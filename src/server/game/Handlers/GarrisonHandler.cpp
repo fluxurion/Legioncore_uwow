@@ -151,10 +151,10 @@ void WorldSession::HandleTrophyData(WorldPackets::Garrison::TrophyData& packet)
 {
     switch (packet.GetOpcode())
     {
-        case CMSG_REPLACE_TROPHY:
-            break;
-        case CMSG_CHANGE_MONUMENT_APPEARANCE:
-            break;
+        //case CMSG_REPLACE_TROPHY:
+        //    break;
+        //case CMSG_CHANGE_MONUMENT_APPEARANCE:
+        //    break;
         default:
             break;
     }

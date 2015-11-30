@@ -107,42 +107,42 @@ void WorldSession::HandleChatMessageOpcode(WorldPackets::Chat::ChatMessage& pack
 
     switch (packet.GetOpcode())
     {
-        case CMSG_CHAT_MESSAGE_SAY:
-            type = CHAT_MSG_SAY;
-            break;
-        case CMSG_CHAT_MESSAGE_YELL:
-            type = CHAT_MSG_YELL;
-            break;
-        case CMSG_CHAT_MESSAGE_CHANNEL:
-            type = CHAT_MSG_CHANNEL;
-            break;
-        case CMSG_CHAT_MESSAGE_WHISPER:
-            type = CHAT_MSG_WHISPER;
-            break;
-        case CMSG_CHAT_MESSAGE_GUILD:
-            type = CHAT_MSG_GUILD;
-            break;
-        case CMSG_CHAT_MESSAGE_OFFICER:
-            type = CHAT_MSG_OFFICER;
-            break;
-        case CMSG_CHAT_MESSAGE_DND:
-            type = CHAT_MSG_DND;
-            break;
-        case CMSG_CHAT_MESSAGE_EMOTE:
-            type = CHAT_MSG_EMOTE;
-            break;
-        case CMSG_CHAT_MESSAGE_PARTY:
-            type = CHAT_MSG_PARTY;
-            break;
-        case CMSG_CHAT_MESSAGE_RAID:
-            type = CHAT_MSG_RAID;
-            break;
-        case CMSG_CHAT_MESSAGE_RAID_WARNING:
-            type = CHAT_MSG_RAID_WARNING;
-            break;
-        case CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
-            type = CHAT_MSG_INSTANCE_CHAT;
-            break;
+        //case CMSG_CHAT_MESSAGE_SAY:
+        //    type = CHAT_MSG_SAY;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_YELL:
+        //    type = CHAT_MSG_YELL;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_CHANNEL:
+        //    type = CHAT_MSG_CHANNEL;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_WHISPER:
+        //    type = CHAT_MSG_WHISPER;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_GUILD:
+        //    type = CHAT_MSG_GUILD;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_OFFICER:
+        //    type = CHAT_MSG_OFFICER;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_DND:
+        //    type = CHAT_MSG_DND;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_EMOTE:
+        //    type = CHAT_MSG_EMOTE;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_PARTY:
+        //    type = CHAT_MSG_PARTY;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_RAID:
+        //    type = CHAT_MSG_RAID;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_RAID_WARNING:
+        //    type = CHAT_MSG_RAID_WARNING;
+        //    break;
+        //case CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
+        //    type = CHAT_MSG_INSTANCE_CHAT;
+        //    break;
         default:
             sLog->outError(LOG_FILTER_NETWORKIO, "HandleMessagechatOpcode : Unknown chat opcode (%u)", packet.GetOpcode());
             return;
@@ -525,21 +525,21 @@ void WorldSession::HandleChatAddonMessageOpcode(WorldPackets::Chat::ChatAddonMes
 
     switch (packet.GetOpcode())
     {
-        case CMSG_CHAT_ADDON_MESSAGE_GUILD:
-            type = CHAT_MSG_GUILD;
-            break;
-        case CMSG_CHAT_ADDON_MESSAGE_INSTANCE_CHAT:
-            type = CHAT_MSG_INSTANCE_CHAT;
-            break;
-        case CMSG_CHAT_ADDON_MESSAGE_OFFICER:
-            type = CHAT_MSG_OFFICER;
-            break;
-        case CMSG_CHAT_ADDON_MESSAGE_PARTY:
-            type = CHAT_MSG_PARTY;
-            break;
-        case CMSG_CHAT_ADDON_MESSAGE_RAID:
-            type = CHAT_MSG_RAID;
-            break;
+        //case CMSG_CHAT_ADDON_MESSAGE_GUILD:
+        //    type = CHAT_MSG_GUILD;
+        //    break;
+        //case CMSG_CHAT_ADDON_MESSAGE_INSTANCE_CHAT:
+        //    type = CHAT_MSG_INSTANCE_CHAT;
+        //    break;
+        //case CMSG_CHAT_ADDON_MESSAGE_OFFICER:
+        //    type = CHAT_MSG_OFFICER;
+        //    break;
+        //case CMSG_CHAT_ADDON_MESSAGE_PARTY:
+        //    type = CHAT_MSG_PARTY;
+        //    break;
+        //case CMSG_CHAT_ADDON_MESSAGE_RAID:
+        //    type = CHAT_MSG_RAID;
+        //    break;
         default:
             sLog->outError(LOG_FILTER_NETWORKIO, "HandleAddonMessagechatOpcode: Unknown addon chat opcode (%u)", packet.GetOpcode());
             return;

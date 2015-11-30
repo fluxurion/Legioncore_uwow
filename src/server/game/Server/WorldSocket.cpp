@@ -246,53 +246,53 @@ bool WorldSocket::ReadDataHandler()
                     HandleAuthSession(authSession);
                     break;
                 }
-                case CMSG_KEEP_ALIVE:
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
-                    sScriptMgr->OnPacketReceive(_worldSession, packet);
-                    break;
-                case CMSG_LOG_DISCONNECT:
-                    packet.rfinish();   // contains uint32 disconnectReason;
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
-                    sScriptMgr->OnPacketReceive(_worldSession, packet);
-                    return true;
-                case CMSG_ENABLE_NAGLE:
-                {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
-                    sScriptMgr->OnPacketReceive(_worldSession, packet);
-                    if (_worldSession)
-                        SetNoDelay(false);
-                    break;
-                }
-                case CMSG_CONNECT_TO_FAILED:
-                {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
-                    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                //case CMSG_KEEP_ALIVE:
+                //    #ifdef WIN32
+                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                //    #endif
+                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                //    break;
+                //case CMSG_LOG_DISCONNECT:
+                //    packet.rfinish();   // contains uint32 disconnectReason;
+                //    #ifdef WIN32
+                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                //    #endif
+                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                //    return true;
+                //case CMSG_ENABLE_NAGLE:
+                //{
+                //    #ifdef WIN32
+                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                //    #endif
+                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                //    if (_worldSession)
+                //        SetNoDelay(false);
+                //    break;
+                //}
+                //case CMSG_CONNECT_TO_FAILED:
+                //{
+                //    #ifdef WIN32
+                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                //    #endif
+                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
 
-                    WorldPackets::Auth::ConnectToFailed connectToFailed(std::move(packet));
-                    connectToFailed.Read();
-                    HandleConnectToFailed(connectToFailed);
-                    break;
-                }
-                case CMSG_AUTH_CONTINUED_SESSION:
-                {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
-                    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                //    WorldPackets::Auth::ConnectToFailed connectToFailed(std::move(packet));
+                //    connectToFailed.Read();
+                //    HandleConnectToFailed(connectToFailed);
+                //    break;
+                //}
+                //case CMSG_AUTH_CONTINUED_SESSION:
+                //{
+                //    #ifdef WIN32
+                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                //    #endif
+                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
 
-                    std::shared_ptr<WorldPackets::Auth::AuthContinuedSession> authSession = std::make_shared<WorldPackets::Auth::AuthContinuedSession>(std::move(packet));
-                    authSession->Read();
-                    //HandleAuthContinuedSession(authSession);
-                    break;
-                }
+                //    std::shared_ptr<WorldPackets::Auth::AuthContinuedSession> authSession = std::make_shared<WorldPackets::Auth::AuthContinuedSession>(std::move(packet));
+                //    authSession->Read();
+                //    //HandleAuthContinuedSession(authSession);
+                //    break;
+                //}
                 default:
                 {
                     if (!_worldSession)
