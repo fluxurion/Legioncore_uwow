@@ -180,7 +180,7 @@ void Battlenet::Session::HandleLogonRequest(Authentication::LogonRequest3 const&
             }
             else
             {
-                if (component.ProgramId != "WoW" || AuthHelper::IsBuildSupportingBattlenet(component.Version))
+                if (component.ProgramId != "WoW" && (component.ProgramId != "WoWB" || !sConfigMgr->GetBoolDefault("AllowBetaBuilds", false)) || AuthHelper::IsBuildSupportingBattlenet(component.Version))
                     logonResponse->SetAuthResult(AUTH_REGION_BAD_VERSION);
                 else
                     logonResponse->SetAuthResult(AUTH_USE_GRUNT_LOGON);
