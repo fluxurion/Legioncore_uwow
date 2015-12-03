@@ -28,7 +28,7 @@ class MessageBuffer
 public:
     MessageBuffer() : _wpos(0), _rpos(0), _storage()
     {
-        _storage.resize(4096);
+        _storage.resize(2048);
     }
 
     explicit MessageBuffer(std::size_t initialSize) : _wpos(0), _rpos(0), _storage()

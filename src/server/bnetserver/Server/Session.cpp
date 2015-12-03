@@ -672,6 +672,7 @@ bool Battlenet::Session::Update()
     if (_queryFuture.valid() && _queryFuture.wait_for(Seconds(0)) == std::future_status::ready)
     {
         auto callback = std::move(_queryCallback);
+        _queryCallback = nullptr;
         callback(_queryFuture.get());
     }
 
@@ -1130,10 +1131,9 @@ Battlenet::WoWRealm::ListUpdate* Battlenet::Session::BuildListUpdate(Realm const
     {
         listUpdate->State.Update.PrivilegedData = boost::in_place();
         std::ostringstream version;
-        // smthng strange here...
-        //if (RealmBuildInfo const* buildInfo = AuthHelper::GetBuildInfo(realm->Build))
-        //    version << buildInfo->MajorVersion << '.' << buildInfo->MinorVersion << '.' << buildInfo->BugfixVersion << '.' << buildInfo->Build;
-        //else
+        if (RealmBuildInfo const* buildInfo = AuthHelper::GetBuildInfo(realm->Build))
+            version << buildInfo->MajorVersion << '.' << buildInfo->MinorVersion << '.' << buildInfo->BugfixVersion << '.' << buildInfo->Build;
+        else
             version << "x.x.x." << realm->Build;
 
         listUpdate->State.Update.PrivilegedData->Version = version.str();

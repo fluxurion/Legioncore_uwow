@@ -35,15 +35,15 @@ enum ConnectionType
     CONNECTION_TYPE_DEFAULT     = -1
 };
 
-enum OpcodeMisc : uint32
+enum OpcodeMisc : uint16
 {
     MAX_OPCODE                                        = 0x1FFF,
-    NUM_OPCODE_HANDLERS                               = (MAX_OPCODE + 1),
-    UNKNOWN_OPCODE                                    = (0xFFFF + 1),
+    NUM_OPCODE_HANDLERS                               = 0xFFFF,
+    UNKNOWN_OPCODE                                    = 0xFFFF,
     NULL_OPCODE                                       = 0xBADD
 };
 
-enum OpcodeClient : uint32
+enum OpcodeClient : uint16
 {
     CMSG_ACCEPT_GUILD_INVITE                          = 0xBADD,
     CMSG_ACCEPT_LEVEL_GRANT                           = 0xBADD,
@@ -225,9 +225,9 @@ enum OpcodeClient : uint32
     CMSG_CONFIRM_RESPEC_WIPE                          = 0xBADD,
     CMSG_CONNECT_TO_FAILED                            = 0xBADD,
     CMSG_CONVERT_RAID                                 = 0xBADD,
-    CMSG_CREATE_CHARACTER                             = 0xBADD,
+    CMSG_CREATE_CHARACTER                             = 0x3644,
     CMSG_CREATE_SHIPMENT                              = 0xBADD,
-    CMSG_DB_QUERY_BULK                                = 0xBADD,
+    CMSG_DB_QUERY_BULK                                = 0x35E5,
     CMSG_DECLINE_GUILD_INVITES                        = 0xBADD,
     CMSG_DECLINE_PETITION                             = 0xBADD,
     CMSG_DELETE_EQUIPMENT_SET                         = 0xBADD,
@@ -257,7 +257,7 @@ enum OpcodeClient : uint32
     CMSG_ENABLE_NAGLE                                 = 0xBADD,
     CMSG_ENABLE_TAXI_NODE                             = 0xBADD,
     CMSG_ENGINE_SURVEY                                = 0xBADD,
-    CMSG_ENUM_CHARACTERS                              = 0xBADD,
+    CMSG_ENUM_CHARACTERS                              = 0x35E7,
     CMSG_ENUM_CHARACTERS_DELETED_BY_CLIENT            = 0xBADD,
     CMSG_FAR_SIGHT                                    = 0xBADD,
     CMSG_GAME_OBJ_REPORT_USE                          = 0xBADD,
@@ -290,7 +290,7 @@ enum OpcodeClient : uint32
     CMSG_GET_PVP_OPTIONS_ENABLED                      = 0xBADD,
     CMSG_GET_REMAINING_GAME_TIME                      = 0xBADD,
     CMSG_GET_TROPHY_LIST                              = 0xBADD,
-    CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS       = 0xBADD,
+    CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS       = 0x36E4,
     CMSG_GM_LAG_REPORT                                = 0xBADD,
     CMSG_GM_SURVEY_SUBMIT                             = 0xBADD,
     CMSG_GM_TICKET_ACKNOWLEDGE_SURVEY                 = 0xBADD,
@@ -390,7 +390,7 @@ enum OpcodeClient : uint32
     CMSG_LOGOUT_CANCEL                                = 0xBADD,
     CMSG_LOGOUT_INSTANT                               = 0xBADD,
     CMSG_LOGOUT_REQUEST                               = 0xBADD,
-    CMSG_LOG_DISCONNECT                               = 0xBADD,
+    CMSG_LOG_DISCONNECT                               = 0x36F8,
     CMSG_LOG_STREAMING_ERROR                          = 0xBADD,
     CMSG_LOOT_ITEM                                    = 0xBADD,
     CMSG_LOOT_MONEY                                   = 0xBADD,
@@ -711,7 +711,7 @@ enum OpcodeClient : uint32
     CMSG_USE_EQUIPMENT_SET                            = 0xBADD,
     CMSG_USE_ITEM                                     = 0xBADD,
     CMSG_USE_TOY                                      = 0xBADD,
-    CMSG_VIOLENCE_LEVEL                               = 0xBADD,
+    CMSG_VIOLENCE_LEVEL                               = 0x3182,
     CMSG_VOICE_ADD_IGNORE                             = 0xBADD,
     CMSG_VOICE_DEL_IGNORE                             = 0xBADD,
     CMSG_VOICE_SESSION_ENABLE                         = 0xBADD,
@@ -725,7 +725,7 @@ enum OpcodeClient : uint32
     CMSG_WRAP_ITEM                                    = 0xBADD,
 };
 
-enum OpcodeServer : uint32
+enum OpcodeServer : uint16
 {
     SMSG_ABORT_NEW_WORLD                              = 0xBADD,
     SMSG_ACCOUNT_CRITERIA_UPDATE                      = 0xBADD,
@@ -739,7 +739,7 @@ enum OpcodeServer : uint32
     SMSG_ADD_ITEM_PASSIVE                             = 0xBADD,
     SMSG_ADD_LOSS_OF_CONTROL                          = 0xBADD,
     SMSG_ADD_RUNE_POWER                               = 0xBADD,
-    SMSG_ADDON_INFO                                   = 0xBADD,
+    SMSG_ADDON_INFO                                   = 0x2779,
     SMSG_ADJUST_SPLINE_DURATION                       = 0xBADD,
     SMSG_AE_LOOT_TARGET_ACK                           = 0xBADD,
     SMSG_AE_LOOT_TARGETS                              = 0xBADD,
@@ -773,7 +773,7 @@ enum OpcodeServer : uint32
     SMSG_AUCTION_WON_NOTIFICATION                     = 0xBADD,
     SMSG_AURA_POINTS_DEPLETED                         = 0xBADD,
     SMSG_AURA_UPDATE                                  = 0xBADD,
-    SMSG_AUTH_CHALLENGE                               = 0xBADD,
+    SMSG_AUTH_CHALLENGE                               = 0x3048,
     SMSG_AUTH_RESPONSE                                = 0x256D,
     SMSG_AVAILABLE_VOICE_CHANNEL                      = 0xBADD,
     SMSG_BARBER_SHOP_RESULT                           = 0xBADD,
@@ -783,7 +783,7 @@ enum OpcodeServer : uint32
     SMSG_BATTLE_PAY_DELIVERY_STARTED                  = 0xBADD,
     SMSG_BATTLE_PAY_DISTRIBUTION_UPDATE               = 0xBADD,
     SMSG_BATTLE_PAY_GET_DISTRIBUTION_LIST_RESPONSE    = 0xBADD,
-    SMSG_BATTLE_PAY_GET_PRODUCT_LIST_RESPONSE         = 0x2779,
+    SMSG_BATTLE_PAY_GET_PRODUCT_LIST_RESPONSE         = 0xBADD,
     SMSG_BATTLE_PAY_GET_PURCHASE_LIST_RESPONSE        = 0xBADD,
     SMSG_BATTLE_PAY_PURCHASE_UPDATE                   = 0xBADD,
     SMSG_BATTLE_PAY_START_DISTRIBUTION_ASSIGN_TO_TARGET_RESPONSE = 0xBADD,
@@ -921,7 +921,7 @@ enum OpcodeServer : uint32
     SMSG_COMPLAINT_RESULT                             = 0xBADD,
     SMSG_COMPLETE_SHIPMENT_RESPONSE                   = 0xBADD,
     SMSG_COMPRESSED_PACKET                            = 0xBADD,
-    SMSG_CONNECT_TO                                   = 0xBADD,
+    SMSG_CONNECT_TO                                   = 0x304C,
     SMSG_CONQUEST_FORMULA_CONSTANTS                   = 0xBADD,
     SMSG_CONSOLE_WRITE                                = 0xBADD,
     SMSG_CONTACT_LIST                                 = 0xBADD,
@@ -932,7 +932,7 @@ enum OpcodeServer : uint32
     SMSG_CORPSE_LOCATION                              = 0xBADD,
     SMSG_CORPSE_RECLAIM_DELAY                         = 0xBADD,
     SMSG_CORPSE_TRANSPORT_QUERY                       = 0xBADD,
-    SMSG_CREATE_CHAR                                  = 0xBADD,
+    SMSG_CREATE_CHAR                                  = 0x273B,
     SMSG_CREATE_SHIPMENT_RESPONSE                     = 0xBADD,
     SMSG_CRITERIA_DELETED                             = 0xBADD,
     SMSG_CRITERIA_UPDATE                              = 0xBADD,
@@ -1393,7 +1393,7 @@ enum OpcodeServer : uint32
     SMSG_PVP_OPTIONS_ENABLED                          = 0xBADD,
     SMSG_PVP_SEASON                                   = 0xBADD,
     SMSG_QUERY_BATTLE_PET_NAME_RESPONSE               = 0xBADD,
-    SMSG_QUERY_CREATURE_RESPONSE                      = 0xBADD,
+    SMSG_QUERY_CREATURE_RESPONSE                      = 0x26F8,
     SMSG_QUERY_GAME_OBJECT_RESPONSE                   = 0xBADD,
     SMSG_QUERY_GARRISON_CREATURE_NAME_RESPONSE        = 0xBADD,
     SMSG_QUERY_GUILD_INFO_RESPONSE                    = 0xBADD,
@@ -1604,7 +1604,7 @@ enum OpcodeServer : uint32
     SMSG_UPDATE_EXPANSION_LEVEL                       = 0xBADD,
     SMSG_UPDATE_INSTANCE_OWNERSHIP                    = 0xBADD,
     SMSG_UPDATE_LAST_INSTANCE                         = 0xBADD,
-    SMSG_UPDATE_OBJECT                                = 0xBADD,
+    SMSG_UPDATE_OBJECT                                = 0x27FC,
     SMSG_UPDATE_TALENT_DATA                           = 0xBADD,
     SMSG_UPDATE_TASK_PROGRESS                         = 0xBADD,
     SMSG_UPDATE_WEEKLY_SPELL_USAGE                    = 0xBADD,
@@ -1757,17 +1757,15 @@ extern OpcodeTable opcodeTable;
 #pragma pack(pop)
 #endif
 
-void InitOpcodes();
-
 // Lookup opcode name for human understandable logging
 template<typename T>
 inline std::string GetOpcodeNameForLogging(T id)
 {
-    uint32 opcode = uint32(id);
+    uint16 opcode = uint16(id);
     std::ostringstream ss;
     ss << '[';
 
-    if (static_cast<uint32>(id) < UNKNOWN_OPCODE)
+    if (static_cast<uint16>(id) < UNKNOWN_OPCODE)
     {
         if (OpcodeHandler const* handler = opcodeTable[T(opcode & 0x7FFF)])
             ss << handler->Name;
@@ -1780,7 +1778,6 @@ inline std::string GetOpcodeNameForLogging(T id)
     ss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << std::uppercase << opcode << std::nouppercase << std::dec << " (" << opcode << ")]";
     return ss.str();
 }
-
 
 #endif
 /// @}

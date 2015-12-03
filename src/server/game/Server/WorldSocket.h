@@ -52,18 +52,18 @@ union ClientPktHeader
     struct
     {
         uint16 Size;
-        uint32 Command;
+        uint16 Command;
     } Setup;
 
     struct
     {
-        uint32 Command : 13;
+        uint16 Command : 13;
         uint32 Size : 19;
     } Normal;
 
 
-    static bool IsValidSize(uint32 size) { return size < 10240; }
-    static bool IsValidOpcode(uint32 opcode) { return opcode < OPCODE_COUNT; }
+    static bool IsValidSize(uint16 size) { return size < 10240; }
+    static bool IsValidOpcode(uint16 opcode) { return opcode < OPCODE_COUNT; }
 };
 
 #pragma pack(pop)
@@ -72,11 +72,9 @@ class WorldSocket : public Socket<WorldSocket>
 {
     static std::string const ServerConnectionInitialize;
     static std::string const ClientConnectionInitialize;
-    static uint32 const MinSizeForCompression;
 
 public:
     WorldSocket(tcp::socket&& socket);
-    ~WorldSocket();
 
     WorldSocket(WorldSocket const& right) = delete;
     WorldSocket& operator=(WorldSocket const& right) = delete;
@@ -96,12 +94,9 @@ private:
     void SendAuthResponseError(uint8 code);
     void HandleConnectToFailed(WorldPackets::Auth::ConnectToFailed& connectToFailed);
 
-    void WritePacketToBuffer(WorldPacket const& packet, MessageBuffer& buffer);
-    uint32 CompressPacket(uint8* buffer, WorldPacket const& packet);
-
     void HandlePing(WorldPacket& recvPacket);
 
-    void ExtractOpcodeAndSize(ClientPktHeader const* header, uint32& opcode, uint32& size) const;
+    void ExtractOpcodeAndSize(ClientPktHeader const* header, uint16& opcode, uint32& size) const;
 
     uint32 _authSeed;
     WorldPacketCrypt _authCrypt;
@@ -115,8 +110,6 @@ private:
 
     MessageBuffer _headerBuffer;
     MessageBuffer _packetBuffer;
-
-    z_stream_s* _compressionStream;
 
     bool _initialized;
 };

@@ -31,7 +31,7 @@ class WorldPacket : public ByteBuffer
         {
         }
 
-        WorldPacket(uint32 opcode, size_t res = 200, ConnectionType connection = CONNECTION_TYPE_DEFAULT) : ByteBuffer(res),
+        WorldPacket(uint16 opcode, size_t res = 200, ConnectionType connection = CONNECTION_TYPE_DEFAULT) : ByteBuffer(res),
             m_opcode(opcode), _connection(connection) { }
 
         WorldPacket(WorldPacket&& packet) : ByteBuffer(std::move(packet)), m_opcode(packet.m_opcode), _connection(packet._connection)
@@ -66,9 +66,9 @@ class WorldPacket : public ByteBuffer
             return *this;
         }
 
-        WorldPacket(uint32 opcode, MessageBuffer&& buffer, ConnectionType connection = CONNECTION_TYPE_DEFAULT) : ByteBuffer(std::move(buffer)), m_opcode(opcode), _connection(connection) { }
+        WorldPacket(uint16 opcode, MessageBuffer&& buffer, ConnectionType connection = CONNECTION_TYPE_DEFAULT) : ByteBuffer(std::move(buffer)), m_opcode(opcode), _connection(connection) { }
 
-        void Initialize(uint32 opcode, size_t newres = 200, ConnectionType connection = CONNECTION_TYPE_DEFAULT)
+        void Initialize(uint16 opcode, size_t newres = 200, ConnectionType connection = CONNECTION_TYPE_DEFAULT)
         {
             clear();
             _storage.reserve(newres);
@@ -76,13 +76,13 @@ class WorldPacket : public ByteBuffer
             _connection = connection;
         }
 
-        uint32 GetOpcode() const { return m_opcode; }
-        void SetOpcode(uint32 opcode) { m_opcode = opcode; }
+        uint16 GetOpcode() const { return m_opcode; }
+        void SetOpcode(uint16 opcode) { m_opcode = opcode; }
 
         ConnectionType GetConnection() const { return _connection; }
 
     protected:
-        uint32 m_opcode;
+        uint16 m_opcode;
         ConnectionType _connection;
 };
 

@@ -33,7 +33,7 @@
 
 using boost::asio::ip::tcp;
 
-#define READ_BLOCK_SIZE 4096
+#define READ_BLOCK_SIZE 2048
 #ifdef BOOST_ASIO_HAS_IOCP
 #define TC_SOCKET_USE_IOCP
 #endif

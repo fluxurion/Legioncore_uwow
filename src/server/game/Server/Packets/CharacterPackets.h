@@ -46,6 +46,7 @@ namespace WorldPackets
             uint8 HairColor = 0;
             uint8 FacialHairStyle = 0;
             uint8 OutfitId = 0;
+            uint8 UnkByte[3] = { };
             Optional<int32> TemplateSet;
             std::string Name;
 

@@ -185,6 +185,8 @@ void WorldPackets::Character::CreateChar::Read()
     _worldPacket >> CreateInfo->HairColor;
     _worldPacket >> CreateInfo->FacialHairStyle;
     _worldPacket >> CreateInfo->OutfitId;
+    for (uint8 i = 0; i < 3; ++i)
+        _worldPacket >> CreateInfo->UnkByte[i];
     CreateInfo->Name = _worldPacket.ReadString(nameLength);
     if (hasTemplateSet)
         CreateInfo->TemplateSet = _worldPacket.read<int32>();

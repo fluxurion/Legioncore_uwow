@@ -884,7 +884,7 @@ class World
 
         void DeleteCharName(std::string name) { nameMap.erase(name); }
 
-        uint32 GetAntiSpamm(uint32 opcode, uint32 value) { return loadantispamm[opcode][value]; }
+        uint32 GetAntiSpamm(uint16 opcode, uint32 value) { return loadantispamm[opcode][value]; }
 
     protected:
         void _UpdateGameTime();
@@ -1007,7 +1007,7 @@ class World
         void ProcessQueryCallbacks();
         std::deque<std::future<PreparedQueryResult>> m_realmCharCallbacks;
 
-        uint32 loadantispamm[PACKETS_COUNT][2];//0 maxcount, 1 time
+        uint16 loadantispamm[PACKETS_COUNT][2];//0 maxcount, 1 time
 };
 
 extern Realm realm;
