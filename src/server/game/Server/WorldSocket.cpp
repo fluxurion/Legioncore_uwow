@@ -42,7 +42,7 @@ uint32 const SizeOfClientHeader[2][2] =
     { 4, 2 }
 };
 
-uint32 const SizeOfServerHeader[2] = { sizeof(uint16) + sizeof(uint16), sizeof(uint32) };
+uint32 const SizeOfServerHeader[2] = { sizeof(uint16) + sizeof(uint32), sizeof(uint32) + sizeof(uint32) };
 
 WorldSocket::WorldSocket(tcp::socket&& socket)
     : Socket(std::move(socket)), _authSeed(rand32()), _OverSpeedPings(0), _worldSession(nullptr), _initialized(false)
