@@ -3618,57 +3618,45 @@ class npc_frozen_orb : public CreatureScript
 
             npc_frozen_orbAI(Creature* creature) : ScriptedAI(creature)
             {
-                Unit* owner = creature->GetOwner();
-
-                if (owner)
-                {
-                    owner->CastSpell(creature, 84721, true);
-                    if (owner->HasAura(44544))
-                        owner->CastSpell(owner, 126084, true);
-                    owner->CastSpell(owner, 44544, true);
-
-                    
-                    float distance = 0.0f;
-                    owner->GetNearPoint2D(x, y, distance, owner->GetOrientation());
-                    z = me->GetMap()->GetHeight(x, y, me->GetPositionZ(), true, MAX_FALL_DISTANCE);
-                    float moveX = x;
-                    float moveY = y;
-                    float moveZ = z;
-                    for (uint8 j = 0; distance < 100.0f; ++j)
-                    {
-                        distance += 5.0f;
-                        owner->GetNearPoint2D(x, y, distance, owner->GetOrientation());
-                        z = me->GetMap()->GetHeight(x,y, me->GetPositionZ(), true, MAX_FALL_DISTANCE);
-                        if (me->IsWithinLOS(x, y, z))
-                        {
-                            moveX = x;
-                            moveY = y;
-                            moveZ = z;
-                        }
-                        else
-                            break;
-                    }
-                    x = moveX;
-                    y = moveY;
-                    z = moveZ;
-                    me->GetMotionMaster()->MovePoint(0, x, y, z);
-                }
-
                 me->SetReactState(REACT_PASSIVE);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+                if (Unit* owner = creature->GetAnyOwner())
+                {
+                    Position pos;
+                    owner->GetFirstCollisionPosition(pos, 40.0f, 0.0f);
+                    x = pos.GetPositionX();
+                    y = pos.GetPositionY();
+                    z = pos.GetPositionZ();
+                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->MovePoint(0, x, y, z, false, me->GetSpeed(MOVE_RUN));
+                }
+
                 frozenOrbTimer = 1000;
             }
 
             void Reset()
             {
-                me->GetMotionMaster()->MovePoint(0, x, y, z);
+                if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE)
+                {
+                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->MovePoint(0, x, y, z, false, me->GetSpeed(MOVE_RUN));
+                }
+            }
+
+            void EnterEvadeMode()
+            {
+                if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE)
+                {
+                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->MovePoint(0, x, y, z, false, me->GetSpeed(MOVE_RUN));
+                }
             }
 
             void UpdateAI(uint32 diff)
             {
-                Unit* owner = me->GetOwner();
-
+                Unit* owner = me->GetAnyOwner();
                 if (!owner)
                     return;
 
@@ -3680,19 +3668,6 @@ class npc_frozen_orb : public CreatureScript
 
                     owner->CastSpell(me, 84721, true);
 
-                    if (me->GetSpeed(MOVE_RUN) != 0.2f)
-                    {
-                        UnitList targets;
-                        Trinity::AnyUnfriendlyUnitInObjectRangeCheck u_check(me, me, 10.0f);
-                        Trinity::UnitListSearcher<Trinity::AnyUnfriendlyUnitInObjectRangeCheck> searcher(me, targets, u_check);
-                        me->VisitNearbyObject(10.0f, searcher);
-                        for (UnitList::iterator iter = targets.begin(); iter != targets.end(); ++iter)
-                        {
-                            me->SetSpeed(MOVE_WALK, 0.2f);
-                            me->SetSpeed(MOVE_RUN, 0.2f);
-                            break;
-                        }
-                    }
                     frozenOrbTimer = 1000;
                 }
                 else
@@ -3802,7 +3777,6 @@ class npc_guardian_of_ancient_kings : public CreatureScript
 
 enum gateway_data
 {
-    SPELL_DEMONIC_GATEWAY_CHARGES           = 113901,
     //Add animation to AreaTrigger
     SPELL_DEMONIC_PORTAL_BIRTH_ANIM_DUMMY   = 143251,
     //Summon arrea trigger.
@@ -3813,12 +3787,6 @@ enum gateway_data
 };
 
 uint32 DestEntry[2]= { NPC_PURGE_GATE, NPC_GREEN_GATE };
-
-uint32 gwauras[2][5]=
-{
-    { 113903, 113911, 113912, 113913, 113914 },
-    { 113915, 113916, 113917, 113918, 113919}
-};
 
 class npc_demonic_gateway : public CreatureScript
 {
@@ -3838,12 +3806,6 @@ class npc_demonic_gateway : public CreatureScript
                 gate = me->GetEntry() == NPC_PURGE_GATE;
                 me->CastSpell(me, SPELL_DEMONIC_GATEWAY, true);
                 me->CastSpell(me, SPELL_DEMONIC_PORTAL_BIRTH_ANIM_DUMMY, false);
-                if (gate)   //Only Purge gate do check for caster aura.
-                {
-                    if (summoner->HasAura(SPELL_DEMONIC_GATEWAY_CHARGES))
-                        summoner->RemoveAurasDueToSpell(SPELL_DEMONIC_GATEWAY_CHARGES);
-                    summoner->CastSpell(summoner, SPELL_DEMONIC_GATEWAY_CHARGES, false);
-                }
             }
 
             void OnSpellClick(Unit* who)
@@ -3856,40 +3818,16 @@ class npc_demonic_gateway : public CreatureScript
                     Player* whoPlayer = who->ToPlayer();
                     if(!ownerPlayer || !whoPlayer || !ownerPlayer->IsGroupVisibleFor(whoPlayer))
                         return;
-                    if (Aura* aurastack = owner->GetAura(SPELL_DEMONIC_GATEWAY_CHARGES))
-                    {
-                        uint32 stacks = aurastack->GetEffect(EFFECT_0)->GetAmount();
-                        if (!stacks)
-                            return;
 
-                        for (int32 i = 0; i < MAX_SUMMON_SLOT; ++i)
+                    for (int32 i = 0; i < MAX_SUMMON_SLOT; ++i)
+                    {
+                        if (owner->m_SummonSlot[i].GetEntry() != DestEntry[gate])
+                            continue;
+                        if(Unit* uGate = ObjectAccessor::GetUnit(*me, owner->m_SummonSlot[i]))
                         {
-                            if (owner->m_SummonSlot[i].GetEntry() != DestEntry[gate])
-                                continue;
-                            if(Unit* uGate = ObjectAccessor::GetUnit(*me, owner->m_SummonSlot[i]))
-                            {
-                                aurastack->GetEffect(EFFECT_0)->ChangeAmount(stacks - 1);
-                                aurastack->SetNeedClientUpdateForTargets();
-                                //who->CastSpell(uGate, gate ? 120729 : 113896, true);
-                                who->CastCustomSpell(uGate, gate ? 120729 : 113896, NULL, NULL, NULL, true, NULL, NULL, owner->GetGUID());
-                                for(int32 j = 5; j >= 0; --j)
-                                {
-                                    if (uGate->HasAura(gwauras[!gate][j]))
-                                    {
-                                        uGate->RemoveAurasDueToSpell(gwauras[!gate][j]);
-                                        break;
-                                    }
-                                }
-                                for(int32 j = 5; j >= 0; --j)
-                                {
-                                    if (me->HasAura(gwauras[gate][j]))
-                                    {
-                                        me->RemoveAurasDueToSpell(gwauras[gate][j]);
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
+                            //who->CastSpell(uGate, gate ? 120729 : 113896, true);
+                            who->CastCustomSpell(uGate, gate ? 120729 : 113896, NULL, NULL, NULL, true, NULL, NULL, owner->GetGUID());
+                            break;
                         }
                     }
                 }

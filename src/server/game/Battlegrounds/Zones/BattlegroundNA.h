@@ -18,7 +18,7 @@
 #ifndef __BATTLEGROUNDNA_H
 #define __BATTLEGROUNDNA_H
 
-class Battleground;
+#include "Arena.h"
 
 enum BattlegroundNAObjectTypes
 {
@@ -41,31 +41,18 @@ enum BattlegroundNAObjects
     BG_NA_OBJECT_TYPE_BUFF_2    = 184664
 };
 
-class BattlegroundNAScore : public BattlegroundScore
-{
-    public:
-        BattlegroundNAScore() {};
-        virtual ~BattlegroundNAScore() {};
-        //TODO fix me
-};
-
-class BattlegroundNA : public Battleground
+class BattlegroundNA : public Arena
 {
     public:
         BattlegroundNA();
         ~BattlegroundNA();
 
-        /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player* player);
-        virtual void StartingEventCloseDoors();
-        virtual void StartingEventOpenDoors();
+        void StartingEventCloseDoors() override;
+        void StartingEventOpenDoors() override;
 
-        void RemovePlayer(Player* player, ObjectGuid guid, uint32 team);
-        void HandleAreaTrigger(Player* Source, uint32 Trigger);
-        bool SetupBattleground();
-        virtual void Reset();
-        virtual void FillInitialWorldStates(WorldPacket &d);
-        void HandleKillPlayer(Player* player, Player* killer);
-        bool HandlePlayerUnderMap(Player* player);
+        void HandleAreaTrigger(Player* player, uint32 trigger, bool entered) override;
+        bool SetupBattleground() override;
+        void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet) override;
 };
+
 #endif

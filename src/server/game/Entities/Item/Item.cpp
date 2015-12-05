@@ -244,7 +244,7 @@ bool ItemCanGoIntoBag(ItemTemplate const* pProto, ItemTemplate const* pBagProto)
 }
 
 Item::Item() : m_slot(0), uState(ITEM_NEW), uQueuePos(-1), m_container(NULL), m_lootGenerated(false),
-mb_in_trade(false), m_paidMoney(0), m_paidExtendedCost(0)
+mb_in_trade(false), m_in_use(false), m_paidMoney(0), m_paidExtendedCost(0)
 {
     m_objectType |= TYPEMASK_ITEM;
     m_objectTypeId = TYPEID_ITEM;
@@ -1679,7 +1679,8 @@ int32 Item::GetItemStatValue(uint32 index) const
 
     if (uint32 randomPropPoints = GetRandomPropertyPoints(GetItemLevel(), GetQuality(), GetTemplate()->GetInventoryType(), GetTemplate()->GetSubClass()))
     {
-        float statValue = float(_bonusData.ItemStatAllocation[index] * randomPropPoints) * 0.0001f;
+        int32 statAlloc = _bonusData.ItemStatAllocation[index] * randomPropPoints;
+        float statValue = statAlloc * 0.0001f;
 
         if (GtItemSocketCostPerLevelEntry const* gtCost = sGtItemSocketCostPerLevelStore.EvaluateTable(GetItemLevel() - 1, 0))
             statValue -= float(int32(_bonusData.ItemStatSocketCostMultiplier[index] * gtCost->ratio));

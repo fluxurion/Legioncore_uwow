@@ -892,10 +892,20 @@ void Garrison::SendBuildingLandmarks(Player* receiver) const
 
 void Garrison::SendGarrisonUpgradebleResult(Player* receiver) const
 {
+    //!
     //@TODO worn on checks... exmaple: at first lvl u cant upgrade if u hadnt complete quest line
     WorldPackets::Garrison::GarrisonIsUpgradeableResult result;
-    if (_siteLevel->Level >= 3)
-        result.Result = GARRISON_ERROR_MAX_LEVEL;
+    switch (_siteLevel->Level)
+    {
+        case 1: 
+            result.Result = GARRISON_ERROR_NOT_ALLOW_GARRISON_UPGRADE;
+            break;
+        case 2: //Requare Alliance Q: 36592, Horde Q: 36567
+        default:
+            result.Result = GARRISON_ERROR_MAX_LEVEL;
+            break;
+    }
+
     receiver->SendDirectMessage(result.Write());
 }
 
@@ -1003,9 +1013,16 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
     if ((building->GetGoType() == GAMEOBJECT_TYPE_GARRISON_BUILDING || building->GetGoType() == GAMEOBJECT_TYPE_GARRISON_PLOT)/* && building->GetGOInfo()->garrisonBuilding.mapID*/)
     {
 
-        if (std::list<GameObjectData> const* goList = sGarrisonMgr.GetGoSpawnBuilding(PacketInfo.GarrPlotInstanceID, BuildingInfo.PacketInfo ? BuildingInfo.PacketInfo->GarrBuildingID : 0))
+        if (std::list<GameObjectData> const* goList = sGarrisonMgr.GetGoSpawnBuilding(PacketInfo.GarrPlotInstanceID, BuildingInfo.PacketInfo && BuildingInfo.PacketInfo->Active ? BuildingInfo.PacketInfo->GarrBuildingID : 0))
         for (std::list<GameObjectData>::const_iterator data = goList->begin(); data != goList->end(); ++data)
         {
+            if (GarrisonMgr::getFirstMap(map->GetId()) != data->mapid)
+                continue;
+
+            // ignore building state object for already build object.
+            if (BuildingInfo.PacketInfo && BuildingInfo.PacketInfo->Active == data->building)
+                continue;
+
             GameObject* linkGO = new GameObject();
             if (!linkGO->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), data->id, map, 1, data->posX, data->posY, data->posZ, data->orientation,
                 data->rotation0, data->rotation1, data->rotation2, data->rotation3, 255, GO_STATE_READY) ||
@@ -1017,9 +1034,13 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
             BuildingInfo.Spawns.insert(linkGO->GetGUID());
         }
 
-        if (std::list<CreatureData> const* npcList = sGarrisonMgr.GetNpcSpawnBuilding(PacketInfo.GarrPlotInstanceID, BuildingInfo.PacketInfo ?  BuildingInfo.PacketInfo->GarrBuildingID : 0))
+        if (std::list<CreatureData> const* npcList = sGarrisonMgr.GetNpcSpawnBuilding(PacketInfo.GarrPlotInstanceID, BuildingInfo.PacketInfo && BuildingInfo.PacketInfo->Active ? BuildingInfo.PacketInfo->GarrBuildingID : 0))
         for (std::list<CreatureData>::const_iterator data = npcList->begin(); data != npcList->end(); ++data)
         {
+            if (GarrisonMgr::getFirstMap(map->GetId()) != data->mapid)
+                continue;
+            if (BuildingInfo.PacketInfo && BuildingInfo.PacketInfo->Active == data->building)
+                continue;
             Creature* linkNPC = new Creature();
             if (!linkNPC->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), map, 1, data->id, 0, 0, data->posX, data->posY, data->posZ, data->orientation) ||
                 !linkNPC->IsPositionValid() || !map->AddToMap(linkNPC))
@@ -1027,6 +1048,9 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
                 delete linkNPC;
                 continue;
             }
+            if (data->building)
+                linkNPC->SetUInt32Value(UNIT_NPC_EMOTESTATE, urand(0, 1) ? 173 : 69);
+
             BuildingInfo.Spawns.insert(linkNPC->GetGUID());
         }
     }

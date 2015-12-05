@@ -180,7 +180,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectInebriate,                                //100 SPELL_EFFECT_INEBRIATE
     &Spell::EffectFeedPet,                                  //101 SPELL_EFFECT_FEED_PET
     &Spell::EffectDismissPet,                               //102 SPELL_EFFECT_DISMISS_PET
-    &Spell::EffectReputation,                               //103 SPELL_EFFECT_REPUTATION
+    &Spell::EffectReputation,                               //103 SPELL_EFFECT_GIVE_REPUTATION
     &Spell::EffectSummonObject,                             //104 SPELL_EFFECT_SUMMON_OBJECT_SLOT
     &Spell::EffectSurvey,                                   //105 SPELL_EFFECT_SURVEY
     &Spell::EffectSummonRaidMarker,                         //106 SPELL_EFFECT_SUMMON_RAID_MARKER
@@ -386,7 +386,7 @@ void Spell::EffectInstaKill(SpellEffIndex /*effIndex*/)
             pet->CastPetAuras(false, m_spellInfo->Id);
     }
 
-    if (unitTarget->HasAura(SPELL_BG_PREPARATION) || unitTarget->HasAura(SPELL_BG_ARENA_PREPARATION))
+    if (unitTarget->HasAura(SPELL_BG_PREPARATION) || unitTarget->HasAura(SPELL_ARENA_PREPARATION))
         return;
 
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
@@ -432,17 +432,6 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
 
     if (unitTarget && unitTarget->isAlive())
     {
-        // Meteor like spells (divided damage to targets)
-        if (m_spellInfo->AttributesCu & SPELL_ATTR0_CU_SHARE_DAMAGE)
-        {
-            uint32 count = 0;
-            for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-                if (ihit->effectMask & (1 << effIndex))
-                    ++count;
-
-            damage /= count;                    // divide to all targets
-        }
-
         switch (m_spellInfo->SpellFamilyName)
         {
             case SPELLFAMILY_GENERIC:
@@ -716,6 +705,17 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
         }
 
         m_damage += damage;
+
+        // Meteor like spells (divided damage to targets)
+        if (m_spellInfo->AttributesCu & SPELL_ATTR0_CU_SHARE_DAMAGE)
+        {
+            uint32 count = 0;
+            for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+                if (ihit->effectMask & (1 << effIndex))
+                    ++count;
+
+            m_damage /= count;                    // divide to all targets
+        }
 
         sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectSchoolDMG end %i, m_diffMode %i, effIndex %i, spellId %u, damage %i", m_damage, m_diffMode, effIndex, m_spellInfo->Id, damage);
 
@@ -1171,7 +1171,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 case 45206: // Copy Off-hand Weapon
                 case 69892:
                 {
-                    m_caster->CastSpell(unitTarget, damage, true);
+                    unitTarget->CastSpell(m_caster, damage, true);
                     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
                         break;
 
@@ -1188,7 +1188,6 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 case 63416:
                 case 69891:
                 {
-                    m_caster->CastSpell(unitTarget, damage, true);
                     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
                         break;
 
@@ -1590,6 +1589,16 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
         return;
     }
 
+    switch (triggered_spell_id)
+    {
+        case 41637: // Prayer of Mending
+            values.AddSpellMod(SPELLVALUE_BASE_POINT0, damage);
+            values.AddSpellMod(SPELLVALUE_BASE_POINT1, damage);
+            values.AddSpellMod(SPELLVALUE_BASE_POINT2, damage);
+        default:
+            break;
+    }
+
     // original caster guid only for GO cast
     m_caster->CastSpell(targets, spellInfo, &values, TRIGGERED_FULL_MASK, NULL, NULL, m_originalCasterGUID);
 }
@@ -1773,8 +1782,8 @@ void Spell::EffectJump(SpellEffIndex effIndex)
     float distance = m_caster->GetExactDist(x, y, z);
     CalculateJumpSpeeds(effIndex, distance, speedXY, speedZ);
 
-    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectJump start xyz %f %f %f caster %u target %u damage %i distance %f distance2d %f",
-    //x, y, z, m_caster->GetGUIDLow(), unitTarget->GetGUIDLow(), damage, distance, distance2d);
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectJump start xyz %f %f %f caster %u target %u damage %i distance %f",
+    x, y, z, m_caster->GetGUIDLow(), unitTarget->GetGUIDLow(), damage, distance);
 
     m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ, 0, 0.0f, delayCast, unitTarget);
 }
@@ -2207,7 +2216,7 @@ void Spell::EffectPowerBurn(SpellEffIndex effIndex)
         damage = std::min(damage, maxDamage);
     }
 
-    int32 newDamage = -(unitTarget->ModifyPower(powerType, -damage));
+    int32 newDamage = -(unitTarget->ModifyPower(powerType, -damage, true));
 
     // NO - Not a typo - EffectPowerBurn uses effect value multiplier - not effect damage multiplier
     float dmgMultiplier = m_spellInfo->GetEffect(effIndex, m_diffMode)->CalcValueMultiplier(m_originalCaster, this);
@@ -2505,7 +2514,7 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
     switch (m_spellInfo->Id)
     {
         case 149254: // Spirit Bond
-            heal = m_originalCaster->CalcVersalityBonus(unitTarget, heal);
+            heal = m_originalCaster->CalcVersalityBonusDone(unitTarget, heal);
         default:
             break;
     }
@@ -3031,9 +3040,15 @@ void Spell::EffectEnergizePct(SpellEffIndex effIndex)
         return;
 
     uint32 gain = CalculatePct(maxPower, damage);
+
+    if (m_spellInfo->Id == 123051) // hack for Mana Leech 0.75% bp cannot now is float
+        gain /= 100;
+
     m_addptype = power;
     m_addpower = gain;
     m_caster->EnergizeBySpell(unitTarget, m_spellInfo->Id, gain, power);
+
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::EffectEnergizePct Id %i damage %i power %i gain %i", m_spellInfo->Id, damage, power, gain);
 }
 
 void Spell::SendLoot(ObjectGuid const& guid, LootType loottype)
@@ -3145,7 +3160,7 @@ void Spell::EffectOpenLock(SpellEffIndex effIndex)
             // in battleground check
             if (Battleground* bg = player->GetBattleground())
             {
-                if (bg->GetTypeID(true) == BATTLEGROUND_EY)
+                if (bg->GetTypeID(true) == BATTLEGROUND_EY || bg->GetTypeID(true) == BATTLEGROUND_EY_RATED)
                     bg->EventPlayerClickedOnFlag(player, gameObjTarget);
                 return;
             }
@@ -4514,9 +4529,6 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                 default:
                     break;
             }
-            // Kill Shot - bonus damage from Ranged Attack Power
-            if (m_spellInfo->SpellFamilyFlags[1] & 0x800000)
-                spell_bonus += int32(0.45f * m_caster->GetTotalAttackPowerValue(RANGED_ATTACK));
             break;
         }
         case SPELLFAMILY_DEATHKNIGHT:
@@ -4739,6 +4751,10 @@ void Spell::EffectInterruptCast(SpellEffIndex effIndex)
                     unitTarget->ProhibitSpellSchool(curSpellInfo->GetSchoolMask(), unitTarget->ModSpellDuration(m_spellInfo, unitTarget, duration, false, 1 << effIndex, m_originalCaster));
                 }
 
+                if (Creature* creature = unitTarget->ToCreature())
+                    if (creature->IsAIEnabled)
+                        creature->AI()->OnInterruptCast(m_caster, m_spellInfo->Id, curSpellInfo->Id, curSpellInfo->GetSchoolMask());
+
                 ExecuteLogEffectInterruptCast(effIndex, unitTarget, curSpellInfo->Id);
                 unitTarget->InterruptSpell(CurrentSpellTypes(i), false);
                 unitTarget->SendLossOfControl(m_caster, m_spellInfo->Id, m_spellInfo->GetDuration(), m_spellInfo->GetDuration(), m_spellInfo->GetEffectMechanic(effIndex), curSpellInfo->GetSchoolMask(), LOC_SCHOOL_INTERRUPT, true);
@@ -4817,7 +4833,7 @@ void Spell::EffectSummonObjectWild(SpellEffIndex effIndex)
             }
             case 566:                                       //EY
             {
-                if (bg && bg->GetTypeID(true) == BATTLEGROUND_EY && bg->GetStatus() == STATUS_IN_PROGRESS)
+                if (bg && (bg->GetTypeID(true) == BATTLEGROUND_EY || bg->GetTypeID(true) == BATTLEGROUND_EY_RATED) && bg->GetStatus() == STATUS_IN_PROGRESS)
                 {
                     ((BattlegroundEY*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID());
                 }
@@ -5007,7 +5023,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     return;
                 }
                 case 45204: // Clone Me!
-                    m_caster->CastSpell(unitTarget, damage, true);
+                    unitTarget->CastSpell(m_caster, damage, true);
                     break;
                 case 55693:                                 // Remove Collapsing Cave Aura
                     if (!unitTarget)
@@ -6367,6 +6383,7 @@ void Spell::EffectSelfResurrect(SpellEffIndex effIndex)
     player->SetPower(POWER_FOCUS, 0);
 
     player->SpawnCorpseBones();
+    player->RemoveAurasDueToSpell(160029);
 }
 
 void Spell::EffectSkinning(SpellEffIndex /*effIndex*/)
@@ -7438,13 +7455,10 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
                 summon->SetDisplayId(1126);
         }
 
-        // if (properties->Id != 3390)
-            // summon->AI()->EnterEvadeMode();
-
         // guardians should follow owner.
         if (caster && !summon->HasUnitState(UNIT_STATE_FOLLOW)) // no charm info and no victim
-            summon->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, summon->GetFollowAngle());
-
+            if (summon->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE) // Prevent rewrite movement from scripts
+                summon->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, summon->GetFollowAngle());
 
         ExecuteLogEffectSummonObject(i, summon);
     }

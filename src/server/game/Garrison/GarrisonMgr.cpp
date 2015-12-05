@@ -24,6 +24,22 @@
 #include "ObjectMgr.h"
 #include "World.h"
 
+uint32 GarrisonMgr::getFirstMap(uint32 map)
+{
+    switch (map)
+    {
+        case 1152:
+        case 1330:
+        case 1153:
+            return 1152;
+        case 1158:
+        case 1331:
+        case 1159:
+            return 1158;
+    }
+    return 0;
+}
+
 void GarrisonMgr::Initialize()
 {
     for (GarrSiteLevelPlotInstEntry const* plotInstance : sGarrSiteLevelPlotInstStore)
@@ -459,7 +475,7 @@ void GarrisonMgr::LoadFollowerClassSpecAbilities()
 void GarrisonMgr::LoadBuildingSpawnNPC()
 {
     //                                                  0       1      2   3    4              5           6            7
-    QueryResult result = WorldDatabase.Query("SELECT plotID, BuildID, id, map, position_x, position_y, position_z, orientation FROM garrison_building_creature");
+    QueryResult result = WorldDatabase.Query("SELECT plotID, BuildID, id, map, position_x, position_y, position_z, orientation, building FROM garrison_building_creature");
 
     if (!result)
     {
@@ -500,13 +516,18 @@ void GarrisonMgr::LoadBuildingSpawnNPC()
 
         CreatureData data;
         data.id = entry;
-        data.mapid = fields[index++].GetUInt16();
+        uint32 map = fields[index++].GetUInt16();
+        data.mapid = getFirstMap(map);
         data.posX = fields[index++].GetFloat();
         data.posY = fields[index++].GetFloat();
         data.posZ = fields[index++].GetFloat();
         data.orientation = fields[index++].GetFloat();
+        data.building = fields[index++].GetBool();
         data.dbData = false;
         _buildSpawnNpc[BuildID][garrPlotInstanceId].push_back(data);
+
+        if (!data.mapid)
+            sLog->outError(LOG_FILTER_SQL, "Not supported map %u in `garrison_building_creature`.", map);
 
         ++count;
     } while (result->NextRow());
@@ -516,8 +537,8 @@ void GarrisonMgr::LoadBuildingSpawnNPC()
 
 void GarrisonMgr::LoadBuildingSpawnGo()
 {
-    //                                                  0       1      2   3    4              5           6            7           8           9       10          11
-    QueryResult result = WorldDatabase.Query("SELECT plotID, BuildID, id, map, position_x, position_y, position_z, orientation, rotation0, rotation1, rotation2, rotation3 FROM garrison_building_gameobject");
+    //                                                  0       1      2   3    4              5           6            7           8           9       10          11          12
+    QueryResult result = WorldDatabase.Query("SELECT plotID, BuildID, id, map, position_x, position_y, position_z, orientation, rotation0, rotation1, rotation2, rotation3, building FROM garrison_building_gameobject");
 
     if (!result)
     {
@@ -557,7 +578,8 @@ void GarrisonMgr::LoadBuildingSpawnGo()
 
         GameObjectData data;
         data.id = entry;
-        data.mapid = fields[index++].GetUInt16();
+        uint32 map = fields[index++].GetUInt16();
+        data.mapid = getFirstMap(map);
         data.posX = fields[index++].GetFloat();
         data.posY = fields[index++].GetFloat();
         data.posZ = fields[index++].GetFloat();
@@ -566,8 +588,12 @@ void GarrisonMgr::LoadBuildingSpawnGo()
         data.rotation1 = fields[index++].GetFloat();
         data.rotation2 = fields[index++].GetFloat();
         data.rotation3 = fields[index++].GetFloat();
+        data.building = fields[index++].GetBool();
         data.dbData = false;
         _buildSpawnGo[BuildID][garrPlotInstanceId].push_back(data);
+
+        if (!data.mapid)
+            sLog->outError(LOG_FILTER_SQL, "Not supported map %u in `garrison_building_gameobject`.", map);
 
         ++count;
     } while (result->NextRow());

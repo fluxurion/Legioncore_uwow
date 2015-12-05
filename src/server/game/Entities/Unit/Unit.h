@@ -601,6 +601,7 @@ enum WeaponAttackType
 // Last check : 5.0.5
 enum CombatRating
 {
+    CR_NONE                             = 0,
     CR_DEFENSE_SKILL                    = 1,
     CR_DODGE                            = 2,
     CR_PARRY                            = 3,
@@ -1681,9 +1682,9 @@ class Unit : public WorldObject
         SpellMissInfo MagicSpellHitResult(Unit* victim, SpellInfo const* spell);
         SpellMissInfo SpellHitResult(Unit* victim, SpellInfo const* spell, bool canReflect = false, uint32 effectMask = 0);
 
-        float GetUnitDodgeChance()    const;
-        float GetUnitParryChance()    const;
-        float GetUnitBlockChance()    const;
+        float GetUnitDodgeChanceAgainst(Unit const* attacker) const;
+        float GetUnitParryChanceAgainst(Unit const* attacker) const;
+        float GetUnitBlockChanceAgainst(Unit const* attacker) const;
         float GetUnitCriticalChance(WeaponAttackType attackType, const Unit* victim, SpellInfo const* spellProto = NULL) const;
         int32 GetMechanicResistChance(const SpellInfo* spell);
         bool CanUseAttackType(uint8 attacktype) const
@@ -1699,7 +1700,6 @@ class Unit : public WorldObject
 
         virtual uint32 GetBlockPercent() { return 30; }
 
-        uint32 GetUnitMeleeSkill(Unit const* target = NULL) const { return (target ? getLevelForTarget(target) : getLevel()) * 5; }
         float GetWeaponProcChance() const;
         float GetPPMProcChance(uint32 WeaponSpeed, float PPM, const SpellInfo* spellProto) const;
 
@@ -1816,6 +1816,8 @@ class Unit : public WorldObject
         void JumpTo(WorldObject* obj, float speedZ);
 
         void MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath = false, bool forceDestination = false);
+        void MonsterSmothMoveWithSpeed(Position pos, float speed, bool generatePath = false, bool forceDestination = false);
+
         //void SetFacing(float ori, WorldObject* obj = NULL);
         //void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint8 type, uint32 MovementFlags, uint32 Time, Player* player = NULL);
         void SendMovementFlagUpdate(bool self = false);
@@ -2319,7 +2321,7 @@ class Unit : public WorldObject
 
         int32 GetSpellPowerHealing();
         int32 GetSpellPowerDamage(SpellSchoolMask schoolMask = SPELL_SCHOOL_MASK_MAGIC);
-        int32 SpellBaseDamageBonusDone(SpellSchoolMask schoolMask, int32 baseBonus = NULL);
+        int32 SpellBaseDamageBonusDone(SpellSchoolMask schoolMask);
         int32 SpellBaseDamageBonusTaken(SpellSchoolMask schoolMask);
         uint32 SpellDamageBonusDone(Unit* victim, SpellInfo const *spellProto, uint32 pdamage, DamageEffectType damagetype, SpellEffIndex effIndex = EFFECT_0, uint32 stack = 1);
         uint32 SpellDamageBonusTaken(Unit* caster, SpellInfo const *spellProto, uint32 pdamage);
@@ -2327,7 +2329,8 @@ class Unit : public WorldObject
         int32 SpellBaseHealingBonusTaken(SpellSchoolMask schoolMask);
         uint32 SpellHealingBonusDone(Unit* victim, SpellInfo const *spellProto, uint32 healamount, DamageEffectType damagetype, SpellEffIndex effIndex = EFFECT_0, uint32 stack = 1);
         uint32 SpellHealingBonusTaken(Unit* caster, SpellInfo const *spellProto, uint32 healamount, DamageEffectType damagetype, SpellEffIndex effIndex = EFFECT_0, uint32 stack = 1);
-        float CalcVersalityBonus(Unit* target, float amount);
+        float CalcVersalityBonusDone(Unit* target, float amount);
+        float CalcVersalityBonusTaken(float amount);
 
         uint32 MeleeDamageBonusDone(Unit *pVictim, uint32 damage, WeaponAttackType attType, SpellInfo const *spellProto = NULL, uint32 effectMask = 0);
         uint32 MeleeDamageBonusTaken(Unit* attacker, uint32 pdamage,WeaponAttackType attType, SpellInfo const *spellProto = NULL);

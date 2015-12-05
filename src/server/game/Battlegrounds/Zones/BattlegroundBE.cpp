@@ -27,22 +27,10 @@
 BattlegroundBE::BattlegroundBE()
 {
     BgObjects.resize(BG_BE_OBJECT_MAX);
-
-    StartDelayTimes[BG_STARTING_EVENT_FIRST]  = Minutes(1);
-    StartDelayTimes[BG_STARTING_EVENT_SECOND] = Seconds(30);
-    StartDelayTimes[BG_STARTING_EVENT_THIRD]  = Seconds(15);
-    StartDelayTimes[BG_STARTING_EVENT_FOURTH] = Seconds(0);
-    //we must set messageIds
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
 BattlegroundBE::~BattlegroundBE()
-{
-
-}
+{ }
 
 void BattlegroundBE::StartingEventCloseDoors()
 {
@@ -51,6 +39,8 @@ void BattlegroundBE::StartingEventCloseDoors()
 
     for (uint32 i = BG_BE_OBJECT_BUFF_1; i <= BG_BE_OBJECT_BUFF_2; ++i)
         SpawnBGObject(i, RESPAWN_ONE_DAY);
+
+    Arena::StartingEventCloseDoors();
 }
 
 void BattlegroundBE::StartingEventOpenDoors()
@@ -60,84 +50,30 @@ void BattlegroundBE::StartingEventOpenDoors()
 
     for (uint32 i = BG_BE_OBJECT_BUFF_1; i <= BG_BE_OBJECT_BUFF_2; ++i)
         SpawnBGObject(i, 60);
+
+    Arena::StartingEventOpenDoors();
 }
 
-void BattlegroundBE::AddPlayer(Player* player)
+void BattlegroundBE::HandleAreaTrigger(Player* player, uint32 trigger, bool entered)
 {
-    //create score and add it to map, default values are set in constructor
-    AddPlayerScore(player->GetGUID(), new BattlegroundBEScore);
-    Battleground::AddPlayer(player);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundBE::RemovePlayer(Player* /*player*/, ObjectGuid /*guid*/, uint32 /*team*/)
-{
-    if (GetStatus() == STATUS_WAIT_LEAVE)
-        return;
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-void BattlegroundBE::HandleKillPlayer(Player* player, Player* killer)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    if (!killer)
+    switch (trigger)
     {
-        sLog->outError(LOG_FILTER_BATTLEGROUND, "Killer player not found");
-        return;
-    }
-
-    Battleground::HandleKillPlayer(player, killer);
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-bool BattlegroundBE::HandlePlayerUnderMap(Player* player)
-{
-    player->TeleportTo(GetMapId(), 6238.930176f, 262.963470f, 0.889519f, player->GetOrientation(), false);
-    return true;
-}
-
-void BattlegroundBE::HandleAreaTrigger(Player* Source, uint32 Trigger)
-{
-    // this is wrong way to implement these things. On official it done by gameobject spell cast.
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    //uint32 SpellId = 0;
-    //uint64 buff_guid = 0;
-    switch (Trigger)
-    {
-        case 4538:                                          // buff trigger?
-            //buff_guid = BgObjects[BG_BE_OBJECT_BUFF_1];
-            break;
-        case 4539:                                          // buff trigger?
-            //buff_guid = BgObjects[BG_BE_OBJECT_BUFF_2];
+        case 8449: // Alliance start loc
+        case 8450: // Horde start loc
+            if (!entered && GetStatus() != STATUS_IN_PROGRESS)
+                player->TeleportTo(GetMapId(), GetTeamStartPosition(player->GetBGTeamId()));
             break;
         default:
-            sLog->outError(LOG_FILTER_BATTLEGROUND, "WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            Source->GetSession()->SendNotification("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
+            Battleground::HandleAreaTrigger(player, trigger, entered);
             break;
     }
-
-    //if (buff_guid)
-    //    HandleTriggerBuff(buff_guid, Source);
 }
 
-void BattlegroundBE::FillInitialWorldStates(WorldPacket &data)
+void BattlegroundBE::FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet)
 {
-    FillInitialWorldState(data, 0x9f3, 1);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundBE::Reset()
-{
-    //call parent's class reset
-    Battleground::Reset();
+    packet.Worldstates.emplace_back(WorldStates::WS_ARENA_BE_UNK2547, 1);
+    packet.Worldstates.emplace_back(static_cast<WorldStates>(3610), 1);
+    Arena::FillInitialWorldStates(packet);
 }
 
 bool BattlegroundBE::SetupBattleground()
@@ -156,16 +92,4 @@ bool BattlegroundBE::SetupBattleground()
     }
 
     return true;
-}
-
-void BattlegroundBE::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
-{
-
-    BattlegroundScoreMap::iterator itr = PlayerScores.find(Source->GetGUID());
-    if (itr == PlayerScores.end())                         // player not found...
-        return;
-
-    //there is nothing special in this score
-    Battleground::UpdatePlayerScore(Source, type, value, doAddHonor);
-
 }

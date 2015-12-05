@@ -487,7 +487,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //426 SPELL_AURA_426
     &AuraEffect::HandleNULL,                                      //427 SPELL_AURA_ITEMS_SCALING_AURA
     &AuraEffect::HandleSummonController,                          //428 SPELL_AURA_SUMMON_CONTROLLER
-    &AuraEffect::HandleNULL,                                      //429 SPELL_AURA_PET_DAMAGE_DONE_PCT
+    &AuraEffect::HandleNULL,                                      //429 SPELL_AURA_PET_DAMAGE_DONE_PCT implemented in Unit::SpellBaseDamageBonus Unit::MeleeDamageBonusDone
     &AuraEffect::HandleAuraActivateScene,                         //430 SPELL_AURA_ACTIVATE_SCENE
     &AuraEffect::HandleNULL,                                      //431 SPELL_AURA_CONTESTED_PVP
     &AuraEffect::HandleNULL,                                      //432 SPELL_AURA_ENTER_BATTLEGROUND - seems used for items and player lvl scaling
@@ -845,11 +845,16 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 case 145976: // Readiness - Paladin Protection
                 case 145967: // Readiness - Monk Brewmaster
                 {
-                    if (Aura * aura = caster->GetAura(146025))
+                    if (caster->ToPlayer()->getLevel() < 91)
                     {
-                        if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
-                            amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        if (Aura * aura = caster->GetAura(146025))
+                        {
+                            if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
+                                amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        }
                     }
+                    else
+                        amount = 0;
                     break;
                 }
                 case 145978: // Readiness - Paladin Retribution
@@ -858,11 +863,16 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 case 145959: // Readiness - Death Knight Frost
                 case 145960: // Readiness - Death Knight Unholy
                 {
-                    if (Aura * aura = caster->GetAura(145955))
+                    if (caster->ToPlayer()->getLevel() < 91)
                     {
-                        if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
-                            amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        if (Aura * aura = caster->GetAura(145955))
+                        {
+                            if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
+                                amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        }
                     }
+                    else
+                        amount = 0;
                     break;
                 }
                 case 145983: // Readiness - Rogue Assassination
@@ -875,11 +885,16 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 case 145961: // Readiness - Druid Feral
                 case 145986: // Readiness - Shaman Enhancement
                 {
-                    if (Aura * aura = caster->GetAura(146019))
+                    if (caster->ToPlayer()->getLevel() < 91)
                     {
-                        if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
-                            amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        if (Aura * aura = caster->GetAura(146019))
+                        {
+                            if (AuraEffect* eff = aura->GetEffect(EFFECT_0))
+                                amount = 100.0f / float((eff->GetAmount() + 100.0f) / 100.0f) - 100.0f;
+                        }
                     }
+                    else
+                        amount = 0;
                     break;
                 }
                 case 114232: // Sanctified Wrath
@@ -1589,7 +1604,8 @@ void AuraEffect::CalculateFromDummyAmount(Unit* caster, Unit* target, int32 &amo
     {
         for (std::vector<SpellAuraDummy>::const_iterator itr = spellAuraDummy->begin(); itr != spellAuraDummy->end(); ++itr)
         {
-            //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::CalculateFromDummyAmount start GetId %i, amount %i, mask %i type %u option %u", GetId(), amount, itr->effectmask, itr->type, itr->option);
+            sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::CalculateFromDummyAmount start GetId %i, amount %i, mask %i type %u option %u caster %u GetCaster %u",
+            GetId(), amount, itr->effectmask, itr->type, itr->option, caster->GetGUIDLow(), GetCaster()->GetGUIDLow());
 
             if(itr->type != SPELL_DUMMY_DEFAULT)
                 continue;
@@ -1651,7 +1667,7 @@ void AuraEffect::CalculateFromDummyAmount(Unit* caster, Unit* target, int32 &amo
                     if(itr->aura < 0 && _targetAura->HasAura(abs(itr->aura)))
                         continue;
 
-                    if(itr->spellDummyId > 0 && _caster->HasAura(itr->spellDummyId), caster->GetGUID())
+                    if(itr->spellDummyId > 0 && _caster->HasAura(itr->spellDummyId, caster->GetGUID()))
                     {
                         if(SpellInfo const* dummyInfo = sSpellMgr->GetSpellInfo(itr->spellDummyId))
                         {
@@ -1682,7 +1698,7 @@ void AuraEffect::CalculateFromDummyAmount(Unit* caster, Unit* target, int32 &amo
                     if(itr->aura < 0 && _targetAura->HasAura(abs(itr->aura)))
                         continue;
 
-                    if(itr->spellDummyId > 0 && _caster->HasAura(itr->spellDummyId), caster->GetGUID())
+                    if(itr->spellDummyId > 0 && _caster->HasAura(itr->spellDummyId, caster->GetGUID()))
                     {
                         if(SpellInfo const* dummyInfo = sSpellMgr->GetSpellInfo(itr->spellDummyId))
                         {
@@ -1745,6 +1761,7 @@ void AuraEffect::CalculateFromDummyAmount(Unit* caster, Unit* target, int32 &amo
             if(check && itr->removeAura)
                 _caster->RemoveAurasDueToSpell(itr->removeAura);
         }
+        sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::CalculateFromDummyAmount end GetId %i, amount %i m_effIndex %u", GetId(), amount, m_effIndex);
     }
 }
 
@@ -2145,10 +2162,6 @@ void AuraEffect::UpdatePeriodic(Unit* caster)
                         default:
                             break;
                     }
-                    break;
-                case SPELLFAMILY_MAGE:
-                    if (GetId() == 55342)// Mirror Image
-                        m_isPeriodic = false;
                     break;
                 case SPELLFAMILY_DEATHKNIGHT:
                     // Chains of Ice
@@ -6191,28 +6204,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                     if (caster)
                         caster->CastSpell(caster, 13138, true, NULL, this);
                     break;
-                case 34026:   // kill command
-                {
-                    Unit* pet = target->GetGuardianPet();
-                    if (!pet)
-                        break;
-
-                    target->CastSpell(target, 34027, true, NULL, this);
-
-                    // set 3 stacks and 3 charges (to make all auras not disappear at once)
-                    Aura* owner_aura = target->GetAura(34027, GetCasterGUID());
-                    Aura* pet_aura  = pet->GetAura(58914, GetCasterGUID());
-                    if (owner_aura != NULL)
-                    {
-                        owner_aura->SetStackAmount(owner_aura->GetSpellInfo()->StackAmount);
-                        if (pet_aura != NULL)
-                        {
-                            pet_aura->SetCharges(0);
-                            pet_aura->SetStackAmount(owner_aura->GetSpellInfo()->StackAmount);
-                        }
-                    }
-                    break;
-                }
                 case 37096:                                     // Blood Elf Illusion
                 {
                     if (caster)
@@ -8013,6 +8004,8 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster, Spell
             case 103103: // Malefic Grasp
             {
                 int32 afflictionDamage = 0;
+                if (caster->HasAura(157077) && target->HealthBelowPct(20)) // Improved Drain Soul
+                    damage *= 2;
 
                 // Every tick, Malefic Grasp deals instantly 50% of tick-damage for each affliction effects on the target
                 // Corruption ...
@@ -8303,7 +8296,7 @@ void AuraEffect::HandlePeriodicHealAurasTick(Unit* target, Unit* caster, SpellEf
        if (ModHealingPct != 1.0f)
            TakenTotalMod *= ModHealingPct;
 
-        TakenTotalMod = caster->CalcVersalityBonus(target, TakenTotalMod);
+        TakenTotalMod = caster->CalcVersalityBonusDone(target, TakenTotalMod);
         TakenTotalMod = std::max(TakenTotalMod, 0.0f);
 
         damage = uint32(target->CountPctFromMaxHealth(damage));

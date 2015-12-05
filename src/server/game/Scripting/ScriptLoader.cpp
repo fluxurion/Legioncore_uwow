@@ -101,6 +101,7 @@ void AddSC_garrison_instance();
 void AddSC_wod_dark_portal();
 void AddSC_wod_frostfire_ridge();
 void AddSC_wod_shadowmoon_valley();
+void AddSC_ashran_battlefield();
 
 void AddSC_instance_iron_docks();       // Iron Docks
 void AddSC_boss_fleshrender_nokgar();
@@ -133,6 +134,13 @@ void AddSC_boss_ranjit();
 void AddSC_boss_araknath();
 void AddSC_boss_rukhran();
 void AddSC_boss_high_sage_viryx();
+
+void AddSC_instance_the_everbloom(); // The Everbloom
+void AddSC_boss_witherbark();
+void AddSC_boss_ancient_protectors();
+void AddSC_boss_xeritac();
+void AddSC_boss_archmage_sol();
+void AddSC_boss_yalnu();
 
 //world
 void AddSC_areatrigger_scripts();
@@ -1097,6 +1105,8 @@ void AddDraenorScripts()
     AddSC_wod_dark_portal();
     AddSC_wod_frostfire_ridge();
     AddSC_wod_shadowmoon_valley();
+    AddSC_ashran_battlefield();
+
     AddSC_instance_iron_docks();       // Iron Docks
     AddSC_boss_fleshrender_nokgar();
     AddSC_boss_grimrail_enforcers();
@@ -1128,6 +1138,13 @@ void AddDraenorScripts()
     AddSC_boss_araknath();
     AddSC_boss_rukhran();
     AddSC_boss_high_sage_viryx();
+
+    AddSC_instance_the_everbloom(); // The Everbloom
+    AddSC_boss_witherbark();
+    AddSC_boss_ancient_protectors();
+    AddSC_boss_xeritac();
+    AddSC_boss_archmage_sol();
+    AddSC_boss_yalnu();
 
 #endif
 }

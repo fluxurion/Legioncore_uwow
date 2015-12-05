@@ -23,30 +23,13 @@
 
 BattlegroundRB::BattlegroundRB()
 {
-    //TODO FIX ME!
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = 0;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_BG_WS_START_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_BG_WS_START_HALF_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_WS_HAS_BEGUN;
 }
 
 BattlegroundRB::~BattlegroundRB()
-{
-
-}
-
-void BattlegroundRB::StartingEventCloseDoors()
-{
-}
-
-void BattlegroundRB::StartingEventOpenDoors()
-{
-}
+{ }
 
 void BattlegroundRB::AddPlayer(Player* player)
 {
-    //create score and add it to map, default values are set in constructor
-    AddPlayerScore(player->GetGUID(), new BattlegroundRBScore);
     Battleground::AddPlayer(player);
 }
 
@@ -54,18 +37,7 @@ void BattlegroundRB::RemovePlayer(Player* /*player*/, ObjectGuid /*guid*/, uint3
 {
 }
 
-void BattlegroundRB::HandleAreaTrigger(Player* /*Source*/, uint32 /*Trigger*/)
+void BattlegroundRB::HandleAreaTrigger(Player* player, uint32 trigger, bool entered)
 {
-    // this is wrong way to implement these things. On official it done by gameobject spell cast.
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-}
-
-void BattlegroundRB::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
-{
-    BattlegroundScoreMap::iterator itr = PlayerScores.find(Source->GetGUID());
-    if (itr == PlayerScores.end())                         // player not found...
-        return;
-
-    Battleground::UpdatePlayerScore(Source, type, value, doAddHonor);
+    Battleground::HandleAreaTrigger(player, trigger, entered);
 }

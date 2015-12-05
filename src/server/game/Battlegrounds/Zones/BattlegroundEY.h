@@ -20,40 +20,12 @@
 #define __BATTLEGROUNDEY_H
 
 #include "Language.h"
-
-class Battleground;
+#include "Battleground.h"
+#include "BattlegroundScore.h"
 
 enum BG_EY_Misc
 {
-    BG_EY_FLAG_RESPAWN_TIME         = (8*IN_MILLISECONDS),
-    BG_EY_FPOINTS_TICK_TIME         = (2*IN_MILLISECONDS),
-};
-
-enum BG_EY_WorldStates
-{
-    EY_ALLIANCE_RESOURCES           = 2749,
-    EY_HORDE_RESOURCES              = 2750,
-    EY_ALLIANCE_BASE                = 2752,
-    EY_HORDE_BASE                   = 2753,
-    DRAENEI_RUINS_HORDE_CONTROL     = 2733,
-    DRAENEI_RUINS_ALLIANCE_CONTROL  = 2732,
-    DRAENEI_RUINS_UNCONTROL         = 2731,
-    MAGE_TOWER_ALLIANCE_CONTROL     = 2730,
-    MAGE_TOWER_HORDE_CONTROL        = 2729,
-    MAGE_TOWER_UNCONTROL            = 2728,
-    FEL_REAVER_HORDE_CONTROL        = 2727,
-    FEL_REAVER_ALLIANCE_CONTROL     = 2726,
-    FEL_REAVER_UNCONTROL            = 2725,
-    BLOOD_ELF_HORDE_CONTROL         = 2724,
-    BLOOD_ELF_ALLIANCE_CONTROL      = 2723,
-    BLOOD_ELF_UNCONTROL             = 2722,
-    PROGRESS_BAR_PERCENT_GREY       = 2720,                 //100 = empty (only grey), 0 = blue|red (no grey)
-    PROGRESS_BAR_STATUS             = 2719,                 //50 init!, 48 ... hordak bere .. 33 .. 0 = full 100% hordacky, 100 = full alliance
-    PROGRESS_BAR_SHOW               = 2718,                 //1 init, 0 druhy send - bez messagu, 1 = controlled aliance
-    NETHERSTORM_FLAG                = 2757,
-    //set to 2 when flag is picked up, and to 1 if it is dropped
-    NETHERSTORM_FLAG_STATE_ALLIANCE = 2769,
-    NETHERSTORM_FLAG_STATE_HORDE    = 2770
+    BG_EY_FPOINTS_TICK_TIME         = 2 * IN_MILLISECONDS
 };
 
 enum BG_EY_ProgressBarConsts
@@ -80,7 +52,7 @@ enum EYBattlegroundObjectEntry
 {
     BG_OBJECT_A_DOOR_EY_ENTRY           = 184719,           //Alliance door
     BG_OBJECT_H_DOOR_EY_ENTRY           = 184720,           //Horde door
-    BG_OBJECT_FLAG1_EY_ENTRY            = 184493,           //Netherstorm flag (generic)
+    BG_OBJECT_FLAG1_EY_ENTRY            = 208977,           //Netherstorm flag (generic)
     BG_OBJECT_FLAG2_EY_ENTRY            = 184141,           //Netherstorm flag (flagstand)
     BG_OBJECT_FLAG3_EY_ENTRY            = 184142,           //Netherstorm flag (flagdrop)
     BG_OBJECT_A_BANNER_EY_ENTRY         = 184381,           //Visual Banner (Alliance)
@@ -92,16 +64,18 @@ enum EYBattlegroundObjectEntry
     BG_OBJECT_DR_TOWER_CAP_EY_ENTRY     = 184083            //Draenei Tower Cap Pt
 };
 
+Position const EYObjectPos[][2] = 
+{
+    {2527.597f, 1596.906f, 1238.454f, 3.15914f,  0.1736417f, 0.001514435f,  -0.9847698f, 0.008638578f}, // BG_OBJECT_A_DOOR_EY_ENTRY
+    {1803.207f, 1539.486f, 1238.454f, 3.138983f, 0.1736479f, 0.0f,          0.984807f,   0.001244878f}, // BG_OBJECT_H_DOOR_EY_ENTRY
+};
+
 enum EYBattlegroundPointsTrigger
 {
-    TR_BLOOD_ELF_POINT        = 4476,
-    TR_FEL_REAVER_POINT      = 4514,
-    TR_MAGE_TOWER_POINT       = 4516,
-    TR_DRAENEI_RUINS_POINT    = 4518,
-    TR_BLOOD_ELF_BUFF         = 4568,
-    TR_FEL_REAVER_BUFF       = 4569,
-    TR_MAGE_TOWER_BUFF        = 4570,
-    TR_DRAENEI_RUINS_BUFF     = 4571
+    TR_BLOOD_ELF_BUFF       = 4568,
+    TR_FEL_REAVER_BUFF      = 4569,
+    TR_MAGE_TOWER_BUFF      = 4570,
+    TR_DRAENEI_RUINS_BUFF   = 4571
 };
 
 enum EYBattlegroundGaveyards
@@ -116,13 +90,13 @@ enum EYBattlegroundGaveyards
 
 enum EYBattlegroundPoints
 {
-    FEL_REAVER     = 0,
-    BLOOD_ELF       = 1,
-    DRAENEI_RUINS   = 2,
-    MAGE_TOWER      = 3,
+    FEL_REAVER                  = 0,
+    BLOOD_ELF                   = 1,
+    DRAENEI_RUINS               = 2,
+    MAGE_TOWER                  = 3,
 
-    EY_PLAYERS_OUT_OF_POINTS  = 4,
-    EY_POINTS_MAX             = 4
+    EY_PLAYERS_OUT_OF_POINTS    = 4,
+    EY_POINTS_MAX               = 4
 };
 
 enum EYBattlegroundCreaturesTypes
@@ -207,14 +181,25 @@ enum EYBattlegroundObjectTypes
     BG_EY_OBJECT_MAX                            = 59
 };
 
-#define BG_EY_NotEYWeekendHonorTicks    260
-#define BG_EY_EYWeekendHonorTicks       160
+struct CapturePointData
+{
+    uint32 ID;
+    Position Pos;
+};
+
+CapturePointData const PointData[] = 
+{
+    {BG_EY_OBJECT_FLAG_BLOOD_ELF, 2048.83f, 1393.65f, 1194.49f},
+    {BG_EY_OBJECT_FLAG_FEL_REAVER, 2044.28f, 1729.68f, 1189.96f},
+    {BG_EY_OBJECT_FLAG_DRAENEI_RUINS, 2286.56f, 1402.36f, 1197.11f},
+    {BG_EY_OBJECT_FLAG_MAGE_TOWER, 2284.48f, 1731.23f, 1189.99f}
+};
 
 #define EY_EVENT_START_BATTLE           13180 // Achievement: Flurry
 
 enum BG_EY_Score
 {
-    BG_EY_WARNING_NEAR_VICTORY_SCORE    = 1000,
+    BG_EY_WARNING_NEAR_VICTORY_SCORE    = 1200,
     BG_EY_MAX_TEAM_SCORE                = 1500
 };
 
@@ -240,11 +225,12 @@ enum BG_EY_Objectives
 
 struct BattlegroundEYPointIconsStruct
 {
-    BattlegroundEYPointIconsStruct(uint32 _WorldStateControlIndex, uint32 _WorldStateAllianceControlledIndex, uint32 _WorldStateHordeControlledIndex)
+    BattlegroundEYPointIconsStruct(WorldStates _WorldStateControlIndex, WorldStates _WorldStateAllianceControlledIndex, WorldStates _WorldStateHordeControlledIndex)
         : WorldStateControlIndex(_WorldStateControlIndex), WorldStateAllianceControlledIndex(_WorldStateAllianceControlledIndex), WorldStateHordeControlledIndex(_WorldStateHordeControlledIndex) {}
-    uint32 WorldStateControlIndex;
-    uint32 WorldStateAllianceControlledIndex;
-    uint32 WorldStateHordeControlledIndex;
+    
+    WorldStates WorldStateControlIndex;
+    WorldStates WorldStateAllianceControlledIndex;
+    WorldStates WorldStateHordeControlledIndex;
 };
 
 // x, y, z, o
@@ -288,16 +274,16 @@ struct BattlegroundEYCapturingPointStruct
     uint32 GraveYardId;
 };
 
-const uint8  BG_EY_TickPoints[EY_POINTS_MAX] = {1, 2, 5, 10};
-const uint32 BG_EY_FlagPoints[EY_POINTS_MAX] = {75, 85, 100, 500};
+uint8 const  BG_EY_TickPoints[EY_POINTS_MAX] = {1, 2, 5, 10};
+uint32 const BG_EY_FlagPoints[EY_POINTS_MAX] = {75, 85, 100, 500};
 
 //constant arrays:
 const BattlegroundEYPointIconsStruct m_PointsIconStruct[EY_POINTS_MAX] =
 {
-    BattlegroundEYPointIconsStruct(FEL_REAVER_UNCONTROL, FEL_REAVER_ALLIANCE_CONTROL, FEL_REAVER_HORDE_CONTROL),
-    BattlegroundEYPointIconsStruct(BLOOD_ELF_UNCONTROL, BLOOD_ELF_ALLIANCE_CONTROL, BLOOD_ELF_HORDE_CONTROL),
-    BattlegroundEYPointIconsStruct(DRAENEI_RUINS_UNCONTROL, DRAENEI_RUINS_ALLIANCE_CONTROL, DRAENEI_RUINS_HORDE_CONTROL),
-    BattlegroundEYPointIconsStruct(MAGE_TOWER_UNCONTROL, MAGE_TOWER_ALLIANCE_CONTROL, MAGE_TOWER_HORDE_CONTROL)
+    BattlegroundEYPointIconsStruct(WorldStates::FEL_REAVER_UNCONTROL, WorldStates::FEL_REAVER_ALLIANCE_CONTROL, WorldStates::FEL_REAVER_HORDE_CONTROL),
+    BattlegroundEYPointIconsStruct(WorldStates::BLOOD_ELF_UNCONTROL, WorldStates::BLOOD_ELF_ALLIANCE_CONTROL, WorldStates::BLOOD_ELF_HORDE_CONTROL),
+    BattlegroundEYPointIconsStruct(WorldStates::DRAENEI_RUINS_UNCONTROL, WorldStates::DRAENEI_RUINS_ALLIANCE_CONTROL, WorldStates::DRAENEI_RUINS_HORDE_CONTROL),
+    BattlegroundEYPointIconsStruct(WorldStates::MAGE_TOWER_UNCONTROL, WorldStates::MAGE_TOWER_ALLIANCE_CONTROL, WorldStates::MAGE_TOWER_HORDE_CONTROL)
 };
 const BattlegroundEYLosingPointStruct m_LosingPointTypes[EY_POINTS_MAX] =
 {
@@ -314,11 +300,31 @@ const BattlegroundEYCapturingPointStruct m_CapturingPointTypes[EY_POINTS_MAX] =
     BattlegroundEYCapturingPointStruct(BG_EY_OBJECT_N_BANNER_MAGE_TOWER_CENTER, BG_EY_OBJECT_A_BANNER_MAGE_TOWER_CENTER, LANG_BG_EY_HAS_TAKEN_A_M_TOWER, BG_EY_OBJECT_H_BANNER_MAGE_TOWER_CENTER, LANG_BG_EY_HAS_TAKEN_H_M_TOWER, EY_GRAVEYARD_MAGE_TOWER)
 };
 
-class BattlegroundEYScore : public BattlegroundScore
+struct BattlegroundEYScore final : public BattlegroundScore
 {
-    public:
-        BattlegroundEYScore() : FlagCaptures(0) {};
-        virtual ~BattlegroundEYScore() {};
+    friend class BattlegroundEY;
+
+    protected:
+        BattlegroundEYScore(ObjectGuid playerGuid, TeamId team) : BattlegroundScore(playerGuid, team), FlagCaptures(0) { }
+
+        void UpdateScore(uint32 type, uint32 value) override
+        {
+            switch (type)
+            {
+                case SCORE_FLAG_CAPTURES:
+                    FlagCaptures += value;
+                    break;
+                default:
+                    BattlegroundScore::UpdateScore(type, value);
+                    break;
+            }
+        }
+
+        void BuildObjectivesBlock(std::vector<int32>& stats) override
+        {
+            stats.push_back(FlagCaptures);
+        }
+
         uint32 FlagCaptures;
 };
 
@@ -328,40 +334,37 @@ class BattlegroundEY : public Battleground
         BattlegroundEY();
         ~BattlegroundEY();
 
-        /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player* player);
-        virtual void StartingEventCloseDoors();
-        virtual void StartingEventOpenDoors();
+        void AddPlayer(Player* player) override;
+        void StartingEventCloseDoors() override;
+        void StartingEventOpenDoors() override;
+        void GetPlayerPositionData(std::vector<WorldPackets::Battleground::PlayerPositions::BattlegroundPlayerPosition>* positions) const override;
 
-        /* BG Flags */
-        ObjectGuid GetFlagPickerGUID(int32 /*team*/ = -1) const    { return m_FlagKeeper; }
-        void SetFlagPicker(ObjectGuid guid)     { m_FlagKeeper = guid; }
-        bool IsFlagPickedup() const         { return !m_FlagKeeper.IsEmpty(); }
-        uint8 GetFlagState() const          { return m_FlagState; }
+        ObjectGuid GetFlagPickerGUID(int32 /*team*/ = -1) const override { return _flagKeeper; }
+        void SetFlagPicker(ObjectGuid guid) { _flagKeeper = guid; }
+        bool IsFlagPickedup() const { return !_flagKeeper.IsEmpty(); }
+        uint8 GetFlagState() const { return _flagState; }
         void RespawnFlag(bool send_message);
         void RespawnFlagAfterDrop();
 
-        void RemovePlayer(Player* player, ObjectGuid guid, uint32 team);
-        void HandleAreaTrigger(Player* Source, uint32 Trigger);
-        void HandleKillPlayer(Player* player, Player* killer);
-        virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
-        virtual bool SetupBattleground();
-        virtual void Reset();
-        void UpdateTeamScore(uint32 Team);
-        void EndBattleground(uint32 winner);
-        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor = true);
-        virtual void FillInitialWorldStates(WorldPacket& data);
-        void SetDroppedFlagGUID(ObjectGuid guid)       { m_DroppedFlagGUID = guid; }
-        ObjectGuid GetDroppedFlagGUID() const          { return m_DroppedFlagGUID; }
+        void RemovePlayer(Player* player, ObjectGuid guid, uint32 team) override;
+        void HandleAreaTrigger(Player* player, uint32 trigger, bool entered) override;
+        void HandleKillPlayer(Player* player, Player* killer) override;
+        WorldSafeLocsEntry const* GetClosestGraveYard(Player* player) override;
+        bool SetupBattleground() override;
+        void Reset() override;
+        void UpdateTeamScore(TeamId teamID);
+        void EndBattleground(uint32 winner) override;
+        bool UpdatePlayerScore(Player* player, uint32 type, uint32 value, bool doAddHonor = true) override;
+        void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet) override;
+        void SetDroppedFlagGUID(ObjectGuid guid) { _droppedFlagGUID = guid; }
+        ObjectGuid GetDroppedFlagGUID() const { return _droppedFlagGUID; }
 
-        /* Battleground Events */
-        virtual void EventPlayerClickedOnFlag(Player* Source, GameObject* target_obj);
-        virtual void EventPlayerDroppedFlag(Player* Source);
+        void EventPlayerClickedOnFlag(Player* Source, GameObject* target_obj) override;
+        void EventPlayerDroppedFlag(Player* Source) override;
 
-        /* achievement req. */
-        bool IsAllNodesConrolledByTeam(uint32 team) const;
+        bool IsAllNodesConrolledByTeam(uint32 team) const override;
     private:
-        virtual void PostUpdateImpl(uint32 diff);
+        void PostUpdateImpl(uint32 diff) override;
 
         void EventPlayerCapturedFlag(Player* Source, uint32 BgObjectType);
         void EventTeamCapturedPoint(Player* Source, uint32 Point);
@@ -369,38 +372,30 @@ class BattlegroundEY : public Battleground
         void UpdatePointsCount(uint32 Team);
         void UpdatePointsIcons(uint32 Team, uint32 Point);
 
-        /* Point status updating procedures */
-        void CheckSomeoneLeftPoint();
-        void CheckSomeoneJoinedPoint();
+        void _CheckSomeoneLeftPoint();
+        void _CheckSomeoneJoinedPoint();
         void UpdatePointStatuses();
 
-        /* Scorekeeping */
-        uint32 GetTeamScore(uint32 Team) const { return m_TeamScores[GetTeamIndexByTeamId(Team)]; }
-        void AddPoints(uint32 Team, uint32 Points);
-
-        void RemovePoint(uint32 TeamID, uint32 Points = 1) { m_TeamScores[GetTeamIndexByTeamId(TeamID)] -= Points; }
-        void SetTeamPoint(uint32 TeamID, uint32 Points = 0) { m_TeamScores[GetTeamIndexByTeamId(TeamID)] = Points; }
-
-        uint32 m_HonorScoreTics[2];
-        uint32 m_TeamPointsCount[2];
-
-        uint32 m_Points_Trigger[EY_POINTS_MAX];
-
-        ObjectGuid m_FlagKeeper;                                // keepers guid
-        ObjectGuid m_DroppedFlagGUID;
-        uint32 m_FlagCapturedBgObjectType;                  // type that should be despawned when flag is captured
-        uint8 m_FlagState;                                  // for checking flag state
-        int32 m_FlagsTimer;
-        int32 m_TowerCapCheckTimer;
-
-        uint32 m_PointOwnedByTeam[EY_POINTS_MAX];
-        uint8 m_PointState[EY_POINTS_MAX];
-        int32 m_PointBarStatus[EY_POINTS_MAX];
-        GuidVector m_PlayersNearPoint[EY_POINTS_MAX + 1];
-        uint8 m_CurrentPointPlayersCount[2*EY_POINTS_MAX];
-
-        int32 m_PointAddingTimer;
-        uint32 m_HonorTics;
+        void AddPoints(TeamId teamID, uint32 points);
+        
+        GuidVector _playersNearPoint[EY_POINTS_MAX + 1];
+        ObjectGuid _flagKeeper;
+        ObjectGuid _droppedFlagGUID;
+        uint32 _honorScoreTics[MAX_TEAMS];
+        uint32 _teamPointsCount[MAX_TEAMS];
+        uint32 _pointsTrigger[EY_POINTS_MAX];
+        uint32 _flagCapturedBgObjectType;
+        int32 _checkFlagPickuperPos;
+        int32 _flagsTimer;
+        int32 _towerCapCheckTimer;
+        uint32 _pointOwnedByTeam[EY_POINTS_MAX];
+        int32 _pointBarStatus[EY_POINTS_MAX];
+        int32 _pointAddingTimer;
+        uint32 _honorTics;
+        uint8 _flagState;
+        uint8 _pointState[EY_POINTS_MAX];
+        uint8 _currentPointPlayersCount[2 * EY_POINTS_MAX];
+        bool _isInformedNearVictory;
 };
 #endif
 

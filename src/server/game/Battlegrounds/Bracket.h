@@ -23,8 +23,6 @@
 #include "Common.h"
 #include "Player.h"
 
-#define WORLD_STATE_ENABLE_RATED_BG 5508
-
 enum BracketState
 {
     BRACKET_UNCHANGED   = 0,
@@ -52,11 +50,11 @@ public:
     uint32 GetBracketInfo(BracketInfoType i) const { return values[i]; }
     uint16 GetSlotByType();
 
-    void SetState(uint8 s) { m_state = s; }
-private:
-
     int16 WonAgainst(uint16 opponents_mmv);
     int16 LostAgainst(uint16 opponents_mmv);
+
+    void SetState(uint8 s) { m_state = s; }
+private:
 
     uint32 values[BRACKET_END];                 //used for store data from Player::PLAYER_FIELD_PVP_INFO
 

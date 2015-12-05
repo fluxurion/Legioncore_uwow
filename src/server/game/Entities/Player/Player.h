@@ -74,12 +74,12 @@ typedef std::deque<Mail*> PlayerMails;
 enum SkillFieldOffset
 {
     SKILL_ID_OFFSET                 = 0,
-    SKILL_STEP_OFFSET               = 64,
-    SKILL_RANK_OFFSET               = SKILL_STEP_OFFSET + 64,
-    SUBSKILL_START_RANK_OFFSET      = SKILL_RANK_OFFSET + 64,
-    SKILL_MAX_RANK_OFFSET           = SUBSKILL_START_RANK_OFFSET + 64,
-    SKILL_TEMP_BONUS_OFFSET         = SKILL_MAX_RANK_OFFSET + 64,
-    SKILL_PERM_BONUS_OFFSET         = SKILL_TEMP_BONUS_OFFSET + 64
+    SKILL_STEP_OFFSET               = 0x40,
+    SKILL_RANK_OFFSET               = SKILL_STEP_OFFSET + 0x40,
+    SUBSKILL_START_RANK_OFFSET      = SKILL_RANK_OFFSET + 0x40,
+    SKILL_MAX_RANK_OFFSET           = SUBSKILL_START_RANK_OFFSET + 0x40,
+    SKILL_TEMP_BONUS_OFFSET         = SKILL_MAX_RANK_OFFSET + 0x40,
+    SKILL_PERM_BONUS_OFFSET         = SKILL_TEMP_BONUS_OFFSET + 0x40
 };
 
 // Note: SPELLMOD_* values is aura types in fact
@@ -530,6 +530,7 @@ enum PlayerFlags
 // used in PLAYER_FIELD_LOCAL_FLAGS values
 enum PlayerLocalFlags
 {
+    PLAYER_LOCAL_FLAG_PET_ACTIVE                    = 0x00000001,
     PLAYER_FIELD_BYTE_TRACK_STEALTHED               = 0x00000002,
     PLAYER_FIELD_BYTE_RELEASE_TIMER                 = 0x00000008,       // Display time till auto release spirit
     PLAYER_FIELD_BYTE_NO_RELEASE_WINDOW             = 0x00000010,       // Display no "release spirit" window at all
@@ -1144,7 +1145,7 @@ struct BGData
     uint32 bgTeam;                          ///< What side the player will be added to
 
     uint32 mountSpell;
-    uint32 taxiPath[2];
+    uint32 taxiPath[MAX_TEAMS];
 
     WorldLocation joinPos;                  ///< From where player entered BG
 
@@ -1475,6 +1476,10 @@ class Player : public Unit, public GridObject<Player>
         void RemoveFromWorld();
 
         bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0, uint32 spellID = 0);
+        bool TeleportTo(uint32 mapid, Position const* pos, uint32 options = 0, uint32 spellID = 0)
+        {
+            return TeleportTo(mapid, pos->GetPositionX(), pos->GetPositionY(), pos->GetPositionZ(), pos->GetOrientation(), options, spellID);
+        }
         bool TeleportTo(WorldLocation const &loc, uint32 options = 0)
         {
             return TeleportTo(loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation(), options);
@@ -2131,8 +2136,8 @@ class Player : public Unit, public GridObject<Player>
 
         void SendProficiency(ItemClass itemClass, uint32 itemSubclassMask);
         bool addSpell(uint32 spellId, bool active, bool learning, bool dependent, bool disabled, bool loading = false, bool charload = false, uint32 fromSkill = 0);
-        void learnSpell(uint32 spell_id, bool dependent, uint32 fromSkill = 0);
-        void removeSpell(uint32 spell_id, bool disabled = false, bool learn_low_rank = true);
+        void learnSpell(uint32 spell_id, bool dependent, uint32 fromSkill = 0, bool sendMessage = true);
+        void removeSpell(uint32 spell_id, bool disabled = false, bool learn_low_rank = true, bool sendMessage = true);
         void resetSpells(bool myClassOnly = false);
         SpellInfo const* GetCastSpellInfo(SpellInfo const* spellInfo) const override;
         void AddOverrideSpell(uint32 overridenSpellId, uint32 newSpellId);
@@ -2185,9 +2190,9 @@ class Player : public Unit, public GridObject<Player>
         void InitTalentForLevel();
         void SendTalentsInfoData(bool pet);
         bool LearnTalent(uint32 talentId);
-        bool AddTalent(TalentEntry const* talent, uint8 spec, bool learning);
+        bool AddTalent(TalentEntry const* talent, uint8 spec, bool learning, bool sendMessage = true);
         bool HasTalent(uint32 spell_id, uint8 spec) const;
-        void RemoveTalent(TalentEntry const* talent);
+        void RemoveTalent(TalentEntry const* talent, bool sendMessage = true);
         uint32 CalculateTalentsPoints() const;
         void LearnTalentSpecialization(uint32 talentSpec);
         void ResetTalentSpecialization();
@@ -2466,8 +2471,7 @@ class Player : public Unit, public GridObject<Player>
         float GetRatingBonusValue(CombatRating cr) const;
         uint32 GetBaseSpellPowerBonus() { return m_baseSpellPower; }
         int32 GetSpellPenetrationItemMod() const { return m_spellPenetrationItemMod; }
-        float GetBaseEnemyDodgeChance(uint8 levelOffset) const;
-        float GetBaseEnemyParryChance(uint8 levelOffset) const;
+        float GetExpertiseDodgeOrParryReduction(WeaponAttackType attType) const;
 
         void UpdateBlockPercentage();
         void UpdateCritPercentage(WeaponAttackType attType);
@@ -2497,7 +2501,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateMasteryAuras();
         void UpdateRuneRegen(RuneType rune);
         void UpdateAllRunesRegen();
-        void UpdateVersality();
+        void UpdateVersality(CombatRating cr = CR_NONE);
         void UpdateMultistrike();
         void UpdateMultistrikeDamage();
         void UpdateReadiness();
@@ -2724,9 +2728,9 @@ class Player : public Unit, public GridObject<Player>
         void SendInitWorldTimers();
         void SendInitWorldStates(uint32 zone, uint32 area);
         void SendUpdateWorldState(uint32 Field, uint32 Value);
+        void SendUpdateWorldState(WorldStates Field, uint32 Value);
         void SendDirectMessage(WorldPacket const* data) const;
         void ScheduleMessageSend(WorldPacket* data, uint32 delay);
-        void SendBGWeekendWorldStates();
 
         void SendAurasForTarget(Unit* target);
         void SendSpellHistoryData();

@@ -350,6 +350,7 @@ struct CreatureData
     uint32 dynamicflags = 0;
     bool isActive = false;
     bool dbData;
+    bool building;                                              // garrison building state
     std::set<uint32> PhaseID;
 };
 
@@ -733,6 +734,12 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
             CreatureSpellCooldowns::const_iterator itr = m_CreatureSpellCooldowns.find(spell_id);
             time_t t = time(NULL);
             return uint32(itr != m_CreatureSpellCooldowns.end() && itr->second > t ? itr->second - t : 0);
+        }
+        void RemoveCreatureSpellCooldown(uint32 spell_id)
+        {
+            CreatureSpellCooldowns::iterator itr = m_CreatureSpellCooldowns.find(spell_id);
+            if (itr != m_CreatureSpellCooldowns.end())
+                m_CreatureSpellCooldowns.erase(itr);
         }
 
         bool HasSpell(uint32 spellID) const;

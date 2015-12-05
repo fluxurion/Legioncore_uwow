@@ -616,6 +616,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
         saveDamageCalculate[i] = 0;
         m_destTargets[i] = SpellDestination(*m_caster);
     }
+
     variance = 0.0f;
     m_damage = 0;
     m_misc.Data = 0;
@@ -1931,6 +1932,8 @@ void Spell::SelectImplicitChainTargets(SpellEffIndex effIndex, SpellImplicitTarg
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_JUMP_TARGETS, maxTargets, this);
     if(maxTargets < 0)
         maxTargets = m_spellInfo->GetEffect(effIndex, m_diffMode)->ChainTargets;
+
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::SelectImplicitChainTargets maxTargets %i Id %i", maxTargets, m_spellInfo->Id);
 
     // Havoc
     if (Aura* _aura = m_caster->GetAura(80240))
@@ -3403,8 +3406,13 @@ void Spell::DoTriggersOnSpellHit(Unit* unit, uint32 effMask)
     if (m_preCastSpell)
     {
         if (sSpellMgr->GetSpellInfo(m_preCastSpell))
-            // Blizz seems to just apply aura without bothering to cast
-            m_caster->AddAura(m_preCastSpell, unit);
+        {
+            if(m_preCastSpell == 160029 && unit->isAlive()) // aura only for death target
+            {}
+            else
+                // Blizz seems to just apply aura without bothering to cast
+                m_caster->AddAura(m_preCastSpell, unit);
+        }
     }
 
     // handle SPELL_AURA_ADD_TARGET_TRIGGER auras
@@ -3973,10 +3981,13 @@ void Spell::cast(bool skipCheck)
         TakePower();
 
     m_caster->SendSpellCreateVisual(m_spellInfo, &visualPos, m_targets.GetUnitTarget());
-
     m_caster->SendSpellPlayOrphanVisual(m_spellInfo, true, m_targets.GetDstPos(), m_targets.GetUnitTarget());
+
     // we must send smsg_spell_go packet before m_castItem delete in TakeCastItem()...
     SendSpellGo();
+
+    if (m_CastItem && m_CastItem->IsInUse())
+        m_CastItem->SetInUse(false);
 
     //test fix for take some charges from aura mods
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -4430,7 +4441,20 @@ void Spell::_handle_finish_phase()
                     m_caster->CastSpell(m_caster, 118674, true);
             }
         }
-
+        if (Aura* insanity = m_caster->GetAura(139139)) // Insanity
+        {
+            int32 bp = insanity->GetCustomData();
+            if (bp)
+            {
+                if (Aura* aura = m_caster->GetAura(132573)) // Insanity
+                {
+                    aura->SetDuration(aura->GetDuration() + (2000 * bp));
+                    insanity->SetCustomData(0);
+                }
+                else
+                    m_caster->CastSpell(m_caster, 132573, true);
+            }
+        }
         // Real add combo points from effects
         if (m_comboPointGain)
             m_caster->m_movedPlayer->GainSpellComboPoints(m_comboPointGain);
@@ -4567,7 +4591,12 @@ void Spell::finish(bool ok)
         m_caster->ReleaseFocus(this);
 
     if (!ok)
+    {
+        if (m_CastItem && m_CastItem->IsInUse())
+            m_CastItem->SetInUse(false);
+
         return;
+    }
 
     if (m_caster->GetTypeId() == TYPEID_UNIT && m_caster->ToCreature()->isSummon())
     {
@@ -4642,7 +4671,11 @@ void Spell::finish(bool ok)
     switch (m_spellInfo->Id)
     {
         case 53351: // Kill Shot
+        case 157708: // Kill Shot
         {
+            if (unitTarget && !unitTarget->isAlive())
+                m_caster->CastSpell(m_caster, 164851, true);
+
             if (!unitTarget || !unitTarget->isAlive() || unitTarget->GetHealthPct() >= 20.0f || m_caster->HasAura(90967))
                 break;
 
@@ -4715,6 +4748,8 @@ void Spell::finish(bool ok)
                 }
             }
         }
+
+    LinkedSpell(m_caster, unitTarget, SPELL_LINK_FINISH_CAST);
 }
 
 void Spell::SendCastResult(SpellCastResult result)
@@ -5427,10 +5462,6 @@ void Spell::TakeCastItem()
     if (!m_CastItem || m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    // not remove cast item at triggered spell (equipping, weapon damage, etc)
-    if (_triggeredCastFlags & TRIGGERED_IGNORE_CAST_ITEM)
-        return;
-
     ItemTemplate const* proto = m_CastItem->GetTemplate();
 
     if (!proto)
@@ -5440,6 +5471,16 @@ void Spell::TakeCastItem()
         sLog->outError(LOG_FILTER_SPELLS_AURAS, "Cast item has no item prototype highId=%d, lowId=%d", m_CastItem->GetGUID().GetHigh(), m_CastItem->GetGUIDLow());
         return;
     }
+
+    // TODO : research spell attributes or item flags
+    bool alwaysDestroy = false;
+    if (SpellEffectInfo const* effect = m_spellInfo->GetEffect(0))
+        if (effect->Effect == SPELL_EFFECT_GIVE_CURRENCY || effect->Effect == SPELL_EFFECT_GIVE_REPUTATION)
+            alwaysDestroy = true;
+
+    // not remove cast item at triggered spell (equipping, weapon damage, etc)
+    if (_triggeredCastFlags & TRIGGERED_IGNORE_CAST_ITEM && !alwaysDestroy)
+        return;
 
     bool expendable = false;
     bool withoutCharges = false;
@@ -6084,7 +6125,7 @@ void Spell::HandleEffects(Unit* pUnitTarget, Item* pItemTarget, GameObject* pGOT
     }
 }
 
-bool Spell::CheckEffFromDummy(Unit* /*target*/, uint32 eff)
+bool Spell::CheckEffFromDummy(Unit* target, uint32 eff)
 {
     bool prevent = false;
     if (std::vector<SpellAuraDummy> const* spellAuraDummy = sSpellMgr->GetSpellAuraDummy(m_spellInfo->Id))
@@ -6105,6 +6146,11 @@ bool Spell::CheckEffFromDummy(Unit* /*target*/, uint32 eff)
                 if (Unit* owner = _caster->GetOwner())
                     _targetAura = owner;
             }
+            if(itr->targetaura == 3) //get target
+                _targetAura = target;
+
+            if(!_targetAura)
+                _targetAura = _caster;
 
             switch (itr->option)
             {
@@ -6338,7 +6384,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         for (uint8 effIndex = EFFECT_0; effIndex < MAX_SPELL_EFFECTS; ++effIndex)
         {
             SpellEffectInfo const* effInfo = m_spellInfo->GetEffect(effIndex, m_diffMode);
-            if (effInfo->ApplyAuraName == SPELL_AURA_MOD_SHAPESHIFT)
+            if (effInfo && effInfo->ApplyAuraName == SPELL_AURA_MOD_SHAPESHIFT)
             {
                 SpellShapeshiftFormEntry const* shapeShiftEntry = sSpellShapeshiftFormStore.LookupEntry(effInfo->MiscValue);
                 if (shapeShiftEntry && (shapeShiftEntry->flags1 & 1) == 0)  // unk flag
@@ -7536,6 +7582,7 @@ SpellCastResult Spell::CheckArenaAndRatedBattlegroundCastRules()
 bool Spell::CanAutoCast(Unit* target)
 {
     ObjectGuid targetguid = target->GetGUID();
+    bool withDamage = false;
 
     for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
     {
@@ -7543,16 +7590,19 @@ bool Spell::CanAutoCast(Unit* target)
         {
             case SPELL_EFFECT_APPLY_AURA:
             {
-                if (m_spellInfo->StackAmount <= 1)
+                if(!withDamage)
                 {
-                    if (target->HasAuraEffect(m_spellInfo->Id, j))
-                        return false;
-                }
-                else
-                {
-                    if (AuraEffect* aureff = target->GetAuraEffect(m_spellInfo->Id, j))
-                        if (aureff->GetBase()->GetStackAmount() >= m_spellInfo->StackAmount)
+                    if (m_spellInfo->StackAmount <= 1)
+                    {
+                        if (target->HasAuraEffect(m_spellInfo->Id, j))
                             return false;
+                    }
+                    else
+                    {
+                        if (AuraEffect* aureff = target->GetAuraEffect(m_spellInfo->Id, j))
+                            if (aureff->GetBase()->GetStackAmount() >= m_spellInfo->StackAmount)
+                                return false;
+                    }
                 }
                 switch (m_spellInfo->Effects[j].ApplyAuraName)
                 {
@@ -7612,6 +7662,15 @@ bool Spell::CanAutoCast(Unit* target)
                         find = true;
                 if(!find)
                     return false;
+                break;
+            }
+            case SPELL_EFFECT_SCHOOL_DAMAGE:
+            case SPELL_EFFECT_WEAPON_DAMAGE:
+            case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+            case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+            case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+            {
+                withDamage = true;
                 break;
             }
         }
@@ -8988,6 +9047,86 @@ SpellCastResult Spell::CallScriptCheckCastHandlers()
 
         (*scritr)->_FinishScriptCall();
     }
+
+    if(retVal == SPELL_CAST_OK)
+        retVal = CustomCheckCast();
+
+    return retVal;
+}
+
+SpellCastResult Spell::CustomCheckCast()
+{
+    SpellCastResult retVal = SPELL_CAST_OK;
+
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u", m_spellInfo->Id);
+
+    if (std::vector<SpellCheckCast> const* checkCast = sSpellMgr->GetSpellCheckCast(m_spellInfo->Id))
+    {
+        bool check = false;
+        for (std::vector<SpellCheckCast>::const_iterator itr = checkCast->begin(); itr != checkCast->end(); ++itr)
+        {
+            Unit* _caster = m_originalCaster ? m_originalCaster : m_caster;
+            Unit* _target = m_targets.GetUnitTarget();
+
+            if (itr->target)
+                _target = (m_originalCaster ? m_originalCaster : m_caster)->GetUnitForLinkedSpell(_caster, _target, itr->target);
+
+            if (itr->caster)
+                _caster = (m_originalCaster ? m_originalCaster : m_caster)->GetUnitForLinkedSpell(_caster, _target, itr->caster);
+
+            if(!_caster)
+                check = true;
+
+            if(!_target)
+                check = true;
+
+            if(itr->dataType)
+                if(m_caster->HasAuraLinkedSpell(_caster, _target, itr->checkType, itr->dataType))
+                    check = true;
+
+            if(itr->dataType2)
+                if(m_caster->HasAuraLinkedSpell(_caster, _target, itr->checkType2, itr->dataType2))
+                    check = true;
+
+            switch (itr->type)
+            {
+                case SPELL_CHECK_CAST_DEFAULT: // 0
+                    if(itr->param1 < 0 && !check)
+                        check = true;
+                    else if(itr->param1 < 0 && check)
+                        check = false;
+                    break;
+                case SPELL_CHECK_CAST_HEALTH: // 1
+                {
+                    if(check)
+                        break;
+                    if (itr->param1 > 0 && _target->GetHealthPct() < itr->param1)
+                        check = true;
+                    else if (itr->param1 < 0 && _target->GetHealthPct() >= abs(itr->param1))
+                        check = true;
+                    break;
+                }
+            }
+
+            sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u check %i param1 %i type %i errorId %i customErrorId %i",
+            m_spellInfo->Id, check, itr->param1, itr->type, itr->errorId, itr->customErrorId);
+
+            if(check)
+            {
+                if (itr->customErrorId)
+                {
+                    retVal = SPELL_FAILED_CUSTOM_ERROR;
+                    m_customError = (SpellCustomErrors)itr->customErrorId;
+                }
+                else
+                    retVal = (SpellCastResult)itr->errorId;
+                break;
+            }
+        }
+    }
+
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u retVal %i m_customError %i", m_spellInfo->Id, retVal, m_customError);
+
     return retVal;
 }
 
@@ -9271,6 +9410,14 @@ void Spell::CustomTargetSelector(std::list<WorldObject*>& targets, SpellEffIndex
                 case SPELL_FILTER_BY_ENTRY: //14
                 {
                     targets.remove_if(Trinity::UnitEntryCheck(itr->param1, itr->param2, itr->param3));
+                    break;
+                }
+                case SPELL_FILTER_TARGET_ATTACKABLE: // 15
+                {
+                    if(itr->param1 < 0.0f)
+                        targets.remove_if(Trinity::UnitAttackableCheck(true, _caster));
+                    else
+                        targets.remove_if(Trinity::UnitAttackableCheck(false, _caster));
                     break;
                 }
             }

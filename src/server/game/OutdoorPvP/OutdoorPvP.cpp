@@ -30,7 +30,7 @@
 #include "CellImpl.h"
 
 OPvPCapturePoint::OPvPCapturePoint(OutdoorPvP* pvp) :
-m_capturePointGUID(), m_capturePoint(NULL), m_maxValue(0.0f), m_minValue(0.0f), m_maxSpeed(0),
+m_capturePointGUID(), m_capturePoint(nullptr), m_maxValue(0.0f), m_minValue(0.0f), m_maxSpeed(0),
 m_value(0), m_team(TEAM_NEUTRAL), m_OldState(OBJECTIVESTATE_NEUTRAL),
 m_State(OBJECTIVESTATE_NEUTRAL), m_neutralValuePct(0), m_PvP(pvp)
 {
@@ -298,7 +298,7 @@ bool OPvPCapturePoint::Update(uint32 diff)
 
     float radius = (float)m_capturePoint->GetGOInfo()->controlZone.radius;
 
-    for (uint32 team = 0; team < 2; ++team)
+    for (uint8 team = TEAM_ALLIANCE; team < MAX_TEAMS; ++team)
     {
         for (PlayerSet::iterator itr = m_activePlayers[team].begin(); itr != m_activePlayers[team].end();)
         {
@@ -413,21 +413,31 @@ bool OPvPCapturePoint::Update(uint32 diff)
 void OutdoorPvP::SendUpdateWorldState(uint32 field, uint32 value)
 {
     if (m_sendUpdate)
-        for (int i = 0; i < 2; ++i)
+        for (uint8 i = TEAM_ALLIANCE; i < MAX_TEAMS; ++i)
             for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
                 (*itr)->SendUpdateWorldState(field, value);
 }
 
 void OPvPCapturePoint::SendUpdateWorldState(uint32 field, uint32 value)
 {
-    for (uint32 team = 0; team < 2; ++team)
-    {
-        // send to all players present in the area
+    for (uint8 team = TEAM_ALLIANCE; team < MAX_TEAMS; ++team)
         for (PlayerSet::iterator itr = m_activePlayers[team].begin(); itr != m_activePlayers[team].end(); ++itr)
-        {
             (*itr)->SendUpdateWorldState(field, value);
-        }
-    }
+}
+
+void OutdoorPvP::SendUpdateWorldState(WorldStates field, uint32 value)
+{
+    if (m_sendUpdate)
+        for (uint8 i = TEAM_ALLIANCE; i < MAX_TEAMS; ++i)
+            for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+                (*itr)->SendUpdateWorldState(field, value);
+}
+
+void OPvPCapturePoint::SendUpdateWorldState(WorldStates field, uint32 value)
+{
+    for (uint8 team = TEAM_ALLIANCE; team < MAX_TEAMS; ++team)
+        for (PlayerSet::iterator itr = m_activePlayers[team].begin(); itr != m_activePlayers[team].end(); ++itr)
+            (*itr)->SendUpdateWorldState(field, value);
 }
 
 void OPvPCapturePoint::SendObjectiveComplete(uint32 id, ObjectGuid guid)
@@ -454,7 +464,7 @@ void OutdoorPvP::HandleKill(Player* killer, Unit* killed)
 {
     if (Group* group = killer->GetGroup())
     {
-        for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
+        for (GroupReference* itr = group->GetFirstMember(); itr != nullptr; itr = itr->next())
         {
             Player* groupGuy = itr->getSource();
 
@@ -571,21 +581,20 @@ int32 OPvPCapturePoint::HandleOpenGo(Player* /*player*/, ObjectGuid guid)
 {
     std::map<ObjectGuid, uint32>::iterator itr = m_ObjectTypes.find(guid);
     if (itr != m_ObjectTypes.end())
-    {
         return itr->second;
-    }
+
     return -1;
 }
 
-bool OutdoorPvP::HandleAreaTrigger(Player* /*player*/, uint32 /*trigger*/)
+void OutdoorPvP::HandleAreaTrigger(Player* player, uint32 trigger, bool entered)
 {
-    return false;
+    player->GetSession()->SendNotification("Warning: Unhandled AreaTrigger in Battleground: %u", trigger);
 }
 
 void OutdoorPvP::BroadcastPacket(WorldPacket &data) const
 {
     // This is faster than sWorld->SendZoneMessage
-    for (uint32 team = 0; team < 2; ++team)
+    for (uint8 team = TEAM_ALLIANCE; team < MAX_TEAMS; ++team)
         for (PlayerSet::const_iterator itr = m_players[team].begin(); itr != m_players[team].end(); ++itr)
             (*itr)->GetSession()->SendPacket(&data);
 }
@@ -634,5 +643,5 @@ void OutdoorPvP::OnGameObjectRemove(GameObject* go)
         return;
 
     if (OPvPCapturePoint *cp = GetCapturePoint(go->GetGUID()))
-        cp->m_capturePoint = NULL;
+        cp->m_capturePoint = nullptr;
 }

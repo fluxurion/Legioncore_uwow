@@ -479,7 +479,7 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
         if (!_spellInfo->HasAttribute(SPELL_ATTR11_SEND_ITEM_LEVEL) && _spellInfo->HasAttribute(SPELL_ATTR10_UNK12))
             level = _spellInfo->BaseLevel;
 
-        if (_spellInfo->Scaling.MaxScalingLevel && _spellInfo->Scaling.MaxScalingLevel > level)
+        if (_spellInfo->Scaling.MaxScalingLevel && level > _spellInfo->Scaling.MaxScalingLevel)
             level = _spellInfo->Scaling.MaxScalingLevel;
 
         float value = 0.0f;
@@ -820,7 +820,7 @@ SpellEffectInfo::StaticData  SpellEffectInfo::_data[TOTAL_SPELL_EFFECTS] =
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_UNIT}, // 100 SPELL_EFFECT_INEBRIATE
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_ITEM}, // 101 SPELL_EFFECT_FEED_PET
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_UNIT}, // 102 SPELL_EFFECT_DISMISS_PET
-    {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_UNIT}, // 103 SPELL_EFFECT_REPUTATION
+    {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_UNIT}, // 103 SPELL_EFFECT_GIVE_REPUTATION
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_DEST}, // 104 SPELL_EFFECT_SUMMON_OBJECT_SLOT
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_DEST}, // 105 SPELL_EFFECT_SURVEY
     {EFFECT_IMPLICIT_TARGET_EXPLICIT, TARGET_OBJECT_TYPE_DEST}, // 106 SPELL_EFFECT_SUMMON_RAID_MARKER
@@ -2144,7 +2144,7 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
 
             return mapEntry->IsBattlegroundOrArena() && player && player->InBattleground() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
         }
-        case SPELL_BG_ARENA_PREPARATION:
+        case SPELL_ARENA_PREPARATION:
         {
             if (!player)
                 return SPELL_FAILED_REQUIRES_AREA;
@@ -2158,6 +2158,31 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
 
             Battleground* bg = player->GetBattleground();
             return bg && bg->GetStatus() == STATUS_WAIT_JOIN ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        }
+        case SPELL_ARENA_PEREODIC_AURA:
+        {
+            if (!player)
+                return SPELL_FAILED_REQUIRES_AREA;
+
+            MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
+            if (!mapEntry)
+                return SPELL_FAILED_INCORRECT_AREA;
+
+            if (!mapEntry->IsBattleArena())
+                return SPELL_FAILED_REQUIRES_AREA;
+        }
+        case SPELL_ENTERING_BATTLEGROUND:
+        case SPELL_RATED_PVP_TRANSFORM_SUPPRESSION:
+        {
+            if (!player)
+                return SPELL_FAILED_REQUIRES_AREA;
+
+            MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
+            if (!mapEntry)
+                return SPELL_FAILED_INCORRECT_AREA;
+
+            if (!mapEntry->IsBattlegroundOrArena())
+                return SPELL_FAILED_REQUIRES_AREA;
         }
     }
 
@@ -2687,6 +2712,10 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
         }
         case SPELLFAMILY_HUNTER:
         {
+            // Poisoned Ammo
+            if (Id == 170661)
+                return SPELL_SPECIFIC_NORMAL;
+
             // only hunter stings have this
             if (Dispel == DISPEL_POISON)
                 return SPELL_SPECIFIC_STING;
@@ -2807,7 +2836,7 @@ uint32 SpellInfo::CalcCastTime(Unit* caster, Spell* spell) const
 
     // hack -- no cast time while prep
     if(sWorld->getBoolConfig(CONFIG_FUN_OPTION_ENABLED) && caster)
-        if (caster->HasAura(SPELL_BG_PREPARATION) || caster->HasAura(SPELL_BG_ARENA_PREPARATION))
+        if (caster->HasAura(SPELL_BG_PREPARATION) || caster->HasAura(SPELL_ARENA_PREPARATION))
             return 0;
 
     // not all spells have cast time index and this is all is pasiive abilities

@@ -18,7 +18,7 @@
 #ifndef __BATTLEGROUNDTV_H
 #define __BATTLEGROUNDTV_H
 
-#include "Battleground.h"
+#include "Arena.h"
 
 enum BattlegroundTVObjectTypes
 {
@@ -33,32 +33,17 @@ enum BattlegroundTVObjects
     BG_TV_OBJECT_TYPE_DOOR_2    = 213197
 };
 
-
-class BattlegroundTVScore : public BattlegroundScore
-{
-    public:
-        BattlegroundTVScore() {};
-        virtual ~BattlegroundTVScore() {};
-        //TODO fix me
-};
-
-class BattlegroundTV : public Battleground
+class BattlegroundTV : public Arena
 {
     public:
         BattlegroundTV();
         ~BattlegroundTV();
 
-        /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player* player);
-        virtual void StartingEventCloseDoors();
-        virtual void StartingEventOpenDoors();
+        void StartingEventCloseDoors() override;
+        void StartingEventOpenDoors() override;
 
-        void RemovePlayer(Player* player, ObjectGuid guid, uint32 team);
-        void HandleAreaTrigger(Player* Source, uint32 Trigger);
-        bool SetupBattleground();
-        virtual void Reset();
-        virtual void FillInitialWorldStates(WorldPacket &d);
-        void HandleKillPlayer(Player* player, Player* killer);
-        bool HandlePlayerUnderMap(Player* player);
+        void HandleAreaTrigger(Player* player, uint32 trigger, bool entered) override;
+        bool SetupBattleground() override;
+        void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet) override;
 };
 #endif

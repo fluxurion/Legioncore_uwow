@@ -436,15 +436,10 @@ void WorldSession::HandleAreaTrigger(WorldPackets::Misc::AreaTrigger& packet)
     }
 
     if (Battleground* bg = player->GetBattleground())
-        if (bg->GetStatus() == STATUS_IN_PROGRESS)
-        {
-            bg->HandleAreaTrigger(player, packet.AreaTriggerID);
-            return;
-        }
+        bg->HandleAreaTrigger(player, packet.AreaTriggerID, packet.Entered);
 
     if (OutdoorPvP* pvp = player->GetOutdoorPvP())
-        if (pvp->HandleAreaTrigger(_player, packet.AreaTriggerID))
-            return;
+        pvp->HandleAreaTrigger(_player, packet.AreaTriggerID, packet.Entered);
 
     AreaTriggerStruct const* at = sObjectMgr->GetAreaTrigger(packet.AreaTriggerID);
     if (!at)

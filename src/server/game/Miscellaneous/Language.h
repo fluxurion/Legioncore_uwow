@@ -593,30 +593,11 @@ enum TrinityStrings
     // End Level 3 list, continued at 1100
 
     // Battleground
-    LANG_BG_A_WINS                      = 600,
-    LANG_BG_H_WINS                      = 601,
 
     LANG_BG_WS_START_TWO_MINUTES        = 753,
     LANG_BG_WS_START_ONE_MINUTE         = 602,
     LANG_BG_WS_START_HALF_MINUTE        = 603,
     LANG_BG_WS_HAS_BEGUN                = 604,
-
-    LANG_BG_WS_CAPTURED_HF              = 605,
-    LANG_BG_WS_CAPTURED_AF              = 606,
-    LANG_BG_WS_DROPPED_HF               = 607,
-    LANG_BG_WS_DROPPED_AF               = 608,
-    LANG_BG_WS_RETURNED_AF              = 609,
-    LANG_BG_WS_RETURNED_HF              = 610,
-    LANG_BG_WS_PICKEDUP_HF              = 611,
-    LANG_BG_WS_PICKEDUP_AF              = 612,
-    LANG_BG_WS_F_PLACED                 = 613,
-    LANG_BG_WS_ALLIANCE_FLAG_RESPAWNED  = 614,
-    LANG_BG_WS_HORDE_FLAG_RESPAWNED     = 615,
-
-    LANG_BG_EY_START_TWO_MINUTES        = 755,
-    LANG_BG_EY_START_ONE_MINUTE         = 636,
-    LANG_BG_EY_START_HALF_MINUTE        = 637,
-    LANG_BG_EY_HAS_BEGUN                = 638,
 
     LANG_BG_AB_ALLY                     = 650,
     LANG_BG_AB_HORDE                    = 651,
@@ -634,8 +615,6 @@ enum TrinityStrings
     LANG_BG_AB_START_ONE_MINUTE         = 661,
     LANG_BG_AB_START_HALF_MINUTE        = 662,
     LANG_BG_AB_HAS_BEGUN                = 663,
-    LANG_BG_AB_A_NEAR_VICTORY           = 664,
-    LANG_BG_AB_H_NEAR_VICTORY           = 665,
     LANG_BG_MARK_BY_MAIL                = 666,
 
     LANG_BG_EY_HAS_TAKEN_A_M_TOWER      = 667,
@@ -655,22 +634,6 @@ enum TrinityStrings
     LANG_BG_EY_HAS_LOST_A_F_RUINS       = 681,
     LANG_BG_EY_HAS_LOST_H_F_RUINS       = 682,
     LANG_BG_EY_HAS_TAKEN_FLAG           = 683,
-    LANG_BG_EY_CAPTURED_FLAG_A          = 684,
-    LANG_BG_EY_CAPTURED_FLAG_H          = 685,
-    LANG_BG_EY_DROPPED_FLAG             = 686,
-    LANG_BG_EY_RESETED_FLAG             = 687,
-    
-    LANG_BG_SSM_START_TWO_MINUTES       = 756,
-    LANG_BG_SSM_START_ONE_MINUTE        = 773,
-    LANG_BG_SSM_START_HALF_MINUTE       = 774,
-    LANG_BG_SSM_HAS_BEGUN               = 775,
-    LANG_BG_SSM_SPAWN_CART              = 776,
-
-    LANG_ARENA_ONE_TOOLOW               = 700,
-    LANG_ARENA_ONE_MINUTE               = 701,
-    LANG_ARENA_THIRTY_SECONDS           = 702,
-    LANG_ARENA_FIFTEEN_SECONDS          = 703,
-    LANG_ARENA_HAS_BEGUN                = 704,
 
     LANG_WAIT_BEFORE_SPEAKING           = 705,
     LANG_NOT_EQUIPPED_ITEM              = 706,
@@ -691,8 +654,6 @@ enum TrinityStrings
     LANG_ARENA_GROUP_TOO_LARGE          = 721,              // "Your group is too large for this arena. Please regroup to join."
     LANG_ARENA_YOUR_TEAM_ONLY           = 722,              // "Your group has members not in your arena team. Please regroup to join."
     LANG_ARENA_NOT_ENOUGH_PLAYERS       = 723,              // "Your group does not have enough players to join this match."
-    LANG_ARENA_GOLD_WINS                = 724,              // "The Gold Team wins!"
-    LANG_ARENA_GREEN_WINS               = 725,              // "The Green Team wins!"
 //                                      = 726, not used
     LANG_BG_GROUP_OFFLINE_MEMBER        = 727,              // "Your group has an offline member. Please remove him before joining."
     LANG_BG_GROUP_MIXED_FACTION         = 728,              // "Your group has players from the opposing faction. You can't join the battleground as a group."
@@ -705,8 +666,6 @@ enum TrinityStrings
     LANG_CANNOT_SUMMON_TO_BG            = 734,              // "You cannot summon players to a battleground or arena map."
     LANG_CANNOT_GO_TO_BG_GM             = 735,              // "You must be in GM mode to teleport to a player in a battleground."
     LANG_CANNOT_GO_TO_BG_FROM_BG        = 736,              // "You cannot teleport to a battleground from another battleground. Please leave the current battleground first."
-    LANG_DEBUG_ARENA_ON                 = 737,
-    LANG_DEBUG_ARENA_OFF                = 738,
     LANG_DEBUG_BG_ON                    = 739,
     LANG_DEBUG_BG_OFF                   = 740,
     LANG_DIST_ARENA_POINTS_START        = 741,
@@ -880,17 +839,6 @@ enum TrinityStrings
     LANG_BG_TP_START_ONE_MINUTE         = 1231,
     LANG_BG_TP_START_HALF_MINUTE        = 1232,
     LANG_BG_TP_HAS_BEGUN                = 1233,
-    LANG_BG_TP_CAPTURED_HF              = 1234,
-    LANG_BG_TP_CAPTURED_AF              = 1235,
-    LANG_BG_TP_DROPPED_HF               = 1236,
-    LANG_BG_TP_DROPPED_AF               = 1237,
-    LANG_BG_TP_RETURNED_AF              = 1238,
-    LANG_BG_TP_RETURNED_HF              = 1239,
-    LANG_BG_TP_PICKEDUP_HF              = 1240,
-    LANG_BG_TP_PICKEDUP_AF              = 1241,
-    LANG_BG_TP_F_PLACED                 = 1242,
-    LANG_BG_TP_ALLIANCE_FLAG_RESPAWNED  = 1243,
-    LANG_BG_TP_HORDE_FLAG_RESPAWNED     = 1244,
     // FREE IDS                           1245-1249
 
     // Battle For Gilneas
@@ -908,8 +856,6 @@ enum TrinityStrings
     LANG_BG_BG_NODE_DEFENDED           = 1260,
     LANG_BG_BG_NODE_ASSAULTED          = 1261,
     LANG_BG_BG_NODE_CLAIMED            = 1262,
-    LANG_BG_BG_A_NEAR_VICTORY          = 1263,
-    LANG_BG_BG_H_NEAR_VICTORY          = 1264,
     // FREE IDS                           1265-1299
 
     // AV
@@ -951,32 +897,10 @@ enum TrinityStrings
     LANG_BG_AV_A_CAPTAIN_DEAD           = 1332,
     LANG_BG_AV_START_TWO_MINUTES        = 1333,
 
-	// Silvershard Mines
-	LANG_BG_SM_CART_1                   = 1334,
-    LANG_BG_SM_CART_2                   = 1335,
-    LANG_BG_SM_CART_3                   = 1336,
-    LANG_BG_SM_CART_TAKEN               = 1337,
-    LANG_BG_SM_CART_DEFENDED            = 1338,
-    LANG_BG_SM_CART_ASSAULTED           = 1339,
-    LANG_BG_SM_CART_CLAIMED             = 1340,
-	LANG_BG_SM_START_ONE_MINUTE         = 1341,
-    LANG_BG_SM_START_HALF_MINUTE        = 1342,
-    LANG_BG_SM_HAS_BEGUN                = 1343,
-    LANG_BG_SM_A_NEAR_VICTORY           = 1344,
-    LANG_BG_SM_H_NEAR_VICTORY           = 1345,
-
 	// Temple of Kotmogu
     LANG_BG_KT_START_ONE_MINUTE         = 1346,
     LANG_BG_KT_START_HALF_MINUTE        = 1347,
     LANG_BG_KT_HAS_BEGUN                = 1348,
-    LANG_BG_KT_PICKEDUP_1               = 1349,
-    LANG_BG_KT_PICKEDUP_2               = 1350,
-    LANG_BG_KT_PICKEDUP_3               = 1351,
-    LANG_BG_KT_PICKEDUP_4               = 1352,
-    LANG_BG_KT_DROPPED_1                = 1353,
-    LANG_BG_KT_DROPPED_2                = 1354,
-    LANG_BG_KT_DROPPED_3                = 1355,
-    LANG_BG_KT_DROPPED_4                = 1356,
     // FREE IDS                           1357-1999
 
 
@@ -1194,11 +1118,6 @@ enum TrinityStrings
     LANG_ARENA_CLOSESEASON_END          = 12009,
 
     LANG_BATTLE_PAY_SUCCES_COINS_MESSAGE= 12100,
-
-    LANG_BG_DG_START_TWO_MINUTES        = 13000,
-    LANG_BG_DG_START_ONE_MINUTE         = 13001,
-    LANG_BG_DG_START_HALF_MINUTE        = 13002,
-    LANG_BG_DG_START_HAS_BEGUN          = 13003,
 
     // Word filter
     LANG_WORD_FILTER_FOUND_BAD_WORD_IN_CHAT = 21000,

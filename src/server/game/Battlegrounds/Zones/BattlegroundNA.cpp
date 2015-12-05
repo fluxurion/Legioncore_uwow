@@ -27,27 +27,17 @@
 BattlegroundNA::BattlegroundNA()
 {
     BgObjects.resize(BG_NA_OBJECT_MAX);
-
-    StartDelayTimes[BG_STARTING_EVENT_FIRST]  = Minutes(1);
-    StartDelayTimes[BG_STARTING_EVENT_SECOND] = Seconds(30);
-    StartDelayTimes[BG_STARTING_EVENT_THIRD]  = Seconds(15);
-    StartDelayTimes[BG_STARTING_EVENT_FOURTH] = Seconds(0);
-    //we must set messageIds
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
 BattlegroundNA::~BattlegroundNA()
-{
-
-}
+{ }
 
 void BattlegroundNA::StartingEventCloseDoors()
 {
     for (uint32 i = BG_NA_OBJECT_DOOR_1; i <= BG_NA_OBJECT_DOOR_4; ++i)
         SpawnBGObject(i, RESPAWN_IMMEDIATELY);
+
+    Arena::StartingEventCloseDoors();
 }
 
 void BattlegroundNA::StartingEventOpenDoors()
@@ -57,80 +47,30 @@ void BattlegroundNA::StartingEventOpenDoors()
 
     for (uint32 i = BG_NA_OBJECT_BUFF_1; i <= BG_NA_OBJECT_BUFF_2; ++i)
         SpawnBGObject(i, 60);
+
+    Arena::StartingEventOpenDoors();
 }
 
-void BattlegroundNA::AddPlayer(Player* player)
+void BattlegroundNA::HandleAreaTrigger(Player* player, uint32 trigger, bool entered)
 {
-    //create score and add it to map, default values are set in constructor
-    AddPlayerScore(player->GetGUID(), new BattlegroundNAScore);
-    Battleground::AddPlayer(player);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundNA::RemovePlayer(Player* /*player*/, ObjectGuid /*guid*/, uint32 /*team*/)
-{
-    if (GetStatus() == STATUS_WAIT_LEAVE)
-        return;
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-void BattlegroundNA::HandleKillPlayer(Player* player, Player* killer)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    if (!killer)
+    switch (trigger)
     {
-        sLog->outError(LOG_FILTER_BATTLEGROUND, "BattlegroundNA: Killer player not found");
-        return;
-    }
-
-    Battleground::HandleKillPlayer(player, killer);
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-bool BattlegroundNA::HandlePlayerUnderMap(Player* player)
-{
-    player->TeleportTo(GetMapId(), 4055.504395f, 2919.660645f, 13.611241f, player->GetOrientation(), false);
-    return true;
-}
-
-void BattlegroundNA::HandleAreaTrigger(Player* Source, uint32 Trigger)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    //uint32 SpellId = 0;
-    //uint64 buff_guid = 0;
-    switch (Trigger)
-    {
-        case 4536:                                          // buff trigger?
-        case 4537:                                          // buff trigger?
+        case 8447: // Alliance start loc
+        case 8448: // Horde start loc
+            if (!entered && GetStatus() != STATUS_IN_PROGRESS)
+                player->TeleportTo(GetMapId(), GetTeamStartPosition(player->GetBGTeamId()));
             break;
         default:
-            sLog->outError(LOG_FILTER_BATTLEGROUND, "WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            Source->GetSession()->SendNotification("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
+            Battleground::HandleAreaTrigger(player, trigger, entered);
             break;
     }
-
-    //if (buff_guid)
-    //    HandleTriggerBuff(buff_guid, Source);
 }
 
-void BattlegroundNA::FillInitialWorldStates(WorldPacket &data)
+void BattlegroundNA::FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet)
 {
-    FillInitialWorldState(data, 0xa11, 1);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundNA::Reset()
-{
-    //call parent's class reset
-    Battleground::Reset();
+    packet.Worldstates.emplace_back(static_cast<WorldStates>(2577), 1);
+    packet.Worldstates.emplace_back(static_cast<WorldStates>(3610), 1);
+    Arena::FillInitialWorldStates(packet);
 }
 
 bool BattlegroundNA::SetupBattleground()

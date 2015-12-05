@@ -27,108 +27,47 @@
 BattlegroundTV::BattlegroundTV()
 {
     BgObjects.resize(BG_TV_OBJECT_MAX);
-
-    StartDelayTimes[BG_STARTING_EVENT_FIRST]  = Minutes(1);
-    StartDelayTimes[BG_STARTING_EVENT_SECOND] = Seconds(30);
-    StartDelayTimes[BG_STARTING_EVENT_THIRD]  = Seconds(15);
-    StartDelayTimes[BG_STARTING_EVENT_FOURTH] = Seconds(0);
-    //we must set messageIds
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
 BattlegroundTV::~BattlegroundTV()
-{
-
-}
+{ }
 
 void BattlegroundTV::StartingEventCloseDoors()
 {
     for (uint32 i = BG_TV_OBJECT_DOOR_1; i <= BG_TV_OBJECT_DOOR_2; ++i)
         SpawnBGObject(i, RESPAWN_IMMEDIATELY);
+
+    Arena::StartingEventCloseDoors();
 }
 
 void BattlegroundTV::StartingEventOpenDoors()
 {
     for (uint32 i = BG_TV_OBJECT_DOOR_1; i <= BG_TV_OBJECT_DOOR_2; ++i)
         DoorOpen(i);
+
+    Arena::StartingEventOpenDoors();
 }
 
-void BattlegroundTV::AddPlayer(Player* player)
+void BattlegroundTV::HandleAreaTrigger(Player* player, uint32 trigger, bool entered)
 {
-    //create score and add it to map, default values are set in constructor
-    AddPlayerScore(player->GetGUID(), new BattlegroundTVScore);
-
-    Battleground::AddPlayer(player);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundTV::RemovePlayer(Player* /*player*/, ObjectGuid /*guid*/, uint32 /*team*/)
-{
-    if (GetStatus() == STATUS_WAIT_LEAVE)
-        return;
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-void BattlegroundTV::HandleKillPlayer(Player* player, Player* killer)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    if (!killer)
+    switch (trigger)
     {
-        sLog->outError(LOG_FILTER_BATTLEGROUND, "BattlegroundTV: Killer player not found");
-        return;
-    }
-
-    Battleground::HandleKillPlayer(player, killer);
-
-    UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
-
-bool BattlegroundTV::HandlePlayerUnderMap(Player* player)
-{
-    player->TeleportTo(GetMapId(), -10717.29f, 430.12f, 24.411f, player->GetOrientation(), false);
-    return true;
-}
-
-void BattlegroundTV::HandleAreaTrigger(Player* Source, uint32 Trigger)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    //uint32 SpellId = 0;
-    //uint64 buff_guid = 0;
-    switch (Trigger)
-    {
-        case 8451:                                          // out from waiting room
-        case 8452:                                          // out from waiting room
+        case 8451: // Alliance start loc
+        case 8452: // Horde start loc
+            if (!entered && GetStatus() != STATUS_IN_PROGRESS)
+                player->TeleportTo(GetMapId(), GetTeamStartPosition(player->GetBGTeamId()));
             break;
         default:
-            sLog->outError(LOG_FILTER_BATTLEGROUND, "WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            Source->GetSession()->SendNotification("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
+            Battleground::HandleAreaTrigger(player, trigger, entered);
             break;
     }
-
-    //if (buff_guid)
-    //    HandleTriggerBuff(buff_guid, Source);
 }
 
-void BattlegroundTV::FillInitialWorldStates(WorldPacket &data)
+void BattlegroundTV::FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet)
 {
-    FillInitialWorldState(data, 6643, 1);
-    UpdateArenaWorldState();
-}
-
-void BattlegroundTV::Reset()
-{
-    //call parent's class reset
-    Battleground::Reset();
+    packet.Worldstates.emplace_back(static_cast<WorldStates>(6643), 1);
+    packet.Worldstates.emplace_back(static_cast<WorldStates>(3610), 1);
+    Arena::FillInitialWorldStates(packet);
 }
 
 bool BattlegroundTV::SetupBattleground()

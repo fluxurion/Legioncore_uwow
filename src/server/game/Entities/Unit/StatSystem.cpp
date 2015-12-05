@@ -131,7 +131,6 @@ bool Player::UpdateStats(Stats stat)
 void Player::ApplySpellPowerBonus(int32 amount, bool apply)
 {
     _ModifyUInt32(apply, m_baseSpellPower, amount);
-
     UpdateSpellDamageAndHealingBonus();
 }
 
@@ -767,7 +766,7 @@ void Player::UpdateSpellCritChance(uint32 school)
 
 void Player::UpdateMeleeHitChances()
 {
-    m_modMeleeHitChance = (float)GetTotalAuraModifier(SPELL_AURA_MOD_HIT_CHANCE);
+    m_modMeleeHitChance = 7.5f + (float)GetTotalAuraModifier(SPELL_AURA_MOD_HIT_CHANCE);
     SetFloatValue(PLAYER_FIELD_UI_HIT_MODIFIER, m_modMeleeHitChance);
 
     m_modMeleeHitChance += GetRatingBonusValue(CR_HIT_MELEE);
@@ -775,13 +774,13 @@ void Player::UpdateMeleeHitChances()
 
 void Player::UpdateRangedHitChances()
 {
-    m_modRangedHitChance = (float)GetTotalAuraModifier(SPELL_AURA_MOD_HIT_CHANCE);
+    m_modRangedHitChance = 7.5f + (float)GetTotalAuraModifier(SPELL_AURA_MOD_HIT_CHANCE);
     m_modRangedHitChance += GetRatingBonusValue(CR_HIT_RANGED);
 }
 
 void Player::UpdateSpellHitChances()
 {
-    m_modSpellHitChance = (float)GetTotalAuraModifier(SPELL_AURA_MOD_SPELL_HIT_CHANCE);
+    m_modSpellHitChance = 15.0f + (float)GetTotalAuraModifier(SPELL_AURA_MOD_SPELL_HIT_CHANCE);
     SetFloatValue(PLAYER_FIELD_UI_SPELL_HIT_MODIFIER, m_modSpellHitChance);
     
     m_modSpellHitChance += GetRatingBonusValue(CR_HIT_SPELL);
@@ -1543,8 +1542,11 @@ bool Guardian::UpdateStats(Stats stat)
                 {
                     switch (ToPet()->GetSpecializationId())
                     {
+                        case SPEC_PET_ADAPTATION_FEROCITY:
                         case SPEC_PET_FEROCITY: mod = 0.67f; break;
+                        case SPEC_PET_ADAPTATION_TENACITY:
                         case SPEC_PET_TENACITY: mod = 0.78f; break;
+                        case SPEC_PET_ADAPTATION_CUNNING:
                         case SPEC_PET_CUNNING: mod = 0.725f; break;
                     }
                 }
@@ -1851,6 +1853,8 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
     float base_pct    = GetModifierValue(unitMod, BASE_PCT);
     float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
     float total_pct   = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
+    if(Unit* owner = GetOwner())
+        total_pct *= owner->GetTotalAuraMultiplier(SPELL_AURA_PET_DAMAGE_DONE_PCT);
 
     float weapon_mindamage = GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
     float weapon_maxdamage = GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
@@ -1917,7 +1921,7 @@ void Player::UpdateMasteryAuras()
     }
 }
 
-void Player::UpdateVersality()
+void Player::UpdateVersality(CombatRating cr)
 {
     // need some informations about calc this for different specs
     //switch (GetSpecializationId(GetActiveSpec()))
@@ -1971,17 +1975,14 @@ void Player::UpdateVersality()
     //Done = CalculatePct(damageDone, DamagePct);
     //Taken  = CalculatePct(taken,   HealPct);
 
-    float ValueD = 0.f;
-    float ValueT = 0.f;
+    if (cr == CR_VERSATILITY_DAMAGE_TAKEN)
+        return;
 
-    ValueD += GetRatingBonusValue(CR_VERSATILITY_DAMAGE_DONE);
-    ValueT += GetRatingBonusValue(CR_VERSATILITY_DAMAGE_TAKEN);
+    uint32 versailty = GetUInt32Value(PLAYER_FIELD_COMBAT_RATINGS + CR_VERSATILITY_DAMAGE_DONE);
+    float versalityBonus = GetTotalAuraModifier(SPELL_AURA_MOD_VERSALITY_PCT, true);
 
-    ValueT += GetTotalAuraModifier(SPELL_AURA_MOD_VERSALITY_PCT, true);
-    ValueD += GetTotalAuraModifier(SPELL_AURA_MOD_VERSALITY_PCT, true);
-
-    SetFloatValue(PLAYER_FIELD_VERSATILITY, ValueD);
-    SetFloatValue(PLAYER_FIELD_VERSATILITY_BONUS, ValueT);
+    SetUInt32Value(PLAYER_FIELD_VERSATILITY, versailty);
+    SetFloatValue(PLAYER_FIELD_VERSATILITY_BONUS, versalityBonus);
 }
 
 void Player::UpdateMultistrike()
@@ -1999,12 +2000,9 @@ void Player::UpdateMultistrike()
 
 void Player::UpdateMultistrikeDamage()
 {
-    float value = 0.3f; // base value
-
-    value *= GetTotalAuraModifier(SPELL_AURA_MULTISTRIKE_DAMAGE_PCT, true);
-
-    if (value < 0.3f)
-        value = 0.3f;
+    float value = 0.3f; // 30% damage of base attack
+    float mod = GetTotalAuraModifier(SPELL_AURA_MULTISTRIKE_DAMAGE_PCT, true);
+    AddPct(value, mod);
 
     SetFloatValue(PLAYER_FIELD_MULTISTRIKE_EFFECT, value);
 }

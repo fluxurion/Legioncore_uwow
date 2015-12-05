@@ -1175,6 +1175,12 @@ const std::vector<SpellTargetFilter>* SpellMgr::GetSpellTargetFilter(int32 spell
     return itr != mSpellTargetFilterMap.end() ? &(itr->second) : NULL;
 }
 
+const std::vector<SpellCheckCast>* SpellMgr::GetSpellCheckCast(int32 spell_id) const
+{
+    SpellCheckCastMap::const_iterator itr = mSpellCheckCastMap.find(spell_id);
+    return itr != mSpellCheckCastMap.end() ? &(itr->second) : NULL;
+}
+
 PetLevelupSpellSet const* SpellMgr::GetPetLevelupSpellList(uint32 petFamily) const
 {
     PetLevelupSpellMap::const_iterator itr = mPetLevelupSpellMap.find(petFamily);
@@ -2307,7 +2313,7 @@ void SpellMgr::LoadSpellPetAuras()
         SpellInfo const* spellInfo = GetSpellInfo(abs(spellId));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spellId` does not exist", abs(spellId));
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_pet_auras` does not exist", spellId);
             continue;
         }
 
@@ -2455,15 +2461,15 @@ void SpellMgr::LoadSpellLinked()
         SpellInfo const* spellInfo = GetSpellInfo(abs(trigger));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_linked_spell` does not exist", abs(trigger));
-            WorldDatabase.PExecute("DELETE FROM `spell_linked_spell` WHERE spell_trigger = %u", abs(trigger));
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_linked_spell` does not exist", trigger);
+            WorldDatabase.PExecute("DELETE FROM `spell_linked_spell` WHERE spell_trigger = %i", trigger);
             continue;
         }
         spellInfo = GetSpellInfo(abs(effect));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_linked_spell` does not exist", abs(effect));
-            WorldDatabase.PExecute("DELETE FROM `spell_linked_spell` WHERE spell_trigger = %u", abs(trigger));
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_linked_spell` does not exist", effect);
+            WorldDatabase.PExecute("DELETE FROM `spell_linked_spell` WHERE spell_trigger = %i", trigger);
             continue;
         }
 
@@ -2527,13 +2533,15 @@ void SpellMgr::LoadTalentSpellLinked()
         SpellInfo const* spellInfo = GetSpellInfo(abs(talent));
         if (!spellInfo && talent)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_talent_linked_spell` does not exist", abs(talent));
+            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_talent_linked_spell` does not exist", talent);
+            WorldDatabase.PExecute("DELETE FROM `spell_talent_linked_spell` WHERE spellid = %i", talent);
             continue;
         }
         spellInfo = GetSpellInfo(abs(triger));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_talent_linked_spell` does not exist", abs(triger));
+            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_talent_linked_spell` does not exist", triger);
+            WorldDatabase.PExecute("DELETE FROM `spell_talent_linked_spell` WHERE spelllink = %i", triger);
             continue;
         }
 
@@ -2565,8 +2573,8 @@ void SpellMgr::LoadSpellConcatenateAura()
     mSpellConcatenateApplyMap.clear();    // need for reload case
     mSpellConcatenateUpdateMap.clear();    // need for reload case
 
-    //                                                   0            1           2            3         4        5         6
-    QueryResult result = WorldDatabase.Query("SELECT `spellid`, `effectSpell`, `auraId`, `effectAura`, `type`, `caster`, `target` FROM spell_concatenate_aura");
+    //                                                   0            1           2            3          4         5         6
+    QueryResult result = WorldDatabase.Query("SELECT `spellid`, `effectSpell`, `auraId`, `effectAura`, `caster`, `target`, `option` FROM spell_concatenate_aura");
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 concatenate auraspells. DB table `spell_concatenate_aura` is empty.");
@@ -2582,20 +2590,20 @@ void SpellMgr::LoadSpellConcatenateAura()
         int32 effectSpell = fields[1].GetUInt8();
         int32 auraId   = fields[2].GetInt32();
         int32 effectAura = fields[3].GetUInt8();
-        int8 type = fields[4].GetUInt8();
-        int8 caster = fields[5].GetUInt8();
-        int8 target = fields[6].GetUInt8();
+        int8 caster = fields[4].GetUInt8();
+        int8 target = fields[5].GetUInt8();
+        uint32 option = fields[6].GetUInt8();
 
-        SpellInfo const* spellInfo = GetSpellInfo(spellid);
+        SpellInfo const* spellInfo = GetSpellInfo(abs(spellid));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_concatenate_aura` does not exist", spellid);
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_concatenate_aura` does not exist", spellid);
             continue;
         }
-        spellInfo = GetSpellInfo(auraId);
+        spellInfo = GetSpellInfo(abs(auraId));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_concatenate_aura` does not exist", auraId);
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_concatenate_aura` does not exist", auraId);
             continue;
         }
 
@@ -2604,9 +2612,9 @@ void SpellMgr::LoadSpellConcatenateAura()
         tempAura.effectSpell = effectSpell;
         tempAura.auraId   = auraId;
         tempAura.effectAura = effectAura;
-        tempAura.type = type;
         tempAura.caster = caster;
         tempAura.target = target;
+        tempAura.option = option;
         mSpellConcatenateUpdateMap[spellid].push_back(tempAura);
         mSpellConcatenateApplyMap[auraId].push_back(tempAura);
 
@@ -2927,6 +2935,7 @@ void SpellMgr::LoadSpellTriggered()
     mSpellAuraTriggerMap.clear();    // need for reload case
     mSpellAuraDummyMap.clear();    // need for reload case
     mSpellTargetFilterMap.clear();    // need for reload case
+    mSpellCheckCastMap.clear();    // need for reload case
 
     uint32 count = 0;
     //                                                    0           1                    2           3         4          5          6          7      8      9         10         11       12       13         14          15            16            17           18          19           20              21          22
@@ -2968,20 +2977,21 @@ void SpellMgr::LoadSpellTriggered()
         SpellInfo const* spellInfo = GetSpellInfo(abs(spell_id));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell_id %u listed in `spell_trigger` does not exist", abs(spell_id));
-            //WorldDatabase.PExecute("DELETE FROM `spell_trigger` WHERE spell_id = %u", abs(spell_id));
+            sLog->outError(LOG_FILTER_SQL, "Spell_id %i listed in `spell_trigger` does not exist", spell_id);
+            WorldDatabase.PExecute("DELETE FROM `spell_trigger` WHERE spell_id = %i", spell_id);
             continue;
         }
         spellInfo = GetSpellInfo(abs(spell_trigger));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell_trigger %u listed in `spell_trigger` does not exist", abs(spell_trigger));
+            sLog->outError(LOG_FILTER_SQL, "Spell_trigger %i listed in `spell_trigger` does not exist", spell_trigger);
+            WorldDatabase.PExecute("DELETE FROM `spell_trigger` WHERE spell_trigger = %i", spell_trigger);
             continue;
         }
         spellInfo = GetSpellInfo(abs(dummyId));
         if (dummyId && !spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "DummyId %u listed in `spell_trigger` does not exist", abs(dummyId));
+            sLog->outError(LOG_FILTER_SQL, "DummyId %i listed in `spell_trigger` does not exist", dummyId);
             continue;
         }
 
@@ -3152,8 +3162,8 @@ void SpellMgr::LoadSpellTriggered()
         SpellInfo const* spellInfo = GetSpellInfo(abs(spellId));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_aura_dummy` does not exist", abs(spellId));
-            //WorldDatabase.PExecute("DELETE FROM `spell_aura_dummy` WHERE spellId = %u", abs(spellId));
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_aura_dummy` does not exist", spellId);
+            WorldDatabase.PExecute("DELETE FROM `spell_aura_dummy` WHERE spellId = %i", spellId);
             continue;
         }
 
@@ -3183,7 +3193,7 @@ void SpellMgr::LoadSpellTriggered()
     result = WorldDatabase.Query("SELECT `spellId`, `targetId`, `option`, `aura`, `chance`, `effectMask`, `resizeType`, `count`, `maxcount`, `addcount`, `addcaster`, `param1`, `param2`, `param3` FROM `spell_target_filter`");
     if (!result)
     {
-        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 aura dummy spells. DB table `spell_aura_dummy` is empty.");
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 aura dummy spells. DB table `spell_target_filter` is empty.");
         return;
     }
 
@@ -3209,8 +3219,8 @@ void SpellMgr::LoadSpellTriggered()
         SpellInfo const* spellInfo = GetSpellInfo(abs(spellId));
         if (!spellInfo)
         {
-            sLog->outError(LOG_FILTER_SQL, "Spell %u listed in `spell_target_filter` does not exist", abs(spellId));
-            //WorldDatabase.PExecute("DELETE FROM `spell_aura_dummy` WHERE spellId = %u", abs(spellId));
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_target_filter` does not exist", spellId);
+            WorldDatabase.PExecute("DELETE FROM `spell_target_filter` WHERE spellId = %i", spellId);
             continue;
         }
 
@@ -3230,6 +3240,46 @@ void SpellMgr::LoadSpellTriggered()
         tempfilter.param2 = param2;
         tempfilter.param3 = param3;
         mSpellTargetFilterMap[spellId].push_back(tempfilter);
+
+        ++count;
+    } while (result->NextRow());
+
+    //                                       0        1         2             3            4         5           6           7            8            9           10        11        12
+    result = WorldDatabase.Query("SELECT `spellId`, `type`, `errorId`, `customErrorId`, `caster`, `target`, `checkType`, `dataType`, `checkType2`, `dataType2`, `param1`, `param2`, `param3` FROM `spell_check_cast`");
+    if (!result)
+    {
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 aura dummy spells. DB table `spell_check_cast` is empty.");
+        return;
+    }
+
+    do
+    {
+        Field* fields = result->Fetch();
+        int32 spellId = fields[0].GetInt32();
+
+        SpellInfo const* spellInfo = GetSpellInfo(abs(spellId));
+        if (!spellInfo)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Spell %i listed in `spell_check_cast` does not exist", spellId);
+            WorldDatabase.PExecute("DELETE FROM `spell_check_cast` WHERE spellId = %i", spellId);
+            continue;
+        }
+
+        SpellCheckCast checkCast;
+        checkCast.spellId = spellId;
+        checkCast.type = fields[1].GetInt32();
+        checkCast.errorId = fields[2].GetInt32();
+        checkCast.customErrorId = fields[3].GetInt32();
+        checkCast.caster = fields[4].GetInt32();
+        checkCast.target = fields[5].GetInt32();
+        checkCast.checkType = fields[6].GetInt32();
+        checkCast.dataType = fields[7].GetInt32();
+        checkCast.checkType2 = fields[8].GetInt32();
+        checkCast.dataType2 = fields[9].GetInt32();
+        checkCast.param1 = fields[10].GetInt32();
+        checkCast.param2 = fields[11].GetInt32();
+        checkCast.param3 = fields[12].GetInt32();
+        mSpellCheckCastMap[spellId].push_back(checkCast);
 
         ++count;
     } while (result->NextRow());
@@ -3967,6 +4017,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 74434: // Soulburn
                     spellInfo->Effects[EFFECT_1].SpellClassMask[0] |= 33024;
+                    spellInfo->ProcCharges = 1;
                     break;
                 case 81269: // Efflorescence
                     spellInfo->Effects[EFFECT_0].Scaling.Coefficient = 1.5309f;
@@ -4145,7 +4196,10 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 143962: //Inferno Strike
                 case 157333: //Soothing Winds
                 case 157503: //Cloudburst
-                    // ONLY SPELLS WITH SPELLFAMILY_GENERIC and EFFECT_SCHOOL_DAMAGE
+                case 155152: //Prismatic Crystal
+                case 153564: //Meteor
+                case 153596: //Comet Storm
+                    // ONLY SPELLS WITH EFFECT_SCHOOL_DAMAGE or SPELL_EFFECT_HEAL
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_SHARE_DAMAGE;
                     break;
                 case 18500: // Wing Buffet
@@ -4258,11 +4312,6 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ENEMY;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     break;
-                case 87935: // Serpent Spread
-                    spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_APPLY_AURA;
-                    spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_DUMMY;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(21); // -1s
-                    break;
                 case 1459:  // Arcane Illumination
                 case 109773:// Dark Intent
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CASTER_AREA_RAID;
@@ -4333,11 +4382,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 140130: // Summon Intro Scene (hack scene)
                     spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(8); // 15s
                     break;
-                case 127630:// Cascade - damage trigger
-                case 120786:// Cascade - heal trigger
-                    spellInfo->Effects[EFFECT_1].TargetA = TARGET_UNIT_TARGET_ANY;
-                    spellInfo->Effects[EFFECT_1].TargetB = 0;
-                    break;
                 case 324:    // Lightning Shield
                 case 50227:  // Sword and Board
                 case 113901: // Demonic Gateway
@@ -4365,6 +4409,13 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 144595:  // Divine Crusader
                 case 157174:  // Elemental Fusion
                 case 88819:  // Daybreak
+                case 157717:  // Enhanced Basic Attacks
+                case 157644:  // Enhanced Pyrotechnics
+                case 79684:  // Arcane Missiles
+                case 81662:  // Evangelism
+                case 123267:  // Divine Insight
+                case 152117:  // Words of Mending
+                case 155363:  // Words of Mending
                     spellInfo->ProcCharges = 1;
                     break;
                 case 89485:  // Inner Focus
@@ -4745,7 +4796,6 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(4);
                     break;
                 case 136769: //Horridon charge
-                case 53260:  // Cobra Strikes trigger
                 case 88764:  // Rolling Thunder
                 case 144278: //Generate rage
                 case 143462: //Sha pool
@@ -5540,6 +5590,14 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 157154:
                     spellInfo->Effects[EFFECT_0].BasePoints = 0;
+                    break;
+                case 168082: // Revitalizing Waters
+                case 168105: // Rapid Tides
+                case 177497: // Bramble Patch
+                case 168041: // Briarskin
+                case 168375: // Grasping Vine
+                case 175997: // Noxious Eruption
+                    spellInfo->CasterAuraSpell = 0;
                     break;
                 default:
                     break;

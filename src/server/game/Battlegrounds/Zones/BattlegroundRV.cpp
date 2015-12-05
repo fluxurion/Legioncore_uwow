@@ -28,23 +28,11 @@ BattlegroundRV::BattlegroundRV()
 {
     BgObjects.resize(BG_RV_OBJECT_MAX);
 
-    StartDelayTimes[BG_STARTING_EVENT_FIRST]  = Minutes(1);
-    StartDelayTimes[BG_STARTING_EVENT_SECOND] = Seconds(30);
-    StartDelayTimes[BG_STARTING_EVENT_THIRD]  = Seconds(15);
-    StartDelayTimes[BG_STARTING_EVENT_FOURTH] = Seconds(0);
-    // we must set messageIds
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
-	
     PillarCollision = false;
 }
 
 BattlegroundRV::~BattlegroundRV()
-{
-
-}
+{ }
 
 void BattlegroundRV::PostUpdateImpl(uint32 diff)
 {
@@ -90,9 +78,8 @@ void BattlegroundRV::StartingEventOpenDoors()
     // Buff respawn
     SpawnBGObject(BG_RV_OBJECT_BUFF_1, 90);
     SpawnBGObject(BG_RV_OBJECT_BUFF_2, 90);
-    // Elevators
-    DoorOpen(BG_RV_OBJECT_ELEVATOR_1);
-    DoorOpen(BG_RV_OBJECT_ELEVATOR_2);
+
+    DoorsOpen(BG_RV_OBJECT_ELEVATOR_1, BG_RV_OBJECT_ELEVATOR_2);
 
     setState(BG_RV_STATE_OPEN_FENCES);
     setTimer(BG_RV_FIRST_TIMER);
@@ -102,81 +89,15 @@ void BattlegroundRV::StartingEventOpenDoors()
     TogglePillarCollision();
 }
 
-void BattlegroundRV::AddPlayer(Player* player)
+void BattlegroundRV::FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet)
 {
-    //create score and add it to map, default values are set in constructor
-    AddPlayerScore(player->GetGUID(), new BattlegroundRVScore);
-    Battleground::AddPlayer(player);
-    UpdateWorldState(BG_RV_WORLD_STATE_A, GetAlivePlayersCountByTeam(ALLIANCE));
-    UpdateWorldState(BG_RV_WORLD_STATE_H, GetAlivePlayersCountByTeam(HORDE));
-}
-
-void BattlegroundRV::RemovePlayer(Player* /*player*/, ObjectGuid /*guid*/, uint32 /*team*/)
-{
-    if (GetStatus() == STATUS_WAIT_LEAVE)
-        return;
-
-    UpdateWorldState(BG_RV_WORLD_STATE_A, GetAlivePlayersCountByTeam(ALLIANCE));
-    UpdateWorldState(BG_RV_WORLD_STATE_H, GetAlivePlayersCountByTeam(HORDE));
-
-    CheckArenaWinConditions();
-}
-
-void BattlegroundRV::HandleKillPlayer(Player* player, Player* killer)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    if (!killer)
-    {
-        sLog->outError(LOG_FILTER_BATTLEGROUND, "BattlegroundRV: Killer player not found");
-        return;
-    }
-
-    Battleground::HandleKillPlayer(player, killer);
-
-    UpdateWorldState(BG_RV_WORLD_STATE_A, GetAlivePlayersCountByTeam(ALLIANCE));
-    UpdateWorldState(BG_RV_WORLD_STATE_H, GetAlivePlayersCountByTeam(HORDE));
-
-    CheckArenaWinConditions();
-}
-
-bool BattlegroundRV::HandlePlayerUnderMap(Player* player)
-{
-    player->TeleportTo(GetMapId(), 763.5f, -284, 28.276f, 2.422f, false);
-    return true;
-}
-
-void BattlegroundRV::HandleAreaTrigger(Player* Source, uint32 Trigger)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    switch (Trigger)
-    {
-        case 5224:
-        case 5226:
-        // fire was removed in 3.2.0
-        case 5473:
-        case 5474:
-            break;
-        default:
-            sLog->outError(LOG_FILTER_BATTLEGROUND, "WARNING: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            Source->GetSession()->SendNotification("Warning: Unhandled AreaTrigger in Battleground: %u", Trigger);
-            break;
-    }
-}
-
-void BattlegroundRV::FillInitialWorldStates(WorldPacket &data)
-{
-    FillInitialWorldState(data, BG_RV_WORLD_STATE_A, GetAlivePlayersCountByTeam(ALLIANCE));
-    FillInitialWorldState(data, BG_RV_WORLD_STATE_H, GetAlivePlayersCountByTeam(HORDE));
-    FillInitialWorldState(data, BG_RV_WORLD_STATE, 1);
+    packet.Worldstates.emplace_back(WorldStates::ARENA_ALIVE_PLAYERS_GREEN, GetAlivePlayersCountByTeam(ALLIANCE));
+    packet.Worldstates.emplace_back(WorldStates::ARENA_ALIVE_PLAYERS_GOLD, GetAlivePlayersCountByTeam(HORDE));
+    packet.Worldstates.emplace_back(WorldStates::BG_RV_WORLD_STATE, 1);
 }
 
 void BattlegroundRV::Reset()
 {
-    //call parent's class reset
     Battleground::Reset();
 }
 

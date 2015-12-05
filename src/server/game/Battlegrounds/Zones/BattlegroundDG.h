@@ -20,9 +20,7 @@
 #define __BATTLEGROUNDDG_H
 
 #include "Battleground.h"
-
-#define CAPTURE_TIME 40000
-#define GOLD_UPDATE 5000
+#include "BattlegroundScore.h"
 
 #define BG_DG_MAX_TEAM_SCORE 1500
 
@@ -68,8 +66,6 @@ enum BG_DG_SPELLS
 
     BG_DG_AURA_CART_HORDE       = 141555,
     BG_DG_AURA_CART_ALLIANCE    = 141551,
-
-
     BG_DG_AURA_CARTS_CHAINS     = 141553,
 
     BG_DG_CAPTURE_SPELL         = 97388,
@@ -122,11 +118,48 @@ enum BG_DG_Objectives
     DG_OBJECTIVE_DEFENDED_FLAG              = 460,
 };
 
-class BattlegroundDGScore : public BattlegroundScore
+static const uint32 BgDGCartRetured[MAX_TEAMS] = {73832, 73834};
+static const uint32 BgDGCartReturedToBase[MAX_TEAMS] = {73836, 73837};
+static const uint32 BgDGCartReady[MAX_TEAMS] = {73540, 73541};
+static const uint32 BgDGCartChecked[MAX_TEAMS] = {73548, 73549};
+static const uint32 BgDGCartCaptured[MAX_TEAMS] = {74023, 74024};
+
+struct BattlegroundDGScore final : public BattlegroundScore
 {
-    public:
-        BattlegroundDGScore() : cartsCaptured(0), cartsDefended(0), pointsCaptured(0), pointsDefended(0) {}
-        virtual ~BattlegroundDGScore() {}
+    friend class BattlegroundDG;
+
+    protected:
+        BattlegroundDGScore(ObjectGuid playerGuid, TeamId team) : BattlegroundScore(playerGuid, team), cartsCaptured(0), cartsDefended(0), pointsCaptured(0), pointsDefended(0) { }
+
+        void UpdateScore(uint32 type, uint32 value) override
+        {
+            switch (type)
+            {
+                case SCORE_CARTS_CAPTURED:
+                    cartsCaptured += value;
+                    break;
+                case SCORE_CARTS_DEFENDED:
+                    cartsDefended += value;
+                    break;
+                case SCORE_POINTS_CAPTURED:
+                    pointsCaptured += value;
+                    break;
+                case SCORE_POINTS_DEFENDED:
+                    pointsCaptured += value;
+                    break;
+                default:
+                    BattlegroundScore::UpdateScore(type, value);
+                    break;
+            }
+        }
+
+        void BuildObjectivesBlock(std::vector<int32>& stats) override
+        {
+            stats.push_back(cartsCaptured);
+            stats.push_back(cartsDefended);
+            stats.push_back(pointsCaptured);
+            stats.push_back(pointsDefended);
+        }
 
         uint32 cartsCaptured;
         uint32 cartsDefended;
@@ -144,34 +177,31 @@ public:
     BattlegroundDG();
     ~BattlegroundDG();
 
-    /* inherited from BattlegroundClass */
-    void AddPlayer(Player* player);
-    virtual void StartingEventCloseDoors();
-    virtual void StartingEventOpenDoors();
+    void AddPlayer(Player* player) override;
+    void StartingEventCloseDoors() override;
+    void StartingEventOpenDoors() override;
 
-    void UpdatePlayerScore(Player* player, uint32 type, uint32 addvalue, bool doAddHonor);
+    bool UpdatePlayerScore(Player* player, uint32 type, uint32 addvalue, bool doAddHonor) override;
 
-    WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
+    WorldSafeLocsEntry const* GetClosestGraveYard(Player* player) override;
 
-    void RemovePlayer(Player* player, ObjectGuid guid, uint32 team);
-    void HandleAreaTrigger(Player* Source, uint32 Trigger);
-    bool SetupBattleground();
-    virtual void Reset();
-    virtual void FillInitialWorldStates(WorldPacket &d);
-    void HandleKillPlayer(Player* player, Player* killer);
-    bool HandlePlayerUnderMap(Player* player);
+    void RemovePlayer(Player* player, ObjectGuid guid, uint32 team) override;
+    void HandleAreaTrigger(Player* player, uint32 trigger, bool entered) override;
+    bool SetupBattleground() override;
+    void Reset() override;
+    void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet) override;
+    void HandleKillPlayer(Player* player, Player* killer) override;
 
     void HandlePointCapturing(Player* player, Creature* creature);
 
-    void EventPlayerUsedGO(Player* player, GameObject* go);
-    void EventPlayerDroppedFlag(Player* Source);
+    void EventPlayerUsedGO(Player* player, GameObject* go) override;
+    void EventPlayerDroppedFlag(Player* Source) override;
 
-    void UpdatePointsCountPerTeam();
+    uint32 ModGold(TeamId teamId, int32 val);
 
-    uint32 ModGold(uint8 teamId, int32 val);
-    uint32 GetCurrentGold(uint8 teamId) { return m_gold[teamId]; }
-
-    ObjectGuid GetFlagPickerGUID(int32 team) const;
+    ObjectGuid GetFlagPickerGUID(int32 team) const override;
+    void GetPlayerPositionData(std::vector<WorldPackets::Battleground::PlayerPositions::BattlegroundPlayerPosition>* positions) const override;
+    uint8 _GetCapturedNodesForTeam(TeamId teamID);
 
 private:
         class Point
@@ -182,12 +212,12 @@ private:
 
             BattlegroundDG* GetBg() { return m_bg; }
 
-            virtual void UpdateState(PointStates state);
+            void UpdateState(PointStates state);
 
-            uint8 GetState() { return m_state; }
+            PointStates GetState() { return m_state; }
 
             void PointClicked(Player* player);
-            void Update(uint32 diff);
+            void Update(Milliseconds diff);
 
             uint32 TakeGoldCredit() { return m_goldCredit; }
 
@@ -195,16 +225,16 @@ private:
             Creature* GetCreaturePoint() { return m_point; }
 
         protected:
-            typedef std::pair<uint32, uint32> WorldState;
+            typedef std::pair<WorldStates, uint32> WorldState;
             WorldState m_currentWorldState;
 
-            uint8 m_state;
+            PointStates m_state;
             uint32 m_prevAura;
 
             BattlegroundDG* m_bg;
             Creature* m_point;
 
-            int32 m_timer;
+            Milliseconds m_timer;
 
             uint32 m_goldCredit;
         };
@@ -237,7 +267,7 @@ private:
         {
         public:
             Cart(BattlegroundDG* bg);
-            ~Cart() {}
+            ~Cart() { }
 
             void ToggleCaptured(Player* player);
             void CartDropped();
@@ -247,8 +277,8 @@ private:
             void SetGameObject(GameObject* obj, uint32 id) { m_goCart = obj; m_goBgId = id; }
             GameObject* GetGameObject() { return m_goCart; }
 
-            void SetTeamId(uint32 team) { m_team = team; }
-            uint32 TeamId() { return m_team; }
+            void SetTeamId(TeamId team) { m_team = team; }
+            TeamId GetTeamId() { return m_team; }
 
             ObjectGuid TakePlayerWhoDroppedFlag() { ObjectGuid v = m_playerDroppedCart; m_playerDroppedCart.Clear(); return v; }
 
@@ -263,22 +293,21 @@ private:
             GameObject* m_goCart;
             uint32 m_goBgId;
 
-            uint32 m_team;
+            TeamId m_team;
 
             ObjectGuid m_playerDroppedCart;
             uint32 m_stolenGold;
         };
 
 private:
-        virtual void PostUpdateImpl(uint32 diff);
+        void PostUpdateImpl(Milliseconds diff) override;
 
-        Point* m_points[MAX_POINTS];
-        Cart*  m_carts[BG_TEAMS_COUNT];
+        Point* _points[MAX_POINTS];
+        Cart*  _carts[MAX_TEAMS];
 
-        int32 m_flagsUpdTimer;
-        int32 m_goldUpdate;
-
-        uint32 m_gold[BG_TEAMS_COUNT];
+        int32 _flagsUpdTimer;
+        Milliseconds _goldUpdate;
 };
 
 #endif
+

@@ -243,7 +243,7 @@ void WorldSession::HandlePVPLogData(WorldPackets::Battleground::NullCmsg& /*pack
         return;
 
     WorldPackets::Battleground::PVPLogData pvpLogData;
-    sBattlegroundMgr->BuildPvPLogDataPacket(pvpLogData, bg);
+    bg->BuildPvPLogDataPacket(pvpLogData);
     SendPacket(pvpLogData.Write());
 }
 
@@ -535,25 +535,6 @@ void WorldSession::JoinBracket(uint8 slot)
     GroupJoinBattlegroundResult err = ERR_BATTLEGROUND_NONE;
     Group* grp = player->GetGroup();
 
-    //! Custom conection for join withoud group
-    if (!grp && sBattlegroundMgr->isArenaTesting())
-    {
-        BattlegroundQueue &bgQueue = sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId);
-
-        WorldPackets::Battleground::IgnorMapInfo ignore;    //empty
-        ginfo = bgQueue.AddGroup(player, nullptr, bgTypeId, bracketEntry, Jointype, true, false, ignore, 1500);
-        avgTime = bgQueue.GetAverageQueueWaitTime(ginfo, bracketEntry->GetBracketId());
-
-        player->AddBattlegroundQueueJoinTime(bgTypeId, ginfo->JoinTime);
-
-        WorldPackets::Battleground::BattlefieldStatusQueued queued;
-        sBattlegroundMgr->BuildBattlegroundStatusQueued(&queued, bg, player, player->AddBattlegroundQueueId(bgQueueTypeId), ginfo->JoinTime, avgTime, ginfo->JoinType, true);
-        SendPacket(queued.Write());
-
-        sBattlegroundMgr->ScheduleQueueUpdate(1500, Jointype, bgQueueTypeId, bgTypeId, bracketEntry->GetBracketId());
-        return;
-    }
-
     // no group found, error
     if (!grp || grp->GetLeaderGUID() != player->GetGUID())
         return;
@@ -562,7 +543,7 @@ void WorldSession::JoinBracket(uint8 slot)
 
     ObjectGuid errorGuid;
     err = grp->CanJoinBattlegroundQueue(bg, bgQueueTypeId, Jointype, Jointype, true, slot, errorGuid);
-    if (!err || (err && sBattlegroundMgr->isArenaTesting()))
+    if (!err)
     {
         sLog->outDebug(LOG_FILTER_BATTLEGROUND, "Battleground: leader %s join type %u", player->GetName(), Jointype);
 
@@ -694,11 +675,8 @@ void WorldSession::HandleJoinSkirmish(WorldPackets::Battleground::JoinSkirmish& 
     Player* player = GetPlayer();
     if (!player)
         return;
-
-    Group* grp = nullptr;
     
-    uint8 arenatype = (packet.Bracket == BRACKET_TYPE_SKIRMISH_3 ? ARENA_TYPE_3v3 : ARENA_TYPE_2v2);
-      
+    uint8 arenatype = sBattlegroundMgr->GetJoinTypeByBracketSlot(packet.Bracket);
     Battleground* bg = sBattlegroundMgr->GetBattlegroundTemplate(BATTLEGROUND_AA);
     if (!bg)
         return;
@@ -718,8 +696,6 @@ void WorldSession::HandleJoinSkirmish(WorldPackets::Battleground::JoinSkirmish& 
     PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bg->GetMapId(), player->getLevel());
     if (!bracketEntry)
         return;
-
-    GroupJoinBattlegroundResult err = ERR_BATTLEGROUND_NONE;
 
     if (!packet.JoinAsGroup)
     {
@@ -762,7 +738,7 @@ void WorldSession::HandleJoinSkirmish(WorldPackets::Battleground::JoinSkirmish& 
     }
     else
     {
-        grp = player->GetGroup();
+        Group* grp = player->GetGroup();
 
         if (!grp)
             return;
@@ -771,7 +747,7 @@ void WorldSession::HandleJoinSkirmish(WorldPackets::Battleground::JoinSkirmish& 
             return;
 
         ObjectGuid errorGuid;
-        err = grp->CanJoinBattlegroundQueue(bg, bgQueueTypeId, 0, bg->GetMaxPlayersPerTeam(), false, 0, errorGuid);
+        GroupJoinBattlegroundResult err = grp->CanJoinBattlegroundQueue(bg, bgQueueTypeId, 0, bg->GetMaxPlayersPerTeam(), false, 0, errorGuid);
 
         BattlegroundQueue& bgQueue = sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId);
         GroupQueueInfo* ginfo = nullptr;

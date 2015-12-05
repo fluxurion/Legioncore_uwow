@@ -48,17 +48,14 @@ enum PriestSpells
     PRIEST_SPELL_HALO_HEAL_HOLY                 = 120692,
 
     // Cascade
-    PRIEST_CASCADE_HOLY_DAMAGE                  = 120785,
     PRIEST_CASCADE_HOLY_TRIGGER                 = 120786,
     PRIEST_CASCADE_INVISIBLE_AURA               = 120840,
     PRIEST_CASCADE_HOLY_TALENT                  = 121135,
     PRIEST_CASCADE_HOLY_MISSILE                 = 121146,
     PRIEST_CASCADE_HOLY_HEAL                    = 121148,
-    PRIEST_CASCADE_SHADOW_MISSILE               = 127627,
     PRIEST_CASCADE_SHADOW_DAMAGE                = 127628,
-    PRIEST_CASCADE_SHADOW_HEAL                  = 127629,
     PRIEST_CASCADE_DAMAGE_TRIGGER               = 127630,
-    PRIEST_CASCADE_INVISIBLE_AURA_2             = 127631,
+    PRIEST_CASCADE_INVISIBLE_AURA_SHADOW        = 127631,
     PRIEST_CASCADE_SHADOW_TALENT                = 127632,
 
     PRIEST_SHADOWFORM_STANCE                    = 15473,
@@ -224,7 +221,15 @@ class spell_pri_power_word_solace : public SpellScriptLoader
             void HandleOnHit()
             {
                 if (Unit* caster = GetCaster())
-                    caster->CastSpell(caster, 129253, true);
+                {
+                    int32 bp = 2;
+                    caster->CastCustomSpell(caster, 129253, &bp, NULL, NULL, true);
+                    if (!caster->HasAura(81749))
+                    {
+                        int32 _damage = GetHitDamage();
+                        caster->CastCustomSpell(caster, 140815, &_damage, NULL, NULL, true);
+                    }
+                }
             }
 
             void Register()
@@ -781,23 +786,18 @@ class spell_pri_devouring_plague : public SpellScriptLoader
                             if(Aura* aura = _player->GetAura(145179)) // Item - Priest T16 Shadow 4P Bonus
                                 aura->GetEffect(0)->SetAmount(20 * currentPower);
 
-                            _player->ModifyPower(POWER_SHADOW_ORBS, -currentPower, true);
                             // Shadow Orb visual
                             if (_player->HasAura(77487))
                                 _player->RemoveAura(77487);
                             // Glyph of Shadow Ravens
                             else if (_player->HasAura(127850))
                                 _player->RemoveAura(127850);
-
-                            // Instant damage equal to amount of shadow orb
-                            SetHitDamage(int32(GetHitDamage() * currentPower / 3));
-
-                            if (Aura* aur = target->GetAura(GetSpellInfo()->Id, _player->GetGUID()))
-                            {
-                                if (AuraEffect* eff = aur->GetEffect(EFFECT_2))
-                                    eff->SetAmount(100 * currentPower / 3);
-                            }
                         }
+
+                        int32 bp = GetHitDamage();
+                        _player->CastCustomSpell(_player, PRIEST_DEVOURING_PLAGUE_HEAL, &bp, 0, 0, true);
+                        bp /= 6;
+                        _player->CastCustomSpell(target, 158831, &bp, 0, 0, true);
                     }
                 }
             }
@@ -807,43 +807,6 @@ class spell_pri_devouring_plague : public SpellScriptLoader
                 OnHit += SpellHitFn(spell_pri_devouring_plague_SpellScript::HandleOnHit);
             }
         };
-
-        class spell_pri_devouring_plague_AuraScript : public AuraScript
-        {
-            PrepareAuraScript(spell_pri_devouring_plague_AuraScript);
-
-            int32 orbCount;
-
-            bool Load()
-            {
-                if(Unit* caster = GetCaster())
-                    orbCount = caster->GetPower(POWER_SHADOW_ORBS) + 1;
-                GetAura()->SetCustomData(orbCount);
-                return true;
-            }
-
-            void OnPereodic(AuraEffect const* /*aurEff*/)
-            {
-                if(Unit* caster = GetCaster())
-                    caster->CastCustomSpell(caster, PRIEST_DEVOURING_PLAGUE_HEAL, &orbCount, 0, 0, true);
-            }
-
-            void HandleTick(AuraEffect const* /*aurEff*/, int32& amount, Unit* /*target*/)
-            {
-                amount *= orbCount;
-            }
-
-            void Register()
-            {
-                OnEffectPeriodic += AuraEffectPeriodicFn(spell_pri_devouring_plague_AuraScript::OnPereodic, EFFECT_1, SPELL_AURA_PERIODIC_DAMAGE);
-                DoEffectChangeTickDamage += AuraEffectChangeTickDamageFn(spell_pri_devouring_plague_AuraScript::HandleTick, EFFECT_1, SPELL_AURA_PERIODIC_DAMAGE);
-            }
-        };
-
-        AuraScript* GetAuraScript() const
-        {
-            return new spell_pri_devouring_plague_AuraScript();
-        }
 
         SpellScript* GetSpellScript() const
         {
@@ -952,124 +915,36 @@ class spell_pri_cascade_second : public SpellScriptLoader
         {
             PrepareSpellScript(spell_pri_cascade_second_SpellScript);
 
-            void HandleOnHit()
+            void HandleOnHit(SpellEffIndex /*effIndex*/)
             {
-                if (Player* _player = GetCaster()->ToPlayer())
+                SpellValue const* spellValue = GetSpellValue();
+                Unit* caster = GetExplTargetUnit();
+                Unit* casterOrig = GetOriginalCaster();
+                Unit* target = GetHitUnit();
+                if(!caster || !spellValue || !target)
+                    return;
+
+                int32 jumpCount = spellValue->EffectBasePoints[1];
+                switch (GetSpellInfo()->Id)
                 {
-                    if (Unit* target = GetHitUnit())
-                    {
-                        std::list<Unit*> checkAuras;
-                        std::list<Unit*> targetList;
-                        int32 affectedUnits = 0;
-
-                        _player->GetAttackableUnitListInRange(targetList, 40.0f);
-
-                        for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
-                        {
-                            if ((*itr)->HasAura(PRIEST_CASCADE_INVISIBLE_AURA))
-                                if (Unit* caster = (*itr)->GetAura(PRIEST_CASCADE_INVISIBLE_AURA)->GetCaster())
-                                    if (caster->GetGUID() == _player->GetGUID())
-                                        affectedUnits++;
-                        }
-
-                        // Stop the script if the max targets is reached ...
-                        if (affectedUnits >= 15)
-                            return;
-
-                        if (Aura* boundNumber = _player->GetAura(PRIEST_CASCADE_INVISIBLE_AURA_2))
-                            if (boundNumber->GetCharges() >= 3)
-                                return;
-
-                        for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
-                            checkAuras.push_back(*itr);
-
-                        for (std::list<Unit*>::const_iterator itr = checkAuras.begin(); itr != checkAuras.end(); ++itr)
-                        {
-                            Unit* unit = *itr;
-                            if (unit->HasAura(PRIEST_CASCADE_INVISIBLE_AURA))
-                                if (Unit* caster = unit->GetAura(PRIEST_CASCADE_INVISIBLE_AURA)->GetCaster())
-                                    if (caster->GetGUID() == _player->GetGUID())
-                                        targetList.remove(unit);
-
-                            if (!unit->IsWithinLOSInMap(_player))
-                                targetList.remove(unit);
-
-                            if (!unit->isInFront(_player))
-                                targetList.remove(unit);
-
-                            if (unit->GetGUID() == _player->GetGUID())
-                                targetList.remove(unit);
-
-                            // damage
-                            if (GetSpellInfo()->Id == 127630)
-                                if (!_player->IsValidAttackTarget(unit))
-                                    targetList.remove(unit);
-
-                            // heal
-                            if (GetSpellInfo()->Id == 120786)
-                                if (_player->IsValidAttackTarget(unit))
-                                    targetList.remove(unit);
-                        }
-
-                        // ... or if there are no targets reachable
-                        if (targetList.size() == 0)
-                            return;
-
-                        // Each bound hit twice more targets up to 8 for the same bound
-                        Trinity::Containers::RandomResizeList(targetList, (affectedUnits * 2));
-
-                        for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
-                        {
-                            if (_player->HasAura(PRIEST_SHADOWFORM_STANCE))
-                            {
-                                switch (GetSpellInfo()->Id)
-                                {
-                                    // damage
-                                    case 127630:
-                                        target->CastSpell(*itr, PRIEST_CASCADE_SHADOW_DAMAGE, true, 0, NULL, _player->GetGUID());
-                                        break;
-                                    // heal
-                                    case 120786:
-                                        target->CastSpell(*itr, PRIEST_CASCADE_SHADOW_MISSILE, true, 0, NULL, _player->GetGUID());
-                                        target->CastSpell(*itr, PRIEST_CASCADE_SHADOW_HEAL, true, 0, NULL, _player->GetGUID());
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                switch (GetSpellInfo()->Id)
-                                {
-                                    // damage
-                                    case 127630:
-                                        target->CastSpell(*itr, PRIEST_CASCADE_HOLY_DAMAGE, true, 0, NULL, _player->GetGUID());
-                                        break;
-                                    // heal
-                                    case 120786:
-                                        target->CastSpell(*itr, PRIEST_CASCADE_HOLY_MISSILE, true, 0, NULL, _player->GetGUID());
-                                        target->CastSpell(*itr, PRIEST_CASCADE_HOLY_HEAL, true, 0, NULL, _player->GetGUID());
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-
-                            _player->CastSpell(*itr, PRIEST_CASCADE_INVISIBLE_AURA, true);
-                        }
-
-                        if (Aura* boundNumber = _player->GetAura(PRIEST_CASCADE_INVISIBLE_AURA_2))
-                        {
-                            boundNumber->RefreshDuration();
-                            boundNumber->SetCharges(boundNumber->GetCharges() + 1);
-                        }
-                    }
+                    // damage
+                    case 127630:
+                        caster->CastCustomSpell(target, PRIEST_CASCADE_SHADOW_DAMAGE, NULL, &jumpCount, NULL, true, NULL, NULL, casterOrig->GetGUID()); //127628
+                        break;
+                    // heal
+                    case 120786:
+                        caster->CastCustomSpell(target, PRIEST_CASCADE_HOLY_MISSILE, NULL, &jumpCount, NULL, true, NULL, NULL, casterOrig->GetGUID()); //121146
+                        casterOrig->CastSpell(target, PRIEST_CASCADE_HOLY_HEAL, true); //121148
+                        break;
+                    default:
+                        break;
                 }
+                caster->CastSpell(target, PRIEST_CASCADE_INVISIBLE_AURA, true);
             }
 
             void Register()
             {
-                OnHit += SpellHitFn(spell_pri_cascade_second_SpellScript::HandleOnHit);
+                OnEffectHitTarget += SpellEffectFn(spell_pri_cascade_second_SpellScript::HandleOnHit, EFFECT_1, SPELL_EFFECT_DUMMY);
             }
         };
 
@@ -1079,7 +954,7 @@ class spell_pri_cascade_second : public SpellScriptLoader
         }
 };
 
-// Cascade - 120785 (holy damage) or Cascade - 127628 (shadow damage) or Cascade - 127627 (shadow missile) or Cascade - 121146 (holy missile)
+// Cascade - 127628 (shadow damage) or Cascade - 121146 (holy missile)
 class spell_pri_cascade_trigger : public SpellScriptLoader
 {
     public:
@@ -1089,114 +964,113 @@ class spell_pri_cascade_trigger : public SpellScriptLoader
         {
             PrepareSpellScript(spell_pri_cascade_trigger_SpellScript);
 
-            void HandleOnHit()
+            void HandleOnHit(SpellEffIndex /*effIndex*/)
             {
-                if (GetOriginalCaster())
-                {
-                    if (Player* _player = GetOriginalCaster()->ToPlayer())
-                    {
-                        if (Unit* target = GetHitUnit())
-                        {
-                            // Trigger for SpellScript
-                            if (_player->IsValidAttackTarget(target))
-                                _player->CastSpell(target, PRIEST_CASCADE_DAMAGE_TRIGGER, true); // Only damage
-                            else
-                                _player->CastSpell(target, PRIEST_CASCADE_HOLY_TRIGGER, true); // Only heal
-                        }
-                    }
-                }
+                SpellValue const* spellValue = GetSpellValue();
+                Unit* caster = GetCaster();
+                Unit* casterOrig = GetOriginalCaster();
+                Unit* target = GetHitUnit();
+                if(!caster || !spellValue || !target)
+                    return;
+
+                int32 jumpCount = spellValue->EffectBasePoints[1] - 1;
+                if(jumpCount)
+                    caster->CastCustomSpell(target, GetSpellInfo()->Id == 127628 ? PRIEST_CASCADE_DAMAGE_TRIGGER : PRIEST_CASCADE_HOLY_TRIGGER, &jumpCount, &jumpCount, NULL, true, NULL, NULL, casterOrig->GetGUID()); //120840
             }
 
             void Register()
             {
-                OnHit += SpellHitFn(spell_pri_cascade_trigger_SpellScript::HandleOnHit);
+                OnEffectHitTarget += SpellEffectFn(spell_pri_cascade_trigger_SpellScript::HandleOnHit, EFFECT_1, SPELL_EFFECT_APPLY_AURA);
             }
         };
 
         SpellScript* GetSpellScript() const
         {
-            return new spell_pri_cascade_trigger_SpellScript;
+            return new spell_pri_cascade_trigger_SpellScript();
         }
 };
 
-// Cascade (shadow) - 127632 and Cascade - 121135
-class spell_pri_cascade_first : public SpellScriptLoader
+// Cascade - 121135
+class spell_pri_cascade : public SpellScriptLoader
 {
     public:
-        spell_pri_cascade_first() : SpellScriptLoader("spell_pri_cascade_first") { }
+        spell_pri_cascade() : SpellScriptLoader("spell_pri_cascade") { }
 
-        class spell_pri_cascade_first_SpellScript : public SpellScript
+        class spell_pri_cascade_SpellScript : public SpellScript
         {
-            PrepareSpellScript(spell_pri_cascade_first_SpellScript);
+            PrepareSpellScript(spell_pri_cascade_SpellScript);
 
             void HandleOnHit()
             {
-                if (Player* _player = GetCaster()->ToPlayer())
+                if (Unit* caster = GetCaster())
                 {
                     if (Unit* target = GetHitUnit())
                     {
-                        switch (GetSpellInfo()->Id)
-                        {
-                            case 127632:
-                            {
-                                // First missile
-                                if (_player->IsValidAttackTarget(target))
-                                    _player->CastSpell(target, PRIEST_CASCADE_SHADOW_DAMAGE, true, 0, NULL, _player->GetGUID());
-                                else
-                                {
-                                    _player->CastSpell(target, PRIEST_CASCADE_SHADOW_MISSILE, true, 0, NULL, _player->GetGUID());
-                                    _player->CastSpell(target, PRIEST_CASCADE_SHADOW_HEAL, true, 0, NULL, _player->GetGUID());
-                                }
+                        int32 jumpCount = GetSpellInfo()->Effects[EFFECT_0].BasePoints;
+                        caster->CastCustomSpell(target, PRIEST_CASCADE_HOLY_MISSILE, NULL, &jumpCount, NULL, true, NULL, NULL, caster->GetGUID()); //121146
+                        caster->CastSpell(target, PRIEST_CASCADE_HOLY_HEAL, true, 0, NULL, caster->GetGUID()); //121148
 
-                                break;
-                            }
-                            case 121135:
-                            {
-                                // First missile
-                                if (_player->IsValidAttackTarget(target))
-                                    _player->CastSpell(target, PRIEST_CASCADE_HOLY_DAMAGE, true, 0, NULL, _player->GetGUID());
-                                else
-                                {
-                                    _player->CastSpell(target, PRIEST_CASCADE_HOLY_MISSILE, true, 0, NULL, _player->GetGUID());
-                                    _player->CastSpell(target, PRIEST_CASCADE_HOLY_HEAL, true, 0, NULL, _player->GetGUID());
-                                }
-
-                                break;
-                            }
-                        }
-
-                        // Invisible aura : Each target cannot be hit more than once time [...]
-                        _player->CastSpell(target, PRIEST_CASCADE_INVISIBLE_AURA, true);
-                        // Invisible aura 2 : [...] or Cascade can bound three times
-                        _player->CastSpell(_player, PRIEST_CASCADE_INVISIBLE_AURA_2, true); // First bound
-
-                        if (Aura* boundNumber = _player->GetAura(PRIEST_CASCADE_INVISIBLE_AURA_2))
-                            boundNumber->SetCharges(1);
+                        caster->CastSpell(target, PRIEST_CASCADE_INVISIBLE_AURA, true); //120840
                     }
                 }
             }
 
             void Register()
             {
-                OnHit += SpellHitFn(spell_pri_cascade_first_SpellScript::HandleOnHit);
+                OnHit += SpellHitFn(spell_pri_cascade_SpellScript::HandleOnHit);
             }
         };
 
         SpellScript* GetSpellScript() const
         {
-            return new spell_pri_cascade_first_SpellScript;
+            return new spell_pri_cascade_SpellScript;
         }
 };
 
-// Halo
-class spell_pri_halo : public SpellScriptLoader
+// Cascade (shadow) - 127632
+class spell_pri_cascade_shadow : public SpellScriptLoader
 {
     public:
-        spell_pri_halo() : SpellScriptLoader("spell_pri_halo") { }
+        spell_pri_cascade_shadow() : SpellScriptLoader("spell_pri_cascade_shadow") { }
 
-        class spell_pri_halo_SpellScript : public SpellScript
+        class spell_pri_cascade_shadow_SpellScript : public SpellScript
         {
-            PrepareSpellScript(spell_pri_halo_SpellScript);
+            PrepareSpellScript(spell_pri_cascade_shadow_SpellScript);
+
+            void HandleOnHit()
+            {
+                if (Unit* caster = GetCaster())
+                {
+                    if (Unit* target = GetHitUnit())
+                    {
+                        int32 jumpCount = GetSpellInfo()->Effects[EFFECT_0].BasePoints;
+                        caster->CastCustomSpell(target, PRIEST_CASCADE_SHADOW_DAMAGE, NULL, &jumpCount, NULL, true, NULL, NULL, caster->GetGUID()); //127628
+                        caster->CastSpell(target, PRIEST_CASCADE_INVISIBLE_AURA_SHADOW, true); //127631
+                    }
+                }
+            }
+
+            void Register()
+            {
+                OnHit += SpellHitFn(spell_pri_cascade_shadow_SpellScript::HandleOnHit);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_pri_cascade_shadow_SpellScript;
+        }
+};
+
+// Halo - 120692
+class spell_pri_halo_heal : public SpellScriptLoader
+{
+    public:
+        spell_pri_halo_heal() : SpellScriptLoader("spell_pri_halo_heal") { }
+
+        class spell_pri_halo_heal_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_pri_halo_heal_SpellScript);
 
             void HandleHeal(SpellEffIndex /*effIndex*/)
             {
@@ -1213,6 +1087,28 @@ class spell_pri_halo : public SpellScriptLoader
                 }
             }
 
+            void Register()
+            {
+                OnEffectHitTarget += SpellEffectFn(spell_pri_halo_heal_SpellScript::HandleHeal, EFFECT_0, SPELL_EFFECT_HEAL);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_pri_halo_heal_SpellScript;
+        }
+};
+
+// Halo - 120696
+class spell_pri_halo_damage : public SpellScriptLoader
+{
+    public:
+        spell_pri_halo_damage() : SpellScriptLoader("spell_pri_halo_damage") { }
+
+        class spell_pri_halo_damage_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_pri_halo_damage_SpellScript);
+
             void HandleDamage(SpellEffIndex /*effIndex*/)
             {
                 if (Unit* caster = GetCaster())
@@ -1228,36 +1124,15 @@ class spell_pri_halo : public SpellScriptLoader
                 }
             }
 
-            void FilterTargets(WorldObject*& target)
-            {
-                Unit* unit = target->ToUnit();
-                if(!unit)
-                    target = NULL;
-                if(!GetCaster()->IsFriendlyTo(unit))
-                    target = NULL;
-            }
-
-            void FilterTargets1(WorldObject*& target)
-            {
-                Unit* unit = target->ToUnit();
-                if(!unit)
-                    target = NULL;
-                if(GetCaster()->IsFriendlyTo(unit))
-                    target = NULL;
-            }
-
             void Register()
             {
-                OnObjectTargetSelect += SpellObjectTargetSelectFn(spell_pri_halo_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_TARGET_ANY);
-                OnObjectTargetSelect += SpellObjectTargetSelectFn(spell_pri_halo_SpellScript::FilterTargets1, EFFECT_1, TARGET_UNIT_TARGET_ANY);
-                OnEffectHitTarget += SpellEffectFn(spell_pri_halo_SpellScript::HandleHeal, EFFECT_0, SPELL_EFFECT_HEAL);
-                OnEffectHitTarget += SpellEffectFn(spell_pri_halo_SpellScript::HandleDamage, EFFECT_1, SPELL_EFFECT_SCHOOL_DAMAGE);
+                OnEffectHitTarget += SpellEffectFn(spell_pri_halo_damage_SpellScript::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
             }
         };
 
         SpellScript* GetSpellScript() const
         {
-            return new spell_pri_halo_SpellScript;
+            return new spell_pri_halo_damage_SpellScript;
         }
 };
 
@@ -1538,6 +1413,8 @@ class spell_pri_shadow_orb : public SpellScriptLoader
                                         plr->RemoveSpellCooldown(GetSpellInfo()->Id, true);
                                     }
                                 }
+                                else if (caster->HasAura(157218)) // Enhanced Shadow Word: Death
+                                    caster->CastSpell(caster, 125927, true);
                             }
             }
 
@@ -1799,8 +1676,7 @@ class spell_pri_vampiric_touch : public SpellScriptLoader
             {
                 if (Unit* caster = GetCaster())
                     if (Unit* dispeller = dispelInfo->GetDispeller())
-                        if (caster->HasAura(PRIEST_SPELL_4P_S12_SHADOW))
-                            dispeller->CastSpell(dispeller, PRIEST_SPELL_SIN_AND_PUNISHMENT, true, 0, NULL, caster->GetGUID());
+                        dispeller->CastSpell(dispeller, PRIEST_SPELL_SIN_AND_PUNISHMENT, true, 0, NULL, caster->GetGUID());
             }
 
             void Register()
@@ -2189,35 +2065,6 @@ class spell_pri_power_word_solace_heal : public SpellScriptLoader
         {
             PrepareSpellScript(spell_pri_power_word_solace_heal_SpellScript);
 
-            void FilterTargets(std::list<WorldObject*>& targets)
-            {
-                if (targets.empty())
-                {
-                    targets.push_back(GetCaster());
-                    return;
-                }
-
-                Unit* targerSave = NULL;
-                for (std::list<WorldObject*>::iterator itr = targets.begin() ; itr != targets.end(); ++itr)
-                {
-                    if(Unit* target = (*itr)->ToUnit())
-                        if(target->GetTypeId() == TYPEID_PLAYER)
-                            if(!targerSave || target->GetHealth() < targerSave->GetHealth())
-                                targerSave = target;
-                }
-
-                targets.clear();
-                if(targerSave)
-                    targets.push_back(targerSave);
-                else
-                    targets.push_back(GetCaster());
-            }
-
-            void FilterSelf(std::list<WorldObject*>& targets)
-            {
-                targets.clear();
-            }
-
             void HandleDamageCalc(SpellEffIndex /*effIndex*/)
             {
                 Unit* caster = GetCaster();
@@ -2229,8 +2076,6 @@ class spell_pri_power_word_solace_heal : public SpellScriptLoader
             void Register()
             {
                 OnEffectHitTarget += SpellEffectFn(spell_pri_power_word_solace_heal_SpellScript::HandleDamageCalc, EFFECT_0, SPELL_EFFECT_HEAL);
-                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_pri_power_word_solace_heal_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_DEST_AREA_ALLY);
-                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_pri_power_word_solace_heal_SpellScript::FilterSelf, EFFECT_0, TARGET_DEST_DEST);
             }
         };
 
@@ -2487,16 +2332,16 @@ class spell_pri_lightwell_trigger : public SpellScriptLoader
 
             void FilterTargets(std::list<WorldObject*>& targets)
             {
-                if (targets.empty())
+                Unit* caster = GetCaster();
+                if (targets.empty() || !caster)
                     return;
 
                 std::list<WorldObject*> unitList;
                 for (std::list<WorldObject*>::iterator itr = targets.begin() ; itr != targets.end(); ++itr)
                 {
                     if (Unit* targer = (*itr)->ToUnit())
-                        if (Unit* caster = GetCaster())
-                            if (targer->GetHealthPct() <= 50.0f && !targer->HasAura(LIGHTSPRING_RENEW_MOP) && targer != caster)
-                                unitList.push_back((*itr));
+                        if (targer->GetHealthPct() <= 50.0f && !targer->HasAura(LIGHTSPRING_RENEW_MOP) && targer != caster)
+                            unitList.push_back((*itr));
                 }
                 targets.clear();
                 targets = unitList;
@@ -2504,7 +2349,7 @@ class spell_pri_lightwell_trigger : public SpellScriptLoader
 
             void Register()
             {
-                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_pri_lightwell_trigger_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_CASTER_AREA_RAID);
+                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_pri_lightwell_trigger_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ALLY);
                 OnHit += SpellHitFn(spell_pri_lightwell_trigger_SpellScript::HandleOnHit);
             }
         };
@@ -2628,6 +2473,236 @@ class spell_pri_devouring_plague_mastery : public SpellScriptLoader
         }
 };
 
+// Mind Sear - 48045
+class spell_pri_mind_sear : public SpellScriptLoader
+{
+    public:
+        spell_pri_mind_sear() : SpellScriptLoader("spell_pri_mind_sear") { }
+
+        class spell_pri_mind_sear_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_pri_mind_sear_SpellScript);
+
+            SpellCastResult CheckTarget()
+            {
+                if (GetExplTargetUnit() == GetCaster())
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                return SPELL_CAST_OK;
+            }
+
+            void Register()
+            {
+                OnCheckCast += SpellCheckCastFn(spell_pri_mind_sear_SpellScript::CheckTarget);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_pri_mind_sear_SpellScript;
+        }
+};
+
+// Prayer of Mending - 41635
+class spell_pri_prayer_of_mending : public SpellScriptLoader
+{
+public:
+    spell_pri_prayer_of_mending() : SpellScriptLoader("spell_pri_prayer_of_mending") { }
+
+    class spell_pri_prayer_of_mendingAuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_pri_prayer_of_mendingAuraScript);
+
+        void OnApply(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+        {
+            if(Aura* aura = GetAura())
+                aura->SetStackAmount(aurEff->GetAmount());
+        }
+
+        void Register()
+        {
+            OnEffectApply += AuraEffectApplyFn(spell_pri_prayer_of_mendingAuraScript::OnApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+        }
+    };
+
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_pri_prayer_of_mendingAuraScript();
+    }
+};
+
+// Insanity - 132573
+class spell_pri_insanity : public SpellScriptLoader
+{
+    public:
+        spell_pri_insanity() : SpellScriptLoader("spell_pri_insanity") { }
+
+        class spell_pri_insanity_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_pri_insanity_AuraScript);
+
+            void CalculateMaxDuration(int32& duration)
+            {
+                if (Unit* caster = GetCaster())
+                {
+                    if (Aura* insanity = caster->GetAura(139139)) // Insanity
+                    {
+                        if(insanity->GetCustomData())
+                        {
+                            duration = (2000 * insanity->GetCustomData());
+                            insanity->SetCustomData(0);
+                        }
+                    }
+                }
+            }
+
+            void Register()
+            {
+                DoCalcMaxDuration += AuraCalcMaxDurationFn(spell_pri_insanity_AuraScript::CalculateMaxDuration);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_pri_insanity_AuraScript();
+        }
+};
+
+// Cascade - 120840, 127631
+class spell_pri_cascade_marker : public SpellScriptLoader
+{
+    public:
+        spell_pri_cascade_marker() : SpellScriptLoader("spell_pri_cascade_marker") { }
+
+        class spell_pri_cascade_marker_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_pri_cascade_marker_AuraScript);
+
+            void CalculateMaxDuration(int32& duration)
+            {
+                duration = 10000;
+            }
+
+            void Register()
+            {
+                DoCalcMaxDuration += AuraCalcMaxDurationFn(spell_pri_cascade_marker_AuraScript::CalculateMaxDuration);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_pri_cascade_marker_AuraScript();
+        }
+};
+
+// Clarity of Purpose - 155245
+class spell_pri_clarity_of_purpose : public SpellScriptLoader
+{
+    public:
+        spell_pri_clarity_of_purpose() : SpellScriptLoader("spell_pri_clarity_of_purpose") { }
+
+        class spell_pri_clarity_of_purpose_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_pri_clarity_of_purpose_SpellScript);
+
+            int32 perc = 0;
+
+            void HandleHeal(SpellEffIndex /*effIndex*/)
+            {
+                if (perc)
+                {
+                    int32 _heal = GetHitHeal();
+                    _heal += CalculatePct(_heal, perc);
+                    SetHitHeal(_heal);
+                }
+            }
+
+            void HandleOnCast()
+            {
+                if (Unit* target = GetExplTargetUnit())
+                    perc = int32(100.0f - target->GetHealthPct());
+            }
+
+            void Register()
+            {
+                OnCast += SpellCastFn(spell_pri_clarity_of_purpose_SpellScript::HandleOnCast);
+                OnEffectHitTarget += SpellEffectFn(spell_pri_clarity_of_purpose_SpellScript::HandleHeal, EFFECT_1, SPELL_EFFECT_HEAL);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_pri_clarity_of_purpose_SpellScript;
+        }
+};
+
+// Mind Sear - 49821, Mind Spike - 73510, Shadow Word: Death - 32379
+class spell_pri_clarity_of_power : public SpellScriptLoader
+{
+    public:
+        spell_pri_clarity_of_power() : SpellScriptLoader("spell_pri_clarity_of_power") { }
+
+        class spell_pri_clarity_of_power_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_pri_clarity_of_power_SpellScript);
+
+            void HandleOnHit()
+            {
+                if (Unit* caster = GetCaster())
+                {
+                    if (caster->HasAura(155246)) // Clarity of Power
+                        if (Unit* target = GetHitUnit())
+                            if (!target->HasAura(PRIEST_SHADOW_WORD_PAIN, caster->GetGUID()) || !target->HasAura(PRIEST_VAMPIRIC_TOUCH, caster->GetGUID()))
+                                SetHitDamage(int32(GetHitDamage() * 1.4f));
+                }
+            }
+
+            void Register()
+            {
+                OnHit += SpellHitFn(spell_pri_clarity_of_power_SpellScript::HandleOnHit);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_pri_clarity_of_power_SpellScript;
+        }
+};
+
+// Words of Mending - 155362
+class spell_pri_words_of_mending : public SpellScriptLoader
+{
+    public:
+        spell_pri_words_of_mending() : SpellScriptLoader("spell_pri_words_of_mending") { }
+
+        class spell_pri_words_of_mending_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_pri_words_of_mending_AuraScript);
+
+            void OnStackChange(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                if (Unit* caster = GetCaster())
+                    if(GetStackAmount() >= 10)
+                    {
+                        caster->CastSpell(caster, 155363, true);
+                        GetAura()->Remove();
+                    }
+            }
+
+            // function registering
+            void Register()
+            {
+                OnEffectApply += AuraEffectApplyFn(spell_pri_words_of_mending_AuraScript::OnStackChange, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+            }
+        };
+
+        // function which creates AuraScript
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_pri_words_of_mending_AuraScript();
+        }
+};
+
 void AddSC_priest_spell_scripts()
 {
     new spell_pri_glyph_of_mass_dispel();
@@ -2651,8 +2726,10 @@ void AddSC_priest_spell_scripts()
     new spell_pri_mind_spike();
     new spell_pri_cascade_second();
     new spell_pri_cascade_trigger();
-    new spell_pri_cascade_first();
-    new spell_pri_halo();
+    new spell_pri_cascade();
+    new spell_pri_cascade_shadow();
+    new spell_pri_halo_heal();
+    new spell_pri_halo_damage();
     new spell_pri_shadowy_apparition();
     new spell_pri_inner_fire_or_will();
     new spell_pri_leap_of_faith();
@@ -2681,4 +2758,11 @@ void AddSC_priest_spell_scripts()
     new spell_pri_void_tendrils_grasp();
     new spell_pri_divine_star_filter();
     new spell_pri_devouring_plague_mastery();
+    new spell_pri_mind_sear();
+    new spell_pri_prayer_of_mending();
+    new spell_pri_insanity();
+    new spell_pri_cascade_marker();
+    new spell_pri_clarity_of_purpose();
+    new spell_pri_clarity_of_power();
+    new spell_pri_words_of_mending();
 }

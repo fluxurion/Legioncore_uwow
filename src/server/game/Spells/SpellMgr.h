@@ -101,6 +101,7 @@ enum SpellLinkedType
     SPELL_LINK_BEFORE_CAST      = 5 * 200000,
     SPELL_LINK_PREPARE_CAST     = 6 * 200000,
     SPELL_LINK_BEFORE_CHECK     = 7 * 200000,
+    SPELL_LINK_FINISH_CAST      = 8 * 200000,
     SPELL_LINK_REMOVE           = 0,
 };
 
@@ -129,6 +130,8 @@ enum SpellLinkedHasType
     LINK_HAS_AURATYPE             = 4,
     LINK_HAS_MY_AURA_ON_CASTER    = 5,
     LINK_HAS_MY_AURA_ON_TARGET    = 6,
+    LINK_HAS_AURA_STATE           = 7,
+    LINK_HAS_SPECID               = 8,
 };
 
 enum SpellLinkedActionType
@@ -194,6 +197,7 @@ enum SpellTriggeredType
     SPELL_TRIGGER_DAM_MAXHEALTH                 = 38,           // set basepoint to spell damage or max heal percent
     SPELL_TRIGGER_STACK_AMOUNT                  = 39,           // stack damage in amount
     SPELL_TRIGGER_BP_DURATION                   = 40,           // damage is duration
+    SPELL_TRIGGER_ADD_STACK_AND_CAST            = 41,           // change stack and set bp = stack
 };
 
 enum DummyTriggerType
@@ -260,12 +264,28 @@ enum SpellTargetFilterType
     SPELL_FILTER_TARGET_IS_IN_BETWEEN_SHIFT     = 12,           // Select target is in between and shift
     SPELL_FILTER_BY_AURA_OR                     = 13,           // Remove target by any aura
     SPELL_FILTER_BY_ENTRY                       = 14,           // Remove target by any entry
+    SPELL_FILTER_TARGET_ATTACKABLE              = 15,           // Check Attackable
+};
+
+enum SpellCheckCastType
+{
+    SPELL_CHECK_CAST_DEFAULT                    = 0,            // Not check type, check only dataType and dataType2
+    SPELL_CHECK_CAST_HEALTH                     = 1,            // Check healh percent
+};
+
+enum SpellConcatenateAuraOption
+{
+    CONCATENATE_NONE                     = 0x000,            //
+    CONCATENATE_CHANGE_AMOUNT            = 0x001,            // change amount
+    CONCATENATE_RECALCULATE_AURA         = 0x002,            // Recalculate amount on aura
+    CONCATENATE_RECALCULATE_SPELL        = 0x004,            // Recalculate amount on spell
 };
 
 enum SpellConcatenateAuraType
 {
-    CONCATENATE_DEFAULT                  = 0,            //
-    CONCATENATE_RECALCULATE              = 1,            // Recalculate amount on aura
+    CONCATENATE_ON_UPDATE_AMOUNT  = 0,            //
+    CONCATENATE_ON_APPLY_AURA     = 1,            // Recalculate amount on aura
+    CONCATENATE_ON_REMOVE_AURA    = 2,            // Recalculate amount on aura
 };
 
 // Spell proc event related declarations (accessed using SpellMgr functions)
@@ -923,9 +943,26 @@ struct SpellConcatenateAura
     int32 effectSpell;
     int32 auraId;
     int32 effectAura;
-    int8 type;
+    uint32 option;
     int8 caster;
     int8 target;
+};
+
+struct SpellCheckCast
+{
+    int32 spellId;
+    int32 type;
+    int32 errorId;
+    int32 customErrorId;
+    int32 caster;
+    int32 target;
+    int32 checkType;
+    int32 dataType;
+    int32 checkType2;
+    int32 dataType2;
+    int32 param1;
+    int32 param2;
+    int32 param3;
 };
 
 typedef std::unordered_map<int32, std::vector<SpellTriggered> > SpellTriggeredMap;
@@ -933,6 +970,7 @@ typedef std::unordered_map<int32, std::vector<SpellDummyTrigger> > SpellDummyTri
 typedef std::unordered_map<int32, std::vector<SpellDummyTrigger> > SpellAuraTriggerMap;
 typedef std::unordered_map<int32, std::vector<SpellAuraDummy> > SpellAuraDummyMap;
 typedef std::unordered_map<int32, std::vector<SpellTargetFilter> > SpellTargetFilterMap;
+typedef std::unordered_map<int32, std::vector<SpellCheckCast> > SpellCheckCastMap;
 typedef std::unordered_map<int32, std::vector<SpellLinked> > SpellLinkedMap;
 typedef std::unordered_map<int32, std::vector<SpellTalentLinked> > SpellTalentLinkedMap;
 typedef std::unordered_map<int32, std::vector<SpellPrcoCheck> > SpellPrcoCheckMap;
@@ -1065,6 +1103,7 @@ class SpellMgr
         const std::vector<SpellDummyTrigger> *GetSpellAuraTrigger(int32 spell_id) const;
         const std::vector<SpellAuraDummy> *GetSpellAuraDummy(int32 spell_id) const;
         const std::vector<SpellTargetFilter> *GetSpellTargetFilter(int32 spell_id) const;
+        const std::vector<SpellCheckCast> *GetSpellCheckCast(int32 spell_id) const;
         const std::vector<SpellVisual> *GetSpellVisual(int32 spell_id) const;
         const SpellVisualPlayOrphan* GetSpellVisualPlayOrphan(int32 spell_id) const;
         const std::vector<SpellPendingCast> *GetSpellPendingCast(int32 spell_id) const;
@@ -1153,6 +1192,7 @@ class SpellMgr
         SpellAuraTriggerMap        mSpellAuraTriggerMap;
         SpellAuraDummyMap          mSpellAuraDummyMap;
         SpellTargetFilterMap       mSpellTargetFilterMap;
+        SpellCheckCastMap          mSpellCheckCastMap;
         SpellEnchantProcEventMap   mSpellEnchantProcEventMap;
         EnchantCustomAttribute     mEnchantCustomAttr;
         SpellAreaMap               mSpellAreaMap;
