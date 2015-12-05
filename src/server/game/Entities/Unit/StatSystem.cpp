@@ -749,19 +749,14 @@ void Player::UpdateSpellCritChance(uint32 school)
         SetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE, 0.0f);
         return;
     }
-    // Base crit chance
+
     float crit = GetBaseSpellCritChance();
-    // Increase crit from SPELL_AURA_MOD_SPELL_CRIT_CHANCE
     crit += GetTotalAuraModifier(SPELL_AURA_MOD_SPELL_CRIT_CHANCE);
-    // Increase crit from SPELL_AURA_MOD_CRIT_PCT
     crit += GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PCT);
-    // Increase crit by school from SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL
     crit += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, 1<<school);
-    // Increase crit from spell crit ratings
     crit += GetRatingBonusValue(CR_CRIT_SPELL);
 
-    // Store crit value
-    SetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE + school, crit);
+    SetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE, crit);
 }
 
 void Player::UpdateMeleeHitChances()
@@ -848,23 +843,23 @@ void Player::ApplyHealthRegenBonus(int32 amount, bool apply)
 
 void Player::UpdateRuneRegen(RuneType rune)
 {
-    if (rune > NUM_RUNE_TYPES)
-        return;
+    //if (rune > NUM_RUNE_TYPES)
+    //    return;
 
-    uint32 cooldown = 0;
+    //uint32 cooldown = 0;
 
-    for (uint32 i = 0; i < MAX_RUNES; ++i)
-        if (GetBaseRune(i) == rune)
-        {
-            cooldown = RUNE_BASE_COOLDOWN;
-            break;
-        }
+    //for (uint32 i = 0; i < MAX_RUNES; ++i)
+    //    if (GetBaseRune(i) == rune)
+    //    {
+    //        cooldown = RUNE_BASE_COOLDOWN;
+    //        break;
+    //    }
 
-    if (cooldown <= 0)
-        return;
+    //if (cooldown <= 0)
+    //    return;
 
-    float regen = float(1 * IN_MILLISECONDS) / float(cooldown);
-    SetFloatValue(PLAYER_FIELD_RUNE_REGEN + uint8(rune), regen);
+    //float regen = float(1 * IN_MILLISECONDS) / float(cooldown);
+    //SetFloatValue(PLAYER_FIELD_RUNE_REGEN + uint8(rune), regen);
 }
 
 void Player::UpdateAllRunesRegen()
@@ -892,7 +887,7 @@ void Player::UpdateAllRunesRegen()
     for (uint8 i = 0; i < NUM_RUNE_TYPES; i++)
     {
         SetRuneCooldownCoef(RuneType(i), coef[i]);
-        SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, coef[i] / 10.0f);
+        //SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, coef[i] / 10.0f);
     }
 }
 
@@ -1992,8 +1987,8 @@ void Player::UpdateMultistrike()
     value += GetRatingBonusValue(CR_MULTISTRIKE);
     value += GetTotalAuraModifier(SPELL_AURA_MOD_MULTISTRIKE_PCT, true);
 
-    if (value)
-        SetFloatValue(PLAYER_FIELD_MULTISTRIKE, value);
+    //if (value)
+    //    SetFloatValue(PLAYER_FIELD_MULTISTRIKE, value);
 
     UpdateMultistrikeDamage();
 }
@@ -2004,7 +1999,7 @@ void Player::UpdateMultistrikeDamage()
     float mod = GetTotalAuraModifier(SPELL_AURA_MULTISTRIKE_DAMAGE_PCT, true);
     AddPct(value, mod);
 
-    SetFloatValue(PLAYER_FIELD_MULTISTRIKE_EFFECT, value);
+    //SetFloatValue(PLAYER_FIELD_MULTISTRIKE_EFFECT, value);
 }
 
 void Player::UpdateReadiness()
@@ -2014,8 +2009,8 @@ void Player::UpdateReadiness()
     value += GetRatingBonusValue(CR_READINESS);
     value += GetTotalAuraModifier(SPELL_AURA_MOD_READINESS_PCT, true);
     
-    if (value)
-        SetFloatValue(PLAYER_FIELD_READINESS, value);
+    //if (value)
+    //    SetFloatValue(PLAYER_FIELD_READINESS, value);
 }
 
 void Player::UpdateCRSpeed()

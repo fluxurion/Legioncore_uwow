@@ -69,7 +69,7 @@ typedef std::deque<Mail*> PlayerMails;
 
 #define PLAYER_MAX_SKILLS           128
 #define PLAYER_MAX_DAILY_QUESTS     25
-#define PLAYER_EXPLORED_ZONES_SIZE  200
+#define PLAYER_EXPLORED_ZONES_SIZE  256
 
 enum SkillFieldOffset
 {
@@ -2204,12 +2204,12 @@ class Player : public Unit, public GridObject<Player>
         void ActivateSpec(uint8 spec);
 
         void InitGlyphsForLevel();
-        void SetGlyphSlot(uint8 slot, uint32 slottype) { SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot, slottype); }
-        uint32 GetGlyphSlot(uint8 slot) const { return GetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot); }
+        void SetGlyphSlot(uint8 slot, uint32 slottype) { /*SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot, slottype)*/; }
+        uint32 GetGlyphSlot(uint8 slot) const { return 0/*GetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot)*/; }
         void SetGlyph(uint8 slot, uint32 glyph)
         {
             _talentMgr->SpecInfo[GetActiveSpec()].Glyphs[slot] = glyph;
-            SetUInt32Value(PLAYER_FIELD_GLYPHS + slot, glyph);
+            //SetUInt32Value(PLAYER_FIELD_GLYPHS + slot, glyph);
         }
         uint32 GetGlyph(uint8 spec, uint8 slot) const { return _talentMgr->SpecInfo[spec].Glyphs[slot]; }
 

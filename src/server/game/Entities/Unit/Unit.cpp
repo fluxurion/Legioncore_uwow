@@ -11790,7 +11790,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         if (GetTypeId() == TYPEID_PLAYER && spellProto && (spellProto->Id == 116858 || spellProto->Id == 6353 || spellProto->Id == 104027))
         {
             float crit_chance;
-            crit_chance = GetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE + GetFirstSchoolInMask(spellProto->GetSchoolMask()));
+            crit_chance = GetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE/* + GetFirstSchoolInMask(spellProto->GetSchoolMask())*/);
             int32 modif = victim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_SPELL_AND_WEAPON_CRIT_CHANCE);
             if(modif < -100)
                 crit_chance -= 50.0f;
@@ -12361,7 +12361,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellInfo const* spellProto, SpellSchoolMas
                 crit_chance = 0.0f;
             // For other schools
             else if (GetTypeId() == TYPEID_PLAYER)
-                crit_chance = GetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE + GetFirstSchoolInMask(schoolMask));
+                crit_chance = GetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE/* + GetFirstSchoolInMask(schoolMask)*/);
             else if(!isAnySummons() || !owner)
             {
                 crit_chance = (float)m_baseSpellCritChance;

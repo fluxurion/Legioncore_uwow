@@ -238,7 +238,7 @@ enum ItemFlags3
     ITEM_FLAG3_UNK5                        = 0x00000010,
     ITEM_FLAG3_UNK6                        = 0x00000020,
     ITEM_FLAG3_UNK7                        = 0x00000040,
-    ITEM_FLAG3_IGNORE_ITEM_LEVEL_DELTAS    = 0x00000080, // Ignore item level adjustments from PLAYER_FIELD_ITEM_LEVEL_DELTA
+    ITEM_FLAG3_IGNORE_ITEM_LEVEL_DELTAS    = 0x00000080,
     ITEM_FLAG3_IGNORE_PVP_ITEM_LEVEL_CAP   = 0x00000100,
     ITEM_FLAG3_HEIRLOOM_QUALITY            = 0x00000200, // Item appears as having heirloom quality ingame regardless of its real quality (does not affect stat calculation)
     ITEM_FLAG3_UNK8                        = 0x00000400,

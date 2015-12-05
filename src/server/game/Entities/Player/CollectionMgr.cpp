@@ -196,7 +196,7 @@ void CollectionMgr::CheckHeirloomUpgrades(Item* item)
         {
             Item* newItem = player->StoreNewItem(dest, heirloom->ItemID, true);
 
-            std::vector<uint32> const& fields = newItem->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS);
+            std::vector<uint32> const& fields = newItem->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
 
             uint32 bonusId = GetHeirloomBonus(heirloom->ItemID);
             if (std::find(fields.begin(), fields.end(), bonusId) == fields.end())
@@ -244,11 +244,11 @@ void CollectionMgr::CheckHeirloomUpgrades(Item* item)
             return;
         }
 
-        std::vector<uint32> const& fields = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS);
+        std::vector<uint32> const& fields = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
 
         for (uint32 bonusId : fields)
             if (bonusId != v->second.bonusId)
-                item->ClearDynamicValue(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS);
+                item->ClearDynamicValue(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
 
         if (std::find(fields.begin(), fields.end(), v->second.bonusId) == fields.end())
             item->AddBonuses(v->second.bonusId);

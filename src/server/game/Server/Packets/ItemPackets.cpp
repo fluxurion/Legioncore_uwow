@@ -133,7 +133,7 @@ void WorldPackets::Item::ItemInstance::Initialize(::Item const* item)
     ItemID = item->GetEntry();
     RandomPropertiesSeed = item->GetItemSuffixFactor();
     RandomPropertiesID = item->GetItemRandomPropertyId();
-    std::vector<uint32> const& bonusListIds = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS);
+    std::vector<uint32> const& bonusListIds = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
     if (!bonusListIds.empty())
     {
         ItemBonus = boost::in_place();

@@ -3662,9 +3662,9 @@ void Player::InitStatsForLevel(bool reapplyMods)
         SetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, 0);
         SetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + i, 0);
         SetFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PERCENT + i, 1.00f);
-        SetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE + i, 0.0f);
     }
-
+    
+    SetFloatValue(PLAYER_FIELD_SPELL_CRIT_PERCENTAGE, 0.0f);
     SetFloatValue(PLAYER_FIELD_MOD_SPELL_POWER_PERCENT, 1.0f);
 
     for (uint8 i = 0; i < 3; ++i)
@@ -9183,13 +9183,11 @@ void Player::_ApplyItemBonuses(Item* item, uint8 slot, bool apply)
                 ApplyRatingMod(CR_AVOIDANCE, int32(val), apply);
                 break;
             case ITEM_MOD_CR_AMPLIFY:
-                ApplyModSignedFloatValue(PLAYER_FIELD_AMPLIFY, val, apply);
                 break;
             case ITEM_MOD_CR_STURDINESS: // items with this should not lose durability on player death - dynamic stat?
                 ApplyModSignedFloatValue(PLAYER_FIELD_STURDINESS, val, apply);
                 break;
-            case ITEM_MOD_CR_CLEAVE: // apply spellAura on player and modify value with this rating ( from UF )
-                ApplyModSignedFloatValue(PLAYER_FIELD_CLEAVE, val, apply);
+            case ITEM_MOD_CR_CLEAVE:
                 break;
             case ITEM_MOD_AGI_STR_INT:
                 HandleStatModifier(UNIT_MOD_STAT_AGILITY, BASE_VALUE, float(val), apply);
@@ -13269,9 +13267,9 @@ void Player::VisualizeItem(uint8 slot, Item* pItem)
 
     if (slot < EQUIPMENT_SLOT_END)
     {
-        float avgItemLevel = GetAverageItemLevel();
-        SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
-        SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
+        //float avgItemLevel = GetAverageItemLevel();
+        //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
+        //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
     }
 
     pItem->SetState(ITEM_CHANGED, this);
@@ -13344,9 +13342,9 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update)
 
         if (slot < EQUIPMENT_SLOT_END)
         {
-            float avgItemLevel = GetAverageItemLevel();
-            SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
-            SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
+            //float avgItemLevel = GetAverageItemLevel();
+            //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
+            //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
         }
 
         if (IsInWorld() && update)
@@ -19595,7 +19593,7 @@ void Player::_LoadDailyQuestStatus(PreparedQueryResult result)
             m_lastDailyQuestTime = time_t(fields[1].GetUInt32());
 
             if (m_dailyquests.find(quest_id) == m_dailyquests.end())
-            AddDynamicValue(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS, quest_id);
+            AddDynamicValue(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS_COMPLETED, quest_id);
             if (uint32 questBit = GetQuestUniqueBitFlag(quest_id))
                 SetQuestCompletedBit(questBit, true);
 
@@ -22807,7 +22805,7 @@ void Player::SetRestBonus (float rest_bonus_new)
         SetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_REST_STATE, REST_STATE_NOT_RAF_LINKED);              // Set Reststate = Normal
 
     //RestTickUpdate
-    SetUInt32Value(PLAYER_FIELD_REST_STATE_BONUS_POOL, uint32(m_rest_bonus));
+    SetUInt32Value(PLAYER_FIELD_REST_INFO+1, uint32(m_rest_bonus)); // can be wrong
 }
 
 bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc /*= NULL*/, uint32 spellid /*= 0*/)
@@ -25394,11 +25392,11 @@ void Player::SetSeasonalQuestStatus(uint32 quest_id)
 
 void Player::DailyReset()
 {
-    for (uint32 questId : GetDynamicValues(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS))
+    for (uint32 questId : GetDynamicValues(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS_COMPLETED))
         if (uint32 questBit = GetQuestUniqueBitFlag(questId))
             SetQuestCompletedBit(questBit, false);
 
-    ClearDynamicValue(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS);
+    ClearDynamicValue(PLAYER_DYNAMIC_FIELD_DAILY_QUESTS_COMPLETED);
 
     m_dailyquests.clear();
     m_DFQuests.clear(); // Dungeon Finder Quests.
@@ -26568,7 +26566,7 @@ void Player::InitGlyphsForLevel()
     if (level >= 75)
         slotMask |= 0x10 | 0x20 | 0x100;
 
-    SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS_ENABLED, slotMask);
+    //SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS_ENABLED, slotMask);
 }
 
 bool Player::isTotalImmune()
@@ -26923,8 +26921,8 @@ void Player::InitRunes()
         SetBlockRuneConvert(i, false);
     }
 
-    for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
-        SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, 0.1f);                  // set a base regen timer equal to 10 sec
+    //for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
+    //    SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, 0.1f);                  // set a base regen timer equal to 10 sec
 }
 
 bool Player::IsBaseRuneSlotsOnCooldown(RuneType runeType) const

@@ -154,7 +154,7 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
     SetUInt32Value(AREATRIGGER_FIELD_SPELL_ID, info->Id);
     SetUInt32Value(AREATRIGGER_FIELD_SPELL_VISUAL_ID, info->SpellVisual[0] ? info->SpellVisual[0] : info->SpellVisual[1]);
     SetUInt32Value(AREATRIGGER_FIELD_DURATION, duration);
-    SetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE, 1.0);
+    SetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D, 1.0);
     SetTargetGuid(targetGuid);
 
     // culculate destination point
@@ -682,8 +682,8 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
         }
         case AT_ACTION_TYPE_CHANGE_SCALE: //limit scale by hit
         {
-            float scale = GetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE) + action.action->scale;
-            SetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE, scale);
+            float scale = GetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D) + action.action->scale;
+            SetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D, scale);
             break;
         }
         case AT_ACTION_TYPE_SHARE_DAMAGE:

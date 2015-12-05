@@ -1880,8 +1880,8 @@ class spell_dk_defile : public SpellScriptLoader
                 {
                     if (AreaTrigger* areaObj = caster->GetAreaObject(GetSpellInfo()->Id))
                     {
-                        float scale = areaObj->GetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE) + 0.025f;
-                        areaObj->SetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE, scale);
+                        float scale = areaObj->GetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D) + 0.025f;
+                        areaObj->SetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D, scale);
                         areaObj->CastAction();
                     }
                     GuidList* summonList = caster->GetSummonList(82521);
@@ -2015,7 +2015,7 @@ class spell_dk_defile_damage : public SpellScriptLoader
                 if (!caster)
                     return;
                 if (AreaTrigger* areaObj = caster->GetAreaObject(152280))
-                    SetHitDamage(int32(GetHitDamage() * areaObj->GetFloatValue(AREATRIGGER_FIELD_EXPLICIT_SCALE)));
+                    SetHitDamage(int32(GetHitDamage() * areaObj->GetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D)));
             }
 
             void Register()

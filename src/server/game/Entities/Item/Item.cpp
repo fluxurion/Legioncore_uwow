@@ -388,7 +388,7 @@ void Item::SaveToDB(SQLTransaction& trans)
             stmt->setUInt32(++index, GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION));
 
             std::ostringstream bonusListIDs;
-            for (uint32 bonusListID : GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS))
+            for (uint32 bonusListID : GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS))
                 bonusListIDs << bonusListID << ' ';
             stmt->setString(++index, bonusListIDs.str());
             stmt->setUInt64(++index, guid);
@@ -1725,7 +1725,7 @@ void Item::AddBonuses(uint32 bonusListID)
 {
     if (DB2Manager::ItemBonusList const* bonuses = sDB2Manager.GetItemBonusList(bonusListID))
     {
-        AddDynamicValue(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS, bonusListID);
+        AddDynamicValue(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS, bonusListID);
         for (ItemBonusEntry const* bonus : *bonuses)
             _bonusData.AddBonus(bonus->Type, bonus->Value);
     }
