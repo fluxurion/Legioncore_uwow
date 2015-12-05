@@ -46,7 +46,9 @@ namespace WorldPackets
             uint8 HairColor = 0;
             uint8 FacialHairStyle = 0;
             uint8 OutfitId = 0;
-            uint8 UnkByte[3] = { };
+            uint8 Tattoo = 0;
+            uint8 Horn = 0;
+            uint8 Blindfold = 0;
             Optional<int32> TemplateSet;
             std::string Name;
 
@@ -114,6 +116,9 @@ namespace WorldPackets
                 uint8 HairStyle = 0;
                 uint8 HairColor = 0;
                 uint8 FacialHair = 0;
+                uint8 Tattoo = 0;
+                uint8 Horn = 0;
+                uint8 Blindfold = 0;
                 uint8 Level = 0;
                 int32 ZoneId = 0;
                 int32 MapId = 0;

@@ -57,8 +57,8 @@ union ClientPktHeader
 
     struct
     {
-        uint16 Command : 13;
-        uint32 Size : 19;
+        uint32 Size;
+        uint16 Command;
     } Normal;
 
 

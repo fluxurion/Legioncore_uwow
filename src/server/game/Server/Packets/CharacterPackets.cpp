@@ -116,8 +116,15 @@ WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
 
     _worldPacket.WriteBit(Success);
     _worldPacket.WriteBit(IsDeletedCharacters);
+    _worldPacket.WriteBit(true);
+    _worldPacket.WriteBit(false);
+    _worldPacket.WriteBit(true);
+    auto byte3C = false;
+    _worldPacket.WriteBit(byte3C);
     _worldPacket << static_cast<uint32>(Characters.size());
     _worldPacket << static_cast<uint32>(FactionChangeRestrictions.size());
+    if (byte3C)
+        _worldPacket << uint32(0);
 
     for (CharacterInfo const& charInfo : Characters)
     {
@@ -131,6 +138,9 @@ WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
         _worldPacket << uint8(charInfo.HairStyle);
         _worldPacket << uint8(charInfo.HairColor);
         _worldPacket << uint8(charInfo.FacialHair);
+        _worldPacket << uint8(charInfo.Tattoo);
+        _worldPacket << uint8(charInfo.Horn);
+        _worldPacket << uint8(charInfo.Blindfold);
         _worldPacket << uint8(charInfo.Level);
         _worldPacket << int32(charInfo.ZoneId);
         _worldPacket << int32(charInfo.MapId);
@@ -185,8 +195,9 @@ void WorldPackets::Character::CreateChar::Read()
     _worldPacket >> CreateInfo->HairColor;
     _worldPacket >> CreateInfo->FacialHairStyle;
     _worldPacket >> CreateInfo->OutfitId;
-    for (uint8 i = 0; i < 3; ++i)
-        _worldPacket >> CreateInfo->UnkByte[i];
+    _worldPacket >> CreateInfo->Tattoo;
+    _worldPacket >> CreateInfo->Horn;
+    _worldPacket >> CreateInfo->Blindfold;
     CreateInfo->Name = _worldPacket.ReadString(nameLength);
     if (hasTemplateSet)
         CreateInfo->TemplateSet = _worldPacket.read<int32>();

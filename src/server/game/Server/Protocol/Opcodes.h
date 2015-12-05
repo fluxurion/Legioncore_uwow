@@ -37,7 +37,7 @@ enum ConnectionType
 
 enum OpcodeMisc : uint16
 {
-    MAX_OPCODE                                        = 0x1FFF,
+    MAX_OPCODE                                        = 0x7FFF,
     NUM_OPCODE_HANDLERS                               = 0xFFFF,
     UNKNOWN_OPCODE                                    = 0xFFFF,
     NULL_OPCODE                                       = 0xBADD

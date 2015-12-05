@@ -31,8 +31,8 @@ union ServerPktHeader
 
     struct
     {
-        uint32 Command;
         uint32 Size;
+        uint16 Command;
     } Normal;
 };
 

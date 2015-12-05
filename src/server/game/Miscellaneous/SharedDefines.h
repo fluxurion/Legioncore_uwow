@@ -168,6 +168,7 @@ enum Expansions
     EXPANSION_CATACLYSM                = 3,
     EXPANSION_MISTS_OF_PANDARIA        = 4,
     EXPANSION_WARLORDS_OF_DRAENOR      = 5,
+    EXPANSION_LEGION                   = 6,
     MAX_EXPANSIONS                     = 6
 };
 
@@ -244,7 +245,8 @@ enum Classes
     CLASS_MAGE          = 8,
     CLASS_WARLOCK       = 9,
     CLASS_MONK          = 10,
-    CLASS_DRUID         = 11
+    CLASS_DRUID         = 11,
+    CLASS_DEMON_HUNTER  = 12
 };
 
 // max+1 for player class
