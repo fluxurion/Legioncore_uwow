@@ -46,7 +46,7 @@ WorldPacket const* WorldPackets::Spells::SendKnownSpells::Write()
 
     _worldPacket.WriteBit(InitialLogin);
     _worldPacket << static_cast<uint32>(KnownSpells.size());
-
+    _worldPacket << unkInt;
     for (uint32 const& spellId : KnownSpells)
         _worldPacket << uint32(spellId);
 

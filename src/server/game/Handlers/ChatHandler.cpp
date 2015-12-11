@@ -107,9 +107,9 @@ void WorldSession::HandleChatMessageOpcode(WorldPackets::Chat::ChatMessage& pack
 
     switch (packet.GetOpcode())
     {
-        //case CMSG_CHAT_MESSAGE_SAY:
-        //    type = CHAT_MSG_SAY;
-        //    break;
+        case CMSG_CHAT_MESSAGE_SAY:
+            type = CHAT_MSG_SAY;
+            break;
         //case CMSG_CHAT_MESSAGE_YELL:
         //    type = CHAT_MSG_YELL;
         //    break;

@@ -86,10 +86,11 @@ namespace WorldPackets
         class SendKnownSpells final : public ServerPacket
         {
         public:
-            SendKnownSpells() : ServerPacket(SMSG_SEND_KNOWN_SPELLS, 5) { }
+            SendKnownSpells() : ServerPacket(SMSG_SEND_KNOWN_SPELLS, 9) { }
 
             WorldPacket const* Write() override;
 
+            uint32 unkInt = 0;
             bool InitialLogin = false;
             std::vector<uint32> KnownSpells;
         };
