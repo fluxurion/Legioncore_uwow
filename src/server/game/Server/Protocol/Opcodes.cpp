@@ -616,7 +616,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_PETITION_RENAME_GUILD,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::PetitionRenameGuild, &WorldSession::HandlePetitionRenameGuild);
     DEFINE_HANDLER(CMSG_PETITION_SHOW_LIST,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::PetitionShowList, &WorldSession::HandlePetitionShowList);
     DEFINE_HANDLER(CMSG_PETITION_SHOW_SIGNATURES,                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::PetitionShowSignatures, &WorldSession::HandlePetitionShowSignatures);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_PING,                                    STATUS_UNHANDLED, PROCESS_INPLACE,      &WorldSession::Handle_EarlyProccess            );
+    DEFINE_OPCODE_HANDLER_OLD(CMSG_PING,                                    STATUS_AUTHED,    PROCESS_INPLACE,      &WorldSession::Handle_EarlyProccess            );
     DEFINE_HANDLER(CMSG_PLAYER_LOGIN,                                       STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Character::PlayerLogin, &WorldSession::HandlePlayerLoginOpcode            );
     DEFINE_HANDLER(CMSG_PROTOCOL_MISMATCH,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_PUSH_QUEST_TO_PARTY,                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandlePushQuestToParty          );
@@ -668,7 +668,7 @@ void OpcodeTable::Initialize()
     DEFINE_OPCODE_HANDLER_OLD(CMSG_REPORT_PVP_PLAYER_AFK,                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleReportPvPAFK              );
     DEFINE_HANDLER(CMSG_REQUEST_ACCOUNT_DATA,                               STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::ClientConfig::RequestAccountData, &WorldSession::HandleRequestAccountData);
     DEFINE_HANDLER(CMSG_REQUEST_BATTLEFIELD_STATUS,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Battleground::NullCmsg, &WorldSession::HandleBattlefieldStatus);
-    DEFINE_HANDLER(CMSG_REQUEST_CATEGORY_COOLDOWNS,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Spells::RequestCategoryCooldowns, &WorldSession::HandleRequestCategoryCooldowns);
+    DEFINE_HANDLER(CMSG_REQUEST_CATEGORY_COOLDOWNS,                         STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Spells::RequestCategoryCooldowns, &WorldSession::HandleRequestCategoryCooldowns);
     DEFINE_HANDLER(CMSG_REQUEST_CEMETERY_LIST,                              STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Misc::RequestCemeteryList, &WorldSession::HandleRequestCemeteryList);
     DEFINE_HANDLER(CMSG_REQUEST_CONQUEST_FORMULA_CONSTANTS,                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Battleground::NullCmsg, &WorldSession::HandlePersonalRatedInfoRequest);
     DEFINE_HANDLER(CMSG_REQUEST_FORCED_REACTIONS,                           STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Reputation::RequestForcedReactions, &WorldSession::HandleForcedReactions);

@@ -182,7 +182,6 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
 
     switch (GetGUID().GetHigh())
     {
-        case HighGuid::Player:
         case HighGuid::Pet:
         case HighGuid::Corpse:
         case HighGuid::DynamicObject:
@@ -345,8 +344,8 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     data->WriteBit(Rotation);
     data->WriteBit(HasAreaTrigger);
     data->WriteBit(HasGameObject);
-    data->WriteBit(ThisIsYou);
     data->WriteBit(ReplaceActive);
+    data->WriteBit(ThisIsYou);
     data->WriteBit(SceneObjCreate);
     data->WriteBit(ScenePendingInstances);
     *data << uint32(PauseTimesCount);
@@ -1689,7 +1688,7 @@ uint32 Object::GetUpdateFieldData(Player const* target, uint32*& flags) const
         case TYPEID_CONTAINER:
             flags = ItemUpdateFieldFlags;
             if (((Item const*)this)->GetOwnerGUID() == target->GetGUID())
-                visibleFlag |= UF_FLAG_OWNER | UF_FLAG_ITEM_OWNER;
+                visibleFlag |= UF_FLAG_OWNER;
             break;
         case TYPEID_UNIT:
         case TYPEID_PLAYER:
@@ -1749,7 +1748,7 @@ uint32 Object::GetDynamicUpdateFieldData(Player const* target, uint32*& flags) c
         case TYPEID_CONTAINER:
             flags = ItemDynamicFieldFlags;
             if (((Item const*)this)->GetOwnerGUID() == target->GetGUID())
-                visibleFlag |= UF_FLAG_OWNER | UF_FLAG_ITEM_OWNER;
+                visibleFlag |= UF_FLAG_OWNER;
             break;
         case TYPEID_UNIT:
         case TYPEID_PLAYER:
