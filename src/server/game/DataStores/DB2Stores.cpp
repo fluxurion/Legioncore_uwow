@@ -359,7 +359,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     if (bad_db2_files.size() >= DB2FilesCount)
     {
         sLog->outError(LOG_FILTER_GENERAL, "\nIncorrect DataDir value in worldserver.conf or ALL required *.db2 files (%d) not found by path: %sdbc/%s/", DB2FilesCount, dataPath.c_str(), localeNames[defaultLocale]);
-        //exit(1);
+        exit(1);
     }
     else if (!bad_db2_files.empty())
     {

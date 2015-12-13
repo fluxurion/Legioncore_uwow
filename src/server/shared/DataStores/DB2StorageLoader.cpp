@@ -23,22 +23,22 @@
 DB2FileLoader::DB2FileLoader()
 {
     fileName = nullptr;
-    recordSize = 0;
-    recordCount = 0;
-    fieldCount = 0;
-    stringSize = 0;
     fieldsOffset = nullptr;
     data = nullptr;
     stringTable = nullptr;
-
-    tableHash = 0;
-    build = 0;
-
-    unk1 = 0;
-    minIndex = 0;
-    maxIndex = 0;
-    localeMask = 0;
-    CopyTableSize = 0;
+    
+    header.RecordSize = 0;
+    header.RecordCount = 0;
+    header.FieldCount = 0;
+    header.StringBlockSize = 0;
+    header.Signature = 0;
+    header.Hash = 0;
+    header.Build = 0;
+    header.Unknown = 0;
+    header.Min = 0;
+    header.Max = 0;
+    header.Locale = 0;
+    header.ReferenceDataSize = 0;
 }
 
 bool DB2FileLoader::Load(const char *filename, const char *fmt)
@@ -51,121 +51,135 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     FILE* f = fopen(filename, "rb");
     if (!f)
-        return false;
-
-    fileName = filename;
-    uint32 header;
-    if (fread(&header, 4, 1, f) != 1)                        // Signature
     {
-        fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(header);
-
-    if (header != 0x33424457)
+    if (fread(&header.Signature, 4, 1, f) != 1)
     {
         fclose(f);
-        return false;                                       //'WDB2'
-    }
-
-    if (fread(&recordCount, 4, 1, f) != 1)                 // Number of records
-    {
-        fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(recordCount);
+    EndianConvert(header.Signature);
 
-    if (fread(&fieldCount, 4, 1, f) != 1)                 // Number of fields
+    if (header.Signature != DB3FmtSig)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(fieldCount);
-
-    if (fread(&recordSize, 4, 1, f) != 1)                 // Size of a record
+    if (fread(&header.RecordCount, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(recordSize);
+    EndianConvert(header.RecordCount);
 
-    if (fread(&stringSize, 4, 1, f) != 1)                 // String size
+    if (fread(&header.FieldCount, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(stringSize);
+    EndianConvert(header.FieldCount);
 
-    if (fread(&tableHash, 4, 1, f) != 1)                  // Table hash
+    if (fread(&header.RecordSize, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(tableHash);
+    EndianConvert(header.RecordSize);
 
-    if (fread(&build, 4, 1, f) != 1)                     // Build
+    if (fread(&header.StringBlockSize, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(build);
+    EndianConvert(header.StringBlockSize);
 
-    if (fread(&unk1, 4, 1, f) != 1)                     // Unknown WDB2
+    if (fread(&header.Hash, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(unk1);
+    EndianConvert(header.Hash);
 
-    if (fread(&minIndex, 4, 1, f) != 1)                           // MinIndex WDB2
+    if (fread(&header.Build, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(minIndex);
+    EndianConvert(header.Build);
 
-    if (fread(&maxIndex, 4, 1, f) != 1)                           // MaxIndex WDB2
+    if (fread(&header.Unknown, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(maxIndex);
+    EndianConvert(header.Unknown);
 
-    if (fread(&localeMask, 4, 1, f) != 1)                             // Locales
+    if (fread(&header.Min, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(localeMask);
+    EndianConvert(header.Min);
 
-    if (fread(&CopyTableSize, 4, 1, f) != 1)
+    if (fread(&header.Max, 4, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
-    EndianConvert(CopyTableSize);
+    EndianConvert(header.Max);
 
-    if (maxIndex != 0)
+    if (fread(&header.Locale, 4, 1, f) != 1)
     {
-        int32 diff = maxIndex - minIndex + 1;
+        fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        return false;
+    }
+
+    EndianConvert(header.Locale);
+
+    if (fread(&header.ReferenceDataSize, 4, 1, f) != 1)
+    {
+        fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        return false;
+    }
+
+    EndianConvert(header.ReferenceDataSize);
+
+    if (header.Max != 0)
+    {
+        int32 diff = header.Max - header.Min + 1;
         fseek(f, diff * 4 + diff * 2, SEEK_CUR);    // diff * 4: an index for rows, diff * 2: a memory allocation bank
     }
 
-    fieldsOffset = new uint32[fieldCount];
+    fieldsOffset = new uint32[header.FieldCount];
     fieldsOffset[0] = 0;
-    for (uint32 i = 1; i < fieldCount; i++)
+    for (uint32 i = 1; i < header.FieldCount; i++)
     {
         fieldsOffset[i] = fieldsOffset[i - 1];
         if (fmt[i - 1] == 'b')
@@ -175,16 +189,21 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
         else
             fieldsOffset[i] += 4;
     }
+    
+    uint32 dataSize = header.RecordCount * header.RecordSize;
+    uint32 indexDataSize = header.RecordCount * 4;
+    bool hasDataOffsetBlock = uint32(f->_bufsiz) > dataSize + indexDataSize + header.StringBlockSize + header.ReferenceDataSize + 48;
 
-    data = new unsigned char[recordSize * recordCount + stringSize];
-    stringTable = data + recordSize * recordCount;
+    data = new unsigned char[header.RecordSize * header.RecordCount + header.StringBlockSize];
+    stringTable = data + header.RecordSize * header.RecordCount;
 
-    if (fread(data, recordSize * recordCount + stringSize, 1, f) != 1)
+    if (fread(data, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
     {
         fclose(f);
+        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
-
+    
     fclose(f);
     return true;
 }
@@ -200,7 +219,7 @@ DB2FileLoader::~DB2FileLoader()
 DB2FileLoader::Record DB2FileLoader::getRecord(size_t id)
 {
     assert(data);
-    return Record(*this, data + id*recordSize);
+    return Record(*this, data + id * header.RecordSize);
 }
 
 uint32 DB2FileLoader::GetFormatRecordSize(const char * format, int32* index_pos)
@@ -267,7 +286,7 @@ uint32 DB2FileLoader::GetFormatLocalizedStringFieldCount(char const* format)
 char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**& indexTable)
 {
     typedef char * ptr;
-    if (strlen(format) != fieldCount)
+    if (strlen(format) != header.FieldCount)
         return nullptr;
 
     //get struct size and index pos
@@ -278,7 +297,7 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
     {
         uint32 maxi = 0;
         //find max index
-        for (uint32 y = 0; y < recordCount; y++)
+        for (uint32 y = 0; y < header.RecordCount; y++)
         {
             uint32 ind = getRecord(y).getUInt(indexField);
             if (ind > maxi)
@@ -292,22 +311,22 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
     }
     else
     {
-        records = recordCount;
-        indexTable = new ptr[recordCount];
+        records = header.RecordCount;
+        indexTable = new ptr[header.RecordCount];
     }
 
-    char* dataTable = new char[recordCount * recordsize];
+    char* dataTable = new char[header.RecordCount * recordsize];
 
     uint32 offset = 0;
 
-    for (uint32 y = 0; y < recordCount; y++)
+    for (uint32 y = 0; y < header.RecordCount; y++)
     {
         if (indexField >= 0)
             indexTable[getRecord(y).getUInt(indexField)] = &dataTable[offset];
         else
             indexTable[y] = &dataTable[offset];
 
-        for (uint32 x = 0; x < fieldCount; x++)
+        for (uint32 x = 0; x < header.FieldCount; x++)
         {
             switch (format[x])
             {
@@ -348,7 +367,7 @@ static char const* const nullStr = "";
 
 char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* dataTable)
 {
-    if (strlen(format) != fieldCount)
+    if (strlen(format) != header.FieldCount)
         return nullptr;
 
     // we store flat holders pool as single memory block
@@ -361,7 +380,7 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
     // each string field at load have array of string for each locale
     std::size_t stringHolderSize = sizeof(char*) * TOTAL_LOCALES;
     std::size_t stringHoldersRecordPoolSize = localizedStringFields * stringHolderSize + (stringFields - localizedStringFields) * sizeof(char*);
-    std::size_t stringHoldersPoolSize = stringHoldersRecordPoolSize * recordCount;
+    std::size_t stringHoldersPoolSize = stringHoldersRecordPoolSize * header.RecordCount;
 
     char* stringHoldersPool = new char[stringHoldersPoolSize];
 
@@ -372,11 +391,11 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
     uint32 offset = 0;
 
     // assign string holders to string field slots
-    for (uint32 y = 0; y < recordCount; y++)
+    for (uint32 y = 0; y < header.RecordCount; y++)
     {
         uint32 stringFieldOffset = 0;
 
-        for (uint32 x = 0; x < fieldCount; x++)
+        for (uint32 x = 0; x < header.FieldCount; x++)
         {
             switch (format[x])
             {
@@ -420,16 +439,16 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
 
 char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uint32 locale)
 {
-    if (strlen(format) != fieldCount)
+    if (strlen(format) != header.FieldCount)
         return nullptr;
 
-    if (!(localeMask & (1 << locale)))
+    if (!(header.Locale & (1 << locale)))
     {
         char const* sep = "";
         std::ostringstream str;
         for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
         {
-            if (localeMask & (1 << i))
+            if (header.Locale & (1 << i))
             {
                 str << sep << localeNames[i];
                 sep = ", ";
@@ -439,14 +458,14 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
         return nullptr;
     }
 
-    char* stringPool = new char[stringSize];
-    memcpy(stringPool, stringTable, stringSize);
+    char* stringPool = new char[header.StringBlockSize];
+    memcpy(stringPool, stringTable, header.StringBlockSize);
 
     uint32 offset = 0;
 
-    for (uint32 y = 0; y < recordCount; y++)
+    for (uint32 y = 0; y < header.RecordCount; y++)
     {
-        for (uint32 x = 0; x < fieldCount; x++)
+        for (uint32 x = 0; x < header.FieldCount; x++)
         {
             switch (format[x])
             {

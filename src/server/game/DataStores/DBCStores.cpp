@@ -324,7 +324,6 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
         sLog->outError(LOG_FILTER_SERVER_LOADING, ">> sGameTablesStore size %u", sGameTablesStore.GetNumRows());
         for (GameTablesEntry const* gt : sGameTablesStore)
         {
-            sLog->outError(LOG_FILTER_SERVER_LOADING, ">> %s", gt->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
 
             if (tableName == gt->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE])
             {

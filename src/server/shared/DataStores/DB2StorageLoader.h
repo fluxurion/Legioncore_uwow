@@ -24,6 +24,9 @@
 #include <cassert>
 #include <list>
 
+static const int32 HeaderSize = 48;
+static const uint32 DB3FmtSig = 0x33424457;
+
 class DB2FileLoader
 {
     public:
@@ -86,10 +89,10 @@ class DB2FileLoader
     Record getRecord(size_t id);
     /// Get begin iterator over records
 
-    uint32 GetNumRows() const { return recordCount;}
-    uint32 GetCols() const { return fieldCount; }
-    uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < fieldCount) ? fieldsOffset[id] : 0; }
-    uint32 GetHash() const { return tableHash; }
+    uint32 GetNumRows() const { return header.RecordCount;}
+    uint32 GetCols() const { return header.FieldCount; }
+    uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < header.FieldCount) ? fieldsOffset[id] : 0; }
+    uint32 GetHash() const { return header.Hash; }
     bool IsLoaded() const { return (data != nullptr); }
     char* AutoProduceData(const char* fmt, uint32& count, char**& indexTable);
     char* AutoProduceStringsArrayHolders(const char* fmt, char* dataTable);
@@ -100,23 +103,26 @@ class DB2FileLoader
 private:
     char const* fileName;
 
-    uint32 recordSize;
-    uint32 recordCount;
-    uint32 fieldCount;
-    uint32 stringSize;
     uint32 *fieldsOffset;
     unsigned char *data;
     unsigned char *stringTable;
 
-    // WDB2 / WCH2 fields
-    uint32 tableHash;    // WDB2
-    uint32 build;        // WDB2
+    struct
+    {
+        uint32 Signature;
+        uint32 RecordCount;
+        uint32 FieldCount;
+        uint32 RecordSize;
+        uint32 StringBlockSize;
 
-    int unk1;            // WDB2 (Unix time in WCH2)
-    int minIndex;        // WDB2
-    int maxIndex;        // WDB2 (index table)
-    int localeMask;      // WDB2
-    int CopyTableSize;   // WDB2
+        uint32 Hash;
+        uint32 Build;
+        int32 Unknown;
+        int32 Min;
+        int32 Max;
+        int32 Locale;
+        int32 ReferenceDataSize;
+    } header;
 };
 
 class DB2DatabaseLoader
