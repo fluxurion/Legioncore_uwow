@@ -254,8 +254,8 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_CANCEL_MOUNT_AURA,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::CancelMountAura, &WorldSession::HandleCancelMountAura);
     DEFINE_HANDLER(CMSG_CANCEL_QUEUED_SPELL,                                STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_CANCEL_TEMP_ENCHANTMENT,                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleCancelTempEnchantmentOpcode);
-    DEFINE_HANDLER(CMSG_CANCEL_TRADE,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Trade::NullCmsg, &WorldSession::HandleCancelTrade);
     DEFINE_HANDLER(CMSG_CAST_SPELL,                                         STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Spells::CastSpell, &WorldSession::HandleCastSpellOpcode);
+    DEFINE_HANDLER(CMSG_CANCEL_TRADE,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Trade::NullCmsg, &WorldSession::HandleCancelTrade);
     DEFINE_HANDLER(CMSG_CHALLENGE_MODE_REQUEST_LEADERS,                     STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::RequestLeaders, &WorldSession::HandleRequestLeaders);
     DEFINE_HANDLER(CMSG_CHALLENGE_MODE_REQUEST_MAP_STATS,                   STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::Misc, &WorldSession::HandleChallengeModeRequestMapStats);
     DEFINE_HANDLER(CMSG_CHANGE_BAG_SLOT_FLAG,                               STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -345,7 +345,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_DESTROY_ITEM,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::DestroyItem, &WorldSession::HandleDestroyItemOpcode);
     DEFINE_HANDLER(CMSG_DF_BOOT_PLAYER_VOTE,                                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::DFBootPlayerVote, &WorldSession::HandleDFBootPlayerVote);
     DEFINE_HANDLER(CMSG_DF_GET_JOIN_STATUS,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::NullCmsg, &WorldSession::HandleDfGetJoinStatus);
-    DEFINE_HANDLER(CMSG_DF_GET_SYSTEM_INFO,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::LockInfoRequest, &WorldSession::HandleLockInfoRequest);
+    DEFINE_HANDLER(CMSG_DF_GET_SYSTEM_INFO,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::LFG::LockInfoRequest, &WorldSession::HandleLockInfoRequest);
     DEFINE_HANDLER(CMSG_DF_JOIN,                                            STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::DFJoin, &WorldSession::HandleDFJoin);
     DEFINE_HANDLER(CMSG_DF_LEAVE,                                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::DFLeave, &WorldSession::HandleDFLeave);
     DEFINE_HANDLER(CMSG_DF_PROPOSAL_RESPONSE,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::LFG::DFProposalResponse, &WorldSession::HandleDFProposalResponse);
@@ -541,7 +541,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_FORCE_WALK_SPEED_CHANGE_ACK,                   STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
     DEFINE_HANDLER(CMSG_MOVE_GRAVITY_DISABLE_ACK,                           STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_GRAVITY_ENABLE_ACK,                            STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
-    DEFINE_HANDLER(CMSG_MOVE_HEARTBEAT,                                     STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
+    DEFINE_HANDLER(CMSG_MOVE_HEARTBEAT,                                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_HOVER_ACK,                                     STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_JUMP,                                          STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_KNOCK_BACK_ACK,                                STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMoveKnockBackAck);
@@ -635,7 +635,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUERY_PAGE_TEXT,                                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Query::QueryPageText, &WorldSession::HandleQueryPageText);
     DEFINE_HANDLER(CMSG_QUERY_PET_NAME,                                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Query::QueryPetName, &WorldSession::HandleQueryPetName);
     DEFINE_HANDLER(CMSG_QUERY_PETITION,                                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::QueryPetition, &WorldSession::HandleQueryPetition);
-    DEFINE_HANDLER(CMSG_QUERY_PLAYER_NAME,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Query::QueryPlayerName, &WorldSession::HandleQueryPlayerName);
+    DEFINE_HANDLER(CMSG_QUERY_PLAYER_NAME,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryPlayerName, &WorldSession::HandleQueryPlayerName);
     DEFINE_HANDLER(CMSG_QUERY_QUEST_COMPLETION_NPCS,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Query::QueryQuestCompletionNPCs, &WorldSession::HandleQueryQuestCompletionNPCs);
     DEFINE_HANDLER(CMSG_QUERY_QUEST_INFO,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Quest::QueryQuestInfo, &WorldSession::HandleQueryQuestInfo);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_QUERY_REALM_NAME,                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleRealmQueryNameOpcode      );

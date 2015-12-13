@@ -102,7 +102,7 @@ ByteBuffer& operator>>(ByteBuffer& data, MovementInfo& movementInfo)
     data.ResetBitPos();
 
     movementInfo.flags = data.ReadBits(30);
-    movementInfo.flags2 = data.ReadBits(15);
+    movementInfo.flags2 = data.ReadBits(18);
 
     bool hasTransport = data.ReadBit();
     bool hasFall = data.ReadBit();
