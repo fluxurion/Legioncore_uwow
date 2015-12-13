@@ -23,6 +23,8 @@
 #include "Log.h"
 #include "World.h"
 
+DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", Achievementfmt, HOTFIX_SEL_ACHIEVEMENT);
+
 DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<BattlePetAbilityEffectEntry>     sBattlePetAbilityEffectStore("BattlePetAbilityEffect.db2", BattlePetAbilityEffectFormat, HOTFIX_SEL_BATTLE_PET_ABILITY_EFFECT);
@@ -41,6 +43,7 @@ DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDi
 DB2Storage<CurrencyTypesEntry>              sCurrencyTypesStore("CurrencyTypes.db2", CurrencyTypesFormat, HOTFIX_SEL_CURRENCY_TYPES);
 DB2Storage<CurvePointEntry>                 sCurvePointStore("CurvePoint.db2", CurvePointFormat, HOTFIX_SEL_CURVE_POINT);
 DB2Storage<GameObjectsEntry>                sGameObjectsStore("GameObjects.db2", GameObjectsFormat, HOTFIX_SEL_GAME_OBJECTS);
+DB2Storage<GameTablesEntry>                 sGameTablesStore("GameTables.db2", GameTablesFmt, HOTFIX_SEL_GAME_TABLES);
 DB2Storage<GarrAbilityEntry>                sGarrAbilityStore("GarrAbility.db2", GarrAbilityFormat, HOTFIX_SEL_GARR_ABILITY);
 DB2Storage<GarrAbilityEffectEntry>          sGarrAbilityEffectStore("GarrAbilityEffect.db2", GarrAbilityEffectFormat, HOTFIX_SEL_GARR_ABILITY_EFFECT);
 DB2Storage<GarrBuildingEntry>               sGarrBuildingStore("GarrBuilding.db2", GarrBuildingFormat, HOTFIX_SEL_GARR_BUILDING);
@@ -172,85 +175,181 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    LOAD_DB2(sAreaGroupMemberStore);
-    LOAD_DB2(sAreaGroupStore);
-    LOAD_DB2(sBattlePetAbilityEffectStore);
-    LOAD_DB2(sBattlePetAbilityStateStore);
-    LOAD_DB2(sBattlePetAbilityStore);
-    LOAD_DB2(sBattlePetAbilityTurnStore);
-    LOAD_DB2(sBattlePetBreedQualityStore);
-    LOAD_DB2(sBattlePetBreedStateStore);
-    LOAD_DB2(sBattlePetEffectPropertiesStore);
-    LOAD_DB2(sBattlePetSpeciesStateStore);
-    LOAD_DB2(sBattlePetSpeciesStore);
-    LOAD_DB2(sBattlePetSpeciesXAbilityStore);
-    LOAD_DB2(sBattlePetStateStore);
-    LOAD_DB2(sBroadcastTextStore);
-    LOAD_DB2(sCreatureDifficultyStore);
-    LOAD_DB2(sCurrencyTypesStore);
-    LOAD_DB2(sCurvePointStore);
-    LOAD_DB2(sGameObjectsStore);
-    LOAD_DB2(sGarrAbilityStore);
-    LOAD_DB2(sGarrAbilityEffectStore);
-    LOAD_DB2(sGarrBuildingPlotInstStore);
-    LOAD_DB2(sGarrBuildingStore);
-    LOAD_DB2(sGarrClassSpecStore);
-    LOAD_DB2(sGarrFollowerStore);
-    LOAD_DB2(sGarrFollowerLevelXPStore);
-    LOAD_DB2(sGarrFollowerQualityStore);
-    LOAD_DB2(sGarrFollowerXAbilityStore);
-    LOAD_DB2(sGarrEncounterStore);
-    LOAD_DB2(sGarrEncounterXMechanicStore);
-    LOAD_DB2(sGarrMechanicStore);
-    LOAD_DB2(sGarrMechanicTypeStore);
-    LOAD_DB2(sGarrMissionStore);
-    LOAD_DB2(sGarrMissionRewardStore);
-    LOAD_DB2(sGarrMissionXEncounterStore);
-    LOAD_DB2(sGarrPlotBuildingStore);
-    LOAD_DB2(sGarrPlotInstanceStore);
-    LOAD_DB2(sGarrPlotStore);
-    LOAD_DB2(sGarrSiteLevelPlotInstStore);
-    LOAD_DB2(sGarrSiteLevelStore);
-    LOAD_DB2(sHeirloomStore);
-    LOAD_DB2(sHolidaysStore);
-    LOAD_DB2(sItemAppearanceStore);
-    LOAD_DB2(sItemBonusStore);
-    LOAD_DB2(sItemBonusTreeNodeStore);
-    LOAD_DB2(sItemCurrencyCostStore);
-    LOAD_DB2(sItemEffectStore);
-    LOAD_DB2(sItemExtendedCostStore);
-    LOAD_DB2(sItemModifiedAppearanceStore);
-    LOAD_DB2(sItemSparseStore);
-    LOAD_DB2(sItemStore);
-    LOAD_DB2(sItemToBattlePetSpeciesStore);
-    LOAD_DB2(sItemUpgradeStore);
-    LOAD_DB2(sItemXBonusTreeStore);
-    LOAD_DB2(sKeyChainStore);
+    LOAD_DB2(sAchievementStore);
+    //LOAD_DB2(sAreaGroupMemberStore);
+    //LOAD_DB2(sAreaGroupStore);
+    //LOAD_DB2(sArmorLocationStore,               "ArmorLocation.dbc");
+    //LOAD_DB2(sAuctionHouseStore,                "AuctionHouse.dbc");
+    //LOAD_DB2(sBankBagSlotPricesStore,           "BankBagSlotPrices.dbc");
+    //LOAD_DB2(sBarberShopStyleStore,             "BarberShopStyle.dbc");
+    //LOAD_DB2(sBattlePetAbilityEffectStore);
+    //LOAD_DB2(sBattlePetAbilityStateStore);
+    //LOAD_DB2(sBattlePetAbilityStore);
+    //LOAD_DB2(sBattlePetAbilityTurnStore);
+    //LOAD_DB2(sBattlePetBreedQualityStore);
+    //LOAD_DB2(sBattlePetBreedStateStore);
+    //LOAD_DB2(sBattlePetEffectPropertiesStore);
+    //LOAD_DB2(sBattlePetSpeciesStateStore);
+    //LOAD_DB2(sBattlePetSpeciesStore);
+    //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
+    //LOAD_DB2(sBattlePetStateStore);
+    //LOAD_DB2(sBroadcastTextStore);
+    //LOAD_DB2(sCharacterLoadoutItemStore,        "CharacterLoadoutItem.dbc");
+    //LOAD_DB2(sCharStartOutfitStore,             "CharStartOutfit.dbc");
+    //LOAD_DB2(sChrPowerTypesStore,               "ChrClassesXPowerTypes.dbc");
+    //LOAD_DB2(sChrRacesStore,                    "ChrRaces.dbc");
+    //LOAD_DB2(sCreatureDifficultyStore);
+    //LOAD_DB2(sCreatureDisplayInfoExtraStore,    "CreatureDisplayInfoExtra.dbc");
+    //LOAD_DB2(sCreatureDisplayInfoStore,         "CreatureDisplayInfo.dbc");
+    //LOAD_DB2(sCreatureSpellDataStore,           "CreatureSpellData.dbc");
+    //LOAD_DB2(sCreatureTypeStore,                "CreatureType.dbc");
+    //LOAD_DB2(sCriteriaStore,                    "Criteria.dbc");
+    //LOAD_DB2(sCriteriaTreeStore,                "CriteriaTree.dbc");
+    //LOAD_DB2(sCurrencyTypesStore);
+    //LOAD_DB2(sCurvePointStore);
+    //LOAD_DB2(sDestructibleModelDataStore,       "DestructibleModelData.dbc");
+    //LOAD_DB2(sDurabilityCostsStore,             "DurabilityCosts.dbc");
+    //LOAD_DB2(sDurabilityQualityStore,           "DurabilityQuality.dbc");
+    //LOAD_DB2(sGameObjectDisplayInfoStore,       "GameObjectDisplayInfo.dbc");
+    //LOAD_DB2(sGameObjectsStore);
+    LOAD_DB2(sGameTablesStore);
+    //LOAD_DB2(sGarrAbilityEffectStore);
+    //LOAD_DB2(sGarrAbilityStore);
+    //LOAD_DB2(sGarrBuildingPlotInstStore);
+    //LOAD_DB2(sGarrBuildingStore);
+    //LOAD_DB2(sGarrClassSpecStore);
+    //LOAD_DB2(sGarrEncounterStore);
+    //LOAD_DB2(sGarrEncounterXMechanicStore);
+    //LOAD_DB2(sGarrFollowerLevelXPStore);
+    //LOAD_DB2(sGarrFollowerQualityStore);
+    //LOAD_DB2(sGarrFollowerStore);
+    //LOAD_DB2(sGarrFollowerXAbilityStore);
+    //LOAD_DB2(sGarrMechanicStore);
+    //LOAD_DB2(sGarrMechanicTypeStore);
+    //LOAD_DB2(sGarrMissionRewardStore);
+    //LOAD_DB2(sGarrMissionStore);
+    //LOAD_DB2(sGarrMissionXEncounterStore);
+    //LOAD_DB2(sGarrPlotBuildingStore);
+    //LOAD_DB2(sGarrPlotInstanceStore);
+    //LOAD_DB2(sGarrPlotStore);
+    //LOAD_DB2(sGarrSiteLevelPlotInstStore);
+    //LOAD_DB2(sGarrSiteLevelStore);
+    //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.dbc");
+    //LOAD_DB2(sGuildPerkSpellsStore,             "GuildPerkSpells.dbc");
+    //LOAD_DB2(sHeirloomStore);
+    //LOAD_DB2(sHolidaysStore);
+    //LOAD_DB2(sImportPriceArmorStore,            "ImportPriceArmor.dbc");
+    //LOAD_DB2(sImportPriceQualityStore,          "ImportPriceQuality.dbc");
+    //LOAD_DB2(sImportPriceShieldStore,           "ImportPriceShield.dbc");
+    //LOAD_DB2(sImportPriceWeaponStore,           "ImportPriceWeapon.dbc");
+    //LOAD_DB2(sItemAppearanceStore);
+    //LOAD_DB2(sItemArmorQualityStore,            "ItemArmorQuality.dbc");
+    //LOAD_DB2(sItemArmorShieldStore,             "ItemArmorShield.dbc");
+    //LOAD_DB2(sItemArmorTotalStore,              "ItemArmorTotal.dbc");
+    //LOAD_DB2(sItemBagFamilyStore,               "ItemBagFamily.dbc");
+    //LOAD_DB2(sItemBonusStore);
+    //LOAD_DB2(sItemBonusTreeNodeStore);
+    //LOAD_DB2(sItemClassStore,                   "ItemClass.dbc");
+    //LOAD_DB2(sItemCurrencyCostStore);
+    //LOAD_DB2(sItemDamageAmmoStore,              "ItemDamageAmmo.dbc");
+    //LOAD_DB2(sItemDamageOneHandCasterStore,     "ItemDamageOneHandCaster.dbc");
+    //LOAD_DB2(sItemDamageOneHandStore,           "ItemDamageOneHand.dbc");
+    //LOAD_DB2(sItemDamageRangedStore,            "ItemDamageRanged.dbc");
+    //LOAD_DB2(sItemDamageThrownStore,            "ItemDamageThrown.dbc");
+    //LOAD_DB2(sItemDamageTwoHandCasterStore,     "ItemDamageTwoHandCaster.dbc");
+    //LOAD_DB2(sItemDamageTwoHandStore,           "ItemDamageTwoHand.dbc");
+    //LOAD_DB2(sItemDamageWandStore,              "ItemDamageWand.dbc");
+    //LOAD_DB2(sItemDisenchantLootStore,          "ItemDisenchantLoot.dbc");
+    //LOAD_DB2(sItemEffectStore);
+    //LOAD_DB2(sItemExtendedCostStore);
+    //LOAD_DB2(sItemLimitCategoryStore,           "ItemLimitCategory.dbc");
+    //LOAD_DB2(sItemModifiedAppearanceStore);
+    //LOAD_DB2(sItemPriceBaseStore,               "ItemPriceBase.dbc");
+    //LOAD_DB2(sItemRandomPropertiesStore,        "ItemRandomProperties.dbc");
+    //LOAD_DB2(sItemRandomSuffixStore,            "ItemRandomSuffix.dbc");
+    //LOAD_DB2(sItemSetSpellStore,                "ItemSetSpell.dbc");
+    //LOAD_DB2(sItemSparseStore);
+    //LOAD_DB2(sItemSpecOverrideStore,            "ItemSpecOverride.dbc");
+    //LOAD_DB2(sItemSpecStore,                    "ItemSpec.dbc");
+    //LOAD_DB2(sItemStore);
+    //LOAD_DB2(sItemToBattlePetSpeciesStore);
+    //LOAD_DB2(sItemUpgradeStore);
+    //LOAD_DB2(sItemXBonusTreeStore);
+    //LOAD_DB2(sKeyChainStore);
     //LOAD_DB2(sLanguageWordsStore);
-    LOAD_DB2(sMapChallengeModeStore);
-    //LOAD_DB2(sMountCapabilityStore); // for 622
-    LOAD_DB2(sMountStore);
-    //LOAD_DB2(sMountTypeXCapabilityStore); // for 622
-    LOAD_DB2(sOverrideSpellDataStore);
-    LOAD_DB2(sPhaseGroupStore);
-    LOAD_DB2(sPvpItemStore);
-    LOAD_DB2(sQuestPackageItemStore);
-    LOAD_DB2(sRuleSetItemUpgradeEntryStore);
-    LOAD_DB2(sSoundEntriesStore);
-    LOAD_DB2(sSpellAuraRestrictionsStore);
-    LOAD_DB2(sSpellCastingRequirementsStore);
-    LOAD_DB2(sSpellClassOptionsStore);
-    LOAD_DB2(sSpellLearnSpellStore);
-    LOAD_DB2(sSpellMiscStore);
-    LOAD_DB2(sSpellPowerStore);
-    LOAD_DB2(sSpellReagentsStore);
-    LOAD_DB2(sSpellRuneCostStore);
-    LOAD_DB2(sSpellTotemsStore);
-    LOAD_DB2(sSpellVisualStore);
-    LOAD_DB2(sTaxiNodesStore);
-    LOAD_DB2(sTaxiPathNodeStore);
-    LOAD_DB2(sTaxiPathStore);
-    LOAD_DB2(sToyStore);
+    //LOAD_DB2(sMailTemplateStore,                "MailTemplate.dbc");
+    //LOAD_DB2(sMapChallengeModeStore);
+    //LOAD_DB2(sModifierTreeStore,                "ModifierTree.dbc");
+    //LOAD_DB2(sMountCapabilityStore);
+    //LOAD_DB2(sMountCapabilityStore,             "MountCapability.dbc");
+    //LOAD_DB2(sMountStore);
+    //LOAD_DB2(sMountTypeStore,                   "MountType.dbc");
+    //LOAD_DB2(sMountTypeXCapabilityStore);
+    //LOAD_DB2(sNameGenStore,                     "NameGen.dbc");
+    //LOAD_DB2(sOverrideSpellDataStore);
+    //LOAD_DB2(sPhaseGroupStore);
+    //LOAD_DB2(sPvpItemStore);
+    //LOAD_DB2(sQuestFactionRewardStore,          "QuestFactionReward.dbc");
+    //LOAD_DB2(sQuestPackageItemStore);
+    //LOAD_DB2(sQuestPOIPointStore,               "QuestPOIPoint.dbc");
+    //LOAD_DB2(sQuestSortStore,                   "QuestSort.dbc");
+    //LOAD_DB2(sQuestV2Store,                     "QuestV2.dbc");
+    //LOAD_DB2(sQuestXPStore,                     "QuestXP.dbc");
+    //LOAD_DB2(sRandomPropertiesPointsStore,      "RandPropPoints.dbc");
+    //LOAD_DB2(sResearchBranchStore,              "ResearchBranch.dbc");
+    //LOAD_DB2(sResearchProjectStore,             "ResearchProject.dbc");
+    //LOAD_DB2(sResearchSiteStore,                "ResearchSite.dbc");
+    //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
+    //LOAD_DB2(sScalingStatDistributionStore,     "ScalingStatDistribution.dbc");
+    //LOAD_DB2(sScenarioStepStore,                "ScenarioStep.dbc");
+    //LOAD_DB2(sScenarioStore,                    "Scenario.dbc");
+    //LOAD_DB2(sSkillLineAbilityStore,            "SkillLineAbility.dbc");
+    //LOAD_DB2(sSkillLineStore,                   "SkillLine.dbc");
+    //LOAD_DB2(sSkillRaceClassInfoStore,          "SkillRaceClassInfo.dbc");
+    //LOAD_DB2(sSoundEntriesStore);
+    //LOAD_DB2(sSpecializationSpellStore,         "SpecializationSpells.dbc");
+    //LOAD_DB2(sSpellAuraOptionsStore,            "SpellAuraOptions.dbc");
+    //LOAD_DB2(sSpellAuraRestrictionsStore);
+    //LOAD_DB2(sSpellCastingRequirementsStore);
+    //LOAD_DB2(sSpellCastTimesStore,              "SpellCastTimes.dbc");
+    //LOAD_DB2(sSpellCategoriesStore,             "SpellCategories.dbc");
+    //LOAD_DB2(sSpellCategoryStores,              "SpellCategory.dbc");
+    //LOAD_DB2(sSpellClassOptionsStore);
+    //LOAD_DB2(sSpellCooldownsStore,              "SpellCooldowns.dbc");
+    //LOAD_DB2(sSpellDurationStore,               "SpellDuration.dbc");
+    //LOAD_DB2(sSpellEffectScalingStore,          "SpellEffectScaling.dbc");
+    //LOAD_DB2(sSpellEffectStore,                 "SpellEffect.dbc");
+    //LOAD_DB2(sSpellEquippedItemsStore,          "SpellEquippedItems.dbc");
+    //LOAD_DB2(sSpellFocusObjectStore,            "SpellFocusObject.dbc");
+    //LOAD_DB2(sSpellInterruptsStore,             "SpellInterrupts.dbc");
+    //LOAD_DB2(sSpellItemEnchantmentConditionStore, "SpellItemEnchantmentCondition.dbc");
+    //LOAD_DB2(sSpellLearnSpellStore);
+    //LOAD_DB2(sSpellLevelsStore,                 "SpellLevels.dbc");
+    //LOAD_DB2(sSpellMiscStore);
+    //LOAD_DB2(sSpellPowerStore);
+    //LOAD_DB2(sSpellProcsPerMinuteModStore,      "SpellProcsPerMinuteMod.dbc");
+    //LOAD_DB2(sSpellProcsPerMinuteStore,         "SpellProcsPerMinute.dbc");
+    //LOAD_DB2(sSpellRadiusStore,                 "SpellRadius.dbc");
+    //LOAD_DB2(sSpellRangeStore,                  "SpellRange.dbc");
+    //LOAD_DB2(sSpellReagentsStore);
+    //LOAD_DB2(sSpellRuneCostStore);
+    //LOAD_DB2(sSpellScalingStore,                "SpellScaling.dbc");
+    //LOAD_DB2(sSpellShapeshiftFormStore,         "SpellShapeshiftForm.dbc");
+    //LOAD_DB2(sSpellShapeshiftStore,             "SpellShapeshift.dbc");
+    //LOAD_DB2(sSpellStore,                       "Spell.dbc");
+    //LOAD_DB2(sSpellTargetRestrictionsStore,     "SpellTargetRestrictions.dbc");
+    //LOAD_DB2(sSpellTotemsStore);
+    //LOAD_DB2(sSpellVisualStore);
+    //LOAD_DB2(sTaxiNodesStore);
+    //LOAD_DB2(sTaxiPathNodeStore);
+    //LOAD_DB2(sTaxiPathStore);
+    //LOAD_DB2(sTotemCategoryStore,               "TotemCategory.dbc");
+    //LOAD_DB2(sToyStore);
+    //LOAD_DB2(sTransportAnimationStore,          "TransportAnimation.dbc");
+    //LOAD_DB2(sTransportRotationStore,           "TransportRotation.dbc");
+    //LOAD_DB2(sUnitPowerBarStore,                "UnitPowerBar.dbc");
+    //LOAD_DB2(sWorldMapOverlayStore,             "WorldMapOverlay.dbc");
+    //LOAD_DB2(sWorldMapTransformsStore,          "WorldMapTransforms.dbc");
 
 #undef LOAD_DB2
 
@@ -260,7 +359,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     if (bad_db2_files.size() >= DB2FilesCount)
     {
         sLog->outError(LOG_FILTER_GENERAL, "\nIncorrect DataDir value in worldserver.conf or ALL required *.db2 files (%d) not found by path: %sdbc/%s/", DB2FilesCount, dataPath.c_str(), localeNames[defaultLocale]);
-        exit(1);
+        //exit(1);
     }
     else if (!bad_db2_files.empty())
     {
@@ -448,6 +547,10 @@ void DB2Manager::InitDB2CustomStores()
                 sOldContinentsNodesMask[field] |= submask;
         }
     }
+
+    for (AchievementEntry const* store : sAchievementStore)
+        if (store->CriteriaTree)
+            _achievementParentList[store->CriteriaTree] = store;
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -504,7 +607,7 @@ time_t DB2Manager::GetHotfixDate(uint32 entry, uint32 type) const
             if (time_t(hotfix.Timestamp) > ret)
                 ret = time_t(hotfix.Timestamp);
 
-    return ret ? ret : time(NULL);
+    return ret ? ret : time(nullptr);
 }
 
 std::vector<uint32> DB2Manager::GetAreasForGroup(uint32 areaGroupId)
@@ -525,7 +628,7 @@ ItemUpgradeData const* DB2Manager::GetItemUpgradeData(uint32 itemEntry)
 {
     ItemUpgradeDataMap::iterator itr = _itemUpgradeDataMap.find(itemEntry);
     if (itr == _itemUpgradeDataMap.end())
-        return NULL;
+        return nullptr;
 
     return &itr->second;
 }
@@ -581,17 +684,17 @@ DB2Manager::ItemBonusList const* DB2Manager::GetItemBonusList(uint32 bonusListId
 DB2Manager::LanguageWordsMap const* DB2Manager::GetLanguageWordMap(uint32 langID)
 {
     std::map<uint32, LanguageWordsMap>::const_iterator itr = sLanguageWordsMapStore.find(langID);
-    return itr != sLanguageWordsMapStore.end() ? &itr->second : NULL;
+    return itr != sLanguageWordsMapStore.end() ? &itr->second : nullptr;
 }
 
 StringVector const* DB2Manager::GetLanguageWordsBySize(uint32 langID, uint32 size)
 {
     LanguageWordsMap const* wordMap = GetLanguageWordMap(langID);
     if (!wordMap)
-        return NULL;
+        return nullptr;
 
     std::map<uint32, StringVector>::const_iterator itr = wordMap->find(size);
-    return itr != wordMap->end() ? &itr->second : NULL;
+    return itr != wordMap->end() ? &itr->second : nullptr;
 }
 
 std::vector<QuestPackageItemEntry const*> const* DB2Manager::GetQuestPackageItems(uint32 questPackageID) const
@@ -796,4 +899,13 @@ char const* DB2Manager::GetBroadcastTextValue(BroadcastTextEntry const* broadcas
         return broadcastText->MaleText->Str[locale];
 
     return broadcastText->MaleText->Str[DEFAULT_LOCALE];
+}
+
+AchievementEntry const* DB2Manager::GetsAchievementByTreeList(uint32 criteriaTree)
+{
+    auto const& v = _achievementParentList.find(criteriaTree);
+    if (v != _achievementParentList.end())
+        return v->second;
+
+    return nullptr;
 }

@@ -1535,13 +1535,19 @@ void World::SetInitialWorldSettings()
     CharacterDatabase.Execute(stmt);
 
     ///- Load the DBC files
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading dbc info...");
     LoadDBCStores(m_dataPath, m_defaultDbcLocale);
-    LoadGameTables(m_dataPath, m_defaultDbcLocale);
+    
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading db2 info...");
     sDB2Manager.LoadStores(m_dataPath, m_defaultDbcLocale);
+
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading hotfix info...");
     sDB2Manager.LoadHotfixData();
     HotfixDatabase.Close();
     
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading game tables info...");
+    LoadGameTables(m_dataPath, m_defaultDbcLocale);
+
     //Load weighted graph on taxi nodes path
     sTaxiPathGraph.Initialize();
 

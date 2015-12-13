@@ -57,25 +57,6 @@
 #define MAX_VEHICLE_SEATS 8
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
-struct AchievementEntry
-{
-    uint32    ID;                                           // 0
-    int32    requiredFaction;                               // 1 -1=all, 0=horde, 1=alliance
-    int32    mapID;                                         // 2 -1=none
-    uint32   parent;                                        // 3 its Achievement parent (can`t start while parent uncomplete, use its Criteria if don`t have own, use its progress on begin)
-    char* name;                                             // 4
-    //char* description;                                    // 5
-    uint32    categoryId;                                   // 6
-    uint32    points;                                       // 7 reward points
-    //uint32 OrderInCategory;                               // 8
-    uint32    flags;                                        // 9
-    //uint32    icon;                                       // 10 icon (from SpellIcon.dbc)
-    //char* reward;                                         // 11
-    uint32 count;                                           // 12 - need this count of completed criterias (own or referenced achievement criterias)
-    uint32 refAchievement;                                  // 13 - referenced achievement (counting of all completed criterias)
-    uint32 criteriaTree;                                    // 14
-};
-
 struct AchievementCategoryEntry
 {
     uint32    ID;                                           // 0
@@ -1169,14 +1150,6 @@ struct GameObjectDisplayInfoEntry
     //float         OverrideNameScale;                      // 20
 };
 
-struct GameTablesEntry
-{
-    //uint32 Index;                                         // 0 - not a real field, not counted for columns
-    char const* Name;                                       // 1
-    uint32 NumRows;                                         // 2
-    uint32 NumColumns;                                      // 3
-};
-
 struct GemPropertiesEntry
 {
     uint32      ID;                                         // 0        m_id
@@ -1253,11 +1226,6 @@ struct GtOCTLevelExperienceEntry
 };
 
 struct GtOCTRegenHPEntry
-{
-    float    ratio;
-};
-
-struct GtOCTRegenMPEntry
 {
     float    ratio;
 };
@@ -1412,22 +1380,6 @@ struct ItemBagFamilyEntry
 {
     uint32   ID;                                            // 0
     //char*     name;                                       // 1        m_name_lang
-};
-
-struct ItemDisplayInfoEntry
-{
-    uint32      ID;                                         // 0        m_ID
-                                                            // 1        m_modelName[2]
-                                                            // 2        m_modelTexture[2]
-                                                            // 3        m_inventoryIcon
-                                                            // 4        m_geosetGroup[3]
-                                                            // 5        m_flags
-                                                            // 6        m_spellVisualID
-                                                            // 7        m_groupSoundIndex
-                                                            // 8        m_helmetGeosetVis[2]
-                                                            // 9        m_texture[2]
-                                                            // 10       m_itemVisual[8]
-                                                            // 11       m_particleColorID
 };
 
 struct ItemDisenchantLootEntry
@@ -2573,27 +2525,6 @@ struct WorldStateSounds
     uint32    zoneMusic;                                    // 6
     uint32    soundAmbience;                                // 7
     uint32    soundProviderPreferences;                     // 8
-};
-*/
-
-/*
-struct WorldStateUI
-{
-    uint32    ID;                                           // 0
-    uint32    map_id;                                       // 1        Can be -1 to show up everywhere.
-    uint32    zone;                                         // 2        Can be zero for "everywhere".
-    uint32    phaseMask;                                    // 3        Phase this WorldState is avaliable in
-    uint32    icon;                                         // 4        The icon that is used in the interface.
-    char*     textureFilename;                              // 5
-    char*     text;                                         // 6-21     The worldstate text
-    char*     description;                                  // 22-38    Text shown when hovering mouse on icon
-    uint32    worldstateID;                                 // 39       This is the actual ID used
-    uint32    type;                                         // 40       0 = unknown, 1 = unknown, 2 = not shown in ui, 3 = wintergrasp
-    uint32    unk1;                                         // 41
-    uint32    unk2;                                         // 43
-    uint32    unk3;                                         // 44-58
-    uint32    unk4;                                         // 59-61    Used for some progress bars.
-    uint32    unk7;                                         // 62       Unused in 3.3.5a
 };
 */
 

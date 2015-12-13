@@ -22,13 +22,10 @@
 // x - skip<uint32>, X - skip<uint8>, s - char*, f - float, i - uint32, b - uint8, d - index (not included)
 // n - index (included), l - bool, p - field present in sql dbc, a - field absent in sql dbc
 
-//char const GtOCTRegenMPfmt[] = "f";
-//char const ItemDisplayTemplateEntryfmt[] = "nxxxxxxxxxxixxxxxxxxxxx";
 //const std::string CustomAchievementCriteriafmt= "pppppppppapppppaapppppp";
 //const std::string CustomAchievementCriteriaIndex = "ID";
 
 char const AchievementCriteriafmt[] = "niiiiiiiixxx";
-char const Achievementfmt[] = "niiisxiixixxiii";
 char const AreaPOIEntryfmt[] = "niiiiiiiiiiiffixixxixxx";
 char const AreaTableEntryfmt[] = "iiiniixxxxsxisiiiiixixxxxxiix";
 char const AreaTriggerEntryfmt[] = "nifffxxxfffffxxxx";
@@ -66,7 +63,6 @@ char const FactionEntryfmt[] = "niiiiiiiiiiiiiiiiiiffixsxxix";
 char const FactionTemplateEntryfmt[] = "niiiiiiiiiiiii";
 char const GameObjectDisplayInfofmt[] = "nixxxxxxxxxxffffffxxx";
 char const GameTablefmt[] = "xf";
-char const GameTablesFmt[] = "dsii";
 char const GemPropertiesEntryfmt[] = "nixxii";
 char const GlyphPropertiesfmt[] = "niiix";
 char const GlyphSlotfmt[] = "nii";
@@ -180,7 +176,6 @@ char const WorldMapOverlayEntryfmt[] = "nxiiiixxxxxxxxxx";
 char const WorldMapTransformsfmt[] = "diffffffiffxxxf";
 char const WorldSafeLocsEntryfmt[] = "niffffx";
 
-const std::string CustomAchievementfmt= "pppaaaapapaappp";
 const std::string CustomAchievementIndex = "ID";
 const std::string CustomCriteriafmt = "pppppppppppp";
 const std::string CustomCriteriaIndex = "ID";

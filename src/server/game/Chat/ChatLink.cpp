@@ -368,13 +368,14 @@ bool AchievementChatLink::Initialize(std::istringstream& iss)
 
 bool AchievementChatLink::ValidateName(char* buffer, const char* context)
 {
-    ChatLink::ValidateName(buffer, context);
+    //TODO:Legion
+    //ChatLink::ValidateName(buffer, context);
 
-    if (*_achievement->name && strcmp(_achievement->name, buffer) == 0)
+    //if (*_achievement->Name && strcmp(_achievement->Name, buffer) == 0)
         return true;
 
-    sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked achievement (id: %u) name wasn't found in any localization", context, _achievement->ID);
-    return false;
+    //sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked achievement (id: %u) name wasn't found in any localization", context, _achievement->ID);
+    //return false;
 }
 
 // |color|Htrade:spell_id:cur_value:max_value:player_guid:base64_data|h[name]|h|r

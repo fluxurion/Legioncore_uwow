@@ -26,6 +26,7 @@
 #include <boost/regex.hpp>
 #include <list>
 
+extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
 extern DB2Storage<BattlePetAbilityEffectEntry>      sBattlePetAbilityEffectStore;
 extern DB2Storage<BattlePetAbilityEntry>            sBattlePetAbilityStore;
@@ -41,6 +42,7 @@ extern DB2Storage<BattlePetStateEntry>              sBattlePetStateStore;
 extern DB2Storage<BroadcastTextEntry>               sBroadcastTextStore;
 extern DB2Storage<CurrencyTypesEntry>               sCurrencyTypesStore;
 extern DB2Storage<GameObjectsEntry>                 sGameObjectsStore;
+extern DB2Storage<GameTablesEntry>                  sGameTablesStore;
 extern DB2Storage<GarrAbilityEntry>                 sGarrAbilityStore;
 extern DB2Storage<GarrBuildingEntry>                sGarrBuildingStore;
 extern DB2Storage<GarrBuildingPlotInstEntry>        sGarrBuildingPlotInstStore;
@@ -100,6 +102,7 @@ extern TaxiMask                                     sAllianceTaxiNodesMask;
 extern TaxiPathSetBySource                          sTaxiPathSetBySource;
 extern TaxiPathNodesByPath                          sTaxiPathNodesByPath;
 
+
 void LoadDB2Stores(std::string const& dataPath);
 
 struct HotfixNotify
@@ -156,6 +159,7 @@ public:
     typedef std::unordered_map<uint32 /*level*/, uint32 /*nextLevelXP*/> GarrFollowerLevelXPMap;
     typedef std::unordered_map<uint32 /*quality*/, uint32 /*nextQualityXP*/> GarrFollowerQualityXPMap;
     typedef std::unordered_map<uint32 /*missionID*/, GarrMissionRewardEntry const*> GarrMissionRewardByMissionIDMap;
+    typedef std::unordered_map<uint32, AchievementEntry const*> sAchievementParentList;
 
     static DB2Manager& Instance()
     {
@@ -196,9 +200,10 @@ public:
     uint32 GetXPForNextFollowerQuality(uint32 quality);
     GarrMissionRewardEntry const* GetMissionRewardByRecID(uint32 missionRecID);
     static char const* GetBroadcastTextValue(BroadcastTextEntry const* broadcastText, LocaleConstant locale = DEFAULT_LOCALE, uint8 gender = GENDER_MALE, bool forceGender = false);
+    AchievementEntry const* GetsAchievementByTreeList(uint32 criteriaTree);
+
 
     MapChallengeModeEntryMap _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
-
     BattlePetBreedStates _battlePetBreedStates;
     BattlePetSpeciesStates _battlePetSpeciesStates;
 private:
@@ -228,6 +233,7 @@ private:
     GarrFollowerLevelXPMap _garrFollowerLevelXP;
     GarrFollowerQualityXPMap _garrFollowerQualityXP;
     GarrMissionRewardByMissionIDMap _garrMissionRewardByMissionID;
+    sAchievementParentList _achievementParentList;
 };
 
 #define sDB2Manager DB2Manager::Instance()

@@ -39,6 +39,25 @@
 
 #pragma pack(push, 1)
 
+struct AchievementEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    LocalizedString* Description;                           // 2
+    uint32      Flags;                                      // 3
+    LocalizedString* Reward;                                // 4
+    uint16      MapID;                                      // 5
+    uint16      ParentAchievement;                          // 6    
+    uint16      CategoryID;                                 // 7
+    uint16      OrderInCategory;                            // 8
+    uint16      IconID;                                     // 9
+    uint16      RefAchievement;                             // 10
+    uint16      CriteriaTree;                               // 11
+    uint8       FactionFlag;                                // 12
+    uint32      RewardPoints;                               // 13
+    uint8       count;                                      // 14
+};
+
 struct AreaGroupEntry
 {
     uint32      ID;                                                 // 0
@@ -942,6 +961,13 @@ struct GameObjectsEntry
     uint32 Type;                                                    // 14
     uint32 Data[GO_DBC_DATA_COUNT];                                 // 15-22
     LocalizedString* Name;                                          // 23
+};
+
+struct GameTablesEntry
+{
+    LocalizedString* Name;                                  // 0
+    uint16      NumRows;                                    // 1
+    uint8       NumColumns;                                 // 2
 };
 
 struct ItemUpgradeData

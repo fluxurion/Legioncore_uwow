@@ -16,11 +16,13 @@
  */
 
 // x - skip<uint32>, X - skip<uint8>, s - char*, f - float, i - uint32, b - uint8, d - index (not included)
-// n - index (included), l - uint64, p - field present in sql dbc, a - field absent in sql dbc
+// n - index (included), l - uint64, p - field present in sql dbc, a - field absent in sql dbc,
+// t - uint16
 
 #ifndef TRINITY_DB2SFRM_H
 #define TRINITY_DB2SFRM_H
 
+char const Achievementfmt[] = "nssistttttttbib";
 char const AreaGroupFormat[] = "n";
 char const AreaGroupMemberFormat[] = "nii";
 char const BattlePetAbilityEffectFormat[] = "niiiiiiiiiii";
@@ -39,6 +41,7 @@ char const CreatureDifficultyFormat[] = "niiiiiiiiii";
 char const CurrencyTypesFormat[] = "nisssiiiiiis";
 char const CurvePointFormat[] = "niiff";
 char const GameObjectsFormat[] = "niiffffffffiiiiiiiiiiiis";
+char const GameTablesFmt[] = "stb";
 char const GarrAbilityFormat[] = "nissiii";
 char const GarrAbilityEffectFormat[] = "niiiiifffii";
 char const GarrBuildingFormat[] = "niiiiissssiiiiiiiiiiiiii";

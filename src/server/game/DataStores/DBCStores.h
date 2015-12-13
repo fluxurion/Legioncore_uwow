@@ -22,6 +22,8 @@
 #include "Common.h"
 #include "DBCStore.h"
 #include "DBCStructure.h"
+#include "DB2Store.h"
+#include "DB2Structure.h"
 #include "SharedDefines.h"
 
 #include <list>
@@ -36,7 +38,6 @@ uint32 GetSpellByTrigger(uint32 trigerSpell);
 std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
 std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
 std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId);
-AchievementEntry const* GetsAchievementByTreeList(uint32 criteriaTree);
 
 char const* GetPetName(uint32 petfamily, uint32 dbclang);
 SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
@@ -125,13 +126,12 @@ private:
     GameTablesEntry const* _gtEntry;
 };
 
-//extern DBCStorage<GtOCTRegenMPEntry>            sGtOCTRegenMPStore; -- not used currently
-//extern DBCStorage<ItemDisplayInfoEntry>      sItemDisplayInfoStore; -- not used currently
-//extern DBCStorage<StableSlotPricesEntry>        sStableSlotPricesStore;
 extern CharacterLoadoutItemMap                  sCharacterLoadoutItemMap;
-extern DBCStorage<AchievementEntry>             sAchievementStore;
+
+
+
 extern DBCStorage<AreaPOIEntry>                 sAreaPOIStore;
-extern DBCStorage<AreaTableEntry>               sAreaStore;// recommend access using functions
+extern DBCStorage<AreaTableEntry>               sAreaStore;
 extern DBCStorage<AreaTriggerEntry>             sAreaTriggerStore;
 extern DBCStorage<ArmorLocationEntry>           sArmorLocationStore;
 extern DBCStorage<AuctionHouseEntry>            sAuctionHouseStore;
@@ -168,7 +168,6 @@ extern DBCStorage<GameObjectDisplayInfoEntry>   sGameObjectDisplayInfoStore;
 extern DBCStorage<GemPropertiesEntry>           sGemPropertiesStore;
 extern DBCStorage<GlyphPropertiesEntry>         sGlyphPropertiesStore;
 extern DBCStorage<GlyphSlotEntry>               sGlyphSlotStore;
-extern DBCStorage<GtArmorMitigationByLvlEntry>  sGtArmorMitigationByLvlStore;
 extern DBCStorage<GuildPerkSpellsEntry>         sGuildPerkSpellsStore;
 extern DBCStorage<ImportPriceArmorEntry>        sImportPriceArmorStore;
 extern DBCStorage<ImportPriceQualityEntry>      sImportPriceQualityStore;
@@ -263,6 +262,7 @@ extern DBCStorage<WorldMapTransformsEntry>      sWorldMapTransformsStore;
 extern DBCStorage<WorldSafeLocsEntry>           sWorldSafeLocsStore;
 
 extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
+extern GameTable<GtArmorMitigationByLvlEntry>   sGtArmorMitigationByLvlStore;
 extern GameTable<GtBattlePetTypeDamageModEntry> sGtBattlePetTypeDamageModStore;
 extern GameTable<GtChanceToMeleeCritBaseEntry>  sGtChanceToMeleeCritBaseStore;
 extern GameTable<GtChanceToMeleeCritEntry>      sGtChanceToMeleeCritStore;

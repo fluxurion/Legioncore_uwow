@@ -25,6 +25,7 @@
 #include "DatabaseEnv.h"
 #include "DBCEnums.h"
 #include "DBCStores.h"
+#include "DB2Stores.h"
 #include "ObjectGuid.h"
 
 struct CriteriaTreeInfo

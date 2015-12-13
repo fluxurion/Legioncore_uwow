@@ -29,6 +29,9 @@ enum HotfixDatabaseStatements
         name for a suiting suffix.
     */
 
+    HOTFIX_SEL_ACHIEVEMENT,
+    HOTFIX_SEL_ACHIEVEMENT_LOCALE,
+
     HOTFIX_SEL_AREA_GROUP,
 
     HOTFIX_SEL_AREA_GROUP_MEMBER,
@@ -197,6 +200,9 @@ enum HotfixDatabaseStatements
 
     HOTFIX_SEL_GAME_OBJECTS,
     HOTFIX_SEL_GAME_OBJECTS_LOCALE,
+    
+    HOTFIX_SEL_GAME_TABLES,
+    HOTFIX_SEL_GAME_TABLES_LOCALE,
 
     HOTFIX_SEL_MAP_CHALLENGE_MODE,
 
