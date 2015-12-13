@@ -88,6 +88,10 @@ public:
                     buffer << *(uint8*)entry;
                     entry += 1;
                     break;
+                case FT_SHORT:
+                    buffer << *(uint16*)entry;
+                    entry += 2;
+                    break;
                 case FT_STRING:
                 {
                     LocalizedString* locStr = *(LocalizedString**)entry;

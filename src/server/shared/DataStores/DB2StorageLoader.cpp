@@ -38,7 +38,7 @@ DB2FileLoader::DB2FileLoader()
     minIndex = 0;
     maxIndex = 0;
     localeMask = 0;
-    unk5 = 0;
+    CopyTableSize = 0;
 }
 
 bool DB2FileLoader::Load(const char *filename, const char *fmt)
@@ -63,7 +63,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header);
 
-    if (header != 0x32424457)
+    if (header != 0x33424457)
     {
         fclose(f);
         return false;                                       //'WDB2'
@@ -101,7 +101,6 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(stringSize);
 
-    /* NEW WDB2 FIELDS*/
     if (fread(&tableHash, 4, 1, f) != 1)                  // Table hash
     {
         fclose(f);
@@ -150,13 +149,13 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(localeMask);
 
-    if (fread(&unk5, 4, 1, f) != 1)                               // Unknown WDB2
+    if (fread(&CopyTableSize, 4, 1, f) != 1)
     {
         fclose(f);
         return false;
     }
 
-    EndianConvert(unk5);
+    EndianConvert(CopyTableSize);
 
     if (maxIndex != 0)
     {
@@ -171,6 +170,8 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
         fieldsOffset[i] = fieldsOffset[i - 1];
         if (fmt[i - 1] == 'b')
             fieldsOffset[i] += 1;
+        else if (fmt[i - 1] == 't')
+            fieldsOffset[i] += 2;
         else
             fieldsOffset[i] += 4;
     }
@@ -231,6 +232,9 @@ uint32 DB2FileLoader::GetFormatRecordSize(const char * format, int32* index_pos)
             case FT_LONG:
                 recordsize += 8;
                 break;
+            case FT_SHORT:
+                recordsize += 2;
+                break;
         }
     }
 
@@ -264,7 +268,7 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
 {
     typedef char * ptr;
     if (strlen(format) != fieldCount)
-        return NULL;
+        return nullptr;
 
     //get struct size and index pos
     int32 indexField;
@@ -319,6 +323,10 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
                 case FT_BYTE:
                     *((uint8*)(&dataTable[offset])) = getRecord(y).getUInt8(x);
                     offset += 1;
+                    break;
+                case FT_SHORT:
+                    *((uint16*)(&dataTable[offset])) = getRecord(y).getUInt16(x);
+                    offset += 2;
                     break;
                 case FT_LONG:
                     *((uint64*)(&dataTable[offset])) = getRecord(y).getUInt64(x);
@@ -382,6 +390,9 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
                     break;
                 case FT_LONG:
                     offset += 8;
+                    break;
+                case FT_SHORT:
+                    offset += 2;
                     break;
                 case FT_STRING:
                 case FT_STRING_NOT_LOCALIZED:
@@ -449,6 +460,9 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
                     break;
                 case FT_LONG:
                     offset += 8;
+                    break;
+                case FT_SHORT:
+                    offset += 2;
                     break;
                 case FT_STRING:
                 {
@@ -579,6 +593,10 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
                     *((int64*)(&dataValue[offset])) = fields[f].GetInt64();
                     offset += 8;
                     break;
+                case FT_SHORT:
+                    *((int16*)(&dataValue[offset])) = fields[f].GetInt16();
+                    offset += 2;
+                    break;
                 case FT_STRING:
                 {
                     LocalizedString** slot = (LocalizedString**)(&dataValue[offset]);
@@ -678,6 +696,9 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
                         break;
                     case FT_LONG:
                         offset += 8;
+                        break;
+                    case FT_SHORT:
+                        offset += 2;
                         break;
                     case FT_STRING:
                     {
