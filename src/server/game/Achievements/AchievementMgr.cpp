@@ -3805,20 +3805,20 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
 
     int32 saveReqType = -1;
     bool saveCheck = false;
-    if(std::vector<ModifierTreeEntry const*> const* modifierList = GetModifierTreeList(modifierTreeId))
+    if (std::vector<ModifierTreeEntry const*> const* modifierList = sDB2Manager.GetModifierTreeList(modifierTreeId))
     for (std::vector<ModifierTreeEntry const*>::const_iterator itr = modifierList->begin(); itr != modifierList->end(); ++itr)
     {
         ModifierTreeEntry const* modifier = *itr;
-        uint32 const reqType = modifier->additionalConditionType;
-        uint32 const reqValue = modifier->additionalConditionValue;
-        uint32 const reqCount = modifier->additionalConditionCount;
+        uint32 const reqType = modifier->Type;
+        uint32 const reqValue = modifier->Asset;
+        uint32 const reqCount = modifier->SecondaryAsset;
         bool check = true;
 
         //sLog->outDebug(LOG_FILTER_ACHIEVEMENTSYS, "AchievementMgr::AdditionalRequirementsSatisfied cheker start Modify %i, reqType %i reqValue %i reqCount %i saveCheck %i saveReqType %i operatorFlags %i check %i", (*itr), reqType, reqValue, reqCount, saveCheck, saveReqType, modifier->operatorFlags, check);
 
-        if (modifier->operatorFlags & (MODIFIERTREE_FLAG_MAIN | MODIFIERTREE_FLAG_PARENT))
+        if (modifier->Operator & (MODIFIERTREE_FLAG_MAIN | MODIFIERTREE_FLAG_PARENT))
         {
-            if(!AdditionalRequirementsSatisfied(modifier->ID, miscValue1, miscValue2, miscValue3, unit, referencePlayer))
+            if (!AdditionalRequirementsSatisfied(modifier->ID, miscValue1, miscValue2, miscValue3, unit, referencePlayer))
                 return false;
         }
         else

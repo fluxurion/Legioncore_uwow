@@ -116,11 +116,24 @@ extern DB2Storage<ItemToBattlePetSpeciesEntry>      sItemToBattlePetSpeciesStore
 extern DB2Storage<ItemUpgradeEntry>                 sItemUpgradeStore;
 extern DB2Storage<KeyChainEntry>                    sKeyChainStore;
 extern DB2Storage<LanguageWordsEntry>               sLanguageWordsStore;
+extern DB2Storage<MailTemplateEntry>                sMailTemplateStore;
 extern DB2Storage<MapChallengeModeEntry>            sMapChallengeModeStore;
+extern DB2Storage<ModifierTreeEntry>                sModifierTreeStore;
+extern DB2Storage<MountCapabilityEntry>             sMountCapabilityStore;
+extern DB2Storage<MountTypeEntry>                   sMountTypeStore;
+extern DB2Storage<NameGenEntry>                     sNameGenStore;
 extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
 extern DB2Storage<PhaseGroupEntry>                  sPhaseGroupStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
+extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
 extern DB2Storage<QuestPackageItemEntry>            sQuestPackageItemStore;
+extern DB2Storage<QuestPOIPointEntry>               sQuestPOIPointStore;
+extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
+extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
+extern DB2Storage<RandPropPointsEntry>              sRandPropPointsStore;
+extern DB2Storage<ResearchBranchEntry>              sResearchBranchStore;
+extern DB2Storage<ResearchProjectEntry>             sResearchProjectStore;
+extern DB2Storage<ResearchSiteEntry>                sResearchSiteStore;
 extern DB2Storage<RuleSetItemUpgradeEntry>          sRuleSetItemUpgradeEntryStore;
 extern DB2Storage<SoundEntriesEntry>                sSoundEntriesStore;
 extern DB2Storage<SpellAuraRestrictionsEntry>       sSpellAuraRestrictionsStore;
@@ -143,6 +156,17 @@ extern TaxiMask                                     sAllianceTaxiNodesMask;
 extern TaxiPathSetBySource                          sTaxiPathSetBySource;
 extern TaxiPathNodesByPath                          sTaxiPathNodesByPath;
 
+struct ResearchSiteData
+{
+    ResearchSiteData() : zone(0), level(0xFF), branch_id(0), entry(NULL) { }
+
+    ResearchSiteEntry const* entry;
+    uint16 zone;
+    uint8 level;
+    uint8 branch_id;
+    ResearchPOIPointVector points;
+    DigSitePositionVector digSites;
+};
 
 void LoadDB2Stores(std::string const& dataPath);
 
@@ -165,7 +189,7 @@ typedef std::vector<HotfixNotify> HotfixData;
 class DB2Manager
 {
 public:
-    //DEFINE_DB2_SET_COMPARATOR(MountTypeXCapabilityEntry);
+    DEFINE_DB2_SET_COMPARATOR(MountTypeXCapabilityEntry);
 
     typedef std::map<uint32 /*hash*/, DB2StorageBase*> StorageMap;
 
@@ -178,8 +202,8 @@ public:
     typedef std::unordered_map<uint32, std::set<ItemBonusTreeNodeEntry const*>> ItemBonusTreeContainer;
     typedef std::unordered_map<uint32, std::vector<ItemSpecOverrideEntry const*>> ItemSpecOverridesContainer;
     typedef std::unordered_map<uint32, MountEntry const*> MountContainer;
-    //typedef std::set<MountTypeXCapabilityEntry const*, MountTypeXCapabilityEntryComparator> MountTypeXCapabilitySet;
-    //typedef std::unordered_map<uint32, MountTypeXCapabilitySet> MountCapabilitiesByTypeContainer;
+    typedef std::set<MountTypeXCapabilityEntry const*, MountTypeXCapabilityEntryComparator> MountTypeXCapabilitySet;
+    typedef std::unordered_map<uint32, MountTypeXCapabilitySet> MountCapabilitiesByTypeContainer;
     typedef std::map<uint32 /*word length*/, StringVector> LanguageWordsContainer;
     typedef std::unordered_map<uint32 /*areaGroupId*/, std::vector<uint32/*areaId*/>> AreaGroupMemberContainer;
     typedef std::unordered_map<uint32, MapChallengeModeEntry const*> MapChallengeModeEntryContainer;
@@ -204,6 +228,10 @@ public:
     typedef std::vector<ItemSetSpellEntry const*> ItemSetSpells;
     typedef std::unordered_map<uint32, ItemSetSpells> ItemSetSpellsContainer;
     typedef std::unordered_map<uint32, std::list<uint32>> ItemSpecsContainer;
+    typedef std::unordered_map<uint32, std::vector<ModifierTreeEntry const*>> ModifierTreeContainer;
+    typedef std::unordered_map<uint32, StringVector[2]/*stringVectorArray*/> NameGenVectorArraysContainer;
+    typedef std::set<ResearchProjectEntry const*> ResearchProjectContainer;
+    typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
 
     static DB2Manager& Instance()
     {
@@ -230,7 +258,7 @@ public:
     std::vector<QuestPackageItemEntry const*> const* GetQuestPackageItems(uint32 questPackageID) const;
     MountEntry const* GetMount(uint32 spellId) const;
     MountEntry const* GetMountById(uint32 id) const;
-    //MountTypeXCapabilitySet const* GetMountCapabilities(uint32 mountType) const;
+    MountTypeXCapabilitySet const* GetMountCapabilities(uint32 mountType) const;
     std::set<uint32> GetItemBonusTree(uint32 itemId, uint32 itemBonusTreeMod) const;
     std::set<uint32> GetFindBonusTree(uint32 BonusTreeID, uint32 itemBonusTreeMod) const;
     HeirloomEntry const* GetHeirloomByItemId(uint32 itemId) const;
@@ -249,11 +277,17 @@ public:
     std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
     std::list<uint32> GetItemSpecsList(uint32 itemID);
     void AddSpecdtoItem(uint32 itemID, uint32 specID);
+    std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
+    std::string GetRandomCharacterName(uint8 race, uint8 gender);
+    uint32 GetQuestUniqueBitFlag(uint32 questID);
+    ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
     BattlePetSpeciesStatesContainer _battlePetSpeciesStates;
     ItemSetSpellsContainer _itemSetSpells;
+    ResearchProjectContainer _researchProjectContainer;
+    ResearchSiteDataMap _researchSiteDataMap;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -265,7 +299,7 @@ private:
     ItemToBonusTreeContainer _itemToBonusTree;
     ItemSpecOverridesContainer _itemSpecOverrides;
     MountContainer _mountsBySpellId;
-    //MountCapabilitiesByTypeContainer _mountCapabilitiesByType;
+    MountCapabilitiesByTypeContainer _mountCapabilitiesByType;
     std::list<uint32> sGameObjectsList;
     std::map<uint32 /*landID*/, LanguageWordsContainer> sLanguageWordsMapStore;
     AreaGroupMemberContainer _areaGroupMembers;
@@ -285,6 +319,9 @@ private:
     CharacterLoadoutItemContainer _characterLoadoutItem;
     CriteriaTreeContainer _criteriaTree;
     ItemSpecsContainer _itemSpec;
+    ModifierTreeContainer _modifierTree;
+    NameGenVectorArraysContainer _genNameVectoArraysMap;
+
 };
 
 #define sDB2Manager DB2Manager::Instance()

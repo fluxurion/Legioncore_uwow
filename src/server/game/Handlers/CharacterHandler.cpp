@@ -2296,11 +2296,9 @@ void WorldSession::HandleGenerateRandomCharacterName(WorldPackets::Character::Ge
     if (!Player::IsValidGender(packet.Sex))
         return;
 
-    std::string name = GetRandomCharacterName(packet.Race, packet.Sex);
-
     WorldPackets::Character::GenerateRandomCharacterNameResult result;
     result.Success = true;
-    result.Name = name;
+    result.Name = sDB2Manager.GetRandomCharacterName(packet.Race, packet.Sex);
     SendPacket(result.Write());
 }
 

@@ -13856,7 +13856,7 @@ void Unit::UpdateMount()
             }
         }
 
-        // Find the fitting mount
+        /*@TODO:Legion this data are gone
         for (uint32 i = MAX_MOUNT_CAPABILITIES-1; i < MAX_MOUNT_CAPABILITIES; --i)
         {
             uint32 id = mountType->MountCapability[i];
@@ -13914,17 +13914,17 @@ void Unit::UpdateMount()
 
             newMount = mountCapability;
             break;
-        }
+        }*/
     }
 
-    if (_mount != newMount)
+    /*if (_mount != newMount)
     {
         uint32 oldSpell = _mount ? _mount->SpeedModSpell : 0;
         bool oldFlyer = _mount ? (_mount->Flags & 2) : false;
         uint32 newSpell = newMount ? newMount->SpeedModSpell : 0;
         bool newFlyer = newMount ? (newMount->Flags & 2) : false;
 
-        // This is required for displaying speeds on aura
+         This is required for displaying speeds on aura
         if (effect)
             effect->SetAmount(newMount ? newMount->Id : 0);
 
@@ -13948,7 +13948,7 @@ void Unit::UpdateMount()
             player = m_movedPlayer;
 
         _mount = newMount;
-    }
+    }*/
 }
 
 MountCapabilityEntry const* Unit::GetMountCapability(uint32 mountType) const
@@ -13968,42 +13968,43 @@ MountCapabilityEntry const* Unit::GetMountCapability(uint32 mountType) const
 
     for (uint32 i = MAX_MOUNT_CAPABILITIES; i > 0; --i)
     {
-        MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(mountTypeEntry->MountCapability[i - 1]);
-        if (!mountCapability)
-            continue;
+        //@TODO:Legion - this data are gone
+        //MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(mountTypeEntry->MountCapability[i - 1]);
+        //if (!mountCapability)
+        //    continue;
 
-        if (ridingSkill < mountCapability->RequiredRidingSkill)
-            continue;
+        //if (ridingSkill < mountCapability->RequiredRidingSkill)
+        //    continue;
 
-        /*if (HasExtraUnitMovementFlag(MOVEMENTFLAG2_FULL_SPEED_PITCHING))
-        {
-            if (!(mountCapability->Flags & MOUNT_FLAG_CAN_PITCH))
-                continue;
-        }*/
-        else if (HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
-        {
-            if (!(mountCapability->Flags & MOUNT_FLAG_CAN_SWIM))
-                continue;
-        }
-        else if (!(mountCapability->Flags & 0x1))   // unknown flags, checked in 4.2.2 14545 client
-        {
-            if (!(mountCapability->Flags & 0x2))
-                continue;
-        }
+        ///*if (HasExtraUnitMovementFlag(MOVEMENTFLAG2_FULL_SPEED_PITCHING))
+        //{
+        //    if (!(mountCapability->Flags & MOUNT_FLAG_CAN_PITCH))
+        //        continue;
+        //}*/
+        //else if (HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
+        //{
+        //    if (!(mountCapability->Flags & MOUNT_FLAG_CAN_SWIM))
+        //        continue;
+        //}
+        //else if (!(mountCapability->Flags & 0x1))   // unknown flags, checked in 4.2.2 14545 client
+        //{
+        //    if (!(mountCapability->Flags & 0x2))
+        //        continue;
+        //}
 
-        if (mountCapability->RequiredMap != -1 && int32(GetMapId()) != mountCapability->RequiredMap)
-            continue;
+        //if (mountCapability->RequiredMap != -1 && int32(GetMapId()) != mountCapability->RequiredMap)
+        //    continue;
 
-        if (mountCapability->RequiredArea && (mountCapability->RequiredArea != zoneId && mountCapability->RequiredArea != areaId))
-            continue;
+        //if (mountCapability->RequiredArea && (mountCapability->RequiredArea != zoneId && mountCapability->RequiredArea != areaId))
+        //    continue;
 
-        if (mountCapability->RequiredAura && !HasAura(mountCapability->RequiredAura))
-            continue;
+        //if (mountCapability->RequiredAura && !HasAura(mountCapability->RequiredAura))
+        //    continue;
 
-        if (mountCapability->RequiredSpell && (GetTypeId() != TYPEID_PLAYER || !ToPlayer()->HasSpell(mountCapability->RequiredSpell)))
-            continue;
+        //if (mountCapability->RequiredSpell && (GetTypeId() != TYPEID_PLAYER || !ToPlayer()->HasSpell(mountCapability->RequiredSpell)))
+        //    continue;
 
-        return mountCapability;
+        //return mountCapability;
     }
 
     return NULL;

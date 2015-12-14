@@ -40,8 +40,8 @@ typedef std::set<uint32> SiteSet;
 
 bool Player::GenerateDigSiteLoot(uint16 siteId, DigSite &site)
 {
-    ResearchSiteDataMap::iterator dataItr = sResearchSiteDataMap.find(siteId);
-    if (dataItr == sResearchSiteDataMap.end())
+    auto dataItr = sDB2Manager._researchSiteDataMap.find(siteId);
+    if (dataItr == sDB2Manager._researchSiteDataMap.end())
         return false;
 
     DigSitePositionVector const& loot = dataItr->second.digSites;
@@ -102,8 +102,8 @@ bool Player::OnSurvey(uint32& entry, float& x, float& y, float& z, float &orient
         site.site_id = site_id;
     }
 
-    ResearchSiteDataMap::iterator rsite = sResearchSiteDataMap.find(site_id);
-    if (rsite == sResearchSiteDataMap.end())
+    auto rsite = sDB2Manager._researchSiteDataMap.find(site_id);
+    if (rsite == sDB2Manager._researchSiteDataMap.end())
         return false;
 
     orientation = GetAngle(site.loot_x, site.loot_y);
@@ -169,15 +169,15 @@ uint16 Player::GetResearchSiteID()
     pt.x = int32(GetPositionX());
     pt.y = int32(GetPositionY());
 
-    for (ResearchSiteDataMap::iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+    for (auto itr : sDB2Manager._researchSiteDataMap)
     {
-        if (itr->second.entry->MapID != GetMapId())
+        if (itr.second.entry->MapID != GetMapId())
             continue;
 
-        if (!IsPointInZone(pt, itr->second.points))
+        if (!IsPointInZone(pt, itr.second.points))
             continue;
 
-        return itr->second.entry->ID;
+        return itr.second.entry->ID;
     }
 
     return 0;
@@ -236,8 +236,8 @@ void Player::RandomizeSitesInMap(uint32 mapId, uint8 count)
     for (ResearchSiteSet::const_iterator itr = _researchSites.begin(); itr != _researchSites.end(); ++itr)
     {
         uint32 site_id = *itr;
-        ResearchSiteDataMap::const_iterator itr2 = sResearchSiteDataMap.find(site_id);
-        if (itr2 == sResearchSiteDataMap.end())
+        auto const& itr2 = sDB2Manager._researchSiteDataMap.find(site_id);
+        if (itr2 == sDB2Manager._researchSiteDataMap.end())
             continue;
 
         if (itr2->second.entry->MapID != mapId)
@@ -265,8 +265,8 @@ bool Player::TeleportToDigsiteInMap(uint32 mapId)
     for (ResearchSiteSet::const_iterator itr = _researchSites.begin(); itr != _researchSites.end(); ++itr)
     {
         uint32 site_id = *itr;
-        ResearchSiteDataMap::const_iterator itr2 = sResearchSiteDataMap.find(site_id);
-        if (itr2 == sResearchSiteDataMap.end())
+        auto const& itr2 = sDB2Manager._researchSiteDataMap.find(site_id);
+        if (itr2 == sDB2Manager._researchSiteDataMap.end())
             continue;
 
         if (itr2->second.entry->MapID != mapId)
@@ -279,7 +279,7 @@ bool Player::TeleportToDigsiteInMap(uint32 mapId)
         return false;
 
     uint32 site_id = Trinity::Containers::SelectRandomContainerElement(sites);
-    ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.find(site_id);
+    auto const& itr = sDB2Manager._researchSiteDataMap.find(site_id);
     ResearchSiteData const& data = itr->second;
     if (data.points.empty())
         return false;
@@ -306,8 +306,7 @@ void Player::ShowResearchSites()
     for (ResearchSiteSet::const_iterator itr = _researchSites.begin(); itr != _researchSites.end(); ++itr)
     {
         uint32 id = *itr;
-        ResearchSiteEntry const* rs = GetResearchSiteEntryById(id);
-
+        ResearchSiteEntry const* rs = sDB2Manager.GetResearchSiteEntryById(id);
         if (!rs || CanResearchWithSkillLevel(rs->ID) == 2)
             id = 0;
 
@@ -320,8 +319,8 @@ bool Player::CanResearchWithLevel(uint32 site_id)
     if (!GetSkillValue(SKILL_ARCHAEOLOGY))
         return false;
 
-    ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.find(site_id);
-    if (itr != sResearchSiteDataMap.end())
+    auto const& itr = sDB2Manager._researchSiteDataMap.find(site_id);
+    if (itr != sDB2Manager._researchSiteDataMap.end())
         return getLevel() + 19 >= itr->second.level;
 
     return true;
@@ -333,8 +332,8 @@ uint8 Player::CanResearchWithSkillLevel(uint32 site_id)
     if (!skill_now)
         return 0;
 
-    ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.find(site_id);
-    if (itr != sResearchSiteDataMap.end())
+    auto const& itr = sDB2Manager._researchSiteDataMap.find(site_id);
+    if (itr != sDB2Manager._researchSiteDataMap.end())
     {
         ResearchSiteData const& entry = itr->second;
 
@@ -376,15 +375,15 @@ void Player::GenerateResearchSiteInMap(uint32 mapId)
 {
     SiteSet tempSites;
 
-    for (ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchSiteDataMap)
     {
-        ResearchSiteEntry const* entry = itr->second.entry;
+        ResearchSiteEntry const* entry = itr.second.entry;
 
         if (HasResearchSite(entry->ID) || entry->MapID != mapId || !CanResearchWithLevel(entry->ID) || !CanResearchWithSkillLevel(entry->ID))
             continue;
 
         // add only mantid sites when player has Mantid Artifact Sonic Locator
-        if (entry->MapID == 870 && itr->second.branch_id != ARCHAEOLOGY_BRANCH_MANTID && HasItemCount(95509))
+        if (entry->MapID == 870 && itr.second.branch_id != ARCHAEOLOGY_BRANCH_MANTID && HasItemCount(95509))
             continue;
 
         tempSites.insert(entry->ID);
@@ -406,14 +405,14 @@ void Player::GenerateResearchSites()
 
     typedef std::map<uint32, SiteSet> Sites;
     Sites tempSites;
-    for (ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchSiteDataMap)
     {
-        ResearchSiteEntry const* entry = itr->second.entry;
+        ResearchSiteEntry const* entry = itr.second.entry;
         if (!CanResearchWithLevel(entry->ID) || !CanResearchWithSkillLevel(entry->ID))
             continue;
 
         // add only mantid sites when player has Mantid Artifact Sonic Locator
-        if (entry->MapID == 870 && itr->second.branch_id != ARCHAEOLOGY_BRANCH_MANTID && HasItemCount(95509))
+        if (entry->MapID == 870 && itr.second.branch_id != ARCHAEOLOGY_BRANCH_MANTID && HasItemCount(95509))
             continue;
 
         tempSites[entry->MapID].insert(entry->ID);
@@ -448,7 +447,7 @@ float Player::GetRareArtifactChance(uint32 skill_value)
 
 void Player::GenerateResearchProjects()
 {
-    if (sResearchProjectSet.empty())
+    if (sDB2Manager._researchProjectContainer.empty())
         return;
 
     uint16 skill_now = GetSkillValue(SKILL_ARCHAEOLOGY);
@@ -463,9 +462,9 @@ void Player::GenerateResearchProjects()
     ProjectsByBranch tempRareProjects;
     float rare_chance = GetRareArtifactChance(skill_now);
 
-    for (std::set<ResearchProjectEntry const*>::const_iterator itr = sResearchProjectSet.begin(); itr != sResearchProjectSet.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchProjectContainer)
     {
-        ResearchProjectEntry const* entry = (*itr);
+        ResearchProjectEntry const* entry = itr;
 
         if (entry->rare)
         {
@@ -535,12 +534,12 @@ bool Player::SolveResearchProject(uint32 spellId, SpellCastTargets& targets)
         return false;
 
     ResearchProjectEntry const* entry = NULL;
-    for (std::set<ResearchProjectEntry const*>::const_iterator itr = sResearchProjectSet.begin(); itr != sResearchProjectSet.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchProjectContainer)
     {
-        if ((*itr)->SpellID != spellId)
+        if (itr->SpellID != spellId)
             continue;
 
-        entry = (*itr);
+        entry = itr;
         break;
     }
 
@@ -623,9 +622,9 @@ bool Player::SolveResearchProject(uint32 spellId, SpellCastTargets& targets)
     ResearchProjectSet tempRareProjects;
     float rare_chance = GetRareArtifactChance(skill_now);
 
-    for (std::set<ResearchProjectEntry const*>::const_iterator itr = sResearchProjectSet.begin(); itr != sResearchProjectSet.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchProjectContainer)
     {
-        ResearchProjectEntry const* project = *itr;
+        ResearchProjectEntry const* project = itr;
         if (project->branchId != entry->branchId)
             continue;
 

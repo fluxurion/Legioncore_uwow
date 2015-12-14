@@ -122,14 +122,27 @@ DB2Storage<ItemUpgradeEntry>                sItemUpgradeStore("ItemUpgrade.db2",
 DB2Storage<ItemXBonusTreeEntry>             sItemXBonusTreeStore("ItemXBonusTree.db2", ItemXBonusTreeFormat, HOTFIX_SEL_ITEM_X_BONUS_TREE);
 DB2Storage<KeyChainEntry>                   sKeyChainStore("KeyChain.db2", KeyChainFormat, HOTFIX_SEL_KEY_CHAIN);
 DB2Storage<LanguageWordsEntry>              sLanguageWordsStore("LanguageWords.db2", LanguageWordsFormat, HOTFIX_SEL_LANGUAGE_WORDS);
+DB2Storage<MailTemplateEntry>               sMailTemplateStore("MailTemplate.db2", MailTemplateEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<MapChallengeModeEntry>           sMapChallengeModeStore("MapChallengeMode.db2", MapChallengeModeFormat, HOTFIX_SEL_MAP_CHALLENGE_MODE);
-//DB2Storage<MountCapabilityEntry>            sMountCapabilityStore("MountCapability.db2", MountCapabilityFormat, HOTFIX_SEL_MOUNT_CAPABILITY);
+DB2Storage<ModifierTreeEntry>               sModifierTreeStore("ModifierTree.db2", ModifierTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<MountCapabilityEntry>            sMountCapabilityStore("MountCapability.db2", MountCapabilityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<MountEntry>                      sMountStore("Mount.db2", MountFormat, HOTFIX_SEL_MOUNT);
-//DB2Storage<MountTypeXCapabilityEntry>       sMountTypeXCapabilityStore("MountTypeXCapability.db2", MountTypeXCapabilityFormat, HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY);
+DB2Storage<MountTypeEntry>                  sMountTypeStore("MountType.db2", MountTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<MountTypeXCapabilityEntry>       sMountTypeXCapabilityStore("MountTypeXCapability.db2", MountTypeXCapabilityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<NameGenEntry>                    sNameGenStore("NameGen.db2", NameGenFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<OverrideSpellDataEntry>          sOverrideSpellDataStore("OverrideSpellData.db2", OverrideSpellDataFormat, HOTFIX_SEL_OVERRIDE_SPELL_DATA);
 DB2Storage<PhaseGroupEntry>                 sPhaseGroupStore("PhaseXPhaseGroup.db2", PhaseGroupFormat, HOTFIX_SEL_PHASE_GROUP);
 DB2Storage<PvpItemEntry>                    sPvpItemStore("PvpItem.db2", PvpItemFormat, HOTFIX_SEL_PVP_ITEM);
+DB2Storage<QuestFactionRewEntry>            sQuestFactionRewardStore("QuestFactionReward.db2", QuestFactionRewardFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<QuestPackageItemEntry>           sQuestPackageItemStore("QuestPackageItem.db2", QuestPackageItemFormat, HOTFIX_SEL_QUEST_PACKAGE_ITEM);
+DB2Storage<QuestPOIPointEntry>              sQuestPOIPointStore("QuestPOIPoint.db2", QuestPOIPointFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.dbc", QuestSortEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.dbc", QuestV2Format, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.dbc", QuestXPFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.dbc", ResearchBranchFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.dbc", ResearchProjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchSiteEntry>               sResearchSiteStore("ResearchSite.dbc", ResearchSiteFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<RuleSetItemUpgradeEntry>         sRuleSetItemUpgradeEntryStore("RulesetItemUpgrade.db2", RuleSetItemUpgradeFormat, HOTFIX_SEL_RULE_SET_ITEM_UPGRADE);
 DB2Storage<SoundEntriesEntry>               sSoundEntriesStore("SoundEntries.db2", SoundEntriesFormat, HOTFIX_SEL_SOUND_ENTRIES);
 DB2Storage<SpellAuraRestrictionsEntry>      sSpellAuraRestrictionsStore("SpellAuraRestrictions.db2", SpellAuraRestrictionsFormat, HOTFIX_SEL_SPELL_AURA_RESTRICTIONS);
@@ -316,28 +329,27 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemXBonusTreeStore);
     //LOAD_DB2(sKeyChainStore);
     //LOAD_DB2(sLanguageWordsStore);
-    //LOAD_DB2(sMailTemplateStore,                "MailTemplate.dbc");
+    //LOAD_DB2(sMailTemplateStore);             // 20796
     //LOAD_DB2(sMapChallengeModeStore);
-    //LOAD_DB2(sModifierTreeStore,                "ModifierTree.dbc");
-    //LOAD_DB2(sMountCapabilityStore);
-    //LOAD_DB2(sMountCapabilityStore,             "MountCapability.dbc");
+    //LOAD_DB2(sModifierTreeStore);             // 20796
+    //LOAD_DB2(sMountCapabilityStore);          // 20796
     //LOAD_DB2(sMountStore);
-    //LOAD_DB2(sMountTypeStore,                   "MountType.dbc");
-    //LOAD_DB2(sMountTypeXCapabilityStore);
-    //LOAD_DB2(sNameGenStore,                     "NameGen.dbc");
+    //LOAD_DB2(sMountTypeStore);                // 20796
+    //LOAD_DB2(sMountTypeXCapabilityStore);     // 20796
+    //LOAD_DB2(sNameGenStore);                  // 20796
     //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseGroupStore);
     //LOAD_DB2(sPvpItemStore);
-    //LOAD_DB2(sQuestFactionRewardStore,          "QuestFactionReward.dbc");
+    //LOAD_DB2(sQuestFactionRewardStore);       // 20796
     //LOAD_DB2(sQuestPackageItemStore);
-    //LOAD_DB2(sQuestPOIPointStore,               "QuestPOIPoint.dbc");
-    //LOAD_DB2(sQuestSortStore,                   "QuestSort.dbc");
-    //LOAD_DB2(sQuestV2Store,                     "QuestV2.dbc");
-    //LOAD_DB2(sQuestXPStore,                     "QuestXP.dbc");
-    //LOAD_DB2(sRandomPropertiesPointsStore,      "RandPropPoints.dbc");
-    //LOAD_DB2(sResearchBranchStore,              "ResearchBranch.dbc");
-    //LOAD_DB2(sResearchProjectStore,             "ResearchProject.dbc");
-    //LOAD_DB2(sResearchSiteStore,                "ResearchSite.dbc");
+    //LOAD_DB2(sQuestPOIPointStore);            // 20796
+    //LOAD_DB2(sQuestSortStore);                // 20796
+    //LOAD_DB2(sQuestV2Store);                  // 20796
+    //LOAD_DB2(sQuestXPStore);                  // 20796
+    //LOAD_DB2(sRandPropPointsStore);           // 20796
+    //LOAD_DB2(sResearchBranchStore);           // 20796
+    //LOAD_DB2(sResearchProjectStore);          // 20796
+    //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
     //LOAD_DB2(sScalingStatDistributionStore,     "ScalingStatDistribution.dbc");
     //LOAD_DB2(sScenarioStepStore,                "ScenarioStep.dbc");
@@ -480,8 +492,8 @@ void DB2Manager::InitDB2CustomStores()
     for (MountEntry const* mount : sMountStore)
         _mountsBySpellId[mount->SpellId] = mount;
 
-    //for (MountTypeXCapabilityEntry const* mount : sMountTypeXCapabilityStore)
-        //_mountCapabilitiesByType[mount->MountTypeID].insert(mount);
+    for (MountTypeXCapabilityEntry const* mount : sMountTypeXCapabilityStore)
+        _mountCapabilitiesByType[mount->MountTypeID].insert(mount);
 
     for (MapChallengeModeEntry const* entry : sMapChallengeModeStore)
         _mapChallengeModeEntrybyMap[entry->map] = entry;
@@ -614,6 +626,36 @@ void DB2Manager::InitDB2CustomStores()
 
     for (ItemSpecOverrideEntry const* isp : sItemSpecOverrideStore)
         _itemSpec[isp->ItemID].push_back(isp->SpecID);
+
+    for (ModifierTreeEntry const* mt : sModifierTreeStore)
+        if (mt->Parent)
+            _modifierTree[mt->Parent].push_back(mt);
+            
+    for (NameGenEntry const* entry : sNameGenStore)
+        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name));
+
+    for (ResearchSiteEntry const* rs : sResearchSiteStore)
+    {
+        if (!rs->IsValid())
+            continue;
+
+        ResearchSiteData& data = _researchSiteDataMap[rs->ID];
+        data.entry = rs;
+        for (QuestPOIPointEntry const* poi : sQuestPOIPointStore)
+            if (poi->QuestPOIBlobID == rs->POIid)
+                data.points.push_back(ResearchPOIPoint(poi->X, poi->Y));
+
+        if (data.points.size() == 0)
+            sLog->outDebug(LOG_FILTER_SERVER_LOADING, "Research site %u POI %u map %u has 0 POI points in DB2!", rs->ID, rs->POIid, rs->MapID);
+    }
+
+    for (ResearchProjectEntry const* rp : sResearchProjectStore)
+    {
+        if (!rp || !rp->IsVaid())
+            continue;
+
+        _researchProjectContainer.insert(rp);
+    }
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -844,21 +886,23 @@ HeirloomEntry const* DB2Manager::GetHeirloomByOldItem(uint32 itemId) const
     return nullptr;
 }
 
-//bool DB2Manager::MountTypeXCapabilityEntryComparator::Compare(MountTypeXCapabilityEntry const* left, MountTypeXCapabilityEntry const* right)
-//{
-//    if (left->MountTypeID == right->MountTypeID)
-//        return left->OrderIndex < right->OrderIndex;
-//    return left->ID < right->ID;
-//}
+bool DB2Manager::MountTypeXCapabilityEntryComparator::Compare(MountTypeXCapabilityEntry const* left, MountTypeXCapabilityEntry const* right)
+{
+    //@TODO Legion - index?
+    //if (left->MountTypeID == right->MountTypeID)
+    //    return left->OrderIndex < right->OrderIndex;
+    //return left->ID < right->ID;
+    return true;
+}
 
-//DB2Manager::MountTypeXCapabilitySet const* DB2Manager::GetMountCapabilities(uint32 mountType) const
-//{
-//    auto itr = _mountCapabilitiesByType.find(mountType);
-//    if (itr != _mountCapabilitiesByType.end())
-//        return &itr->second;
-//
-//    return nullptr;
-//}
+DB2Manager::MountTypeXCapabilitySet const* DB2Manager::GetMountCapabilities(uint32 mountType) const
+{
+    auto itr = _mountCapabilitiesByType.find(mountType);
+    if (itr != _mountCapabilitiesByType.end())
+        return &itr->second;
+
+    return nullptr;
+}
 
 BattlePetSpeciesEntry const* DB2Manager::GetBattlePetSpeciesEntry(uint32 creatureEntry)
 {
@@ -1011,4 +1055,36 @@ std::list<uint32> DB2Manager::GetItemSpecsList(uint32 itemID)
 void DB2Manager::AddSpecdtoItem(uint32 itemID, uint32 specID)
 {
     _itemSpec[itemID].push_back(specID);
+}
+
+std::vector<ModifierTreeEntry const*> const* DB2Manager::GetModifierTreeList(uint32 parent)
+{
+    ModifierTreeContainer::const_iterator itr = _modifierTree.find(parent);
+    if (itr != _modifierTree.end())
+        return &itr->second;
+
+    return nullptr;
+}
+
+std::string DB2Manager::GetRandomCharacterName(uint8 race, uint8 gender)
+{
+    return _genNameVectoArraysMap[race][gender][urand(0, _genNameVectoArraysMap[race][gender].size() - 1)];
+}
+
+uint32 DB2Manager::GetQuestUniqueBitFlag(uint32 questID)
+{
+    QuestV2Entry const* v2 = sQuestV2Store.LookupEntry(questID);
+    if (!v2)
+        return 0;
+
+    return v2->UniqueBitFlag;
+}
+
+ResearchSiteEntry const* DB2Manager::GetResearchSiteEntryById(uint32 id)
+{
+    ResearchSiteDataMap::const_iterator itr = _researchSiteDataMap.find(id);
+    if (itr != _researchSiteDataMap.end())
+        return itr->second.entry;
+
+    return nullptr;
 }

@@ -9638,8 +9638,8 @@ void ObjectMgr::LoadResearchSiteToZoneData()
         uint32 zone_id = fields[1].GetUInt32();
         uint32 branch_id = fields[2].GetUInt32();
 
-        ResearchSiteDataMap::iterator itr = sResearchSiteDataMap.find(site_id);
-        if (itr == sResearchSiteDataMap.end())
+        auto itr = sDB2Manager._researchSiteDataMap.find(site_id);
+        if (itr == sDB2Manager._researchSiteDataMap.end())
         {
             sLog->outError(LOG_FILTER_SQL, "DB table `archaeology_zones` has data for nonexistant site id %u", site_id);
             continue;
@@ -9663,12 +9663,12 @@ void ObjectMgr::LoadResearchSiteToZoneData()
     while (result->NextRow());
 
     // recheck all research sites
-    for (ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+    for (auto const& itr : sDB2Manager._researchSiteDataMap)
     {
-        if (itr->second.zone == 0 || itr->second.level == 0xFF || itr->second.branch_id == 0)
+        if (itr.second.zone == 0 || itr.second.level == 0xFF || itr.second.branch_id == 0)
             sLog->outError(LOG_FILTER_SQL, "DB table `archaeology_zones` has not full or does not have data for site id %u: "
             "zone %u level %u branch_id %u",
-            itr->second.entry->areaName, itr->second.zone, itr->second.level, itr->second.branch_id);
+            itr.second.entry->areaName, itr.second.zone, itr.second.level, itr.second.branch_id);
     }
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u archaeology zones.", counter);
@@ -9695,9 +9695,9 @@ void ObjectMgr::LoadDigSitePositions()
         float y = fields[3].GetFloat();
 
         bool added = false;
-        for (ResearchSiteDataMap::iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+        for (auto itr : sDB2Manager._researchSiteDataMap)
         {
-            ResearchSiteData& data = itr->second;
+            ResearchSiteData& data = itr.second;
 
             if (data.entry->MapID != map)
                 continue;
@@ -9725,16 +9725,16 @@ void ObjectMgr::LoadDigSitePositions()
     while (result->NextRow());
 
     std::set<uint32> toRemove;
-    for (ResearchSiteDataMap::iterator itr = sResearchSiteDataMap.begin(); itr != sResearchSiteDataMap.end(); ++itr)
+    for (auto itr : sDB2Manager._researchSiteDataMap)
     {
-        ResearchSiteData& data = itr->second;
+        ResearchSiteData& data = itr.second;
 
         uint32 siteCount = data.digSites.size();
         if (siteCount < MAX_DIGSITE_FINDS)
         {
             sLog->outError(LOG_FILTER_SQL, "Archaeology research site %u has less that %u dig site positions! (%u)", data.entry->ID, MAX_DIGSITE_FINDS, siteCount);
             if (!siteCount)
-                toRemove.insert(itr->first);
+                toRemove.insert(itr.first);
             else
             {
                 while (data.digSites.size() < MAX_DIGSITE_FINDS)
@@ -9744,7 +9744,7 @@ void ObjectMgr::LoadDigSitePositions()
     }
 
     for (std::set<uint32>::const_iterator itr = toRemove.begin(); itr != toRemove.end(); ++itr)
-        sResearchSiteDataMap.erase(*itr);
+        sDB2Manager._researchSiteDataMap.erase(*itr);
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u dig site positions.", counter);
 }

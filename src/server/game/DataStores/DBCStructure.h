@@ -47,17 +47,6 @@
 #define MAX_VEHICLE_SEATS 8
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
-struct ModifierTreeEntry // additional Condition
-{
-    uint32  ID;                                            // 0 m_ID
-    uint32  additionalConditionType;                       // 1 m_type
-    uint32  additionalConditionValue;                      // 2 m_asset
-    uint32  additionalConditionCount;                       // 3 m_secondaryAsset
-    uint32  operatorFlags;                                 // 4 m_operator
-    //uint32  m_amount                                     // 5 m_amount
-    uint32  parent;                                        // 6 m_parent in m_id
-};
-
 struct AreaTableEntry
 {
     uint32      ID;                                         // 0
@@ -687,13 +676,6 @@ struct PhaseEntry
     uint32      Flags;                                      // 1
 };
 
-struct MailTemplateEntry
-{
-    uint32      ID;                                         // 0
-    //char*       subject;                                  // 1        m_subject_lang
-    char* content;                                          // 2        m_body_lang
-};
-
 struct MapEntry
 {
     uint32  MapID;                                          // 0
@@ -772,24 +754,6 @@ struct MapDifficultyEntry
     uint32      ItemBonusTreeModID;                         // 7
 };
 
-struct MountCapabilityEntry
-{
-    uint32 Id;
-    uint32 Flags;
-    uint32 RequiredRidingSkill;
-    uint32 RequiredArea;
-    uint32 RequiredAura;
-    uint32 RequiredSpell;
-    uint32 SpeedModSpell;
-    int32  RequiredMap;
-};
-
-struct MountTypeEntry
-{
-    uint32 Id;
-    uint32 MountCapability[MAX_MOUNT_CAPABILITIES];
-};
-
 struct MovieEntry
 {
     uint32      Id;                                         // 0 index
@@ -797,14 +761,6 @@ struct MovieEntry
     //uint32      unk1;                                     // 2        m_volume
     //uint32      unk2;                                     // 3 4.0.0
     //uint32      unk3;                                     // 4 5.0.0
-};
-
-struct NameGenEntry
-{
-    //uint32 id;
-    char*  name;
-    uint32 race;
-    uint32 gender;
 };
 
 struct PvPDifficultyEntry
@@ -819,107 +775,12 @@ struct PvPDifficultyEntry
     BattlegroundBracketId GetBracketId() const { return BattlegroundBracketId(bracketId); }
 };
 
-struct QuestSortEntry
-{
-    uint32      id;                                         // 0        m_ID
-    //char*       name;                                     // 1        m_SortName_lang
-};
-
-struct QuestV2Entry
-{
-    uint32      ID;                                         // 0
-    uint32      UniqueBitFlag;                              // 1
-};
-
-struct QuestXPEntry
-{
-  uint32      id;
-  uint32      Exp[10];
-};
-
-struct QuestFactionRewEntry
-{
-  uint32      id;
-  int32       QuestRewFactionValue[10];
-};
-
-struct RandomPropertiesPointsEntry
-{
-    //uint32  Id;                                           // 0 hidden key
-    uint32    itemLevel;                                    // 1
-    uint32    EpicPropertiesPoints[5];                      // 2-6
-    uint32    RarePropertiesPoints[5];                      // 7-11
-    uint32    UncommonPropertiesPoints[5];                  // 12-16
-};
-
-struct ResearchBranchEntry
-{
-    uint32    ID;                                           // 0 ID
-    char* Race;                                             // 1 Archeaology Race (Fossil, Troll, Nerubian)
-    //char* AlwaysDwarf;                                    // 2 unk. Always Dwarf.
-    uint32    CurrencyID;                                   // 3 CurrencyID
-    //                                                      // 4 Icon Path
-    uint32    ItemID;                                       // 5 ItemID
-};
-
-struct ResearchProjectEntry
-{
-    uint32    ID;                                           // 0 ID
-    char*     Name;                                         // 1 Name of item.
-    char*     Description;                                  // 2 Item description
-    uint32    rare;                                         // 3
-    uint32    branchId;                                     // 4
-    uint32    SpellID;                                      // 5 SpellID - Reward
-    uint32    Complexity;                                   // 6 Item from ResearchBranch
-    //                                                      // 7 Icon Path
-    uint32    RequiredCurrencyAmount;                       // 8 Required currency amount for create (should be * 100)
-
-    bool IsVaid() const
-    {
-        return branchId != ARCHAEOLOGY_BRANCH_UNUSED &&
-            branchId != ARCHAEOLOGY_BRANCH_NONE;
-    }
-};
-
-struct ResearchSiteEntry
-{
-    uint32    ID;                                           // 0 ID
-    uint32    MapID;                                        // 1 MapID
-    uint32    POIid;                                        // 2
-    char*     areaName;                                     // 3 Research site name
-    //uint32  flags;                                        // 4 Always 177.
-
-    bool IsValid() const
-    {
-        return ID != 140 && // template
-            ID != 142 &&    // template
-            ID != 161 &&    // template
-            ID != 471 &&    // vashj'ir
-            ID != 473 &&    // vashj'ir
-            ID != 475 &&    // vashj'ir
-            ID != 949 &&    // template
-            ID != 951 &&    // template
-            ID != 1023 &&   // not on wowhead
-            ID != 1049 &&   // not on wowhead
-            ID != 1051 &&   // not on wowhead
-            ID != 1284;     // not on wowhead
-    }
-};
-
 struct QuestPOIBlobEntry
 {
     uint32    ID;                                           // 0 ID
     uint32    Count;                                        // 1 m_NumPoints
     uint32    MapID;                                        // 2 m_MapID
     //uint32 unk;                                           // 4 m_WorldMapAreaID
-};
-
-struct QuestPOIPointEntry
-{
-    //uint32    ID;                                           // 0
-    int32     x;                                            // 1
-    int32     y;                                            // 2
-    uint32    POIId;                                        // 4    m_QuestPOIBlobID
 };
 
 struct ScalingStatDistributionEntry
@@ -1628,13 +1489,6 @@ struct WorldStateSounds
 
 #pragma pack(pop)
 
-struct VectorArray
-{
-    StringVector stringVectorArray[2];
-};
-
-typedef std::unordered_map<uint32, VectorArray> NameGenVectorArraysMap;
-
 struct TalentSpellPos
 {
     TalentSpellPos() : talent_id(0), rank(0) {}
@@ -1701,21 +1555,5 @@ struct DigSitePosition
 
 typedef std::vector<ResearchPOIPoint> ResearchPOIPointVector;
 typedef std::vector<DigSitePosition> DigSitePositionVector;
-
-struct ResearchSiteData
-{
-    ResearchSiteData() : zone(0), level(0xFF), branch_id(0), entry(NULL) { }
-
-    ResearchSiteEntry const* entry;
-    uint16 zone;
-    uint8 level;
-    uint8 branch_id;
-
-    ResearchPOIPointVector points;
-    DigSitePositionVector digSites;
-};
-
-typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
-ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
 
 #endif

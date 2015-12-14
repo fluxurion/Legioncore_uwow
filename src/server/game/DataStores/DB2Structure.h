@@ -607,6 +607,145 @@ struct ItemAppearanceEntry
     uint32      FileDataID;                                 // 2
 };
 
+struct MailTemplateEntry
+{
+    LocalizedString* Content;                               // 0
+};
+
+struct ModifierTreeEntry
+{
+    uint32      Asset;                                      // 0
+    uint32      SecondaryAsset;                             // 1
+    uint16      Parent;                                     // 2
+    uint8       Type;                                       // 3
+    uint8       UnkLegion;                                  // 4
+    uint8       Operator;                                   // 5
+    uint8       Amount;                                     // 6
+
+    uint32 ID; // temp - for compile
+};
+
+struct MountCapabilityEntry
+{
+    uint32      Unknown0;
+    uint32      ReqSpellKnownID;
+    uint32      ModSpellAuraID;
+    uint16      ReqRidingSkill;
+    uint16      ReqAreaID;
+    uint16      ReqMapID;
+    uint8       Flags;
+    uint8       Unknown7;
+};
+
+struct MountTypeEntry
+{
+    uint32      MountTypeID;
+};
+
+struct MountTypeXCapabilityEntry
+{
+    uint16      MountTypeID;                                // 0
+    uint16      MountCapabilityID;                          // 1
+    uint8       OrderIndex;                                 // 2
+};
+
+struct NameGenEntry
+{
+    char*       Name;
+    uint32      RaceID;
+    uint32      Gender;
+};
+
+struct QuestFactionRewEntry
+{
+    int32       Difficulty[10];
+};
+
+struct QuestPOIPointEntry
+{
+    uint32      ID;                                         // 0
+    uint32      QuestPOIBlobID;                             // 1
+    int16       X;                                          // 2
+    int16       Y;                                          // 3
+};
+
+struct QuestSortEntry
+{
+    LocalizedString* SortName;                              // 0
+};
+
+struct QuestV2Entry
+{
+    uint16      UniqueBitFlag;                              // 0
+};
+
+struct QuestXPEntry
+{
+    uint16      Difficulty[10];
+};
+
+struct RandPropPointsEntry
+{
+    uint16      EpicPropertiesPoints[5];                    // 0 - 4
+    uint16      RarePropertiesPoints[5];                    // 5 - 9
+    uint16      UncommonPropertiesPoints[5];                // 10 - 14
+};
+
+struct ResearchBranchEntry
+{
+    LocalizedString* Name;                                  // 0
+    LocalizedString* Texture;                               // 1
+    uint32      ItemID;                                     // 2
+    uint16      CurrencyID;                                 // 3
+    uint8       ResearchFieldID;                            // 4
+
+    uint32 ID; // temp - for compile
+};
+
+struct ResearchProjectEntry
+{
+    char*       Name;                                       // 1
+    char*       Description;                                // 2
+    uint32      rare;                                       // 3
+    uint32      branchId;                                   // 4
+    uint32      SpellID;                                    // 5
+    uint32      Complexity;                                 // 6
+    uint32      RequiredCurrencyAmount;                     // 8
+
+    uint32 ID; // temp - for compile
+
+    bool IsVaid() const
+    {
+        return branchId != ARCHAEOLOGY_BRANCH_UNUSED &&
+            branchId != ARCHAEOLOGY_BRANCH_NONE;
+    }
+};
+
+struct ResearchSiteEntry
+{
+    uint32    ID;                                           // 0 ID
+    uint32    MapID;                                        // 1 MapID
+    uint32    POIid;                                        // 2
+    char*     areaName;                                     // 3 Research site name
+    //uint32  flags;                                        // 4 Always 177.
+
+    bool IsValid() const
+    {
+        return ID != 140 && // template
+            ID != 142 &&    // template
+            ID != 161 &&    // template
+            ID != 471 &&    // vashj'ir
+            ID != 473 &&    // vashj'ir
+            ID != 475 &&    // vashj'ir
+            ID != 949 &&    // template
+            ID != 951 &&    // template
+            ID != 1023 &&   // not on wowhead
+            ID != 1049 &&   // not on wowhead
+            ID != 1051 &&   // not on wowhead
+            ID != 1284;     // not on wowhead
+    }
+};
+
 struct ItemBonusEntry
 {
     uint32      ID;                                                 // 0
@@ -1158,26 +1297,6 @@ struct MountEntry
     uint32 Source;
     uint32 SpellId;
     uint32 PlayerConditionId;
-};
-
-/*struct MountCapabilityEntry
-{
-    uint32 ID;                                                      // 0
-    uint32 Flags;                                                   // 1
-    uint32 RequiredRidingSkill;                                     // 2
-    uint32 RequiredArea;                                            // 3
-    uint32 RequiredAura;                                            // 4
-    uint32 RequiredSpell;                                           // 5
-    uint32 SpeedModSpell;                                           // 6
-    int32  RequiredMap;                                             // 7
-};*/
-
-struct MountTypeXCapabilityEntry
-{
-    uint32 ID;                                                      // 0
-    uint32 MountTypeID;                                             // 1
-    uint32 OrderIndex;                                              // 2
-    uint32 MountCapabilityID;                                       // 3
 };
 
 struct LanguageWordsEntry

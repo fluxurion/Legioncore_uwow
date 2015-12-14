@@ -33,7 +33,6 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction);
 uint32 GetLearnSpell(uint32 trigerSpell);
 uint32 GetSpellByTrigger(uint32 trigerSpell);
 
-std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
 std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId);
 
 char const* GetPetName(uint32 petfamily, uint32 dbclang);
@@ -50,8 +49,6 @@ WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid
 
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId);
 int32 GetMapFromZone(uint32 zoneId);
-
-std::string GetRandomCharacterName(uint8 race, uint8 gender);
 
 enum ContentLevels
 {
@@ -151,26 +148,13 @@ extern DBCStorage<ItemSetEntry>                 sItemSetStore;
 extern DBCStorage<LFGDungeonEntry>              sLFGDungeonStore;
 extern DBCStorage<LiquidTypeEntry>              sLiquidTypeStore;
 extern DBCStorage<LockEntry>                    sLockStore;
-extern DBCStorage<MailTemplateEntry>            sMailTemplateStore;
 extern DBCStorage<MapDifficultyEntry>           sMapDifficultyStore; // use GetMapDifficultyData instead
 extern DBCStorage<MapEntry>                     sMapStore;
 extern DBCStorage<MinorTalentEntry>             sMinorTalentStore;
-extern DBCStorage<ModifierTreeEntry>            sModifierTreeStore;
-extern DBCStorage<MountCapabilityEntry>         sMountCapabilityStore;
-extern DBCStorage<MountTypeEntry>               sMountTypeStore;
 extern DBCStorage<MovieEntry>                   sMovieStore;
-extern DBCStorage<NameGenEntry>                 sNameGenStore;
 extern DBCStorage<PhaseEntry>                   sPhaseStores;
 extern DBCStorage<PowerDisplayEntry>            sPowerDisplayStore;
-extern DBCStorage<QuestFactionRewEntry>         sQuestFactionRewardStore;
 extern DBCStorage<QuestPOIBlobEntry>            sQuestPOIBlobStore;
-extern DBCStorage<QuestPOIPointEntry>           sQuestPOIPointStore;
-extern DBCStorage<QuestSortEntry>               sQuestSortStore;
-extern DBCStorage<QuestXPEntry>                 sQuestXPStore;
-extern DBCStorage<RandomPropertiesPointsEntry>  sRandomPropertiesPointsStore;
-extern DBCStorage<ResearchBranchEntry>          sResearchBranchStore;
-extern DBCStorage<ResearchProjectEntry>         sResearchProjectStore;
-extern DBCStorage<ResearchSiteEntry>            sResearchSiteStore;
 extern DBCStorage<ScalingStatDistributionEntry> sScalingStatDistributionStore;
 extern DBCStorage<ScenarioEntry>                sScenarioStore;
 extern DBCStorage<ScenarioStepEntry>            sScenarioStepStore;
@@ -238,10 +222,8 @@ extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
 
 extern MapDifficultyMap                          sMapDifficultyMap;
 extern PetFamilySpellsStore                      sPetFamilySpellsStore;
-extern ResearchSiteDataMap                       sResearchSiteDataMap;
 extern SpellCategoryStore                        sSpellCategoryStore;
 extern SpellSkillingList                         sSpellSkillingList;
-extern std::set<ResearchProjectEntry const*>     sResearchProjectSet;
 extern std::set<uint32>                          sScenarioCriteriaTreeStore;
 extern TransportAnimationsByEntry                sTransportAnimationsByEntry;
 
@@ -250,7 +232,6 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);
 void InitDBCCustomStores();
 bool IsValidDifficulty(uint32 diff, bool isRaid);
 
-uint32 GetQuestUniqueBitFlag(uint32 questId);
 AreaTableEntry const* FindAreaEntry(uint32 area);
 DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
 uint32 GetParentZoneOrSelf(uint32 zone);

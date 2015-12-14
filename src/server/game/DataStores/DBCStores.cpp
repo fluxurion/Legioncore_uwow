@@ -53,7 +53,6 @@ struct WMOAreaTableTripple
 typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
 
-static std::unordered_map<uint32, std::vector<ModifierTreeEntry const*>> sModifierTreeList;
 static std::unordered_map<uint32, std::list<uint32>> sSpellProcsPerMinuteModEntryList;
 static std::unordered_map<uint32, uint32> sRevertLearnSpellList;
 static std::unordered_map<uint32, uint32> sReversTriggerSpellList;
@@ -66,15 +65,12 @@ static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 static std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> _specializationSpellsBySpec;
 
 MapDifficultyMap                            sMapDifficultyMap;
-NameGenVectorArraysMap                      sGenNameVectoArraysMap;
 PetFamilySpellsStore                        sPetFamilySpellsStore;
-ResearchSiteDataMap                         sResearchSiteDataMap;
 SpellCategoryStore                          sSpellCategoryStore;
 SpellEffectDiffMap                          sSpellEffectDiffMap;
 SpellEffectMap                              sSpellEffectMap;
 SpellRestrictionDiffMap                     sSpellRestrictionDiffMap;
 SpellSkillingList                           sSpellSkillingList;
-std::set<ResearchProjectEntry const*>       sResearchProjectSet;
 std::set<uint32>                            sScenarioCriteriaTreeStore;
 TransportAnimationsByEntry                  sTransportAnimationsByEntry;
 SkillRaceClassInfoMap                       SkillRaceClassInfoBySkill;
@@ -107,28 +103,14 @@ DBCStorage<ItemSetEntry>                    sItemSetStore(ItemSetEntryfmt);
 DBCStorage<LFGDungeonEntry>                 sLFGDungeonStore(LFGDungeonEntryfmt);
 DBCStorage<LiquidTypeEntry>                 sLiquidTypeStore(LiquidTypefmt);
 DBCStorage<LockEntry>                       sLockStore(LockEntryfmt);
-DBCStorage<MailTemplateEntry>               sMailTemplateStore(MailTemplateEntryfmt);
 DBCStorage<MapDifficultyEntry>              sMapDifficultyStore(MapDifficultyEntryfmt); // only for loading
 DBCStorage<MapEntry>                        sMapStore(MapEntryfmt);
 DBCStorage<MinorTalentEntry>                sMinorTalentStore(MinorTalentEntryfmt);
-DBCStorage<ModifierTreeEntry>               sModifierTreeStore(ModifierTreefmt);
-DBCStorage<MountCapabilityEntry>            sMountCapabilityStore(MountCapabilityfmt);
-DBCStorage<MountTypeEntry>                  sMountTypeStore(MountTypefmt);
 DBCStorage<MovieEntry>                      sMovieStore(MovieEntryfmt);
-DBCStorage<NameGenEntry>                    sNameGenStore(NameGenfmt);
 DBCStorage<PhaseEntry>                      sPhaseStores(PhaseEntryfmt);
 DBCStorage<PowerDisplayEntry>               sPowerDisplayStore(PowerDisplayEntryfmt);
 DBCStorage<PvPDifficultyEntry>              sPvPDifficultyStore(PvPDifficultyfmt);
-DBCStorage<QuestFactionRewEntry>            sQuestFactionRewardStore(QuestFactionRewardfmt);
 DBCStorage<QuestPOIBlobEntry>               sQuestPOIBlobStore(QuestPOIBlobfmt);
-DBCStorage<QuestPOIPointEntry>              sQuestPOIPointStore(QuestPOIPointfmt);
-DBCStorage<QuestSortEntry>                  sQuestSortStore(QuestSortEntryfmt);
-DBCStorage<QuestV2Entry>                    sQuestV2Store(QuestV2fmt);
-DBCStorage<QuestXPEntry>                    sQuestXPStore(QuestXPfmt);
-DBCStorage<RandomPropertiesPointsEntry>     sRandomPropertiesPointsStore(RandomPropertiesPointsfmt);
-DBCStorage<ResearchBranchEntry>             sResearchBranchStore(ResearchBranchfmt);
-DBCStorage<ResearchProjectEntry>            sResearchProjectStore(ResearchProjectfmt);
-DBCStorage<ResearchSiteEntry>               sResearchSiteStore(ResearchSitefmt);
 DBCStorage<ScalingStatDistributionEntry>    sScalingStatDistributionStore(ScalingStatDistributionfmt);
 DBCStorage<ScenarioEntry>                   sScenarioStore(Scenariofmt);
 DBCStorage<ScenarioStepEntry>               sScenarioStepStore(ScenarioStepfmt);
@@ -451,10 +433,6 @@ void InitDBCCustomStores()
             sAreaFlagByMapID.insert(AreaFlagByMapID::value_type(area->mapid, area->AreaBit));
     }
 
-    for (ModifierTreeEntry const* mt : sModifierTreeStore)
-        if (mt->parent > 0)
-            sModifierTreeList[mt->parent].push_back(mt);
-
     for (FactionEntry const* faction : sFactionStore)
     {
         if (faction->team)
@@ -479,39 +457,10 @@ void InitDBCCustomStores()
         sMapDifficultyMap[entry->MapID][entry->DifficultyID] = entry;
     }
 
-    for (NameGenEntry const* entry : sNameGenStore)
-        sGenNameVectoArraysMap[entry->race].stringVectorArray[entry->gender].push_back(std::string(entry->name));
-    sNameGenStore.Clear();
-
     for (PvPDifficultyEntry const* entry : sPvPDifficultyStore)
     {
         if (entry->bracketId > MAX_BATTLEGROUND_BRACKETS)
             ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by DBC data");
-    }
-
-    for (ResearchProjectEntry const* rp : sResearchProjectStore)
-    {
-        if (!rp || !rp->IsVaid())
-            continue;
-
-        sResearchProjectSet.insert(rp);
-    }
-
-    for (ResearchSiteEntry const* rs : sResearchSiteStore)
-    {
-        if (!rs->IsValid())
-            continue;
-
-        ResearchSiteData& data = sResearchSiteDataMap[rs->ID];
-
-        data.entry = rs;
-
-        for (QuestPOIPointEntry const* poi : sQuestPOIPointStore)
-            if (poi->POIId == rs->POIid)
-                data.points.push_back(ResearchPOIPoint(poi->x, poi->y));
-
-        if (data.points.size() == 0)
-            sLog->outDebug(LOG_FILTER_SERVER_LOADING, "Research site %u POI %u map %u has 0 POI points in DBC!", rs->ID, rs->POIid, rs->MapID);
     }
 
     for (ScenarioStepEntry const* entry : sScenarioStepStore)
@@ -626,14 +575,6 @@ void InitDBCCustomStores()
         sMinorTalentByIndexStore[minotTal->SpecID][minotTal->OrderIndex] = minotTal;
 }
 
-std::string GetRandomCharacterName(uint8 race, uint8 gender)
-{
-    uint32 size = sGenNameVectoArraysMap[race].stringVectorArray[gender].size();
-    uint32 randPos = urand(0, size - 1);
-
-    return sGenNameVectoArraysMap[race].stringVectorArray[gender][randPos];
-}
-
 SimpleFactionsList const* GetFactionTeamList(uint32 faction)
 {
     FactionTeamMap::const_iterator itr = sFactionTeamMap.find(faction);
@@ -657,14 +598,6 @@ uint32 GetSpellByTrigger(uint32 trigerSpell)
     if (itr != sReversTriggerSpellList.end())
         return itr->second;
     return 0;
-}
-
-std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent)
-{
-    std::unordered_map<uint32, std::vector<ModifierTreeEntry const*> >::const_iterator itr = sModifierTreeList.find(parent);
-    if (itr != sModifierTreeList.end())
-        return &itr->second;
-    return NULL;
 }
 
 std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId)
@@ -1014,15 +947,6 @@ float GetCurrencyPrecision(uint32 currencyId)
     return entry ? entry->GetPrecision() : 1.0f;
 }
 
-ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id)
-{
-    ResearchSiteDataMap::const_iterator itr = sResearchSiteDataMap.find(id);
-    if (itr == sResearchSiteDataMap.end())
-        return NULL;
-
-    return itr->second.entry;
-}
-
 bool MapEntry::IsDifficultyModeSupported(uint32 difficulty) const
 {
     return IsValidDifficulty(difficulty, IsRaid());
@@ -1046,15 +970,6 @@ bool IsValidDifficulty(uint32 diff, bool isRaid)
     }
 
     return isRaid;
-}
-
-uint32 GetQuestUniqueBitFlag(uint32 questId)
-{
-    QuestV2Entry const* v2 = sQuestV2Store.LookupEntry(questId);
-    if (!v2)
-        return 0;
-
-    return v2->UniqueBitFlag;
 }
 
 bool IsScenarioCriteriaTree(uint32 criteriaTreeId)
