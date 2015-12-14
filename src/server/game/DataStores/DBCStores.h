@@ -35,7 +35,6 @@ void AddSpecdtoItem(uint32 ItemID, uint32 SpecID);
 uint32 GetLearnSpell(uint32 trigerSpell);
 uint32 GetSpellByTrigger(uint32 trigerSpell);
 
-std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
 std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
 std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId);
 
@@ -126,36 +125,21 @@ private:
     GameTablesEntry const* _gtEntry;
 };
 
-extern CharacterLoadoutItemMap                  sCharacterLoadoutItemMap;
 
 
 
 extern DBCStorage<AreaPOIEntry>                 sAreaPOIStore;
 extern DBCStorage<AreaTableEntry>               sAreaStore;
 extern DBCStorage<AreaTriggerEntry>             sAreaTriggerStore;
-extern DBCStorage<ArmorLocationEntry>           sArmorLocationStore;
-extern DBCStorage<AuctionHouseEntry>            sAuctionHouseStore;
-extern DBCStorage<BankBagSlotPricesEntry>       sBankBagSlotPricesStore;
 extern DBCStorage<BannedAddOnsEntry>            sBannedAddOnsStore;
-extern DBCStorage<BarberShopStyleEntry>         sBarberShopStyleStore;
 extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
-extern DBCStorage<CharStartOutfitEntry>         sCharStartOutfitStore;
 extern DBCStorage<CharTitlesEntry>              sCharTitlesStore;
 extern DBCStorage<ChatChannelsEntry>            sChatChannelsStore;
 extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
-extern DBCStorage<ChrPowerTypesEntry>           sChrPowerTypesStore;
-extern DBCStorage<ChrRacesEntry>                sChrRacesStore;
 extern DBCStorage<ChrSpecializationsEntry>      sChrSpecializationsStore;
 extern DBCStorage<CinematicSequencesEntry>      sCinematicSequencesStore;
-extern DBCStorage<CreatureDisplayInfoEntry>     sCreatureDisplayInfoStore;
-extern DBCStorage<CreatureDisplayInfoExtraEntry> sCreatureDisplayInfoExtraStore;
 extern DBCStorage<CreatureFamilyEntry>          sCreatureFamilyStore;
 extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
-extern DBCStorage<CreatureSpellDataEntry>       sCreatureSpellDataStore;
-extern DBCStorage<CreatureTypeEntry>            sCreatureTypeStore;
-extern DBCStorage<CriteriaEntry>                sCriteriaStore;
-extern DBCStorage<CriteriaTreeEntry>            sCriteriaTreeStore;
-extern DBCStorage<DestructibleModelDataEntry>   sDestructibleModelDataStore;
 extern DBCStorage<DifficultyEntry>              sDifficultyStore;
 extern DBCStorage<DungeonEncounterEntry>        sDungeonEncounterStore;
 extern DBCStorage<DurabilityCostsEntry>         sDurabilityCostsStore;
@@ -300,7 +284,6 @@ void InitDBCCustomStores();
 bool IsValidDifficulty(uint32 diff, bool isRaid);
 
 uint32 GetQuestUniqueBitFlag(uint32 questId);
-std::vector<uint32> GetItemLoadOutItems(uint32 LoadOutID);
 AreaTableEntry const* FindAreaEntry(uint32 area);
 DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
 uint32 GetParentZoneOrSelf(uint32 zone);

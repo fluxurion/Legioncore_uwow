@@ -295,7 +295,7 @@ class AchievementMgr
         T* GetOwner() const { return _owner; }
 
         void UpdateTimedAchievements(uint32 timeDiff);
-        void StartTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry, uint32 timeLost = 0);
+        void StartTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry, uint16 timeLost = 0);
         void RemoveTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry);   // used for quest and scripted timed achievements
         uint32 GetAchievementPoints() const { return _achievementPoints; }
         CriteriaSort GetCriteriaSort() const;
@@ -330,7 +330,7 @@ class AchievementMgr
 
         bool ConditionsSatisfied(CriteriaEntry const *criteria, Player* referencePlayer) const;
         bool RequirementsSatisfied(AchievementEntry const* achievement, CriteriaEntry const *criteria, uint64 miscValue1, uint64 miscValue2, uint64 miscValue3, Unit const* unit, Player* referencePlayer) const;
-        bool AdditionalRequirementsSatisfied(uint32 ModifyTree, uint64 miscValue1, uint64 miscValue2, uint64 miscValue3, Unit const* unit, Player* referencePlayer) const;
+        bool AdditionalRequirementsSatisfied(uint32 modifierTreeId, uint64 miscValue1, uint64 miscValue2, uint64 miscValue3, Unit const* unit, Player* referencePlayer) const;
 
         T* _owner;
         AchievementProgressMap m_achievementProgress;
@@ -397,8 +397,9 @@ class AchievementGlobalMgr
 
         AchievementCriteriaDataSet const* GetCriteriaDataSet(CriteriaEntry const* achievementCriteria) const
         {
-            AchievementCriteriaDataMap::const_iterator iter = m_criteriaDataMap.find(achievementCriteria->ID);
-            return iter != m_criteriaDataMap.end() ? &iter->second : NULL;
+            //@TODO:Legion
+            //AchievementCriteriaDataMap::const_iterator iter = m_criteriaDataMap.find(achievementCriteria->ID);
+            return /*iter != m_criteriaDataMap.end() ? &iter->second : */NULL;
         }
 
         bool IsRealmCompleted(AchievementEntry const* achievement) const

@@ -53,7 +53,6 @@ struct WMOAreaTableTripple
 typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
 
-static std::unordered_map<uint32, std::vector<CriteriaTreeEntry const*>> sCriteriaTreeList;
 static std::unordered_map<uint32, std::vector<ModifierTreeEntry const*>> sModifierTreeList;
 static std::unordered_map<uint32, std::list<uint32>> sSpellProcsPerMinuteModEntryList;
 static std::unordered_map<uint32, std::list<uint32>> sItemSpecsList;
@@ -67,7 +66,6 @@ static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
 static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 static std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> _specializationSpellsBySpec;
 
-CharacterLoadoutItemMap                     sCharacterLoadoutItemMap;
 ItemSetSpellsStore                          sItemSetSpellsStore;
 MapDifficultyMap                            sMapDifficultyMap;
 NameGenVectorArraysMap                      sGenNameVectoArraysMap;
@@ -89,30 +87,15 @@ MinorTalentByIndexArray                     sMinorTalentByIndexStore;
 DBCStorage<AreaPOIEntry>                    sAreaPOIStore(AreaPOIEntryfmt);
 DBCStorage<AreaTableEntry>                  sAreaStore(AreaTableEntryfmt);
 DBCStorage<AreaTriggerEntry>                sAreaTriggerStore(AreaTriggerEntryfmt);
-DBCStorage<ArmorLocationEntry>              sArmorLocationStore(ArmorLocationfmt);
-DBCStorage<AuctionHouseEntry>               sAuctionHouseStore(AuctionHouseEntryfmt);
-DBCStorage<BankBagSlotPricesEntry>          sBankBagSlotPricesStore(BankBagSlotPricesEntryfmt);
 DBCStorage<BannedAddOnsEntry>               sBannedAddOnsStore(BannedAddOnsfmt);
-DBCStorage<BarberShopStyleEntry>            sBarberShopStyleStore(BarberShopStyleEntryfmt);
 DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterListEntryfmt);
-DBCStorage<CharacterLoadoutItemEntry>       sCharacterLoadoutItemStore(CharacterLoadoutItemfmt);
-DBCStorage<CharStartOutfitEntry>            sCharStartOutfitStore(CharStartOutfitEntryfmt);
 DBCStorage<CharTitlesEntry>                 sCharTitlesStore(CharTitlesEntryfmt);
 DBCStorage<ChatChannelsEntry>               sChatChannelsStore(ChatChannelsEntryfmt);
 DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
-DBCStorage<ChrPowerTypesEntry>              sChrPowerTypesStore(ChrClassesXPowerTypesfmt);
-DBCStorage<ChrRacesEntry>                   sChrRacesStore(ChrRacesEntryfmt);
 DBCStorage<ChrSpecializationsEntry>         sChrSpecializationsStore(ChrSpecializationsfmt);
 DBCStorage<CinematicSequencesEntry>         sCinematicSequencesStore(CinematicSequencesEntryfmt);
-DBCStorage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore(CreatureDisplayInfofmt);
-DBCStorage<CreatureDisplayInfoExtraEntry>   sCreatureDisplayInfoExtraStore(CreatureDisplayInfoExtrafmt);
 DBCStorage<CreatureFamilyEntry>             sCreatureFamilyStore(CreatureFamilyfmt);
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
-DBCStorage<CreatureSpellDataEntry>          sCreatureSpellDataStore(CreatureSpellDatafmt);
-DBCStorage<CreatureTypeEntry>               sCreatureTypeStore(CreatureTypefmt);
-DBCStorage<CriteriaEntry>                   sCriteriaStore(Criteriafmt);
-DBCStorage<CriteriaTreeEntry>               sCriteriaTreeStore(CriteriaTreefmt);
-DBCStorage<DestructibleModelDataEntry>      sDestructibleModelDataStore(DestructibleModelDatafmt);
 DBCStorage<DifficultyEntry>                 sDifficultyStore(Difficultyfmt);
 DBCStorage<DungeonEncounterEntry>           sDungeonEncounterStore(DungeonEncounterfmt);
 DBCStorage<DurabilityCostsEntry>            sDurabilityCostsStore(DurabilityCostsfmt);
@@ -500,10 +483,6 @@ void InitDBCCustomStores()
             sAreaFlagByMapID.insert(AreaFlagByMapID::value_type(area->mapid, area->AreaBit));
     }
 
-    for (CriteriaTreeEntry const* ct : sCriteriaTreeStore)
-        if (ct->parent > 0)
-            sCriteriaTreeList[ct->parent].push_back(ct);
-
     for (ModifierTreeEntry const* mt : sModifierTreeStore)
         if (mt->parent > 0)
             sModifierTreeList[mt->parent].push_back(mt);
@@ -675,9 +654,6 @@ void InitDBCCustomStores()
     for (ItemSetSpellEntry const* itemSetSpell : sItemSetSpellStore)
         sItemSetSpellsStore[itemSetSpell->ItemSetID].push_back(itemSetSpell);
 
-    for (CharacterLoadoutItemEntry const* LoadOutItem : sCharacterLoadoutItemStore)
-        sCharacterLoadoutItemMap[LoadOutItem->LoadOutID].push_back(LoadOutItem->ItemID);
-
     for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
         if (store->creatureDisplayID)
             sDungeonEncounterByDisplayID[store->creatureDisplayID] = store;
@@ -739,14 +715,6 @@ uint32 GetSpellByTrigger(uint32 trigerSpell)
     if (itr != sReversTriggerSpellList.end())
         return itr->second;
     return 0;
-}
-
-std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent)
-{
-    std::unordered_map<uint32, std::vector<CriteriaTreeEntry const*> >::const_iterator itr = sCriteriaTreeList.find(parent);
-    if (itr != sCriteriaTreeList.end())
-        return &itr->second;
-    return NULL;
 }
 
 std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent)
@@ -1150,11 +1118,6 @@ uint32 GetQuestUniqueBitFlag(uint32 questId)
 bool IsScenarioCriteriaTree(uint32 criteriaTreeId)
 {
     return sScenarioCriteriaTreeStore.find(criteriaTreeId) != sScenarioCriteriaTreeStore.end();
-}
-
-std::vector<uint32> GetItemLoadOutItems(uint32 LoadOutID)
-{
-    return sCharacterLoadoutItemMap[LoadOutID];
 }
 
 AreaTableEntry const* FindAreaEntry(uint32 area)

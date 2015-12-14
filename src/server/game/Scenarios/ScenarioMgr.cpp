@@ -245,7 +245,7 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
                 if (!criteriaTreeEntry)
                     continue;
 
-                progress.Id = criteriaTreeEntry->criteria;
+                progress.Id = criteriaTreeEntry->CriteriaID;
                 progress.Quantity = treeProgress.counter;
                 progress.Player = ObjectGuid::Create<HighGuid::Scenario>(0, GetScenarioId(), 1); // whats the fuck ?
                 progress.Flags = 0;
@@ -273,7 +273,7 @@ void ScenarioProgress::SendCriteriaUpdate(CriteriaTreeProgress const* progress)
     WorldPackets::Scene::ScenarioProgressUpdate update;
 
     WorldPackets::Achievement::CriteriaTreeProgress& progressUpdate = update.Progress;
-    progressUpdate.Id = progress->criteriaTree->criteria;
+    progressUpdate.Id = progress->criteriaTree->CriteriaID;
     progressUpdate.Quantity = progress->counter;
     progressUpdate.Player = progress->CompletedGUID;
     progressUpdate.Flags = 0;
@@ -294,15 +294,15 @@ void ScenarioProgress::BroadCastPacket(const WorldPacket* data)
 
 bool ScenarioProgress::CanUpdateCriteria(uint32 criteriaId, uint32 recursTree /*=0*/) const
 {
-    std::vector<CriteriaTreeEntry const*> const* cTreeList = GetCriteriaTreeList(recursTree ? recursTree : currentTree);
-    if(!cTreeList)
+    auto const& cTreeList = sDB2Manager.GetCriteriaTreeList(recursTree ? recursTree : currentTree);
+    if (!cTreeList)
         return false;
 
     for (std::vector<CriteriaTreeEntry const*>::const_iterator itr = cTreeList->begin(); itr != cTreeList->end(); ++itr)
     {
         if(CriteriaTreeEntry const* criteriaTree = *itr)
         {
-            if(criteriaTree->criteria == 0)
+            if(criteriaTree->CriteriaID == 0)
             {
                 if(CanUpdateCriteria(criteriaId, criteriaTree->ID))
                     return true;

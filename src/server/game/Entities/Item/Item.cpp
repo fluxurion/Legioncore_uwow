@@ -1723,7 +1723,7 @@ uint32 Item::GetVisibleAppearanceModId() const
 
 void Item::AddBonuses(uint32 bonusListID)
 {
-    if (DB2Manager::ItemBonusList const* bonuses = sDB2Manager.GetItemBonusList(bonusListID))
+    if (DB2Manager::ItemBonusContainer const* bonuses = sDB2Manager.GetItemBonusList(bonusListID))
     {
         AddDynamicValue(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS, bonusListID);
         for (ItemBonusEntry const* bonus : *bonuses)
@@ -1775,7 +1775,7 @@ void BonusData::Initialize(WorldPackets::Item::ItemInstance const& itemInstance)
 
     if (itemInstance.ItemBonus)
         for (uint32 bonusListID : itemInstance.ItemBonus->BonusListIDs)
-            if (DB2Manager::ItemBonusList const* bonuses = sDB2Manager.GetItemBonusList(bonusListID))
+            if (DB2Manager::ItemBonusContainer const* bonuses = sDB2Manager.GetItemBonusList(bonusListID))
                 for (ItemBonusEntry const* bonus : *bonuses)
                     AddBonus(bonus->Type, bonus->Value);
 }

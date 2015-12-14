@@ -16210,12 +16210,12 @@ uint32 Unit::GetPowerIndexByClass(uint32 powerId, uint32 classId) const
         return 0;
 
     uint32 index = 0;
-    for (ChrPowerTypesEntry const* powerEntry : sChrPowerTypesStore)
+    for (ChrClassesXPowerTypesEntry const* powerEntry : sChrClassesXPowerTypesStore)
     {
-        if (powerEntry->classId != classId)
+        if (powerEntry->ClassID != classId)
             continue;
 
-        if (powerEntry->power == powerId)
+        if (powerEntry->PowerID == powerId)
             return index;
 
         ++index;
@@ -16340,12 +16340,12 @@ void Unit::InitialPowers(bool maxpower)
     packet.Guid = GetGUID();        
 
     int32 powerIndex = 0;
-    for (ChrPowerTypesEntry const* powerEntry : sChrPowerTypesStore)
+    for (ChrClassesXPowerTypesEntry const* powerEntry : sChrClassesXPowerTypesStore)
     {
-        if (powerEntry->classId != classId)
+        if (powerEntry->ClassID != classId)
             continue;
 
-        Powers power = Powers(powerEntry->power);
+        Powers power = Powers(powerEntry->PowerID);
         int32 curval = GetPowerForReset(power, maxpower);
 
         if (power != POWER_ALTERNATE_POWER)

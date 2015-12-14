@@ -494,7 +494,7 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
 
     //New equipment
     uint32 bagEntry = 0;
-    std::vector<uint32> items = GetItemLoadOutItems(LoadOutIdByClass(pCurrChar->getClass()));
+    std::vector<uint32> items = sDB2Manager.GetItemLoadOutItemsByClassID(pCurrChar->getClass());
     for (uint32 itemID : items)
     {
         if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))

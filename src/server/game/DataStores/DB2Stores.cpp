@@ -23,10 +23,23 @@
 #include "Log.h"
 #include "World.h"
 
-DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", Achievementfmt, HOTFIX_SEL_ACHIEVEMENT);
-
+DB2Storage<DestructibleModelDataEntry>      sDestructibleModelDataStore("DestructibleModelData.db2", DestructibleModelDataFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CriteriaTreeEntry>               sCriteriaTreeStore("CriteriaTree.dbc", CriteriaTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CriteriaEntry>                   sCriteriaStore("Criteria.db2", CriteriaFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureTypeEntry>               sCreatureTypeStore("CreatureType.dbc", CreatureTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureDisplayInfoExtraEntry>   sCreatureDisplayInfoExtraStore("CreatureDisplayInfoExtra.db2", CreatureDisplayInfoExtraFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRacesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ChrClassesXPowerTypesEntry>      sChrClassesXPowerTypesStore("ChrClassesXPowerTypes.db2", ChrClassesXPowerTypesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CharStartOutfitEntry>            sCharStartOutfitStore("CharStartOutfit.db2", CharStartOutfitEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
+DB2Storage<CharacterLoadoutItemEntry>       sCharacterLoadoutItemStore("CharacterLoadoutItem.db2", CharacterLoadoutItemFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<BarberShopStyleEntry>            sBarberShopStyleStore("BarberShopStyle.db2", BarberShopStyleEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
+DB2Storage<ArmorLocationEntry>              sArmorLocationStore("ArmorLocation.db2", ArmorLocationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<AuctionHouseEntry>               sAuctionHouseStore("AuctionHouse.db2", AuctionHouseEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<BankBagSlotPricesEntry>          sBankBagSlotPricesStore("BankBagSlotPrices.db2", BankBagSlotPricesEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<BattlePetAbilityEffectEntry>     sBattlePetAbilityEffectStore("BattlePetAbilityEffect.db2", BattlePetAbilityEffectFormat, HOTFIX_SEL_BATTLE_PET_ABILITY_EFFECT);
 DB2Storage<BattlePetAbilityEntry>           sBattlePetAbilityStore("BattlePetAbility.db2", BattlePetAbilityFormat, HOTFIX_SEL_BATTLE_PET_ABILITY);
 DB2Storage<BattlePetAbilityStateEntry>      sBattlePetAbilityStateStore("BattlePetAbilityState.db2", BattlePetAbilityStateFormat, HOTFIX_SEL_BATTLE_PET_ABILITY_STATE);
@@ -175,13 +188,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    LOAD_DB2(sAchievementStore);
+    LOAD_DB2(sAchievementStore);                // 20796
     //LOAD_DB2(sAreaGroupMemberStore);
     //LOAD_DB2(sAreaGroupStore);
-    //LOAD_DB2(sArmorLocationStore,               "ArmorLocation.dbc");
-    //LOAD_DB2(sAuctionHouseStore,                "AuctionHouse.dbc");
-    //LOAD_DB2(sBankBagSlotPricesStore,           "BankBagSlotPrices.dbc");
-    //LOAD_DB2(sBarberShopStyleStore,             "BarberShopStyle.dbc");
+    //LOAD_DB2(sArmorLocationStore);            // 20796
+    //LOAD_DB2(sAuctionHouseStore);             // 20796
+    //LOAD_DB2(sBankBagSlotPricesStore);        // 20796
+    //LOAD_DB2(sBarberShopStyleStore);          // 20796
     //LOAD_DB2(sBattlePetAbilityEffectStore);
     //LOAD_DB2(sBattlePetAbilityStateStore);
     //LOAD_DB2(sBattlePetAbilityStore);
@@ -194,25 +207,24 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     //LOAD_DB2(sBattlePetStateStore);
     //LOAD_DB2(sBroadcastTextStore);
-    //LOAD_DB2(sCharacterLoadoutItemStore,        "CharacterLoadoutItem.dbc");
-    //LOAD_DB2(sCharStartOutfitStore,             "CharStartOutfit.dbc");
-    //LOAD_DB2(sChrPowerTypesStore,               "ChrClassesXPowerTypes.dbc");
-    //LOAD_DB2(sChrRacesStore,                    "ChrRaces.dbc");
+    //LOAD_DB2(sCharacterLoadoutItemStore);     // 20796
+    //LOAD_DB2(sCharStartOutfitStore);          // 20796
+    //LOAD_DB2(sChrClassesXPowerTypesStore);    // 20796
+    //LOAD_DB2(sChrRacesStore);                 // 20796
     //LOAD_DB2(sCreatureDifficultyStore);
-    //LOAD_DB2(sCreatureDisplayInfoExtraStore,    "CreatureDisplayInfoExtra.dbc");
-    //LOAD_DB2(sCreatureDisplayInfoStore,         "CreatureDisplayInfo.dbc");
-    //LOAD_DB2(sCreatureSpellDataStore,           "CreatureSpellData.dbc");
-    //LOAD_DB2(sCreatureTypeStore,                "CreatureType.dbc");
-    //LOAD_DB2(sCriteriaStore,                    "Criteria.dbc");
-    //LOAD_DB2(sCriteriaTreeStore,                "CriteriaTree.dbc");
+    //LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20796
+    //LOAD_DB2(sCreatureDisplayInfoStore);      //@TODO:Legion check struct
+    //LOAD_DB2(sCreatureTypeStore);             // 20796
+    //LOAD_DB2(sCriteriaStore);                 //@TODO:Legion - remove temp ID
+    //LOAD_DB2(sCriteriaTreeStore);             //@TODO:Legion - remove temp ID
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
-    //LOAD_DB2(sDestructibleModelDataStore,       "DestructibleModelData.dbc");
+    //LOAD_DB2(sDestructibleModelDataStore);    // 20796
     //LOAD_DB2(sDurabilityCostsStore,             "DurabilityCosts.dbc");
     //LOAD_DB2(sDurabilityQualityStore,           "DurabilityQuality.dbc");
     //LOAD_DB2(sGameObjectDisplayInfoStore,       "GameObjectDisplayInfo.dbc");
     //LOAD_DB2(sGameObjectsStore);
-    LOAD_DB2(sGameTablesStore);
+    LOAD_DB2(sGameTablesStore);                 // 20796
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
     //LOAD_DB2(sGarrBuildingPlotInstStore);
@@ -389,13 +401,13 @@ void DB2Manager::InitDB2CustomStores()
         _battlePetQualityMultiplierId[entry->quality] = entry->qualityModifier;
 
     for (BattlePetAbilityTurnEntry const* entry : sBattlePetAbilityTurnStore)
-        _battlePetTurnByAbilityId.insert(BattlePetTurnByAbilityIdMap::value_type(entry->AbilityID, std::make_pair(entry->ID, entry->turnIndex)));
+        _battlePetTurnByAbilityId.insert(BattlePetTurnByAbilityIdContainer::value_type(entry->AbilityID, std::make_pair(entry->ID, entry->turnIndex)));
 
     for (BattlePetAbilityEffectEntry const* entry : sBattlePetAbilityEffectStore)
         _battlePetEffectEntryByTurnId[entry->TurnEntryID] = entry;
 
     for (BattlePetSpeciesXAbilityEntry const* entry : sBattlePetSpeciesXAbilityStore)
-        _battlePetXAbilityEntryBySpecId.insert(BattlePetXAbilityEntryBySpecIdMap::value_type(entry->speciesID, entry));
+        _battlePetXAbilityEntryBySpecId.insert(BattlePetXAbilityEntryBySpecIdContainer::value_type(entry->speciesID, entry));
 
     for (GarrFollowerLevelXPEntry* const entry : sGarrFollowerLevelXPStore)
         _garrFollowerLevelXP[entry->Level] = entry->NextLevelXP;
@@ -458,7 +470,7 @@ void DB2Manager::InitDB2CustomStores()
 
     for (RuleSetItemUpgradeEntry const* rsiu : sRuleSetItemUpgradeEntryStore)
     {
-        ItemUpgradeDataMap::iterator itr = _itemUpgradeDataMap.find(rsiu->itemEntry);
+        ItemUpgradeDataContainer::iterator itr = _itemUpgradeDataMap.find(rsiu->itemEntry);
         if (itr != _itemUpgradeDataMap.end())
             continue;
 
@@ -489,7 +501,6 @@ void DB2Manager::InitDB2CustomStores()
             }
         }
     }
-
 
     for (TaxiPathEntry const* entry : sTaxiPathStore)
         sTaxiPathSetBySource[entry->From][entry->To] = TaxiPathBySourceAndDestination(entry->ID, entry->Cost);
@@ -551,6 +562,13 @@ void DB2Manager::InitDB2CustomStores()
     for (AchievementEntry const* store : sAchievementStore)
         if (store->CriteriaTree)
             _achievementParentList[store->CriteriaTree] = store;
+
+    for (CharacterLoadoutItemEntry const* LoadOutItem : sCharacterLoadoutItemStore)
+        _characterLoadoutItem[LoadOutItem->LoadOutID].push_back(LoadOutItem->ItemID);
+
+    for (CriteriaTreeEntry const* ct : sCriteriaTreeStore)
+        if (ct->Parent)
+            _criteriaTree[ct->Parent].push_back(ct);
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -626,7 +644,7 @@ std::list<uint32> DB2Manager::GetGameObjectsList()
 
 ItemUpgradeData const* DB2Manager::GetItemUpgradeData(uint32 itemEntry)
 {
-    ItemUpgradeDataMap::iterator itr = _itemUpgradeDataMap.find(itemEntry);
+    ItemUpgradeDataContainer::iterator itr = _itemUpgradeDataMap.find(itemEntry);
     if (itr == _itemUpgradeDataMap.end())
         return nullptr;
 
@@ -672,7 +690,7 @@ uint32 DB2Manager::GetItemDisplayId(uint32 itemId, uint32 appearanceModId) const
     return 0;
 }
 
-DB2Manager::ItemBonusList const* DB2Manager::GetItemBonusList(uint32 bonusListId) const
+DB2Manager::ItemBonusContainer const* DB2Manager::GetItemBonusList(uint32 bonusListId) const
 {
     auto itr = _itemBonusLists.find(bonusListId);
     if (itr != _itemBonusLists.end())
@@ -681,15 +699,15 @@ DB2Manager::ItemBonusList const* DB2Manager::GetItemBonusList(uint32 bonusListId
     return nullptr;
 }
 
-DB2Manager::LanguageWordsMap const* DB2Manager::GetLanguageWordMap(uint32 langID)
+DB2Manager::LanguageWordsContainer const* DB2Manager::GetLanguageWordMap(uint32 langID)
 {
-    std::map<uint32, LanguageWordsMap>::const_iterator itr = sLanguageWordsMapStore.find(langID);
+    std::map<uint32, LanguageWordsContainer>::const_iterator itr = sLanguageWordsMapStore.find(langID);
     return itr != sLanguageWordsMapStore.end() ? &itr->second : nullptr;
 }
 
 StringVector const* DB2Manager::GetLanguageWordsBySize(uint32 langID, uint32 size)
 {
-    LanguageWordsMap const* wordMap = GetLanguageWordMap(langID);
+    LanguageWordsContainer const* wordMap = GetLanguageWordMap(langID);
     if (!wordMap)
         return nullptr;
 
@@ -763,7 +781,7 @@ std::set<uint32> DB2Manager::GetFindBonusTree(uint32 BonusTreeID, uint32 itemBon
 
 HeirloomEntry const* DB2Manager::GetHeirloomByItemId(uint32 itemId) const
 {
-    auto itr = _heirlooms.find(itemId);
+    HeirloomItemsContainer::const_iterator itr = _heirlooms.find(itemId);
     if (itr != _heirlooms.end())
         return itr->second;
 
@@ -799,7 +817,7 @@ HeirloomEntry const* DB2Manager::GetHeirloomByOldItem(uint32 itemId) const
 
 BattlePetSpeciesEntry const* DB2Manager::GetBattlePetSpeciesEntry(uint32 creatureEntry)
 {
-    auto const it = _battlePetSpeciesBySpellId.find(creatureEntry);
+    BattlePetSpeciesBySpellIdContainer::const_iterator it = _battlePetSpeciesBySpellId.find(creatureEntry);
     if (it != _battlePetSpeciesBySpellId.end())
         return it->second;
 
@@ -808,7 +826,7 @@ BattlePetSpeciesEntry const* DB2Manager::GetBattlePetSpeciesEntry(uint32 creatur
 
 uint8 DB2Manager::GetBattlePetSpeciesBySpellID(uint32 entry) const
 {
-    auto const it = _battlePetSpeciesBySpellId.find(entry);
+    BattlePetSpeciesBySpellIdContainer::const_iterator it = _battlePetSpeciesBySpellId.find(entry);
     if (it != _battlePetSpeciesBySpellId.end())
         return it->second->petType;
 
@@ -817,7 +835,7 @@ uint8 DB2Manager::GetBattlePetSpeciesBySpellID(uint32 entry) const
 
 float DB2Manager::CalcBattlePetQualityMuliplier(uint8 quality, uint8 level)
 {
-    auto itr = _battlePetQualityMultiplierId.find(quality);
+    BattlePetQualityMultiplierContainer::const_iterator itr = _battlePetQualityMultiplierId.find(quality);
     if (itr != _battlePetQualityMultiplierId.end())
         return level * itr->second;
 
@@ -833,7 +851,7 @@ uint32 DB2Manager::GetBattlePetTurnByAbility(uint32 abilityID, uint8 turnIndex /
         if (_turnIndex == turnIndex)
         {
             uint32 turnID = std::get<0>(itr->second);
-            auto itr = _battlePetEffectEntryByTurnId.find(turnID);
+            BattlePetEffectEntryByTurnIdContainer::const_iterator itr = _battlePetEffectEntryByTurnId.find(turnID);
             if (itr != _battlePetEffectEntryByTurnId.end())
                 return itr->second->ID;
         }
@@ -860,7 +878,7 @@ uint32 DB2Manager::GetBattlePetXAbilityEntryBySpec(uint32 speciesID, uint32 cust
 
 uint32 DB2Manager::GetXPForNextFollowerLevel(uint32 level)
 {
-    auto const it = _garrFollowerLevelXP.find(level);
+    GarrFollowerLevelXPContainer::const_iterator it = _garrFollowerLevelXP.find(level);
     if (it != _garrFollowerLevelXP.end())
         return it->second;
 
@@ -869,7 +887,7 @@ uint32 DB2Manager::GetXPForNextFollowerLevel(uint32 level)
 
 uint32 DB2Manager::GetXPForNextFollowerQuality(uint32 quality)
 {
-    auto const it = _garrFollowerQualityXP.find(quality);
+    GarrFollowerQualityXPContainer::const_iterator it = _garrFollowerQualityXP.find(quality);
     if (it != _garrFollowerQualityXP.end())
         return it->second;
 
@@ -878,7 +896,7 @@ uint32 DB2Manager::GetXPForNextFollowerQuality(uint32 quality)
 
 GarrMissionRewardEntry const* DB2Manager::GetMissionRewardByRecID(uint32 missionRecID)
 {
-    auto const it = _garrMissionRewardByMissionID.find(missionRecID);
+    GarrMissionRewardByMissionIDContainer::const_iterator it = _garrMissionRewardByMissionID.find(missionRecID);
     if (it != _garrMissionRewardByMissionID.end())
         return it->second;
 
@@ -903,9 +921,38 @@ char const* DB2Manager::GetBroadcastTextValue(BroadcastTextEntry const* broadcas
 
 AchievementEntry const* DB2Manager::GetsAchievementByTreeList(uint32 criteriaTree)
 {
-    auto const& v = _achievementParentList.find(criteriaTree);
+    AchievementParentContainer::const_iterator v = _achievementParentList.find(criteriaTree);
     if (v != _achievementParentList.end())
         return v->second;
 
     return nullptr;
 }
+
+std::vector<uint32> DB2Manager::GetItemLoadOutItemsByClassID(uint32 classID)
+{
+    switch(classID)
+    {
+        case CLASS_WARRIOR: return _characterLoadoutItem[539];
+        case CLASS_PALADIN: return _characterLoadoutItem[524];
+        case CLASS_HUNTER: return _characterLoadoutItem[533];
+        case CLASS_ROGUE: return _characterLoadoutItem[512];
+        case CLASS_PRIEST: return _characterLoadoutItem[536];
+        case CLASS_DEATH_KNIGHT: return _characterLoadoutItem[515];
+        case CLASS_SHAMAN: return _characterLoadoutItem[530];
+        case CLASS_MAGE: return _characterLoadoutItem[545];
+        case CLASS_WARLOCK: return _characterLoadoutItem[542];
+        case CLASS_MONK: return _characterLoadoutItem[527];
+        case CLASS_DRUID: return _characterLoadoutItem[549];
+        case CLASS_DEMON_HUNTER: return _characterLoadoutItem[512]; // update id
+    }
+}
+
+std::vector<CriteriaTreeEntry const*> const* DB2Manager::GetCriteriaTreeList(uint32 parent)
+{
+    CriteriaTreeContainer::const_iterator itr = _criteriaTree.find(parent);
+    if (itr != _criteriaTree.end())
+        return &itr->second;
+
+    return nullptr;
+}
+

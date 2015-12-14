@@ -26,8 +26,21 @@
 #include <boost/regex.hpp>
 #include <list>
 
+extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
+extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
+extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
+extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
+extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
+extern DB2Storage<CreatureDisplayInfoExtraEntry>    sCreatureDisplayInfoExtraStore;
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
+extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
+extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
+extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
+extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
+extern DB2Storage<AuctionHouseEntry>                sAuctionHouseStore;
+extern DB2Storage<BankBagSlotPricesEntry>           sBankBagSlotPricesStore;
+extern DB2Storage<BarberShopStyleEntry>             sBarberShopStyleStore;
 extern DB2Storage<BattlePetAbilityEffectEntry>      sBattlePetAbilityEffectStore;
 extern DB2Storage<BattlePetAbilityEntry>            sBattlePetAbilityStore;
 extern DB2Storage<BattlePetAbilityStateEntry>       sBattlePetAbilityStateStore;
@@ -129,37 +142,37 @@ public:
     typedef std::map<uint32 /*hash*/, DB2StorageBase*> StorageMap;
 
     typedef std::map<uint32 /*curveID*/, std::map<uint32/*index*/, CurvePointEntry const*, std::greater<uint32>>> HeirloomCurvesContainer;
-    typedef std::vector<ItemBonusEntry const*> ItemBonusList;
-    typedef std::vector<ItemXBonusTreeEntry const*> ItemXBonusTreeList;
-    typedef std::unordered_map<uint32 /*bonusListId*/, ItemBonusList> ItemBonusListContainer;
-    typedef std::unordered_map<uint32 /*itemId*/, ItemXBonusTreeList> ItemToBonusTreeContainer;
+    typedef std::vector<ItemBonusEntry const*> ItemBonusContainer;
+    typedef std::vector<ItemXBonusTreeEntry const*> ItemXBonusTreeContainer;
+    typedef std::unordered_map<uint32 /*bonusListId*/, ItemBonusContainer> ItemBonusListContainer;
+    typedef std::unordered_map<uint32 /*itemId*/, ItemXBonusTreeContainer> ItemToBonusTreeContainer;
     typedef std::unordered_map<uint32 /*itemId | appearanceMod << 24*/, uint32> ItemDisplayIdContainer;
     typedef std::unordered_map<uint32, std::set<ItemBonusTreeNodeEntry const*>> ItemBonusTreeContainer;
     typedef std::unordered_map<uint32, std::vector<ItemSpecOverrideEntry const*>> ItemSpecOverridesContainer;
     typedef std::unordered_map<uint32, MountEntry const*> MountContainer;
     //typedef std::set<MountTypeXCapabilityEntry const*, MountTypeXCapabilityEntryComparator> MountTypeXCapabilitySet;
     //typedef std::unordered_map<uint32, MountTypeXCapabilitySet> MountCapabilitiesByTypeContainer;
-    typedef std::map<uint32 /*word length*/, StringVector> LanguageWordsMap;
+    typedef std::map<uint32 /*word length*/, StringVector> LanguageWordsContainer;
     typedef std::unordered_map<uint32 /*areaGroupId*/, std::vector<uint32/*areaId*/>> AreaGroupMemberContainer;
-    typedef std::unordered_map<uint32, MapChallengeModeEntry const*> MapChallengeModeEntryMap;
-    typedef std::unordered_map<uint32, ItemUpgradeData> ItemUpgradeDataMap;
+    typedef std::unordered_map<uint32, MapChallengeModeEntry const*> MapChallengeModeEntryContainer;
+    typedef std::unordered_map<uint32, ItemUpgradeData> ItemUpgradeDataContainer;
     typedef std::unordered_map<uint32, std::vector<QuestPackageItemEntry const*>> QuestPackageItemContainer;
     typedef std::vector<uint32> ToyItemIdsContainer;
     typedef std::unordered_map<uint32, HeirloomEntry const*> HeirloomItemsContainer;
-    typedef std::multimap<uint32, std::pair<uint32, int32>> BattlePetBreedStateByBreedMap;
-    typedef std::multimap<uint32, std::pair<uint32, int32>> BattlePetSpeciesStateBySpecMap;
-    typedef std::map<uint32, BattlePetSpeciesEntry const*> BattlePetSpeciesBySpellIdMap;
-    typedef std::multimap<uint32, std::pair<uint32, uint8>> BattlePetTurnByAbilityIdMap;
-    typedef std::multimap<uint32, BattlePetSpeciesXAbilityEntry const*> BattlePetXAbilityEntryBySpecIdMap;
-    typedef std::map<uint32, uint8> BattlePetQualityMultiplierMap;
-    typedef std::map<uint32, BattlePetAbilityEffectEntry const*> BattlePetEffectEntryByTurnIdMap;
-    typedef std::unordered_map<BattlePetState /*state*/, int32 /*value*/, std::hash<std::underlying_type<BattlePetState>::type> > BattlePetStateMap;
-    typedef std::unordered_map<uint16 /*BreedID*/, BattlePetStateMap> BattlePetBreedStates;
-    typedef std::unordered_map<uint32 /*SpeciesID*/, BattlePetStateMap> BattlePetSpeciesStates;
-    typedef std::unordered_map<uint32 /*level*/, uint32 /*nextLevelXP*/> GarrFollowerLevelXPMap;
-    typedef std::unordered_map<uint32 /*quality*/, uint32 /*nextQualityXP*/> GarrFollowerQualityXPMap;
-    typedef std::unordered_map<uint32 /*missionID*/, GarrMissionRewardEntry const*> GarrMissionRewardByMissionIDMap;
-    typedef std::unordered_map<uint32, AchievementEntry const*> sAchievementParentList;
+    typedef std::map<uint32, BattlePetSpeciesEntry const*> BattlePetSpeciesBySpellIdContainer;
+    typedef std::multimap<uint32, std::pair<uint32, uint8>> BattlePetTurnByAbilityIdContainer;
+    typedef std::multimap<uint32, BattlePetSpeciesXAbilityEntry const*> BattlePetXAbilityEntryBySpecIdContainer;
+    typedef std::map<uint32, uint8> BattlePetQualityMultiplierContainer;
+    typedef std::map<uint32, BattlePetAbilityEffectEntry const*> BattlePetEffectEntryByTurnIdContainer;
+    typedef std::unordered_map<BattlePetState /*state*/, int32 /*value*/, std::hash<std::underlying_type<BattlePetState>::type> > BattlePetStateMapContainer;
+    typedef std::unordered_map<uint16 /*BreedID*/, BattlePetStateMapContainer> BattlePetBreedStatesContainer;
+    typedef std::unordered_map<uint32 /*SpeciesID*/, BattlePetStateMapContainer> BattlePetSpeciesStatesContainer;
+    typedef std::unordered_map<uint32 /*level*/, uint32 /*nextLevelXP*/> GarrFollowerLevelXPContainer;
+    typedef std::unordered_map<uint32 /*quality*/, uint32 /*nextQualityXP*/> GarrFollowerQualityXPContainer;
+    typedef std::unordered_map<uint32 /*missionID*/, GarrMissionRewardEntry const*> GarrMissionRewardByMissionIDContainer;
+    typedef std::unordered_map<uint32, AchievementEntry const*> AchievementParentContainer;
+    typedef std::map<uint32 /*LoadOutID*/, std::vector<uint32>> CharacterLoadoutItemContainer;
+    typedef std::unordered_map<uint32 /*Parent*/, std::vector<CriteriaTreeEntry const*>> CriteriaTreeContainer;
 
     static DB2Manager& Instance()
     {
@@ -180,8 +193,8 @@ public:
     ItemUpgradeData const* GetItemUpgradeData(uint32 itemEntry);
     uint32 GetHeirloomItemLevel(uint32 curveId, uint32 level) const;
     uint32 GetItemDisplayId(uint32 itemId, uint32 appearanceModId) const;
-    ItemBonusList const* GetItemBonusList(uint32 bonusListId) const;
-    LanguageWordsMap const* GetLanguageWordMap(uint32 landID);
+    ItemBonusContainer const* GetItemBonusList(uint32 bonusListId) const;
+    LanguageWordsContainer const* GetLanguageWordMap(uint32 landID);
     StringVector const* GetLanguageWordsBySize(uint32 landID, uint32 size);
     std::vector<QuestPackageItemEntry const*> const* GetQuestPackageItems(uint32 questPackageID) const;
     MountEntry const* GetMount(uint32 spellId) const;
@@ -201,11 +214,13 @@ public:
     GarrMissionRewardEntry const* GetMissionRewardByRecID(uint32 missionRecID);
     static char const* GetBroadcastTextValue(BroadcastTextEntry const* broadcastText, LocaleConstant locale = DEFAULT_LOCALE, uint8 gender = GENDER_MALE, bool forceGender = false);
     AchievementEntry const* GetsAchievementByTreeList(uint32 criteriaTree);
+    std::vector<uint32> GetItemLoadOutItemsByClassID(uint32 classID);
+    std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
 
 
-    MapChallengeModeEntryMap _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
-    BattlePetBreedStates _battlePetBreedStates;
-    BattlePetSpeciesStates _battlePetSpeciesStates;
+    MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
+    BattlePetBreedStatesContainer _battlePetBreedStates;
+    BattlePetSpeciesStatesContainer _battlePetSpeciesStates;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -219,21 +234,23 @@ private:
     MountContainer _mountsBySpellId;
     //MountCapabilitiesByTypeContainer _mountCapabilitiesByType;
     std::list<uint32> sGameObjectsList;
-    std::map<uint32 /*landID*/, LanguageWordsMap> sLanguageWordsMapStore;
+    std::map<uint32 /*landID*/, LanguageWordsContainer> sLanguageWordsMapStore;
     AreaGroupMemberContainer _areaGroupMembers;
-    ItemUpgradeDataMap _itemUpgradeDataMap;
+    ItemUpgradeDataContainer _itemUpgradeDataMap;
     QuestPackageItemContainer _questPackages;
     ToyItemIdsContainer _toys;
     HeirloomItemsContainer _heirlooms;
-    BattlePetQualityMultiplierMap _battlePetQualityMultiplierId;
-    BattlePetTurnByAbilityIdMap _battlePetTurnByAbilityId;
-    BattlePetXAbilityEntryBySpecIdMap _battlePetXAbilityEntryBySpecId;
-    BattlePetEffectEntryByTurnIdMap _battlePetEffectEntryByTurnId;
-    BattlePetSpeciesBySpellIdMap _battlePetSpeciesBySpellId;
-    GarrFollowerLevelXPMap _garrFollowerLevelXP;
-    GarrFollowerQualityXPMap _garrFollowerQualityXP;
-    GarrMissionRewardByMissionIDMap _garrMissionRewardByMissionID;
-    sAchievementParentList _achievementParentList;
+    BattlePetQualityMultiplierContainer _battlePetQualityMultiplierId;
+    BattlePetTurnByAbilityIdContainer _battlePetTurnByAbilityId;
+    BattlePetXAbilityEntryBySpecIdContainer _battlePetXAbilityEntryBySpecId;
+    BattlePetEffectEntryByTurnIdContainer _battlePetEffectEntryByTurnId;
+    BattlePetSpeciesBySpellIdContainer _battlePetSpeciesBySpellId;
+    GarrFollowerLevelXPContainer _garrFollowerLevelXP;
+    GarrFollowerQualityXPContainer _garrFollowerQualityXP;
+    GarrMissionRewardByMissionIDContainer _garrMissionRewardByMissionID;
+    AchievementParentContainer _achievementParentList;
+    CharacterLoadoutItemContainer _characterLoadoutItem;
+    CriteriaTreeContainer _criteriaTree;
 };
 
 #define sDB2Manager DB2Manager::Instance()

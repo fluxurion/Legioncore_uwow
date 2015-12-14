@@ -29,20 +29,12 @@
 #include <set>
 #include <vector>
 
-// Structures using to access raw DBC data and required packing to portability
-
-// GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push, N), also any gcc version not support it at some platform
-#if defined(__GNUC__)
-#pragma pack(1)
-#else
 #pragma pack(push, 1)
-#endif
 
 #define MAX_MAP_DEPTH -5000 // Temporary define until max depth is found somewhere (adt?)
 #define MAX_OUTFIT_ITEMS 24
 #define MAX_MASTERY_SPELLS 2
 #define MAX_PERKS_COUNT 4
-#define MAX_CREATURE_SPELL_DATA_SLOT 4
 #define MAX_FACTION_RELATIONS 4
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 #define MAX_ITEM_SET_ITEMS 17
@@ -56,526 +48,6 @@
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 #define MAX_VEHICLE_SEATS 8
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
-
-struct AchievementCategoryEntry
-{
-    uint32    ID;                                           // 0
-    uint32    parentCategory;                               // 1 -1 for main category
-    //char* name;                                           // 2
-    //uint32    sortOrder;                                  // 3
-};
-
-struct CriteriaEntry
-{
-    uint32  ID;                                            // 0
-    uint32  type;                                          // 1
-    union
-    {
-        // ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE          = 0
-        // TODO: also used for player deaths..
-        struct
-        {
-            uint32  creatureID;                             // 2
-            // uint32  creatureCount;                       // treeCount in CriteriaTree
-        } kill_creature;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_BG                 = 1
-        struct
-        {
-            uint32  bgMapID;                                // 2
-            // uint32  winCount;                            // treeCount in CriteriaTree
-        } win_bg;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_ARCHAEOLOGY_PROJECTS = 3
-        struct
-        {
-            uint32  type;                                   // 2
-            // uint32  itemCount;                           // treeCount in CriteriaTree
-        } archaelogy;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_REACH_LEVEL            = 125
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  level;                               // treeCount in CriteriaTree
-        } reach_level;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_REACH_SKILL_LEVEL      = 7
-        struct
-        {
-            uint32  skillID;                                // 2
-            // uint32  skillLevel;                          // treeCount in CriteriaTree
-        } reach_skill_level;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_ACHIEVEMENT   = 8
-        struct
-        {
-            uint32  linkedAchievement;                      // 2
-        } complete_achievement;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUEST_COUNT   = 9
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  totalQuestCount;                     // treeCount in CriteriaTree
-        } complete_quest_count;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_DAILY_QUEST_DAILY = 10
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  numberOfDays;                        // treeCount in CriteriaTree
-        } complete_daily_quest_daily;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE = 11
-        struct
-        {
-            uint32  zoneID;                                 // 2
-            // uint32  questCount;                          // treeCount in CriteriaTree
-        } complete_quests_in_zone;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_CURRENCY = 12
-        struct
-        {
-            uint32 currency;
-            // uint32 count;
-        } currencyGain;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_DAILY_QUEST   = 14
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  questCount;                          // treeCount in CriteriaTree
-        } complete_daily_quest;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_BATTLEGROUND  = 15
-        struct
-        {
-            uint32  mapID;                                  // 2
-        } complete_battleground;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATH_AT_MAP           = 16
-        struct
-        {
-            uint32  mapID;                                  // 2
-        } death_at_map;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATH_IN_DUNGEON       = 18
-        struct
-        {
-            uint32  manLimit;                               // 2
-        } death_in_dungeon;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_RAID          = 19
-        struct
-        {
-            uint32  groupSize;                              // 2 can be 5, 10 or 25
-        } complete_raid;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_KILLED_BY_CREATURE     = 20
-        struct
-        {
-            uint32  creatureEntry;                          // 2
-        } killed_by_creature;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_FALL_WITHOUT_DYING     = 24
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  fallHeight;                          // treeCount in CriteriaTree
-        } fall_without_dying;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM            = 26
-        struct
-        {
-            uint32 type;                                    // 2, see enum EnviromentalDamage
-        } death_from;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUEST         = 27
-        struct
-        {
-            uint32  questID;                                // 2
-            // uint32  questCount;                          // treeCount in CriteriaTree
-        } complete_quest;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET        = 28
-        // ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET2       = 69
-        struct
-        {
-            uint32  spellID;                                // 2
-            // uint32  spellCount;                          // treeCount in CriteriaTree
-        } be_spell_target;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL             = 29
-        // ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL2            = 110
-        struct
-        {
-            uint32  spellID;                                // 2
-            // uint32  castCount;                           // treeCount in CriteriaTree
-        } cast_spell;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BG_OBJECTIVE_CAPTURE
-        struct
-        {
-            uint32 objectiveId;                             // 2
-            // uint32 completeCount;                        // treeCount in CriteriaTree
-        } bg_objective;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HONORABLE_KILL_AT_AREA = 31
-        struct
-        {
-            uint32  areaID;                                 // 2 Reference to AreaTable.dbc
-            // uint32  killCount;                           // treeCount in CriteriaTree
-        } honorable_kill_at_area;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_ARENA              = 32
-        struct
-        {
-            uint32  mapID;                                  // 2 Reference to Map.dbc
-        } win_arena;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_PLAY_ARENA             = 33
-        struct
-        {
-            uint32  mapID;                                  // 2 Reference to Map.dbc
-        } play_arena;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SPELL            = 34
-        struct
-        {
-            uint32  spellID;                                // 2 Reference to Map.dbc
-        } learn_spell;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_OWN_ITEM               = 36
-        struct
-        {
-            uint32  itemID;                                 // 2
-            // uint32  itemCount;                           // treeCount in CriteriaTree
-        } own_item;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_RATED_ARENA        = 37
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } win_rated_arena;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_TEAM_RATING    = 38
-        struct
-        {
-            uint32  teamtype;                               // 2 {2, 3, 5}
-        } highest_team_rating;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_REACH_TEAM_RATING      = 39
-        struct
-        {
-            uint32  teamtype;                               // 2 {2, 3, 5}
-            // uint32  teamrating;                          // treeCount in CriteriaTree
-        } reach_team_rating;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_PERSONAL_RATING = 39
-        struct
-        {
-            uint32 teamtype; // 2 {2, 3, 5}
-            // uint32 PersonalRating; // 4
-        } highest_personal_rating;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LEVEL      = 40
-        struct
-        {
-            uint32  skillID;                                // 2
-            // uint32  skillLevel;                          // treeCount in CriteriaTree apprentice=1, journeyman=2, expert=3, artisan=4, master=5, grand master=6
-        } learn_skill_level;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_USE_ITEM               = 41
-        struct
-        {
-            uint32  itemID;                                 // 2
-            // uint32  itemCount;                           // treeCount in CriteriaTree
-        } use_item;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM              = 42
-        struct
-        {
-            uint32  itemID;                                 // 2
-            // uint32  itemCount;                           // treeCount in CriteriaTree
-        } loot_item;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA           = 43
-        struct
-        {
-            // TODO: This rank is _NOT_ the index from AreaTable.dbc
-            uint32  areaReference;                          // 2
-        } explore_area;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_OWN_RANK               = 44
-        struct
-        {
-            // TODO: This rank is _NOT_ the index from CharTitles.dbc
-            uint32  rank;                                   // 2
-        } own_rank;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BUY_BANK_SLOT          = 45
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  numberOfSlots;                       // treeCount in CriteriaTree
-        } buy_bank_slot;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_GAIN_REPUTATION        = 46
-        struct
-        {
-            uint32  factionID;                              // 2
-            // uint32  reputationAmount;                    // treeCount in CriteriaTree Total reputation amount, so 42000 = exalted
-        } gain_reputation;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_GAIN_EXALTED_REPUTATION= 47
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  numberOfExaltedFactions;             // treeCount in CriteriaTree
-        } gain_exalted_reputation;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_VISIT_BARBER_SHOP      = 48
-        struct
-        {
-            uint32 unused;                                  // 2
-            // uint32 numberOfVisits;                       // treeCount in CriteriaTree
-        } visit_barber;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_EQUIP_EPIC_ITEM        = 49
-        // TODO: where is the required itemlevel stored?
-        struct
-        {
-            uint32  itemSlot;                               // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } equip_epic_item;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_ROLL_NEED_ON_LOOT      = 50
-        struct
-        {
-            uint32  rollValue;                              // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } roll_need_on_loot;
-       // ACHIEVEMENT_CRITERIA_TYPE_ROLL_GREED_ON_LOOT      = 51
-        struct
-        {
-            uint32  rollValue;                              // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } roll_greed_on_loot;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HK_CLASS               = 52
-        struct
-        {
-            uint32  classID;                                // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } hk_class;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HK_RACE                = 53
-        struct
-        {
-            uint32  raceID;                                 // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } hk_race;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE               = 54
-        // TODO: where is the information about the target stored?
-        struct
-        {
-            uint32  emoteID;                                // 2 enum TextEmotes
-            // uint32  count;                               // treeCount in CriteriaTree count of emotes, always required special target or requirements
-        } do_emote;
-        // ACHIEVEMENT_CRITERIA_TYPE_DAMAGE_DONE            = 13
-        // ACHIEVEMENT_CRITERIA_TYPE_HEALING_DONE           = 55
-        // ACHIEVEMENT_CRITERIA_TYPE_GET_KILLING_BLOWS      = 56
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } healing_done;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_GET_KILLING_BLOWS      = 56
-        struct
-        {
-            uint32  unused;
-            // uint32  killCount;
-        } get_killing_blow;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_EQUIP_ITEM             = 57
-        struct
-        {
-            uint32  itemID;                                 // 2
-            // uint32  count;                               // treeCount in CriteriaTree
-        } equip_item;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_MONEY_FROM_QUEST_REWARD= 62
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  goldInCopper;                        // treeCount in CriteriaTree
-        } quest_reward_money;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LOOT_MONEY             = 67
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  goldInCopper;                        // treeCount in CriteriaTree
-        } loot_money;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT         = 68
-        struct
-        {
-            uint32  goEntry;                                // 2
-            // uint32  useCount;                            // treeCount in CriteriaTree
-        } use_gameobject;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_SPECIAL_PVP_KILL       = 70
-        // TODO: are those special criteria stored in the dbc or do we have to add another sql table?
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  killCount;                           // treeCount in CriteriaTree
-        } special_pvp_kill;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_INSTANSE_MAP_ID        = 71
-        struct
-        {
-            uint32  mapID;                                // 2
-            // uint32  lootCount;                           // treeCount in CriteriaTree
-        } finish_instance;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_FISH_IN_GAMEOBJECT     = 72
-        struct
-        {
-            uint32  goEntry;                                // 2
-            // uint32  lootCount;                           // treeCount in CriteriaTree
-        } fish_in_gameobject;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT           = 73
-        // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT_2         = 92
-        struct
-        {
-            uint32 unkValue;
-            //uint32 count;
-        } script_event;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS = 75
-        struct
-        {
-            uint32  skillLine;                              // 2
-            // uint32  spellCount;                          // treeCount in CriteriaTree
-        } learn_skillline_spell;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_DUEL               = 76
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  duelCount;                           // treeCount in CriteriaTree
-        } win_duel;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_ADD_BATTLE_PET_JOURNAL = 96
-        struct
-        {
-            uint32  add_pet;
-        } battle_pet_journal;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_STAT           = 97
-        struct
-        {
-            uint32  statType;                               // 2 4=spirit, 3=int, 2=stamina, 1=agi, 0=strength
-        } highest_stat;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_SPELLPOWER     = 98
-        struct
-        {
-            uint32  spellSchool;                            // 2
-        } highest_spellpower;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_RATING         = 100
-        struct
-        {
-            uint32  ratingType;                             // 2
-        } highest_rating;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE              = 109
-        struct
-        {
-            uint32  lootType;                               // 2 3=fishing, 2=pickpocket, 4=disentchant
-            // uint32  lootTypeCount;                       // treeCount in CriteriaTree
-        } loot_type;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LINE       = 112
-        struct
-        {
-            uint32  skillLine;                              // 2
-            // uint32  spellCount;                          // treeCount in CriteriaTree
-        } learn_skill_line;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_EARN_HONORABLE_KILL    = 113
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  killCount;                           // treeCount in CriteriaTree
-        } honorable_kill;
-        
-        // ACHIEVEMENT_CRITERIA_TYPE_BATTLEPET_LEVEL_UP     = 160
-        struct
-        {
-            uint32  level_up;
-        } battlepet_level;
-
-        struct
-        {
-            uint32  unused;                                 // 2
-            // uint32  dungeonsComplete;                    // treeCount in CriteriaTree
-        } use_lfg;
-
-        struct
-        {
-            uint32  field3;                                 //  main requirement
-            // uint32  count;                               // treeCount in CriteriaTree main requirement count
-        } raw;
-
-        struct
-        {
-            //ACHIEVEMENT_CRITERIA_TYPE_PLACE_GARRISON_BUILDING = 167
-            //ACHIEVEMENT_CRITERIA_TYPE_UPGRADE_GARRISON_BUILDING = 168
-            // ACHIEVEMENT_CRITERIA_TYPE_CONSTRUCT_GARRISON_BUILDING = 169
-            uint32 GarrBuildingID;
-        } garBuild;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_UPGRADE_GARRISON       = 170
-        uint32 GarrisonLevel;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_GARRISON_MISSION = 174
-        uint32 GarrMissionID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_GARRISON_SHIPMENT = 182
-        uint32 CharShipmentContainerID;
-    };
-
-    uint32  timedCriteriaStartType;                        // 3 m_timer_start_event
-    uint32  timedCriteriaMiscId;                           // 4 m_timer_asset_id
-    uint32  timeLimit;                                     // 5 m_timer_time
-    uint32  timedCriteriaFailType;                         // 6 fail_event
-    uint32  timedCriteriaMiscFailId;                       // 7 fail_asset_id
-    uint32  ModifyTree;                                    // 8 m_modifier_tree_id
-    uint32  operatorFlags;                                 // 9 m_flags
-    uint32  worldStateId;                                  // 10 m_eligibility_world_state_ID
-    uint32  worldStateValue;                               // 11 m_eligibility_world_state_value
-};
-
-struct CriteriaTreeEntry
-{
-    uint32  ID;                                          // 0
-    uint32  criteria;                                    // 1
-    uint32  requirement_count;                           // 2
-    //uint32  field3;                                    // 3 always 0
-    uint32  flags;                                       // 4
-    uint32  parent;                                      // 5 m_parent in m_id
-    uint32  flags2;                                      // 6
-    char*   name;                                        // 7
-};
 
 struct ModifierTreeEntry // additional Condition
 {
@@ -664,12 +136,6 @@ struct AreaTriggerEntry
     //uint32 unk                                                        on 6.0.3 19243
 };
 
-struct ArmorLocationEntry
-{
-  uint32    InventoryType;                                  // 0
-  float     Value[5];                                       // 1-5 multiplier for armor types (cloth...plate, no armor?)
-};
-
 struct AuctionHouseEntry
 {
     uint32    houseId;                                      // 0 index
@@ -679,12 +145,6 @@ struct AuctionHouseEntry
     //char*     name;                                       // 4
 };
 
-struct BankBagSlotPricesEntry
-{
-    uint32  ID;
-    uint32  price;
-};
-
 struct BannedAddOnsEntry
 {
     uint32      ID;                                         // 0
@@ -692,18 +152,6 @@ struct BannedAddOnsEntry
     //uint32    VersionMD5[4];                              // 2
     //uint32    LastModified;                               // 3
     //uint32    Flags;                                      // 4
-};
-
-struct BarberShopStyleEntry
-{
-    uint32  Id;                                             // 0
-    uint32  type;                                           // 1 value 0 -> hair, value 2 -> facialhair
-    //char*   name;                                         // 2        m_DisplayName_lang
-    //char*  unk_name;                                      // 3        m_Description_lang
-    //float   CostMultiplier;                               // 4        m_Cost_Modifier
-    uint32  race;                                           // 5        m_race
-    uint32  gender;                                         // 6        m_sex
-    uint32  hair_id;                                        // 7        m_data (real ID to hair/facial hair)
 };
 
 struct BattlemasterListEntry
@@ -724,18 +172,6 @@ struct BattlemasterListEntry
     //uint32      IconFileDataID
     //char*       GametypeLang
     //uint32      CritreriaID;
-};
-
-struct CharStartOutfitEntry
-{
-    //uint32    ID;                                         // 0
-    uint8       RaceID;                                     // 1
-    uint8       ClassID;                                    // 2
-    uint8       GenderID;                                   // 3
-    //uint8     OutfitID;                                   // 4
-    int32       ItemID[MAX_OUTFIT_ITEMS];                   // 5-28
-    uint32      PetDisplayID;                               // 29 Pet Model ID for starting pet
-    uint32      PetFamilyID;                                // 30 Pet Family Entry for starting pet
 };
 
 struct CharTitlesEntry
@@ -780,52 +216,6 @@ struct ChrClassesEntry
     //uint32    Unk1;                                       // 18
 };
 
-struct ChrRacesEntry
-{
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
-    uint32      FactionID;                                  // 2 faction template id
-    //uint32    ExplorationSoundID;                         // 3
-    uint32      MaleDisplayID;                              // 4
-    uint32      FemaleDisplayID;                            // 5
-    //char*     ClientPrefix;                               // 6
-    //uint32    BaseLanguage;                               // 7
-    //uint32    CreatureType;                               // 8
-    //uint32    ResSicknessSpellID;                         // 9
-    //uint32    SplashSoundID;                              // 10
-    //char*     ClientFileString;                           // 11
-    uint32      CinematicSequenceID;                        // 12
-    uint32      TeamID;                                     // 13 m_alliance (0 alliance, 1 horde, 2 neutral)
-    char*       Name_lang;                                  // 14
-    //char*     NameFemale_lang;                            // 15
-    //char*     NameMale_lang;                              // 16
-    //char*     FacialHairCustomization[2];                 // 17-18
-    //char*     HairCustomization;                          // 19
-    //uint32    RaceRelated;                                // 20
-    //uint32    UnalteredVisualRaceID;                      // 21
-    //uint32    UAMaleCreatureSoundDataID;                  // 22
-    //uint32    UAFemaleCreatureSoundDataID;                // 23
-    //uint32    CharComponentTextureLayoutID;               // 24
-    //uint32    DefaultClassID;                             // 25
-    //uint32    CreateScreenFileDataID;                     // 26
-    //uint32    SelectScreenFileDataID;                     // 27
-    //float     MaleCustomizeOffset[3];                     // 28-30
-    //float     FemaleCustomizeOffset[3];                   // 31-33
-    //uint32    NeutralRaceID;                              // 34
-    //uint32    LowResScreenFileDataID;                     // 35
-    //uint32    HighResMaleDisplayID;                       // 36
-    //uint32    HighResFemaleDisplayID;                     // 37
-    //uint32    CharComponentTexLayoutHiResID;              // 38
-    //uint32    Unk;                                        // 39
-};
-
-struct ChrPowerTypesEntry
-{
-   uint32 entry;                                               // 0
-   uint32 classId;                                             // 1
-   uint32 power;                                               // 2
-};
-
 struct ChrSpecializationsEntry
 {
     uint32      ID;                                         // 0 Specialization ID
@@ -865,44 +255,6 @@ struct CinematicSequencesEntry
                                                             // 3-9 always 0
 };
 
-struct CreatureDisplayInfoEntry
-{
-    uint32      ID;                                         // 0
-    uint32      ModelID;                                    // 1
-    //uint32    SoundID;                                    // 2
-    uint32      ExtendedDisplayInfoID;                      // 3
-    float       CreatureModelScale;                         // 4
-    //uint32    CreatureModelAlpha;                         // 5
-    //char*     TextureVariation[3];                        // 6-8
-    //char*     PortraitTextureName;                        // 9
-    //uint32    PortraitCreatureDisplayInfoID;              // 10
-    //uint32    SizeClass;                                  // 11
-    //uint32    BloodID;                                    // 12
-    //uint32    NPCSoundID;                                 // 13
-    //uint32    ParticleColorID;                            // 14
-    //uint32    CreatureGeosetData;                         // 15
-    //uint32    ObjectEffectPackageID;                      // 16
-    //uint32    AnimReplacementSetID;                       // 17
-    //uint32    Flags;                                      // 18
-    int32       Gender;                                     // 19
-    //uint32    StateSpellVisualKitID;                      // 20
-};
-
-struct CreatureDisplayInfoExtraEntry
-{
-    //uint32    ID;                                         // 0
-    uint32      DisplayRaceID;                              // 1
-    //uint32    DisplaySexID;                               // 2
-    //uint32    SkinID;                                     // 3
-    //uint32    FaceID;                                     // 4
-    //uint32    HairStyleID;                                // 5
-    //uint32    HairColorID;                                // 6
-    //uint32    FacialHairID;                               // 7
-    //uint32    NPCItemDisplay[11];                         // 8-18
-    //uint32    Flags;                                      // 19
-    //uint32    FileDataID;                                 // 20
-    //uint32    Unk;                                        // 21
-};
 struct CreatureFamilyEntry
 {
     uint32  ID;                                             // 0        m_ID
@@ -940,20 +292,6 @@ struct CreatureModelDataEntry
     //float Unks[13]
 };
 
-struct CreatureSpellDataEntry
-{
-    uint32    ID;                                           // 0        m_ID
-    uint32    spellId[MAX_CREATURE_SPELL_DATA_SLOT];        // 1-4      m_spells[4]
-    //uint32    availability[MAX_CREATURE_SPELL_DATA_SLOT]; // 4-7      m_availability[4]
-};
-
-struct CreatureTypeEntry
-{
-    uint32    ID;                                           // 0        m_ID
-    //char*   Name;                                         // 1        m_name_lang
-    //uint32    no_expirience;                              // 2        m_flags no exp? critters, non-combat pets, gas cloud.
-};
-
 /* not used
 struct CurrencyCategoryEntry
 {
@@ -963,34 +301,6 @@ struct CurrencyCategoryEntry
     //                                                      // 18       string flags
 };
 */
-
-struct DestructibleModelDataEntry
-{
-    uint32  Id;
-    uint32  DamagedDisplayId;
-    //uint32  DamagedUnk1;
-    //uint32  DamagedUnk2;
-    //uint32  DamagedUnk3;
-    uint32  DestroyedDisplayId;
-    //uint32  DestroyedUnk1;
-    //uint32  DestroyedUnk2;
-    //uint32  DestroyedUnk3;
-    //uint32  DestroyedUnk4;
-    uint32  RebuildingDisplayId;
-    //uint32  RebuildingUnk1;
-    //uint32  RebuildingUnk2;
-    //uint32  RebuildingUnk3;
-    //uint32  RebuildingUnk4;
-    uint32  SmokeDisplayId;
-    //uint32  SmokeUnk1;
-    //uint32  SmokeUnk2;
-    //uint32  SmokeUnk3;
-    //uint32  SmokeUnk4;
-    //uint32  UnkDisplayid;
-    //uint32  Unk6;
-    //uint32  Unk7;
-    //uint32  Unk8;
-};
 
 struct DifficultyEntry
 {
@@ -2528,12 +1838,7 @@ struct WorldStateSounds
 };
 */
 
-// GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
-#if defined(__GNUC__)
-#pragma pack()
-#else
 #pragma pack(pop)
-#endif
 
 struct VectorArray
 {
@@ -2558,10 +1863,9 @@ struct SpellEffect
     SpellEffect()
     {
         for(int i = 0; i < MAX_SPELL_EFFECTS; i++)
-        {
             effects[i] = NULL;
-        }
     }
+
     SpellEffectEntry const* effects[MAX_SPELL_EFFECTS];
 };
 
@@ -2626,31 +1930,4 @@ struct ResearchSiteData
 typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
 ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
 
-struct CharacterLoadoutItemEntry
-{
-    uint32 ID;
-    uint32 LoadOutID;
-    uint32 ItemID;
-};
-
-typedef std::map<uint32 /*LoadOutID*/, std::vector<uint32>> CharacterLoadoutItemMap;
-
-static uint32 LoadOutIdByClass(uint32 classID)
-{
-    switch(classID)
-    {
-        case CLASS_WARRIOR: return 539;
-        case CLASS_PALADIN: return 524;
-        case CLASS_HUNTER: return 533;
-        case CLASS_ROGUE: return 512;
-        case CLASS_PRIEST: return 536;
-        case CLASS_DEATH_KNIGHT: return 515;
-        case CLASS_SHAMAN: return 530;
-        case CLASS_MAGE: return 545;
-        case CLASS_WARLOCK: return 542;
-        case CLASS_MONK: return 527;
-        case CLASS_DRUID: return 549;
-    }
-    return 0;
-}
 #endif

@@ -22,9 +22,23 @@
 #ifndef TRINITY_DB2SFRM_H
 #define TRINITY_DB2SFRM_H
 
-char const Achievementfmt[] = "nssistttttttbib";
+char const DestructibleModelDataFormat[] = "ixxixxxixxxixxxixxxxxxxx";
+char const CriteriaTreeFormat[] = "isttttb";
+char const CriteriaFormat[]= "iiitttbbbbb";
+char const CreatureTypeFormat[] = "sb";
+char const CreatureDisplayInfoFormat[] = "nixifxxxxxxxxxxxxxxix";
+char const CreatureDisplayInfoExtraFormat[] = "iiiiiiiiiiiibbbbbbbbbbbb";
+char const ChrRacesFormat[] = "iissssssssiiffffffittttttttttttbbbbbbbbb";
+char const ChrClassesXPowerTypesFormat[] = "bb";
+char const CharStartOutfitEntryFormat[] = "iiiiiiiiiiiiiiiiiiiiiiiiibbbbb";
+char const AchievementFormat[] = "nssistttttttbib";
 char const AreaGroupFormat[] = "n";
 char const AreaGroupMemberFormat[] = "nii";
+char const ArmorLocationFormat[] = "fffff";
+char const AuctionHouseEntryFormat[] = "stbb";
+char const BankBagSlotPricesEntryFormat[] = "i";
+char const BarberShopStyleEntryFormat[] = "issfbbbb";
+char const CharacterLoadoutItemFormat[]= "nii";
 char const BattlePetAbilityEffectFormat[] = "niiiiiiiiiii";
 char const BattlePetAbilityFormat[] = "niiiiiss";
 char const BattlePetAbilityStateFormat[] = "niii";
