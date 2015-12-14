@@ -12309,6 +12309,7 @@ int32 Unit::GetSpellPowerDamage(SpellSchoolMask schoolMask)
         case CLASS_ROGUE:
         case CLASS_WARRIOR:
         case CLASS_DEATH_KNIGHT:
+        case CLASS_DEMON_HUNTER:
             return SPD;
         default:
             break;

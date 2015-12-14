@@ -251,17 +251,16 @@ enum Classes
     CLASS_WARLOCK       = 9,
     CLASS_MONK          = 10,
     CLASS_DRUID         = 11,
-    CLASS_DEMON_HUNTER  = 12
+    CLASS_DEMON_HUNTER  = 12,
+
+    MAX_CLASSES
 };
 
-// max+1 for player class
-#define MAX_CLASSES       12
-
 #define CLASSMASK_ALL_PLAYABLE \
-    ((1<<(CLASS_WARRIOR-1))|(1<<(CLASS_PALADIN-1))|(1<<(CLASS_HUNTER-1))| \
-    (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
-    (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)) | \
-    (1<<(CLASS_DEATH_KNIGHT-1)) |(1<<(CLASS_MONK-1)))
+    ((1<<(CLASS_WARRIOR-1))     |(1<<(CLASS_PALADIN-1)) |(1<<(CLASS_HUNTER-1))| \
+    (1<<(CLASS_ROGUE-1))        |(1<<(CLASS_PRIEST-1))  |(1<<(CLASS_SHAMAN-1))| \
+    (1<<(CLASS_MAGE-1))         |(1<<(CLASS_WARLOCK-1)) |(1<<(CLASS_DRUID-1)) | \
+    (1<<(CLASS_DEATH_KNIGHT-1)) |(1<<(CLASS_MONK-1))    |(1<<(CLASS_DEMON_HUNTER-1)))
 
 // valid classes for creature_template.unit_class
 enum UnitClass
@@ -3988,17 +3987,17 @@ inline uint8 ClassByQuestSort(int32 QuestSort)
 {
     switch (QuestSort)
     {
-    case QUEST_SORT_WARLOCK:        return CLASS_WARLOCK;
-    case QUEST_SORT_WARRIOR:        return CLASS_WARRIOR;
-    case QUEST_SORT_SHAMAN:         return CLASS_SHAMAN;
-    case QUEST_SORT_PALADIN:        return CLASS_PALADIN;
-    case QUEST_SORT_MAGE:           return CLASS_MAGE;
-    case QUEST_SORT_ROGUE:          return CLASS_ROGUE;
-    case QUEST_SORT_HUNTER:         return CLASS_HUNTER;
-    case QUEST_SORT_PRIEST:         return CLASS_PRIEST;
-    case QUEST_SORT_DRUID:          return CLASS_DRUID;
-    case QUEST_SORT_DEATH_KNIGHT:   return CLASS_DEATH_KNIGHT;
-    case QUEST_SORT_MONK:           return CLASS_MONK;      // New on MoP 5.0.5
+        case QUEST_SORT_WARLOCK:        return CLASS_WARLOCK;
+        case QUEST_SORT_WARRIOR:        return CLASS_WARRIOR;
+        case QUEST_SORT_SHAMAN:         return CLASS_SHAMAN;
+        case QUEST_SORT_PALADIN:        return CLASS_PALADIN;
+        case QUEST_SORT_MAGE:           return CLASS_MAGE;
+        case QUEST_SORT_ROGUE:          return CLASS_ROGUE;
+        case QUEST_SORT_HUNTER:         return CLASS_HUNTER;
+        case QUEST_SORT_PRIEST:         return CLASS_PRIEST;
+        case QUEST_SORT_DRUID:          return CLASS_DRUID;
+        case QUEST_SORT_DEATH_KNIGHT:   return CLASS_DEATH_KNIGHT;
+        case QUEST_SORT_MONK:           return CLASS_MONK;      // New on MoP 5.0.5
     }
     return 0;
 }

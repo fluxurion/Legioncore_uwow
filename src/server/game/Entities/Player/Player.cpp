@@ -12794,7 +12794,7 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
                 return EQUIP_ERR_CLIENT_LOCKED_OUT;
         }
 
-        if (_class == CLASS_ROGUE || _class == CLASS_DRUID)
+        if (_class == CLASS_ROGUE || _class == CLASS_DRUID || _class == CLASS_DEMON_HUNTER)
             if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
                 return EQUIP_ERR_CLIENT_LOCKED_OUT;
 
