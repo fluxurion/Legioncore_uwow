@@ -26,6 +26,7 @@
 #include <boost/regex.hpp>
 #include <list>
 
+extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
@@ -148,6 +149,11 @@ extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
 extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
+extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
+extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
+extern DB2Storage<ScalingStatDistributionEntry>     sScalingStatDistributionStore;
+extern DB2Storage<ScenarioStepEntry>                sScenarioStepStore;
+extern DB2Storage<ScenarioEntry>                    sScenarioStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
 extern TaxiMask                                     sOldContinentsNodesMask;
@@ -232,6 +238,8 @@ public:
     typedef std::unordered_map<uint32, StringVector[2]/*stringVectorArray*/> NameGenVectorArraysContainer;
     typedef std::set<ResearchProjectEntry const*> ResearchProjectContainer;
     typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
+    typedef std::unordered_map<uint32 /*frame*/, TransportAnimationEntry const*> TransportAnimationEntryMap;
+    typedef std::unordered_map<uint32, TransportAnimationEntryMap> TransportAnimationsByEntryContainer;
 
     static DB2Manager& Instance()
     {
@@ -281,6 +289,8 @@ public:
     std::string GetRandomCharacterName(uint8 race, uint8 gender);
     uint32 GetQuestUniqueBitFlag(uint32 questID);
     ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
+    void DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId = nullptr, DBCPosition2D* newPos = nullptr);
+    bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -288,6 +298,8 @@ public:
     ItemSetSpellsContainer _itemSetSpells;
     ResearchProjectContainer _researchProjectContainer;
     ResearchSiteDataMap _researchSiteDataMap;
+    TransportAnimationsByEntryContainer _transportAnimationsByEntry;
+    std::set<uint32> sScenarioCriteriaTreeStore;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -300,7 +312,7 @@ private:
     ItemSpecOverridesContainer _itemSpecOverrides;
     MountContainer _mountsBySpellId;
     MountCapabilitiesByTypeContainer _mountCapabilitiesByType;
-    std::list<uint32> sGameObjectsList;
+    std::list<uint32> _gameObjectsList;
     std::map<uint32 /*landID*/, LanguageWordsContainer> sLanguageWordsMapStore;
     AreaGroupMemberContainer _areaGroupMembers;
     ItemUpgradeDataContainer _itemUpgradeDataMap;

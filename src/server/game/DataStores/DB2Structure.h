@@ -39,6 +39,7 @@
 #define MAX_SPELL_TOTEMS 2
 #define MAX_SPELL_REAGENTS 8
 #define MAX_OUTFIT_ITEMS 24
+#define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
 #pragma pack(push, 1)
 
@@ -1620,10 +1621,113 @@ struct ItemXBonusTreeEntry
     uint32 BonusTreeID;                                             // 2
 };
 
+struct ScenarioEntry
+{
+    LocalizedString* Name;                                  // 0
+    uint8       Flags;                                      // 1
+    uint8       UnkLegion;                                  // 2
+
+    bool IsChallenge() const { return Flags & SCENARIO_FLAG_CHALLENGE; }
+    bool IsProvingGrounds() const { return Flags & SCENARIO_FLAG_SUPRESS_STAGE_TEXT; }
+};
+
+struct ScenarioStepEntry
+{
+    LocalizedString* DescriptionLang;                       // 0
+    LocalizedString* TitleLang;                             // 1
+    uint16      Criteriatreeid;                             // 2
+    uint16      ScenarioID;                                 // 3
+    uint16      Supersedes;                                 // 4
+    uint16      RewardQuestID;                              // 5
+    uint8       OrderIndex;                                 // 6
+    uint8       Flags;                                      // 7
+    uint8       RelatedStep;                                // 8
+
+    bool IsBonusObjective() const { return Flags & SCENARIO_STEP_FLAG_BONUS_OBJECTIVE; }
+};
+
+struct ScalingStatDistributionEntry
+{
+    uint16      ItemLevelCurveID;                           // 0
+    uint8       MinLevel;                                   // 1
+    uint8       MaxLevel;                                   // 2
+};
+
+struct TotemCategoryEntry
+{
+    LocalizedString* Name;                                  // 0
+    uint32      TotemCategoryType;                          // 1
+    uint8       TotemCategoryMask;                          // 2
+};
+
 struct ItemToBattlePetSpeciesEntry
 {
-    uint32      ID;                                                 // 0
-    uint32      BattlePetSpeciesID;                                 // 1
+    uint32      ID;                                         // 0
+    uint32      BattlePetSpeciesID;                         // 1
+};
+
+struct TransportAnimationEntry
+{
+    uint32      TransportID;                                // 0
+    uint32      TimeIndex;                                  // 1
+    DBCPosition3D Pos;                                      // 2 - 4
+    uint8       SequenceID;                                 // 5
+};
+ 
+struct TransportRotationEntry
+{
+    uint32      TransportID;                                // 0
+    uint32      TimeIndex;                                  // 1
+    DBCPosition4D Rot;                                      // 2 - 5
+};
+
+struct UnitPowerBarEntry
+{
+    uint32      MaxPower;                                   // 0
+    float       RegenerationPeace;                          // 1
+    float       RegenerationCombat;                         // 2
+    uint32      FileDataID[6];                              // 3 - 8
+    uint32      Color[6];                                   // 9 - 14
+    LocalizedString* Name;                                  // 15
+    LocalizedString* Cost;                                  // 16
+    LocalizedString* OutOfError;                            // 17
+    LocalizedString* ToolTip;                               // 18
+    float       StartInset;                                 // 19
+    float       EndInset;                                   // 20
+    uint16      StartPower;                                 // 21
+    uint16      Flags;                                      // 22
+    uint8       MinPower;                                   // 23
+    uint8       CenterPower;                                // 24
+    uint8       BarType;                                    // 25
+};
+
+struct WorldMapOverlayEntry
+{
+    LocalizedString* TextureName;                           // 0
+    uint16      MapAreaID;                                  // 1
+    uint16      AreaID[MAX_WORLD_MAP_OVERLAY_AREA_IDX];     // 2 - 5
+    uint16      TextureWidth;                               // 6
+    uint16      TextureHeight;                              // 7
+    uint16      OffsetX;                                    // 8
+    uint16      OffsetY;                                    // 9
+    uint16      HitRectTop;                                 // 10
+    uint16      HitRectLeft;                                // 11
+    uint16      HitRectBottom;                              // 12
+    uint16      HitRectRight;                               // 13
+    uint16      PlayerConditionID;                          // 14
+};
+
+struct WorldMapTransformsEntry
+{
+    DBCPosition3D RegionMin;                                // 0 - 2
+    DBCPosition3D RegionMax;                                // 3 - 5
+    DBCPosition2D RegionOffset;                             // 6 - 7
+    float       RegionScale;                                // 8
+    uint16      MapID;                                      // 9
+    uint16      NewMapID;                                   // 10
+    uint16      NewDungeonMapID;                            // 11
+    uint16      NewAreaID;                                  // 12
+    uint8       Flags;                                      // 13
 };
 
 #pragma pack(pop)

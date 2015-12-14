@@ -45,7 +45,6 @@
 #define MAX_POWERS_FOR_SPELL 4
 #define MAX_SHAPESHIFT_SPELLS 8
 #define MAX_VEHICLE_SEATS 8
-#define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
 struct AreaTableEntry
 {
@@ -783,40 +782,6 @@ struct QuestPOIBlobEntry
     //uint32 unk;                                           // 4 m_WorldMapAreaID
 };
 
-struct ScalingStatDistributionEntry
-{
-    uint32      ID;                                         // 0
-    uint32      MinLevel;                                   // 1
-    uint32      MaxLevel;                                   // 2       m_maxlevel
-    uint32      ItemLevelCurveID;                           // 3
-};
-
-struct ScenarioEntry
-{
-    uint32 m_Id;                                            // 0
-    char* m_name_lang;                                      // 1
-    uint32 m_flags;                                         // 2
-
-    bool IsChallenge() const { return m_flags & SCENARIO_FLAG_CHALLENGE; }
-    bool IsProvingGrounds() const { return m_flags & SCENARIO_FLAG_SUPRESS_STAGE_TEXT; }
-};
-
-struct ScenarioStepEntry
-{
-    uint32 m_Id;                                            // 0
-    uint32 m_criteriaTreeId;                                // 1
-    uint32 m_scenarioId;                                    // 2
-    uint32 m_orderIndex;                                    // 3
-    //char* m_descriptionLang;                              // 4
-    //char* m_title_lang;                                   // 5
-    uint32 m_flags;                                         // 6
-    uint32 RelatedStep;                                     // 7
-    uint32 Supersedes;                                      // 8
-    uint32 RewardQuestID;                                   // 9
-
-    bool IsBonusObjective() const { return m_flags & SCENARIO_STEP_FLAG_BONUS_OBJECTIVE; }
-};
-
 //struct SkillLineCategoryEntry{
 //    uint32    id;                                         // 0      m_ID
 //    char*     name[16];                                   // 1-17   m_name_lang
@@ -1239,56 +1204,6 @@ struct TeamContributionPointsEntry
     float     value;                                        // 1 (???)
 };
 
-struct TotemCategoryEntry
-{
-    uint32    ID;                                           // 0
-    //char*   name;                                         // 1        m_name_lang
-    uint32    categoryType;                                 // 2        m_totemCategoryType (one for specialization)
-    uint32    categoryMask;                                 // 3        m_totemCategoryMask (compatibility mask for same type: different for totems, compatible from high to low for rods)
-};
-
-
-struct TransportAnimationEntry
-{
-    //uint32        ID;                                     // 0
-    uint32          TransportID;                            // 1
-    uint32          TimeIndex;                              // 2
-    DBCPosition3D   Pos;                                    // 3-5
-    //uint32        SequenceID;                             // 6
-};
- 
-struct TransportRotationEntry
-{
-    //uint32    ID;                                         // 0
-    uint32      TransportID;                                // 1
-    uint32      TimeIndex;                                  // 2
-    float       X;                                          // 3
-    float       Y;                                          // 4
-    float       Z;                                          // 5
-    float       W;                                          // 6
-};
-
-struct UnitPowerBarEntry
-{
-    uint32 ID;                     // 0
-    uint32 MinPower;               // 1
-    uint32 MaxPower;               // 2
-    uint32 startPower;             // 3
-    uint32 centerPower;            // 4
-    float regenerationPeace;       // 5
-    float regenerationCombat;      // 6
-    uint32 barType;                // 7
-    //uint32 fileDataID[6];        // 8-13
-    //uint32 color[6];             // 14-19
-    uint32 flags;                  // 20
-    //char* name;
-    //char* costString;
-    //char* errorString;
-    //char* tooltipString;
-    // float
-    // float
-};
-
 struct VehicleEntry
 {
     uint32      ID;                                         // 0
@@ -1433,37 +1348,6 @@ struct WorldMapAreaEntry
     uint32    LevelRangeMax;                              // 13 Maximum recommended level displayed on world map
 };
 
-struct WorldMapOverlayEntry
-{
-    uint32      ID;                                         // 0
-    //uint32    MapAreaID;                                  // 1 idx in WorldMapArea.dbc
-    uint32      AreaID[MAX_WORLD_MAP_OVERLAY_AREA_IDX];     // 2-5
-    //char*     TextureName;                                // 6
-    //uint32    TextureWidth;                               // 7
-    //uint32    TextureHeight;                              // 8
-    //uint32    OffsetX;                                    // 9
-    //uint32    OffsetY;                                    // 10
-    //uint32    HitRectTop;                                 // 11
-    //uint32    HitRectLeft;                                // 12
-    //uint32    HitRectBottom;                              // 13
-    //uint32    HitRectRight;                               // 14
-    //uint32    PlayerConditionID;                          // 15
-};
-
-struct WorldMapTransformsEntry
-{
-    //uint32 ID;                                            //
-    uint32 MapID;                                           //
-    DBCPosition3D RegionMin;                                //
-    DBCPosition3D RegionMax;                                //
-    uint32 NewMapID;                                        //
-    DBCPosition2D RegionOffset;                             //
-    //uint32 NewDungeonMapID;                               //
-    //uint32 Flags;                                         //
-    //uint32 NewAreaID;                                     //
-    float RegionScale;                                      //
-};
-
 struct WorldSafeLocsEntry
 {
     uint32          ID;                                     // 0
@@ -1529,8 +1413,6 @@ struct SpellRestrictionDiff
 };
 
 typedef std::unordered_map<uint32, SpellRestrictionDiff> SpellRestrictionDiffMap;
-typedef std::unordered_map<uint32 /*frame*/, TransportAnimationEntry const*> TransportAnimationEntryMap;
-typedef std::unordered_map<uint32, TransportAnimationEntryMap> TransportAnimationsByEntry;
 
 float GetCurrencyPrecision(uint32 currencyId);
 

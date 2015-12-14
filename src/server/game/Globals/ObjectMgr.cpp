@@ -6789,8 +6789,8 @@ void ObjectMgr::LoadGameObjectTemplate()
             }
             case GAMEOBJECT_TYPE_TRANSPORT:                 // 11
             {
-                TransportAnimationsByEntry::const_iterator itr = sTransportAnimationsByEntry.find(got.entry);
-                if (itr == sTransportAnimationsByEntry.end())
+                auto const& itr = sDB2Manager._transportAnimationsByEntry.find(got.entry);
+                if (itr == sDB2Manager._transportAnimationsByEntry.end())
                 {
                     sLog->outError(LOG_FILTER_SQL, "Gameobject (Entry: %u GoType: %u) is transport by does not have entries in TransportAnimation.dbc! Gameobject is obsolete.",
                         got.entry, got.type);

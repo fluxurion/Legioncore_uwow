@@ -71,8 +71,6 @@ SpellEffectDiffMap                          sSpellEffectDiffMap;
 SpellEffectMap                              sSpellEffectMap;
 SpellRestrictionDiffMap                     sSpellRestrictionDiffMap;
 SpellSkillingList                           sSpellSkillingList;
-std::set<uint32>                            sScenarioCriteriaTreeStore;
-TransportAnimationsByEntry                  sTransportAnimationsByEntry;
 SkillRaceClassInfoMap                       SkillRaceClassInfoBySkill;
 ChrSpecializationByIndexArray               sChrSpecializationByIndexStore;
 TalentsByPosition                           sTalentByPos;
@@ -111,9 +109,6 @@ DBCStorage<PhaseEntry>                      sPhaseStores(PhaseEntryfmt);
 DBCStorage<PowerDisplayEntry>               sPowerDisplayStore(PowerDisplayEntryfmt);
 DBCStorage<PvPDifficultyEntry>              sPvPDifficultyStore(PvPDifficultyfmt);
 DBCStorage<QuestPOIBlobEntry>               sQuestPOIBlobStore(QuestPOIBlobfmt);
-DBCStorage<ScalingStatDistributionEntry>    sScalingStatDistributionStore(ScalingStatDistributionfmt);
-DBCStorage<ScenarioEntry>                   sScenarioStore(Scenariofmt);
-DBCStorage<ScenarioStepEntry>               sScenarioStepStore(ScenarioStepfmt);
 DBCStorage<SkillLineAbilityEntry>           sSkillLineAbilityStore(SkillLineAbilityfmt);
 DBCStorage<SkillLineEntry>                  sSkillLineStore(SkillLinefmt);
 DBCStorage<SkillRaceClassInfoEntry>         sSkillRaceClassInfoStore(SkillRaceClassInfofmt);
@@ -145,16 +140,10 @@ DBCStorage<StableSlotPricesEntry>           sStableSlotPricesStore(StableSlotPri
 DBCStorage<SummonPropertiesEntry>           sSummonPropertiesStore(SummonPropertiesfmt);
 DBCStorage<TalentEntry>                     sTalentStore(TalentEntryfmt);
 DBCStorage<TeamContributionPointsEntry>     sTeamContributionPointsStore(TeamContributionPointsfmt);
-DBCStorage<TotemCategoryEntry>              sTotemCategoryStore(TotemCategoryEntryfmt);
-DBCStorage<TransportAnimationEntry>         sTransportAnimationStore(TransportAnimationfmt);
-DBCStorage<TransportRotationEntry>          sTransportRotationStore(TransportRotationfmt);
-DBCStorage<UnitPowerBarEntry>               sUnitPowerBarStore(UnitPowerBarfmt);
 DBCStorage<VehicleEntry>                    sVehicleStore(VehicleEntryfmt);
 DBCStorage<VehicleSeatEntry>                sVehicleSeatStore(VehicleSeatEntryfmt);
 DBCStorage<WMOAreaTableEntry>               sWMOAreaTableStore(WMOAreaTableEntryfmt);
 DBCStorage<WorldMapAreaEntry>               sWorldMapAreaStore(WorldMapAreaEntryfmt);
-DBCStorage<WorldMapOverlayEntry>            sWorldMapOverlayStore(WorldMapOverlayEntryfmt);
-DBCStorage<WorldMapTransformsEntry>         sWorldMapTransformsStore(WorldMapTransformsfmt);
 DBCStorage<WorldSafeLocsEntry>              sWorldSafeLocsStore(WorldSafeLocsEntryfmt);
 
 GameTable<GtArmorMitigationByLvlEntry>      sGtArmorMitigationByLvlStore(GameTablefmt);
@@ -463,17 +452,6 @@ void InitDBCCustomStores()
             ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by DBC data");
     }
 
-    for (ScenarioStepEntry const* entry : sScenarioStepStore)
-    {
-        if (!entry || !entry->m_criteriaTreeId)
-            continue;
-
-        if (!sCriteriaTreeStore.LookupEntry(entry->m_criteriaTreeId))
-            continue;
-
-        sScenarioCriteriaTreeStore.insert(entry->m_criteriaTreeId);
-    }
-
     for (uint32 i = 1; i < sSpellStore.GetNumRows(); ++i)
     {
         SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(i);
@@ -542,15 +520,6 @@ void InitDBCCustomStores()
     for (TalentEntry const* talentInfo : sTalentStore)
         if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 7 && talentInfo->column < 3)
             sTalentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
-
-    for (TransportAnimationEntry const* entry : sTransportAnimationStore)
-        sTransportAnimationsByEntry[entry->TransportID][entry->TimeIndex] = entry;
-
-    for (TransportRotationEntry const* rot : sTransportRotationStore)
-    {
-        //WoD::ToDo
-        //sTransportMgr->AddPathRotationToTransport(rot->TransportID, rot->TimeIndex, rot);
-    }
 
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
         sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));
@@ -787,26 +756,6 @@ uint32 GetExpansionForLevel(uint32 level)
         return CURRENT_EXPANSION;
 }
 
-bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId)
-{
-    if (requiredTotemCategoryId == 0)
-        return true;
-    if (itemTotemCategoryId == 0)
-        return false;
-
-    TotemCategoryEntry const* itemEntry = sTotemCategoryStore.LookupEntry(itemTotemCategoryId);
-    if (!itemEntry)
-        return false;
-    TotemCategoryEntry const* reqEntry = sTotemCategoryStore.LookupEntry(requiredTotemCategoryId);
-    if (!reqEntry)
-        return false;
-
-    if (itemEntry->categoryType != reqEntry->categoryType)
-        return false;
-
-    return (itemEntry->categoryMask & reqEntry->categoryMask) == reqEntry->categoryMask;
-}
-
 void Zone2MapCoordinates(float& x, float& y, uint32 zone)
 {
     WorldMapAreaEntry const* maEntry = sWorldMapAreaStore.LookupEntry(zone);
@@ -972,11 +921,6 @@ bool IsValidDifficulty(uint32 diff, bool isRaid)
     return isRaid;
 }
 
-bool IsScenarioCriteriaTree(uint32 criteriaTreeId)
-{
-    return sScenarioCriteriaTreeStore.find(criteriaTreeId) != sScenarioCriteriaTreeStore.end();
-}
-
 AreaTableEntry const* FindAreaEntry(uint32 area)
 {
     auto data = sAreaEntry.find(area);
@@ -999,55 +943,6 @@ DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID)
     if (data == sDungeonEncounterByDisplayID.end())
         return NULL;
     return data->second;
-}
-
-void DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId /*= nullptr*/, DBCPosition2D* newPos /*= nullptr*/)
-{
-    ASSERT(newMapId || newPos);
-    WorldMapTransformsEntry const* transformation = nullptr;
-    for (WorldMapTransformsEntry const* transform : sWorldMapTransformsStore)
-    {
-        if (transform->MapID != mapId)
-            continue;
-
-        if (transform->RegionMin.X > x || transform->RegionMax.X < x)
-            continue;
-        if (transform->RegionMin.Y > y || transform->RegionMax.Y < y)
-            continue;
-        if (transform->RegionMin.Z > z || transform->RegionMax.Z < z)
-            continue;
-
-        transformation = transform;
-        break;
-    }
-
-    if (!transformation)
-    {
-        if (newMapId)
-            *newMapId = mapId;
-
-        if (newPos)
-        {
-            newPos->X = x;
-            newPos->Y = y;
-        }
-        return;
-    }
-
-    if (newMapId)
-        *newMapId = transformation->NewMapID;
-
-    if (!newPos)
-        return;
-
-    if (transformation->RegionScale > 0.0f && transformation->RegionScale < 1.0f)
-    {
-        x = (x - transformation->RegionMin.X) * transformation->RegionScale + transformation->RegionMin.X;
-        y = (y - transformation->RegionMin.Y) * transformation->RegionScale + transformation->RegionMin.Y;
-    }
-
-    newPos->X = x + transformation->RegionOffset.X;
-    newPos->Y = y + transformation->RegionOffset.Y;
 }
 
 SkillRaceClassInfoEntry const* GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_)

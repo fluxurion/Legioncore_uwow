@@ -97,7 +97,6 @@ public:
         return &instance;
     }
 
-    void Initialize();
 
     void Update(uint32 diff);
 

@@ -65,10 +65,6 @@ uint32 GetExpansionForLevel(uint32 level);
 
 ContentLevels GetContentLevelsForMapAndZone(uint32 mapid, uint32 zoneId);
 
-bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId);
-
-void DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId = nullptr, DBCPosition2D* newPos = nullptr);
-
 void Zone2MapCoordinates(float &x, float &y, uint32 zone);
 void Map2ZoneCoordinates(float &x, float &y, uint32 zone);
 
@@ -155,9 +151,6 @@ extern DBCStorage<MovieEntry>                   sMovieStore;
 extern DBCStorage<PhaseEntry>                   sPhaseStores;
 extern DBCStorage<PowerDisplayEntry>            sPowerDisplayStore;
 extern DBCStorage<QuestPOIBlobEntry>            sQuestPOIBlobStore;
-extern DBCStorage<ScalingStatDistributionEntry> sScalingStatDistributionStore;
-extern DBCStorage<ScenarioEntry>                sScenarioStore;
-extern DBCStorage<ScenarioStepEntry>            sScenarioStepStore;
 extern DBCStorage<SkillLineAbilityEntry>        sSkillLineAbilityStore;
 extern DBCStorage<SkillLineEntry>               sSkillLineStore;
 extern DBCStorage<SkillRaceClassInfoEntry>      sSkillRaceClassInfoStore;
@@ -187,14 +180,10 @@ extern DBCStorage<SpellShapeshiftFormEntry>     sSpellShapeshiftFormStore;
 extern DBCStorage<SpellTargetRestrictionsEntry> sSpellTargetRestrictionsStore;
 extern DBCStorage<SummonPropertiesEntry>        sSummonPropertiesStore;
 extern DBCStorage<TalentEntry>                  sTalentStore;
-extern DBCStorage<TransportAnimationEntry>      sTransportAnimationStore;
-extern DBCStorage<UnitPowerBarEntry>            sUnitPowerBarStore;
 extern DBCStorage<VehicleEntry>                 sVehicleStore;
 extern DBCStorage<VehicleSeatEntry>             sVehicleSeatStore;
 extern DBCStorage<WMOAreaTableEntry>            sWMOAreaTableStore;
 extern DBCStorage<WorldMapAreaEntry>            sWorldMapAreaStore; //-- use Zone2MapCoordinates and Map2ZoneCoordinates
-extern DBCStorage<WorldMapOverlayEntry>         sWorldMapOverlayStore;
-extern DBCStorage<WorldMapTransformsEntry>      sWorldMapTransformsStore;
 extern DBCStorage<WorldSafeLocsEntry>           sWorldSafeLocsStore;
 
 extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
@@ -224,8 +213,6 @@ extern MapDifficultyMap                          sMapDifficultyMap;
 extern PetFamilySpellsStore                      sPetFamilySpellsStore;
 extern SpellCategoryStore                        sSpellCategoryStore;
 extern SpellSkillingList                         sSpellSkillingList;
-extern std::set<uint32>                          sScenarioCriteriaTreeStore;
-extern TransportAnimationsByEntry                sTransportAnimationsByEntry;
 
 void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);

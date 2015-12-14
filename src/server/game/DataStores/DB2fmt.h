@@ -151,5 +151,14 @@ char const TaxiNodesFormat[] = "nifffsiiiiiff";
 char const TaxiPathFormat[] = "niii";
 char const TaxiPathNodeFormat[] = "niiifffiiii";
 char const ToyFormat[] = "niisi";
+char const WorldMapTransformsFormat[] = "iiiiiiiiittttb";
+char const WorldMapOverlayEntryFormat[] = "stttttttttttttt";
+char const UnitPowerBarFormat[] = "niiiiffixxxxxxxxxxxxixxxxxx";
+char const TransportRotationFormat[] = "iiffff";
+char const TransportAnimationFormat[] = "iifffb";
+char const TotemCategoryEntryFormat[] = "isb";
+char const ScalingStatDistributionFormat[] = "tbb";
+char const ScenarioStepFormat[]= "niiixxiiii";
+char const ScenarioFormat[]= "sbb";
 
 #endif

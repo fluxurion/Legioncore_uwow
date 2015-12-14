@@ -23,6 +23,7 @@
 #include "Log.h"
 #include "World.h"
 
+DB2Storage<WorldMapTransformsEntry>         sWorldMapTransformsStore("WorldMapTransforms.db2", WorldMapTransformsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
 DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
@@ -49,9 +50,9 @@ DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRa
 DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDifficulty.db2", CreatureDifficultyFormat, HOTFIX_SEL_CREATURE_DIFFICULTY);
 DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<CreatureDisplayInfoExtraEntry>   sCreatureDisplayInfoExtraStore("CreatureDisplayInfoExtra.db2", CreatureDisplayInfoExtraFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CreatureTypeEntry>               sCreatureTypeStore("CreatureType.dbc", CreatureTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureTypeEntry>               sCreatureTypeStore("CreatureType.db2", CreatureTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<CriteriaEntry>                   sCriteriaStore("Criteria.db2", CriteriaFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CriteriaTreeEntry>               sCriteriaTreeStore("CriteriaTree.dbc", CriteriaTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CriteriaTreeEntry>               sCriteriaTreeStore("CriteriaTree.db2", CriteriaTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<CurrencyTypesEntry>              sCurrencyTypesStore("CurrencyTypes.db2", CurrencyTypesFormat, HOTFIX_SEL_CURRENCY_TYPES);
 DB2Storage<CurvePointEntry>                 sCurvePointStore("CurvePoint.db2", CurvePointFormat, HOTFIX_SEL_CURVE_POINT);
 DB2Storage<DestructibleModelDataEntry>      sDestructibleModelDataStore("DestructibleModelData.db2", DestructibleModelDataFormat, MAX_HOTFIXDATABASE_STATEMENTS);
@@ -136,13 +137,13 @@ DB2Storage<PvpItemEntry>                    sPvpItemStore("PvpItem.db2", PvpItem
 DB2Storage<QuestFactionRewEntry>            sQuestFactionRewardStore("QuestFactionReward.db2", QuestFactionRewardFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<QuestPackageItemEntry>           sQuestPackageItemStore("QuestPackageItem.db2", QuestPackageItemFormat, HOTFIX_SEL_QUEST_PACKAGE_ITEM);
 DB2Storage<QuestPOIPointEntry>              sQuestPOIPointStore("QuestPOIPoint.db2", QuestPOIPointFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.dbc", QuestSortEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.dbc", QuestV2Format, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.dbc", QuestXPFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.db2", QuestSortEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.db2", QuestV2Format, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.dbc", ResearchBranchFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.dbc", ResearchProjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ResearchSiteEntry>               sResearchSiteStore("ResearchSite.dbc", ResearchSiteFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.db2", ResearchBranchFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.db2", ResearchProjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ResearchSiteEntry>               sResearchSiteStore("ResearchSite.db2", ResearchSiteFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<RuleSetItemUpgradeEntry>         sRuleSetItemUpgradeEntryStore("RulesetItemUpgrade.db2", RuleSetItemUpgradeFormat, HOTFIX_SEL_RULE_SET_ITEM_UPGRADE);
 DB2Storage<SoundEntriesEntry>               sSoundEntriesStore("SoundEntries.db2", SoundEntriesFormat, HOTFIX_SEL_SOUND_ENTRIES);
 DB2Storage<SpellAuraRestrictionsEntry>      sSpellAuraRestrictionsStore("SpellAuraRestrictions.db2", SpellAuraRestrictionsFormat, HOTFIX_SEL_SPELL_AURA_RESTRICTIONS);
@@ -159,6 +160,14 @@ DB2Storage<TaxiNodesEntry>                  sTaxiNodesStore("TaxiNodes.db2", Tax
 DB2Storage<TaxiPathEntry>                   sTaxiPathStore("TaxiPath.db2", TaxiPathFormat, HOTFIX_SEL_TAXI_PATH);
 DB2Storage<TaxiPathNodeEntry>               sTaxiPathNodeStore("TaxiPathNode.db2", TaxiPathNodeFormat, HOTFIX_SEL_TAXI_PATH_NODE);
 DB2Storage<ToyEntry>                        sToyStore("Toy.db2", ToyFormat, HOTFIX_SEL_TOY);
+DB2Storage<WorldMapOverlayEntry>            sWorldMapOverlayStore("WorldMapOverlay.db2", WorldMapOverlayEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<UnitPowerBarEntry>               sUnitPowerBarStore("UnitPowerBar.db2", UnitPowerBarFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<TransportRotationEntry>          sTransportRotationStore("TransportRotation.db2", TransportRotationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<TransportAnimationEntry>         sTransportAnimationStore("TransportAnimation.db2", TransportAnimationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<TotemCategoryEntry>              sTotemCategoryStore("TotemCategory.dbc", TotemCategoryEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ScalingStatDistributionEntry>    sScalingStatDistributionStore("ScalingStatDistribution.dbc", ScalingStatDistributionFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ScenarioStepEntry>               sScenarioStepStore("ScenarioStep.dbc", ScenarioStepFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ScenarioEntry>                   sScenarioStore("Scenario.dbc", ScenarioFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 
 TaxiMask                                    sTaxiNodesMask;
 TaxiMask                                    sOldContinentsNodesMask;
@@ -351,9 +360,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
-    //LOAD_DB2(sScalingStatDistributionStore,     "ScalingStatDistribution.dbc");
-    //LOAD_DB2(sScenarioStepStore,                "ScenarioStep.dbc");
-    //LOAD_DB2(sScenarioStore,                    "Scenario.dbc");
+    //LOAD_DB2(sScalingStatDistributionStore);  // 20796
+    //LOAD_DB2(sScenarioStepStore);             // 20796
+    //LOAD_DB2(sScenarioStore);                 // 20796
     //LOAD_DB2(sSkillLineAbilityStore,            "SkillLineAbility.dbc");
     //LOAD_DB2(sSkillLineStore,                   "SkillLine.dbc");
     //LOAD_DB2(sSkillRaceClassInfoStore,          "SkillRaceClassInfo.dbc");
@@ -394,13 +403,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
-    //LOAD_DB2(sTotemCategoryStore,               "TotemCategory.dbc");
+    //LOAD_DB2(sTotemCategoryStore);            // 20796
     //LOAD_DB2(sToyStore);
-    //LOAD_DB2(sTransportAnimationStore,          "TransportAnimation.dbc");
-    //LOAD_DB2(sTransportRotationStore,           "TransportRotation.dbc");
-    //LOAD_DB2(sUnitPowerBarStore,                "UnitPowerBar.dbc");
-    //LOAD_DB2(sWorldMapOverlayStore,             "WorldMapOverlay.dbc");
-    //LOAD_DB2(sWorldMapTransformsStore,          "WorldMapTransforms.dbc");
+    //LOAD_DB2(sTransportAnimationStore);       // 20796
+    //LOAD_DB2(sTransportRotationStore);        // 20796
+    //LOAD_DB2(sUnitPowerBarStore);             // 20796
+    //LOAD_DB2(sWorldMapOverlayStore);          // 20796
+    //LOAD_DB2(sWorldMapTransformsStore);       // 20796
 
 #undef LOAD_DB2
 
@@ -505,7 +514,7 @@ void DB2Manager::InitDB2CustomStores()
         _questPackages[questPackageItem->QuestPackageID].push_back(questPackageItem);
 
     for (GameObjectsEntry const* store : sGameObjectsStore)
-        sGameObjectsList.push_back(store->ID);
+        _gameObjectsList.push_back(store->ID);
 
     for (RuleSetItemUpgradeEntry const* rsiu : sRuleSetItemUpgradeEntryStore)
     {
@@ -568,8 +577,8 @@ void DB2Manager::InitDB2CustomStores()
         if (sTaxiNodesStore.GetNumRows())
         {
             ASSERT(TaxiMaskSize >= ((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1,
-                "TaxiMaskSize is not large enough to contain all taxi nodes! (current value %d, required %d)",
-                TaxiMaskSize, (((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1));
+                   "TaxiMaskSize is not large enough to contain all taxi nodes! (current value %d, required %d)",
+                   TaxiMaskSize, (((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1));
         }
 
         sTaxiNodesMask.fill(0);
@@ -620,7 +629,7 @@ void DB2Manager::InitDB2CustomStores()
         if (info->GeoBoxMax.Z < info->GeoBoxMin.Z)
             std::swap(*(float*)(&info->GeoBoxMax.Z), *(float*)(&info->GeoBoxMin.Z));
     }
-    
+
     for (ItemSetSpellEntry const* itemSetSpell : sItemSetSpellStore)
         _itemSetSpells[itemSetSpell->ItemSetID].push_back(itemSetSpell);
 
@@ -630,7 +639,7 @@ void DB2Manager::InitDB2CustomStores()
     for (ModifierTreeEntry const* mt : sModifierTreeStore)
         if (mt->Parent)
             _modifierTree[mt->Parent].push_back(mt);
-            
+
     for (NameGenEntry const* entry : sNameGenStore)
         _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name));
 
@@ -655,6 +664,25 @@ void DB2Manager::InitDB2CustomStores()
             continue;
 
         _researchProjectContainer.insert(rp);
+    }
+
+    for (TransportRotationEntry const* rot : sTransportRotationStore)
+    {
+        //sTransportMgr->AddPathRotationToTransport(rot->GameObjectsID, rot->TimeIndex, rot);
+    }
+
+    for (TransportAnimationEntry const* entry : sTransportAnimationStore)
+        _transportAnimationsByEntry[entry->TransportID][entry->TimeIndex] = entry;
+
+    for (ScenarioStepEntry const* entry : sScenarioStepStore)
+    {
+        if (!entry || !entry->Criteriatreeid)
+            continue;
+
+        if (!sCriteriaTreeStore.LookupEntry(entry->Criteriatreeid))
+            continue;
+
+        sScenarioCriteriaTreeStore.insert(entry->Criteriatreeid);
     }
 }
 
@@ -726,7 +754,7 @@ std::vector<uint32> DB2Manager::GetAreasForGroup(uint32 areaGroupId)
 
 std::list<uint32> DB2Manager::GetGameObjectsList()
 {
-    return sGameObjectsList;
+    return _gameObjectsList;
 }
 
 ItemUpgradeData const* DB2Manager::GetItemUpgradeData(uint32 itemEntry)
@@ -1019,7 +1047,7 @@ AchievementEntry const* DB2Manager::GetsAchievementByTreeList(uint32 criteriaTre
 
 std::vector<uint32> DB2Manager::GetItemLoadOutItemsByClassID(uint32 classID)
 {
-    switch(classID)
+    switch (classID)
     {
         case CLASS_WARRIOR: return _characterLoadoutItem[539];
         case CLASS_PALADIN: return _characterLoadoutItem[524];
@@ -1088,3 +1116,75 @@ ResearchSiteEntry const* DB2Manager::GetResearchSiteEntryById(uint32 id)
 
     return nullptr;
 }
+
+void DB2Manager::DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId /*= nullptr*/, DBCPosition2D* newPos /*= nullptr*/)
+{
+    ASSERT(newMapId || newPos);
+    WorldMapTransformsEntry const* transformation = nullptr;
+    for (WorldMapTransformsEntry const* transform : sWorldMapTransformsStore)
+    {
+        if (transform->MapID != mapId)
+            continue;
+
+        if (transform->RegionMin.X > x || transform->RegionMax.X < x)
+            continue;
+        if (transform->RegionMin.Y > y || transform->RegionMax.Y < y)
+            continue;
+        if (transform->RegionMin.Z > z || transform->RegionMax.Z < z)
+            continue;
+
+        transformation = transform;
+        break;
+    }
+
+    if (!transformation)
+    {
+        if (newMapId)
+            *newMapId = mapId;
+
+        if (newPos)
+        {
+            newPos->X = x;
+            newPos->Y = y;
+        }
+        return;
+    }
+
+    if (newMapId)
+        *newMapId = transformation->NewMapID;
+
+    if (!newPos)
+        return;
+
+    if (transformation->RegionScale > 0.0f && transformation->RegionScale < 1.0f)
+    {
+        x = (x - transformation->RegionMin.X) * transformation->RegionScale + transformation->RegionMin.X;
+        y = (y - transformation->RegionMin.Y) * transformation->RegionScale + transformation->RegionMin.Y;
+    }
+
+    newPos->X = x + transformation->RegionOffset.X;
+    newPos->Y = y + transformation->RegionOffset.Y;
+}
+
+bool DB2Manager::IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId)
+{
+    if (!requiredTotemCategoryId)
+        return true;
+
+    if (!itemTotemCategoryId)
+        return false;
+
+    TotemCategoryEntry const* itemEntry = sTotemCategoryStore.LookupEntry(itemTotemCategoryId);
+    if (!itemEntry)
+        return false;
+
+    TotemCategoryEntry const* reqEntry = sTotemCategoryStore.LookupEntry(requiredTotemCategoryId);
+    if (!reqEntry)
+        return false;
+
+    if (itemEntry->TotemCategoryType != reqEntry->TotemCategoryType)
+        return false;
+
+    return (itemEntry->TotemCategoryMask & reqEntry->TotemCategoryMask) == reqEntry->TotemCategoryMask;
+}
+

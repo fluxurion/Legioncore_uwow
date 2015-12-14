@@ -8786,7 +8786,7 @@ void AuraEffect::HandleProgressBar(AuraApplication const* aurApp, uint8 mode, bo
         return;
 
     target->SetMaxPower(POWER_ALTERNATE_POWER, entry->MaxPower);
-    target->SetPower(POWER_ALTERNATE_POWER, entry->startPower);
+    target->SetPower(POWER_ALTERNATE_POWER, entry->StartPower);
 }
 
 void AuraEffect::HandleAuraStrangulate(AuraApplication const* aurApp, uint8 mode, bool apply) const

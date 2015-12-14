@@ -4650,8 +4650,8 @@ void AchievementGlobalMgr::LoadAchievementCriteriaList()
     for (AchievementEntry const* achievement : sAchievementStore)
         AddCriteriaTreeEntry(achievement->CriteriaTree, criterias, guildCriterias, scenarioCriterias, achievement);
 
-    for (std::set<uint32>::const_iterator itr = sScenarioCriteriaTreeStore.begin(); itr != sScenarioCriteriaTreeStore.end(); ++itr)
-        AddCriteriaTreeEntry(*itr, criterias, guildCriterias, scenarioCriterias, NULL, true);
+    for (auto const& v : sDB2Manager.sScenarioCriteriaTreeStore)
+        AddCriteriaTreeEntry(v, criterias, guildCriterias, scenarioCriterias, NULL, true);
 
     //support for QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE
     if (QueryResult result = WorldDatabase.PQuery("SELECT ObjectID FROM `quest_objectives` WHERE `Type` = %u", QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE))

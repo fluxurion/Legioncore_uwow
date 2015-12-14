@@ -2259,8 +2259,8 @@ uint32 GameObject::CalculateAnimDuration(GOState oldState, GOState newState) con
     if (oldState == newState || oldState >= MAX_GO_STATE || newState >= MAX_GO_STATE)
         return 0;
 
-    TransportAnimationsByEntry::const_iterator itr = sTransportAnimationsByEntry.find(GetEntry());
-    if (itr == sTransportAnimationsByEntry.end())
+    auto const& itr = sDB2Manager._transportAnimationsByEntry.find(GetEntry());
+    if (itr == sDB2Manager._transportAnimationsByEntry.end())
         return 0;
 
     uint32 frameByState[MAX_GO_STATE] = { 0, m_goInfo->transport.Timeto2ndfloor, m_goInfo->transport.Timeto3rdfloor };

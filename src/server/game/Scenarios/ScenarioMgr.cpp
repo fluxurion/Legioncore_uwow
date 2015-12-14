@@ -93,16 +93,16 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
     for (ScenarioSteps::const_iterator itr = steps.begin(); itr != steps.end(); ++itr)
     {
         //Not check if ctep already complete
-        if(currentStep > itr->second->m_orderIndex)
+        if(currentStep > itr->second->OrderIndex)
             continue;
 
-        CriteriaTreeEntry const* criteriaTree = sCriteriaTreeStore.LookupEntry(itr->second->m_criteriaTreeId);
+        CriteriaTreeEntry const* criteriaTree = sCriteriaTreeStore.LookupEntry(itr->second->Criteriatreeid);
         if (!criteriaTree)
             continue;
 
         if (GetAchievementMgr().IsCompletedScenarioTree(criteriaTree))
         {
-            currentStep = itr->second->m_orderIndex + 1;
+            currentStep = itr->second->OrderIndex + 1;
             currentTree = GetScenarioCriteriaByStep(currentStep);;
             continue;
         }
@@ -125,8 +125,8 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
 uint32 ScenarioProgress::GetScenarioCriteriaByStep(uint8 step)
 {
     for (ScenarioSteps::const_iterator itr = steps.begin(); itr != steps.end(); ++itr)
-        if(step == itr->second->m_orderIndex)
-            return itr->second->m_criteriaTreeId;
+        if(step == itr->second->OrderIndex)
+            return itr->second->Criteriatreeid;
 
     return 0;
 }
@@ -317,7 +317,13 @@ bool ScenarioProgress::CanUpdateCriteria(uint32 criteriaId, uint32 recursTree /*
 
 ScenarioMgr::ScenarioMgr() : updateDiff(0)
 {
-    Initialize();
+    for (ScenarioStepEntry const* entry : sScenarioStepStore)
+    {
+        if (!sScenarioStore.LookupEntry(entry->ScenarioID))
+            continue;
+
+        m_stepMap[entry->ScenarioID][entry->OrderIndex] = entry;
+    }
 }
 
 ScenarioMgr::~ScenarioMgr()
@@ -362,17 +368,6 @@ ScenarioType ScenarioMgr::GetScenarioType(uint32 scenarioId)
         return SCENARIO_TYPE_CHALLENGE;
 
     return SCENARIO_TYPE_NORMAL;
-}
-
-void ScenarioMgr::Initialize()
-{
-    for (ScenarioStepEntry const* entry : sScenarioStepStore)
-    {
-        if (!sScenarioStore.LookupEntry(entry->m_scenarioId))
-            continue;
-
-        m_stepMap[entry->m_scenarioId][entry->m_orderIndex] = entry;
-    }
 }
 
 void ScenarioMgr::Update(uint32 diff)
