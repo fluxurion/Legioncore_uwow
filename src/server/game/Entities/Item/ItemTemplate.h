@@ -629,16 +629,6 @@ const uint32 MaxItemSubclassValues[MAX_ITEM_CLASS] =
     MAX_ITEM_SUBCLASS_BATTLE_PET,
 };
 
-inline uint8 ItemSubClassToDurabilityMultiplierId(uint32 ItemClass, uint32 ItemSubClass)
-{
-    switch (ItemClass)
-    {
-        case ITEM_CLASS_WEAPON: return ItemSubClass;
-        case ITEM_CLASS_ARMOR:  return ItemSubClass + 21;
-    }
-    return 0;
-}
-
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push, N), also any gcc version not support it at some platform
 #if defined(__GNUC__)
 #pragma pack(1)
@@ -681,8 +671,8 @@ struct _Socket
 #define MIN_ITEM_LEVEL 1
 #define MAX_ITEM_LEVEL 1000
 
-template<class T>
-class DBCStorage;
+template<class T> class DBCStorage;
+template<class T> class DB2Storage;
 struct ItemDamageEntry;
 
 struct ItemTemplate
@@ -840,7 +830,7 @@ struct ItemTemplate
                SubClass == ITEM_SUBCLASS_WEAPON_CROSSBOW;
     }
 
-    DBCStorage<ItemDamageEntry>* GetItemDamageStore() const;
+    DB2Storage<ItemDamageEntry>* GetItemDamageStore() const;
     uint32 GetArmor(uint32 itemLevel) const;
     void GetDamage(uint32 itemLevel, float& minDamage, float& maxDamage) const;
     uint32 GetDPS(uint32 itemLevel) const;

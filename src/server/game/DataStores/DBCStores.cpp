@@ -55,7 +55,6 @@ typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTri
 
 static std::unordered_map<uint32, std::vector<ModifierTreeEntry const*>> sModifierTreeList;
 static std::unordered_map<uint32, std::list<uint32>> sSpellProcsPerMinuteModEntryList;
-static std::unordered_map<uint32, std::list<uint32>> sItemSpecsList;
 static std::unordered_map<uint32, uint32> sRevertLearnSpellList;
 static std::unordered_map<uint32, uint32> sReversTriggerSpellList;
 static AreaEntryMap sAreaEntry;
@@ -66,7 +65,6 @@ static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
 static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 static std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> _specializationSpellsBySpec;
 
-ItemSetSpellsStore                          sItemSetSpellsStore;
 MapDifficultyMap                            sMapDifficultyMap;
 NameGenVectorArraysMap                      sGenNameVectoArraysMap;
 PetFamilySpellsStore                        sPetFamilySpellsStore;
@@ -98,44 +96,14 @@ DBCStorage<CreatureFamilyEntry>             sCreatureFamilyStore(CreatureFamilyf
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
 DBCStorage<DifficultyEntry>                 sDifficultyStore(Difficultyfmt);
 DBCStorage<DungeonEncounterEntry>           sDungeonEncounterStore(DungeonEncounterfmt);
-DBCStorage<DurabilityCostsEntry>            sDurabilityCostsStore(DurabilityCostsfmt);
-DBCStorage<DurabilityQualityEntry>          sDurabilityQualityStore(DurabilityQualityfmt);
 DBCStorage<EmotesEntry>                     sEmotesStore(EmotesEntryfmt);
 DBCStorage<EmotesTextEntry>                 sEmotesTextStore(EmotesTextEntryfmt);
 DBCStorage<FactionEntry>                    sFactionStore(FactionEntryfmt);
 DBCStorage<FactionTemplateEntry>            sFactionTemplateStore(FactionTemplateEntryfmt);
-DBCStorage<GameObjectDisplayInfoEntry>      sGameObjectDisplayInfoStore(GameObjectDisplayInfofmt);
 DBCStorage<GemPropertiesEntry>              sGemPropertiesStore(GemPropertiesEntryfmt);
 DBCStorage<GlyphPropertiesEntry>            sGlyphPropertiesStore(GlyphPropertiesfmt);
 DBCStorage<GlyphSlotEntry>                  sGlyphSlotStore(GlyphSlotfmt);
-DBCStorage<GuildPerkSpellsEntry>            sGuildPerkSpellsStore(GuildPerkSpellsfmt);
-DBCStorage<ImportPriceArmorEntry>           sImportPriceArmorStore(ImportPriceArmorfmt);
-DBCStorage<ImportPriceQualityEntry>         sImportPriceQualityStore(ImportPriceQualityfmt);
-DBCStorage<ImportPriceShieldEntry>          sImportPriceShieldStore(ImportPriceShieldfmt);
-DBCStorage<ImportPriceWeaponEntry>          sImportPriceWeaponStore(ImportPriceWeaponfmt);
-DBCStorage<ItemArmorQualityEntry>           sItemArmorQualityStore(ItemArmorQualityfmt);
-DBCStorage<ItemArmorShieldEntry>            sItemArmorShieldStore(ItemArmorShieldfmt);
-DBCStorage<ItemArmorTotalEntry>             sItemArmorTotalStore(ItemArmorTotalfmt);
-DBCStorage<ItemBagFamilyEntry>              sItemBagFamilyStore(ItemBagFamilyfmt);
-DBCStorage<ItemClassEntry>                  sItemClassStore(ItemClassfmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageAmmoStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageOneHandCasterStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageOneHandStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageRangedStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageThrownStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageTwoHandCasterStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageTwoHandStore(ItemDamagefmt);
-DBCStorage<ItemDamageEntry>                 sItemDamageWandStore(ItemDamagefmt);
-DBCStorage<ItemDisenchantLootEntry>         sItemDisenchantLootStore(ItemDisenchantLootfmt);
-DBCStorage<ItemLimitCategoryEntry>          sItemLimitCategoryStore(ItemLimitCategoryEntryfmt);
-DBCStorage<ItemPriceBaseEntry>              sItemPriceBaseStore(ItemPriceBasefmt);
-DBCStorage<ItemRandomPropertiesEntry>       sItemRandomPropertiesStore(ItemRandomPropertiesfmt);
-DBCStorage<ItemRandomSuffixEntry>           sItemRandomSuffixStore(ItemRandomSuffixfmt);
-DBCStorage<ItemReforgeEntry>                sItemReforgeStore(ItemReforgefmt);
 DBCStorage<ItemSetEntry>                    sItemSetStore(ItemSetEntryfmt);
-DBCStorage<ItemSetSpellEntry>               sItemSetSpellStore(ItemSetSpellEntryfmt);
-DBCStorage<ItemSpecEntry>                   sItemSpecStore(ItemSpecEntryfmt);
-DBCStorage<ItemSpecOverrideEntry>           sItemSpecOverrideStore(ItemSpecOverrideEntryfmt);
 DBCStorage<LFGDungeonEntry>                 sLFGDungeonStore(LFGDungeonEntryfmt);
 DBCStorage<LiquidTypeEntry>                 sLiquidTypeStore(LiquidTypefmt);
 DBCStorage<LockEntry>                       sLockStore(LockEntryfmt);
@@ -496,19 +464,6 @@ void InitDBCCustomStores()
         }
     }
 
-    for (GameObjectDisplayInfoEntry const* info : sGameObjectDisplayInfoStore)
-    {
-        if (info->maxX < info->minX)
-            std::swap(*(float*)(&info->maxX), *(float*)(&info->minX));
-        if (info->maxY < info->minY)
-            std::swap(*(float*)(&info->maxY), *(float*)(&info->minY));
-        if (info->maxZ < info->minZ)
-            std::swap(*(float*)(&info->maxZ), *(float*)(&info->minZ));
-    }
-
-    for (ItemSpecOverrideEntry const* isp : sItemSpecOverrideStore)
-        sItemSpecsList[isp->ItemID].push_back(isp->SpecID);
-
     for (MapDifficultyEntry const* entry : sMapDifficultyStore)
     {
         if (!sMapStore.LookupEntry(entry->MapID))
@@ -651,9 +606,6 @@ void InitDBCCustomStores()
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
         sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));
 
-    for (ItemSetSpellEntry const* itemSetSpell : sItemSetSpellStore)
-        sItemSetSpellsStore[itemSetSpell->ItemSetID].push_back(itemSetSpell);
-
     for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
         if (store->creatureDisplayID)
             sDungeonEncounterByDisplayID[store->creatureDisplayID] = store;
@@ -689,16 +641,6 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction)
         return &itr->second;
 
     return NULL;
-}
-
-std::list<uint32> GetItemSpecsList(uint32 ItemID)
-{
-    return sItemSpecsList[ItemID];
-}
-
-void AddSpecdtoItem(uint32 ItemID, uint32 SpecID)
-{
-    sItemSpecsList[ItemID].push_back(SpecID);
 }
 
 uint32 GetLearnSpell(uint32 trigerSpell)

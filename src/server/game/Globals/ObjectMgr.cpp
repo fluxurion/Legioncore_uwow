@@ -2587,9 +2587,9 @@ void FillDisenchantFields(uint32* disenchantID, uint32* requiredDisenchantSkill,
     for (ItemDisenchantLootEntry const* disenchant : sItemDisenchantLootStore)
     {
         if (disenchant->ItemClass == itemTemplate.Class &&
-            disenchant->ItemQuality == itemTemplate.Quality &&
-            disenchant->MinItemLevel <= itemTemplate.ItemLevel &&
-            disenchant->MaxItemLevel >= itemTemplate.ItemLevel)
+            disenchant->Quality == itemTemplate.Quality &&
+            disenchant->MinLevel <= itemTemplate.ItemLevel &&
+            disenchant->MaxLevel >= itemTemplate.ItemLevel)
         {
             if (disenchant->Id == 60 || disenchant->Id == 61)   // epic item disenchant ilvl range 66-99 (classic)
             {
@@ -2603,7 +2603,7 @@ void FillDisenchantFields(uint32* disenchantID, uint32* requiredDisenchantSkill,
             }
 
             *disenchantID = disenchant->Id;
-            *requiredDisenchantSkill = disenchant->RequiredDisenchantSkill;
+            *requiredDisenchantSkill = disenchant->SkillRequired;
             //return;
         }
     }
@@ -2748,11 +2748,11 @@ void ObjectMgr::LoadItemTemplates()
 
                     if (ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(itemSpec->SpecID))
                         if ((1 << specialization->classId) & sparse->AllowableClass)
-                            AddSpecdtoItem(itemId, itemSpec->SpecID);
+                            sDB2Manager.AddSpecdtoItem(itemId, itemSpec->SpecID);
                 }
             }
         }*/
-        itemTemplate.ItemSpecExist = GetItemSpecsList(itemId).empty() ? 0 : 1;
+        itemTemplate.ItemSpecExist = sDB2Manager.GetItemSpecsList(itemId).empty() ? 0 : 1;
 
         // Mantid Amber Sliver
         if (itemTemplate.ItemId == 95373)
@@ -2937,7 +2937,7 @@ void ObjectMgr::LoadItemTemplates()
             itemTemplate.FoodType                  = 0;
             itemTemplate.MinMoneyLoot              = 0;
             itemTemplate.MaxMoneyLoot              = 0;
-            itemTemplate.ItemSpecExist             = GetItemSpecsList(itemId).empty() ? 0 : 1;
+            itemTemplate.ItemSpecExist             = sDB2Manager.GetItemSpecsList(itemId).empty() ? 0 : 1;
             itemTemplate.FlagsCu                   = 0;
             ++dbCount;
         } while (result->NextRow());

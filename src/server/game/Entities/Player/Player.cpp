@@ -6223,7 +6223,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
     if (cost)
     {
         uint32 LostDurability = maxDurability - curDurability;
-        if (LostDurability>0)
+        if (LostDurability > 0)
         {
             ItemTemplate const* ditemProto = item->GetTemplate();
 
@@ -6234,7 +6234,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
                 return TotalCost;
             }
 
-            uint32 dQualitymodEntryId = (ditemProto->Quality+1)*2;
+            uint32 dQualitymodEntryId = (ditemProto->Quality + 1) * 2;
             DurabilityQualityEntry const* dQualitymodEntry = sDurabilityQualityStore.LookupEntry(dQualitymodEntryId);
             if (!dQualitymodEntry)
             {
@@ -6242,11 +6242,13 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
                 return TotalCost;
             }
 
-            uint32 dmultiplier = dcost->multiplier[ItemSubClassToDurabilityMultiplierId(ditemProto->Class, ditemProto->SubClass)];
-            uint32 costs = uint32(LostDurability*dmultiplier*double(dQualitymodEntry->quality_mod));
+            uint32 dmultiplier = 0;
+            if (ditemProto->Class == ITEM_CLASS_WEAPON)
+                dmultiplier = dcost->WeaponSubstructCost[ditemProto->SubClass];
+            else if (ditemProto->Class == ITEM_CLASS_ARMOR)
+                dmultiplier = dcost->ArmorSubstructCost[ditemProto->SubClass];
 
-            costs = uint32(costs * discountMod * sWorld->getRate(RATE_REPAIRCOST));
-
+            uint32 costs = uint32(LostDurability * dmultiplier * double(dQualitymodEntry->Data)) * discountMod * sWorld->getRate(RATE_REPAIRCOST);
             if (costs == 0)                                   //fix for ITEM_QUALITY_ARTIFACT
                 costs = 1;
 
@@ -6286,6 +6288,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
     // reapply mods for total broken and repaired item if equipped
     if (IsEquipmentPos(pos) && !curDurability)
         _ApplyItemMods(item, pos & 255, true);
+
     return TotalCost;
 }
 
@@ -11579,13 +11582,13 @@ InventoryResult Player::CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item
             return EQUIP_ERR_NOT_EQUIPPABLE;
         }
 
-        if (limitEntry->mode == ITEM_LIMIT_CATEGORY_MODE_HAVE)
+        if (limitEntry->Flags == ITEM_LIMIT_CATEGORY_MODE_HAVE)
         {
             uint32 curcount = GetItemCountWithLimitCategory(pProto->ItemLimitCategory, pItem);
-            if (curcount + count > uint32(limitEntry->maxCount))
+            if (curcount + count > uint32(limitEntry->Quantity))
             {
                 if (no_space_count)
-                    *no_space_count = count + curcount - limitEntry->maxCount;
+                    *no_space_count = count + curcount - limitEntry->Quantity;
                 return EQUIP_ERR_ITEM_MAX_LIMIT_CATEGORY_COUNT_EXCEEDED_IS;
             }
         }
@@ -14806,11 +14809,11 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                                 if (item_rand)
                                 {
                                     // Search enchant_amount
-                                    for (int k = 0; k < 5; ++k)
+                                    for (int k = 0; k < MAX_ITEM_ENCHANTS; ++k)
                                     {
-                                        if (item_rand->enchant_id[k] == enchant_id)
+                                        if (item_rand->Enchantment[k] == enchant_id)
                                         {
-                                            basepoints = int32((item_rand->prefix[k] * item->GetItemSuffixFactor()) / 10000);
+                                            basepoints = int32((item_rand->AllocationPct[k] * item->GetItemSuffixFactor()) / 10000);
                                             break;
                                         }
                                     }
@@ -14832,11 +14835,11 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                         ItemRandomSuffixEntry const* item_rand = sItemRandomSuffixStore.LookupEntry(abs(item->GetItemRandomPropertyId()));
                         if (item_rand)
                         {
-                            for (int k = 0; k < MAX_ITEM_ENCHANTMENT_EFFECTS; ++k)
+                            for (int k = 0; k < MAX_ITEM_ENCHANTS; ++k)
                             {
-                                if (item_rand->enchant_id[k] == enchant_id)
+                                if (item_rand->Enchantment[k] == enchant_id)
                                 {
-                                    enchant_amount = uint32((item_rand->prefix[k] * item->GetItemSuffixFactor()) / 10000);
+                                    enchant_amount = uint32((item_rand->AllocationPct[k] * item->GetItemSuffixFactor()) / 10000);
                                     break;
                                 }
                             }
@@ -14852,11 +14855,11 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                         ItemRandomSuffixEntry const* item_rand_suffix = sItemRandomSuffixStore.LookupEntry(abs(item->GetItemRandomPropertyId()));
                         if (item_rand_suffix)
                         {
-                            for (int k = 0; k < 5; ++k)
+                            for (int k = 0; k < MAX_ITEM_ENCHANTS; ++k)
                             {
-                                if (item_rand_suffix->enchant_id[k] == enchant_id)
+                                if (item_rand_suffix->Enchantment[k] == enchant_id)
                                 {
-                                    enchant_amount = uint32((item_rand_suffix->prefix[k] * item->GetItemSuffixFactor()) / 10000);
+                                    enchant_amount = uint32((item_rand_suffix->AllocationPct[k] * item->GetItemSuffixFactor()) / 10000);
                                     break;
                                 }
                             }
@@ -27323,11 +27326,11 @@ InventoryResult Player::CanEquipUniqueItem(ItemTemplate const* itemProto, uint8 
 
         // NOTE: limitEntry->mode not checked because if item have have-limit then it applied and to equip case
 
-        if (limit_count > limitEntry->maxCount)
+        if (limit_count > limitEntry->Quantity)
             return EQUIP_ERR_ITEM_MAX_LIMIT_CATEGORY_EQUIPPED_EXCEEDED_IS;
 
         // there is an equip limit on this item
-        if (HasItemOrGemWithLimitCategoryEquipped(itemProto->ItemLimitCategory, limitEntry->maxCount - limit_count + 1, except_slot))
+        if (HasItemOrGemWithLimitCategoryEquipped(itemProto->ItemLimitCategory, limitEntry->Quantity - limit_count + 1, except_slot))
             return EQUIP_ERR_ITEM_MAX_COUNT_EQUIPPED_SOCKETED;
     }
 

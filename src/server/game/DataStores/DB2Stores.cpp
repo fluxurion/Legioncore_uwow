@@ -23,23 +23,13 @@
 #include "Log.h"
 #include "World.h"
 
-DB2Storage<DestructibleModelDataEntry>      sDestructibleModelDataStore("DestructibleModelData.db2", DestructibleModelDataFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CriteriaTreeEntry>               sCriteriaTreeStore("CriteriaTree.dbc", CriteriaTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CriteriaEntry>                   sCriteriaStore("Criteria.db2", CriteriaFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CreatureTypeEntry>               sCreatureTypeStore("CreatureType.dbc", CreatureTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CreatureDisplayInfoExtraEntry>   sCreatureDisplayInfoExtraStore("CreatureDisplayInfoExtra.db2", CreatureDisplayInfoExtraFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRacesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ChrClassesXPowerTypesEntry>      sChrClassesXPowerTypesStore("ChrClassesXPowerTypes.db2", ChrClassesXPowerTypesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<CharStartOutfitEntry>            sCharStartOutfitStore("CharStartOutfit.db2", CharStartOutfitEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
-DB2Storage<CharacterLoadoutItemEntry>       sCharacterLoadoutItemStore("CharacterLoadoutItem.db2", CharacterLoadoutItemFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<BarberShopStyleEntry>            sBarberShopStyleStore("BarberShopStyle.db2", BarberShopStyleEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<ArmorLocationEntry>              sArmorLocationStore("ArmorLocation.db2", ArmorLocationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AuctionHouseEntry>               sAuctionHouseStore("AuctionHouse.db2", AuctionHouseEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<BankBagSlotPricesEntry>          sBankBagSlotPricesStore("BankBagSlotPrices.db2", BankBagSlotPricesEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<BarberShopStyleEntry>            sBarberShopStyleStore("BarberShopStyle.db2", BarberShopStyleEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<BattlePetAbilityEffectEntry>     sBattlePetAbilityEffectStore("BattlePetAbilityEffect.db2", BattlePetAbilityEffectFormat, HOTFIX_SEL_BATTLE_PET_ABILITY_EFFECT);
 DB2Storage<BattlePetAbilityEntry>           sBattlePetAbilityStore("BattlePetAbility.db2", BattlePetAbilityFormat, HOTFIX_SEL_BATTLE_PET_ABILITY);
 DB2Storage<BattlePetAbilityStateEntry>      sBattlePetAbilityStateStore("BattlePetAbilityState.db2", BattlePetAbilityStateFormat, HOTFIX_SEL_BATTLE_PET_ABILITY_STATE);
@@ -52,22 +42,35 @@ DB2Storage<BattlePetSpeciesStateEntry>      sBattlePetSpeciesStateStore("BattleP
 DB2Storage<BattlePetSpeciesXAbilityEntry>   sBattlePetSpeciesXAbilityStore("BattlePetSpeciesXAbility.db2", BattlePetSpeciesXAbilityFormat, HOTFIX_SEL_BATTLE_PET_SPECIES_X_ABILITY);
 DB2Storage<BattlePetStateEntry>             sBattlePetStateStore("BattlePetState.db2", BattlePetStateFormat, HOTFIX_SEL_BATTLE_PET_STATE);
 DB2Storage<BroadcastTextEntry>              sBroadcastTextStore("BroadcastText.db2", BroadcastTextFormat, HOTFIX_SEL_BROADCAST_TEXT);
+DB2Storage<CharacterLoadoutItemEntry>       sCharacterLoadoutItemStore("CharacterLoadoutItem.db2", CharacterLoadoutItemFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CharStartOutfitEntry>            sCharStartOutfitStore("CharStartOutfit.db2", CharStartOutfitEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ChrClassesXPowerTypesEntry>      sChrClassesXPowerTypesStore("ChrClassesXPowerTypes.db2", ChrClassesXPowerTypesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRacesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDifficulty.db2", CreatureDifficultyFormat, HOTFIX_SEL_CREATURE_DIFFICULTY);
+DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureDisplayInfoExtraEntry>   sCreatureDisplayInfoExtraStore("CreatureDisplayInfoExtra.db2", CreatureDisplayInfoExtraFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CreatureTypeEntry>               sCreatureTypeStore("CreatureType.dbc", CreatureTypeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CriteriaEntry>                   sCriteriaStore("Criteria.db2", CriteriaFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<CriteriaTreeEntry>               sCriteriaTreeStore("CriteriaTree.dbc", CriteriaTreeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<CurrencyTypesEntry>              sCurrencyTypesStore("CurrencyTypes.db2", CurrencyTypesFormat, HOTFIX_SEL_CURRENCY_TYPES);
 DB2Storage<CurvePointEntry>                 sCurvePointStore("CurvePoint.db2", CurvePointFormat, HOTFIX_SEL_CURVE_POINT);
+DB2Storage<DestructibleModelDataEntry>      sDestructibleModelDataStore("DestructibleModelData.db2", DestructibleModelDataFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<DurabilityCostsEntry>            sDurabilityCostsStore("DurabilityCosts.db2", DurabilityCostsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<DurabilityQualityEntry>          sDurabilityQualityStore("DurabilityQuality.db2", DurabilityQualityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<GameObjectDisplayInfoEntry>      sGameObjectDisplayInfoStore("GameObjectDisplayInfo.db2", GameObjectDisplayInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<GameObjectsEntry>                sGameObjectsStore("GameObjects.db2", GameObjectsFormat, HOTFIX_SEL_GAME_OBJECTS);
-DB2Storage<GameTablesEntry>                 sGameTablesStore("GameTables.db2", GameTablesFmt, HOTFIX_SEL_GAME_TABLES);
-DB2Storage<GarrAbilityEntry>                sGarrAbilityStore("GarrAbility.db2", GarrAbilityFormat, HOTFIX_SEL_GARR_ABILITY);
+DB2Storage<GameTablesEntry>                 sGameTablesStore("GameTables.db2", GameTablesFormat, HOTFIX_SEL_GAME_TABLES);
 DB2Storage<GarrAbilityEffectEntry>          sGarrAbilityEffectStore("GarrAbilityEffect.db2", GarrAbilityEffectFormat, HOTFIX_SEL_GARR_ABILITY_EFFECT);
+DB2Storage<GarrAbilityEntry>                sGarrAbilityStore("GarrAbility.db2", GarrAbilityFormat, HOTFIX_SEL_GARR_ABILITY);
 DB2Storage<GarrBuildingEntry>               sGarrBuildingStore("GarrBuilding.db2", GarrBuildingFormat, HOTFIX_SEL_GARR_BUILDING);
 DB2Storage<GarrBuildingPlotInstEntry>       sGarrBuildingPlotInstStore("GarrBuildingPlotInst.db2", GarrBuildingPlotInstFormat, HOTFIX_SEL_GARR_BUILDING_PLOT_INST);
 DB2Storage<GarrClassSpecEntry>              sGarrClassSpecStore("GarrClassSpec.db2", GarrClassSpecFormat, HOTFIX_SEL_GARR_CLASS_SPEC);
+DB2Storage<GarrEncounterEntry>              sGarrEncounterStore("GarrEncounter.db2", GarrEncounterFormat, HOTFIX_SEL_GARR_ENCOUNTER);
+DB2Storage<GarrEncounterXMechanicEntry>     sGarrEncounterXMechanicStore("GarrEncounterXMechanic.db2", GarrEncounterXMechanicFormat, HOTFIX_SEL_GARR_ENCOUNTER_X_MECHANIC);
 DB2Storage<GarrFollowerEntry>               sGarrFollowerStore("GarrFollower.db2", GarrFollowerFormat, HOTFIX_SEL_GARR_FOLLOWER);
 DB2Storage<GarrFollowerLevelXPEntry>        sGarrFollowerLevelXPStore("GarrFollowerLevelXP.db2", GarrFollowerLevelXPFormat, HOTFIX_SEL_GARR_FOLLOWER_LEVEL_XP);
 DB2Storage<GarrFollowerQualityEntry>        sGarrFollowerQualityStore("GarrFollowerQuality.db2", GarrFollowerQualityFormat, HOTFIX_SEL_GARR_FOLLOWER_QUALITY);
 DB2Storage<GarrFollowerXAbilityEntry>       sGarrFollowerXAbilityStore("GarrFollowerXAbility.db2", GarrFollowerXAbilityFormat, HOTFIX_SEL_GARR_FOLLOWER_X_ABILITY);
-DB2Storage<GarrEncounterEntry>              sGarrEncounterStore("GarrEncounter.db2", GarrEncounterFormat, HOTFIX_SEL_GARR_ENCOUNTER);
-DB2Storage<GarrEncounterXMechanicEntry>     sGarrEncounterXMechanicStore("GarrEncounterXMechanic.db2", GarrEncounterXMechanicFormat, HOTFIX_SEL_GARR_ENCOUNTER_X_MECHANIC);
 DB2Storage<GarrMechanicEntry>               sGarrMechanicStore("GarrMechanic.db2", GarrMechanicFormat, HOTFIX_SEL_GARR_MECHANIC);
 DB2Storage<GarrMechanicTypeEntry>           sGarrMechanicTypeStore("GarrMechanicType.db2", GarrMechanicTypeFormat, HOTFIX_SEL_GARR_MECHANIC_TYPE);
 DB2Storage<GarrMissionEntry>                sGarrMissionStore("GarrMission.db2", GarrMissionFormat, HOTFIX_SEL_GARR_MISSION);
@@ -78,17 +81,42 @@ DB2Storage<GarrPlotEntry>                   sGarrPlotStore("GarrPlot.db2", GarrP
 DB2Storage<GarrPlotInstanceEntry>           sGarrPlotInstanceStore("GarrPlotInstance.db2", GarrPlotInstanceFormat, HOTFIX_SEL_GARR_PLOT_INSTANCE);
 DB2Storage<GarrSiteLevelEntry>              sGarrSiteLevelStore("GarrSiteLevel.db2", GarrSiteLevelFormat, HOTFIX_SEL_GARR_SITE_LEVEL);
 DB2Storage<GarrSiteLevelPlotInstEntry>      sGarrSiteLevelPlotInstStore("GarrSiteLevelPlotInst.db2", GarrSiteLevelPlotInstFormat, HOTFIX_SEL_GARR_SITE_LEVEL_PLOT_INST);
+DB2Storage<GuildPerkSpellsEntry>            sGuildPerkSpellsStore("GuildPerkSpells.db2", GuildPerkSpellsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<HeirloomEntry>                   sHeirloomStore("Heirloom.db2", HeirloomFormat, HOTFIX_SEL_HEIRLOOM);
 DB2Storage<HolidaysEntry>                   sHolidaysStore("Holidays.db2", HolidaysFormat, HOTFIX_SEL_HOLIDAYS);
+DB2Storage<ImportPriceArmorEntry>           sImportPriceArmorStore("ImportPriceArmor.db2", ImportPriceArmorFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ImportPriceQualityEntry>         sImportPriceQualityStore("ImportPriceQuality.db2", ImportPriceQualityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ImportPriceShieldEntry>          sImportPriceShieldStore("ImportPriceShield.db2", ImportPriceShieldFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ImportPriceWeaponEntry>          sImportPriceWeaponStore("ImportPriceWeapon.db2", ImportPriceWeaponFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemAppearanceEntry>             sItemAppearanceStore("ItemAppearance.db2", ItemAppearanceFormat, HOTFIX_SEL_ITEM_APPEARANCE);
+DB2Storage<ItemArmorQualityEntry>           sItemArmorQualityStore("ItemArmorQuality.db2", ItemArmorQualityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemArmorShieldEntry>            sItemArmorShieldStore("ItemArmorShield.db2", ItemArmorShieldFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemArmorTotalEntry>             sItemArmorTotalStore("ItemArmorTotal.db2", ItemArmorTotalFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemBonusEntry>                  sItemBonusStore("ItemBonus.db2", ItemBonusFormat, HOTFIX_SEL_ITEM_BONUS);
 DB2Storage<ItemBonusTreeNodeEntry>          sItemBonusTreeNodeStore("ItemBonusTreeNode.db2", ItemBonusTreeNodeFormat, HOTFIX_SEL_ITEM_BONUS_TREE_NODE);
+DB2Storage<ItemClassEntry>                  sItemClassStore("ItemClass.db2", ItemClassFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemCurrencyCostEntry>           sItemCurrencyCostStore("ItemCurrencyCost.db2", ItemCurrencyCostFormat, HOTFIX_SEL_ITEM_CURRENCY_COST);
+DB2Storage<ItemDamageEntry>                 sItemDamageAmmoStore("ItemDamageAmmo.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageOneHandCasterStore("ItemDamageOneHandCaster.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageOneHandStore("ItemDamageOneHand.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageRangedStore("ItemDamageRanged.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageThrownStore("ItemDamageThrown.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageTwoHandCasterStore("ItemDamageTwoHandCaster.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageTwoHandStore("ItemDamageTwoHand.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDamageEntry>                 sItemDamageWandStore("ItemDamageWand.db2", ItemDamageFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemDisenchantLootEntry>         sItemDisenchantLootStore("ItemDisenchantLoot.db2", ItemDisenchantLootFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemEffectEntry>                 sItemEffectStore("ItemEffect.db2", ItemEffectFormat, HOTFIX_SEL_ITEM_EFFECT);
 DB2Storage<ItemEntry>                       sItemStore("Item.db2", ItemFormat, HOTFIX_SEL_ITEM);
 DB2Storage<ItemExtendedCostEntry>           sItemExtendedCostStore("ItemExtendedCost.db2", ItemExtendedCostFormat, HOTFIX_SEL_ITEM_EXTENDED_COST);
+DB2Storage<ItemLimitCategoryEntry>          sItemLimitCategoryStore("ItemLimitCategory.db2", ItemLimitCategoryEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemModifiedAppearanceEntry>     sItemModifiedAppearanceStore("ItemModifiedAppearance.db2", ItemModifiedAppearanceFormat, HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE);
+DB2Storage<ItemPriceBaseEntry>              sItemPriceBaseStore("ItemPriceBase.db2", ItemPriceBaseFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemRandomPropertiesEntry>       sItemRandomPropertiesStore("ItemRandomProperties.db2", ItemRandomPropertiesFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemRandomSuffixEntry>           sItemRandomSuffixStore("ItemRandomSuffix.db2", ItemRandomSuffixFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemSetSpellEntry>               sItemSetSpellStore("ItemSetSpell.db2", ItemSetSpellEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemSparseEntry>                 sItemSparseStore("Item-sparse.db2", ItemSparseFormat, HOTFIX_SEL_ITEM_SPARSE);
+DB2Storage<ItemSpecEntry>                   sItemSpecStore("ItemSpec.db2", ItemSpecEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ItemSpecOverrideEntry>           sItemSpecOverrideStore("ItemSpecOverride.db2", ItemSpecOverrideEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ItemToBattlePetSpeciesEntry>     sItemToBattlePetSpeciesStore("ItemToBattlePetSpecies.db2", ItemToBattlePetSpeciesFormat, HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES);
 DB2Storage<ItemUpgradeEntry>                sItemUpgradeStore("ItemUpgrade.db2", ItemUpgradeFormat, HOTFIX_SEL_ITEM_UPGRADE);
 DB2Storage<ItemXBonusTreeEntry>             sItemXBonusTreeStore("ItemXBonusTree.db2", ItemXBonusTreeFormat, HOTFIX_SEL_ITEM_X_BONUS_TREE);
@@ -220,9 +248,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
     //LOAD_DB2(sDestructibleModelDataStore);    // 20796
-    //LOAD_DB2(sDurabilityCostsStore,             "DurabilityCosts.dbc");
-    //LOAD_DB2(sDurabilityQualityStore,           "DurabilityQuality.dbc");
-    //LOAD_DB2(sGameObjectDisplayInfoStore,       "GameObjectDisplayInfo.dbc");
+    //LOAD_DB2(sDurabilityCostsStore);          // 20796
+    //LOAD_DB2(sDurabilityQualityStore);        // 20796
+    //LOAD_DB2(sGameObjectDisplayInfoStore);    // 20796
     //LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameTablesStore);                 // 20796
     //LOAD_DB2(sGarrAbilityEffectStore);
@@ -246,43 +274,42 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGarrPlotStore);
     //LOAD_DB2(sGarrSiteLevelPlotInstStore);
     //LOAD_DB2(sGarrSiteLevelStore);
-    //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.dbc");
-    //LOAD_DB2(sGuildPerkSpellsStore,             "GuildPerkSpells.dbc");
+    //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.dbc"); // DEPRECATED
+    //LOAD_DB2(sGuildPerkSpellsStore);          // 20796
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
-    //LOAD_DB2(sImportPriceArmorStore,            "ImportPriceArmor.dbc");
-    //LOAD_DB2(sImportPriceQualityStore,          "ImportPriceQuality.dbc");
-    //LOAD_DB2(sImportPriceShieldStore,           "ImportPriceShield.dbc");
-    //LOAD_DB2(sImportPriceWeaponStore,           "ImportPriceWeapon.dbc");
+    //LOAD_DB2(sImportPriceArmorStore);         // 20796
+    //LOAD_DB2(sImportPriceQualityStore);       // 20796
+    //LOAD_DB2(sImportPriceShieldStore);        // 20796
+    //LOAD_DB2(sImportPriceWeaponStore);        // 20796
     //LOAD_DB2(sItemAppearanceStore);
-    //LOAD_DB2(sItemArmorQualityStore,            "ItemArmorQuality.dbc");
-    //LOAD_DB2(sItemArmorShieldStore,             "ItemArmorShield.dbc");
-    //LOAD_DB2(sItemArmorTotalStore,              "ItemArmorTotal.dbc");
-    //LOAD_DB2(sItemBagFamilyStore,               "ItemBagFamily.dbc");
+    //LOAD_DB2(sItemArmorQualityStore);         // 20796
+    //LOAD_DB2(sItemArmorShieldStore);          // 20796
+    //LOAD_DB2(sItemArmorTotalStore);           // 20796
     //LOAD_DB2(sItemBonusStore);
     //LOAD_DB2(sItemBonusTreeNodeStore);
-    //LOAD_DB2(sItemClassStore,                   "ItemClass.dbc");
+    //LOAD_DB2(sItemClassStore);                // 20796
     //LOAD_DB2(sItemCurrencyCostStore);
-    //LOAD_DB2(sItemDamageAmmoStore,              "ItemDamageAmmo.dbc");
-    //LOAD_DB2(sItemDamageOneHandCasterStore,     "ItemDamageOneHandCaster.dbc");
-    //LOAD_DB2(sItemDamageOneHandStore,           "ItemDamageOneHand.dbc");
-    //LOAD_DB2(sItemDamageRangedStore,            "ItemDamageRanged.dbc");
-    //LOAD_DB2(sItemDamageThrownStore,            "ItemDamageThrown.dbc");
-    //LOAD_DB2(sItemDamageTwoHandCasterStore,     "ItemDamageTwoHandCaster.dbc");
-    //LOAD_DB2(sItemDamageTwoHandStore,           "ItemDamageTwoHand.dbc");
-    //LOAD_DB2(sItemDamageWandStore,              "ItemDamageWand.dbc");
-    //LOAD_DB2(sItemDisenchantLootStore,          "ItemDisenchantLoot.dbc");
+    //LOAD_DB2(sItemDamageAmmoStore);           // 20796
+    //LOAD_DB2(sItemDamageOneHandCasterStore);  // 20796
+    //LOAD_DB2(sItemDamageOneHandStore);        // 20796
+    //LOAD_DB2(sItemDamageRangedStore);         // 20796
+    //LOAD_DB2(sItemDamageThrownStore);         // 20796
+    //LOAD_DB2(sItemDamageTwoHandCasterStore);  // 20796
+    //LOAD_DB2(sItemDamageTwoHandStore);        // 20796
+    //LOAD_DB2(sItemDamageWandStore);           // 20796
+    //LOAD_DB2(sItemDisenchantLootStore);       // 20796
     //LOAD_DB2(sItemEffectStore);
     //LOAD_DB2(sItemExtendedCostStore);
-    //LOAD_DB2(sItemLimitCategoryStore,           "ItemLimitCategory.dbc");
+    //LOAD_DB2(sItemLimitCategoryStore);        // 20796
     //LOAD_DB2(sItemModifiedAppearanceStore);
-    //LOAD_DB2(sItemPriceBaseStore,               "ItemPriceBase.dbc");
-    //LOAD_DB2(sItemRandomPropertiesStore,        "ItemRandomProperties.dbc");
-    //LOAD_DB2(sItemRandomSuffixStore,            "ItemRandomSuffix.dbc");
-    //LOAD_DB2(sItemSetSpellStore,                "ItemSetSpell.dbc");
+    //LOAD_DB2(sItemPriceBaseStore);            // 20796
+    //LOAD_DB2(sItemRandomPropertiesStore);     // 20796
+    //LOAD_DB2(sItemRandomSuffixStore);         // 20796
+    //LOAD_DB2(sItemSetSpellStore               // 20796
     //LOAD_DB2(sItemSparseStore);
-    //LOAD_DB2(sItemSpecOverrideStore,            "ItemSpecOverride.dbc");
-    //LOAD_DB2(sItemSpecStore,                    "ItemSpec.dbc");
+    //LOAD_DB2(sItemSpecOverrideStore);         // 20796
+    //LOAD_DB2(sItemSpecStore);                 // 20796
     //LOAD_DB2(sItemStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
@@ -569,6 +596,24 @@ void DB2Manager::InitDB2CustomStores()
     for (CriteriaTreeEntry const* ct : sCriteriaTreeStore)
         if (ct->Parent)
             _criteriaTree[ct->Parent].push_back(ct);
+
+    for (GameObjectDisplayInfoEntry const* info : sGameObjectDisplayInfoStore)
+    {
+        if (info->GeoBoxMax.X < info->GeoBoxMin.X)
+            std::swap(*(float*)(&info->GeoBoxMax.X), *(float*)(&info->GeoBoxMin.X));
+
+        if (info->GeoBoxMax.Y < info->GeoBoxMin.Y)
+            std::swap(*(float*)(&info->GeoBoxMax.Y), *(float*)(&info->GeoBoxMin.Y));
+
+        if (info->GeoBoxMax.Z < info->GeoBoxMin.Z)
+            std::swap(*(float*)(&info->GeoBoxMax.Z), *(float*)(&info->GeoBoxMin.Z));
+    }
+    
+    for (ItemSetSpellEntry const* itemSetSpell : sItemSetSpellStore)
+        _itemSetSpells[itemSetSpell->ItemSetID].push_back(itemSetSpell);
+
+    for (ItemSpecOverrideEntry const* isp : sItemSpecOverrideStore)
+        _itemSpec[isp->ItemID].push_back(isp->SpecID);
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -958,3 +1003,12 @@ std::vector<CriteriaTreeEntry const*> const* DB2Manager::GetCriteriaTreeList(uin
     return nullptr;
 }
 
+std::list<uint32> DB2Manager::GetItemSpecsList(uint32 itemID)
+{
+    return _itemSpec[itemID];
+}
+
+void DB2Manager::AddSpecdtoItem(uint32 itemID, uint32 specID)
+{
+    _itemSpec[itemID].push_back(specID);
+}

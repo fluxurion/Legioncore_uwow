@@ -73,7 +73,7 @@ void AddItemsSetItem(Player* player, Item* item)
 
     ++eff->item_count;
 
-    ItemSetSpells& spells = sItemSetSpellsStore[setid];
+    auto spells = sDB2Manager._itemSetSpells[setid];
     for (size_t x = 0; x < spells.size(); ++x)
     {
         //not enough for  spell
@@ -140,8 +140,8 @@ void RemoveItemsSetItem(Player*player, ItemTemplate const* proto)
         return;
 
     --eff->item_count;
-    ItemSetSpells& spells = sItemSetSpellsStore[setid];
-    for (size_t x = 0; x < spells.size(); x++)
+    auto spells = sDB2Manager._itemSetSpells[setid];
+    for (size_t x = 0; x < spells.size(); ++x)
     {
         // enough for spell
         if (spells[x]->Threshold <= eff->item_count)
@@ -691,7 +691,7 @@ void Item::SetItemRandomProperties(int32 randomPropId)
                 SetState(ITEM_CHANGED, GetOwner());
             }
             for (uint32 i = PROP_ENCHANTMENT_SLOT_1; i < PROP_ENCHANTMENT_SLOT_1 + 3; ++i)
-                SetEnchantment(EnchantmentSlot(i), item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_1], 0, 0);
+                SetEnchantment(EnchantmentSlot(i), item_rand->Enchantment[i - PROP_ENCHANTMENT_SLOT_1], 0, 0);
         }
     }
     else
@@ -708,7 +708,7 @@ void Item::SetItemRandomProperties(int32 randomPropId)
             }
 
             for (uint32 i = PROP_ENCHANTMENT_SLOT_0; i <= PROP_ENCHANTMENT_SLOT_4; ++i)
-                SetEnchantment(EnchantmentSlot(i), item_rand->enchant_id[i - PROP_ENCHANTMENT_SLOT_0], 0, 0);
+                SetEnchantment(EnchantmentSlot(i), item_rand->Enchantment[i - PROP_ENCHANTMENT_SLOT_0], 0, 0);
         }
     }
 }
@@ -1475,7 +1475,6 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
         if (!qualityPrice || !basePrice)
             return 0;
 
-        float qualityFactor = qualityPrice->Factor;
         float baseFactor = 0.0f;
 
         uint32 inventoryType = proto->GetInventoryType();
@@ -1487,9 +1486,9 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
             inventoryType == INVTYPE_RANGED ||
             inventoryType == INVTYPE_THROWN ||
             inventoryType == INVTYPE_RANGEDRIGHT)
-            baseFactor = basePrice->WeaponFactor;
+            baseFactor = basePrice->Weapon;
         else
-            baseFactor = basePrice->ArmorFactor;
+            baseFactor = basePrice->Armor;
 
         if (inventoryType == INVTYPE_ROBE)
             inventoryType = INVTYPE_CHEST;
@@ -1517,16 +1516,16 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
                 {
                     case ITEM_SUBCLASS_ARMOR_MISCELLANEOUS:
                     case ITEM_SUBCLASS_ARMOR_CLOTH:
-                        typeFactor = armorPrice->ClothFactor;
+                        typeFactor = armorPrice->ClothModifier;
                         break;
                     case ITEM_SUBCLASS_ARMOR_LEATHER:
-                        typeFactor = armorPrice->LeatherFactor;
+                        typeFactor = armorPrice->LeatherModifier;
                         break;
                     case ITEM_SUBCLASS_ARMOR_MAIL:
-                        typeFactor = armorPrice->MailFactor;
+                        typeFactor = armorPrice->ChainModifier;
                         break;
                     case ITEM_SUBCLASS_ARMOR_PLATE:
-                        typeFactor = armorPrice->PlateFactor;
+                        typeFactor = armorPrice->PlateModifier;
                         break;
                     default:
                         return 0;
@@ -1540,7 +1539,7 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
                 if (!shieldPrice)
                     return 0;
 
-                typeFactor = shieldPrice->Factor;
+                typeFactor = shieldPrice->Data;
                 break;
             }
             case INVTYPE_WEAPONMAINHAND:
@@ -1565,7 +1564,7 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
                 if (!weaponPrice)
                     return 0;
 
-                typeFactor = weaponPrice->Factor;
+                typeFactor = weaponPrice->Data;
                 break;
             }
             default:
@@ -1573,7 +1572,7 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
         }
 
         normalSellPrice = false;
-        return (uint32)(qualityFactor * proto->Unk430_2 * proto->Unk430_1 * typeFactor * baseFactor);
+        return (uint32)(qualityPrice->Data * proto->Unk430_2 * proto->Unk430_1 * typeFactor * baseFactor);
     }
 }
 

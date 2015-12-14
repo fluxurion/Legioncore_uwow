@@ -72,7 +72,7 @@ uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32
     if (MSV <= 0)
         return AH_MINIMUM_DEPOSIT;
 
-    float multiplier = CalculatePct(float(entry->depositPercent), 3);
+    float multiplier = CalculatePct(float(entry->DepositRate), 3);
     uint32 timeHr = (((time / 60) / 60) / 12);
     uint32 deposit = uint32(((multiplier * MSV * count / 3) * timeHr * 3) * sWorld->getRate(RATE_AUCTION_DEPOSIT));
 
@@ -577,7 +577,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
 
                 if (itemRandProp)
                 {
-                    char* temp = itemRandProp->nameSuffix;
+                    auto temp = itemRandProp->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
                     //char* temp = itemRandProp->nameSuffix;
 
                     // dbc local name
@@ -645,7 +645,7 @@ void AuctionEntry::BuildAuctionInfo(std::vector<WorldPackets::AuctionHouse::Auct
 
 uint64 AuctionEntry::GetAuctionCut() const
 {
-    int64 cut = int64(CalculatePct(bid, auctionHouseEntry->cutPercent) * sWorld->getRate(RATE_AUCTION_CUT));
+    int64 cut = int64(CalculatePct(bid, auctionHouseEntry->ConsignmentRate) * sWorld->getRate(RATE_AUCTION_CUT));
     return cut > 0 ? cut : 0;
 }
 

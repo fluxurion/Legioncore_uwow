@@ -1433,7 +1433,7 @@ void LootTemplate::LootGroup::Process(Loot& loot) const
                 if(_proto->ItemSpecExist && loot.objType == 4)
                 {
                     bool specFind = false;
-                    std::list<uint32> specList = GetItemSpecsList(itr->itemid);
+                    std::list<uint32> specList = sDB2Manager.GetItemSpecsList(itr->itemid);
                     for (std::list<uint32>::const_iterator spec = specList.begin(); spec != specList.end(); ++spec)
                         if(specId == (*spec))
                         {
@@ -1615,7 +1615,7 @@ bool LootTemplate::LootGroup::ProcessPersonalInst(Loot& loot) const
                 if(_proto->ItemSpecExist)
                 {
                     bool specFind = false;
-                    std::list<uint32> specList = GetItemSpecsList(item->itemid);
+                    std::list<uint32> specList = sDB2Manager.GetItemSpecsList(item->itemid);
                     for (std::list<uint32>::const_iterator spec = specList.begin(); spec != specList.end(); ++spec)
                     {
                         if(specId == (*spec))
@@ -1798,7 +1798,7 @@ void LootTemplate::Process(Loot& loot, bool rate, uint8 groupId) const
                 if(_proto->ItemSpecExist && loot.objType == 4)
                 {
                     bool specFind = false;
-                    std::list<uint32> specList = GetItemSpecsList(i->itemid);
+                    std::list<uint32> specList = sDB2Manager.GetItemSpecsList(i->itemid);
                     for (std::list<uint32>::const_iterator spec = specList.begin(); spec != specList.end(); ++spec)
                         if(specId == (*spec))
                         {

@@ -3453,7 +3453,7 @@ public:
             return false;
         }
 
-        std::list<uint32> specList = GetItemSpecsList(itemId);
+        std::list<uint32> specList = sDB2Manager.GetItemSpecsList(itemId);
         for (std::list<uint32>::const_iterator spec = specList.begin(); spec != specList.end(); ++spec)
             handler->PSendSysMessage("GetItemSpecsList %u", (*spec));
 

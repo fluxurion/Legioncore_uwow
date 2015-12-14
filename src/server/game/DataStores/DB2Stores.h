@@ -26,16 +26,7 @@
 #include <boost/regex.hpp>
 #include <list>
 
-extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
-extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
-extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
-extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
-extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
-extern DB2Storage<CreatureDisplayInfoExtraEntry>    sCreatureDisplayInfoExtraStore;
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
-extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
-extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
-extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
 extern DB2Storage<AuctionHouseEntry>                sAuctionHouseStore;
@@ -53,19 +44,31 @@ extern DB2Storage<BattlePetSpeciesStateEntry>       sBattlePetSpeciesStateStore;
 extern DB2Storage<BattlePetSpeciesXAbilityEntry>    sBattlePetSpeciesXAbilityStore;
 extern DB2Storage<BattlePetStateEntry>              sBattlePetStateStore;
 extern DB2Storage<BroadcastTextEntry>               sBroadcastTextStore;
+extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
+extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
+extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
+extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
+extern DB2Storage<CreatureDisplayInfoExtraEntry>    sCreatureDisplayInfoExtraStore;
+extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
+extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
+extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
 extern DB2Storage<CurrencyTypesEntry>               sCurrencyTypesStore;
+extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
+extern DB2Storage<DurabilityCostsEntry>             sDurabilityCostsStore;
+extern DB2Storage<DurabilityQualityEntry>           sDurabilityQualityStore;
+extern DB2Storage<GameObjectDisplayInfoEntry>       sGameObjectDisplayInfoStore;
 extern DB2Storage<GameObjectsEntry>                 sGameObjectsStore;
 extern DB2Storage<GameTablesEntry>                  sGameTablesStore;
 extern DB2Storage<GarrAbilityEntry>                 sGarrAbilityStore;
 extern DB2Storage<GarrBuildingEntry>                sGarrBuildingStore;
 extern DB2Storage<GarrBuildingPlotInstEntry>        sGarrBuildingPlotInstStore;
 extern DB2Storage<GarrClassSpecEntry>               sGarrClassSpecStore;
+extern DB2Storage<GarrEncounterEntry>               sGarrEncounterStore;
+extern DB2Storage<GarrEncounterXMechanicEntry>      sGarrEncounterXMechanicStore;
 extern DB2Storage<GarrFollowerEntry>                sGarrFollowerStore;
 extern DB2Storage<GarrFollowerLevelXPEntry>         sGarrFollowerLevelXPStore;
 extern DB2Storage<GarrFollowerQualityEntry>         sGarrFollowerQualityStore;
 extern DB2Storage<GarrFollowerXAbilityEntry>        sGarrFollowerXAbilityStore;
-extern DB2Storage<GarrEncounterEntry>               sGarrEncounterStore;
-extern DB2Storage<GarrEncounterXMechanicEntry>      sGarrEncounterXMechanicStore;
 extern DB2Storage<GarrMechanicEntry>                sGarrMechanicStore;
 extern DB2Storage<GarrMechanicTypeEntry>            sGarrMechanicTypeStore;
 extern DB2Storage<GarrMissionEntry>                 sGarrMissionStore;
@@ -76,14 +79,39 @@ extern DB2Storage<GarrPlotEntry>                    sGarrPlotStore;
 extern DB2Storage<GarrPlotInstanceEntry>            sGarrPlotInstanceStore;
 extern DB2Storage<GarrSiteLevelEntry>               sGarrSiteLevelStore;
 extern DB2Storage<GarrSiteLevelPlotInstEntry>       sGarrSiteLevelPlotInstStore;
+extern DB2Storage<GuildPerkSpellsEntry>             sGuildPerkSpellsStore;
 extern DB2Storage<HeirloomEntry>                    sHeirloomStore;
 extern DB2Storage<HolidaysEntry>                    sHolidaysStore;
+extern DB2Storage<ImportPriceArmorEntry>            sImportPriceArmorStore;
+extern DB2Storage<ImportPriceQualityEntry>          sImportPriceQualityStore;
+extern DB2Storage<ImportPriceShieldEntry>           sImportPriceShieldStore;
+extern DB2Storage<ImportPriceWeaponEntry>           sImportPriceWeaponStore;
 extern DB2Storage<ItemAppearanceEntry>              sItemAppearanceStore;
+extern DB2Storage<ItemArmorQualityEntry>            sItemArmorQualityStore;
+extern DB2Storage<ItemArmorShieldEntry>             sItemArmorShieldStore;
+extern DB2Storage<ItemArmorTotalEntry>              sItemArmorTotalStore;
+extern DB2Storage<ItemClassEntry>                   sItemClassStore;
 extern DB2Storage<ItemCurrencyCostEntry>            sItemCurrencyCostStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageAmmoStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageOneHandCasterStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageOneHandStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageRangedStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageThrownStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageTwoHandCasterStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageTwoHandStore;
+extern DB2Storage<ItemDamageEntry>                  sItemDamageWandStore;
+extern DB2Storage<ItemDisenchantLootEntry>          sItemDisenchantLootStore;
 extern DB2Storage<ItemEffectEntry>                  sItemEffectStore;
 extern DB2Storage<ItemEntry>                        sItemStore;
 extern DB2Storage<ItemExtendedCostEntry>            sItemExtendedCostStore;
+extern DB2Storage<ItemLimitCategoryEntry>           sItemLimitCategoryStore;
+extern DB2Storage<ItemPriceBaseEntry>               sItemPriceBaseStore;
+extern DB2Storage<ItemRandomPropertiesEntry>        sItemRandomPropertiesStore;
+extern DB2Storage<ItemRandomSuffixEntry>            sItemRandomSuffixStore;
+extern DB2Storage<ItemSetSpellEntry>                sItemSetSpellStore;
 extern DB2Storage<ItemSparseEntry>                  sItemSparseStore;
+extern DB2Storage<ItemSpecEntry>                    sItemSpecStore;
+extern DB2Storage<ItemSpecOverrideEntry>            sItemSpecOverrideStore;
 extern DB2Storage<ItemToBattlePetSpeciesEntry>      sItemToBattlePetSpeciesStore;
 extern DB2Storage<ItemUpgradeEntry>                 sItemUpgradeStore;
 extern DB2Storage<KeyChainEntry>                    sKeyChainStore;
@@ -173,6 +201,9 @@ public:
     typedef std::unordered_map<uint32, AchievementEntry const*> AchievementParentContainer;
     typedef std::map<uint32 /*LoadOutID*/, std::vector<uint32>> CharacterLoadoutItemContainer;
     typedef std::unordered_map<uint32 /*Parent*/, std::vector<CriteriaTreeEntry const*>> CriteriaTreeContainer;
+    typedef std::vector<ItemSetSpellEntry const*> ItemSetSpells;
+    typedef std::unordered_map<uint32, ItemSetSpells> ItemSetSpellsContainer;
+    typedef std::unordered_map<uint32, std::list<uint32>> ItemSpecsContainer;
 
     static DB2Manager& Instance()
     {
@@ -216,11 +247,13 @@ public:
     AchievementEntry const* GetsAchievementByTreeList(uint32 criteriaTree);
     std::vector<uint32> GetItemLoadOutItemsByClassID(uint32 classID);
     std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
-
+    std::list<uint32> GetItemSpecsList(uint32 itemID);
+    void AddSpecdtoItem(uint32 itemID, uint32 specID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
     BattlePetSpeciesStatesContainer _battlePetSpeciesStates;
+    ItemSetSpellsContainer _itemSetSpells;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -251,6 +284,7 @@ private:
     AchievementParentContainer _achievementParentList;
     CharacterLoadoutItemContainer _characterLoadoutItem;
     CriteriaTreeContainer _criteriaTree;
+    ItemSpecsContainer _itemSpec;
 };
 
 #define sDB2Manager DB2Manager::Instance()

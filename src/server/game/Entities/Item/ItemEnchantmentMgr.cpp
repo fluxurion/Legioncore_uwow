@@ -219,11 +219,11 @@ bool CheckSpecProp(uint32 ench, uint32 type, uint32 SpecID)
     {
         if(ItemRandomPropertiesEntry const* random_id = sItemRandomPropertiesStore.LookupEntry(ench))
         {
-            for (uint32 slot = 0; slot < MAX_ITEM_ENCHANTMENT_EFFECTS; ++slot)
+            for (uint32 slot = 0; slot < MAX_ITEM_ENCHANTS; ++slot)
             {
-                if(!random_id->enchant_id[slot])
+                if(!random_id->Enchantment[slot])
                     continue;
-                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->enchant_id[slot]))
+                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
                 {
                     for (int s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
                     {
@@ -242,11 +242,11 @@ bool CheckSpecProp(uint32 ench, uint32 type, uint32 SpecID)
     {
         if(ItemRandomSuffixEntry const* random_id = sItemRandomSuffixStore.LookupEntry(ench))
         {
-            for (uint32 slot = 0; slot < 5; ++slot)
+            for (uint32 slot = 0; slot < MAX_ITEM_ENCHANTS; ++slot)
             {
-                if(!random_id->enchant_id[slot])
+                if(!random_id->Enchantment[slot])
                     continue;
-                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->enchant_id[slot]))
+                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
                 {
                     for (int s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
                     {

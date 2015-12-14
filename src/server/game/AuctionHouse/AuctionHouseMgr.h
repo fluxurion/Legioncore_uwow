@@ -81,7 +81,7 @@ struct AuctionEntry
 
     // helpers
     uint32 GetHouseId() const { return auctionHouseEntry->houseId; }
-    uint32 GetHouseFaction() const { return auctionHouseEntry->faction; }
+    uint32 GetHouseFaction() const { return auctionHouseEntry->FactionID; }
     uint64 GetAuctionCut() const;
     uint64 GetAuctionOutBid() const;
     void BuildAuctionInfo(std::vector<WorldPackets::AuctionHouse::AuctionItem>& items, bool listAuctionItems) const;

@@ -32,7 +32,6 @@
 #pragma pack(push, 1)
 
 #define MAX_MAP_DEPTH -5000 // Temporary define until max depth is found somewhere (adt?)
-#define MAX_OUTFIT_ITEMS 24
 #define MAX_MASTERY_SPELLS 2
 #define MAX_PERKS_COUNT 4
 #define MAX_FACTION_RELATIONS 4
@@ -45,7 +44,6 @@
 #define MAX_EFFECT_MASK 4294967295
 #define MAX_POWERS_FOR_SPELL 4
 #define MAX_SHAPESHIFT_SPELLS 8
-#define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 #define MAX_VEHICLE_SEATS 8
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
@@ -134,15 +132,6 @@ struct AreaTriggerEntry
     //uint32 m_areaTriggerActionSetID                       // 15       m_areaTriggerActionSetID
     //uint32 m_flags                                        // 16       m_flags
     //uint32 unk                                                        on 6.0.3 19243
-};
-
-struct AuctionHouseEntry
-{
-    uint32    houseId;                                      // 0 index
-    uint32    faction;                                      // 1 id of faction.dbc for player factions associated with city
-    uint32    depositPercent;                               // 2 1/3 from real
-    uint32    cutPercent;                                   // 3
-    //char*     name;                                       // 4
 };
 
 struct BannedAddOnsEntry
@@ -332,18 +321,6 @@ struct DungeonEncounterEntry
     //uint32 flags;                                         // 8
 };
 
-struct DurabilityCostsEntry
-{
-    uint32    Itemlvl;                                      // 0
-    uint32    multiplier[29];                               // 1-29
-};
-
-struct DurabilityQualityEntry
-{
-    uint32    Id;                                           // 0
-    float     quality_mod;                                  // 1
-};
-
 struct EmotesEntry
 {
     uint32  Id;                                             // 0
@@ -442,22 +419,6 @@ struct FactionTemplateEntry
         return hostileMask == 0 && friendlyMask == 0;
     }
     bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
-};
-
-struct GameObjectDisplayInfoEntry
-{
-    uint32          ID;                                     // 0
-    uint32          FileDataID;                             // 1
-    //uint32        Sound[10];                              // 2-11
-    float   minX;
-    float   minY;
-    float   minZ;
-    float   maxX;
-    float   maxY;
-    float   maxZ;
-    //uint32        ObjectEffectPackageID;                  // 18
-    //float         OverrideLootEffectScale;                // 19
-    //float         OverrideNameScale;                      // 20
 };
 
 struct GemPropertiesEntry
@@ -576,52 +537,6 @@ struct GtBattlePetTypeDamageModEntry
     float value;
 };
 
-struct GuildPerkSpellsEntry
-{
-    //uint32 Id;
-    uint32 Level;
-    uint32 SpellId;
-};
-
-// ImportPriceArmor.dbc
-struct ImportPriceArmorEntry
-{
-    uint32 InventoryType;                                   // 1        Id/InventoryType
-    float ClothFactor;                                      // 2        Price factor cloth
-    float LeatherFactor;                                    // 3        Price factor leather
-    float MailFactor;                                       // 4        Price factor mail
-    float PlateFactor;                                      // 5        Price factor plate
-};
-
-// ImportPriceQuality.dbc
-struct ImportPriceQualityEntry
-{
-    uint32 QualityId;                                       // 1        Quality Id (+1?)
-    float Factor;                                           // 2        Price factor
-};
-
-// ImportPriceShield.dbc
-struct ImportPriceShieldEntry
-{
-    uint32 Id;                                              // 1        Unk id (only 1 and 2)
-    float Factor;                                           // 2        Price factor
-};
-
-// ImportPriceWeapon.dbc
-struct ImportPriceWeaponEntry
-{
-    uint32 Id;                                              // 1        Unk id (mainhand - 0, offhand - 1, weapon - 2, 2hweapon - 3, ranged/rangedright/relic - 4)
-    float Factor;                                           // 2        Price factor
-};
-
-// ItemPriceBase.dbc
-struct ItemPriceBaseEntry
-{
-    uint32 ItemLevel;                                       // 2        Item level (1 - 1000)
-    float ArmorFactor;                                      // 3        Price factor for armor
-    float WeaponFactor;                                     // 4        Price factor for weapons
-};
-
 struct GtItemSocketCostPerLevelEntry
 {
     float    ratio;
@@ -632,103 +547,6 @@ struct GtNPCManaCostScalerEntry
     float    ratio;
 };
 
-struct ItemReforgeEntry
-{
-    uint32 Id;
-    uint32 SourceStat;
-    float SourceMultiplier;
-    uint32 FinalStat;
-    float FinalMultiplier;
-};
-
-// common struct for:
-// ItemDamageAmmo.dbc
-// ItemDamageOneHand.dbc
-// ItemDamageOneHandCaster.dbc
-// ItemDamageRanged.dbc
-// ItemDamageThrown.dbc
-// ItemDamageTwoHand.dbc
-// ItemDamageTwoHandCaster.dbc
-// ItemDamageWand.dbc
-struct ItemDamageEntry
-{
-    uint32    Id;                                             // 0 item level
-    float     DPS[7];                                         // 1-7 multiplier for item quality
-    uint32    Id2;                                            // 8 item level
-};
-
-struct ItemArmorQualityEntry
-{
-    uint32      ID;                                           // 0 item level
-    float       QualityMod[7];                                // 1-7 multiplier for item quality
-    uint32      ItemLevel;                                    // 8 item level
-};
-
-struct ItemArmorShieldEntry
-{
-    uint32      ID;                                           // 0 item level
-    uint32      ItemLevel;                                    // 1 item level
-    float       Quality[7];                                   // 2-8 quality
-};
-
-struct ItemArmorTotalEntry
-{
-    uint32    Id;                                             // 0 item level
-    uint32    Id2;                                            // 1 item level
-    float     Value[4];                                       // 2-5 multiplier for armor types (cloth...plate)
-};
-
-// ItemClass.dbc
-struct ItemClassEntry
-{
-    uint32    Class;                                          // 1 item class id
-    float     PriceFactor;                                    // 2 used to calculate certain prices
-  //char*     Name;                                           // 3 class name
-};
-
-struct ItemBagFamilyEntry
-{
-    uint32   ID;                                            // 0
-    //char*     name;                                       // 1        m_name_lang
-};
-
-struct ItemDisenchantLootEntry
-{
-    uint32 Id;
-    uint32 ItemClass;
-    int32 ItemSubClass;
-    uint32 ItemQuality;
-    uint32 MinItemLevel;
-    uint32 MaxItemLevel;
-    uint32 RequiredDisenchantSkill;
-};
-
-struct ItemLimitCategoryEntry
-{
-    uint32      ID;                                         // 0 Id
-    //char*     name;                                       // 1        m_name_lang
-    uint32      maxCount;                                   // 2,       m_quantity max allowed equipped as item or in gem slot
-    uint32      mode;                                       // 3,       m_flags 0 = have, 1 = equip (enum ItemLimitCategoryMode)
-};
-
-struct ItemRandomPropertiesEntry
-{
-    uint32    ID;                                           // 0        m_ID
-    //char* internalName                                    // 1        m_Name
-    uint32    enchant_id[MAX_ITEM_ENCHANTMENT_EFFECTS];     // 2-4      m_Enchantment
-                                                            // 5-6      unused
-    char* nameSuffix;                                       // 7        m_name_lang
-};
-
-struct ItemRandomSuffixEntry
-{
-    uint32    ID;                                           // 0        m_ID
-    char* nameSuffix;                                       // 1        m_name_lang
-                                                            // 2        m_internalName
-    uint32    enchant_id[5];                                // 3-7      m_enchantment
-    uint32    prefix[5];                                    // 8-12     m_allocationPct
-};
-
 struct ItemSetEntry
 {
     uint32      ID;                                         // 0
@@ -736,36 +554,6 @@ struct ItemSetEntry
     uint32    itemId[MAX_ITEM_SET_ITEMS];                   // 2-18     m_itemID
     uint32    required_skill_id;                            // 19       m_requiredSkill
     uint32    required_skill_value;                         // 20       m_requiredSkillRank
-};
-
-struct ItemSetSpellEntry
-{
-    uint32      ID;                                         // 0
-    uint32      ItemSetID;                                  // 1
-    uint32      SpellID;                                    // 2
-    uint32      Threshold;                                  // 3
-    uint32      ChrSpecID;                                  // 4
-};
-
-typedef std::vector<ItemSetSpellEntry const*> ItemSetSpells;
-typedef std::unordered_map<uint32, ItemSetSpells> ItemSetSpellsStore;
-
-struct ItemSpecEntry
-{
-    uint32      ID;                                         // 0
-    uint32      MinLevel;                                   // 1
-    uint32      MaxLevel;                                   // 2
-    uint32      ItemType;                                   // 3
-    uint32      PrimaryStat;                                // 4
-    uint32      SecondaryStat;                              // 5
-    uint32      SpecID;                                     // 6
-};
-
-struct ItemSpecOverrideEntry
-{
-    uint32      ID;                                         // 0
-    uint32      ItemID;                                     // 1
-    uint32      SpecID;                                     // 2
 };
 
 struct LFGDungeonEntry

@@ -30,6 +30,7 @@
 #define MAX_HOLIDAY_FLAGS 10
 #define MAX_ITEM_EXT_COST_ITEMS 5
 #define MAX_ITEM_EXT_COST_CURRENCIES 5
+#define MAX_ITEM_ENCHANTS 5
 #define MAX_EFFECT_PROPERTIES 6
 #define KEYCHAIN_SIZE 32
 #define MAX_OVERRIDE_SPELL 10
@@ -37,6 +38,7 @@
 #define MAX_ITEM_UPDGRADES 5
 #define MAX_SPELL_TOTEMS 2
 #define MAX_SPELL_REAGENTS 8
+#define MAX_OUTFIT_ITEMS 24
 
 #pragma pack(push, 1)
 
@@ -69,6 +71,16 @@ struct AreaGroupMemberEntry
     uint32      ID;                                                 // 0
     uint32      AreaGroupID;                                        // 1
     uint32      AreaID;                                             // 2
+};
+
+struct AuctionHouseEntry
+{
+    LocalizedString* Name;                                  // 0
+    uint32      FactionID;                                  // 1
+    uint32      DepositRate;                                // 2
+    uint32      ConsignmentRate;                            // 3
+
+    uint32      houseId; // temp - for compile
 };
 
 struct ArmorLocationEntry
@@ -394,8 +406,156 @@ struct DestructibleModelDataEntry
     uint8       EjectDirection;                             // 20
     uint8       DoNotHighlight;                             // 21
     uint8       HealEffect;                                 // 22
+};
+
+struct DurabilityCostsEntry
+{
+    uint16      WeaponSubstructCost[21];                    // 0-20
+    uint16      ArmorSubstructCost[8];                      // 21-29
+};
+
+struct DurabilityQualityEntry
+{
+    float       Data;                                       // 0
+};
+
+struct GameObjectDisplayInfoEntry
+{
+    uint32      FileDataID;                             // 0
+    DBCPosition3D GeoBoxMin;                            // 1-3
+    DBCPosition3D GeoBoxMax;                            // 4-6
+    float       OverrideLootEffectScale;                // 7
+    float       OverrideNameScale;                      // 8
+    uint16      Sound[10];                              // 9-18
+    int16       ObjectEffectPackageID;                  // 19
+};
+
+struct ImportPriceArmorEntry
+{
+    float       ClothModifier;                          // 0
+    float       LeatherModifier;                        // 1
+    float       ChainModifier;                          // 2
+    float       PlateModifier;                          // 3
+};
+
+struct ImportPriceQualityEntry
+{
+    float       Data;                                   // 0
+};
+
+struct ImportPriceShieldEntry
+{
+    float       Data;                                   // 0
+};
+
+struct ImportPriceWeaponEntry
+{
+    float       Data;                                   // 0
+};
+
+struct ItemArmorQualityEntry
+{
+    float       QualityMod[7];                          // 0 - 6
+    uint16      ItemLevel;                              // 7
+};
+
+struct ItemArmorShieldEntry
+{
+    float       QualityMod[7];                          // 0 - 6
+    uint16      ItemLevel;                              // 7
+};
+
+struct ItemArmorTotalEntry
+{
+    float       Value[4];                               // 0 - 3
+    uint32      ItemLevel;                              // 4
+};
+
+struct ItemDamageEntry
+{
+    float       Quality[7];                             // 0 - 6
+    uint32      ItemLevel;                              // 7
+};
+
+struct ItemClassEntry
+{
+    uint32      Class;                                  // 0
+    float       PriceFactor;                            // 1
+    LocalizedString* Name;                              // 2
+};
+
+struct ItemDisenchantLootEntry
+{
+    uint16      MinLevel;                               // 0
+    uint16      MaxLevel;                               // 1
+    uint16      SkillRequired;                          // 2
+    uint16      ItemClass;                              // 3
+    int16       ItemSubClass;                           // 4
+    uint16      Quality;                                // 5
+
+    uint32 Id; // temp - for compile
+};
+
+struct ItemLimitCategoryEntry
+{
+    LocalizedString* NameLang;                          // 0
+    uint8       Quantity;                               // 1
+    uint8       Flags;                                  // 2
+};
+
+struct ItemPriceBaseEntry
+{
+    float       Armor;                                  // 0
+    float       Weapon;                                 // 1
+    uint16      ItemLevel;                              // 2
+};
+
+struct ItemRandomPropertiesEntry
+{
+    LocalizedString* Name;                              // 0
+    uint32      Enchantment[MAX_ITEM_ENCHANTS];         // 1 - 5
 
     uint32 ID; // temp - for compile
+};
+
+struct ItemRandomSuffixEntry
+{
+    LocalizedString* Name;                              // 0
+    LocalizedString* IternalName;                       // 1
+    uint32      Enchantment[MAX_ITEM_ENCHANTS];         // 2 - 6
+    uint32      AllocationPct[MAX_ITEM_ENCHANTS];       // 7 - 11
+
+    uint32 ID; // temp - for compile
+};
+
+struct ItemSpecOverrideEntry
+{
+    uint32      ItemID;                                 // 0
+    uint16      SpecID;                                 // 1
+};
+
+struct ItemSpecEntry
+{
+    uint16      SpecID;                                 // 0
+    uint8       MinLevel;                               // 1
+    uint8       MaxLevel;                               // 2
+    uint8       ItemType;                               // 3
+    uint8       PrimaryStat;                            // 4
+    uint8       SecondaryStat;                          // 5
+};
+
+struct ItemSetSpellEntry
+{
+    uint32      SpellID;                                // 0
+    uint16      ItemSetID;                              // 1
+    uint16      ChrSpecID;                              // 2
+    uint8       Threshold;                              // 3
+};
+
+struct GuildPerkSpellsEntry
+{
+    uint32      SpellId;
+    uint8       Level;
 };
 
 struct HeirloomEntry

@@ -55,12 +55,12 @@ uint32 ItemTemplate::GetArmor(uint32 itemLevel) const
     if (!shield)
         return 0;
 
-    return uint32(shield->Quality[quality] + 0.5f);
+    return uint32(shield->QualityMod[quality] + 0.5f);
 }
 
-DBCStorage<ItemDamageEntry>* ItemTemplate::GetItemDamageStore() const
+DB2Storage<ItemDamageEntry>* ItemTemplate::GetItemDamageStore() const
 {
-    DBCStorage<ItemDamageEntry>* store = NULL;
+    DB2Storage<ItemDamageEntry>* store = nullptr;
 
     // get the right store here
     if (GetInventoryType() > INVTYPE_RANGEDRIGHT)
@@ -120,7 +120,7 @@ void ItemTemplate::GetDamage(uint32 itemLevel, float& minDamage, float& maxDamag
     if (GetClass() != ITEM_CLASS_WEAPON || quality > ITEM_QUALITY_ARTIFACT)
         return;
 
-    DBCStorage<ItemDamageEntry>* store = GetItemDamageStore();
+    DB2Storage<ItemDamageEntry>* store = GetItemDamageStore();
     if (!store)
         return;
 
@@ -128,7 +128,7 @@ void ItemTemplate::GetDamage(uint32 itemLevel, float& minDamage, float& maxDamag
     if (!damageInfo)
         return;
 
-    float dps = damageInfo->DPS[quality];
+    float dps = damageInfo->Quality[quality];
     float avgDamage = dps * GetDelay() * 0.001f;
     minDamage = (GetStatScalingFactor() * -0.5f + 1.0f) * avgDamage;
     maxDamage = floor(float(avgDamage * (GetStatScalingFactor() * 0.5f + 1.0f) + 0.5f));
@@ -136,7 +136,7 @@ void ItemTemplate::GetDamage(uint32 itemLevel, float& minDamage, float& maxDamag
 
 uint32 ItemTemplate::GetDPS(uint32 itemLevel) const
 {
-    DBCStorage<ItemDamageEntry>* store = GetItemDamageStore();
+    DB2Storage<ItemDamageEntry>* store = GetItemDamageStore();
     if (!store)
         return 0;
 
@@ -144,7 +144,7 @@ uint32 ItemTemplate::GetDPS(uint32 itemLevel) const
     if (!damageInfo)
         return 0;
 
-    return damageInfo->DPS[GetQuality() != ITEM_QUALITY_HEIRLOOM ? GetQuality() : ITEM_QUALITY_RARE];
+    return damageInfo->Quality[GetQuality() != ITEM_QUALITY_HEIRLOOM ? GetQuality() : ITEM_QUALITY_RARE];
 }
 
 bool ItemTemplate::CanWinForPlayer(Player const* player) const

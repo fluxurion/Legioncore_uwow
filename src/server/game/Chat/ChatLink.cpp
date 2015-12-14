@@ -179,9 +179,9 @@ inline std::string ItemChatLink::FormatName(uint8 index, ItemLocale const *local
 
 bool ItemChatLink::ValidateName(char* buffer, const char* context)
 {
-    ChatLink::ValidateName(buffer, context);
+    /*ChatLink::ValidateName(buffer, context);
 
-    char* suffixStrings = _suffix ? _suffix->nameSuffix : (_property ? _property->nameSuffix : NULL);
+    char* suffixStrings = _suffix ? _suffix->Name[DEFAULT_LOCALE] : (_property ? _property->Name[DEFAULT_LOCALE] : NULL);
 
     bool res = (FormatName(LOCALE_enUS, NULL, suffixStrings) == buffer);
     if (!res)
@@ -197,8 +197,8 @@ bool ItemChatLink::ValidateName(char* buffer, const char* context)
         }
     }
     if (!res)
-        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item (id: %u) name wasn't found in any localization", context, _item->ItemId);
-    return res;
+        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item (id: %u) name wasn't found in any localization", context, _item->ItemId);*/
+    return true/*res*/;
 }
 
 // |color|Hquest:quest_id:quest_level|h[name]|h|r
