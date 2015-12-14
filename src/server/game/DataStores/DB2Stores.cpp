@@ -945,6 +945,8 @@ std::vector<uint32> DB2Manager::GetItemLoadOutItemsByClassID(uint32 classID)
         case CLASS_DRUID: return _characterLoadoutItem[549];
         case CLASS_DEMON_HUNTER: return _characterLoadoutItem[512]; // update id
     }
+
+    return _characterLoadoutItem[536];
 }
 
 std::vector<CriteriaTreeEntry const*> const* DB2Manager::GetCriteriaTreeList(uint32 parent)

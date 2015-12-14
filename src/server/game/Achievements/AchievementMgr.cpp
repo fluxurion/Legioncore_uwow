@@ -1621,11 +1621,11 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, referencePlayer->getLevel(), referencePlayer, PROGRESS_SET, progressMap, progress);
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_REACH_SKILL_LEVEL:                
-                if (uint32 skillvalue = referencePlayer->GetBaseSkillValue(criteria->reach_skill_level.skillID))
+                if (uint32 skillvalue = referencePlayer->GetBaseSkillValue(criteria->Asset.SkillID))
                     canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, skillvalue, referencePlayer, PROGRESS_SET, progressMap, progress);
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LEVEL:             
-                if (uint32 maxSkillvalue = referencePlayer->GetPureMaxSkillValue(criteria->learn_skill_level.skillID))
+                if (uint32 maxSkillvalue = referencePlayer->GetPureMaxSkillValue(criteria->Asset.SkillID))
                     canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, maxSkillvalue, referencePlayer, PROGRESS_SET, progressMap, progress);
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUEST_COUNT:
@@ -1670,7 +1670,7 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 for (RewardedQuestSet::const_iterator itr = rewQuests.begin(); itr != rewQuests.end(); ++itr)
                 {
                     Quest const* quest = sObjectMgr->GetQuestTemplate(*itr);
-                    if (quest && quest->GetZoneOrSort() >= 0 && uint32(quest->GetZoneOrSort()) == criteria->complete_quests_in_zone.zoneID)
+                    if (quest && quest->GetZoneOrSort() >= 0 && uint32(quest->GetZoneOrSort()) == criteria->Asset.ZoneID)
                         ++counter;
                 }
                 canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, counter, referencePlayer, PROGRESS_SET, progressMap, progress);
@@ -1695,7 +1695,7 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_GAIN_REPUTATION:
                 {
-                    int32 reputation = referencePlayer->GetReputationMgr().GetReputation(criteria->gain_reputation.factionID);
+                    int32 reputation = referencePlayer->GetReputationMgr().GetReputation(criteria->Asset.FactionID);
                     if (reputation > 0)
                         canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, reputation, referencePlayer, PROGRESS_SET, progressMap, progress);
                     break;
@@ -1711,7 +1711,7 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 {
                     SkillLineAbilityMapBounds bounds = sSpellMgr->GetSkillLineAbilityMapBounds(spellIter->first);
                     for (SkillLineAbilityMap::const_iterator skillIter = bounds.first; skillIter != bounds.second; ++skillIter)
-                        if (skillIter->second->SkillLine == criteria->learn_skillline_spell.skillLine)
+                        if (skillIter->second->SkillLine == criteria->Asset.SkillLine)
                             spellCount++;
                 }
                 canComplete = SetCriteriaProgress(achievement, criteriaTree, criteria, spellCount, referencePlayer, PROGRESS_SET, progressMap, progress);
@@ -1744,7 +1744,7 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_TEAM_RATING:
                 {
-                    uint32 reqTeamType = criteria->highest_team_rating.teamtype;
+                    uint32 reqTeamType = criteria->Asset.TeamType;
 
                     if (miscValue1)
                     {
@@ -1767,7 +1767,7 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
                 break;
             case ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_PERSONAL_RATING:
             {
-                uint32 reqTeamType = criteria->highest_personal_rating.teamtype;
+                uint32 reqTeamType = criteria->Asset.TeamType;
 
                 if (miscValue1)
                 {
@@ -3459,37 +3459,30 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
         case ACHIEVEMENT_CRITERIA_TYPE_OWN_HEIRLOOMS:
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_ACHIEVEMENT:
-            if (m_completedAchievements.find(criteria->complete_achievement.linkedAchievement) == m_completedAchievements.end())
+            if (m_completedAchievements.find(criteria->Asset.AchievementID) == m_completedAchievements.end())
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_WIN_BG:
-            if (!miscValue1 || criteria->win_bg.bgMapID != referencePlayer->GetMapId())
+            if (!miscValue1 || criteria->Asset.MapID != referencePlayer->GetMapId())
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE:
-            if (!miscValue1 || criteria->kill_creature.creatureID != miscValue1)
+            if (!miscValue1 || criteria->Asset.CreatureID != miscValue1)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_REACH_SKILL_LEVEL:
-            // update at loading or specific skill update
-            if (miscValue1 && miscValue1 != criteria->reach_skill_level.skillID)
-                return false;
-            break;
         case ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LEVEL:
             // update at loading or specific skill update
-            if (miscValue1 && miscValue1 != criteria->learn_skill_level.skillID)
+            if (miscValue1 && miscValue1 != criteria->Asset.SkillID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE:
-            if (miscValue1 && miscValue1 != criteria->complete_quests_in_zone.zoneID)
+            if (miscValue1 && miscValue1 != criteria->Asset.ZoneID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_BATTLEGROUND:
-            if (!miscValue1 || referencePlayer->GetMapId() != criteria->complete_battleground.mapID)
-                return false;
-            break;
         case ACHIEVEMENT_CRITERIA_TYPE_DEATH_AT_MAP:
-            if (!miscValue1 || referencePlayer->GetMapId() != criteria->death_at_map.mapID)
+            if (!miscValue1 || referencePlayer->GetMapId() != criteria->Asset.MapID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_DEATH:
@@ -3554,12 +3547,12 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                     return false;
 
                 //FIXME: work only for instances where max == min for players
-                if (((InstanceMap*)map)->GetMaxPlayers() != criteria->death_in_dungeon.manLimit)
+                if (((InstanceMap*)map)->GetMaxPlayers() != criteria->Asset.ManLimit)
                     return false;
                 break;
             }
         case ACHIEVEMENT_CRITERIA_TYPE_KILLED_BY_CREATURE:
-            if (!miscValue1 || miscValue1 != criteria->killed_by_creature.creatureEntry)
+            if (!miscValue1 || miscValue1 != criteria->Asset.CreatureID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_KILLED_BY_PLAYER:
@@ -3571,7 +3564,7 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM:
-            if (!miscValue1 || miscValue2 != criteria->death_from.type)
+            if (!miscValue1 || miscValue2 != criteria->Asset.EnviromentalDamageType)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUEST:
@@ -3579,13 +3572,13 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                 // if miscValues != 0, it contains the questID.
                 if (miscValue1)
                 {
-                    if (miscValue1 != criteria->complete_quest.questID)
+                    if (miscValue1 != criteria->Asset.QuestID)
                         return false;
                 }
                 else
                 {
                     // login case.
-                    if (!referencePlayer->GetQuestRewardStatus(criteria->complete_quest.questID))
+                    if (!referencePlayer->GetQuestRewardStatus(criteria->Asset.QuestID))
                         return false;
                 }
 
@@ -3596,42 +3589,39 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
             }
         case ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET:
         case ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET2:
-            if (!miscValue1 || miscValue1 != criteria->be_spell_target.spellID)
-                return false;
-            break;
         case ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL:
         case ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL2:
-            if (!miscValue1 || miscValue1 != criteria->cast_spell.spellID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.SpellID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_LEARN_SPELL:
-            if (miscValue1 && miscValue1 != criteria->learn_spell.spellID)
+            if (miscValue1 && miscValue1 != criteria->Asset.SpellID)
                 return false;
 
-            if (!referencePlayer->HasSpell(criteria->learn_spell.spellID))
+            if (!referencePlayer->HasSpell(criteria->Asset.SpellID))
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE:
             // miscValue1 = loot_type (note: 0 = LOOT_CORPSE and then it ignored)
             // miscValue2 = count of item loot
-            if (!miscValue1 || !miscValue2 || miscValue1 != criteria->loot_type.lootType)
+            if (!miscValue1 || !miscValue2 || miscValue1 != criteria->Asset.LootType)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_OWN_ITEM:
-            if (miscValue1 && criteria->own_item.itemID != miscValue1)
+            if (miscValue1 && criteria->Asset.ItemID != miscValue1)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_USE_ITEM:
-            if (!miscValue1 || criteria->use_item.itemID != miscValue1)
+            if (!miscValue1 || criteria->Asset.ItemID != miscValue1)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM:
-            if (!miscValue1 || miscValue1 != criteria->own_item.itemID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.ItemID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA:
             {
-                WorldMapOverlayEntry const* worldOverlayEntry = sWorldMapOverlayStore.LookupEntry(criteria->explore_area.areaReference);
+                WorldMapOverlayEntry const* worldOverlayEntry = sWorldMapOverlayStore.LookupEntry(criteria->Asset.AreaID);
                 if (!worldOverlayEntry)
                     break;
 
@@ -3666,19 +3656,19 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                 break;
             }
         case ACHIEVEMENT_CRITERIA_TYPE_GAIN_REPUTATION:
-            if (miscValue1 && miscValue1 != criteria->gain_reputation.factionID)
+            if (miscValue1 && miscValue1 != criteria->Asset.FactionID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_EQUIP_EPIC_ITEM:
             // miscValue1 = itemid miscValue2 = itemSlot
-            if (!miscValue1 || miscValue2 != criteria->equip_epic_item.itemSlot)
+            if (!miscValue1 || miscValue2 != criteria->Asset.ItemSlot)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_ROLL_NEED_ON_LOOT:
         case ACHIEVEMENT_CRITERIA_TYPE_ROLL_GREED_ON_LOOT:
             {
                 // miscValue1 = itemid miscValue2 = diced value
-                if (!miscValue1 || miscValue2 != criteria->roll_greed_on_loot.rollValue)
+                if (!miscValue1 || miscValue2 != criteria->Asset.RollValue)
                     return false;
 
                 ItemTemplate const* proto = sObjectMgr->GetItemTemplate(uint32(miscValue1));
@@ -3687,7 +3677,7 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                 break;
             }
         case ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE:
-            if (!miscValue1 || miscValue1 != criteria->do_emote.emoteID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.EmoteID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_DAMAGE_DONE:
@@ -3707,19 +3697,19 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_EQUIP_ITEM:
             // miscValue1 = item_id
-            if (!miscValue1 || miscValue1 != criteria->equip_item.itemID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.ItemID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT:
-            if (!miscValue1 || miscValue1 != criteria->use_gameobject.goEntry)
+            if (!miscValue1 || miscValue1 != criteria->Asset.GoEntry)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_FISH_IN_GAMEOBJECT:
-            if (!miscValue1 || miscValue1 != criteria->fish_in_gameobject.goEntry)
+            if (!miscValue1 || miscValue1 != criteria->Asset.GoEntry)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS:
-            if (miscValue1 && miscValue1 != criteria->learn_skillline_spell.skillLine)
+            if (miscValue1 && miscValue1 != criteria->Asset.SkillLine)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_LOOT_EPIC_ITEM:
@@ -3733,68 +3723,67 @@ bool AchievementMgr<T>::RequirementsSatisfied(AchievementEntry const* achievemen
                 break;
             }
         case ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LINE:
-            if (miscValue1 && miscValue1 != criteria->learn_skill_line.skillLine)
+            if (miscValue1 && miscValue1 != criteria->Asset.SkillLine)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_HK_CLASS:
-            if (!miscValue1 || miscValue1 != criteria->hk_class.classID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.ClassID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_HK_RACE:
-            if (!miscValue1 || miscValue1 != criteria->hk_race.raceID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.RaceID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_BG_OBJECTIVE_CAPTURE:
-            if (!miscValue1 || miscValue1 != criteria->bg_objective.objectiveId)
+            if (!miscValue1 || miscValue1 != criteria->Asset.ObjectiveID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_HONORABLE_KILL_AT_AREA:
-            if (!miscValue1 || miscValue1 != criteria->honorable_kill_at_area.areaID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.AreaID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_CURRENCY:
-            if (!miscValue1 || !miscValue2 || int64(miscValue2) < 0
-                || miscValue1 != criteria->currencyGain.currency)
+            if (!miscValue1 || !miscValue2 || int64(miscValue2) < 0 || miscValue1 != criteria->Asset.CurrencyID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_INSTANSE_MAP_ID:
-            if (!miscValue1 || miscValue1 != criteria->finish_instance.mapID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.MapID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_WIN_ARENA:
-            if (!miscValue1 || miscValue1 != criteria->win_arena.mapID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.MapID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_RAID:
-            if (!miscValue1 || miscValue1 != criteria->complete_raid.groupSize)
+            if (!miscValue1 || miscValue1 != criteria->Asset.RaidSize)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_PLAY_ARENA:
-            if (!miscValue1 || miscValue1 != criteria->play_arena.mapID)
+            if (!miscValue1 || miscValue1 != criteria->Asset.MapID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_OWN_RANK:
-            if (!miscValue1 || miscValue1 != criteria->own_rank.rank)
+            if (!miscValue1 || miscValue1 != criteria->Asset.rank)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT:
         case ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT_2:
-            if (!miscValue1 || miscValue1 != criteria->script_event.unkValue)
+            if (!miscValue1 || miscValue1 != criteria->Asset.ScriptDataVal)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_ADD_BATTLE_PET_JOURNAL:
-            if (!miscValue1 || miscValue1 != criteria->battle_pet_journal.add_pet)
+            if (!miscValue1 || miscValue1 != criteria->Asset.AddPet)
                 return false;
         case ACHIEVEMENT_CRITERIA_TYPE_BATTLEPET_LEVEL_UP:
-            if (!miscValue1 || miscValue1 != criteria->battlepet_level.level_up)
+            if (!miscValue1 || miscValue1 != criteria->Asset.LevelUP)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_PLACE_GARRISON_BUILDING:
-            if (miscValue1 != criteria->garBuild.GarrBuildingID)
+            if (miscValue1 != criteria->Asset.GarrBuildingID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_CONSTRUCT_GARRISON_BUILDING:
-            if (miscValue1 != criteria->garBuild.GarrBuildingID)
+            if (miscValue1 != criteria->Asset.GarrBuildingID)
                 return false;
             break;
         case ACHIEVEMENT_CRITERIA_TYPE_START_GARRISON_MISSION:
