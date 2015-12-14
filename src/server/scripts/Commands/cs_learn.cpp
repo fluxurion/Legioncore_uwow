@@ -159,11 +159,8 @@ public:
             if (!skillInfo)
                 continue;
 
-            if ((skillInfo->categoryId == SKILL_CATEGORY_PROFESSION || skillInfo->categoryId == SKILL_CATEGORY_SECONDARY) &&
-                skillInfo->canLink)                             // only prof. with recipes have
-            {
+            if ((skillInfo->CategoryID == SKILL_CATEGORY_PROFESSION || skillInfo->CategoryID == SKILL_CATEGORY_SECONDARY) && skillInfo->CanLink) // only prof. with recipes have
                 HandleLearnSkillRecipesHelper(handler->GetSession()->GetPlayer(), skillInfo->id);
-            }
         }
 
         handler->SendSysMessage(LANG_COMMAND_LEARN_ALL_CRAFT);
@@ -202,12 +199,10 @@ public:
             if (!skillInfo)
                 continue;
 
-            if ((skillInfo->categoryId != SKILL_CATEGORY_PROFESSION &&
-                skillInfo->categoryId != SKILL_CATEGORY_SECONDARY) ||
-                !skillInfo->canLink)                            // only prof with recipes have set
+            if ((skillInfo->CategoryID != SKILL_CATEGORY_PROFESSION && skillInfo->CategoryID != SKILL_CATEGORY_SECONDARY) || !skillInfo->CanLink) // only prof with recipes have set
                 continue;
 
-            name = skillInfo->name;
+            name = skillInfo->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
             if (name.empty())
                 continue;
 

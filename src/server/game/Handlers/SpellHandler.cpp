@@ -616,7 +616,7 @@ void WorldSession::HandleRequestCategoryCooldowns(WorldPackets::Spells::RequestC
 
 void WorldSession::HandleUnlearnSkill(WorldPackets::Spells::UnlearnSkill& packet)
 {
-    SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(packet.SkillLine, GetPlayer()->getRace(), GetPlayer()->getClass());
+    SkillRaceClassInfoEntry const* rcEntry = sDB2Manager.GetSkillRaceClassInfo(packet.SkillLine, GetPlayer()->getRace(), GetPlayer()->getClass());
     if (!rcEntry || !(rcEntry->Flags & SKILL_FLAG_UNLEARNABLE))
         return;
 

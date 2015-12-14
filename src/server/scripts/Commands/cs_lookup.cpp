@@ -712,7 +712,7 @@ public:
             SkillLineEntry const* skillInfo = sSkillLineStore.LookupEntry(id);
             if (skillInfo)
             {
-                std::string name = skillInfo->name;
+                std::string name = skillInfo->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
                 if (name.empty())
                     continue;
 

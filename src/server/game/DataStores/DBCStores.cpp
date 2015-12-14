@@ -62,7 +62,6 @@ static AreaFlagByMapID sAreaFlagByMapID;
 static FactionTeamMap sFactionTeamMap;
 static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
 static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
-static std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> _specializationSpellsBySpec;
 
 MapDifficultyMap                            sMapDifficultyMap;
 PetFamilySpellsStore                        sPetFamilySpellsStore;
@@ -71,7 +70,6 @@ SpellEffectDiffMap                          sSpellEffectDiffMap;
 SpellEffectMap                              sSpellEffectMap;
 SpellRestrictionDiffMap                     sSpellRestrictionDiffMap;
 SpellSkillingList                           sSpellSkillingList;
-SkillRaceClassInfoMap                       SkillRaceClassInfoBySkill;
 ChrSpecializationByIndexArray               sChrSpecializationByIndexStore;
 TalentsByPosition                           sTalentByPos;
 MinorTalentByIndexArray                     sMinorTalentByIndexStore;
@@ -109,23 +107,8 @@ DBCStorage<PhaseEntry>                      sPhaseStores(PhaseEntryfmt);
 DBCStorage<PowerDisplayEntry>               sPowerDisplayStore(PowerDisplayEntryfmt);
 DBCStorage<PvPDifficultyEntry>              sPvPDifficultyStore(PvPDifficultyfmt);
 DBCStorage<QuestPOIBlobEntry>               sQuestPOIBlobStore(QuestPOIBlobfmt);
-DBCStorage<SkillLineAbilityEntry>           sSkillLineAbilityStore(SkillLineAbilityfmt);
-DBCStorage<SkillLineEntry>                  sSkillLineStore(SkillLinefmt);
-DBCStorage<SkillRaceClassInfoEntry>         sSkillRaceClassInfoStore(SkillRaceClassInfofmt);
-DBCStorage<SpecializationSpellEntry>        sSpecializationSpellStore(SpecializationSpellsfmt);
-DBCStorage<SpellAuraOptionsEntry>           sSpellAuraOptionsStore(SpellAuraOptionsEntryfmt);
-DBCStorage<SpellCastTimesEntry>             sSpellCastTimesStore(SpellCastTimefmt);
-DBCStorage<SpellCategoriesEntry>            sSpellCategoriesStore(SpellCategoriesEntryfmt);
-DBCStorage<SpellCategoryEntry>              sSpellCategoryStores(SpellCategoryEntryfmt);
-DBCStorage<SpellCooldownsEntry>             sSpellCooldownsStore(SpellCooldownsEntryfmt);
-DBCStorage<SpellDurationEntry>              sSpellDurationStore(SpellDurationfmt);
 DBCStorage<SpellEffectEntry>                sSpellEffectStore(SpellEffectEntryfmt);
-DBCStorage<SpellEffectScalingEntry>         sSpellEffectScalingStore(SpellEffectScalingEntryfmt);
 DBCStorage<SpellEntry>                      sSpellStore(SpellEntryfmt);
-DBCStorage<SpellEquippedItemsEntry>         sSpellEquippedItemsStore(SpellEquippedItemsEntryfmt);
-DBCStorage<SpellFocusObjectEntry>           sSpellFocusObjectStore(SpellFocusObjectfmt);
-DBCStorage<SpellInterruptsEntry>            sSpellInterruptsStore(SpellInterruptsEntryfmt);
-DBCStorage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore(SpellItemEnchantmentConditionfmt);
 DBCStorage<SpellItemEnchantmentEntry>       sSpellItemEnchantmentStore(SpellItemEnchantmentfmt);
 DBCStorage<SpellLevelsEntry>                sSpellLevelsStore(SpellLevelsEntryfmt);
 DBCStorage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore(SpellProcsPerMinuteEntryfmt);
@@ -452,41 +435,6 @@ void InitDBCCustomStores()
             ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by DBC data");
     }
 
-    for (uint32 i = 1; i < sSpellStore.GetNumRows(); ++i)
-    {
-        SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(i);
-        if (spell && spell->Category)
-            sSpellCategoryStore[spell->Category].insert(i);
-    }
-
-    for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
-    {
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(skillLine->SpellID);
-        if (!spellInfo)
-            continue;
-
-        SpellLevelsEntry const* levels = sSpellLevelsStore.LookupEntry(spellInfo->LevelsID);
-        if (spellInfo->LevelsID && (!levels || levels->spellLevel))
-            continue;
-
-        if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
-        {
-            if (spellMisc->Attributes & SPELL_ATTR0_PASSIVE)
-            {
-                for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
-                {
-                    if (skillLine->SkillLine != cFamily->skillLine[0] && skillLine->SkillLine != cFamily->skillLine[1])
-                        continue;
-
-                    if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
-                        continue;
-
-                    sPetFamilySpellsStore[cFamily->ID].insert(spellInfo->ID);
-                }
-            }
-        }
-    }
-
     for (SpellTargetRestrictionsEntry const* restriction : sSpellTargetRestrictionsStore)
         sSpellRestrictionDiffMap[restriction->SpellId].restrictions.insert(restriction);
 
@@ -527,13 +475,6 @@ void InitDBCCustomStores()
     for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
         if (store->creatureDisplayID)
             sDungeonEncounterByDisplayID[store->creatureDisplayID] = store;
-
-    for (SkillRaceClassInfoEntry const* entry : sSkillRaceClassInfoStore)
-        if (sSkillLineStore.LookupEntry(entry->SkillID))
-            SkillRaceClassInfoBySkill.emplace(entry->SkillID, entry);
-
-    for (SpecializationSpellEntry const* specSpells : sSpecializationSpellStore)
-        _specializationSpellsBySpec[specSpells->SpecializationEntry].push_back(specSpells);
 
     memset(sChrSpecializationByIndexStore, 0, sizeof(sChrSpecializationByIndexStore));
     for (ChrSpecializationsEntry const* chrSpec : sChrSpecializationsStore)
@@ -613,11 +554,6 @@ SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8
     }
 
     return NULL;
-}
-
-SpellEffectScalingEntry const* GetSpellEffectScalingEntry(uint32 effectId)
-{
-    return sSpellEffectScalingStore.LookupEntry(effectId);
 }
 
 SpellTargetRestrictionsEntry const *GetSpellTargetRestrioctions(uint32 spellId, uint16 difficulty)
@@ -943,29 +879,4 @@ DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID)
     if (data == sDungeonEncounterByDisplayID.end())
         return NULL;
     return data->second;
-}
-
-SkillRaceClassInfoEntry const* GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_)
-{
-    SkillRaceClassInfoBounds bounds = SkillRaceClassInfoBySkill.equal_range(skill);
-    for (SkillRaceClassInfoMap::iterator itr = bounds.first; itr != bounds.second; ++itr)
-    {
-        if (itr->second->RaceMask && !(itr->second->RaceMask & (1 << (race - 1))))
-            continue;
-        if (itr->second->ClassMask && !(itr->second->ClassMask & (1 << (class_ - 1))))
-            continue;
-
-        return itr->second;
-    }
-
-    return nullptr;
-}
-
-std::vector<SpecializationSpellEntry const*> const* GetSpecializationSpells(uint32 specId)
-{
-    auto itr = _specializationSpellsBySpec.find(specId);
-    if (itr != _specializationSpellsBySpec.end())
-        return &itr->second;
-
-    return nullptr;
 }

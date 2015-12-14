@@ -3520,18 +3520,18 @@ void Player::LearnSpecializationSpells()
     uint8 level = getLevel();
     uint32 specializationId = GetSpecializationId(GetActiveSpec());
 
-    if (std::vector<SpecializationSpellEntry const*> const* specSpells = GetSpecializationSpells(specializationId))
+    if (std::vector<SpecializationSpellEntry const*> const* specSpells = sDB2Manager.GetSpecializationSpells(specializationId))
     {
         for (size_t j = 0; j < specSpells->size(); ++j)
         {
             SpecializationSpellEntry const* specSpell = specSpells->at(j);
-            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(specSpell->LearnSpell);
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(specSpell->SpellID);
             if (!spellInfo || spellInfo->SpellLevel > getLevel())
                 continue;
 
-            learnSpell(specSpell->LearnSpell, false);
-            if (specSpell->OverrideSpell)
-                AddOverrideSpell(specSpell->OverrideSpell, specSpell->LearnSpell);
+            learnSpell(specSpell->SpellID, false);
+            if (specSpell->OverridesSpellID)
+                AddOverrideSpell(specSpell->OverridesSpellID, specSpell->SpellID);
         }
     }
 
@@ -3578,14 +3578,14 @@ void Player::RemoveSpecializationSpells()
     {
         if (ChrSpecializationsEntry const* specialization = sChrSpecializationByIndexStore[getClass()][i])
         {
-            if (std::vector<SpecializationSpellEntry const*> const* specSpells = GetSpecializationSpells(specialization->ID))
+            if (std::vector<SpecializationSpellEntry const*> const* specSpells = sDB2Manager.GetSpecializationSpells(specialization->ID))
             {
                 for (size_t j = 0; j < specSpells->size(); ++j)
                 {
                     SpecializationSpellEntry const* specSpell = specSpells->at(j);
-                    removeSpell(specSpell->LearnSpell, true, true, false);
-                    if (specSpell->OverrideSpell)
-                        RemoveOverrideSpell(specSpell->OverrideSpell, specSpell->LearnSpell);
+                    removeSpell(specSpell->SpellID, true, true, false);
+                    if (specSpell->OverridesSpellID)
+                        RemoveOverrideSpell(specSpell->OverridesSpellID, specSpell->SpellID);
                 }
             }
 
@@ -4373,7 +4373,7 @@ bool Player::addSpell(uint32 spellId, bool active, bool learning, bool dependent
 
             // Runeforging special case
             if ((_spell_idx->second->AquireMethod == SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN && !HasSkill(pSkill->id)) || ((pSkill->id == SKILL_RUNEFORGING_2) && _spell_idx->second->TrivialSkillLineRankHigh == 0))
-                if (SkillRaceClassInfoEntry const* rcInfo = GetSkillRaceClassInfo(pSkill->id, getRace(), getClass()))
+                if (SkillRaceClassInfoEntry const* rcInfo = sDB2Manager.GetSkillRaceClassInfo(pSkill->id, getRace(), getClass()))
                     LearnDefaultSkill(rcInfo);
         }
     }
@@ -4934,17 +4934,17 @@ bool Player::HasChargesForSpell(SpellInfo const* spellInfo) const
 
 uint8 Player::GetMaxSpellCategoryCharges(SpellCategoryEntry const* categoryEntry) const
 {
-    int count = categoryEntry->chargeCount;
-    count += GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_CHARGES, categoryEntry->CategoryId);
+    int count = categoryEntry->MaxCharges;
+    count += GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_CHARGES, categoryEntry->ID);
     return std::max(0, count);
 }
 
 uint32 Player::GetSpellCategoryChargesTimer(SpellCategoryEntry const* categoryEntry) const
 {
-    uint32 regenTime = categoryEntry->chargeRegenTime;
+    uint32 regenTime = categoryEntry->ChargeRecoveryTime;
 
-    regenTime += GetTotalAuraModifierByMiscValue(SPELL_AURA_CHARGE_RECOVERY_MOD, categoryEntry->CategoryId);
-    regenTime *= GetTotalAuraMultiplierByMiscValue(SPELL_AURA_CHARGE_RECOVERY_MULTIPLIER, categoryEntry->CategoryId);
+    regenTime += GetTotalAuraModifierByMiscValue(SPELL_AURA_CHARGE_RECOVERY_MOD, categoryEntry->ID);
+    regenTime *= GetTotalAuraMultiplierByMiscValue(SPELL_AURA_CHARGE_RECOVERY_MULTIPLIER, categoryEntry->ID);
 
     return regenTime;
 }
@@ -5054,7 +5054,7 @@ void Player::RestoreSpellCategoryCharges(uint32 categoryId)
     {
         SpellChargeData& data = itr->second;
 
-        if (categoryId && data.categoryEntry->CategoryId != categoryId)
+        if (categoryId && data.categoryEntry->ID != categoryId)
             continue;
 
         data.charges = data.maxCharges;
@@ -7093,7 +7093,7 @@ void Player::SetSkill(uint16 id, uint16 step, uint16 newVal, uint16 maxVal)
                 }
 
                 SetUInt16Value(PLAYER_FIELD_SKILL + field, offset, id);
-                if (skillEntry->categoryId == SKILL_CATEGORY_PROFESSION)
+                if (skillEntry->CategoryID == SKILL_CATEGORY_PROFESSION)
                 {
                     if (!GetUInt32Value(PLAYER_FIELD_PROFESSION_SKILL_LINE))
                         SetUInt32Value(PLAYER_FIELD_PROFESSION_SKILL_LINE, id);
@@ -24921,7 +24921,7 @@ void Player::SendSpellChargeData()
     for (SpellChargeDataMap::const_iterator itr = m_spellChargeData.begin(); itr != m_spellChargeData.end(); ++itr)
     {
         SpellChargeData const& chargeData = itr->second;
-        int32 diff = int32(chargeData.categoryEntry->chargeRegenTime) - int32(chargeData.timer);
+        int32 diff = int32(chargeData.categoryEntry->ChargeRecoveryTime) - int32(chargeData.timer);
         if (diff < 0)
             diff = 0;
 
@@ -25066,7 +25066,7 @@ void Player::UpdateSkillsForLevel()
             continue;
 
         uint32 pskill = itr->first;
-        SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(pskill, getRace(), getClass());
+        SkillRaceClassInfoEntry const* rcEntry = sDB2Manager.GetSkillRaceClassInfo(pskill, getRace(), getClass());
         if (!rcEntry)
             continue;
 
@@ -27151,7 +27151,7 @@ void Player::_LoadSkills(PreparedQueryResult result)
             uint16 value    = fields[1].GetUInt16();
             uint16 max      = fields[2].GetUInt16();
 
-            SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(skill, getRace(), getClass());
+            SkillRaceClassInfoEntry const* rcEntry = sDB2Manager.GetSkillRaceClassInfo(skill, getRace(), getClass());
             if (!rcEntry)
             {
                 sLog->outError(LOG_FILTER_PLAYER, "Character %u has skill %u that does not exist.", GetGUIDLow(), skill);
@@ -27198,10 +27198,10 @@ void Player::_LoadSkills(PreparedQueryResult result)
             SkillLineEntry const* skillLine = sSkillLineStore.LookupEntry(rcEntry->SkillID);
             if (skillLine)
             {
-                if (skillLine->categoryId == SKILL_CATEGORY_SECONDARY)
+                if (skillLine->CategoryID == SKILL_CATEGORY_SECONDARY)
                     step = max / 75;
 
-                if (skillLine->categoryId == SKILL_CATEGORY_PROFESSION)
+                if (skillLine->CategoryID == SKILL_CATEGORY_PROFESSION)
                 {
                     step = max / 75;
 

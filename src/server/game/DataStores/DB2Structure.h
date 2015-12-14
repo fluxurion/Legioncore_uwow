@@ -362,8 +362,8 @@ struct CreatureDisplayInfoEntry
     uint32      ExtendedDisplayInfoID;                      // 3
     float       CreatureModelScale;                         // 4
     uint32      CreatureModelAlpha;                         // 5
-    char*       TextureVariation[3];                        // 6-8
-    char*       PortraitTextureName;                        // 9
+    LocalizedString* TextureVariation[3];                   // 6-8
+    LocalizedString* PortraitTextureName;                   // 9
     uint32      PortraitCreatureDisplayInfoID;              // 10
     uint32      SizeClass;                                  // 11
     uint32      BloodID;                                    // 12
@@ -652,7 +652,7 @@ struct MountTypeXCapabilityEntry
 
 struct NameGenEntry
 {
-    char*       Name;
+    LocalizedString* Name;
     uint32      RaceID;
     uint32      Gender;
 };
@@ -705,8 +705,8 @@ struct ResearchBranchEntry
 
 struct ResearchProjectEntry
 {
-    char*       Name;                                       // 1
-    char*       Description;                                // 2
+    LocalizedString* Name;                                  // 1
+    LocalizedString* Description;                           // 2
     uint32      rare;                                       // 3
     uint32      branchId;                                   // 4
     uint32      SpellID;                                    // 5
@@ -727,7 +727,7 @@ struct ResearchSiteEntry
     uint32    ID;                                           // 0 ID
     uint32    MapID;                                        // 1 MapID
     uint32    POIid;                                        // 2
-    char*     areaName;                                     // 3 Research site name
+    LocalizedString* areaName;                              // 3 Research site name
     //uint32  flags;                                        // 4 Always 177.
 
     bool IsValid() const
@@ -1616,9 +1616,161 @@ struct SpellVisualEntry
 
 struct ItemXBonusTreeEntry
 {
-    uint32 ID;                                                      // 0
-    uint32 ItemID;                                                  // 1
-    uint32 BonusTreeID;                                             // 2
+    uint32      ID;                                         // 0
+    uint32      ItemID;                                     // 1
+    uint32      BonusTreeID;                                // 2
+};
+
+struct SpellItemEnchantmentConditionEntry
+{
+    uint8       Color[MAX_ITEM_ENCHANTS];                   // 0 - 4
+    uint8       LtOperandType[MAX_ITEM_ENCHANTS];           // 5 - 9
+    uint8       Comparator[MAX_ITEM_ENCHANTS];              // 10 - 14
+    uint8       CompareColor[MAX_ITEM_ENCHANTS];            // 15 - 19
+    uint8       Value[MAX_ITEM_ENCHANTS];                   // 20 - 24
+    uint8       Logic[MAX_ITEM_ENCHANTS];                   // 25 - 29
+};
+
+struct SpellInterruptsEntry
+{
+    uint32      SpellID;                                    // 0
+    uint32      AuraInterruptFlags[2];                      // 1 - 2
+    uint32      ChannelInterruptFlags[2];                   // 3 - 4
+    uint16      InterruptFlags;                             // 5
+    uint8       DifficultyID;                               // 6
+};
+
+struct SpellFocusObjectEntry
+{
+    LocalizedString* Name;                                  // 0
+};
+
+struct SpellEquippedItemsEntry
+{
+    uint32      SpellID;                                    // 0
+    int32       EquippedItemInventoryTypeMask;              // 1
+    int32       EquippedItemSubClassMask;                   // 2
+    uint8       EquippedItemClass;                          // 3
+};
+
+struct SpellEffectScalingEntry
+{
+    float       Coefficient;                                // 0
+    float       Variance;                                   // 1
+    float       ResourceCoefficient;                        // 2
+    uint32      SpellEffectId;                              // 3
+};
+
+struct SpellDurationEntry
+{
+    int32       Duration;                                   // 0
+    int32       MaxDuration;                                // 1
+    uint16      DurationPerLevel;                           // 2
+
+    uint32 ID; // temp - for compile
+};
+
+struct SpellCooldownsEntry
+{
+    uint32      SpellID;                                    // 0
+    uint32      CategoryRecoveryTime;                       // 1
+    uint32      RecoveryTime;                               // 2
+    uint32      StartRecoveryTime;                          // 3
+    uint8       DifficultyID;                               // 4
+};
+
+struct SpellCategoryEntry
+{
+    LocalizedString* Name;                                  // 0
+    int32       ChargeRecoveryTime;                         // 1
+    uint8       Flags;                                      // 2
+    uint8       UsesPerWeek;                                // 3
+    uint8       MaxCharges;                                 // 4
+
+    uint32      ID; // temp - for compile
+};
+
+struct SpellCategoriesEntry
+{
+    uint32      SpellID;                                    // 0
+    uint16      Category;                                   // 1
+    uint16      StartRecoveryCategory;                      // 2
+    uint16      ChargeCategory;                             // 3
+    uint8       DifficultyID;                               // 4
+    uint8       DefenseType;                                // 5
+    uint8       DispelType;                                 // 6
+    uint8       Mechanic;                                   // 7
+    uint8       PreventionType;                             // 8
+};
+
+struct SpellCastTimesEntry
+{
+    int32       Base;                                       // 0
+    int32       Minimum;                                    // 1
+    int16       PerLevel;                                   // 2
+};
+
+struct SpellAuraOptionsEntry
+{
+    uint32      SpellID;                                    // 0
+    uint32      ProcCharges;                                // 1
+    uint32      ProcTypeMask;                               // 2
+    uint32      ProcCategoryRecovery;                       // 3
+    uint16      CumulativeAura;                             // 4
+    uint8       DifficultyID;                               // 5
+    uint8       ProcChance;                                 // 6
+    uint8       SpellProcsPerMinuteID;                      // 7
+};
+
+struct SpecializationSpellEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpellID;                                    // 1
+    uint32      OverridesSpellID;                           // 2
+    LocalizedString* DescriptionLang;                       // 3
+    uint16      SpecID;                                     // 4
+    uint8       UnkLegion;                                  // 5 maybe pvp talents related?
+};
+
+struct SkillRaceClassInfoEntry
+{
+    int32       RaceMask;                                   // 0
+    uint16      SkillID;                                    // 1
+    int16       ClassMask;                                  // 2
+    uint16      Flags;                                      // 3
+    uint16      SkillTierID;                                // 4
+    uint8       Availability;                               // 5
+    uint8       MinLevel;                                   // 6
+};
+
+struct SkillLineEntry
+{
+    LocalizedString* DisplayName;                           // 0
+    LocalizedString* Description;                           // 1
+    LocalizedString* AlternateVerb;                         // 2
+    uint16      SpellIconID;                                // 3
+    uint16      Flags;                                      // 4
+    uint8       CategoryID;                                 // 5
+    uint8       CanLink;                                    // 6
+    uint8       ParentSkillLineID;                          // 7
+
+    uint32 id; // temp - for compile
+};
+
+struct SkillLineAbilityEntry
+{
+    uint32      SpellID;                                    // 0
+    uint32      RaceMask;                                   // 1
+    uint32      ClassMask;                                  // 2
+    uint32      SupercedesSpell;                            // 3
+    uint16      SkillLine;                                  // 4
+    uint16      MinSkillLineRank;                           // 5
+    uint16      TrivialSkillLineRankHigh;                   // 6
+    uint16      TrivialSkillLineRankLow;                    // 7
+    uint16      UniqueBit;                                  // 8
+    uint16      TradeSkillCategoryID;                       // 9
+    uint8       AquireMethod;                               // 10
+    uint8       NumSkillUps;                                // 11
 };
 
 struct ScenarioEntry

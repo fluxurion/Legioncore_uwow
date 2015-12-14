@@ -8269,7 +8269,7 @@ SkillRangeType GetSkillRangeType(SkillRaceClassInfoEntry const* rcEntry)
     if (rcEntry->SkillID == SKILL_RUNEFORGING || rcEntry->SkillID == SKILL_RUNEFORGING_2)
         return SKILL_RANGE_MONO;
 
-    switch (skill->categoryId)
+    switch (skill->CategoryID)
     {
         case SKILL_CATEGORY_ARMOR:
             return SKILL_RANGE_MONO;

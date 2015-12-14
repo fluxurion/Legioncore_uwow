@@ -3922,7 +3922,7 @@ void Spell::EffectLearnSkill(SpellEffIndex effIndex)
         return;
 
     uint32 skillid = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue;
-    SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(skillid, unitTarget->getRace(), unitTarget->getClass());
+    SkillRaceClassInfoEntry const* rcEntry = sDB2Manager.GetSkillRaceClassInfo(skillid, unitTarget->getRace(), unitTarget->getClass());
     if (!rcEntry)
         return;
 

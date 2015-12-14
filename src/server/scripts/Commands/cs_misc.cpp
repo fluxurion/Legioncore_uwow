@@ -1663,7 +1663,7 @@ public:
 
         if (!target->GetSkillValue(skill))
         {
-            handler->PSendSysMessage(LANG_SET_SKILL_ERROR, tNameLink.c_str(), skill, skillLine->name);
+            handler->PSendSysMessage(LANG_SET_SKILL_ERROR, tNameLink.c_str(), skill, skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -1674,7 +1674,7 @@ public:
             return false;
 
         target->SetSkill(skill, target->GetSkillStep(skill), level, max);
-        handler->PSendSysMessage(LANG_SET_SKILL, skill, skillLine->name, tNameLink.c_str(), level, max);
+        handler->PSendSysMessage(LANG_SET_SKILL, skill, skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE], tNameLink.c_str(), level, max);
 
         return true;
     }

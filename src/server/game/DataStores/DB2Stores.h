@@ -26,7 +26,6 @@
 #include <boost/regex.hpp>
 #include <list>
 
-extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
@@ -136,10 +135,28 @@ extern DB2Storage<ResearchBranchEntry>              sResearchBranchStore;
 extern DB2Storage<ResearchProjectEntry>             sResearchProjectStore;
 extern DB2Storage<ResearchSiteEntry>                sResearchSiteStore;
 extern DB2Storage<RuleSetItemUpgradeEntry>          sRuleSetItemUpgradeEntryStore;
+extern DB2Storage<ScalingStatDistributionEntry>     sScalingStatDistributionStore;
+extern DB2Storage<ScenarioEntry>                    sScenarioStore;
+extern DB2Storage<ScenarioStepEntry>                sScenarioStepStore;
+extern DB2Storage<SkillLineAbilityEntry>            sSkillLineAbilityStore;
+extern DB2Storage<SkillLineEntry>                   sSkillLineStore;
+extern DB2Storage<SkillRaceClassInfoEntry>          sSkillRaceClassInfoStore;
 extern DB2Storage<SoundEntriesEntry>                sSoundEntriesStore;
+extern DB2Storage<SpecializationSpellEntry>         sSpecializationSpellStore;
+extern DB2Storage<SpellAuraOptionsEntry>            sSpellAuraOptionsStore;
 extern DB2Storage<SpellAuraRestrictionsEntry>       sSpellAuraRestrictionsStore;
 extern DB2Storage<SpellCastingRequirementsEntry>    sSpellCastingRequirementsStore;
+extern DB2Storage<SpellCastTimesEntry>              sSpellCastTimesStore;
+extern DB2Storage<SpellCategoriesEntry>             sSpellCategoriesStore;
+extern DB2Storage<SpellCategoryEntry>               sSpellCategoryStores;
 extern DB2Storage<SpellClassOptionsEntry>           sSpellClassOptionsStore;
+extern DB2Storage<SpellCooldownsEntry>              sSpellCooldownsStore;
+extern DB2Storage<SpellDurationEntry>               sSpellDurationStore;
+extern DB2Storage<SpellEffectScalingEntry>          sSpellEffectScalingStore;
+extern DB2Storage<SpellEquippedItemsEntry>          sSpellEquippedItemsStore;
+extern DB2Storage<SpellFocusObjectEntry>            sSpellFocusObjectStore;
+extern DB2Storage<SpellInterruptsEntry>             sSpellInterruptsStore;
+extern DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore;
 extern DB2Storage<SpellLearnSpellEntry>             sSpellLearnSpellStore;
 extern DB2Storage<SpellMiscEntry>                   sSpellMiscStore;
 extern DB2Storage<SpellPowerEntry>                  sSpellPowerStore;
@@ -149,11 +166,9 @@ extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
 extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
-extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
-extern DB2Storage<ScalingStatDistributionEntry>     sScalingStatDistributionStore;
-extern DB2Storage<ScenarioStepEntry>                sScenarioStepStore;
-extern DB2Storage<ScenarioEntry>                    sScenarioStore;
+extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
+extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
 extern TaxiMask                                     sOldContinentsNodesMask;
@@ -240,6 +255,9 @@ public:
     typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
     typedef std::unordered_map<uint32 /*frame*/, TransportAnimationEntry const*> TransportAnimationEntryMap;
     typedef std::unordered_map<uint32, TransportAnimationEntryMap> TransportAnimationsByEntryContainer;
+    typedef std::unordered_multimap<uint32, SkillRaceClassInfoEntry const*> SkillRaceClassInfoContainer;
+    typedef std::pair<SkillRaceClassInfoContainer::iterator, SkillRaceClassInfoContainer::iterator> SkillRaceClassInfoBounds;
+    typedef std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> SpecializationSpellsBySpecContainer;
 
     static DB2Manager& Instance()
     {
@@ -291,6 +309,8 @@ public:
     ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
     void DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId = nullptr, DBCPosition2D* newPos = nullptr);
     bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId);
+    SkillRaceClassInfoEntry const* GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_);
+    std::vector<SpecializationSpellEntry const*> const* GetSpecializationSpells(uint32 specId);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -333,6 +353,8 @@ private:
     ItemSpecsContainer _itemSpec;
     ModifierTreeContainer _modifierTree;
     NameGenVectorArraysContainer _genNameVectoArraysMap;
+    SkillRaceClassInfoContainer _skillRaceClassInfoBySkill;
+    SpecializationSpellsBySpecContainer _specializationSpellsBySpec;
 
 };
 

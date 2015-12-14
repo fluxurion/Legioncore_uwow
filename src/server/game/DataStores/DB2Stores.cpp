@@ -23,7 +23,6 @@
 #include "Log.h"
 #include "World.h"
 
-DB2Storage<WorldMapTransformsEntry>         sWorldMapTransformsStore("WorldMapTransforms.db2", WorldMapTransformsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
 DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
@@ -145,10 +144,28 @@ DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch
 DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.db2", ResearchProjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ResearchSiteEntry>               sResearchSiteStore("ResearchSite.db2", ResearchSiteFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<RuleSetItemUpgradeEntry>         sRuleSetItemUpgradeEntryStore("RulesetItemUpgrade.db2", RuleSetItemUpgradeFormat, HOTFIX_SEL_RULE_SET_ITEM_UPGRADE);
+DB2Storage<ScalingStatDistributionEntry>    sScalingStatDistributionStore("ScalingStatDistribution.db2", ScalingStatDistributionFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ScenarioEntry>                   sScenarioStore("Scenario.db2", ScenarioFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<ScenarioStepEntry>               sScenarioStepStore("ScenarioStep.db2", ScenarioStepFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SkillLineAbilityEntry>           sSkillLineAbilityStore("SkillLineAbility.db2", SkillLineAbilityFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SkillLineEntry>                  sSkillLineStore("SkillLine.db2", SkillLineFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SkillRaceClassInfoEntry>         sSkillRaceClassInfoStore("SkillRaceClassInfo.db2", SkillRaceClassInfoFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SoundEntriesEntry>               sSoundEntriesStore("SoundEntries.db2", SoundEntriesFormat, HOTFIX_SEL_SOUND_ENTRIES);
+DB2Storage<SpecializationSpellEntry>        sSpecializationSpellStore("SpecializationSpells.db2", SpecializationSpellsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellAuraOptionsEntry>           sSpellAuraOptionsStore("SpellAuraOptions.db2", SpellAuraOptionsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellAuraRestrictionsEntry>      sSpellAuraRestrictionsStore("SpellAuraRestrictions.db2", SpellAuraRestrictionsFormat, HOTFIX_SEL_SPELL_AURA_RESTRICTIONS);
 DB2Storage<SpellCastingRequirementsEntry>   sSpellCastingRequirementsStore("SpellCastingRequirements.db2", SpellCastingRequirementsFormat, HOTFIX_SEL_SPELL_CASTING_REQUIREMENTS);
+DB2Storage<SpellCastTimesEntry>             sSpellCastTimesStore("SpellCastTimes.db2", SpellCastTimeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellCategoriesEntry>            sSpellCategoriesStore("SpellCategories.db2", SpellCategoriesEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellCategoryEntry>              sSpellCategoryStores("SpellCategory.db2", SpellCategoryEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellClassOptionsEntry>          sSpellClassOptionsStore("SpellClassOptions.db2", SpellClassOptionsFormat, HOTFIX_SEL_SPELL_CLASS_OPTIONS);
+DB2Storage<SpellCooldownsEntry>             sSpellCooldownsStore("SpellCooldowns.db2", SpellCooldownsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellDurationEntry>              sSpellDurationStore("SpellDuration.db2", SpellDurationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellEffectScalingEntry>         sSpellEffectScalingStore("SpellEffectScaling.db2", SpellEffectScalingEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellEquippedItemsEntry>         sSpellEquippedItemsStore("SpellEquippedItems.db2", SpellEquippedItemsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellFocusObjectEntry>           sSpellFocusObjectStore("SpellFocusObject.db2", SpellFocusObjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellInterruptsEntry>            sSpellInterruptsStore("SpellInterrupts.db2", SpellInterruptsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore("SpellItemEnchantmentCondition.db2", SpellItemEnchantmentConditionFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellLearnSpellEntry>            sSpellLearnSpellStore("SpellLearnSpell.db2", SpellLearnSpellFormat, HOTFIX_SEL_SPELL_LEARN_SPELL);
 DB2Storage<SpellMiscEntry>                  sSpellMiscStore("SpellMisc.db2", SpellMiscFormat, HOTFIX_SEL_SPELL_MISC);
 DB2Storage<SpellPowerEntry>                 sSpellPowerStore("SpellPower.db2", SpellPowerFormat, HOTFIX_SEL_SPELL_POWER);
@@ -159,15 +176,13 @@ DB2Storage<SpellVisualEntry>                sSpellVisualStore("SpellVisual.db2",
 DB2Storage<TaxiNodesEntry>                  sTaxiNodesStore("TaxiNodes.db2", TaxiNodesFormat, HOTFIX_SEL_TAXI_NODES);
 DB2Storage<TaxiPathEntry>                   sTaxiPathStore("TaxiPath.db2", TaxiPathFormat, HOTFIX_SEL_TAXI_PATH);
 DB2Storage<TaxiPathNodeEntry>               sTaxiPathNodeStore("TaxiPathNode.db2", TaxiPathNodeFormat, HOTFIX_SEL_TAXI_PATH_NODE);
+DB2Storage<TotemCategoryEntry>              sTotemCategoryStore("TotemCategory.db2", TotemCategoryEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<ToyEntry>                        sToyStore("Toy.db2", ToyFormat, HOTFIX_SEL_TOY);
-DB2Storage<WorldMapOverlayEntry>            sWorldMapOverlayStore("WorldMapOverlay.db2", WorldMapOverlayEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<UnitPowerBarEntry>               sUnitPowerBarStore("UnitPowerBar.db2", UnitPowerBarFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<TransportRotationEntry>          sTransportRotationStore("TransportRotation.db2", TransportRotationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<TransportAnimationEntry>         sTransportAnimationStore("TransportAnimation.db2", TransportAnimationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<TotemCategoryEntry>              sTotemCategoryStore("TotemCategory.dbc", TotemCategoryEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ScalingStatDistributionEntry>    sScalingStatDistributionStore("ScalingStatDistribution.dbc", ScalingStatDistributionFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ScenarioStepEntry>               sScenarioStepStore("ScenarioStep.dbc", ScenarioStepFormat, MAX_HOTFIXDATABASE_STATEMENTS);
-DB2Storage<ScenarioEntry>                   sScenarioStore("Scenario.dbc", ScenarioFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<TransportRotationEntry>          sTransportRotationStore("TransportRotation.db2", TransportRotationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<UnitPowerBarEntry>               sUnitPowerBarStore("UnitPowerBar.db2", UnitPowerBarFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<WorldMapOverlayEntry>            sWorldMapOverlayStore("WorldMapOverlay.db2", WorldMapOverlayEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<WorldMapTransformsEntry>         sWorldMapTransformsStore("WorldMapTransforms.db2", WorldMapTransformsFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 
 TaxiMask                                    sTaxiNodesMask;
 TaxiMask                                    sOldContinentsNodesMask;
@@ -363,26 +378,26 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sScalingStatDistributionStore);  // 20796
     //LOAD_DB2(sScenarioStepStore);             // 20796
     //LOAD_DB2(sScenarioStore);                 // 20796
-    //LOAD_DB2(sSkillLineAbilityStore,            "SkillLineAbility.dbc");
-    //LOAD_DB2(sSkillLineStore,                   "SkillLine.dbc");
-    //LOAD_DB2(sSkillRaceClassInfoStore,          "SkillRaceClassInfo.dbc");
+    //LOAD_DB2(sSkillLineAbilityStore);         // 20796
+    //LOAD_DB2(sSkillLineStore);                // 20796
+    //LOAD_DB2(sSkillRaceClassInfoStore);       // 20796
     //LOAD_DB2(sSoundEntriesStore);
-    //LOAD_DB2(sSpecializationSpellStore,         "SpecializationSpells.dbc");
-    //LOAD_DB2(sSpellAuraOptionsStore,            "SpellAuraOptions.dbc");
+    //LOAD_DB2(sSpecializationSpellStore);      // 20796
+    //LOAD_DB2(sSpellAuraOptionsStore);         // 20796
     //LOAD_DB2(sSpellAuraRestrictionsStore);
     //LOAD_DB2(sSpellCastingRequirementsStore);
-    //LOAD_DB2(sSpellCastTimesStore,              "SpellCastTimes.dbc");
-    //LOAD_DB2(sSpellCategoriesStore,             "SpellCategories.dbc");
-    //LOAD_DB2(sSpellCategoryStores,              "SpellCategory.dbc");
+    //LOAD_DB2(sSpellCastTimesStore);           // 20796
+    //LOAD_DB2(sSpellCategoriesStore);          // 20796
+    //LOAD_DB2(sSpellCategoryStores);           // 20796
     //LOAD_DB2(sSpellClassOptionsStore);
-    //LOAD_DB2(sSpellCooldownsStore,              "SpellCooldowns.dbc");
-    //LOAD_DB2(sSpellDurationStore,               "SpellDuration.dbc");
-    //LOAD_DB2(sSpellEffectScalingStore,          "SpellEffectScaling.dbc");
+    //LOAD_DB2(sSpellCooldownsStore);           // 20796
+    //LOAD_DB2(sSpellDurationStore);            // 20796
+    //LOAD_DB2(sSpellEffectScalingStore);       // 20796
     //LOAD_DB2(sSpellEffectStore,                 "SpellEffect.dbc");
-    //LOAD_DB2(sSpellEquippedItemsStore,          "SpellEquippedItems.dbc");
-    //LOAD_DB2(sSpellFocusObjectStore,            "SpellFocusObject.dbc");
-    //LOAD_DB2(sSpellInterruptsStore,             "SpellInterrupts.dbc");
-    //LOAD_DB2(sSpellItemEnchantmentConditionStore, "SpellItemEnchantmentCondition.dbc");
+    //LOAD_DB2(sSpellEquippedItemsStore);       // 20796
+    //LOAD_DB2(sSpellFocusObjectStore);         // 20796
+    //LOAD_DB2(sSpellInterruptsStore);          // 20796
+    //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20796
     //LOAD_DB2(sSpellLearnSpellStore);
     //LOAD_DB2(sSpellLevelsStore,                 "SpellLevels.dbc");
     //LOAD_DB2(sSpellMiscStore);
@@ -641,7 +656,7 @@ void DB2Manager::InitDB2CustomStores()
             _modifierTree[mt->Parent].push_back(mt);
 
     for (NameGenEntry const* entry : sNameGenStore)
-        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name));
+        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]));
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {
@@ -683,6 +698,48 @@ void DB2Manager::InitDB2CustomStores()
             continue;
 
         sScenarioCriteriaTreeStore.insert(entry->Criteriatreeid);
+    }
+
+    for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
+    {
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(skillLine->SpellID);
+        if (!spellInfo)
+            continue;
+
+        SpellLevelsEntry const* levels = sSpellLevelsStore.LookupEntry(spellInfo->LevelsID);
+        if (spellInfo->LevelsID && (!levels || levels->spellLevel))
+            continue;
+
+        if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
+        {
+            if (spellMisc->Attributes & SPELL_ATTR0_PASSIVE)
+            {
+                for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
+                {
+                    if (skillLine->SkillLine != cFamily->skillLine[0] && skillLine->SkillLine != cFamily->skillLine[1])
+                        continue;
+
+                    if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
+                        continue;
+
+                    sPetFamilySpellsStore[cFamily->ID].insert(spellInfo->ID);
+                }
+            }
+        }
+    }
+
+    for (SkillRaceClassInfoEntry const* entry : sSkillRaceClassInfoStore)
+        if (sSkillLineStore.LookupEntry(entry->SkillID))
+            _skillRaceClassInfoBySkill.emplace(entry->SkillID, entry);
+
+    for (SpecializationSpellEntry const* specSpells : sSpecializationSpellStore)
+        _specializationSpellsBySpec[specSpells->SpecID].push_back(specSpells);
+
+    for (auto const& v : sSpellStore)
+    {
+        SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(v->ID);
+        if (spell && spell->Category)
+            sSpellCategoryStore[spell->Category].insert(v->ID);
     }
 }
 
@@ -1188,3 +1245,27 @@ bool DB2Manager::IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint
     return (itemEntry->TotemCategoryMask & reqEntry->TotemCategoryMask) == reqEntry->TotemCategoryMask;
 }
 
+SkillRaceClassInfoEntry const* DB2Manager::GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_)
+{
+    SkillRaceClassInfoBounds bounds = _skillRaceClassInfoBySkill.equal_range(skill);
+    for (SkillRaceClassInfoContainer::iterator itr = bounds.first; itr != bounds.second; ++itr)
+    {
+        if (itr->second->RaceMask && !(itr->second->RaceMask & (1 << (race - 1))))
+            continue;
+        if (itr->second->ClassMask && !(itr->second->ClassMask & (1 << (class_ - 1))))
+            continue;
+
+        return itr->second;
+    }
+
+    return nullptr;
+}
+
+std::vector<SpecializationSpellEntry const*> const* DB2Manager::GetSpecializationSpells(uint32 specId)
+{
+    SpecializationSpellsBySpecContainer::const_iterator itr = _specializationSpellsBySpec.find(specId);
+    if (itr != _specializationSpellsBySpec.end())
+        return &itr->second;
+
+    return nullptr;
+}

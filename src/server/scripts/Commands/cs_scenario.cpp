@@ -99,7 +99,7 @@ public:
 
         ScenarioEntry const* scenario = sScenarioStore.LookupEntry(progress->GetScenarioId());
         handler->PSendSysMessage("ScenarioId: '%s' (%u) Current Step: %u Steps: %u (Completed: %s) Bonus Steps: %u (Completed: %s)",
-            scenario->m_name_lang, progress->GetScenarioId(), progress->GetCurrentStep(), progress->GetStepCount(false), progress->IsCompleted(false) ? "true" : "false",
+            scenario->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE], progress->GetScenarioId(), progress->GetCurrentStep(), progress->GetStepCount(false), progress->IsCompleted(false) ? "true" : "false",
             progress->GetBonusStepCount(), progress->IsCompleted(true) ? "true" : "false");
         handler->PSendSysMessage("Scenario Type: %s Difficulty: %s (%u)",
             GetScenarioTypeString(progress->GetType()).c_str(), GetScenarioDifficultyString(map->GetDifficultyID()).c_str(), map->GetDifficultyID());

@@ -304,8 +304,8 @@ bool SpellChatLink::ValidateName(char* buffer, const char* context)
             return false;
         }
 
-        uint32 skillLineNameLength = strlen(skillLine->name);
-        if (skillLineNameLength > 0 && strncmp(skillLine->name, buffer, skillLineNameLength) == 0)
+        uint32 skillLineNameLength = strlen(skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
+        if (skillLineNameLength > 0 && strncmp(skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE], buffer, skillLineNameLength) == 0)
         {
             // found the prefix, remove it to perform spellname validation below
             // -2 = strlen(": ")

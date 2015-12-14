@@ -463,7 +463,6 @@ public:
     SpellChainNode const* ChainEntry;
     SpellPowerEntry spellPower[MAX_POWERS_FOR_SPELL];
 
-    // SpecializationSpellEntry
     std::set<uint32> SpecializationIdList;
     std::set<SpecializationSpellEntry const*> SpecializationOverrideSpellList;
 

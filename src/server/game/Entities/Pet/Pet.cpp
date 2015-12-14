@@ -1971,10 +1971,10 @@ void Pet::LearnSpecializationSpell()
 {
     for (SpecializationSpellEntry const* specializationEntry : sSpecializationSpellStore)
     {
-        if (specializationEntry->SpecializationEntry != GetSpecializationId())
+        if (specializationEntry->SpecID != GetSpecializationId())
             continue;
 
-        learnSpell(specializationEntry->LearnSpell);
+        learnSpell(specializationEntry->SpellID);
     }
 }
 
@@ -1982,10 +1982,10 @@ void Pet::UnlearnSpecializationSpell()
 {
     for (SpecializationSpellEntry const* specializationEntry : sSpecializationSpellStore)
     {
-        if (specializationEntry->SpecializationEntry != GetSpecializationId())
+        if (specializationEntry->SpecID != GetSpecializationId())
             continue;
 
-        unlearnSpell(specializationEntry->LearnSpell);
+        unlearnSpell(specializationEntry->SpellID);
     }
 }
 

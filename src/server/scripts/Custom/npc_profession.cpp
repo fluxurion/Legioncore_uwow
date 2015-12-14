@@ -35,45 +35,43 @@ class npc_profession : public CreatureScript
         uint32 skillCount = 0;
 
         if (pPlayer->HasSkill(SKILL_MINING))
-                skillCount++;
+            skillCount++;
         if (pPlayer->HasSkill(SKILL_SKINNING))
-                skillCount++;
+            skillCount++;
         if (pPlayer->HasSkill(SKILL_HERBALISM))
-                skillCount++;
+            skillCount++;
 
         if (skillCount >= 2)
-                return true;
+            return true;
 
         for (uint32 i = 1; i < sSkillLineStore.GetNumRows(); ++i)
         {
             SkillLineEntry const *SkillInfo = sSkillLineStore.LookupEntry(i);
             if (!SkillInfo)
-                    continue;
+                continue;
 
-            if (SkillInfo->categoryId == SKILL_CATEGORY_SECONDARY)
-                    continue;
+            if (SkillInfo->CategoryID == SKILL_CATEGORY_SECONDARY)
+                continue;
 
-            if ((SkillInfo->categoryId != SKILL_CATEGORY_PROFESSION) || !SkillInfo->canLink)
-                    continue;
+            if ((SkillInfo->CategoryID != SKILL_CATEGORY_PROFESSION) || !SkillInfo->CanLink)
+                continue;
 
             const uint32 skillID = SkillInfo->id;
             if (pPlayer->HasSkill(skillID))
-                    skillCount++;
+                skillCount++;
 
             if (skillCount >= 2)
-                    return true;
+                return true;
         }
-                        
+
         return false;
     }
 
     bool LearnAllRecipesInProfession(Player *pPlayer, SkillType skill)
     {
         ChatHandler handler(pPlayer->GetSession());
-        char* skill_name;
-
-        SkillLineEntry const *SkillInfo = sSkillLineStore.LookupEntry(skill);
-        skill_name = SkillInfo->name;
+        SkillLineEntry const* SkillInfo = sSkillLineStore.LookupEntry(skill);
+        char const* skill_name = SkillInfo->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
 
         if (!SkillInfo)
         {

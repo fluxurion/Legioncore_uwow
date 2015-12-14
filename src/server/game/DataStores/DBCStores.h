@@ -37,7 +37,6 @@ std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId);
 
 char const* GetPetName(uint32 petfamily, uint32 dbclang);
 SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
-SpellEffectScalingEntry const* GetSpellEffectScalingEntry(uint32 effectId);
 SpellTargetRestrictionsEntry const *GetSpellTargetRestrioctions(uint32 spellid, uint16 difficulty);
 
 int32 GetAreaFlagByAreaID(uint32 area_id);                  // -1 if not found
@@ -151,23 +150,8 @@ extern DBCStorage<MovieEntry>                   sMovieStore;
 extern DBCStorage<PhaseEntry>                   sPhaseStores;
 extern DBCStorage<PowerDisplayEntry>            sPowerDisplayStore;
 extern DBCStorage<QuestPOIBlobEntry>            sQuestPOIBlobStore;
-extern DBCStorage<SkillLineAbilityEntry>        sSkillLineAbilityStore;
-extern DBCStorage<SkillLineEntry>               sSkillLineStore;
-extern DBCStorage<SkillRaceClassInfoEntry>      sSkillRaceClassInfoStore;
-extern DBCStorage<SpecializationSpellEntry>     sSpecializationSpellStore;
-extern DBCStorage<SpellAuraOptionsEntry>        sSpellAuraOptionsStore;
-extern DBCStorage<SpellCastTimesEntry>          sSpellCastTimesStore;
-extern DBCStorage<SpellCategoriesEntry>         sSpellCategoriesStore;
-extern DBCStorage<SpellCategoryEntry>           sSpellCategoryStores;
-extern DBCStorage<SpellCooldownsEntry>          sSpellCooldownsStore;
-extern DBCStorage<SpellDurationEntry>           sSpellDurationStore;
 extern DBCStorage<SpellEffectEntry>             sSpellEffectStore;
-extern DBCStorage<SpellEffectScalingEntry>      sSpellEffectScalingStore;
 extern DBCStorage<SpellEntry>                   sSpellStore;
-extern DBCStorage<SpellEquippedItemsEntry>      sSpellEquippedItemsStore;
-extern DBCStorage<SpellFocusObjectEntry>        sSpellFocusObjectStore;
-extern DBCStorage<SpellInterruptsEntry>         sSpellInterruptsStore;
-extern DBCStorage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore;
 extern DBCStorage<SpellItemEnchantmentEntry>    sSpellItemEnchantmentStore;
 extern DBCStorage<SpellLevelsEntry>             sSpellLevelsStore;
 extern DBCStorage<SpellProcsPerMinuteEntry>     sSpellProcsPerMinuteStore;
@@ -222,13 +206,6 @@ bool IsValidDifficulty(uint32 diff, bool isRaid);
 AreaTableEntry const* FindAreaEntry(uint32 area);
 DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
 uint32 GetParentZoneOrSelf(uint32 zone);
-
-// SkillRaceClassInfo
-typedef std::unordered_multimap<uint32, SkillRaceClassInfoEntry const*> SkillRaceClassInfoMap;
-typedef std::pair<SkillRaceClassInfoMap::iterator, SkillRaceClassInfoMap::iterator> SkillRaceClassInfoBounds;
-SkillRaceClassInfoEntry const* GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_);
-
-std::vector<SpecializationSpellEntry const*> const* GetSpecializationSpells(uint32 specId);
 
 typedef ChrSpecializationsEntry const* ChrSpecializationByIndexArray[MAX_CLASSES][4];
 extern ChrSpecializationByIndexArray             sChrSpecializationByIndexStore;
