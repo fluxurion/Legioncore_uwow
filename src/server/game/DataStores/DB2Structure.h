@@ -135,7 +135,7 @@ struct CriteriaEntry
         // ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE                  = 0
         // ACHIEVEMENT_CRITERIA_TYPE_KILLED_BY_CREATURE             = 20
         uint32 CreatureID;
-        
+
         // ACHIEVEMENT_CRITERIA_TYPE_WIN_BG                         = 1
         // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_BATTLEGROUND          = 15
         // ACHIEVEMENT_CRITERIA_TYPE_DEATH_AT_MAP                   = 16
@@ -217,7 +217,7 @@ struct CriteriaEntry
         // ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT                 = 68
         // ACHIEVEMENT_CRITERIA_TYPE_FISH_IN_GAMEOBJECT             = 72
         uint32 GoEntry;
-            
+
         // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT                   = 73
         // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT_2                 = 92
         uint32 ScriptDataVal;
@@ -295,8 +295,8 @@ struct CharStartOutfitEntry
 
 struct ChrClassesXPowerTypesEntry
 {
-   uint8        ClassID;                                    // 0
-   uint8        PowerID;                                    // 1
+    uint8        ClassID;                                    // 0
+    uint8        PowerID;                                    // 1
 };
 
 struct ChrRacesEntry
@@ -591,14 +591,14 @@ struct HolidaysEntry
 struct ItemEntry
 {
     uint32      ID;                                         // 0
-    uint32      Class;                                      // 1
-    uint32      SubClass;                                   // 2
-    int32       SoundOverrideSubclass;                      // 3
-    int32       Material;                                   // 4
-    uint32      InventoryType;                              // 5
-    uint32      Sheath;                                     // 6
-    uint32      FileDataID;                                 // 7
-    uint32      GroupSoundsID;                              // 8
+    uint32      FileDataID;                                 // 1
+    uint8       Class;                                      // 2
+    uint8       SubClass;                                   // 3
+    int8        SoundOverrideSubclass;                      // 4
+    int8        Material;                                   // 5
+    uint8       InventoryType;                              // 6
+    uint8       Sheath;                                     // 7
+    uint8       GroupSoundsID;                              // 8
 };
 
 struct ItemAppearanceEntry
@@ -878,7 +878,7 @@ struct ItemExtendedCostEntry
 
     bool IsSeasonCurrencyRequirement(uint32 i) const
     {
-        if(i > MAX_ITEM_EXT_COST_CURRENCIES)
+        if (i > MAX_ITEM_EXT_COST_CURRENCIES)
             return 0;
 
         // start from ITEM_EXTENDED_COST_FLAG_SEASON_IN_INDEX_0
@@ -1551,6 +1551,7 @@ struct GameObjectsEntry
 
 struct GameTablesEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     uint16      NumRows;                                    // 1
     uint8       NumColumns;                                 // 2
@@ -1959,7 +1960,7 @@ struct TransportAnimationEntry
     DBCPosition3D Pos;                                      // 2 - 4
     uint8       SequenceID;                                 // 5
 };
- 
+
 struct TransportRotationEntry
 {
     uint32      TransportID;                                // 0
@@ -2017,11 +2018,13 @@ struct WorldMapTransformsEntry
 };
 
 #pragma pack(pop)
-   
+
 struct TaxiPathBySourceAndDestination
 {
-    TaxiPathBySourceAndDestination() : ID(0), price(0) { }
-    TaxiPathBySourceAndDestination(uint32 _id, uint32 _price) : ID(_id), price(_price) { }
+    TaxiPathBySourceAndDestination() : ID(0), price(0)
+    { }
+    TaxiPathBySourceAndDestination(uint32 _id, uint32 _price) : ID(_id), price(_price)
+    { }
 
     uint32    ID;
     uint32    price;

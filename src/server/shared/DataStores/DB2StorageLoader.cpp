@@ -56,7 +56,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
         return false;
     }
 
-    if (fread(&header.Signature, 4, 1, f) != 1)
+    if (fread(&header.Signature, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -72,7 +72,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
         return false;
     }
 
-    if (fread(&header.RecordCount, 4, 1, f) != 1)
+    if (fread(&header.RecordCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -81,7 +81,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.RecordCount);
 
-    if (fread(&header.FieldCount, 4, 1, f) != 1)
+    if (fread(&header.FieldCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -90,7 +90,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.FieldCount);
 
-    if (fread(&header.RecordSize, 4, 1, f) != 1)
+    if (fread(&header.RecordSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -99,7 +99,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.RecordSize);
 
-    if (fread(&header.StringBlockSize, 4, 1, f) != 1)
+    if (fread(&header.StringBlockSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -108,7 +108,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.StringBlockSize);
 
-    if (fread(&header.Hash, 4, 1, f) != 1)
+    if (fread(&header.Hash, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -117,7 +117,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Hash);
 
-    if (fread(&header.Build, 4, 1, f) != 1)
+    if (fread(&header.Build, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -126,7 +126,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Build);
 
-    if (fread(&header.Unknown, 4, 1, f) != 1)
+    if (fread(&header.Unknown, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -135,7 +135,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Unknown);
 
-    if (fread(&header.Min, 4, 1, f) != 1)
+    if (fread(&header.Min, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -144,7 +144,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Min);
 
-    if (fread(&header.Max, 4, 1, f) != 1)
+    if (fread(&header.Max, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -153,7 +153,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Max);
 
-    if (fread(&header.Locale, 4, 1, f) != 1)
+    if (fread(&header.Locale, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -162,7 +162,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Locale);
 
-    if (fread(&header.ReferenceDataSize, 4, 1, f) != 1)
+    if (fread(&header.ReferenceDataSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -171,6 +171,10 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.ReferenceDataSize);
 
+    int stringTableStart = HeaderSize + header.RecordCount * header.RecordSize;
+    int stringTableEnd = stringTableStart + header.StringBlockSize;
+    bool hasIndex = stringTableEnd + header.ReferenceDataSize < f->_bufsiz;
+    sLog->outError(LOG_FILTER_GENERAL, "hasIndex %u Function: %s Line: %u", hasIndex, "DB2FileLoader::Load", __LINE__);
     if (header.Max != 0)
     {
         int32 diff = header.Max - header.Min + 1;
@@ -189,14 +193,8 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
         else
             fieldsOffset[i] += 4;
     }
-    
-    uint32 dataSize = header.RecordCount * header.RecordSize;
-    uint32 indexDataSize = header.RecordCount * 4;
-    bool hasDataOffsetBlock = uint32(f->_bufsiz) > dataSize + indexDataSize + header.StringBlockSize + header.ReferenceDataSize + 48;
 
     data = new unsigned char[header.RecordSize * header.RecordCount + header.StringBlockSize];
-    stringTable = data + header.RecordSize * header.RecordCount;
-
     if (fread(data, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
     {
         fclose(f);

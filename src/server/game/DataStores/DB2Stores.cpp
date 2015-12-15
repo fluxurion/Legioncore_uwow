@@ -161,9 +161,9 @@ DB2Storage<SpellCategoryEntry>              sSpellCategoryStores("SpellCategory.
 DB2Storage<SpellClassOptionsEntry>          sSpellClassOptionsStore("SpellClassOptions.db2", SpellClassOptionsFormat, HOTFIX_SEL_SPELL_CLASS_OPTIONS);
 DB2Storage<SpellCooldownsEntry>             sSpellCooldownsStore("SpellCooldowns.db2", SpellCooldownsFormat, HOTFIX_SEL_SPELL_COOLDOWNS);
 DB2Storage<SpellDurationEntry>              sSpellDurationStore("SpellDuration.db2", SpellDurationFormat, HOTFIX_SEL_SPELL_DURATION);
-DB2Storage<SpellEffectEntry>                sSpellEffectStore("SpellEffect.dbc", SpellEffectFormat, HOTFIX_SEL_SPELL_EFFECT);
+DB2Storage<SpellEffectEntry>                sSpellEffectStore("SpellEffect.db2", SpellEffectFormat, HOTFIX_SEL_SPELL_EFFECT);
 DB2Storage<SpellEffectScalingEntry>         sSpellEffectScalingStore("SpellEffectScaling.db2", SpellEffectScalingFormat, HOTFIX_SEL_SPELL_EFFECT_SCALING);
-DB2Storage<SpellEntry>                      sSpellStore("Spell.dbc", SpellFormat, HOTFIX_SEL_SPELL);
+DB2Storage<SpellEntry>                      sSpellStore("Spell.db2", SpellFormat, HOTFIX_SEL_SPELL);
 DB2Storage<SpellEquippedItemsEntry>         sSpellEquippedItemsStore("SpellEquippedItems.db2", SpellEquippedItemsFormat, HOTFIX_SEL_SPELL_EQUIPPED_ITEMS);
 DB2Storage<SpellFocusObjectEntry>           sSpellFocusObjectStore("SpellFocusObject.db2", SpellFocusObjectFormat, HOTFIX_SEL_SPELL_FOCUS_OBJECT);
 DB2Storage<SpellInterruptsEntry>            sSpellInterruptsStore("SpellInterrupts.db2", SpellInterruptsFormat, HOTFIX_SEL_SPELL_INTERRUPTS);
@@ -172,16 +172,16 @@ DB2Storage<SpellLearnSpellEntry>            sSpellLearnSpellStore("SpellLearnSpe
 DB2Storage<SpellLevelsEntry>                sSpellLevelsStore("SpellLevels.db2", SpellLevelsFormat, HOTFIX_SEL_SPELL_LEVELS);
 DB2Storage<SpellMiscEntry>                  sSpellMiscStore("SpellMisc.db2", SpellMiscFormat, HOTFIX_SEL_SPELL_MISC);
 DB2Storage<SpellPowerEntry>                 sSpellPowerStore("SpellPower.db2", SpellPowerFormat, HOTFIX_SEL_SPELL_POWER);
-DB2Storage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore("SpellProcsPerMinute.dbc", SpellProcsPerMinuteFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE);
-DB2Storage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore("SpellProcsPerMinuteMod.dbc", SpellProcsPerMinuteModFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE_MOD);
-DB2Storage<SpellRadiusEntry>                sSpellRadiusStore("SpellRadius.dbc", SpellRadiusFormat, HOTFIX_SEL_SPELL_RADIUS);
-DB2Storage<SpellRangeEntry>                 sSpellRangeStore("SpellRange.dbc", SpellRangeFormat, HOTFIX_SEL_SPELL_RANGE);
+DB2Storage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore("SpellProcsPerMinute.db2", SpellProcsPerMinuteFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE);
+DB2Storage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore("SpellProcsPerMinuteMod.db2", SpellProcsPerMinuteModFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE_MOD);
+DB2Storage<SpellRadiusEntry>                sSpellRadiusStore("SpellRadius.db2", SpellRadiusFormat, HOTFIX_SEL_SPELL_RADIUS);
+DB2Storage<SpellRangeEntry>                 sSpellRangeStore("SpellRange.db2", SpellRangeFormat, HOTFIX_SEL_SPELL_RANGE);
 DB2Storage<SpellReagentsEntry>              sSpellReagentsStore("SpellReagents.db2", SpellReagentsFormat, HOTFIX_SEL_SPELL_REAGENTS);
 DB2Storage<SpellRuneCostEntry>              sSpellRuneCostStore("SpellRuneCost.db2", SpellRuneCostFormat, HOTFIX_SEL_SPELL_RUNE_COST);
-DB2Storage<SpellScalingEntry>               sSpellScalingStore("SpellScaling.dbc", SpellScalingFormat, HOTFIX_SEL_SPELL_SCALING);
-DB2Storage<SpellShapeshiftEntry>            sSpellShapeshiftStore("SpellShapeshift.dbc", SpellShapeshiftFormat, HOTFIX_SEL_SPELL_SHAPESHIFT);
-DB2Storage<SpellShapeshiftFormEntry>        sSpellShapeshiftFormStore("SpellShapeshiftForm.dbc", SpellShapeshiftFormFormat, HOTFIX_SEL_SPELL_SHAPESHIFT_FORM);
-DB2Storage<SpellTargetRestrictionsEntry>    sSpellTargetRestrictionsStore("SpellTargetRestrictions.dbc", SpellTargetRestrictionsFormat, HOTFIX_SEL_SPELL_TARGET_RESTRICTIONS);
+DB2Storage<SpellScalingEntry>               sSpellScalingStore("SpellScaling.db2", SpellScalingFormat, HOTFIX_SEL_SPELL_SCALING);
+DB2Storage<SpellShapeshiftEntry>            sSpellShapeshiftStore("SpellShapeshift.db2", SpellShapeshiftFormat, HOTFIX_SEL_SPELL_SHAPESHIFT);
+DB2Storage<SpellShapeshiftFormEntry>        sSpellShapeshiftFormStore("SpellShapeshiftForm.db2", SpellShapeshiftFormFormat, HOTFIX_SEL_SPELL_SHAPESHIFT_FORM);
+DB2Storage<SpellTargetRestrictionsEntry>    sSpellTargetRestrictionsStore("SpellTargetRestrictions.db2", SpellTargetRestrictionsFormat, HOTFIX_SEL_SPELL_TARGET_RESTRICTIONS);
 DB2Storage<SpellTotemsEntry>                sSpellTotemsStore("SpellTotems.db2", SpellTotemsFormat, HOTFIX_SEL_SPELL_TOTEMS);
 DB2Storage<SpellVisualEntry>                sSpellVisualStore("SpellVisual.db2", SpellVisualFormat, HOTFIX_SEL_SPELL_VISUAL);
 DB2Storage<TaxiNodesEntry>                  sTaxiNodesStore("TaxiNodes.db2", TaxiNodesFormat, HOTFIX_SEL_TAXI_NODES);
@@ -264,7 +264,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    LOAD_DB2(sAchievementStore);                // 20796
+    //LOAD_DB2(sAchievementStore);                // 20796
     //LOAD_DB2(sAreaGroupMemberStore);
     //LOAD_DB2(sAreaGroupStore);
     //LOAD_DB2(sArmorLocationStore);            // 20796
@@ -300,7 +300,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sDurabilityQualityStore);        // 20796
     //LOAD_DB2(sGameObjectDisplayInfoStore);    // 20796
     //LOAD_DB2(sGameObjectsStore);
-    LOAD_DB2(sGameTablesStore);                 // 20796
+    LOAD_DB2(sGameTablesStore);               // 20796
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
     //LOAD_DB2(sGarrBuildingPlotInstStore);
@@ -358,7 +358,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemSparseStore);
     //LOAD_DB2(sItemSpecOverrideStore);         // 20796
     //LOAD_DB2(sItemSpecStore);                 // 20796
-    //LOAD_DB2(sItemStore);
+    //LOAD_DB2(sItemStore);                       // 20796
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
@@ -439,7 +439,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #undef LOAD_DB2
 
-    InitDB2CustomStores();
+    //InitDB2CustomStores();
 
     // error checks
     if (bad_db2_files.size() >= DB2FilesCount)

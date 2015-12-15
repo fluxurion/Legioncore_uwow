@@ -15,9 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// x - skip<uint32>, X - skip<uint8>, s - char*, f - float, i - uint32, b - uint8, d - index (not included)
-// n - index (included), l - uint64, p - field present in sql dbc, a - field absent in sql dbc,
-// t - uint16
+// x - skip<uint32>,        X - skip<uint8>,    s - char*,  f - float,  i - uint32,     b - uint8,  d - index (not included)
+// n - index (included),    l - uint64,         t - uint16
 
 #ifndef TRINITY_DB2SFRM_H
 #define TRINITY_DB2SFRM_H
@@ -58,7 +57,7 @@ char const DurabilityCostsFormat[] = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 char const DurabilityQualityFormat[] = "f";
 char const GameObjectDisplayInfoFormat[] = "iffffffffttttttttttt";
 char const GameObjectsFormat[] = "niiffffffffiiiiiiiiiiiis";
-char const GameTablesFormat[] = "stb";
+char const GameTablesFormat[] = "nstb";
 char const GarrAbilityEffectFormat[] = "niiiiifffii";
 char const GarrAbilityFormat[] = "nissiii";
 char const GarrBuildingFormat[] = "niiiiissssiiiiiiiiiiiiii";
@@ -99,7 +98,7 @@ char const ItemDamageFormat[] = "nfffffffi";
 char const ItemDisenchantLootFormat[] = "niiiiii";
 char const ItemEffectFormat[] = "niiiiiiii";
 char const ItemExtendedCostFormat[] = "niiiiiiiiiiiiiiiiiiiiiiiiiiii";
-char const ItemFormat[] = "niiiiiiii";
+char const ItemFormat[] = "iibbbbbbb";
 char const ItemLimitCategoryFormat[] = "nxii";
 char const ItemModifiedAppearanceFormat[] = "niiiii";
 char const ItemPriceBaseFormat[] = "diff";

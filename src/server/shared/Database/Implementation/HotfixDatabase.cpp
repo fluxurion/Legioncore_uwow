@@ -24,6 +24,8 @@
 
 void HotfixDatabaseConnection::DoPrepareStatements()
 {
+    return;
+
     if (!m_reconnecting)
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
 
@@ -217,7 +219,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_HOLIDAYS, "SELECT ID, TextureFilename_lang FROM holidays_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Item.db2
-    PrepareStatement(HOTFIX_SEL_ITEM, "SELECT ID, Class, SubClass, SoundOverrideSubclass, Material, InventoryType, Sheath, FileDataID, GroupSoundsID"
+    PrepareStatement(HOTFIX_SEL_ITEM, "SELECT ID, FileDataID, Class, SubClass, SoundOverrideSubclass, Material, InventoryType, Sheath, GroupSoundsID"
         " FROM item ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemAppearance.db2
@@ -570,8 +572,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_GAME_OBJECTS, "SELECT ID, Name_lang FROM game_objects_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // GameTables.db2
-    PrepareStatement(HOTFIX_SEL_GAME_TABLES, "SELECT Name, NumRows, NumColumns FROM game_tables ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_GAME_TABLES, "SELECT Name, Name_lang FROM game_tables_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_GAME_TABLES, "SELECT ID, Name, NumRows, NumColumns FROM game_tables ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_GAME_TABLES, "SELECT ID, Name_lang FROM game_tables_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // MapChallengeMode.db2
     PrepareStatement(HOTFIX_SEL_MAP_CHALLENGE_MODE, "SELECT id, map, unk1, unk2, season, bronze, silver, gold, unk3, unk4 FROM map_challenge_mode"

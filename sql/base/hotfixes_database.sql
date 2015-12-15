@@ -1065,14 +1065,14 @@ CREATE TABLE `holidays_locale` (
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Class` int(10) unsigned NOT NULL DEFAULT '0',
-  `SubClass` int(10) unsigned NOT NULL DEFAULT '0',
-  `SoundOverrideSubclass` int(11) NOT NULL DEFAULT '0',
-  `Material` int(11) NOT NULL DEFAULT '0',
-  `InventoryType` int(10) unsigned NOT NULL DEFAULT '0',
-  `Sheath` int(10) unsigned NOT NULL DEFAULT '0',
   `FileDataID` int(10) unsigned NOT NULL DEFAULT '0',
-  `GroupSoundsID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Class` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SubClass` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SoundOverrideSubclass` tinyint(4) NOT NULL DEFAULT '0',
+  `Material` tinyint(4) NOT NULL DEFAULT '0',
+  `InventoryType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Sheath` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GroupSoundsID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3043,11 +3043,12 @@ CREATE TABLE `game_objects_locale` (
 
 DROP TABLE IF EXISTS `game_tables`;
 CREATE TABLE `game_tables` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `NumRows` smallint(5) unsigned NOT NULL DEFAULT '0',
   `NumColumns` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3056,11 +3057,11 @@ CREATE TABLE `game_tables` (
 
 DROP TABLE IF EXISTS `game_tables_locale`;
 CREATE TABLE `game_tables_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
