@@ -161,16 +161,27 @@ DB2Storage<SpellCategoryEntry>              sSpellCategoryStores("SpellCategory.
 DB2Storage<SpellClassOptionsEntry>          sSpellClassOptionsStore("SpellClassOptions.db2", SpellClassOptionsFormat, HOTFIX_SEL_SPELL_CLASS_OPTIONS);
 DB2Storage<SpellCooldownsEntry>             sSpellCooldownsStore("SpellCooldowns.db2", SpellCooldownsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellDurationEntry>              sSpellDurationStore("SpellDuration.db2", SpellDurationFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellEffectEntry>                sSpellEffectStore("SpellEffect.dbc", SpellEffectEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellEffectScalingEntry>         sSpellEffectScalingStore("SpellEffectScaling.db2", SpellEffectScalingEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellEntry>                      sSpellStore("Spell.dbc", SpellEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellEquippedItemsEntry>         sSpellEquippedItemsStore("SpellEquippedItems.db2", SpellEquippedItemsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellFocusObjectEntry>           sSpellFocusObjectStore("SpellFocusObject.db2", SpellFocusObjectFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellInterruptsEntry>            sSpellInterruptsStore("SpellInterrupts.db2", SpellInterruptsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore("SpellItemEnchantmentCondition.db2", SpellItemEnchantmentConditionFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellLearnSpellEntry>            sSpellLearnSpellStore("SpellLearnSpell.db2", SpellLearnSpellFormat, HOTFIX_SEL_SPELL_LEARN_SPELL);
+DB2Storage<SpellLevelsEntry>                sSpellLevelsStore("SpellLevels.db2", SpellLevelsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellMiscEntry>                  sSpellMiscStore("SpellMisc.db2", SpellMiscFormat, HOTFIX_SEL_SPELL_MISC);
 DB2Storage<SpellPowerEntry>                 sSpellPowerStore("SpellPower.db2", SpellPowerFormat, HOTFIX_SEL_SPELL_POWER);
+DB2Storage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore("SpellProcsPerMinute.dbc", SpellProcsPerMinuteEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore("SpellProcsPerMinuteMod.dbc", SpellProcsPerMinuteModEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellRadiusEntry>                sSpellRadiusStore("SpellRadius.dbc", SpellRadiusFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellRangeEntry>                 sSpellRangeStore("SpellRange.dbc", SpellRangeFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellReagentsEntry>              sSpellReagentsStore("SpellReagents.db2", SpellReagentsFormat, HOTFIX_SEL_SPELL_REAGENTS);
 DB2Storage<SpellRuneCostEntry>              sSpellRuneCostStore("SpellRuneCost.db2", SpellRuneCostFormat, HOTFIX_SEL_SPELL_RUNE_COST);
+DB2Storage<SpellScalingEntry>               sSpellScalingStore("SpellScaling.dbc", SpellScalingEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellShapeshiftEntry>            sSpellShapeshiftStore("SpellShapeshift.dbc", SpellShapeshiftEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellShapeshiftFormEntry>        sSpellShapeshiftFormStore("SpellShapeshiftForm.dbc", SpellShapeshiftFormFormat, MAX_HOTFIXDATABASE_STATEMENTS);
+DB2Storage<SpellTargetRestrictionsEntry>    sSpellTargetRestrictionsStore("SpellTargetRestrictions.dbc", SpellTargetRestrictionsEntryFormat, MAX_HOTFIXDATABASE_STATEMENTS);
 DB2Storage<SpellTotemsEntry>                sSpellTotemsStore("SpellTotems.db2", SpellTotemsFormat, HOTFIX_SEL_SPELL_TOTEMS);
 DB2Storage<SpellVisualEntry>                sSpellVisualStore("SpellVisual.db2", SpellVisualFormat, HOTFIX_SEL_SPELL_VISUAL);
 DB2Storage<TaxiNodesEntry>                  sTaxiNodesStore("TaxiNodes.db2", TaxiNodesFormat, HOTFIX_SEL_TAXI_NODES);
@@ -393,26 +404,26 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSpellCooldownsStore);           // 20796
     //LOAD_DB2(sSpellDurationStore);            // 20796
     //LOAD_DB2(sSpellEffectScalingStore);       // 20796
-    //LOAD_DB2(sSpellEffectStore,                 "SpellEffect.dbc");
+    //LOAD_DB2(sSpellEffectStore);              // 20796
     //LOAD_DB2(sSpellEquippedItemsStore);       // 20796
     //LOAD_DB2(sSpellFocusObjectStore);         // 20796
     //LOAD_DB2(sSpellInterruptsStore);          // 20796
     //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20796
     //LOAD_DB2(sSpellLearnSpellStore);
-    //LOAD_DB2(sSpellLevelsStore,                 "SpellLevels.dbc");
+    //LOAD_DB2(sSpellLevelsStore);              // 20796
     //LOAD_DB2(sSpellMiscStore);
     //LOAD_DB2(sSpellPowerStore);
-    //LOAD_DB2(sSpellProcsPerMinuteModStore,      "SpellProcsPerMinuteMod.dbc");
-    //LOAD_DB2(sSpellProcsPerMinuteStore,         "SpellProcsPerMinute.dbc");
-    //LOAD_DB2(sSpellRadiusStore,                 "SpellRadius.dbc");
-    //LOAD_DB2(sSpellRangeStore,                  "SpellRange.dbc");
+    //LOAD_DB2(sSpellProcsPerMinuteModStore);   // 20796
+    //LOAD_DB2(sSpellProcsPerMinuteStore);      // 20796
+    //LOAD_DB2(sSpellRadiusStore);              // 20796
+    //LOAD_DB2(sSpellRangeStore);               // 20796
     //LOAD_DB2(sSpellReagentsStore);
     //LOAD_DB2(sSpellRuneCostStore);
-    //LOAD_DB2(sSpellScalingStore,                "SpellScaling.dbc");
-    //LOAD_DB2(sSpellShapeshiftFormStore,         "SpellShapeshiftForm.dbc");
-    //LOAD_DB2(sSpellShapeshiftStore,             "SpellShapeshift.dbc");
-    //LOAD_DB2(sSpellStore,                       "Spell.dbc");
-    //LOAD_DB2(sSpellTargetRestrictionsStore,     "SpellTargetRestrictions.dbc");
+    //LOAD_DB2(sSpellScalingStore);             // 20796
+    //LOAD_DB2(sSpellShapeshiftFormStore);      // 20796
+    //LOAD_DB2(sSpellShapeshiftStore);          // 20796
+    //LOAD_DB2(sSpellStore);                    // 20796
+    //LOAD_DB2(sSpellTargetRestrictionsStore);  // 20796
     //LOAD_DB2(sSpellTotemsStore);
     //LOAD_DB2(sSpellVisualStore);
     //LOAD_DB2(sTaxiNodesStore);
@@ -706,11 +717,11 @@ void DB2Manager::InitDB2CustomStores()
         if (!spellInfo)
             continue;
 
-        SpellLevelsEntry const* levels = sSpellLevelsStore.LookupEntry(spellInfo->LevelsID);
-        if (spellInfo->LevelsID && (!levels || levels->spellLevel))
-            continue;
+        /*SpellLevelsEntry const* levels = sSpellLevelsStore.LookupEntry(spellInfo->LevelsID);
+        if (spellInfo->LevelsID && (!levels || levels->SpellLevel))
+            continue;*/
 
-        if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
+        /*if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
         {
             if (spellMisc->Attributes & SPELL_ATTR0_PASSIVE)
             {
@@ -725,7 +736,7 @@ void DB2Manager::InitDB2CustomStores()
                     sPetFamilySpellsStore[cFamily->ID].insert(spellInfo->ID);
                 }
             }
-        }
+        }*/
     }
 
     for (SkillRaceClassInfoEntry const* entry : sSkillRaceClassInfoStore)
@@ -740,6 +751,29 @@ void DB2Manager::InitDB2CustomStores()
         SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(v->ID);
         if (spell && spell->Category)
             sSpellCategoryStore[spell->Category].insert(v->ID);
+    }
+    
+    for (SpellProcsPerMinuteModEntry const* sppm : sSpellProcsPerMinuteModStore)
+        _spellProcsPerMinuteModEntryList[sppm->SpellProcsPerMinuteID].push_back(sppm->Id);
+    
+    for (SpellTargetRestrictionsEntry const* restriction : sSpellTargetRestrictionsStore)
+        _spellRestrictionDiff[restriction->SpellID].insert(restriction);
+
+    for (SpellEffectEntry const* spellEffect : sSpellEffectStore)
+    {
+        if (spellEffect->EffectIndex > MAX_SPELL_EFFECTS)
+            continue;
+
+        if (spellEffect->DifficultyID)
+            _spellEffectDiff[spellEffect->SpellID].effects[MAKE_PAIR16(spellEffect->EffectIndex, spellEffect->DifficultyID)] = spellEffect;
+        else
+            _spellEffectMap[spellEffect->SpellID].effects[spellEffect->EffectIndex] = spellEffect;
+
+        if (spellEffect->Effect == SPELL_EFFECT_LEARN_SPELL)
+            _revertLearnSpell[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
+
+        if (spellEffect->EffectTriggerSpell)
+            _reversTriggerSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
     }
 }
 
@@ -1266,6 +1300,72 @@ std::vector<SpecializationSpellEntry const*> const* DB2Manager::GetSpecializatio
     SpecializationSpellsBySpecContainer::const_iterator itr = _specializationSpellsBySpec.find(specId);
     if (itr != _specializationSpellsBySpec.end())
         return &itr->second;
+
+    return nullptr;
+}
+
+std::list<uint32> const* DB2Manager::GetSpellProcsPerMinuteModList(uint32 procID)
+{
+    SpellProcsPerMinuteModEntryListContainer::const_iterator itr = _spellProcsPerMinuteModEntryList.find(procID);
+    if (itr != _spellProcsPerMinuteModEntryList.end())
+        return &itr->second;
+
+    return nullptr;
+}
+
+SpellTargetRestrictionsEntry const* DB2Manager::GetSpellTargetRestrioctions(uint32 spellId, uint16 difficulty)
+{
+    SpellRestrictionDiffContainer::const_iterator itr = _spellRestrictionDiff.find(spellId);
+    if (itr != _spellRestrictionDiff.end())
+        for (auto const& v : itr->second)
+            if (v->DifficultyID == difficulty)
+                return v;
+
+    return nullptr;
+}
+
+uint32 DB2Manager::GetLearnSpell(uint32 trigerSpell)
+{
+    RevertLearnSpellContainer::const_iterator itr = _revertLearnSpell.find(trigerSpell);
+    if (itr != _revertLearnSpell.end())
+        return itr->second;
+
+    return 0;
+}
+
+uint32 DB2Manager::GetSpellByTrigger(uint32 trigerSpell)
+{
+    ReversTriggerSpellContainer::const_iterator itr = _reversTriggerSpellList.find(trigerSpell);
+    if (itr != _reversTriggerSpellList.end())
+        return itr->second;
+
+    return 0;
+}
+
+SpellEffectEntry const* DB2Manager::GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty)
+{
+    if (spellId == 9262) //hack fix Segmentation fault
+        return nullptr;
+
+    if (difficulty)
+    {
+        uint16 index = MAKE_PAIR16(effect, difficulty);
+        SpellEffectDiffContainer::const_iterator itr = _spellEffectDiff.find(spellId);
+        if (itr != _spellEffectDiff.end())
+        {
+            SpellEffectsMap const* effects = &itr->second.effects;
+            SpellEffectsMap::const_iterator itrsecond = effects->find(index);
+            if (itrsecond != effects->end())
+                return itrsecond->second;
+        }
+    }
+    else
+    {
+        SpellEffectContainer::const_iterator itr = _spellEffectMap.find(spellId);
+        if (itr != _spellEffectMap.end())
+            if (itr->second.effects[effect])
+                return itr->second.effects[effect];
+    }
 
     return nullptr;
 }

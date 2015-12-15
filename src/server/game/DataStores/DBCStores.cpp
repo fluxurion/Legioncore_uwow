@@ -53,9 +53,6 @@ struct WMOAreaTableTripple
 typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
 
-static std::unordered_map<uint32, std::list<uint32>> sSpellProcsPerMinuteModEntryList;
-static std::unordered_map<uint32, uint32> sRevertLearnSpellList;
-static std::unordered_map<uint32, uint32> sReversTriggerSpellList;
 static AreaEntryMap sAreaEntry;
 static AreaFlagByAreaID sAreaFlagByAreaID;
 static AreaFlagByMapID sAreaFlagByMapID;
@@ -66,10 +63,6 @@ static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 MapDifficultyMap                            sMapDifficultyMap;
 PetFamilySpellsStore                        sPetFamilySpellsStore;
 SpellCategoryStore                          sSpellCategoryStore;
-SpellEffectDiffMap                          sSpellEffectDiffMap;
-SpellEffectMap                              sSpellEffectMap;
-SpellRestrictionDiffMap                     sSpellRestrictionDiffMap;
-SpellSkillingList                           sSpellSkillingList;
 ChrSpecializationByIndexArray               sChrSpecializationByIndexStore;
 TalentsByPosition                           sTalentByPos;
 MinorTalentByIndexArray                     sMinorTalentByIndexStore;
@@ -107,18 +100,7 @@ DBCStorage<PhaseEntry>                      sPhaseStores(PhaseEntryfmt);
 DBCStorage<PowerDisplayEntry>               sPowerDisplayStore(PowerDisplayEntryfmt);
 DBCStorage<PvPDifficultyEntry>              sPvPDifficultyStore(PvPDifficultyfmt);
 DBCStorage<QuestPOIBlobEntry>               sQuestPOIBlobStore(QuestPOIBlobfmt);
-DBCStorage<SpellEffectEntry>                sSpellEffectStore(SpellEffectEntryfmt);
-DBCStorage<SpellEntry>                      sSpellStore(SpellEntryfmt);
 DBCStorage<SpellItemEnchantmentEntry>       sSpellItemEnchantmentStore(SpellItemEnchantmentfmt);
-DBCStorage<SpellLevelsEntry>                sSpellLevelsStore(SpellLevelsEntryfmt);
-DBCStorage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore(SpellProcsPerMinuteEntryfmt);
-DBCStorage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore(SpellProcsPerMinuteModEntryfmt);
-DBCStorage<SpellRadiusEntry>                sSpellRadiusStore(SpellRadiusfmt);
-DBCStorage<SpellRangeEntry>                 sSpellRangeStore(SpellRangefmt);
-DBCStorage<SpellScalingEntry>               sSpellScalingStore(SpellScalingEntryfmt);
-DBCStorage<SpellShapeshiftEntry>            sSpellShapeshiftStore(SpellShapeshiftEntryfmt);
-DBCStorage<SpellShapeshiftFormEntry>        sSpellShapeshiftFormStore(SpellShapeshiftFormfmt);
-DBCStorage<SpellTargetRestrictionsEntry>    sSpellTargetRestrictionsStore(SpellTargetRestrictionsEntryfmt);
 DBCStorage<StableSlotPricesEntry>           sStableSlotPricesStore(StableSlotPricesfmt);
 DBCStorage<SummonPropertiesEntry>           sSummonPropertiesStore(SummonPropertiesfmt);
 DBCStorage<TalentEntry>                     sTalentStore(TalentEntryfmt);
@@ -435,36 +417,6 @@ void InitDBCCustomStores()
             ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by DBC data");
     }
 
-    for (SpellTargetRestrictionsEntry const* restriction : sSpellTargetRestrictionsStore)
-        sSpellRestrictionDiffMap[restriction->SpellId].restrictions.insert(restriction);
-
-    for (SpellProcsPerMinuteModEntry const* sppm : sSpellProcsPerMinuteModStore)
-        sSpellProcsPerMinuteModEntryList[sppm->ProcsPerMinuteId].push_back(sppm->Id);
-
-    for (SpellEffectEntry const* spellEffect : sSpellEffectStore)
-    {
-        if (spellEffect->EffectIndex > MAX_SPELL_EFFECTS)
-            continue;
-
-        if (spellEffect->DifficultyID)
-            sSpellEffectDiffMap[spellEffect->SpellID].effects[MAKE_PAIR16(spellEffect->EffectIndex, spellEffect->DifficultyID)] = spellEffect;
-        else
-            sSpellEffectMap[spellEffect->SpellID].effects[spellEffect->EffectIndex] = spellEffect;
-
-        if (spellEffect->Effect == SPELL_EFFECT_LEARN_SPELL)
-            sRevertLearnSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
-
-        if (spellEffect->EffectTriggerSpell)
-            sReversTriggerSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
-    }
-
-    for (SpellEntry const* spell : sSpellStore)
-    {
-        if (SpellEffectEntry const* spellEffect = spell->GetSpellEffect(EFFECT_1))
-            if (spellEffect->Effect == SPELL_EFFECT_SKILL && IsProfessionSkill(spellEffect->EffectMiscValue))
-                sSpellSkillingList.push_back(spell);
-    }
-
     for (TalentEntry const* talentInfo : sTalentStore)
         if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 7 && talentInfo->column < 3)
             sTalentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
@@ -494,30 +446,6 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction)
     return NULL;
 }
 
-uint32 GetLearnSpell(uint32 trigerSpell)
-{
-    std::unordered_map<uint32, uint32 >::const_iterator itr = sRevertLearnSpellList.find(trigerSpell);
-    if (itr != sRevertLearnSpellList.end())
-        return itr->second;
-    return 0;
-}
-
-uint32 GetSpellByTrigger(uint32 trigerSpell)
-{
-    std::unordered_map<uint32, uint32 >::const_iterator itr = sReversTriggerSpellList.find(trigerSpell);
-    if (itr != sReversTriggerSpellList.end())
-        return itr->second;
-    return 0;
-}
-
-std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId)
-{
-    std::unordered_map<uint32, std::list<uint32> >::const_iterator itr = sSpellProcsPerMinuteModEntryList.find(PerMinId);
-    if (itr != sSpellProcsPerMinuteModEntryList.end())
-        return &itr->second;
-    return NULL;
-}
-
 char const* GetPetName(uint32 petfamily, uint32 /*dbclang*/)
 {
     if (!petfamily)
@@ -526,50 +454,6 @@ char const* GetPetName(uint32 petfamily, uint32 /*dbclang*/)
     if (!pet_family)
         return NULL;
     return pet_family->Name ? pet_family->Name : NULL;
-}
-
-SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty)
-{
-    if (spellId == 9262) //hack fix Segmentation fault
-        return NULL;
-
-    if (difficulty)
-    {
-        uint16 index = MAKE_PAIR16(effect, difficulty);
-        SpellEffectDiffMap::const_iterator itr = sSpellEffectDiffMap.find(spellId);
-        if (itr != sSpellEffectDiffMap.end())
-        {
-            SpellEffectsMap const* effects = &itr->second.effects;
-            SpellEffectsMap::const_iterator itrsecond = effects->find(index);
-            if (itrsecond != effects->end())
-                return itrsecond->second;
-        }
-    }
-    else
-    {
-        SpellEffectMap::const_iterator itr = sSpellEffectMap.find(spellId);
-        if (itr != sSpellEffectMap.end())
-            if (itr->second.effects[effect])
-                return itr->second.effects[effect];
-    }
-
-    return NULL;
-}
-
-SpellTargetRestrictionsEntry const *GetSpellTargetRestrioctions(uint32 spellId, uint16 difficulty)
-{
-    SpellRestrictionDiffMap::const_iterator itr = sSpellRestrictionDiffMap.find(spellId);
-    if (itr != sSpellRestrictionDiffMap.end())
-    {
-        SpellRestrictionMap const* restr = &itr->second.restrictions;
-        for (SpellRestrictionMap::const_iterator sr = restr->begin(); sr != restr->end(); ++sr)
-        {
-            if ((*sr)->m_difficultyID == difficulty)
-                return *sr;
-        }
-    }
-
-    return NULL;
 }
 
 TalentSpellPos const* GetTalentSpellPos(uint32 spellId)

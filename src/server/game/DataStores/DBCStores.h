@@ -30,14 +30,8 @@
 
 typedef std::list<uint32> SimpleFactionsList;
 SimpleFactionsList const* GetFactionTeamList(uint32 faction);
-uint32 GetLearnSpell(uint32 trigerSpell);
-uint32 GetSpellByTrigger(uint32 trigerSpell);
-
-std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 PerMinId);
 
 char const* GetPetName(uint32 petfamily, uint32 dbclang);
-SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
-SpellTargetRestrictionsEntry const *GetSpellTargetRestrioctions(uint32 spellid, uint16 difficulty);
 
 int32 GetAreaFlagByAreaID(uint32 area_id);                  // -1 if not found
 AreaTableEntry const* GetAreaEntryByAreaID(uint32 area_id);
@@ -115,9 +109,6 @@ private:
     GameTablesEntry const* _gtEntry;
 };
 
-
-
-
 extern DBCStorage<AreaPOIEntry>                 sAreaPOIStore;
 extern DBCStorage<AreaTableEntry>               sAreaStore;
 extern DBCStorage<AreaTriggerEntry>             sAreaTriggerStore;
@@ -150,18 +141,7 @@ extern DBCStorage<MovieEntry>                   sMovieStore;
 extern DBCStorage<PhaseEntry>                   sPhaseStores;
 extern DBCStorage<PowerDisplayEntry>            sPowerDisplayStore;
 extern DBCStorage<QuestPOIBlobEntry>            sQuestPOIBlobStore;
-extern DBCStorage<SpellEffectEntry>             sSpellEffectStore;
-extern DBCStorage<SpellEntry>                   sSpellStore;
 extern DBCStorage<SpellItemEnchantmentEntry>    sSpellItemEnchantmentStore;
-extern DBCStorage<SpellLevelsEntry>             sSpellLevelsStore;
-extern DBCStorage<SpellProcsPerMinuteEntry>     sSpellProcsPerMinuteStore;
-extern DBCStorage<SpellProcsPerMinuteModEntry>  sSpellProcsPerMinuteModStore;
-extern DBCStorage<SpellRadiusEntry>             sSpellRadiusStore;
-extern DBCStorage<SpellRangeEntry>              sSpellRangeStore;
-extern DBCStorage<SpellScalingEntry>            sSpellScalingStore;
-extern DBCStorage<SpellShapeshiftEntry>         sSpellShapeshiftStore;
-extern DBCStorage<SpellShapeshiftFormEntry>     sSpellShapeshiftFormStore;
-extern DBCStorage<SpellTargetRestrictionsEntry> sSpellTargetRestrictionsStore;
 extern DBCStorage<SummonPropertiesEntry>        sSummonPropertiesStore;
 extern DBCStorage<TalentEntry>                  sTalentStore;
 extern DBCStorage<VehicleEntry>                 sVehicleStore;
@@ -196,7 +176,6 @@ extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
 extern MapDifficultyMap                          sMapDifficultyMap;
 extern PetFamilySpellsStore                      sPetFamilySpellsStore;
 extern SpellCategoryStore                        sSpellCategoryStore;
-extern SpellSkillingList                         sSpellSkillingList;
 
 void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);

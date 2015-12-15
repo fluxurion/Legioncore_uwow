@@ -1621,6 +1621,140 @@ struct ItemXBonusTreeEntry
     uint32      BonusTreeID;                                // 2
 };
 
+struct SpellEffectEntry
+{
+    uint32      ID;                                         // 0
+    uint32      DifficultyID;                               // 1
+    uint32      Effect;                                     // 2
+    float       EffectAmplitude;                            // 3
+    uint32      EffectAura;                                 // 4
+    uint32      EffectAuraPeriod;                           // 5
+    uint32      EffectBasePoints;                           // 6
+    float       EffectBonusCoefficient;                     // 7
+    float       EffectChainAmplitude;                       // 8
+    uint32      EffectChainTargets;                         // 9
+    uint32      EffectDieSides;                             // 10
+    uint32      EffectItemType;                             // 11
+    uint32      EffectMechanic;                             // 12
+    int32       EffectMiscValue;                            // 13
+    int32       EffectMiscValueB;                           // 14
+    float       EffectPointsPerResource;                    // 15
+    uint32      EffectRadiusIndex;                          // 16
+    uint32      EffectRadiusMaxIndex;                       // 17
+    float       EffectRealPointsPerLevel;                   // 18
+    flag128     EffectSpellClassMask;                       // 19-22
+    uint32      EffectTriggerSpell;                         // 23
+    float       EffectPosFacing;                            // 24
+    uint32      ImplicitTarget[2];                          // 25-26
+    uint32      SpellID;                                    // 27
+    uint32      EffectIndex;                                // 28
+    uint32      EffectAttributes;                           // 29
+    float       BonusCoefficientFromAP;                     // 30
+};
+
+struct SpellShapeshiftFormEntry
+{
+    LocalizedString* Name;                                  // 0
+    float       UnkLegion;                                  // 1 seems related to bonus stats
+    uint32      Flags;                                      // 2
+    uint16      AttackIconID;                               // 3
+    uint16      CombatRoundTime;                            // 4
+    uint16      CreatureDisplayID[4];                       // 5 - 8
+    uint16      PresetSpellID[MAX_SHAPESHIFT_SPELLS];       // 9 - 16
+    int8        CreatureType;                               // 17
+    uint8       MountTypeID;                                // 18
+    uint8       ExitSoundEntriesID;                         // 19
+
+    uint32 ID; // temp - for compile
+};
+
+struct SpellShapeshiftEntry
+{
+    uint32      ID;                                         // 0
+    uint32      ShapeshiftExclude[2];                       // 1-2
+    uint32      ShapeshiftMask[2];                          // 3-4
+    uint32      StanceBarOrder;                             // 5
+};
+
+struct SpellTargetRestrictionsEntry
+{
+    uint32      SpellID;                                    // 0
+    float       ConeAngle;                                  // 1
+    float       Width;                                      // 2
+    uint32      Targets;                                    // 3
+    uint16      MaxTargetLevel;                             // 4
+    uint16      TargetCreatureType;                         // 5
+    uint8       DifficultyID;                               // 6
+    uint8       MaxAffectedTargets;                         // 7
+};
+
+struct SpellEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    LocalizedString* NameSubtext;                           // 2
+    LocalizedString* Description;                           // 3
+    LocalizedString* AuraDescription;                       // 4
+    uint32      UnkLegion;                                  // 5 really dont have ideas about this one
+    uint32      DescriptionVariablesID;                     // 6
+
+    SpellEffectEntry const* GetSpellEffect(uint32 eff, uint8 diff = 0) const;
+};
+
+struct SpellScalingEntry
+{
+    uint32      SpellID;                                    // 0
+    uint16      ScalesFromItemLevel;                        // 1
+    uint8       ScalingClass;                               // 2
+    uint8       MaxScalingLevel;                            // 3
+};
+
+struct SpellRangeEntry
+{
+    float       MinRangeHostile;                            // 0
+    float       MinRangeFriend;                             // 1
+    float       MaxRangeHostile;                            // 2
+    float       MaxRangeFriend;                             // 3
+    LocalizedString* DisplayName;                           // 4
+    LocalizedString* DisplayNameShort;                      // 5
+    uint8       Flags;                                      // 6
+
+    uint8       ID; // temp - for compile
+};
+
+struct SpellRadiusEntry
+{
+    float       Radius;                                     // 0
+    float       RadiusPerLevel;                             // 1
+    float       RadiusMin;                                  // 2
+    float       RadiusMax;                                  // 3
+};
+
+struct SpellProcsPerMinuteEntry
+{
+    float       BaseProcRate;                               // 0
+    uint8       Flags;                                      // 1
+};
+
+struct SpellProcsPerMinuteModEntry
+{
+    float       PpmRateMod;                                 // 0
+    uint32      Type;                                       // 1
+    uint32      SpecID;                                     // 2
+    uint32      SpellProcsPerMinuteID;                      // 3
+
+    uint32 Id; // temp - for compile
+};
+
+struct SpellLevelsEntry
+{
+    uint32      SpellID;                                    // 0
+    uint16      BaseLevel;                                  // 1
+    uint16      MaxLevel;                                   // 2
+    uint16      SpellLevel;                                 // 3
+    uint8       DifficultyID;                               // 4
+};
+
 struct SpellItemEnchantmentConditionEntry
 {
     uint8       Color[MAX_ITEM_ENCHANTS];                   // 0 - 4

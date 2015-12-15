@@ -8505,7 +8505,7 @@ void ObjectMgr::AddSpellToTrainer(uint32 entry, uint32 spell, uint32 spellCost, 
         return;
     }
 
-    if(uint32 learnSpell = GetLearnSpell(spell))
+    if (uint32 learnSpell = sDB2Manager.GetLearnSpell(spell))
     {
         if(SpellInfo const* spellinfoNew = sSpellMgr->GetSpellInfo(learnSpell))
         {

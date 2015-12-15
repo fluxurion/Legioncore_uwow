@@ -669,11 +669,11 @@ m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAre
     if (castItem && castItem->GetLevelBeforeCap() && castItem->GetItemLevel() > 650) // 650 for Wod arena season 1 and 690 for Wod arena season 2
         m_inArenaNerf = true;
 
-    if(SpellScalingEntry const* _scaling = m_spellInfo->GetSpellScaling())
+    if (SpellScalingEntry const* _scaling = m_spellInfo->GetSpellScaling())
     {
         if (_scaling->ScalesFromItemLevel && castItem)
             m_casterLevel = castItem->GetItemLevel();
-        //For scaling max level
+
         if(_scaling->MaxScalingLevel && caster && caster->getLevel() > _scaling->MaxScalingLevel)
             m_casterLevel = _scaling->MaxScalingLevel;
     }

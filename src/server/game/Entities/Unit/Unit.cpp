@@ -15877,11 +15877,11 @@ float Unit::GetSpellMaxRangeForTarget(Unit const* target, SpellInfo const* spell
     if (!spellInfo->RangeEntry)
         return 0;
 
-    if (spellInfo->RangeEntry->maxRangeFriend == spellInfo->RangeEntry->maxRangeHostile)
+    if (spellInfo->RangeEntry->MaxRangeFriend == spellInfo->RangeEntry->MaxRangeHostile)
         return spellInfo->GetMaxRange();
 
     if (!target)
-    	return spellInfo->RangeEntry->maxRangeFriend;
+    	return spellInfo->RangeEntry->MaxRangeFriend;
 
     return spellInfo->GetMaxRange(!IsHostileTo(target));
 }
@@ -15890,7 +15890,7 @@ float Unit::GetSpellMinRangeForTarget(Unit const* target, SpellInfo const* spell
 {
     if (!spellInfo->RangeEntry)
         return 0;
-    if (spellInfo->RangeEntry->minRangeFriend == spellInfo->RangeEntry->minRangeHostile)
+    if (spellInfo->RangeEntry->MinRangeFriend == spellInfo->RangeEntry->MaxRangeFriend)
         return spellInfo->GetMinRange();
     return spellInfo->GetMinRange(!IsHostileTo(target));
 }
@@ -15916,8 +15916,8 @@ uint32 Unit::GetCreatureType() const
     {
         ShapeshiftForm form = GetShapeshiftForm();
         SpellShapeshiftFormEntry const* ssEntry = sSpellShapeshiftFormStore.LookupEntry(form);
-        if (ssEntry && ssEntry->creatureType > 0)
-            return ssEntry->creatureType;
+        if (ssEntry && ssEntry->CreatureType > 0)
+            return ssEntry->CreatureType;
         else
             return CREATURE_TYPE_HUMANOID;
     }
@@ -20427,17 +20427,17 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* victim, SpellInfo const* spellProto
         float spellPPM = 0.0f;
         if(SpellProcsPerMinuteEntry const* procPPM = sSpellProcsPerMinuteStore.LookupEntry(spellProto->procPerMinId))
         {
-            spellPPM = procPPM->ppmRate;
+            spellPPM = procPPM->BaseProcRate;
 
             if(Player* player = ToPlayer())
             {
                 uint32 specId = player->GetSpecializationId(player->GetActiveSpec());
-                if(std::list<uint32> const* modList = GetSpellProcsPerMinuteModList(spellProto->procPerMinId))
+                if(std::list<uint32> const* modList = sDB2Manager.GetSpellProcsPerMinuteModList(spellProto->procPerMinId))
                     for (std::list<uint32>::const_iterator itr = modList->begin(); itr != modList->end(); ++itr)
                     {
                         if(SpellProcsPerMinuteModEntry const* procPPMmod = sSpellProcsPerMinuteModStore.LookupEntry((*itr)))
-                            if(procPPMmod->specId == specId)
-                                spellPPM *= procPPMmod->ppmRateMod + 1;
+                            if(procPPMmod->SpecID == specId)
+                                spellPPM *= procPPMmod->PpmRateMod + 1;
                     }
 
                 double cooldown = player->GetPPPMSpellCooldownDelay(spellProto->Id); //base cap
@@ -22405,21 +22405,21 @@ uint32 Unit::GetModelForForm(ShapeshiftForm form)
 
     uint32 modelid = 0;
     SpellShapeshiftFormEntry const* formEntry = sSpellShapeshiftFormStore.LookupEntry(form);
-    if (formEntry && formEntry->modelID_A)
+    if (formEntry && formEntry->CreatureDisplayID[0])
     {
         // Take the alliance modelid as default
         if (GetTypeId() != TYPEID_PLAYER)
-            return formEntry->modelID_A;
+            return formEntry->CreatureDisplayID[0];
         else
         {
             if (Player::TeamForRace(getRace()) == ALLIANCE)
-                modelid = formEntry->modelID_A;
+                modelid = formEntry->CreatureDisplayID[0];
             else
-                modelid = formEntry->modelID_H;
+                modelid = formEntry->CreatureDisplayID[1];
 
             // If the player is horde but there are no values for the horde modelid - take the alliance modelid
             if (!modelid && Player::TeamForRace(getRace()) == HORDE)
-                modelid = formEntry->modelID_A;
+                modelid = formEntry->CreatureDisplayID[0];
         }
     }
 

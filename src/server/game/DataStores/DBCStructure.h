@@ -759,121 +759,6 @@ struct QuestPOIBlobEntry
     //uint32 unk;                                           // 4 m_WorldMapAreaID
 };
 
-struct SpellEffectEntry
-{
-    uint32      ID;                                         // 0
-    uint32      DifficultyID;                               // 1
-    uint32      Effect;                                     // 2
-    float       EffectAmplitude;                            // 3
-    uint32      EffectAura;                                 // 4
-    uint32      EffectAuraPeriod;                           // 5
-    uint32      EffectBasePoints;                           // 6
-    float       EffectBonusCoefficient;                     // 7
-    float       EffectChainAmplitude;                       // 8
-    uint32      EffectChainTargets;                         // 9
-    uint32      EffectDieSides;                             // 10
-    uint32      EffectItemType;                             // 11
-    uint32      EffectMechanic;                             // 12
-    int32       EffectMiscValue;                            // 13
-    int32       EffectMiscValueB;                           // 14
-    float       EffectPointsPerResource;                    // 15
-    uint32      EffectRadiusIndex;                          // 16
-    uint32      EffectRadiusMaxIndex;                       // 17
-    float       EffectRealPointsPerLevel;                   // 18
-    flag128     EffectSpellClassMask;                       // 19-22
-    uint32      EffectTriggerSpell;                         // 23
-    float       EffectPosFacing;                            // 24
-    uint32      ImplicitTarget[2];                          // 25-26
-    uint32      SpellID;                                    // 27
-    uint32      EffectIndex;                                // 28
-    uint32      EffectAttributes;                           // 29
-    float       BonusCoefficientFromAP;                     // 30
-};
-
-struct SpellProcsPerMinuteEntry
-{
-    uint32    Id;                                           // 0       m_ID
-    float     ppmRate;                                      // 1       m_ppmRate
-    //uint32                                                // 2       not use
-};
-
-struct SpellProcsPerMinuteModEntry
-{
-    uint32    Id;                                           // 0       m_ID
-    //uint32    spellId;                                    // 1       unk
-    uint32    specId;                                       // 2       SpecializationId
-    float     ppmRateMod;                                   // 3       ppmRate mod for spec
-    uint32    ProcsPerMinuteId;                             // 4       SpellProcsPerMinuteId
-};
-
-struct SpellEntry
-{
-    uint32      ID;                                         // 0
-    char*       Name_lang;                                  // 1
-    char*       NameSubtext_lang;                           // 2
-    //char*     Description_lang;                           // 3
-    //char*     AuraDescription_lang;                       // 4
-    uint32      RuneCostID;                                 // 5
-    uint32      SpellMissileID;                             // 6
-    uint32      DescriptionVariablesID;                     // 7
-    uint32      ScalingID;                                  // 8
-    uint32      AuraOptionsID;                              // 9
-    uint32      AuraRestrictionsID;                         // 10
-    uint32      CastingRequirementsID;                      // 11
-    uint32      CategoriesID;                               // 12
-    uint32      ClassOptionsID;                             // 13
-    uint32      CooldownsID;                                // 14
-    uint32      EquippedItemsID;                            // 15
-    uint32      InterruptsID;                               // 16
-    uint32      LevelsID;                                   // 17
-    uint32      ReagentsID;                                 // 18
-    uint32      ShapeshiftID;                               // 19
-    uint32      TargetRestrictionsID;                       // 20
-    uint32      TotemsID;                                   // 21
-    uint32      RequiredProjectID;                          // 22
-    uint32      MiscID;                                     // 23
-
-    // struct access functions
-    SpellEffectEntry const* GetSpellEffect(uint32 eff, uint8 diff = 0) const;
-};
-
-typedef std::set<uint32> SpellCategorySet;
-typedef std::unordered_map<uint32, SpellCategorySet > SpellCategoryStore;
-typedef std::list<const SpellEntry*> SpellSkillingList;
-typedef std::set<uint32> PetFamilySpellsSet;
-typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsStore;
-
-struct SpellRadiusEntry
-{
-    uint32    ID;                                           // 0
-    float     radiusHostile;                                // 1
-    //float   radiusPerLevel                                // 2
-    //uint32                                                // 3    new 5.0.5
-    float     radiusFriend;                                 // 4
-};
-
-struct SpellRangeEntry
-{
-    uint32    ID;
-    float     minRangeHostile;
-    float     minRangeFriend;
-    float     maxRangeHostile;
-    float     maxRangeFriend;                               //friend means unattackable unit here
-    uint32    type;
-    //char*   Name;                                         // 6-21     m_displayName_lang
-    //char*   ShortName;                                    // 23-38    m_displayNameShort_lang
-};
-
-struct SpellLevelsEntry
-{
-    //uint32 Id; // 0 m_ID
-    uint32 SpellId; // 1 m_spellId
-    //uint32 m_difficultyID; // 2 5.0.1.15589
-    uint32 baseLevel; // 3 m_baseLevel
-    uint32 maxLevel; // 4 m_maxLevel
-    uint32 spellLevel; // 5 m_spellLevel
-};
-
 struct PowerDisplayEntry
 {
     uint32    Id;                                           // 0 m_ID
@@ -882,60 +767,6 @@ struct PowerDisplayEntry
     //uint32    red;                                        // 3 m_red
     //uint32    green;                                      // 4 m_green
     //uint32    blue;                                       // 5 m_blue
-};
-
-struct SpellShapeshiftFormEntry
-{
-    uint32 ID;                                              // 0
-    //uint32 m_bonusActionBar;                              // 1 unused
-    //char* Name;                                           // 2 unused
-    uint32 flags1;                                          // 3
-    int32  creatureType;                                    // 4 <=0 humanoid, other normal creature types
-    //uint32 m_attackIconID;                                // 5 unused, related to next field
-    uint32 attackSpeed;                                     // 6
-    uint32 modelID_A;                                       // 7 alliance modelid (0 means no model)
-    uint32 modelID_H;                                       // 8 horde modelid (but only for one form)
-    //uint32 modelID;                                       // 9 unused always 0
-    //uint32 modelID;                                       // 10 unused always 0
-    uint32 stanceSpell[MAX_SHAPESHIFT_SPELLS];              // 11-18 spells which appear in the bar after shapeshifting
-    //uint32 m_mountTypeID;                                 // 19
-    //uint32 m_exitSoundEntriesID;                          // 20
-};
-
-struct SpellShapeshiftEntry
-{
-    uint32    Id;                                           // 0 - m_ID
-    uint32    StancesNot;                                   // 3 - m_shapeshiftExclude
-    // uint32 StancesNot2;                                  // 2 - 3.2.0
-    uint32    Stances;                                      // 1 - m_shapeshiftMask
-    // uint32 Stances2;                                     // 4 - 3.2.0
-    // uint32    StanceBarOrder;                            // 5 - m_stanceBarOrder not used
-};
-
-struct SpellTargetRestrictionsEntry
-{
-    uint32 Id; // 0 m_ID
-    uint32 SpellId; // 1 m_spellId
-    uint32 m_difficultyID; // 2 5.0.1.15589
-    float MaxTargetRadius; // 3 m_maxTargetRadius
-    //float m_width; // 5 5.0.1.15589
-    uint32 MaxAffectedTargets; // 5 m_maxTargets
-    uint32 MaxTargetLevel; // 6 m_maxTargetLevel
-    uint32 TargetCreatureType; // 7 m_targetCreatureType
-    uint32 Targets; // 8 m_targets
-};
-
-struct SpellScalingEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    int32     CastTimeMin;                                  // 1
-    int32     CastTimeMax;                                  // 2
-    uint32    CastTimeMaxLevel;                             // 3
-    int32     ScalingClass;                                 // 4        (index * 100) + charLevel - 1 => gtSpellScaling.dbc
-    float     NerfFactor;                                   // 5
-    uint32    NerfMaxLevel;                                 // 6
-    uint32    MaxScalingLevel;                              // 7
-    uint32    ScalesFromItemLevel;                          // 8
 };
 
 struct SpellItemEnchantmentEntry
@@ -1163,35 +994,10 @@ struct TalentSpellPos
 
 typedef std::unordered_map<uint32, TalentSpellPos> TalentSpellPosMap;
 
-struct SpellEffect
-{
-    SpellEffect()
-    {
-        for(int i = 0; i < MAX_SPELL_EFFECTS; i++)
-            effects[i] = NULL;
-    }
-
-    SpellEffectEntry const* effects[MAX_SPELL_EFFECTS];
-};
-
-typedef std::unordered_map<uint16, SpellEffectEntry const*> SpellEffectsMap;
-
-struct SpellEffectDiff
-{
-    SpellEffectsMap effects;
-};
-
-typedef std::unordered_map<uint32, SpellEffectDiff> SpellEffectDiffMap;
-typedef std::unordered_map<uint32, SpellEffect> SpellEffectMap;
-
-typedef std::set<SpellTargetRestrictionsEntry const*> SpellRestrictionMap;
-
-struct SpellRestrictionDiff
-{
-    SpellRestrictionMap restrictions;
-};
-
-typedef std::unordered_map<uint32, SpellRestrictionDiff> SpellRestrictionDiffMap;
+typedef std::set<uint32> SpellCategorySet;
+typedef std::unordered_map<uint32, SpellCategorySet > SpellCategoryStore;
+typedef std::set<uint32> PetFamilySpellsSet;
+typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsStore;
 
 float GetCurrencyPrecision(uint32 currencyId);
 

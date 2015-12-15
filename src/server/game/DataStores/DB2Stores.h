@@ -153,15 +153,25 @@ extern DB2Storage<SpellClassOptionsEntry>           sSpellClassOptionsStore;
 extern DB2Storage<SpellCooldownsEntry>              sSpellCooldownsStore;
 extern DB2Storage<SpellDurationEntry>               sSpellDurationStore;
 extern DB2Storage<SpellEffectScalingEntry>          sSpellEffectScalingStore;
+extern DB2Storage<SpellEntry>                       sSpellStore;
 extern DB2Storage<SpellEquippedItemsEntry>          sSpellEquippedItemsStore;
 extern DB2Storage<SpellFocusObjectEntry>            sSpellFocusObjectStore;
 extern DB2Storage<SpellInterruptsEntry>             sSpellInterruptsStore;
 extern DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore;
 extern DB2Storage<SpellLearnSpellEntry>             sSpellLearnSpellStore;
+extern DB2Storage<SpellLevelsEntry>                 sSpellLevelsStore;
 extern DB2Storage<SpellMiscEntry>                   sSpellMiscStore;
 extern DB2Storage<SpellPowerEntry>                  sSpellPowerStore;
+extern DB2Storage<SpellProcsPerMinuteEntry>         sSpellProcsPerMinuteStore;
+extern DB2Storage<SpellProcsPerMinuteModEntry>      sSpellProcsPerMinuteModStore;
+extern DB2Storage<SpellRadiusEntry>                 sSpellRadiusStore;
+extern DB2Storage<SpellRangeEntry>                  sSpellRangeStore;
 extern DB2Storage<SpellReagentsEntry>               sSpellReagentsStore;
 extern DB2Storage<SpellRuneCostEntry>               sSpellRuneCostStore;
+extern DB2Storage<SpellScalingEntry>                sSpellScalingStore;
+extern DB2Storage<SpellShapeshiftEntry>             sSpellShapeshiftStore;
+extern DB2Storage<SpellShapeshiftFormEntry>         sSpellShapeshiftFormStore;
+extern DB2Storage<SpellTargetRestrictionsEntry>     sSpellTargetRestrictionsStore;
 extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
@@ -199,6 +209,17 @@ struct HotfixNotify
 };
 
 typedef std::vector<HotfixNotify> HotfixData;
+
+struct SpellEffect
+{
+    SpellEffect()
+    {
+        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; i++)
+            effects[i] = nullptr;
+    }
+
+    SpellEffectEntry const* effects[MAX_SPELL_EFFECTS];
+};
 
 #define DEFINE_DB2_SET_COMPARATOR(structure) \
     struct structure ## Comparator : public std::binary_function<structure const*, structure const*, bool> \
@@ -258,6 +279,15 @@ public:
     typedef std::unordered_multimap<uint32, SkillRaceClassInfoEntry const*> SkillRaceClassInfoContainer;
     typedef std::pair<SkillRaceClassInfoContainer::iterator, SkillRaceClassInfoContainer::iterator> SkillRaceClassInfoBounds;
     typedef std::unordered_map<uint32, std::vector<SpecializationSpellEntry const*>> SpecializationSpellsBySpecContainer;
+    typedef std::unordered_map<uint32, std::list<uint32>> SpellProcsPerMinuteModEntryListContainer;
+    typedef std::unordered_map<uint32, std::set<SpellTargetRestrictionsEntry const*>> SpellRestrictionDiffContainer;
+    typedef std::unordered_map<uint32, uint32> RevertLearnSpellContainer;
+    typedef std::unordered_map<uint32, uint32> ReversTriggerSpellContainer;
+    typedef std::unordered_map<uint16, SpellEffectEntry const*> SpellEffectsMap;
+    struct SpellEffectDiff { SpellEffectsMap effects; };
+    typedef std::unordered_map<uint32, SpellEffectDiff> SpellEffectDiffContainer;
+    typedef std::unordered_map<uint32, SpellEffect> SpellEffectContainer;
+
 
     static DB2Manager& Instance()
     {
@@ -311,6 +341,11 @@ public:
     bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId);
     SkillRaceClassInfoEntry const* GetSkillRaceClassInfo(uint32 skill, uint8 race, uint8 class_);
     std::vector<SpecializationSpellEntry const*> const* GetSpecializationSpells(uint32 specId);
+    std::list<uint32> const* GetSpellProcsPerMinuteModList(uint32 procID);
+    SpellTargetRestrictionsEntry const* GetSpellTargetRestrioctions(uint32 spellid, uint16 difficulty);
+    uint32 GetLearnSpell(uint32 trigerSpell);
+    uint32 GetSpellByTrigger(uint32 trigerSpell);
+    SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -355,7 +390,12 @@ private:
     NameGenVectorArraysContainer _genNameVectoArraysMap;
     SkillRaceClassInfoContainer _skillRaceClassInfoBySkill;
     SpecializationSpellsBySpecContainer _specializationSpellsBySpec;
-
+    SpellProcsPerMinuteModEntryListContainer _spellProcsPerMinuteModEntryList;
+    SpellRestrictionDiffContainer _spellRestrictionDiff;
+    RevertLearnSpellContainer _revertLearnSpell;
+    ReversTriggerSpellContainer _reversTriggerSpellList;
+    SpellEffectDiffContainer _spellEffectDiff;
+    SpellEffectContainer _spellEffectMap;
 };
 
 #define sDB2Manager DB2Manager::Instance()

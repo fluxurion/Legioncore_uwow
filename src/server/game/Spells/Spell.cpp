@@ -6387,7 +6387,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (effInfo && effInfo->ApplyAuraName == SPELL_AURA_MOD_SHAPESHIFT)
             {
                 SpellShapeshiftFormEntry const* shapeShiftEntry = sSpellShapeshiftFormStore.LookupEntry(effInfo->MiscValue);
-                if (shapeShiftEntry && (shapeShiftEntry->flags1 & 1) == 0)  // unk flag
+                if (shapeShiftEntry && (shapeShiftEntry->Flags & 1) == 0)
                     checkMask |= VEHICLE_SEAT_FLAG_UNCONTROLLED;
                 break;
             }
@@ -7712,7 +7712,7 @@ SpellCastResult Spell::CheckRange(bool strict)
         if (m_spellInfo->RangeEntry->ID == 1)
             return SPELL_CAST_OK;
 
-        range_type = m_spellInfo->RangeEntry->type;
+        range_type = m_spellInfo->RangeEntry->Flags;
     }
 
     Unit* target = m_targets.GetUnitTarget() ? m_targets.GetUnitTarget() : m_originalTarget;
