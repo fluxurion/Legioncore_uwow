@@ -59,7 +59,7 @@ struct AchievementEntry
     uint16      CriteriaTree;                               // 11
     uint8       FactionFlag;                                // 12
     uint32      RewardPoints;                               // 13
-    uint8       count;                                      // 14
+    uint8       Amount;                                     // 14
 };
 
 struct AreaGroupEntry

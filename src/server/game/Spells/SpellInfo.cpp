@@ -387,7 +387,7 @@ SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* 
     TargetB = SpellImplicitTargetInfo(_effect ? _effect->ImplicitTarget[1] : 0);
     RadiusEntry = _effect && _effect->EffectRadiusIndex ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusIndex) : NULL;
     if (!RadiusEntry)
-         RadiusEntry = _effect && _effect->EffectRadiusMaxIndex ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusMaxIndex) : NULL;
+        RadiusEntry = _effect && _effect->EffectRadiusMaxIndex ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusMaxIndex) : NULL;
     ChainTargets = _effect ? _effect->EffectChainTargets : 0;
     ItemType = _effect ? _effect->EffectItemType : 0;
     TriggerSpell = _effect ? _effect->EffectTriggerSpell : 0;
@@ -978,10 +978,10 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
     ResearchProject = 0;
     for (auto const& v : sResearchProjectStore)
         if (v->SpellID == Id)
-            ResearchProject = ID;
+            ResearchProject = v->ID;
 
     SpellName = spellEntry->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
-    Rank = spellEntry->NameSubtext[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];   
+    Rank = spellEntry->NameSubtext[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
     RuneCostID = 0/*spellEntry->RuneCostID*/;
 
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -989,7 +989,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
 
     for (int difficulty = 1; difficulty < MAX_DIFFICULTY; ++difficulty)
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS_DIFF; ++i)
-            if(SpellEffectEntry const* _effect = spellEntry->GetSpellEffect(i, difficulty))
+            if (SpellEffectEntry const* _effect = spellEntry->GetSpellEffect(i, difficulty))
                 EffectsMap[MAKE_PAIR16(i, difficulty)] = SpellEffectInfo(spellEntry, this, i, _effect);
 
     SpellScalingEntry const* _scaling = GetSpellScaling();
@@ -998,7 +998,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
     Scaling.CastTimeMax = 0;
     Scaling.CastTimeMaxLevel = 0;
     Scaling.NerfFactor = 0;
-    Scaling.NerfMaxLevel =  0;
+    Scaling.NerfMaxLevel = 0;
     Scaling.Class = _scaling ? _scaling->ScalingClass : 0;
     Scaling.MaxScalingLevel = _scaling ? _scaling->MaxScalingLevel : 0;
     Scaling.ScalesFromItemLevel = _scaling ? _scaling->ScalesFromItemLevel : 0;
@@ -1053,7 +1053,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
 
     SpellEquippedItemsEntry const* _equipped = GetSpellEquippedItems();
     EquippedItemClass = _equipped ? _equipped->EquippedItemClass : -1;
-    EquippedItemSubClassMask = _equipped ?_equipped->EquippedItemSubClassMask : -1;
+    EquippedItemSubClassMask = _equipped ? _equipped->EquippedItemSubClassMask : -1;
     EquippedItemInventoryTypeMask = _equipped ? _equipped->EquippedItemInventoryTypeMask : -1;
 
     SpellInterruptsEntry const* _interrupt = GetSpellInterrupts();
@@ -1068,7 +1068,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
 
     // SpellPowerEntry
     PowerType = POWER_NULL;
-    PowerCost =  0;
+    PowerCost = 0;
     PowerCostPerSecond = 0;
     PowerCostPercentage = 0.0f;
     PowerCostPercentagePerSecond = 0.0f;
@@ -3516,7 +3516,7 @@ SpellCastingRequirementsEntry const* SpellInfo::GetSpellCastingRequirements() co
 }
 
 SpellCategoriesEntry const* SpellInfo::GetSpellCategories() const
-{    
+{
     for (auto const& v : sSpellCategoriesStore)
         if (v->SpellID == Id)
             return v;
@@ -3525,7 +3525,7 @@ SpellCategoriesEntry const* SpellInfo::GetSpellCategories() const
 }
 
 SpellClassOptionsEntry const* SpellInfo::GetSpellClassOptions() const
-{    
+{
     for (auto const& v : sSpellClassOptionsStore)
         if (v->ID == Id)
             return v;
@@ -3534,7 +3534,7 @@ SpellClassOptionsEntry const* SpellInfo::GetSpellClassOptions() const
 }
 
 SpellCooldownsEntry const* SpellInfo::GetSpellCooldowns() const
-{    
+{
     for (auto const& v : sSpellCooldownsStore)
         if (v->SpellID == Id)
             return v;

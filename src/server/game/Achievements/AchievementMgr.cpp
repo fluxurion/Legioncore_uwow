@@ -2263,10 +2263,10 @@ bool AchievementMgr<T>::IsCompletedCriteriaTree(CriteriaTreeEntry const* criteri
         volatile uint32 criteriaID = criteria->ID;
         volatile uint32 criteriaProgressID = criteriaProgress->ID;
 
-        volatile uint32 Amount = achievement->count > 0 ? achievement->count : criteriaProgress->Amount;
+        volatile uint32 Amount = achievement->Amount > 0 ? achievement->Amount : criteriaProgress->Amount;
 
         volatile bool check = false;
-        if(parent && achievement->count <= 0)
+        if(parent && achievement->Amount <= 0)
             count = progress->counter;
         else
             count += progress->counter;
@@ -2399,7 +2399,7 @@ bool AchievementMgr<T>::IsCompletedCriteriaTree(CriteriaTreeEntry const* criteri
             default:
                 break;
         }
-        if(achievement->count <= 0)
+        if(achievement->Amount <= 0)
         {
             if(parent && !check)
             {
@@ -2414,12 +2414,12 @@ bool AchievementMgr<T>::IsCompletedCriteriaTree(CriteriaTreeEntry const* criteri
                 return treeProgress->completed;
             }
         }
-        else if(achievement->count > 0 && check)
+        else if(achievement->Amount > 0 && check)
             return true;
     }
 
     //sLog->outDebug(LOG_FILTER_ACHIEVEMENTSYS, "IsCompletedCriteriaTree finish criteriaTree %u, achievement %u count %i Amount %i parent %u", criteriaTree->ID, achievement ? achievement->ID : 0, count, criteriaTree->Amount, parent);
-    return parent && achievement->count <= 0 ? true : false;
+    return parent && achievement->Amount <= 0 ? true : false;
 }
 
 template<class T>
