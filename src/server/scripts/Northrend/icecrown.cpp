@@ -1632,7 +1632,7 @@ class npc_tg_tirion_fordring : public CreatureScript
                             {
                                 LichKing->SetFacingToObject(me);
                                 LichKing->AI()->Talk(SAY_LICH_KING_01);
-                                me->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 0, uint32(EQUIP_ASHBRINGER));
+                                me->SetVirtualItem(0, uint32(EQUIP_ASHBRINGER));
                                 me->GetMotionMaster()->MovePoint(0, 6167.601f, 2757.219f, 573.914f);
                             }
                             Events.ScheduleEvent(EVENT_MOVE_08, 2000);
@@ -1726,19 +1726,19 @@ class npc_tg_tirion_fordring : public CreatureScript
                             if (Creature* Escort = me->GetCreature(*me, EscortGUID[0]))
                             {
                                 Escort->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                                Escort->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 0, uint32(EQUIP_ESCORT));
+                                Escort->SetVirtualItem(0, uint32(EQUIP_ESCORT));
                                 Escort->GetMotionMaster()->MovePoint(0, 6137.778f, 2759.621f, 573.914f);
                             }
                             if (Creature* Escort = me->GetCreature(*me, EscortGUID[1]))
                             {
                                 Escort->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                                Escort->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 0, uint32(EQUIP_ESCORT));
+                                Escort->SetVirtualItem(0, uint32(EQUIP_ESCORT));
                                 Escort->GetMotionMaster()->MovePoint(0, 6128.400f, 2757.948f, 573.914f);
                             }
                             if (Creature* Escort = me->GetCreature(*me, EscortGUID[2]))
                             {
                                 Escort->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                                Escort->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 0, uint32(EQUIP_ESCORT));
+                                Escort->SetVirtualItem(0, uint32(EQUIP_ESCORT));
                                 Escort->GetMotionMaster()->MovePoint(0, 6132.821f, 2765.189f, 573.914f);
                             }
                             Events.ScheduleEvent(EVENT_ESCORT_DEFEND_2, 5000);
@@ -1869,7 +1869,7 @@ class npc_tg_tirion_fordring : public CreatureScript
                                 if (Creature* Escort = me->GetCreature(*me, EscortGUID[i]))
                                 {
                                     Escort->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                                    Escort->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 0, uint32(0));
+                                    Escort->SetVirtualItem(0, uint32(0));
                                     Escort->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
                                     Escort->DespawnOrUnsummon();
                                 }

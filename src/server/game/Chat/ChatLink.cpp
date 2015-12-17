@@ -119,14 +119,20 @@ bool ItemChatLink::Initialize(std::istringstream& iss)
         return false;
     }
     // Validate item's color
-    if (_color != ItemQualityColors[_item->Quality])
+    uint32 colorQuality = _item->GetQuality();
+    if (_item->Flags3 & ITEM_FLAG3_HEIRLOOM_QUALITY)
+        colorQuality = ITEM_QUALITY_HEIRLOOM;
+
+    if (_color != ItemQualityColors[colorQuality])
     {
         sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item has color %u, but user claims %u", iss.str().c_str(), ItemQualityColors[_item->Quality], _color);
         return false;
     }
     // Number of various item properties after item entry
-    const uint8 propsCount = 8;
-    const uint8 randomPropertyPosition = 5;
+    uint8 const propsCount = 11;
+    uint8 const randomPropertyPosition = 5;
+    uint8 const numBonusListIDsPosition = 10;
+    uint8 const maxBonusListIDs = 100;
     for (uint8 index = 0; index < propsCount; ++index)
     {
         if (!CheckDelimiter(iss, DELIMITER, "item"))
@@ -160,36 +166,57 @@ bool ItemChatLink::Initialize(std::istringstream& iss)
                 }
             }
         }
+        if (index == numBonusListIDsPosition)
+        {
+            if (id > maxBonusListIDs)
+                return false;
+
+            _bonusListIDs.resize(id);
+        }
+
         _data[index] = id;
     }
+
+    for (uint32 index = 0; index < _bonusListIDs.size(); ++index)
+    {
+        if (!CheckDelimiter(iss, DELIMITER, "item"))
+            return false;
+
+        int32 id = 0;
+        if (!ReadInt32(iss, id))
+            return false;
+
+        if (!sDB2Manager.GetItemBonusList(id))
+            return false;
+
+        _bonusListIDs[index] = id;
+    }
+
     return true;
 }
 
-inline std::string ItemChatLink::FormatName(uint8 index, ItemLocale const *locale, char* suffixStrings) const
+std::string ItemChatLink::FormatName(uint8 index, LocalizedString* suffixStrings) const
 {
     std::stringstream ss;
-    if (locale == NULL || index >= locale->Name.size())
-        ss << _item->Name1;
-    else
-        ss << locale->Name[index];
+    ss << _item->Name1;
+
     if (suffixStrings)
-        ss << ' ' << suffixStrings[index];
+        ss << ' ' << suffixStrings->Str[index];
     return ss.str();
 }
 
 bool ItemChatLink::ValidateName(char* buffer, const char* context)
 {
-    /*ChatLink::ValidateName(buffer, context);
+    ChatLink::ValidateName(buffer, context);
 
-    char* suffixStrings = _suffix ? _suffix->Name[DEFAULT_LOCALE] : (_property ? _property->Name[DEFAULT_LOCALE] : NULL);
+    LocalizedString* suffixStrings = _suffix ? _suffix->Name : (_property ? _property->Name : NULL);
 
-    bool res = (FormatName(LOCALE_enUS, NULL, suffixStrings) == buffer);
+    bool res = (FormatName(LOCALE_enUS, suffixStrings) == buffer);
     if (!res)
     {
-        ItemLocale const* il = sObjectMgr->GetItemLocale(_item->ItemId);
         for (uint8 index = LOCALE_koKR; index < TOTAL_LOCALES; ++index)
         {
-            if (FormatName(index, il, suffixStrings) == buffer)
+            if (FormatName(index, suffixStrings) == buffer)
             {
                 res = true;
                 break;
@@ -197,8 +224,8 @@ bool ItemChatLink::ValidateName(char* buffer, const char* context)
         }
     }
     if (!res)
-        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item (id: %u) name wasn't found in any localization", context, _item->ItemId);*/
-    return true/*res*/;
+        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item (id: %u) name wasn't found in any localization", context, _item->ItemId);
+    return res;
 }
 
 // |color|Hquest:quest_id:quest_level|h[name]|h|r
@@ -304,13 +331,13 @@ bool SpellChatLink::ValidateName(char* buffer, const char* context)
             return false;
         }
 
-        uint32 skillLineNameLength = strlen(skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
-        if (skillLineNameLength > 0 && strncmp(skillLine->DisplayName[DEFAULT_LOCALE].Str[DEFAULT_LOCALE], buffer, skillLineNameLength) == 0)
+        uint32 skillLineNameLength = strlen(skillLine->DisplayName->Str[DEFAULT_LOCALE]);
+        if (skillLineNameLength > 0 && strncmp(skillLine->DisplayName->Str[DEFAULT_LOCALE], buffer, skillLineNameLength) == 0)
         {
             // found the prefix, remove it to perform spellname validation below
             // -2 = strlen(": ")
             uint32 spellNameLength = strlen(buffer) - skillLineNameLength - 2;
-            memcpy(buffer, buffer + skillLineNameLength + 2, spellNameLength + 1);
+            memmove(buffer, buffer + skillLineNameLength + 2, spellNameLength + 1);
         }
     }
 
@@ -368,14 +395,13 @@ bool AchievementChatLink::Initialize(std::istringstream& iss)
 
 bool AchievementChatLink::ValidateName(char* buffer, const char* context)
 {
-    //TODO:Legion
-    //ChatLink::ValidateName(buffer, context);
+    ChatLink::ValidateName(buffer, context);
 
-    //if (*_achievement->Name && strcmp(_achievement->Name, buffer) == 0)
-        return true;
+    for (uint8 locale = LOCALE_enUS; locale < TOTAL_LOCALES; ++locale)
+        if (strcmp(_achievement->Name->Str[locale], buffer) == 0)
+            return true;
 
-    //sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked achievement (id: %u) name wasn't found in any localization", context, _achievement->ID);
-    //return false;
+    return false;
 }
 
 // |color|Htrade:spell_id:cur_value:max_value:player_guid:base64_data|h[name]|h|r
@@ -434,8 +460,6 @@ bool TradeChatLink::Initialize(std::istringstream& iss)
 // |cff4e96f7|Htalent:2232:-1|h[Taste for Blood]|h|r
 bool TalentChatLink::Initialize(std::istringstream& iss)
 {
-    return false;
-    /*
     if (_color != CHAT_LINK_COLOR_TALENT)
         return false;
     // Read talent entry
@@ -452,10 +476,10 @@ bool TalentChatLink::Initialize(std::istringstream& iss)
         return false;
     }
     // Validate talent's spell
-    _spell = sSpellMgr->GetSpellInfo(talentInfo->RankID[0]);
+    _spell = sSpellMgr->GetSpellInfo(talentInfo->spellId);
     if (!_spell)
     {
-        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): got invalid spell id %u in |trade command", iss.str().c_str(), talentInfo->RankID[0]);
+        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): got invalid spell id %u in |trade command", iss.str().c_str(), talentInfo->spellId);
         return false;
     }
     // Delimiter
@@ -467,7 +491,7 @@ bool TalentChatLink::Initialize(std::istringstream& iss)
         sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): sequence finished unexpectedly while reading talent rank", iss.str().c_str());
         return false;
     }
-    return true;*/
+    return true;
 }
 
 // |color|Henchant:recipe_spell_id|h[prof_name: recipe_name]|h|r

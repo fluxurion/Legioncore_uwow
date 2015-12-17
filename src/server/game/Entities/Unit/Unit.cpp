@@ -24893,3 +24893,20 @@ int32 Unit::CalculateMonkMeleeAttacks(float coeff)
 
     return irand(int32(minDamage * coeff), int32(maxDamage * coeff));
 }
+
+uint32 Unit::GetVirtualItemId(uint32 slot) const
+{
+    if (slot >= MAX_EQUIPMENT_ITEMS)
+        return 0;
+
+    return GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + slot * 2);
+}
+
+void Unit::SetVirtualItem(uint32 slot, uint32 itemID, uint16 appearanceModID /*= 0*/)
+{
+    if (slot >= MAX_EQUIPMENT_ITEMS)
+        return;
+
+    SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + slot * 2, itemID);
+    SetUInt16Value(UNIT_FIELD_VIRTUAL_ITEM_ID + slot * 2 + 1, 0, appearanceModID);
+}

@@ -2603,6 +2603,8 @@ class Unit : public WorldObject
 
         void DestroyForPlayer(Player* target, bool onDeath = false) const override;
 
+        uint32 GetVirtualItemId(uint32 slot) const;
+        void SetVirtualItem(uint32 slot, uint32 itemID, uint16 appearanceModID = 0);
     protected:
         explicit Unit (bool isWorldObject);
 

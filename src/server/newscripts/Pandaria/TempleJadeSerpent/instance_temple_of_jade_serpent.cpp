@@ -457,34 +457,32 @@ public:
                         return;
                     uint32 prevItem = target->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID);
                     if (Player* player = caster->ToPlayer())
-
                     {
                         if (Item* mainItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-                            target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID, mainItem->GetEntry());
-
+                            target->SetVirtualItem(0, mainItem->GetEntry());
                     }
                     else
-                        target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID));
+                        target->SetVirtualItem(0, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID));
 
                     prevItem = target->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID) + 1;
 
                     if (Player* player = caster->ToPlayer())
                     {
                         if (Item* offItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-                            target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 1, offItem->GetEntry());
+                            target->SetVirtualItem(1, offItem->GetEntry());
                     }
                     else
-                        target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 1, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 1));
+                        target->SetVirtualItem(1, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 1));
                     
                     prevItem = target->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID) + 2;
 
                     if (Player* player = caster->ToPlayer())
                     {
                         if (Item* rangedItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED))
-                            target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 2, rangedItem->GetEntry());
+                            target->SetVirtualItem(2, rangedItem->GetEntry());
                     }
                     else 
-                        target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 2, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 2));
+                        target->SetVirtualItem(2, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + 2));
                 }
                 break;
             }

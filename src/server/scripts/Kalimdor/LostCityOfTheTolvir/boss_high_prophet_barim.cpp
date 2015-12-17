@@ -1048,10 +1048,10 @@ class spell_copy_melee_weapon : public SpellScriptLoader
                 if (Player* player = caster->ToPlayer())
                 {
                     if (Item* main_weapon = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-                        target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID, main_weapon->GetEntry());
+                        target->SetVirtualItem(0, main_weapon->GetEntry());
                 }
                 else
-                    target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID));
+                    target->SetVirtualItem(0, caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID));
             }
 
             void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
@@ -1062,7 +1062,7 @@ class spell_copy_melee_weapon : public SpellScriptLoader
                 if (!target)
                     return;
 
-                target->SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID, uiTargetDefaultWeapon);
+                target->SetVirtualItem(0, uiTargetDefaultWeapon);
             }
 
             void Register()

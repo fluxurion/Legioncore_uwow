@@ -1625,7 +1625,7 @@ void Creature::LoadEquipment(int8 id, bool force)
         if (force)
         {
             for (uint8 i = 0; i < 3; ++i)
-                SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + i, 0);
+                SetVirtualItem(i, 0);
             m_equipmentId = 0;
         }
         return;
@@ -1637,7 +1637,7 @@ void Creature::LoadEquipment(int8 id, bool force)
 
     m_equipmentId = id;
     for (uint8 i = 0; i < 3; ++i)
-        SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + i, einfo->ItemEntry[i]);
+        SetVirtualItem(i, einfo->ItemEntry[i]);
 }
 
 bool Creature::hasQuest(uint32 quest_id) const

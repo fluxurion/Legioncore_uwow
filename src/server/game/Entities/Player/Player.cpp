@@ -13232,14 +13232,14 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
 
     if (pItem)
     {
-        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (slot * 3), pItem->GetVisibleEntry());
-        SetUInt16Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 3), 0, pItem->GetVisibleAppearanceModId());
-        SetUInt16Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 3), 1, pItem->GetEnchantmentId(PERM_ENCHANTMENT_SLOT));
+        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (slot * 2), pItem->GetVisibleEntry());
+        SetUInt16Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 2), 0, pItem->GetVisibleAppearanceModId());
+        SetUInt16Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 2), 1, pItem->GetEnchantmentId(PERM_ENCHANTMENT_SLOT));
     }
     else
     {
-        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (slot * 3), 0);
-        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 3), 0);
+        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (slot * 2), 0);
+        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + 1 + (slot * 2), 0);
     }
 }
 
@@ -20753,7 +20753,7 @@ bool Player::HandleChangeSlotModel(uint32 newItem, uint16 pos)
 {
     if (newItem == 0 && pos != EQUIPMENT_SLOT_RANGED)    // отключаем для слота отображение модельки вообще.
     {
-        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 3, 0);
+        SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 2, 0);
         return true;
     }
     else if (newItem == 1)
@@ -20762,9 +20762,9 @@ bool Player::HandleChangeSlotModel(uint32 newItem, uint16 pos)
     {
         Item const* realItem = GetItemByPos(255, pos);
         if (realItem)
-            SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 3, realItem->GetEntry());
+            SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 2, realItem->GetEntry());
         else
-            SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 3, 0);
+            SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 2, 0);
         return true;
     }
     else
@@ -20845,7 +20845,7 @@ bool Player::HandleChangeSlotModel(uint32 newItem, uint16 pos)
             }
             if (condition)    // все окей, меняем модельку
             {
-                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 3, newItem);
+                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + pos * 2, newItem);
                 return true;
             }
             else
@@ -20864,9 +20864,9 @@ void Player::HandleAltVisSwitch()
         {
             Item const* realItem =  GetItemByPos(255, i);
             if (realItem)
-                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (i * 3), realItem->GetEntry());
+                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (i * 2), realItem->GetEntry());
             else
-                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (i * 3), 0);
+                SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (i * 2), 0);
         }
     }
     else
