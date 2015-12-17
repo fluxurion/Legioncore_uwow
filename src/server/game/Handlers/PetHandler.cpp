@@ -162,8 +162,6 @@ void WorldSession::HandleQueryPetName(WorldPackets::Query::QueryPetName& packet)
     }
 
     response.Allow = pet->isPet() ? 1 : 0;
-    
-    response.DeclinedNames;
     response.Name = pet->GetName();
 
     if (Pet* playerPet = pet->ToPet())
