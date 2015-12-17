@@ -616,17 +616,15 @@ class Spell
         SpellInfo const* const m_spellInfo;
         Item* m_CastItem;
         ObjectGuid m_castItemGUID;
-        uint8 m_cast_count;
         uint32 m_castItemEntry;
         uint32 m_castFlagsEx;
 
         union
         {
-            // Alternate names for this value
-            uint32 TalentId;
-            uint32 GlyphSlot;
-
-            uint32 Data;
+            struct
+            {
+                uint32 Data[2];
+            } Raw;
         } m_misc;
         uint32 m_preCastSpell;
         SpellCastTargets m_targets;

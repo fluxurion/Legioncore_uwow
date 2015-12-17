@@ -677,10 +677,7 @@ void WorldSession::LogoutPlayer(bool Save)
         //! Send the 'logout complete' packet to the client
         //! Client will respond by sending 3x CMSG_CANCEL_TRADE, which we currently dont handle
         //! Send before delete. As need guid.
-        WorldPacket data(SMSG_LOGOUT_COMPLETE);
-        data << ObjectGuid::Empty;   //relogin
-        SendPacket(&data);
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "SESSION: Sent SMSG_LOGOUT_COMPLETE Message");
+        SendPacket(WorldPackets::Character::LogoutComplete().Write());
 
         if (Map* _map = _player->FindMap())
             _map->RemovePlayerFromMap(_player, true);

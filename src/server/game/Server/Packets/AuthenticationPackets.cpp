@@ -120,7 +120,7 @@ WorldPacket const* WorldPackets::Auth::AuthResponse::Write()
         _worldPacket.WriteBit(SuccessInfo->IsVeteranTrial);
         _worldPacket.FlushBits();
 
-        if (SuccessInfo->NumPlayersHorde)
+        if (!SuccessInfo->NumPlayersHorde)
             _worldPacket << uint16(*SuccessInfo->NumPlayersHorde);
 
         if (SuccessInfo->NumPlayersAlliance)

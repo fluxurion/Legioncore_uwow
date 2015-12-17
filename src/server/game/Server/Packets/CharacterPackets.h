@@ -427,7 +427,7 @@ namespace WorldPackets
         class LogoutComplete final : public ServerPacket
         {
         public:
-            LogoutComplete() : ServerPacket(SMSG_LOGOUT_COMPLETE, 2) { }
+            LogoutComplete() : ServerPacket(SMSG_LOGOUT_COMPLETE, 16) { }
 
             WorldPacket const* Write() override;
 

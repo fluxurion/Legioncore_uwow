@@ -69,8 +69,8 @@ void WorldSession::HandleUseToy(WorldPackets::Toy::UseToy& packet)
 
     Spell* spell = new Spell(player, spellInfo, TRIGGERED_NONE, ObjectGuid::Empty, false);
     spell->m_castItemEntry = packet.ItemID;
-    spell->m_cast_count = packet.Cast.CastID;
-    spell->m_misc.Data = packet.Cast.Misc;
+    for (uint8 i = 0; i < 2; ++i)
+        spell->m_misc.Raw.Data[i] = packet.Cast.Misc[i];
     spell->m_castFlagsEx |= CAST_FLAG_EX_USE_TOY_SPELL;
     spell->prepare(&targets);
 }

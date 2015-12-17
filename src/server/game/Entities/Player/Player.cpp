@@ -9762,7 +9762,6 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, uint8
 
         Spell* spell = new Spell(this, spellInfo, TRIGGERED_NONE);
         spell->m_CastItem = item;
-        spell->m_cast_count = cast_count;                   //set count of casts
         spell->SetSpellValue(SPELLVALUE_BASE_POINT0, learning_spell_id);
         spell->prepare(&targets);
         return;
@@ -9807,8 +9806,7 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, uint8
 
         Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
         spell->m_CastItem = item;
-        spell->m_cast_count = cast_count;
-        spell->m_misc.GlyphSlot = misc;
+        spell->m_misc.Raw.Data[0] = misc;
         spell->prepare(&targets);
 
         ++count;
@@ -9835,8 +9833,7 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, uint8
 
             Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
             spell->m_CastItem = item;
-            spell->m_cast_count = cast_count;
-            spell->m_misc.GlyphSlot = misc;
+            spell->m_misc.Raw.Data[0] = misc;
             spell->prepare(&targets);
 
             ++count;
@@ -27620,15 +27617,10 @@ void Player::SendTalentsInfoData(bool pet)
     }
 
     WorldPackets::Talent::UpdateTalentData packet;
-
     packet.Info.ActiveGroup = GetActiveSpec();
-
-    uint8 groupsCount = GetSpecsCount();
-
-    for (uint8 i = 0; i < groupsCount; ++i)
+    for (uint8 i = 0; i < GetSpecsCount(); ++i)
     {
         WorldPackets::Talent::TalentGroupInfo groupInfoPkt;
-
         groupInfoPkt.SpecID = GetSpecializationId(i);
         groupInfoPkt.TalentIDs.reserve(GetTalentMap(i)->size());
 
@@ -27650,9 +27642,6 @@ void Player::SendTalentsInfoData(bool pet)
 
             groupInfoPkt.TalentIDs.push_back(uint16(itr->first));
         }
-
-        for (uint32 x = 0; x < MAX_GLYPH_SLOT_INDEX; ++x)
-            groupInfoPkt.GlyphIDs[x] = uint16(GetGlyph(i, x));
 
         packet.Info.TalentGroups.push_back(groupInfoPkt);
     }

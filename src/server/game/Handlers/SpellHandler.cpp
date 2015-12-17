@@ -136,7 +136,7 @@ void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
     {
         // no script or script not process request by self
         pItem->SetInUse();
-        pUser->CastItemUseSpell(pItem, targets, cast.Cast.CastID, cast.Cast.Misc);
+        pUser->CastItemUseSpell(pItem, targets, 0, cast.Cast.Misc[0]);
     }
 }
 
@@ -181,15 +181,12 @@ void WorldSession::HandleGameobjectReportUse(WorldPacket& recvPacket)
 void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
 {
     bool replaced = false;
-    // ignore for remote control state (for player case)
     Unit* mover = _player->m_mover;
     if (mover != _player && mover->GetTypeId() == TYPEID_PLAYER)
     {
         sLog->outError(LOG_FILTER_NETWORKIO, "WORLD: mover != _player id %u", cast.Cast.SpellID);
         return;
     }
-
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: got cast spell packet, castCount: %u, spellId: %u, glyphIndex %u", cast.Cast.CastID, cast.Cast.SpellID, cast.Cast.Misc);
 
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(cast.Cast.SpellID);
     if (!spellInfo)
@@ -301,8 +298,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
     }
 
     Spell* spell = new Spell(mover, spellInfo, TRIGGERED_NONE, ObjectGuid::Empty, false, replaced);
-    spell->m_cast_count = cast.Cast.CastID;
-    spell->m_misc.Data = cast.Cast.Misc;
+    for (uint8 i = 0; i < 2; ++i)
+        spell->m_misc.Raw.Data[i] = cast.Cast.Misc[i];
     spell->prepare(&targets);
 }
 

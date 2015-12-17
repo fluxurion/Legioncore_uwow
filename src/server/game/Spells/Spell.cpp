@@ -538,7 +538,7 @@ m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(
 m_referencedFromCurrentSpell(false), m_executedCurrently(false), m_needComboPoints(info->NeedsComboPoints()), hasPredictedDispel(NULL),
 m_comboPointGain(0), m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
 m_CastItem(NULL), m_castItemGUID(), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
-m_cast_count(0), m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
+m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
 m_runesState(0), m_powerCost(0), m_casttime(0), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
 m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NULL), m_replaced(replaced), m_triggeredByAura(NULL), m_originalTargetGUID()
 {
@@ -619,7 +619,8 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     variance = 0.0f;
     m_damage = 0;
-    m_misc.Data = 0;
+    m_misc.Raw.Data[0]= 0;
+    m_misc.Raw.Data[1]= 0;
     m_healing = 0;
     m_final_damage = 0;
     m_absorb = 0;
@@ -3616,7 +3617,7 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
     m_caster->m_Events.AddEvent(Event, m_caster->m_Events.CalculateTime(1));
 
     //Prevent casting at cast another spell (ServerSide check)
-    if (!(_triggeredCastFlags & TRIGGERED_IGNORE_CAST_IN_PROGRESS) && m_caster->IsNonMeleeSpellCasted(false, true, true) && m_cast_count)
+    if (!(_triggeredCastFlags & TRIGGERED_IGNORE_CAST_IN_PROGRESS) && m_caster->IsNonMeleeSpellCasted(false, true, true))
     {
         SendCastResult(SPELL_FAILED_SPELL_IN_PROGRESS);
         finish(false);
@@ -4763,7 +4764,7 @@ void Spell::SendCastResult(SpellCastResult result)
     if (m_caster->ToPlayer()->GetSession()->PlayerLoading())  // don't send cast results at loading time
         return;
 
-    SendCastResult(m_caster->ToPlayer(), m_spellInfo, m_cast_count, result, m_customError, m_misc.Data);
+    SendCastResult(m_caster->ToPlayer(), m_spellInfo, 0/*m_cast_count*/, result, m_customError, m_misc.Raw.Data[0]);
 }
 
 void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cast_count, SpellCastResult result, SpellCustomErrors customError /*= SPELL_CUSTOM_ERROR_NONE*/, uint32 misc/*=0*/, bool pet /*=false*/)
@@ -4958,7 +4959,6 @@ void Spell::SendSpellStart()
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
 
     castData.CasterUnit = m_caster->GetGUID();
-    castData.CastID = m_cast_count; // pending spell cast?
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
     castData.CastFlagsEx = m_castFlagsEx;
@@ -5132,7 +5132,6 @@ void Spell::SendSpellGo()
         castData.CasterGUID = m_caster->GetGUID();
 
     castData.CasterUnit = m_caster->GetGUID();
-    castData.CastID = m_cast_count; // pending spell cast?
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
     castData.CastFlagsEx = m_castFlagsEx;
@@ -5359,14 +5358,13 @@ void Spell::SendInterrupted(uint8 result)
 {
     WorldPackets::Spells::SpellFailure failurePacket;
     failurePacket.CasterUnit = m_caster->GetGUID();
-    failurePacket.CastID = m_cast_count;
     failurePacket.SpellID = m_spellInfo->Id;
     failurePacket.Reason = result;
     m_caster->SendMessageToSet(failurePacket.Write(), true);
 
     WorldPackets::Spells::SpellFailedOther failedPacket;
     failedPacket.CasterUnit = m_caster->GetGUID();
-    failedPacket.CastID = m_cast_count;
+    failedPacket.CastID = 0/*m_cast_count*/;
     failedPacket.SpellID = m_spellInfo->Id;
     failedPacket.Reason = result;
     m_caster->SendMessageToSet(failedPacket.Write(), true);
@@ -6210,7 +6208,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!spell)
                     continue;
 
-                if (spell->talentId != m_misc.GlyphSlot)
+                if (spell->talentId != m_misc.Raw.Data[0])
                     continue;
 
                 if (plr->HasSpellCooldown(spell->Id))
@@ -7130,7 +7128,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             case SPELL_EFFECT_UNLEARN_TALENT:
                 if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     return SPELL_FAILED_BAD_TARGETS;
-                if (TalentEntry const* talent = sTalentStore.LookupEntry(m_misc.TalentId))
+                if (TalentEntry const* talent = sTalentStore.LookupEntry(m_misc.Raw.Data[0]))
                 {
                     if (m_caster->ToPlayer()->HasSpellCooldown(talent->spellId))
                         return SPELL_FAILED_CANT_UNTALENT;

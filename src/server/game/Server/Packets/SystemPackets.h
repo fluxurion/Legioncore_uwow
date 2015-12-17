@@ -80,7 +80,6 @@ namespace WorldPackets
             bool CommerceSystemEnabled = false;
             bool Unk67 = false;
             bool WillKickFromWorld = false;
-
             bool RestrictedAccount = false;
             bool TutorialsEnabled = false;
             bool NPETutorialsEnabled = false;

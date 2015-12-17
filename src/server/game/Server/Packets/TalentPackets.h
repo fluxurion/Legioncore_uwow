@@ -29,13 +29,14 @@ namespace WorldPackets
         {
             uint32 SpecID;
             std::vector<uint16> TalentIDs;
-            uint16 GlyphIDs[MAX_GLYPH_SLOT_INDEX] = { };
+            std::vector<uint16> PvPTalentIDs;
         };
 
         struct TalentInfoUpdate
         {
-            uint8 ActiveGroup;
             std::vector<TalentGroupInfo> TalentGroups;
+            uint32 LegionUnkInt = 0;
+            uint8 ActiveGroup = 0;
         };
 
         class UpdateTalentData final : public ServerPacket

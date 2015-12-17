@@ -46,7 +46,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::VoidStorage::VoidItem con
 {
     data << voidItem.Guid;
     data << voidItem.Creator;
-    data << uint32(voidItem.Slot);
+    data << voidItem.Slot;
     data << voidItem.Item;
 
     return data;

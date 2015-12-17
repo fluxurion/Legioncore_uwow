@@ -99,7 +99,7 @@ namespace WorldPackets
         class VoidStorageTransferChanges final : public ServerPacket
         {
         public:
-            VoidStorageTransferChanges() : ServerPacket(SMSG_VOID_STORAGE_TRANSFER_CHANGES, 0) { }
+            VoidStorageTransferChanges() : ServerPacket(SMSG_VOID_STORAGE_TRANSFER_CHANGES, 4) { }
 
             WorldPacket const* Write() override;
 

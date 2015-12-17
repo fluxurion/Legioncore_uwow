@@ -149,18 +149,34 @@ namespace WorldPackets
             std::vector<SpellLogPowerData> PowerData;
         };
 
+        struct AuraUpdateUNK
+        {
+            uint16 UnkUint16 = 0;
+            uint16 UnkUint16_4 = 0;
+            uint8 UnkUint8_6 = 0;
+            uint8 UnkUint8_7 = 0;
+            uint8 UnkUint8_8 = 0;
+            uint8 UnkUint8_9 = 0;
+            uint8 UnkUint8_10 = 0;
+            int8 UnkUint8_11 = 0;
+
+        };
+
         struct AuraDataInfo
         {
+            ObjectGuid UnkLGuid;
+            std::vector<float> Points;
+            std::vector<float> EstimatedPoints;
             int32 SpellID = 0;
-            uint8 Flags = 0;
+            uint32 SpellXSpellVisualID = 0;
             uint32 ActiveFlags = 0;
             uint16 CastLevel = 1;
+            uint8 Flags = 0;
             uint8 Applications = 1;
             Optional<ObjectGuid> CastUnit;
             Optional<int32> Duration;
             Optional<int32> Remaining;
-            std::vector<float> Points;
-            std::vector<float> EstimatedPoints;
+            Optional<AuraUpdateUNK> UnkOptStruct;
         };
 
         struct AuraInfo
@@ -172,7 +188,7 @@ namespace WorldPackets
         class AuraUpdate final : public ServerPacket
         {
         public:
-            AuraUpdate() : ServerPacket(SMSG_AURA_UPDATE) { }
+            AuraUpdate() : ServerPacket(SMSG_AURA_UPDATE, 16 + 1 + 4) { }
 
             WorldPacket const* Write() override;
 
@@ -213,15 +229,16 @@ namespace WorldPackets
 
         struct SpellCastRequest
         {
-            uint8 CastID = 0;
-            int32 SpellID = 0;
-            int32 Misc = 0;
-            uint8 SendCastFlags = 0;
+            ObjectGuid UnkGuid;
+            ObjectGuid Charmer;
             SpellTargetData Target;
             MissileTrajectoryRequest MissileTrajectory;
-            Optional<MovementInfo> MoveUpdate;
             std::vector<SpellWeight> Weight;
-            ObjectGuid Charmer;
+            int32 SpellID = 0;
+            int32 SpellXSpellVisualID = 0;
+            int32 Misc[2] = { };
+            uint8 SendCastFlags = 0;
+            Optional<MovementInfo> MoveUpdate;
         };
 
         class CastSpell final : public ClientPacket
@@ -289,11 +306,6 @@ namespace WorldPackets
             int8 InventoryType = 0;
         };
 
-        struct ProjectileVisualData
-        {
-            int32 ID[2];
-        };
-
         struct CreatureImmunities
         {
             uint32 School = 0;
@@ -311,7 +323,8 @@ namespace WorldPackets
         {
             ObjectGuid CasterGUID;
             ObjectGuid CasterUnit;
-            uint8 CastID = 0;
+            ObjectGuid UnkLGuid1;
+            ObjectGuid UnkLGuid2;
             int32 SpellID = 0;
             uint32 CastFlags = 0;
             uint32 CastFlagsEx = 0;
@@ -324,7 +337,6 @@ namespace WorldPackets
             Optional<RuneData> RemainingRunes;
             MissileTrajectoryResult MissileTrajectory;
             SpellAmmo Ammo;
-            Optional<ProjectileVisualData> ProjectileVisual;
             uint8 DestLocSpellCastIndex = 0;
             std::vector<TargetLocation> TargetPoints;
             CreatureImmunities Immunities;
@@ -366,14 +378,15 @@ namespace WorldPackets
         class SpellFailure final : public ServerPacket
         {
         public:
-            SpellFailure() : ServerPacket(SMSG_SPELL_FAILURE, 16 + 4 + 1 + 1) { }
+            SpellFailure() : ServerPacket(SMSG_SPELL_FAILURE, 32 + 8 + 2) { }
 
             WorldPacket const* Write() override;
 
             ObjectGuid CasterUnit;
+            ObjectGuid UnkLegionGuid;
+            uint32 SpellXSpellVisualID = 0;
             uint32 SpellID = 0;
             uint16 Reason = 0;
-            uint8 CastID = 0;
         };
 
         class SpellFailedOther final : public ServerPacket

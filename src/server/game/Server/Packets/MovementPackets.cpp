@@ -244,6 +244,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementSpline 
         data.appendPackXYZ(pos.x, pos.y, pos.z);
     data.WriteBits(movementSpline.Face, 2);
     data.WriteBit(movementSpline.SplineFilter.is_initialized());
+    data.WriteBit(false); // unk
     data.FlushBits();
 
     switch (movementSpline.Face)

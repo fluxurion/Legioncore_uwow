@@ -116,7 +116,9 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
         if (_worldPacket.WriteBit(aura.AuraData.is_initialized()))
         {
             AuraDataInfo const& data = *aura.AuraData;
+            _worldPacket << data.UnkLGuid;
             _worldPacket << uint32(data.SpellID);
+            _worldPacket << uint32(data.SpellXSpellVisualID);
             _worldPacket << uint8(data.Flags);
             _worldPacket << uint32(data.ActiveFlags);
             _worldPacket << uint16(data.CastLevel);
@@ -133,6 +135,7 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
             _worldPacket.WriteBit(data.CastUnit.is_initialized());
             _worldPacket.WriteBit(data.Duration.is_initialized());
             _worldPacket.WriteBit(data.Remaining.is_initialized());
+            _worldPacket.WriteBit(data.UnkOptStruct.is_initialized());
 
             if (data.CastUnit)
                 _worldPacket << *data.CastUnit;
@@ -142,6 +145,18 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
 
             if (data.Remaining)
                 _worldPacket << uint32(*data.Remaining);
+
+            if (data.UnkOptStruct)
+            {
+                _worldPacket << data.UnkOptStruct->UnkUint16;
+                _worldPacket << data.UnkOptStruct->UnkUint16_4;
+                _worldPacket << data.UnkOptStruct->UnkUint8_6;
+                _worldPacket << data.UnkOptStruct->UnkUint8_7;
+                _worldPacket << data.UnkOptStruct->UnkUint8_8;
+                _worldPacket << data.UnkOptStruct->UnkUint8_9;
+                _worldPacket << data.UnkOptStruct->UnkUint8_10;
+                _worldPacket << data.UnkOptStruct->UnkUint8_11;
+            }
         }
 
         _worldPacket.FlushBits();
@@ -208,9 +223,11 @@ ByteBuffer& operator>>(ByteBuffer& buffer, WorldPackets::Spells::MissileTrajecto
 
 ByteBuffer& operator>>(ByteBuffer& buffer, WorldPackets::Spells::SpellCastRequest& request)
 {
-    buffer >> request.CastID;
+    buffer >> request.UnkGuid;
+    for (uint8 i = 0; i < 2; ++i)
+        buffer >> request.Misc[i];
     buffer >> request.SpellID;
-    buffer >> request.Misc;
+    buffer >> request.SpellXSpellVisualID;
     buffer >> request.Target;
     buffer >> request.MissileTrajectory;
     buffer >> request.Charmer;
@@ -339,14 +356,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellAmmo const& 
     return data;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::ProjectileVisualData const& projectileVisual)
-{
-    data << projectileVisual.ID[0];
-    data << projectileVisual.ID[1];
-
-    return data;
-}
-
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::CreatureImmunities const& immunities)
 {
     data << immunities.School;
@@ -368,7 +377,9 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
 {
     data << spellCastData.CasterGUID;
     data << spellCastData.CasterUnit;
-    data << uint8(spellCastData.CastID);
+    data << spellCastData.UnkLGuid1;
+    data << spellCastData.UnkLGuid2;
+
     data << int32(spellCastData.SpellID);
     data << uint32(spellCastData.CastFlags);
     data << uint32(spellCastData.CastTime);
@@ -401,14 +412,10 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
 
     data.WriteBits(spellCastData.CastFlagsEx, 18);
     data.WriteBit(spellCastData.RemainingRunes.is_initialized());
-    data.WriteBit(spellCastData.ProjectileVisual.is_initialized());
     data.FlushBits();
 
     if (spellCastData.RemainingRunes)
         data << *spellCastData.RemainingRunes;
-
-    if (spellCastData.ProjectileVisual)
-        data << *spellCastData.ProjectileVisual;
 
     return data;
 }
@@ -448,8 +455,9 @@ WorldPacket const* WorldPackets::Spells::LearnedSpells::Write()
 WorldPacket const* WorldPackets::Spells::SpellFailure::Write()
 {
     _worldPacket << CasterUnit;
-    _worldPacket << CastID;
+    _worldPacket << UnkLegionGuid;
     _worldPacket << SpellID;
+    _worldPacket << SpellXSpellVisualID;
     _worldPacket << Reason;
 
     return &_worldPacket;

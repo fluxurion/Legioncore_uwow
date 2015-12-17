@@ -521,7 +521,6 @@ void WorldSession::HandleComplainOpcode(WorldPacket& recvData)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "REPORT SPAM: type %u, guid %u, unk1 %u, unk2 %u, unk3 %u, unk4 %u, message %s", spam_type, spammer_guid.GetGUIDLow(), unk1, unk2, unk3, unk4, description.c_str());
 }
 
-//! 6.0.3
 void WorldSession::HandleRealmQueryNameOpcode(WorldPacket& recvData)
 {
     uint32 realmId = recvData.read<uint32>();

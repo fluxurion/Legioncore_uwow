@@ -495,7 +495,6 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     triggeredCastFlags &= ~TRIGGERED_IGNORE_POWER_AND_REAGENT_COST;
 
     Spell* spell = new Spell(caster, spellInfo, TriggerCastFlags(triggeredCastFlags));
-    spell->m_cast_count = cast.Cast.CastID;                    // probably pending spell cast
     spell->m_targets = targets;
 
     // TODO: need to check victim?
@@ -528,7 +527,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     {
         Creature* pet = caster->ToCreature();
         bool sendPet = !pet || !(pet->isPossessed() || pet->IsVehicle());
-        Spell::SendCastResult(GetPlayer(), spellInfo, cast.Cast.CastID, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
+        Spell::SendCastResult(GetPlayer(), spellInfo, 0, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
 
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
