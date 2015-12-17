@@ -31,9 +31,6 @@ enum Spells
     SPELL_STONE_GRIP                = 83603,
     SPELL_PARALYSIS                 = 84030,
     SPELL_SHADOW_NOVA               = 83703,
-    SPELL_SHADOW_NOVA_25            = 86166,
-    SPELL_SHADOW_NOVA_10H           = 86167,
-    SPELL_SHADOW_NOVA_25H           = 86168,
     SPELL_SHADOW_WARPED             = 83952,
     SPELL_UNRESPONSIVE_DRAKE        = 86003,
     SPELL_UNRESPONSIVE_WHELP        = 86022,
@@ -404,13 +401,10 @@ class boss_halfus_wyrmbreaker : public CreatureScript
             void SpellHit(Unit* caster, SpellInfo const* spell)
             {
                 if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL))
-                if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SHADOW_NOVA ||
-                    me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SHADOW_NOVA_25 ||
-                    me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SHADOW_NOVA_10H ||
-                    me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SHADOW_NOVA_25H)
-                    for (uint8 i = 0; i < 3; ++i)
-                        if (spell->Effects[i].Effect == SPELL_EFFECT_INTERRUPT_CAST)
-                            me->InterruptSpell(CURRENT_GENERIC_SPELL);
+                    if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SHADOW_NOVA)
+                        for (uint8 i = 0; i < 3; ++i)
+                            if (spell->Effects[i].Effect == SPELL_EFFECT_INTERRUPT_CAST)
+                                me->InterruptSpell(CURRENT_GENERIC_SPELL);
             }
 
             void UpdateAI(uint32 diff)
@@ -447,24 +441,12 @@ class boss_halfus_wyrmbreaker : public CreatureScript
                         if (me->HasAura(SPELL_CYCLONE_WINDS))
                         {
                             if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA))
-                                spell->SetCastTimeIndex(5);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_25))
-                                spell->SetCastTimeIndex(5);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_10H))
-                                spell->SetCastTimeIndex(5);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_25H))
-                                spell->SetCastTimeIndex(5);
+                                spell->CastTimes.Minimum /= 5;
                         }
                         else
                         {
                             if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA))
-                                spell->SetCastTimeIndex(2);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_25))
-                                spell->SetCastTimeIndex(2);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_10H))
-                                spell->SetCastTimeIndex(2);
-                            if (SpellInfo* spell = GET_SPELL(SPELL_SHADOW_NOVA_25H))
-                                spell->SetCastTimeIndex(2);
+                                spell->CastTimes.Minimum /= 2;
                         }
 
                         DoCast(me, SPELL_SHADOW_NOVA);

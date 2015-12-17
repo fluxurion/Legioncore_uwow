@@ -376,7 +376,6 @@ public:
     uint32 TargetAuraSpell;
     uint32 ExcludeCasterAuraSpell;
     uint32 ExcludeTargetAuraSpell;
-    SpellCastTimesEntry const* CastTimeEntry;
     uint32 RecoveryTime;
     uint32 CategoryRecoveryTime;
     uint32 StartRecoveryCategory;
@@ -432,15 +431,17 @@ public:
 
     struct ScalingInfo
     {
-        int32 CastTimeMin;
-        int32 CastTimeMax;
-        uint32 CastTimeMaxLevel;
         int32 Class;
-        float NerfFactor;
-        uint32 NerfMaxLevel;
         uint32 MaxScalingLevel;
         uint32 ScalesFromItemLevel;
     } Scaling;
+
+    struct SpellCastTimes
+    {
+        int32 Base;
+        int32 Minimum;
+        int16 PerLevel;
+    } CastTimes;
 
     SpellEffectInfo Effects[MAX_SPELL_EFFECTS];
     SpellEffectInfoMap EffectsMap;
@@ -616,7 +617,6 @@ public:
     // correction helpers
     void SetDurationIndex(uint32 index);
     void SetRangeIndex(uint32 index);
-    void SetCastTimeIndex(uint32 index);
 
     // unloading helpers
     void _UnloadImplicitTargetConditionLists();

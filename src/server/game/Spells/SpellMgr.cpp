@@ -3849,7 +3849,10 @@ void SpellMgr::LoadSpellCustomAttr()
                     }
                     case SPELL_EFFECT_APPLY_GLYPH:
                         if(sWorld->getBoolConfig(CONFIG_FUN_OPTION_ENABLED))
-                            spellInfo->CastTimeEntry = sSpellCastTimesStore.LookupEntry(1);
+                        {
+                            spellInfo->CastTimes.Minimum = 0;
+                            spellInfo->CastTimes.Base = 0;
+                        }
                         break;
                     case SPELL_EFFECT_CREATE_ITEM:
                     case SPELL_EFFECT_CREATE_ITEM_2:
@@ -4102,10 +4105,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 79136: // Venomous Wound
                 case 127802: // Touch of the Grave
                     spellInfo->Speed = 25.f;
-                    break;
-                case 124465: // Mastery: Vampiric Touch
-                    spellInfo->Scaling.CastTimeMin = 0;
-                    spellInfo->Scaling.CastTimeMax = 0;
                     break;
                 case 2094: // Blind
                 case 108446: // Soul Link
@@ -5124,9 +5123,6 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].RadiusEntry = sSpellRadiusStore.LookupEntry(12);
                     spellInfo->Effects[EFFECT_2].RadiusEntry = sSpellRadiusStore.LookupEntry(12);
                     break;
-                case 121577: //Barrage
-                    spellInfo->CastTimeEntry = sSpellCastTimesStore.LookupEntry(1);
-                    break;
                 case 121600: //Barrage Dmg
                     spellInfo->Effects[EFFECT_1].RadiusEntry = sSpellRadiusStore.LookupEntry(13);
                     spellInfo->Effects[EFFECT_2].RadiusEntry = sSpellRadiusStore.LookupEntry(13);
@@ -5149,7 +5145,6 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->AttributesEx3 = 268894272;
                     spellInfo->AttributesEx4 = 2048;
                     spellInfo->AttributesEx6 = 1024;
-                    spellInfo->CastTimeEntry = sSpellCastTimesStore.LookupEntry(1);
                     spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(1);
                     spellInfo->EquippedItemClass = -1;
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_DUMMY;
@@ -5541,10 +5536,6 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 146397: // Legendary Finale
                     spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(567); //135s
-                    break;
-                case 143343: // Deafening Screech
-                    spellInfo->Scaling.CastTimeMin = 0.7f;
-                    spellInfo->Scaling.CastTimeMax = 0.7f;
                     break;
                 case 89496: // Gnomish Gravity Well
                     spellInfo->AttributesEx4 &= ~SPELL_ATTR4_CAST_ONLY_IN_OUTLAND;

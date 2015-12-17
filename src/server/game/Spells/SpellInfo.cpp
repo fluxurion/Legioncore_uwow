@@ -504,11 +504,11 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
             else
                 value = GetRandomPropertyPoints(_spellInfo->Scaling.ScalesFromItemLevel, ITEM_QUALITY_RARE, INVTYPE_CHEST, 0);
 
-            if (level < _spellInfo->Scaling.CastTimeMaxLevel && _spellInfo->Scaling.CastTimeMax)
-                value *= float(_spellInfo->Scaling.CastTimeMin + (level - 1) * (_spellInfo->Scaling.CastTimeMax - _spellInfo->Scaling.CastTimeMin) / (_spellInfo->Scaling.CastTimeMaxLevel - 1)) / float(_spellInfo->Scaling.CastTimeMax);
+            //if (level < _spellInfo->Scaling.CastTimeMaxLevel && _spellInfo->Scaling.CastTimeMax)
+            //    value *= float(_spellInfo->Scaling.CastTimeMin + (level - 1) * (_spellInfo->Scaling.CastTimeMax - _spellInfo->Scaling.CastTimeMin) / (_spellInfo->Scaling.CastTimeMaxLevel - 1)) / float(_spellInfo->Scaling.CastTimeMax);
 
-            if (level < _spellInfo->Scaling.NerfMaxLevel)
-                value *= ((((1.0 - _spellInfo->Scaling.NerfFactor) * (level - 1)) / (_spellInfo->Scaling.NerfMaxLevel - 1)) + _spellInfo->Scaling.NerfFactor);
+            //if (level < _spellInfo->Scaling.NerfMaxLevel)
+            //    value *= ((((1.0 - _spellInfo->Scaling.NerfFactor) * (level - 1)) / (_spellInfo->Scaling.NerfMaxLevel - 1)) + _spellInfo->Scaling.NerfFactor);
         }
 
         value *= Scaling.Coefficient;
@@ -995,12 +995,6 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
                 EffectsMap[MAKE_PAIR16(i, difficulty)] = SpellEffectInfo(spellEntry, this, i, _effect);
 
     SpellScalingEntry const* _scaling = GetSpellScaling();
-    //@TODO:Legion - new field - spellID and 5 fields gone
-    Scaling.CastTimeMin = 0;
-    Scaling.CastTimeMax = 0;
-    Scaling.CastTimeMaxLevel = 0;
-    Scaling.NerfFactor = 0;
-    Scaling.NerfMaxLevel = 0;
     Scaling.Class = _scaling ? _scaling->ScalingClass : 0;
     Scaling.MaxScalingLevel = _scaling ? _scaling->MaxScalingLevel : 0;
     Scaling.ScalesFromItemLevel = _scaling ? _scaling->ScalesFromItemLevel : 0;
@@ -1105,14 +1099,14 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     AttributesEx11 = _misc ? _misc->AttributesEx11 : 0;
     AttributesEx12 = _misc ? _misc->AttributesEx12 : 0;
 
-    uint32 castingTimeIndex = _misc ? _misc->CastingTimeIndex : 0;
-    uint32 durationIndex = _misc ? _misc->DurationIndex : 0;
-    uint32 rangeIndex = _misc ? _misc->RangeIndex : 0;
+    SpellCastTimesEntry const* _castTimes = sSpellCastTimesStore.LookupEntry(_misc ? _misc->CastingTimeIndex : 0);
+    CastTimes.Base = _castTimes->Base;
+    CastTimes.Minimum = _castTimes->Minimum;
+    CastTimes.PerLevel = _castTimes->PerLevel;
 
-    CastTimeEntry = sSpellCastTimesStore.LookupEntry(castingTimeIndex);
-    DurationEntry = sSpellDurationStore.LookupEntry(durationIndex);
-
-    RangeEntry = sSpellRangeStore.LookupEntry(rangeIndex);
+    DurationEntry = sSpellDurationStore.LookupEntry(_misc ? _misc->DurationIndex : 0);
+    
+    RangeEntry = sSpellRangeStore.LookupEntry(_misc ? _misc->RangeIndex : 0);
 
     Speed = _misc ? _misc->Speed : 1.00f;
     SpellIconID = _misc ? _misc->SpellIconID : 0;
@@ -2805,30 +2799,20 @@ int32 SpellInfo::GetMaxDuration() const
 
 uint32 SpellInfo::CalcCastTime(Unit* caster, Spell* spell) const
 {
-    int32 castTime = 0;
+    int32 castTime = CastTimes.Base;
 
     // hack -- no cast time while prep
     if(sWorld->getBoolConfig(CONFIG_FUN_OPTION_ENABLED) && caster)
         if (caster->HasAura(SPELL_BG_PREPARATION) || caster->HasAura(SPELL_ARENA_PREPARATION))
             return 0;
 
-    // not all spells have cast time index and this is all is pasiive abilities
-    if (caster && Scaling.CastTimeMax > 0)
-    {
-        castTime = Scaling.CastTimeMax;
-        if (Scaling.CastTimeMaxLevel > int32(caster->getLevel()))
-            castTime = Scaling.CastTimeMin + int32(caster->getLevel() - 1) * (Scaling.CastTimeMax - Scaling.CastTimeMin) / (Scaling.CastTimeMaxLevel - 1);
-    }
-    else if (CastTimeEntry)
-        castTime = CastTimeEntry->Base;
-
-    if (!castTime)
-        return 0;
-
     if (caster)
         caster->ModSpellCastTime(this, castTime, spell);
 
-    return (castTime > 0) ? uint32(castTime) : 0;
+    if (castTime < CastTimes.Minimum)
+        castTime = CastTimes.Minimum;
+
+    return castTime;
 }
 
 uint32 SpellInfo::GetMaxTicks() const
@@ -3556,13 +3540,6 @@ void SpellInfo::SetRangeIndex(uint32 index)
     SpellRangeEntry const* rangeIndex = sSpellRangeStore.LookupEntry(index);
     if (rangeIndex)
         RangeEntry = rangeIndex;
-}
-
-void SpellInfo::SetCastTimeIndex(uint32 index)
-{
-    SpellCastTimesEntry const* castTimeIndex = sSpellCastTimesStore.LookupEntry(index);
-    if (castTimeIndex)
-        CastTimeEntry = castTimeIndex;
 }
 
 SpellEffectEntry const* SpellEntry::GetSpellEffect(uint32 eff, uint8 diff) const
