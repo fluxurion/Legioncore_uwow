@@ -1411,29 +1411,36 @@ struct SpellMiscEntry
 
 struct SpellPowerEntry
 {
-    uint32      ID;                                         // 0
-    uint32      SpellID;                                    // 1
-    uint32      PowerIndex;                                 // 2
-    uint32      PowerType;                                  // 3
-    uint32      PowerCost;                                  // 4
-    uint32      PowerCostPerLevel;                          // 5
-    uint32      PowerCostPerSecond;                         // 6
-    uint32      ManaCostAdditional;                         // 7 (All 0 except one spell: 22570)
-    uint32      PowerDisplayId;                             // 8
-    uint32      UnitPowerBarID;                             // 9
-    float       PowerCostPercentage;                        // 10
-    float       PowerCostPercentagePerSecond;               // 11
-    uint32      RequiredAura;                               // 12
-    float       HealthCostPercentage;                       // 13
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    uint32      PowerCost;                                  // 1
+    float       PowerCostPercentage;                        // 2
+    float       PowerCostPercentagePerSecond;               // 3
+    uint32      RequiredAura;                               // 4
+    float       HealthCostPercentage;                       // 5
+    uint16      PowerCostPerSecond;                         // 6
+    uint16      ManaCostAdditional;                         // 7
+    uint16      PowerDisplayID;                             // 8
+    uint16      UnitPowerBarID;                             // 9
+    uint8       PowerIndex;                                 // 10
+    uint8       PowerType;                                  // 11
+    uint8       PowerCostPerLevel;                          // 12
 };
 
 struct SpellReagentsEntry
 {
-    uint32      Id;                                         // 0
+    uint32      Id;
+    uint32      SpellID;                                    // 0
     int32       Reagent[MAX_SPELL_REAGENTS];                // 1-8
-    uint32      ReagentCount[MAX_SPELL_REAGENTS];           // 9-16
-    uint32      ReagentCurrency;                            // 17
-    uint32      ReagentCurrencyCount;                       // 18
+    uint16      ReagentCount[MAX_SPELL_REAGENTS];           // 9-16
+};
+
+struct SpellReagentsCurrencyEntry
+{
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    uint16      CurrencyID;                                 // 1
+    uint16      CurrencyCount;                              // 2
 };
 
 struct SpellRuneCostEntry
@@ -1464,9 +1471,10 @@ struct PvpItemEntry
 
 struct SpellTotemsEntry
 {
-    uint32      ID;                                         // 0
-    uint32      TotemCategory[MAX_SPELL_TOTEMS];            // 1
-    uint32      Totem[MAX_SPELL_TOTEMS];                    // 2
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    uint32      TotemCategory[MAX_SPELL_TOTEMS];            // 1 - 2
+    uint8       Totem[MAX_SPELL_TOTEMS];                    // 3 - 4
 };
 
 struct SpellXSpellVisualEntry

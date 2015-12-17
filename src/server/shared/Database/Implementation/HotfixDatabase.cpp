@@ -522,14 +522,17 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "CastingTimeIndex, DurationIndex, RangeIndex, SpellIconID, ActiveIconID, SchoolMask FROM spell_misc ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellPower.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_POWER, "SELECT ID, SpellID, PowerIndex, PowerType, PowerCost, PowerCostPerLevel, PowerCostPerSecond, "
-        "ManaCostAdditional, PowerDisplayId, UnitPowerBarID, PowerCostPercentage, PowerCostPercentagePerSecond, RequiredAura, HealthCostPercentage"
+    PrepareStatement(HOTFIX_SEL_SPELL_POWER, "SELECT ID, SpellID, PowerCost, PowerCostPercentage, PowerCostPercentagePerSecond, RequiredAura, "
+        "HealthCostPercentage, PowerCostPerSecond, ManaCostAdditional, PowerDisplayID, UnitPowerBarID, PowerIndex, PowerType, PowerCostPerLevel"
         " FROM spell_power ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellReagents.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS, "SELECT Id, Reagent1, Reagent2, Reagent3, Reagent4, Reagent5, Reagent6, Reagent7, Reagent8, "
-        "ReagentCount1, ReagentCount2, ReagentCount3, ReagentCount4, ReagentCount5, ReagentCount6, ReagentCount7, ReagentCount8, ReagentCurrency, "
-        "ReagentCurrencyCount FROM spell_reagents ORDER BY Id DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS, "SELECT Id, SpellID, Reagent1, Reagent2, Reagent3, Reagent4, Reagent5, Reagent6, Reagent7, Reagent8, "
+        "ReagentCount1, ReagentCount2, ReagentCount3, ReagentCount4, ReagentCount5, ReagentCount6, ReagentCount7, ReagentCount8 FROM spell_reagents"
+        " ORDER BY Id DESC", CONNECTION_SYNCH);
+
+    // SpellReagentsCurrency.db2
+    PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS_CURRENCY, "SELECT ID, SpellID, CurrencyID, CurrencyCount FROM spell_reagents_currency ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellRuneCost.db2
     PrepareStatement(HOTFIX_SEL_SPELL_RUNE_COST, "SELECT ID, RuneCost1, RuneCost2, RuneCost3, RuneCost4, RunePowerGain FROM spell_rune_cost"
@@ -543,7 +546,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_PVP_ITEM, "SELECT ID, ItemID, BonusIlvl FROM pvp_item ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellTotems.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, TotemCategory1, TotemCategory2, Totem1, Totem2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, SpellID, TotemCategory1, TotemCategory2, Totem1, Totem2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellXSpellVisual.db2
     PrepareStatement(HOTFIX_SEL_SPELL_X_SPELL_VISUAL, "SELECT ID, SpellID, TravelSpeed, SpellVisualID1, SpellVisualID2, PlayerConditionID, "

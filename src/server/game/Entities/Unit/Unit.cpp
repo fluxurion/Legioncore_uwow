@@ -7205,7 +7205,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                     return false;
 
                 // mana cost save
-                int32 cost = int32(procSpell->PowerCost + CalculatePct(GetCreateMana(), procSpell->PowerCostPercentage));
+                int32 cost = int32(procSpell->Power.PowerCost + CalculatePct(GetCreateMana(), procSpell->Power.PowerCostPercentage));
                 basepoints0 = CalculatePct(cost, triggerAmount);
                 if (basepoints0 <= 0)
                     return false;
@@ -7846,7 +7846,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                 case 28719:
                 {
                     // mana back
-                    basepoints0 = int32(CalculatePct(procSpell->PowerCost, 30));
+                    basepoints0 = int32(CalculatePct(procSpell->Power.PowerCost, 30));
                     target = this;
                     triggered_spell_id = 28742;
                     break;
@@ -9513,7 +9513,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
                     {
                         if (!procSpell)
                             return false;
-                        basepoints0 = int32(CalculatePct(procSpell->PowerCost, 35));
+                        basepoints0 = int32(CalculatePct(procSpell->Power.PowerCost, 35));
                         trigger_spell_id = 23571;
                         target = this;
                         break;
@@ -10082,7 +10082,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
         // Enlightenment (trigger only from mana cost spells)
         case 35095:
         {
-            if (!procSpell || procSpell->PowerType != POWER_MANA || (procSpell->PowerCost == 0 && procSpell->PowerCostPercentage == 0))
+            if (!procSpell || procSpell->Power.PowerType != POWER_MANA || (procSpell->Power.PowerCost == 0 && procSpell->Power.PowerCostPercentage == 0))
                 return false;
             break;
         }
@@ -15522,7 +15522,7 @@ int32 Unit::CalcSpellDuration(SpellInfo const* spellProto)
 
     int32 duration;
 
-    if (spellProto->PowerType == POWER_HOLY_POWER)
+    if (spellProto->Power.PowerType == POWER_HOLY_POWER)
         holyPower = GetModForHolyPowerSpell();
 
     if (comboPoints && minduration != -1 && minduration != maxduration)
@@ -17423,7 +17423,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
                     case SPELL_AURA_MOD_POWER_COST_SCHOOL:
                         // Skip melee hits and spells ws wrong school or zero cost
                         if (procSpell &&
-                            (procSpell->PowerCost != 0 || procSpell->PowerCostPercentage != 0) && // Cost check
+                            (procSpell->Power.PowerCost != 0 || procSpell->Power.PowerCostPercentage != 0) && // Cost check
                             (triggeredByAura->GetMiscValue() & procSpell->Misc.SchoolMask))          // School check
                             takeCharges = true;
                         break;
@@ -19533,7 +19533,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
     bool procCheckSecond = false;
     bool procCheckSecondActiveted = false;
     int32 spellProcId = procSpell ? procSpell->Id : -1;
-    uint32 procPowerType = procSpell ? procSpell->PowerType : 0;
+    uint32 procPowerType = procSpell ? procSpell->Power.PowerType : 0;
     uint32 procDmgClass = procSpell ? procSpell->Categories.DefenseType : 0;
     uint32 Attributes = procSpell ? procSpell->Misc.Attributes[0] : 0;
     uint32 AllEffectsMechanicMask = procSpell ? procSpell->GetAllEffectsMechanicMask() : 0;
@@ -23869,7 +23869,7 @@ bool Unit::RequiresCurrentSpellsToHolyPower(SpellInfo const* spellProto)
     if (!spellProto)
         return false;
 
-    if (spellProto->PowerType == POWER_HOLY_POWER)
+    if (spellProto->Power.PowerType == POWER_HOLY_POWER)
         return true;
     else
     {
@@ -23881,7 +23881,7 @@ bool Unit::RequiresCurrentSpellsToHolyPower(SpellInfo const* spellProto)
                 continue;
 
             SpellInfo const* currentSpellInfo = spell->GetSpellInfo();
-            if (currentSpellInfo && currentSpellInfo->PowerType == POWER_HOLY_POWER)
+            if (currentSpellInfo && currentSpellInfo->Power.PowerType == POWER_HOLY_POWER)
                 return true;
         }
     }

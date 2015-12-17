@@ -4817,14 +4817,14 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         }
         case SPELL_FAILED_TOTEMS:
         {
-            packet.FailedArg1 = spellInfo->Totem[0];
-            packet.FailedArg2 = spellInfo->Totem[1];
+            packet.FailedArg1 = spellInfo->Totems.Totem[0];
+            packet.FailedArg2 = spellInfo->Totems.Totem[1];
             break;
         }
         case SPELL_FAILED_TOTEM_CATEGORY:
         {
-            packet.FailedArg1 = spellInfo->TotemCategory[0];
-            packet.FailedArg2 = spellInfo->TotemCategory[1];
+            packet.FailedArg1 = spellInfo->Totems.TotemCategory[0];
+            packet.FailedArg2 = spellInfo->Totems.TotemCategory[1];
 
             //if (hasBit1 && hasBit2 && (!spellInfo->TotemCategory[0] || !spellInfo->TotemCategory[1]))
             //    sLog->OutCS(">>> SPELL_FAILED_TOTEM_CATEGORY ");
@@ -4897,11 +4897,11 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         {
             for (uint32 i = 0; i < MAX_SPELL_REAGENTS; i++)
             {
-                if (spellInfo->Reagent[i] <= 0)
+                if (spellInfo->Reagents.Reagent[i] <= 0)
                     continue;
 
-                uint32 itemid    = spellInfo->Reagent[i];
-                uint32 itemcount = spellInfo->ReagentCount[i];
+                uint32 itemid    = spellInfo->Reagents.Reagent[i];
+                uint32 itemcount = spellInfo->Reagents.ReagentCount[i];
 
                 if (!caster->HasItemCount(itemid, itemcount))
                 {
@@ -4911,10 +4911,10 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
                 }
             }
 
-            if (!packet.FailedArg1 && spellInfo->ReagentCurrency != 0)
+            if (!packet.FailedArg1 && spellInfo->Reagents.CurrencyID != 0)
             {
-                uint32 currencyId    = spellInfo->ReagentCurrency;
-                uint32 currencyCount = spellInfo->ReagentCurrencyCount;
+                uint32 currencyId    = spellInfo->Reagents.CurrencyID;
+                uint32 currencyCount = spellInfo->Reagents.CurrencyCount;
 
                 if (!caster->HasCurrency(currencyId, currencyCount))
                 {
@@ -5590,7 +5590,7 @@ void Spell::TakePower()
         if (!m_UniqueTargetInfo.empty())
             if (Aura* aur = m_caster->GetAura(123980))
             {
-                uint8 chipower = m_spellInfo->PowerCost;
+                uint8 chipower = m_spellInfo->Power.PowerCost;
                 uint8 maxamount = aur->GetSpellInfo()->Effects[EFFECT_0].BasePoints;
                 int8 amount = aur->GetEffect(EFFECT_0)->GetAmount();
                 amount -= chipower;
@@ -6010,11 +6010,11 @@ void Spell::TakeReagents()
 
     for (uint32 x = 0; x < MAX_SPELL_REAGENTS; ++x)
     {
-        if (m_spellInfo->Reagent[x] <= 0)
+        if (m_spellInfo->Reagents.Reagent[x] <= 0)
             continue;
 
-        uint32 itemid = m_spellInfo->Reagent[x];
-        uint32 itemcount = m_spellInfo->ReagentCount[x];
+        uint32 itemid = m_spellInfo->Reagents.Reagent[x];
+        uint32 itemcount = m_spellInfo->Reagents.ReagentCount[x];
 
         // if CastItem is also spell reagent
         if (castItemTemplate && castItemTemplate->ItemId == itemid)
@@ -6041,8 +6041,8 @@ void Spell::TakeReagents()
 
         p_caster->DestroyItemCount(itemid, itemcount, true);
     }
-    if(m_spellInfo->ReagentCurrency != 0)
-        p_caster->ModifyCurrency(m_spellInfo->ReagentCurrency, -int32(m_spellInfo->ReagentCurrencyCount));
+    if(m_spellInfo->Reagents.CurrencyID != 0)
+        p_caster->ModifyCurrency(m_spellInfo->Reagents.CurrencyID, -int32(m_spellInfo->Reagents.CurrencyCount));
 }
 
 void Spell::HandleThreatSpells()
@@ -7808,7 +7808,7 @@ SpellCastResult Spell::CheckPower()
 
         if (powerType == POWER_HOLY_POWER)
         {
-            m_powerCost = m_caster->HandleHolyPowerCost(m_powerCost, m_spellInfo->PowerCost);
+            m_powerCost = m_caster->HandleHolyPowerCost(m_powerCost, m_spellInfo->Power.PowerCost);
             if(m_powerCost)
                 if (Player* modOwner = m_caster->GetSpellModOwner())
                     modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_COST, m_powerCost);
@@ -7963,11 +7963,11 @@ SpellCastResult Spell::CheckItems()
         {
             for (uint32 i = 0; i < MAX_SPELL_REAGENTS; i++)
             {
-                if (m_spellInfo->Reagent[i] <= 0)
+                if (m_spellInfo->Reagents.Reagent[i] <= 0)
                     continue;
 
-                uint32 itemid    = m_spellInfo->Reagent[i];
-                uint32 itemcount = m_spellInfo->ReagentCount[i];
+                uint32 itemid    = m_spellInfo->Reagents.Reagent[i];
+                uint32 itemcount = m_spellInfo->Reagents.ReagentCount[i];
 
                 // if CastItem is also spell reagent
                 if (m_CastItem && m_CastItem->GetEntry() == itemid)
@@ -7989,10 +7989,10 @@ SpellCastResult Spell::CheckItems()
                 if (!p_caster->HasItemCount(itemid, itemcount))
                     return SPELL_FAILED_REAGENTS;
             }
-            if(m_spellInfo->ReagentCurrency != 0)
+            if(m_spellInfo->Reagents.CurrencyID != 0)
             {
-                uint32 currencyId    = m_spellInfo->ReagentCurrency;
-                uint32 currencyCount = m_spellInfo->ReagentCurrencyCount;
+                uint32 currencyId    = m_spellInfo->Reagents.CurrencyID;
+                uint32 currencyCount = m_spellInfo->Reagents.CurrencyCount;
 
                 if (!p_caster->HasCurrency(currencyId, currencyCount))
                     return SPELL_FAILED_REAGENTS;
@@ -8003,9 +8003,9 @@ SpellCastResult Spell::CheckItems()
         uint32 totems = 2;
         for (int i = 0; i < 2; ++i)
         {
-            if (m_spellInfo->Totem[i] != 0)
+            if (m_spellInfo->Totems.Totem[i] != 0)
             {
-                if (p_caster->HasItemCount(m_spellInfo->Totem[i]))
+                if (p_caster->HasItemCount(m_spellInfo->Totems.Totem[i]))
                 {
                     totems -= 1;
                     continue;

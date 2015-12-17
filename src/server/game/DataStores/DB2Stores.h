@@ -167,6 +167,7 @@ extern DB2Storage<SpellProcsPerMinuteModEntry>      sSpellProcsPerMinuteModStore
 extern DB2Storage<SpellRadiusEntry>                 sSpellRadiusStore;
 extern DB2Storage<SpellRangeEntry>                  sSpellRangeStore;
 extern DB2Storage<SpellReagentsEntry>               sSpellReagentsStore;
+extern DB2Storage<SpellReagentsCurrencyEntry>       sSpellReagentsCurrencyStore;
 extern DB2Storage<SpellRuneCostEntry>               sSpellRuneCostStore;
 extern DB2Storage<SpellScalingEntry>                sSpellScalingStore;
 extern DB2Storage<SpellShapeshiftEntry>             sSpellShapeshiftStore;

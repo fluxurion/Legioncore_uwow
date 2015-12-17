@@ -168,6 +168,7 @@ char const SpellProcsPerMinuteModFormat[] = "ftbb";
 char const SpellRadiusFormat[] = "ffff";
 char const SpellRangeFormat[] = "ffffssb";
 char const SpellReagentsFormat[] = "niiiiiiiiiiiiiiiiii";
+char const SpellReagentsCurrencyFormat[] = "nitt";
 char const SpellRuneCostFormat[] = "niiiii";
 char const SpellScalingFormat[] = "diiiifiii";
 char const SpellShapeshiftFormat[] = "nixixx";

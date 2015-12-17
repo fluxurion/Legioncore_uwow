@@ -1104,14 +1104,18 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     BaseLevel = _levels ? _levels->BaseLevel : 0;
     SpellLevel = _levels ? _levels->SpellLevel : 0;
 
-    // SpellPowerEntry
-    PowerType = POWER_NULL;
-    PowerCost = 0;
-    PowerCostPerSecond = 0;
-    PowerCostPercentage = 0.0f;
-    PowerCostPercentagePerSecond = 0.0f;
-    PowerRequestId = 0;
-    PowerGetPercentHp = 0.0f;
+    Power.PowerCost = 0;
+    Power.PowerCostPercentage = 0.0f;
+    Power.PowerCostPercentagePerSecond = 0.0f;
+    Power.RequiredAura = 0;
+    Power.HealthCostPercentage = 0.0f;
+    Power.PowerCostPerSecond = 0;
+    Power.ManaCostAdditional = 0;
+    Power.PowerDisplayID = 0;
+    Power.UnitPowerBarID = 0;
+    Power.PowerIndex = 0;
+    Power.PowerType = POWER_NULL;
+    Power.PowerCostPerLevel = 0;
 
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
     {
@@ -1133,14 +1137,24 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     CastTimes.Minimum = _castTimes ? _castTimes->Minimum : 0;
     CastTimes.PerLevel = _castTimes ? _castTimes->PerLevel : 0;
 
-    SpellReagentsEntry const* _reagents = GetSpellReagents();
+    SpellReagentsEntry const* reagentsStore = nullptr;
+    for (auto const& _reagentsStore : sSpellReagentsStore)
+        if (_reagentsStore->SpellID == Id)
+            reagentsStore = _reagentsStore;
+
     for (uint8 i = 0; i < MAX_SPELL_REAGENTS; ++i)
     {
-        Reagent[i] = _reagents ? _reagents->Reagent[i] : 0;
-        ReagentCount[i] = _reagents ? _reagents->ReagentCount[i] : 0;
+        Reagents.Reagent[i] = reagentsStore ? reagentsStore->Reagent[i] : 0;
+        Reagents.ReagentCount[i] = reagentsStore ? reagentsStore->ReagentCount[i] : 0;
     }
-    ReagentCurrency = _reagents ? _reagents->ReagentCurrency : 0;
-    ReagentCurrencyCount = _reagents ? _reagents->ReagentCurrencyCount : 0;
+
+    SpellReagentsCurrencyEntry const* reagentsCurrencyStore = nullptr;
+    for (auto const& _reagentsCurrencyStore : sSpellReagentsCurrencyStore)
+        if (_reagentsCurrencyStore->SpellID == Id)
+            reagentsCurrencyStore = _reagentsCurrencyStore;
+
+    Reagents.CurrencyID = reagentsCurrencyStore ? reagentsCurrencyStore->CurrencyID : 0;
+    Reagents.CurrencyCount = reagentsCurrencyStore ? reagentsCurrencyStore->CurrencyCount : 0;
 
     SpellShapeshiftEntry const* _shapeshift = GetSpellShapeshift();
     Stances = _shapeshift ? _shapeshift->ShapeshiftMask[0] : 0;
@@ -1170,11 +1184,15 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
             GeneralTargetCreatureType = _restr->TargetCreatureType;
     }
 
-    SpellTotemsEntry const* _totem = GetSpellTotems();
+    SpellTotemsEntry const* totemsStore = nullptr;
+    for (auto const& _totemStore : sSpellTotemsStore)
+        if (_totemStore->SpellID == Id)
+            totemsStore = _totemStore;
+
     for (uint8 i = 0; i < 2; ++i)
     {
-        TotemCategory[i] = _totem ? _totem->TotemCategory[i] : 0;
-        Totem[i] = _totem ? _totem->Totem[i] : 0;
+        Totems.TotemCategory[i] = totemsStore ? totemsStore->TotemCategory[i] : 0;
+        Totems.Totem[i] = totemsStore ? totemsStore->Totem[i] : 0;
     }
 
     talentId = 0;
@@ -1424,7 +1442,7 @@ bool SpellInfo::IsLootCrafting() const
     return Effects[0].Effect == SPELL_EFFECT_CREATE_RANDOM_ITEM || Effects[0].Effect == SPELL_EFFECT_CREATE_ITEM_3 ||
         // different random cards from Inscription (121==Virtuoso Inking Set category) r without explicit item
         Effects[0].Effect == SPELL_EFFECT_CREATE_ITEM_2 &&
-        (TotemCategory[0] != 0 || Effects[0].ItemType == 0);
+        (Totems.TotemCategory[0] != 0 || Effects[0].ItemType == 0);
 }
 
 bool SpellInfo::IsArchaeologyCraftingSpell() const
@@ -1616,7 +1634,7 @@ bool SpellInfo::IsStackableWithRanks() const
 {
     if (IsPassive())
         return false;
-    if (PowerType != POWER_MANA && PowerType != POWER_HEALTH)
+    if (Power.PowerType != POWER_MANA && Power.PowerType != POWER_HEALTH)
         return false;
     if (IsProfessionOrRiding())
         return false;
@@ -2857,11 +2875,11 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
     if (HasAttribute(SPELL_ATTR1_DRAIN_ALL_POWER))
     {
         // If power type - health drain all
-        if (PowerType == POWER_HEALTH)
+        if (Power.PowerType == POWER_HEALTH)
             return caster->GetHealth();
         // Else drain all power
-        if (PowerType < MAX_POWERS)
-            return caster->GetPower(Powers(PowerType));
+        if (Power.PowerType < MAX_POWERS)
+            return caster->GetPower(Powers(Power.PowerType));
         sLog->outError(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CalcPowerCost: Unknown power type '%d' in spell %d", spellPower->PowerType, Id);
         return 0;
     }
@@ -2891,8 +2909,8 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
             }
         }
 
-        if(PowerGetPercentHp)
-            powerCost += caster->CountPctFromMaxHealth(PowerGetPercentHp);
+        if(Power.HealthCostPercentage)
+            powerCost += caster->CountPctFromMaxHealth(Power.HealthCostPercentage);
 
         SpellSchools school = GetFirstSchoolInMask(schoolMask);
         // Flat mod from caster auras by spell school
@@ -3426,32 +3444,9 @@ SpellLevelsEntry const* SpellInfo::GetSpellLevels() const
     return nullptr;
 }
 
-SpellPowerEntry const* SpellInfo::GetSpellPower() const
-{
-    return sSpellPowerStore.LookupEntry(Id);
-}
-
-SpellReagentsEntry const* SpellInfo::GetSpellReagents() const
-{
-    for (auto const& v : sSpellReagentsStore)
-        if (v->Id == Id)
-            return v;
-
-    return nullptr;
-}
-
 SpellShapeshiftEntry const* SpellInfo::GetSpellShapeshift() const
 {
     for (auto const& v : sSpellShapeshiftStore)
-        if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellTotemsEntry const* SpellInfo::GetSpellTotems() const
-{
-    for (auto const& v : sSpellTotemsStore)
         if (v->ID == Id)
             return v;
 

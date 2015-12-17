@@ -487,14 +487,14 @@ bool SpellMgr::IsSpellValid(SpellInfo const* spellInfo, Player* player, bool msg
     {
         for (uint8 j = 0; j < MAX_SPELL_REAGENTS; ++j)
         {
-            if (spellInfo->Reagent[j] > 0 && !sObjectMgr->GetItemTemplate(spellInfo->Reagent[j]))
+            if (spellInfo->Reagents.Reagent[j] > 0 && !sObjectMgr->GetItemTemplate(spellInfo->Reagents.Reagent[j]))
             {
                 if (msg)
                 {
                     if (player)
-                        ChatHandler(player).PSendSysMessage("Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagent[j]);
+                        ChatHandler(player).PSendSysMessage("Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagents.Reagent[j]);
                     else
-                        sLog->outError(LOG_FILTER_SQL, "Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagent[j]);
+                        sLog->outError(LOG_FILTER_SQL, "Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagents.Reagent[j]);
                 }
                 return false;
             }
@@ -3706,13 +3706,13 @@ void SpellMgr::LoadSpellInfoStore()
         if (!spell)
             continue;
 
-        spell->PowerType = spellPower->PowerType;
-        spell->PowerCost = spellPower->PowerCost;
-        spell->PowerCostPercentage = spellPower->PowerCostPercentage;
-        spell->PowerCostPerSecond = spellPower->PowerCostPerSecond;
-        spell->PowerCostPercentagePerSecond = spellPower->PowerCostPercentagePerSecond;
-        spell->PowerRequestId = spellPower->RequiredAura;
-        spell->PowerGetPercentHp = spellPower->HealthCostPercentage;
+        spell->Power.PowerType = spellPower->PowerType;
+        spell->Power.PowerCost = spellPower->PowerCost;
+        spell->Power.PowerCostPercentage = spellPower->PowerCostPercentage;
+        spell->Power.PowerCostPerSecond = spellPower->PowerCostPerSecond;
+        spell->Power.PowerCostPercentagePerSecond = spellPower->PowerCostPercentagePerSecond;
+        spell->Power.RequiredAura = spellPower->RequiredAura;
+        spell->Power.HealthCostPercentage = spellPower->HealthCostPercentage;
 
         if (!spell->AddPowerData(spellPower))
             sLog->outInfo(LOG_FILTER_WORLDSERVER, "Spell - %u has more powers > 4.", spell->Id);

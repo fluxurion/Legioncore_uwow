@@ -177,6 +177,7 @@ DB2Storage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore("SpellP
 DB2Storage<SpellRadiusEntry>                sSpellRadiusStore("SpellRadius.db2", SpellRadiusFormat, HOTFIX_SEL_SPELL_RADIUS);
 DB2Storage<SpellRangeEntry>                 sSpellRangeStore("SpellRange.db2", SpellRangeFormat, HOTFIX_SEL_SPELL_RANGE);
 DB2Storage<SpellReagentsEntry>              sSpellReagentsStore("SpellReagents.db2", SpellReagentsFormat, HOTFIX_SEL_SPELL_REAGENTS);
+DB2Storage<SpellReagentsCurrencyEntry>      sSpellReagentsCurrencyStore("SpellReagentsCurrency.db2", SpellReagentsCurrencyFormat, HOTFIX_SEL_SPELL_REAGENTS_CURRENCY);
 DB2Storage<SpellRuneCostEntry>              sSpellRuneCostStore("SpellRuneCost.db2", SpellRuneCostFormat, HOTFIX_SEL_SPELL_RUNE_COST);
 DB2Storage<SpellScalingEntry>               sSpellScalingStore("SpellScaling.db2", SpellScalingFormat, HOTFIX_SEL_SPELL_SCALING);
 DB2Storage<SpellShapeshiftEntry>            sSpellShapeshiftStore("SpellShapeshift.db2", SpellShapeshiftFormat, HOTFIX_SEL_SPELL_SHAPESHIFT);
@@ -413,19 +414,21 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSpellLearnSpellStore);
     //LOAD_DB2(sSpellLevelsStore);              // 20796
     //LOAD_DB2(sSpellMiscStore);                // 20796
-    //LOAD_DB2(sSpellPowerStore);
+    //LOAD_DB2(sSpellPowerStore);               // 20796
+    // SpellPowerDifficulty.db2
     //LOAD_DB2(sSpellProcsPerMinuteModStore);   // 20796
     //LOAD_DB2(sSpellProcsPerMinuteStore);      // 20796
     //LOAD_DB2(sSpellRadiusStore);              // 20796
     //LOAD_DB2(sSpellRangeStore);               // 20796
-    //LOAD_DB2(sSpellReagentsStore);
+    //LOAD_DB2(sSpellReagentsStore);            // 20796
+    //LOAD_DB2(sSpellReagentsCurrencyStore);    // 20796
     //LOAD_DB2(sSpellRuneCostStore);
     //LOAD_DB2(sSpellScalingStore);             // 20796
     //LOAD_DB2(sSpellShapeshiftFormStore);      // 20796
     //LOAD_DB2(sSpellShapeshiftStore);          // 20796
     //LOAD_DB2(sSpellStore);                    // 20796
     //LOAD_DB2(sSpellTargetRestrictionsStore);  // 20796
-    //LOAD_DB2(sSpellTotemsStore);
+    //LOAD_DB2(sSpellTotemsStore);              // 20796
     //LOAD_DB2(sSpellXSpellVisualStore);        // 20796
     //LOAD_DB2(sSpellVisualStore);
     //LOAD_DB2(sTaxiNodesStore);

@@ -2776,18 +2776,18 @@ DROP TABLE IF EXISTS `spell_power`;
 CREATE TABLE `spell_power` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerType` int(10) unsigned NOT NULL DEFAULT '0',
   `PowerCost` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerCostPerLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerCostPerSecond` int(10) unsigned NOT NULL DEFAULT '0',
-  `ManaCostAdditional` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerDisplayId` int(10) unsigned NOT NULL DEFAULT '0',
-  `UnitPowerBarID` int(10) unsigned NOT NULL DEFAULT '0',
   `PowerCostPercentage` float NOT NULL DEFAULT '0',
   `PowerCostPercentagePerSecond` float NOT NULL DEFAULT '0',
   `RequiredAura` int(10) unsigned NOT NULL DEFAULT '0',
   `HealthCostPercentage` float NOT NULL DEFAULT '0',
+  `PowerCostPerSecond` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ManaCostAdditional` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerDisplayID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnitPowerBarID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerIndex` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `PowerType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `PowerCostPerLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2799,6 +2799,7 @@ CREATE TABLE `spell_power` (
 DROP TABLE IF EXISTS `spell_reagents`;
 CREATE TABLE `spell_reagents` (
   `Id` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `Reagent1` int(11) NOT NULL DEFAULT '0',
   `Reagent2` int(11) NOT NULL DEFAULT '0',
   `Reagent3` int(11) NOT NULL DEFAULT '0',
@@ -2807,18 +2808,30 @@ CREATE TABLE `spell_reagents` (
   `Reagent6` int(11) NOT NULL DEFAULT '0',
   `Reagent7` int(11) NOT NULL DEFAULT '0',
   `Reagent8` int(11) NOT NULL DEFAULT '0',
-  `ReagentCount1` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount2` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount3` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount4` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount5` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount6` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount7` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCount8` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCurrency` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReagentCurrencyCount` int(10) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount5` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount6` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount7` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReagentCount8` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `spell_reagents_currency`
+--
+
+DROP TABLE IF EXISTS `spell_reagents_currency`;
+CREATE TABLE `spell_reagents_currency` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `CurrencyID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `CurrencyCount` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -2885,10 +2898,11 @@ CREATE TABLE `pvp_item` (
 DROP TABLE IF EXISTS `spell_totems`;
 CREATE TABLE `spell_totems` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `TotemCategory1` int(10) unsigned NOT NULL DEFAULT '0',
   `TotemCategory2` int(10) unsigned NOT NULL DEFAULT '0',
-  `Totem1` int(10) unsigned NOT NULL DEFAULT '0',
-  `Totem2` int(10) unsigned NOT NULL DEFAULT '0',
+  `Totem1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Totem2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

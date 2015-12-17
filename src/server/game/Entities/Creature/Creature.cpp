@@ -2051,7 +2051,7 @@ SpellInfo const* Creature::reachWithSpellAttack(Unit* victim)
         if (bcontinue)
              continue;
 
-        if (spellInfo->PowerCost > (uint32)GetPower(POWER_MANA))
+        if (spellInfo->Power.PowerCost > (uint32)GetPower(POWER_MANA))
             continue;
         float range = spellInfo->GetMaxRange(false);
         float minrange = spellInfo->GetMinRange(false);
@@ -2095,7 +2095,7 @@ SpellInfo const* Creature::reachWithSpellCure(Unit* victim)
         if (bcontinue)
             continue;
 
-        if (spellInfo->PowerCost > (uint32)GetPower(POWER_MANA))
+        if (spellInfo->Power.PowerCost > (uint32)GetPower(POWER_MANA))
             continue;
 
         float range = spellInfo->GetMaxRange(true);
@@ -2563,7 +2563,7 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
         return;
 
     uint32 baseCD = 6000; //for pet prevented spamm spell
-    if(spellInfo->CalcCastTime() || spellInfo->PowerType < MAX_POWERS)
+    if(spellInfo->CalcCastTime() || spellInfo->Power.PowerType < MAX_POWERS)
         baseCD = 0;
     uint32 cooldown = spellInfo->GetRecoveryTime();
     if (Player* modOwner = GetSpellModOwner())

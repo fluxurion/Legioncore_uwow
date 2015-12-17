@@ -355,24 +355,11 @@ public:
     uint32 MaxLevel;
     uint32 BaseLevel;
     uint32 SpellLevel;
-    uint32 PowerType;
-    uint32 PowerCost;
-    uint32 PowerCostPerSecond;
-    float PowerCostPercentagePerSecond;
-    float PowerCostPercentage;
-    uint32 PowerRequestId;
-    float PowerGetPercentHp;
     uint32 RuneCostID;
     SpellRangeEntry const* RangeEntry;
-    uint32 Totem[2];
-    int32  Reagent[MAX_SPELL_REAGENTS];
-    uint32 ReagentCount[MAX_SPELL_REAGENTS];
-    int32  ReagentCurrency;
-    uint32 ReagentCurrencyCount;
     int32  EquippedItemClass;
     int32  EquippedItemSubClassMask;
     int32  EquippedItemInventoryTypeMask;
-    uint32 TotemCategory[2];
     char const* SpellName;
     uint32 MaxTargetLevel;
     uint32 CustomMaxAffectedTargets;      //only if not exist on dbc use it.
@@ -466,6 +453,36 @@ public:
         uint8 UsesPerWeek;
         uint8 MaxCharges;
     } Category;
+
+    struct SpellTotems
+    {
+        uint32 Totem[2];
+        uint8 TotemCategory[2];
+    } Totems;
+
+    struct SpellReagents
+    {
+        int32 Reagent[MAX_SPELL_REAGENTS];
+        uint16 ReagentCount[MAX_SPELL_REAGENTS];
+        uint16 CurrencyID;
+        uint16 CurrencyCount;
+    } Reagents;
+    
+    struct SpellPowers
+    {
+        uint32 PowerCost;
+        float PowerCostPercentage;
+        float PowerCostPercentagePerSecond;
+        uint32 RequiredAura;
+        float HealthCostPercentage;
+        uint16 PowerCostPerSecond;
+        uint16 ManaCostAdditional;
+        uint16 PowerDisplayID;
+        uint16 UnitPowerBarID;
+        uint8 PowerIndex;
+        uint8 PowerType;
+        uint8 PowerCostPerLevel;
+    } Power;
 
     SpellEffectInfo Effects[MAX_SPELL_EFFECTS];
     SpellEffectInfoMap EffectsMap;
@@ -638,10 +655,7 @@ private:
     SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
     SpellInterruptsEntry const* GetSpellInterrupts() const;
     SpellLevelsEntry const* GetSpellLevels() const;
-    SpellPowerEntry const* GetSpellPower() const;
-    SpellReagentsEntry const* GetSpellReagents() const;
     SpellShapeshiftEntry const* GetSpellShapeshift() const;
-    SpellTotemsEntry const* GetSpellTotems() const;
 
     SpellVisualMap _visuals;
 };
