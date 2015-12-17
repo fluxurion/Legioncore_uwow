@@ -501,17 +501,17 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SOUND_ENTRIES, "SELECT ID, Name_lang FROM sound_entries_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellAuraRestrictions.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_AURA_RESTRICTIONS, "SELECT ID, CasterAuraState, TargetAuraState, ExcludeCasterAuraState, "
-        "ExcludeTargetAuraState, CasterAuraSpell, TargetAuraSpell, ExcludeCasterAuraSpell, ExcludeTargetAuraSpell FROM spell_aura_restrictions"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_AURA_RESTRICTIONS, "SELECT ID, SpellID, CasterAuraSpell, TargetAuraSpell, ExcludeCasterAuraSpell, "
+        "ExcludeTargetAuraSpell, DifficultyID, CasterAuraState, TargetAuraState, ExcludeCasterAuraState, ExcludeTargetAuraState"
+        " FROM spell_aura_restrictions ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellCastingRequirements.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_CASTING_REQUIREMENTS, "SELECT ID, FacingCasterFlags, MinFactionID, MinReputation, RequiredAreasID, "
-        "RequiredAuraVision, RequiresSpellFocus FROM spell_casting_requirements ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_CASTING_REQUIREMENTS, "SELECT ID, SpellID, MinFactionID, RequiredAreasID, RequiresSpellFocus, "
+        "FacingCasterFlags, MinReputation, RequiredAuraVision FROM spell_casting_requirements ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellClassOptions.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_CLASS_OPTIONS, "SELECT ID, ModalNextSpell, SpellClassMask1, SpellClassMask2, SpellClassMask3, SpellClassMask4, "
-        "SpellClassSet FROM spell_class_options ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_CLASS_OPTIONS, "SELECT ID, SpellID, SpellClassMask1, SpellClassMask2, SpellClassMask3, SpellClassMask4, "
+        "ModalNextSpell, SpellClassSet FROM spell_class_options ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellLearnSpell.db2
     PrepareStatement(HOTFIX_SEL_SPELL_LEARN_SPELL, "SELECT ID, LearnSpellID, SpellID, OverridesSpellID FROM spell_learn_spell ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -612,8 +612,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "DifficultyID, MaxAffectedTargets FROM spell_target_restrictions ORDER BY SpellID DESC", CONNECTION_SYNCH);
 
     // Spell.db2
-    PrepareStatement(HOTFIX_SEL_SPELL, "SELECT ID, Name, NameSubtext, Description, AuraDescription, UnkLegion, DescriptionVariablesID FROM spell"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL, "SELECT ID, Name, NameSubtext, Description, AuraDescription, SpellMiscDifficultyID, DescriptionVariablesID"
+        " FROM spell ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL, "SELECT ID, Name_lang, NameSubtext_lang, Description_lang, AuraDescription_lang FROM spell_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 

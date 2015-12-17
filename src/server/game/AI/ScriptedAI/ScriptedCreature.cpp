@@ -243,7 +243,7 @@ SpellInfo const* ScriptedAI::SelectSpell(Unit* target, uint32 school, uint32 mec
             continue;
 
         //Check for spell mechanic if specified
-        if (mechanic && tempSpell->Mechanic != mechanic)
+        if (mechanic && tempSpell->Categories.Mechanic != mechanic)
             continue;
 
         //Make sure that the spell uses the requested amount of power

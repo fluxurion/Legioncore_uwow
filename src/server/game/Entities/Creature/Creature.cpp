@@ -1980,7 +1980,7 @@ bool Creature::IsImmunedToSpell(SpellInfo const* spellInfo)
         return false;
 
     // Creature is immune to main mechanic of the spell
-    if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))
+    if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Categories.Mechanic - 1)))
         return true;
 
     // This check must be done instead of 'if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Mechanic - 1)))' for not break
@@ -2058,9 +2058,9 @@ SpellInfo const* Creature::reachWithSpellAttack(Unit* victim)
         float dist = GetDistance(victim);
         if (dist > range || dist < minrange)
             continue;
-        if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
+        if (spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
             continue;
-        if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
+        if (spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_PACIFY && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
             continue;
         return spellInfo;
     }
@@ -2104,9 +2104,9 @@ SpellInfo const* Creature::reachWithSpellCure(Unit* victim)
 
         if (dist > range || dist < minrange)
             continue;
-        if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
+        if (spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
             continue;
-        if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
+        if (spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_PACIFY && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
             continue;
         return spellInfo;
     }
@@ -2576,8 +2576,8 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
     else if(baseCD)
         _AddCreatureSpellCooldown(spellid, time(NULL) + baseCD/IN_MILLISECONDS);
 
-    if (spellInfo->Category)
-        _AddCreatureCategoryCooldown(spellInfo->Category, time(NULL));
+    if (spellInfo->Categories.Category)
+        _AddCreatureCategoryCooldown(spellInfo->Categories.Category, time(NULL));
 }
 
 bool Creature::HasCategoryCooldown(uint32 spell_id) const
@@ -2586,7 +2586,7 @@ bool Creature::HasCategoryCooldown(uint32 spell_id) const
     if (!spellInfo)
         return false;
 
-    CreatureSpellCooldowns::const_iterator itr = m_CreatureCategoryCooldowns.find(spellInfo->Category);
+    CreatureSpellCooldowns::const_iterator itr = m_CreatureCategoryCooldowns.find(spellInfo->Categories.Category);
     return(itr != m_CreatureCategoryCooldowns.end() && time_t(itr->second + (spellInfo->CategoryRecoveryTime / IN_MILLISECONDS)) > time(NULL));
 }
 
@@ -2845,7 +2845,7 @@ void Creature::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs
         if (spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
             continue;
 
-        if (spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
+        if (spellInfo->Categories.PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
             continue;
 
         if ((idSchoolMask & spellInfo->GetSchoolMask()) && _GetSpellCooldownDelay(spellID) < unTimeMs)

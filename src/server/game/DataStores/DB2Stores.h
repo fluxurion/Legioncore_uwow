@@ -288,7 +288,7 @@ public:
     struct SpellEffectDiff { SpellEffectsMap effects; };
     typedef std::unordered_map<uint32, SpellEffectDiff> SpellEffectDiffContainer;
     typedef std::unordered_map<uint32, SpellEffect> SpellEffectContainer;
-
+    typedef std::unordered_map<uint32, std::set<uint32>/*category*/> SpellCategoryContainer;
 
     static DB2Manager& Instance()
     {
@@ -347,6 +347,7 @@ public:
     uint32 GetLearnSpell(uint32 trigerSpell);
     uint32 GetSpellByTrigger(uint32 trigerSpell);
     SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
+    std::set<uint32> const* GetSpellCategory(uint32 category);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -397,6 +398,7 @@ private:
     ReversTriggerSpellContainer _reversTriggerSpellList;
     SpellEffectDiffContainer _spellEffectDiff;
     SpellEffectContainer _spellEffectMap;
+    SpellCategoryContainer _spellCategory;
 };
 
 #define sDB2Manager DB2Manager::Instance()

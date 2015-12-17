@@ -1370,14 +1370,14 @@ bool TempSummon::addSpell(uint32 spellId, ActiveStates active /*= ACT_DECIDE*/, 
 
     if(m_charmInfo)
     {
-        if (spellInfo->IsPassive() && (!spellInfo->CasterAuraState || HasAuraState(AuraStateType(spellInfo->CasterAuraState))))
+        if (spellInfo->IsPassive() && (!spellInfo->AuraRestrictions.CasterAuraState || HasAuraState(AuraStateType(spellInfo->AuraRestrictions.CasterAuraState))))
             CastSpell(this, spellId, true);
         else
             m_charmInfo->AddSpellToActionBar(spellInfo);
     }
     else
     {
-        if (spellInfo->IsPassive() && (!spellInfo->CasterAuraState || HasAuraState(AuraStateType(spellInfo->CasterAuraState))))
+        if (spellInfo->IsPassive() && (!spellInfo->AuraRestrictions.CasterAuraState || HasAuraState(AuraStateType(spellInfo->AuraRestrictions.CasterAuraState))))
             CastSpell(this, spellId, true);
         else
             AddPetCastSpell(spellId);
@@ -2067,7 +2067,7 @@ void Pet::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         if (spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
             continue;
 
-        if (spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
+        if (spellInfo->Categories.PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
             continue;
 
         if ((idSchoolMask & spellInfo->GetSchoolMask()) && _GetSpellCooldownDelay(unSpellId) < unTimeMs)

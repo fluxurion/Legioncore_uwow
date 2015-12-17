@@ -1353,34 +1353,38 @@ struct SoundEntriesEntry
 
 struct SpellAuraRestrictionsEntry
 {
-    uint32      ID;                                         // 0
-    uint32      CasterAuraState;                            // 1
-    uint32      TargetAuraState;                            // 2
-    uint32      ExcludeCasterAuraState;                     // 3
-    uint32      ExcludeTargetAuraState;                     // 4
-    uint32      CasterAuraSpell;                            // 5
-    uint32      TargetAuraSpell;                            // 6
-    uint32      ExcludeCasterAuraSpell;                     // 7
-    uint32      ExcludeTargetAuraSpell;                     // 8
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    uint32      CasterAuraSpell;                            // 1
+    uint32      TargetAuraSpell;                            // 2
+    uint32      ExcludeCasterAuraSpell;                     // 3
+    uint32      ExcludeTargetAuraSpell;                     // 4
+    uint8       DifficultyID;                               // 5
+    uint8       CasterAuraState;                            // 6
+    uint8       TargetAuraState;                            // 7
+    uint8       ExcludeCasterAuraState;                     // 8
+    uint8       ExcludeTargetAuraState;                     // 9
 };
 
 struct SpellCastingRequirementsEntry
 {
-    uint32      ID;                                         // 0
-    uint32      FacingCasterFlags;                          // 1
-    uint32      MinFactionID;                               // 1
-    uint32      MinReputation;                              // 3
-    uint32      RequiredAreasID;                            // 4
-    uint32      RequiredAuraVision;                         // 5
-    uint32      RequiresSpellFocus;                         // 6
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    uint16      MinFactionID;                               // 1
+    int16       RequiredAreasID;                            // 2
+    uint16      RequiresSpellFocus;                         // 3
+    uint8       FacingCasterFlags;                          // 4
+    uint8       MinReputation;                              // 5
+    uint8       RequiredAuraVision;                         // 6
 };
 
 struct SpellClassOptionsEntry
 {
-    uint32      ID;                                         // 0
-    uint32      ModalNextSpell;                             // 1
-    flag128     SpellClassMask;                             // 2
-    uint32      SpellClassSet;                              // 3
+    uint32      ID;
+    uint32      SpellID;                                    // 0
+    flag128     SpellClassMask;                             // 1
+    uint16      ModalNextSpell;                             // 2
+    uint8       SpellClassSet;                              // 3
 };
 
 struct SpellLearnSpellEntry
@@ -1694,7 +1698,7 @@ struct SpellEntry
     LocalizedString* NameSubtext;                           // 2
     LocalizedString* Description;                           // 3
     LocalizedString* AuraDescription;                       // 4
-    uint32      UnkLegion;                                  // 5 really dont have ideas about this one
+    uint32      SpellMiscDifficultyID;                      // 5
     uint32      DescriptionVariablesID;                     // 6
 
     SpellEffectEntry const* GetSpellEffect(uint32 eff, uint8 diff = 0) const;

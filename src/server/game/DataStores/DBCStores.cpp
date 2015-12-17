@@ -62,7 +62,6 @@ static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 
 MapDifficultyMap                            sMapDifficultyMap;
 PetFamilySpellsStore                        sPetFamilySpellsStore;
-SpellCategoryStore                          sSpellCategoryStore;
 ChrSpecializationByIndexArray               sChrSpecializationByIndexStore;
 TalentsByPosition                           sTalentByPos;
 MinorTalentByIndexArray                     sMinorTalentByIndexStore;

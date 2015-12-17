@@ -396,12 +396,12 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSoundEntriesStore);
     //LOAD_DB2(sSpecializationSpellStore);      // 20796
     //LOAD_DB2(sSpellAuraOptionsStore);         // 20796
-    //LOAD_DB2(sSpellAuraRestrictionsStore);
-    //LOAD_DB2(sSpellCastingRequirementsStore);
+    //LOAD_DB2(sSpellAuraRestrictionsStore);    // 20796
+    //LOAD_DB2(sSpellCastingRequirementsStore); // 20796
     //LOAD_DB2(sSpellCastTimesStore);           // 20796
     //LOAD_DB2(sSpellCategoriesStore);          // 20796
     //LOAD_DB2(sSpellCategoryStores);           // 20796
-    //LOAD_DB2(sSpellClassOptionsStore);
+    //LOAD_DB2(sSpellClassOptionsStore);        // 20796
     //LOAD_DB2(sSpellCooldownsStore);           // 20796
     //LOAD_DB2(sSpellDurationStore);            // 20796
     //LOAD_DB2(sSpellEffectScalingStore);       // 20796
@@ -752,7 +752,7 @@ void DB2Manager::InitDB2CustomStores()
     {
         SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(v->ID);
         if (spell && spell->Category)
-            sSpellCategoryStore[spell->Category].insert(v->ID);
+            _spellCategory[spell->Category].insert(v->ID);
     }
     
     for (SpellProcsPerMinuteModEntry const* sppm : sSpellProcsPerMinuteModStore)
@@ -1368,6 +1368,15 @@ SpellEffectEntry const* DB2Manager::GetSpellEffectEntry(uint32 spellId, uint32 e
             if (itr->second.effects[effect])
                 return itr->second.effects[effect];
     }
+
+    return nullptr;
+}
+
+std::set<uint32> const* DB2Manager::GetSpellCategory(uint32 category)
+{
+    SpellCategoryContainer::const_iterator v = _spellCategory.find(category);
+    if (v != _spellCategory.end())
+        return &v->second;
 
     return nullptr;
 }

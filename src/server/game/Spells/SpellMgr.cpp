@@ -1772,7 +1772,7 @@ void SpellMgr::LoadSpellTargetPositions()
                 break;
             }
         }
-        if (!found && !spellInfo->RequiresSpellFocus)
+        if (!found && !spellInfo->CastingReq.RequiresSpellFocus)
         {
             sLog->outError(LOG_FILTER_SQL, "Spell (Id: %u) listed in `spell_target_position` does not have target with Object Type = TARGET_OBJECT_TYPE_DEST .", Spell_ID);
             continue;
@@ -3942,7 +3942,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 10326:  // Turn Evil
                 case 145067: // Turn Evil
-                    spellInfo->Mechanic = MECHANIC_FEAR;
+                    spellInfo->Categories.Mechanic = MECHANIC_FEAR;
                     break;
                 case 86213:  // Soul Swap Exhale
                     spellInfo->Misc.Speed = 0.0f;
@@ -4075,13 +4075,13 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_MOD_INCREASE_SPEED;
                     break;
                 case 9005: // Pounce
-                    spellInfo->Mechanic = MECHANIC_STUN;
+                    spellInfo->Categories.Mechanic = MECHANIC_STUN;
                     break;
                 case 58372: // Glyph of Rude Interruption
                     spellInfo->AuraOptions.ProcChance = 0;
                     break;
                 case 115460: // Healing Sphere
-                    spellInfo->PreventionType = 1;
+                    spellInfo->Categories.PreventionType = 1;
                     //spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_DEST_AREA_ENTRY;
                     break;
                 case 16213: // Purification
@@ -4328,7 +4328,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].ApplyAuraName = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
                     break;
                 case 5782:  // Fear
-                    spellInfo->Mechanic = 0;
+                    spellInfo->Categories.Mechanic = 0;
                     spellInfo->Effects[EFFECT_0].Mechanic = MECHANIC_NONE;
                     break;
                 case 45204: // Mirror Image - Clone Me!
@@ -4341,12 +4341,12 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 69891:
                 case 69892:
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_DUMMY;
-                    spellInfo->Mechanic = 0;
+                    spellInfo->Categories.Mechanic = 0;
                     break;
                 case 116694:// Surging Mists
                 case 117952:// Crackling Jade Lightning
                 case 116: // Frost Bolt
-                    spellInfo->PreventionType = SPELL_PREVENTION_TYPE_SILENCE;
+                    spellInfo->Categories.PreventionType = SPELL_PREVENTION_TYPE_SILENCE;
                     break;
                 case 108201:// Desecrated Ground
                     spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_USABLE_WHILE_FEARED;
@@ -4620,7 +4620,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 116157: //Lightning fists
                 case 116374: //Lightning fists (trigger dmg)
                 case 136324: //Rising Anger
-                    spellInfo->CasterAuraSpell = 0;
+                    spellInfo->AuraRestrictions.CasterAuraSpell = 0;
                     break;
                 case 116417: //Arcane Resonance
                     spellInfo->Effects[EFFECT_0].TargetA = 6;
@@ -4673,7 +4673,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 15850: // Chilled
                 case 16927: // Chilled
                 case 20005: // Chilled
-                    spellInfo->Mechanic = MECHANIC_SNARE;
+                    spellInfo->Categories.Mechanic = MECHANIC_SNARE;
                     break;
                 case 128405: // Narrow Escape
                     spellInfo->AuraInterruptFlags |= AURA_INTERRUPT_FLAG_TAKE_DAMAGE;
@@ -4692,11 +4692,11 @@ void SpellMgr::LoadSpellCustomAttr()
                 //
                 //Lord Meljarak
                 case 122193: //Heal
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                     spellInfo->Effects[EFFECT_1].TargetA = 25;
                     break;
                 case 122147: //Heal trigger
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                     spellInfo->Effects[EFFECT_0].TargetA = 25;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     break;
@@ -4707,7 +4707,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].RadiusEntry = sSpellRadiusStore.LookupEntry(18);
                     break;
                 case 121995: //Amber Scalpel trigger spell
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                     spellInfo->Effects[EFFECT_0].TargetA = 25;
                     spellInfo->Effects[EFFECT_1].RadiusEntry = sSpellRadiusStore.LookupEntry(15);//3yards
                     break;
@@ -4865,7 +4865,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[4].TargetA = 1;
                     break;
                 case 137405: //Tears of Sun
-                    spellInfo->ExcludeTargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.ExcludeTargetAuraSpell = 0;
                     break;
                 case 137419: //Ice Comet tr ef
                     spellInfo->Effects[EFFECT_1].Effect = 0;
@@ -4968,10 +4968,10 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Misc.SchoolMask |= SPELL_SCHOOL_MASK_NORMAL;
                     break;
                 case 147082:    //Burst of Anger
-                    spellInfo->TargetAuraSpell = 144421;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 144421;
                     break;
                 case 145214:    //Unleashed Anger
-                    spellInfo->CasterAuraSpell = 0;
+                    spellInfo->AuraRestrictions.CasterAuraSpell = 0;
                     spellInfo->Effects[2].TargetA = 25;
                     break;
                 case 145573:    //Blind Hatred Dummy
@@ -4984,7 +4984,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].TargetB = 15;
                     break;
                 case 145735:    //Icy Fear Dmg
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                     break;
                 case 144421:    //Corruption
                     spellInfo->Effects[EFFECT_1].Effect = SPELL_EFFECT_APPLY_AURA;
@@ -4993,7 +4993,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CONE_ENEMY_104;
                     break;
                 case 145073:    //Residual Corruption
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                 case 144628:    //Titanic Smash
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CONE_ENEMY_24;
                     spellInfo->Effects[2].TargetA = TARGET_UNIT_CONE_ENEMY_24;
@@ -5040,7 +5040,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->InterruptFlags = 0;
                     break;
                 case 143882: //Hunter's Mark
-                    spellInfo->ExcludeTargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.ExcludeTargetAuraSpell = 0;
                     break;
                 //Spoils of Pandaria
                 case 146257: //Path of Blossoms Dmg
@@ -5079,7 +5079,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_CONE_BACK;
                     break;  
                 case 143430: //Clump Check
-                    spellInfo->TargetAuraSpell = 0;
+                    spellInfo->AuraRestrictions.TargetAuraSpell = 0;
                     spellInfo->Effects[0].RadiusEntry = sSpellRadiusStore.LookupEntry(22); //200yards
                     spellInfo->Effects[0].Effect = SPELL_EFFECT_DUMMY;
                     spellInfo->Effects[0].TargetA = 22;
@@ -5216,7 +5216,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 74793:// Summoning Ritual
                 case 134210: // Scenario: Pursuing the Black Harvest - Memory of the Reliquary
-                    spellInfo->RequiredAreasID = -1;
+                    spellInfo->CastingReq.RequiredAreasID = -1;
                     break;
                 case 75478:// Summon Charbringer
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_DEST_CASTER_RANDOM;
@@ -5393,7 +5393,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 106676:
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_DEST_DEST;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 0;
-                    spellInfo->ExcludeCasterAuraSpell = 0;
+                    spellInfo->AuraRestrictions.ExcludeCasterAuraSpell = 0;
                     spellInfo->Duration.Duration = 1 * IN_MILLISECONDS;
                     break;
                 // Aspects auras
@@ -5483,7 +5483,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].Effect = 0;
                     break;
                 case 85222: // Light of Dawn
-                    spellInfo->DmgClass = SPELL_DAMAGE_CLASS_MAGIC;
+                    spellInfo->Categories.DefenseType = SPELL_DAMAGE_CLASS_MAGIC;
                     break;
                 case 115037: // Ling-Ting's Herbal Journey
                     spellInfo->Effects[EFFECT_0].MiscValue = 3;
@@ -5585,7 +5585,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 168041: // Briarskin
                 case 168375: // Grasping Vine
                 case 175997: // Noxious Eruption
-                    spellInfo->CasterAuraSpell = 0;
+                    spellInfo->AuraRestrictions.CasterAuraSpell = 0;
                     break;
                 default:
                     break;

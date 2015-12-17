@@ -550,7 +550,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
     LoadAttrDummy();
 
     // Get data for type of attack
-    switch (m_spellInfo->DmgClass)
+    switch (m_spellInfo->Categories.DefenseType)
     {
         case SPELL_DAMAGE_CLASS_MELEE:
             if (AttributesCustomEx3 & SPELL_ATTR3_REQ_OFFHAND)
@@ -604,7 +604,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     // Determine if spell can be reflected back to the caster
     // Patch 1.2 notes: Spell Reflection no longer reflects abilities
-    m_canReflect = m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC && !(AttributesCustom & SPELL_ATTR0_ABILITY)
+    m_canReflect = m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC && !(AttributesCustom & SPELL_ATTR0_ABILITY)
         && !(AttributesCustomEx & SPELL_ATTR1_CANT_BE_REFLECTED) && !(AttributesCustom & SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY)
         && !(AttributesCustomEx3 & SPELL_ATTR3_ONLY_TARGET_PLAYERS)
         && !m_spellInfo->IsPassive() && !m_spellInfo->IsPositive();
@@ -745,7 +745,7 @@ void Spell::SelectExplicitTargets()
             || (m_spellInfo->GetExplicitTargetMask() & TARGET_FLAG_UNIT && !m_spellInfo->IsPositive()))
         {
             Unit* redirect;
-            switch (m_spellInfo->DmgClass)
+            switch (m_spellInfo->Categories.DefenseType)
             {
                 case SPELL_DAMAGE_CLASS_MAGIC:
                     redirect = m_caster->GetMagicHitRedirectTarget(target, m_spellInfo);
@@ -1063,7 +1063,7 @@ void Spell::SelectImplicitNearbyTargets(SpellEffIndex effIndex, SpellImplicitTar
         switch (targetType.GetObjectType())
         {
             case TARGET_OBJECT_TYPE_GOBJ:
-                if (m_spellInfo->RequiresSpellFocus)
+                if (m_spellInfo->CastingReq.RequiresSpellFocus)
                 {
                     if (focusObject)
                         AddGOTarget(focusObject, effMask);
@@ -1072,7 +1072,7 @@ void Spell::SelectImplicitNearbyTargets(SpellEffIndex effIndex, SpellImplicitTar
                 break;
             case TARGET_OBJECT_TYPE_DEST:
             case TARGET_OBJECT_TYPE_OBJ_AND_DEST:
-                if (m_spellInfo->RequiresSpellFocus)
+                if (m_spellInfo->CastingReq.RequiresSpellFocus)
                 {
                     if (focusObject)
                         m_targets.SetDst(*focusObject);
@@ -2321,7 +2321,7 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
 {
     // max dist for jump target selection
     float jumpRadius = 0.0f;
-    switch (m_spellInfo->DmgClass)
+    switch (m_spellInfo->Categories.DefenseType)
     {
         case SPELL_DAMAGE_CLASS_RANGED:
             // 7.5y for multi shot
@@ -2347,8 +2347,8 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
 
     // chain lightning/heal spells and similar - allow to jump at larger distance and go out of los
     bool isBouncingFar = (AttributesCustomEx4 & SPELL_ATTR4_AREA_TARGET_CHAIN
-        || m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_NONE
-        || m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC);
+        || m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_NONE
+        || m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC);
 
 //     switch (m_spellInfo->Id)
 //     {
@@ -2914,7 +2914,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
                     break;
                 }
         }
-        switch (m_spellInfo->DmgClass)
+        switch (m_spellInfo->Categories.DefenseType)
         {
             case SPELL_DAMAGE_CLASS_MAGIC:
                 if (positive)
@@ -3053,7 +3053,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
 
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell);
             if (caster->GetTypeId() == TYPEID_PLAYER && (AttributesCustom & SPELL_ATTR0_STOP_ATTACK_TARGET) == 0 &&
-               (m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MELEE || m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_RANGED))
+               (m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MELEE || m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_RANGED))
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx);
         }
 
@@ -3855,9 +3855,9 @@ void Spell::cast(bool skipCheck)
         sScriptMgr->OnPlayerSpellCast(playerCaster, this, skipCheck);
 
         // As of 3.0.2 pets begin attacking their owner's target immediately
-        // Let any pets know we've attacked something. Check DmgClass for harmful spells only
+        // Let any pets know we've attacked something. Check Categories.DefenseType for harmful spells only
         // This prevents spells such as Hunter's Mark from triggering pet attack
-        if (this->GetSpellInfo()->DmgClass != SPELL_DAMAGE_CLASS_NONE)
+        if (this->GetSpellInfo()->Categories.DefenseType != SPELL_DAMAGE_CLASS_NONE)
             if (Pet* playerPet = playerCaster->GetPet())
                 if (playerPet->isAlive() && playerPet->isControlled() && (m_targets.GetTargetMask() & TARGET_FLAG_UNIT))
                     playerPet->AI()->OwnerAttacked(m_targets.GetObjectTarget()->ToUnit());
@@ -4079,7 +4079,7 @@ void Spell::cast(bool skipCheck)
                 m_spellInfo->SpellFamilyFlags[2] & 0x00024000)) // Explosive and Immolation Trap
                 procAttacker |= PROC_FLAG_DONE_TRAP_ACTIVATION;
 
-            switch (m_spellInfo->DmgClass)
+            switch (m_spellInfo->Categories.DefenseType)
             {
                 case SPELL_DAMAGE_CLASS_MELEE:
                 {
@@ -4369,7 +4369,7 @@ void Spell::_handle_immediate_phase()
     }
     else
     {
-        if (m_spellInfo->StartRecoveryTime && m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
+        if (m_spellInfo->StartRecoveryTime && m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC)
         {
             std::vector<uint32> spellId;
             std::list<AuraType> auralist;
@@ -4791,7 +4791,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         }
         case SPELL_FAILED_REQUIRES_SPELL_FOCUS:
         {
-            packet.FailedArg1 = spellInfo->RequiresSpellFocus;        // SpellFocusObject.dbc id
+            packet.FailedArg1 = spellInfo->CastingReq.RequiresSpellFocus;
             break;
         }
         case SPELL_FAILED_REQUIRES_AREA:                    // AreaTable.dbc id
@@ -6356,15 +6356,15 @@ SpellCastResult Spell::CheckCast(bool strict)
     // not for triggered spells (needed by execute)
     if (!(_triggeredCastFlags & TRIGGERED_IGNORE_CASTER_AURASTATE))
     {
-        if (m_spellInfo->CasterAuraState && !m_caster->HasAuraState(AuraStateType(m_spellInfo->CasterAuraState), m_spellInfo, m_caster))
+        if (m_spellInfo->AuraRestrictions.CasterAuraState && !m_caster->HasAuraState(AuraStateType(m_spellInfo->AuraRestrictions.CasterAuraState), m_spellInfo, m_caster))
             return SPELL_FAILED_CASTER_AURASTATE;
-        if (m_spellInfo->ExcludeCasterAuraState && m_caster->HasAuraState(AuraStateType(m_spellInfo->ExcludeCasterAuraState), m_spellInfo, m_caster))
+        if (m_spellInfo->AuraRestrictions.ExcludeCasterAuraState && m_caster->HasAuraState(AuraStateType(m_spellInfo->AuraRestrictions.ExcludeCasterAuraState), m_spellInfo, m_caster))
             return SPELL_FAILED_CASTER_AURASTATE;
 
         // Note: spell 62473 requres casterAuraSpell = triggering spell
-        if (!((m_spellInfo->Id == 48020 || m_spellInfo->Id == 114794 || m_spellInfo->Id == 104136) && m_spellInfo->CasterAuraSpell == 62388) && m_spellInfo->CasterAuraSpell && !m_caster->HasAura(m_spellInfo->CasterAuraSpell))
+        if (!((m_spellInfo->Id == 48020 || m_spellInfo->Id == 114794 || m_spellInfo->Id == 104136) && m_spellInfo->AuraRestrictions.CasterAuraSpell == 62388) && m_spellInfo->AuraRestrictions.CasterAuraSpell && !m_caster->HasAura(m_spellInfo->AuraRestrictions.CasterAuraSpell))
             return SPELL_FAILED_CASTER_AURASTATE;
-        if (m_spellInfo->ExcludeCasterAuraSpell && m_caster->HasAura(m_spellInfo->ExcludeCasterAuraSpell))
+        if (m_spellInfo->AuraRestrictions.ExcludeCasterAuraSpell && m_caster->HasAura(m_spellInfo->AuraRestrictions.ExcludeCasterAuraSpell))
             return SPELL_FAILED_CASTER_AURASTATE;
 
         if (reqCombat && m_caster->isInCombat() && !m_spellInfo->CanBeUsedInCombat())
@@ -6494,7 +6494,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if ((!canHitTargetInLOS) && !DisableMgr::IsDisabledFor(DISABLE_TYPE_SPELL, m_spellInfo->Id, NULL, SPELL_DISABLE_LOS) && !m_caster->IsWithinLOSInMap(target))
                         return SPELL_FAILED_LINE_OF_SIGHT;
 
-                if (m_spellInfo->DmgClass != SPELL_DAMAGE_CLASS_MELEE && m_caster->IsVisionObscured(target))
+                if (m_spellInfo->Categories.DefenseType != SPELL_DAMAGE_CLASS_MELEE && m_caster->IsVisionObscured(target))
                 {
                     if (m_caster->ToCreature() && m_caster->GetEntry() == 71529) //fix exploit on Thok Bloodthirsty
                         m_caster->ToCreature()->AI()->EnterEvadeMode();
@@ -7304,7 +7304,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 InstanceTemplate const* it = sObjectMgr->GetInstanceTemplate(m_caster->GetMapId());
                 if (it)
                     allowMount = it->AllowMount;
-                if ((m_caster->GetTypeId() == TYPEID_PLAYER && !allowMount && !m_spellInfo->RequiredAreasID) || (m_caster->GetMapId() == 530 && m_caster->ToPlayer()->getCurrentUpdateZoneID() == 0)) //530 - uwow event map
+                if ((m_caster->GetTypeId() == TYPEID_PLAYER && !allowMount && !m_spellInfo->CastingReq.RequiredAreasID) || (m_caster->GetMapId() == 530 && m_caster->ToPlayer()->getCurrentUpdateZoneID() == 0)) //530 - uwow event map
                     return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 
                 if (m_caster->IsInDisallowedMountForm())
@@ -7489,9 +7489,9 @@ SpellCastResult Spell::CheckCasterAuras() const
         prevented_reason = SPELL_FAILED_CONFUSED;
     else if (unitflag & UNIT_FLAG_FLEEING && !(AttributesCustomEx5 & SPELL_ATTR5_USABLE_WHILE_FEARED))
         prevented_reason = SPELL_FAILED_FLEEING;
-    else if (unitflag & UNIT_FLAG_SILENCED && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE && !(AttributesCustomEx8 & SPELL_ATTR8_USABLE_WHILE_SILENCED))
+    else if (unitflag & UNIT_FLAG_SILENCED && m_spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE && !(AttributesCustomEx8 & SPELL_ATTR8_USABLE_WHILE_SILENCED))
         prevented_reason = SPELL_FAILED_SILENCED;
-    else if (unitflag & UNIT_FLAG_PACIFIED && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+    else if (unitflag & UNIT_FLAG_PACIFIED && m_spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
         prevented_reason = SPELL_FAILED_PACIFIED;
 
     // Attr must make flag drop spell totally immune from all effects
@@ -7536,9 +7536,9 @@ SpellCastResult Spell::CheckCasterAuras() const
                             case SPELL_AURA_MOD_SILENCE:
                             case SPELL_AURA_MOD_PACIFY:
                             case SPELL_AURA_MOD_PACIFY_SILENCE:
-                                if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+                                if (m_spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
                                     return SPELL_FAILED_PACIFIED;
-                                else if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE && !(AttributesCustomEx8 & SPELL_ATTR8_USABLE_WHILE_SILENCED))
+                                else if (m_spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE && !(AttributesCustomEx8 & SPELL_ATTR8_USABLE_WHILE_SILENCED))
                                     return SPELL_FAILED_SILENCED;
                                 break;
                             default: break;
@@ -7748,7 +7748,7 @@ SpellCastResult Spell::CheckRange(bool strict)
             return !(_triggeredCastFlags & TRIGGERED_DONT_REPORT_CAST_ERROR) ? SPELL_FAILED_TOO_CLOSE : SPELL_FAILED_DONT_REPORT;
 
         if (m_caster->GetTypeId() == TYPEID_PLAYER &&
-            (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(static_cast<float>(M_PI), target))
+            (m_spellInfo->CastingReq.FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(static_cast<float>(M_PI), target))
             return !(_triggeredCastFlags & TRIGGERED_DONT_REPORT_CAST_ERROR) ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 
@@ -7922,13 +7922,13 @@ SpellCastResult Spell::CheckItems()
     }
 
     // check spell focus object
-    if (m_spellInfo->RequiresSpellFocus)
+    if (m_spellInfo->CastingReq.RequiresSpellFocus)
     {
         CellCoord p(Trinity::ComputeCellCoord(m_caster->GetPositionX(), m_caster->GetPositionY()));
         Cell cell(p);
 
         GameObject* ok = NULL;
-        Trinity::GameObjectFocusCheck go_check(m_caster, m_spellInfo->RequiresSpellFocus);
+        Trinity::GameObjectFocusCheck go_check(m_caster, m_spellInfo->CastingReq.RequiresSpellFocus);
         Trinity::GameObjectSearcher<Trinity::GameObjectFocusCheck> checker(m_caster, ok, go_check);
 
         TypeContainerVisitor<Trinity::GameObjectSearcher<Trinity::GameObjectFocusCheck>, GridTypeMapContainer > object_checker(checker);
@@ -9485,9 +9485,9 @@ void Spell::PrepareTriggersExecutedOnHit()
     // todo: move this to scripts
     if (m_spellInfo->SpellFamilyName)
     {
-        SpellInfo const* excludeTargetSpellInfo = sSpellMgr->GetSpellInfo(m_spellInfo->ExcludeTargetAuraSpell);
+        SpellInfo const* excludeTargetSpellInfo = sSpellMgr->GetSpellInfo(m_spellInfo->AuraRestrictions.ExcludeTargetAuraSpell);
         if (excludeTargetSpellInfo && !excludeTargetSpellInfo->IsPositive())
-            m_preCastSpell = m_spellInfo->ExcludeTargetAuraSpell;
+            m_preCastSpell = m_spellInfo->AuraRestrictions.ExcludeTargetAuraSpell;
     }
 
     // handle SPELL_AURA_ADD_TARGET_TRIGGER auras:

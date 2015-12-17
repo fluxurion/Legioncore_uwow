@@ -1579,7 +1579,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
 
     // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
     if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->Category == spellInfo->Category)
+        && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
     // Hack. Lana'thel Vampiric Bite
@@ -1678,7 +1678,7 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
 
     // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
     if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->Category == spellInfo->Category)
+        && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
     // original caster guid only for GO cast
@@ -3776,7 +3776,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     // On success dispel
     // Devour Magic
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Category == SPELLCATEGORY_DEVOUR_MAGIC)
+    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
     {
         m_caster->CastSpell(m_caster, 19658, true);
         // Glyph of Felhunter
@@ -4732,7 +4732,7 @@ void Spell::EffectInterruptCast(SpellEffIndex effIndex)
             // check if we can interrupt spell
             if ((spell->getState() == SPELL_STATE_CASTING
                 || (spell->getState() == SPELL_STATE_PREPARING && spell->GetCastTime() > 0.0f))
-                && (curSpellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE || curSpellInfo->PreventionType > SPELL_PREVENTION_TYPE_PACIFY && curSpellInfo->PreventionType != SPELL_PREVENTION_TYPE_UNK4)
+                && (curSpellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE || curSpellInfo->Categories.PreventionType > SPELL_PREVENTION_TYPE_PACIFY && curSpellInfo->Categories.PreventionType != SPELL_PREVENTION_TYPE_UNK4)
                 && ((i == CURRENT_GENERIC_SPELL && curSpellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_INTERRUPT)
                 || (i == CURRENT_CHANNELED_SPELL && curSpellInfo->ChannelInterruptFlags & CHANNEL_INTERRUPT_FLAG_INTERRUPT)))
             {
@@ -4884,7 +4884,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         case SPELLFAMILY_GENERIC:
         {
             // process discovery spells
-            if (m_spellInfo->Mechanic == MECHANIC_DISCOVERY || m_spellInfo->IsExplicitDiscovery())
+            if (m_spellInfo->Categories.Mechanic == MECHANIC_DISCOVERY || m_spellInfo->IsExplicitDiscovery())
             {
                 if (Player* player = m_caster->ToPlayer())
                 {
@@ -7150,7 +7150,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
 
     // On success dispel
     // Devour Magic
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Category == SPELLCATEGORY_DEVOUR_MAGIC)
+    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
     {
         m_caster->CastSpell(m_caster, 19658, true);
         // Glyph of Felhunter

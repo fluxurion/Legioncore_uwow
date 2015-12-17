@@ -991,42 +991,94 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS_DIFF; ++i)
             if (SpellEffectEntry const* _effect = spellEntry->GetSpellEffect(i, difficulty))
                 EffectsMap[MAKE_PAIR16(i, difficulty)] = SpellEffectInfo(spellEntry, this, i, _effect);
-    
-    LoadSpellMiscData();
-    LoadSpellDurationData();
-    LoadSpellScalingData();
-    LoadSpellAuraOptionsData();
 
-    SpellAuraRestrictionsEntry const* _aura = GetSpellAuraRestrictions();
-    CasterAuraState = _aura ? _aura->CasterAuraState : 0;
-    TargetAuraState = _aura ? _aura->TargetAuraState : 0;
-    ExcludeCasterAuraState = _aura ? _aura->ExcludeCasterAuraState : 0;
-    ExcludeTargetAuraState = _aura ? _aura->ExcludeTargetAuraState : 0;
-    CasterAuraSpell = _aura ? _aura->CasterAuraSpell : 0;
-    TargetAuraSpell = _aura ? _aura->TargetAuraSpell : 0;
-    ExcludeCasterAuraSpell = _aura ? _aura->ExcludeCasterAuraSpell : 0;
-    ExcludeTargetAuraSpell = _aura ? _aura->ExcludeTargetAuraSpell : 0;
+    SpellMiscEntry const* miscStore = nullptr;
+    for (auto const& _miscStore : sSpellMiscStore)
+        if (_miscStore->ID == Id)
+            miscStore = _miscStore;
 
-    SpellCastingRequirementsEntry const* _castreq = GetSpellCastingRequirements();
-    RequiresSpellFocus = _castreq ? _castreq->RequiresSpellFocus : 0;
-    FacingCasterFlags = _castreq ? _castreq->FacingCasterFlags : 0;
-    RequiredAreasID = _castreq ? _castreq->RequiredAreasID : -1;
+    for (uint8 i = 0; i < MaxAttributes; ++i)
+        Misc.Attributes[i] = miscStore ? miscStore->Attributes[i] : 0;
+    Misc.Speed = miscStore ? miscStore->Speed : 0.0f;
+    Misc.MultistrikeSpeedMod = miscStore ? miscStore->MultistrikeSpeedMod : 0.0f;
+    Misc.CastingTimeIndex = miscStore ? miscStore->CastingTimeIndex : 0;
+    Misc.DurationIndex = miscStore ? miscStore->DurationIndex : 0;
+    Misc.RangeIndex = miscStore ? miscStore->RangeIndex : 0;
+    Misc.SpellIconID = miscStore ? miscStore->SpellIconID : 0;
+    Misc.ActiveIconID = miscStore ? miscStore->ActiveIconID : 0;
+    Misc.SchoolMask = miscStore ? miscStore->SchoolMask : 0;
 
-    SpellCategoriesEntry const* _categorie = GetSpellCategories();
-    Category = _categorie ? _categorie->Category : 0;
-    Dispel = _categorie ? _categorie->DispelType : 0;
-    Mechanic = _categorie ? _categorie->Mechanic : 0;
-    StartRecoveryCategory = _categorie ? _categorie->StartRecoveryCategory : 0;
-    ChargeRecoveryCategory = _categorie ? _categorie->ChargeCategory : 0;
-    DmgClass = _categorie ? _categorie->DefenseType : 0;
-    PreventionType = _categorie ? _categorie->PreventionType : 0;
+    SpellDurationEntry const* durationStore = sSpellDurationStore.LookupEntry(Misc.DurationIndex);
+    Duration.Duration = durationStore ? durationStore->Duration : 0;
+    Duration.MaxDuration = durationStore ? durationStore->MaxDuration : 0;
+    Duration.DurationPerLevel = durationStore ? durationStore->DurationPerLevel : 0;
 
-    SpellCategoryEntry const* categoryInfo = sSpellCategoryStores.LookupEntry(Category);
-    CategoryFlags = categoryInfo ? categoryInfo->Flags : 0;
+    SpellScalingEntry const* scalingStore = nullptr;
+    for (auto const& _scalingStore : sSpellScalingStore)
+        if (_scalingStore->SpellID == Id)
+            scalingStore = _scalingStore;
 
-    categoryInfo = sSpellCategoryStores.LookupEntry(ChargeRecoveryCategory);
-    CategoryCharges = categoryInfo ? categoryInfo->MaxCharges : 0;
-    CategoryChargeRecoveryTime = categoryInfo ? categoryInfo->ChargeRecoveryTime : 0;
+    Scaling.Class = scalingStore ? scalingStore->ScalingClass : 0;
+    Scaling.MaxScalingLevel = scalingStore ? scalingStore->MaxScalingLevel : 0;
+    Scaling.ScalesFromItemLevel = scalingStore ? scalingStore->ScalesFromItemLevel : 0;
+
+    SpellAuraOptionsEntry const* auraOpStore = nullptr;
+    for (auto const& _auraOpStore : sSpellAuraOptionsStore)
+        if (_auraOpStore->SpellID == Id)
+            auraOpStore = _auraOpStore;
+
+    AuraOptions.ProcCharges = auraOpStore ? auraOpStore->ProcCharges : 0;
+    AuraOptions.ProcTypeMask = auraOpStore ? auraOpStore->ProcTypeMask : 0;
+    AuraOptions.ProcCategoryRecovery = auraOpStore ? auraOpStore->ProcCategoryRecovery : 0;
+    AuraOptions.CumulativeAura = auraOpStore ? auraOpStore->CumulativeAura : 0;
+    AuraOptions.ProcChance = auraOpStore ? auraOpStore->ProcChance : 0;
+    AuraOptions.SpellProcsPerMinuteID = auraOpStore ? auraOpStore->SpellProcsPerMinuteID : 0;
+
+    SpellAuraRestrictionsEntry const* auraRest = nullptr;
+    for (auto const& _auraRest : sSpellAuraRestrictionsStore)
+        if (_auraRest->SpellID == Id)
+            auraRest = _auraRest;
+
+    AuraRestrictions.CasterAuraSpell = auraRest ? auraRest->CasterAuraSpell : 0;
+    AuraRestrictions.TargetAuraSpell = auraRest ? auraRest->TargetAuraSpell : 0;
+    AuraRestrictions.ExcludeCasterAuraSpell = auraRest ? auraRest->ExcludeCasterAuraSpell : 0;
+    AuraRestrictions.ExcludeTargetAuraSpell = auraRest ? auraRest->ExcludeTargetAuraSpell : 0;
+    AuraRestrictions.CasterAuraState = auraRest ? auraRest->CasterAuraState : 0;
+    AuraRestrictions.TargetAuraState = auraRest ? auraRest->TargetAuraState : 0;
+    AuraRestrictions.ExcludeCasterAuraState = auraRest ? auraRest->ExcludeCasterAuraState : 0;
+    AuraRestrictions.ExcludeTargetAuraState = auraRest ? auraRest->ExcludeTargetAuraState : 0;
+
+    SpellCastingRequirementsEntry const* castingReq = nullptr;
+    for (auto const& _castingReq : sSpellCastingRequirementsStore)
+        if (_castingReq->SpellID == Id)
+            castingReq = _castingReq;
+
+    CastingReq.MinFactionID = castingReq ? castingReq->MinFactionID : 0;
+    CastingReq.RequiredAreasID = castingReq ? castingReq->RequiredAreasID : -1;
+    CastingReq.RequiresSpellFocus = castingReq ? castingReq->RequiresSpellFocus : 0;
+    CastingReq.FacingCasterFlags = castingReq ? castingReq->FacingCasterFlags : 0;
+    CastingReq.MinReputation = castingReq ? castingReq->MinReputation : 0;
+    CastingReq.RequiredAuraVision = castingReq ? castingReq->RequiredAuraVision : 0;
+
+    SpellCategoriesEntry const* categories = nullptr;
+    for (auto const& _castegories : sSpellCategoriesStore)
+        if (_castegories->SpellID == Id)
+            categories = _castegories;
+
+    Categories.Category = categories ? categories->Category : 0;
+    Categories.StartRecoveryCategory = categories ? categories->StartRecoveryCategory : 0;
+    Categories.ChargeCategory = categories ? categories->ChargeCategory : 0;
+    Categories.DefenseType = categories ? categories->DefenseType : 0;
+    Categories.DispelType = categories ? categories->DispelType : 0;
+    Categories.Mechanic = categories ? categories->Mechanic : 0;
+    Categories.PreventionType = categories ? categories->PreventionType : 0;
+
+    SpellCategoryEntry const* categoryStore = sSpellCategoryStores.LookupEntry(Categories.Category);
+    Category.UsesPerWeek = categoryStore ? categoryStore->UsesPerWeek : 0;
+    Category.Flags = categoryStore ? categoryStore->Flags : 0;
+    categoryStore = sSpellCategoryStores.LookupEntry(Categories.ChargeCategory);
+    Category.ChargeRecoveryTime = categoryStore ? categoryStore->ChargeRecoveryTime : 0;
+    Category.MaxCharges = categoryStore ? categoryStore->MaxCharges : 0;
 
     SpellClassOptionsEntry const* _class = GetSpellClassOptions();
     SpellFamilyName = _class ? _class->SpellClassSet : 0;
@@ -1134,60 +1186,6 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
 SpellInfo::~SpellInfo()
 {
     _UnloadImplicitTargetConditionLists();
-}
-
-void SpellInfo::LoadSpellMiscData()
-{
-    SpellMiscEntry const* miscStore = nullptr;
-    for (auto const& _miscStore : sSpellMiscStore)
-        if (_miscStore->ID == Id)
-            miscStore = _miscStore;
-
-    for (uint8 i = 0; i < MaxAttributes; ++i)
-        Misc.Attributes[i] = miscStore ? miscStore->Attributes[i] : 0;
-    Misc.Speed = miscStore ? miscStore->Speed : 0.0f;
-    Misc.MultistrikeSpeedMod = miscStore ? miscStore->MultistrikeSpeedMod : 0.0f;
-    Misc.CastingTimeIndex = miscStore ? miscStore->CastingTimeIndex : 0;
-    Misc.DurationIndex = miscStore ? miscStore->DurationIndex : 0;
-    Misc.RangeIndex = miscStore ? miscStore->RangeIndex : 0;
-    Misc.SpellIconID = miscStore ? miscStore->SpellIconID : 0;
-    Misc.ActiveIconID = miscStore ? miscStore->ActiveIconID : 0;
-    Misc.SchoolMask = miscStore ? miscStore->SchoolMask : 0;
-}
-
-void SpellInfo::LoadSpellDurationData()
-{
-    SpellDurationEntry const* durationStore = sSpellDurationStore.LookupEntry(Misc.DurationIndex);
-    Duration.Duration = durationStore ? durationStore->Duration : 0;
-    Duration.MaxDuration = durationStore ? durationStore->MaxDuration : 0;
-    Duration.DurationPerLevel = durationStore ? durationStore->DurationPerLevel : 0;
-}
-
-void SpellInfo::LoadSpellScalingData()
-{
-    SpellScalingEntry const* scalingStore = nullptr;
-    for (auto const& _scalingStore : sSpellScalingStore)
-        if (_scalingStore->SpellID == Id)
-            scalingStore = _scalingStore;
-
-    Scaling.Class = scalingStore ? scalingStore->ScalingClass : 0;
-    Scaling.MaxScalingLevel = scalingStore ? scalingStore->MaxScalingLevel : 0;
-    Scaling.ScalesFromItemLevel = scalingStore ? scalingStore->ScalesFromItemLevel : 0;
-}
-
-void SpellInfo::LoadSpellAuraOptionsData()
-{
-    SpellAuraOptionsEntry const* auraOpStore = nullptr;
-    for (auto const& _auraOpStore : sSpellAuraOptionsStore)
-        if (_auraOpStore->SpellID == Id)
-            auraOpStore = _auraOpStore;
-    
-    AuraOptions.ProcCharges = auraOpStore ? auraOpStore->ProcCharges : 0;
-    AuraOptions.ProcTypeMask = auraOpStore ? auraOpStore->ProcTypeMask : 0;
-    AuraOptions.ProcCategoryRecovery = auraOpStore ? auraOpStore->ProcCategoryRecovery : 0;
-    AuraOptions.CumulativeAura = auraOpStore ? auraOpStore->CumulativeAura : 0;
-    AuraOptions.ProcChance = auraOpStore ? auraOpStore->ProcChance : 0;
-    AuraOptions.SpellProcsPerMinuteID = auraOpStore ? auraOpStore->SpellProcsPerMinuteID : 0;
 }
 
 SpellEffectInfo const* SpellInfo::GetEffect(uint8 effect, uint8 difficulty) const
@@ -1776,7 +1774,7 @@ bool SpellInfo::CanPierceImmuneAura(SpellInfo const* aura) const
     // these spells (Cyclone for example) can pierce all...
     if ((HasAttribute(SPELL_ATTR1_UNAFFECTED_BY_SCHOOL_IMMUNE))
         // ...but not these (Divine shield for example)
-        && !(aura && (aura->Mechanic == MECHANIC_MAGICAL_IMMUNITY || aura->Mechanic == MECHANIC_INVULNERABILITY)))
+        && !(aura && (aura->Categories.Mechanic == MECHANIC_MAGICAL_IMMUNITY || aura->Categories.Mechanic == MECHANIC_INVULNERABILITY)))
         return true;
 
     return false;
@@ -1955,10 +1953,10 @@ SpellCastResult SpellInfo::CheckShapeshift(uint32 form) const
 SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 area_id, Player const* player) const
 {
     // normal case
-    if (RequiredAreasID > 0)
+    if (CastingReq.RequiredAreasID > 0)
     {
         bool found = false;
-        std::vector<uint32> areaGroupMembers = sDB2Manager.GetAreasForGroup(RequiredAreasID);
+        std::vector<uint32> areaGroupMembers = sDB2Manager.GetAreasForGroup(CastingReq.RequiredAreasID);
         for (uint32 areaId : areaGroupMembers)
         {
             if (areaId == zone_id || areaId == area_id)
@@ -2240,7 +2238,7 @@ SpellCastResult SpellInfo::CheckTarget(Unit const* caster, WorldObject const* ta
                 }
 
                 // Not allow disarm unarmed player
-                if (Mechanic == MECHANIC_DISARM)
+                if (Categories.Mechanic == MECHANIC_DISARM)
                 {
                     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
                     {
@@ -2309,17 +2307,17 @@ SpellCastResult SpellInfo::CheckTarget(Unit const* caster, WorldObject const* ta
     // the use of these 2 covers passenger target check
     if (!(GeneralTargets & TARGET_UNIT_MASTER) && !caster->IsVehicle())
     {
-        if (TargetAuraState && !unitTarget->HasAuraState(AuraStateType(TargetAuraState), this, caster))
+        if (AuraRestrictions.TargetAuraState && !unitTarget->HasAuraState(AuraStateType(AuraRestrictions.TargetAuraState), this, caster))
             return SPELL_FAILED_TARGET_AURASTATE;
 
-        if (ExcludeTargetAuraState && unitTarget->HasAuraState(AuraStateType(ExcludeTargetAuraState), this, caster))
+        if (AuraRestrictions.ExcludeTargetAuraState && unitTarget->HasAuraState(AuraStateType(AuraRestrictions.ExcludeTargetAuraState), this, caster))
             return SPELL_FAILED_TARGET_AURASTATE;
     }
 
-    if (TargetAuraSpell && !unitTarget->HasAura(TargetAuraSpell))
+    if (AuraRestrictions.TargetAuraSpell && !unitTarget->HasAura(AuraRestrictions.TargetAuraSpell))
         return SPELL_FAILED_TARGET_AURASTATE;
 
-    if (ExcludeTargetAuraSpell && unitTarget->HasAura(ExcludeTargetAuraSpell))
+    if (AuraRestrictions.ExcludeTargetAuraSpell && unitTarget->HasAura(AuraRestrictions.ExcludeTargetAuraSpell))
         return SPELL_FAILED_TARGET_AURASTATE;
 
     if (unitTarget->HasAuraType(SPELL_AURA_PREVENT_RESURRECTION))
@@ -2372,7 +2370,7 @@ SpellCastResult SpellInfo::CheckExplicitTarget(Unit const* caster, WorldObject c
 bool SpellInfo::CheckTargetCreatureType(Unit const* target) const
 {
     // Curse of Doom & Exorcism: not find another way to fix spell target check :/
-    if (SpellFamilyName == SPELLFAMILY_WARLOCK && Category == 1179)
+    if (SpellFamilyName == SPELLFAMILY_WARLOCK && Categories.Category == 1179)
     {
         // not allow cast at player
         if (target->GetTypeId() == TYPEID_PLAYER)
@@ -2381,9 +2379,8 @@ bool SpellInfo::CheckTargetCreatureType(Unit const* target) const
             return true;
     }
     if (target->GetEntry() == 5925)
-    {
         return true;
-    }
+
     uint32 creatureType = target->GetCreatureTypeMask();
     return !GeneralTargetCreatureType || !creatureType || (creatureType & GeneralTargetCreatureType);
 }
@@ -2396,8 +2393,8 @@ SpellSchoolMask SpellInfo::GetSchoolMask() const
 uint32 SpellInfo::GetAllEffectsMechanicMask() const
 {
     uint32 mask = 0;
-    if (Mechanic)
-        mask |= 1 << Mechanic;
+    if (Categories.Mechanic)
+        mask |= 1 << Categories.Mechanic;
     for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         if (Effects[i].IsEffect() && Effects[i].Mechanic)
             mask |= 1 << Effects[i].Mechanic;
@@ -2407,8 +2404,8 @@ uint32 SpellInfo::GetAllEffectsMechanicMask() const
 uint32 SpellInfo::GetEffectMechanicMask(uint8 effIndex) const
 {
     uint32 mask = 0;
-    if (Mechanic)
-        mask |= 1<< Mechanic;
+    if (Categories.Mechanic)
+        mask |= 1<< Categories.Mechanic;
     if (Effects[effIndex].IsEffect() && Effects[effIndex].Mechanic)
         mask |= 1<< Effects[effIndex].Mechanic;
     return mask;
@@ -2417,8 +2414,8 @@ uint32 SpellInfo::GetEffectMechanicMask(uint8 effIndex) const
 uint32 SpellInfo::GetSpellMechanicMaskByEffectMask(uint32 effectMask) const
 {
     uint32 mask = 0;
-    if (Mechanic)
-        mask |= 1<< Mechanic;
+    if (Categories.Mechanic)
+        mask |= 1 << Categories.Mechanic;
     for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         if ((effectMask & (1 << i)) && Effects[i].Mechanic)
             mask |= 1<< Effects[i].Mechanic;
@@ -2429,8 +2426,8 @@ Mechanics SpellInfo::GetEffectMechanic(uint8 effIndex) const
 {
     if (Effects[effIndex].IsEffect() && Effects[effIndex].Mechanic)
         return Mechanics(Effects[effIndex].Mechanic);
-    if (Mechanic)
-        return Mechanics(Mechanic);
+    if (Categories.Mechanic)
+        return Mechanics(Categories.Mechanic);
     return MECHANIC_NONE;
 }
 
@@ -2444,7 +2441,7 @@ bool SpellInfo::HasAnyEffectMechanic() const
 
 uint32 SpellInfo::GetDispelMask() const
 {
-    return GetDispelMask(DispelType(Dispel));
+    return GetDispelMask(DispelType(Categories.DispelType));
 }
 
 uint32 SpellInfo::GetDispelMask(DispelType type)
@@ -2548,7 +2545,7 @@ AuraStateType SpellInfo::GetAuraState() const
         return AURA_STATE_FAERIE_FIRE;
 
     // Sting (hunter's pet ability)
-    if (Category == 1133)
+    if (Categories.Category == 1133)
         return AURA_STATE_FAERIE_FIRE;
 
     // Victorious
@@ -2560,7 +2557,7 @@ AuraStateType SpellInfo::GetAuraState() const
         return AURA_STATE_SWIFTMEND;
 
     // Enrage aura state (excluding Vengeance buff)
-    if (Dispel == DISPEL_ENRAGE && Id != 132365)
+    if (Categories.DispelType == DISPEL_ENRAGE && Id != 132365)
         return AURA_STATE_ENRAGE;
 
     // Bleeding aura state
@@ -2675,7 +2672,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                 return SPELL_SPECIFIC_BANE;
 
             // only warlock curses have this
-            if (Dispel == DISPEL_CURSE)
+            if (Categories.DispelType == DISPEL_CURSE)
                 return SPELL_SPECIFIC_CURSE;
             break;
         }
@@ -2698,7 +2695,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                 return SPELL_SPECIFIC_NORMAL;
 
             // only hunter stings have this
-            if (Dispel == DISPEL_POISON)
+            if (Categories.DispelType == DISPEL_POISON)
                 return SPELL_SPECIFIC_STING;
 
             // only hunter aspects have this (but not all aspects in hunter family)
@@ -2819,10 +2816,7 @@ uint32 SpellInfo::CalcCastTime(Unit* caster, Spell* spell) const
     if (caster)
         caster->ModSpellCastTime(this, castTime, spell);
 
-    if (castTime < CastTimes.Minimum)
-        castTime = CastTimes.Minimum;
-
-    return castTime;
+    return std::max(CastTimes.Minimum, castTime);
 }
 
 uint32 SpellInfo::GetMaxTicks() const
@@ -3142,7 +3136,7 @@ bool SpellInfo::_IsPositiveEffect(uint8 effIndex, bool deep) const
     if (HasAttribute(SPELL_ATTR0_DEBUFF))
         return false;
 
-    switch (Mechanic)
+    switch (Categories.Mechanic)
     {
         case MECHANIC_MAGICAL_IMMUNITY:
             return true;
@@ -3459,33 +3453,6 @@ SpellTotemsEntry const* SpellInfo::GetSpellTotems() const
 {
     for (auto const& v : sSpellTotemsStore)
         if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellAuraRestrictionsEntry const* SpellInfo::GetSpellAuraRestrictions() const
-{
-    for (auto const& v : sSpellAuraRestrictionsStore)
-        if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellCastingRequirementsEntry const* SpellInfo::GetSpellCastingRequirements() const
-{
-    for (auto const& v : sSpellCastingRequirementsStore)
-        if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellCategoriesEntry const* SpellInfo::GetSpellCategories() const
-{
-    for (auto const& v : sSpellCategoriesStore)
-        if (v->SpellID == Id)
             return v;
 
     return nullptr;

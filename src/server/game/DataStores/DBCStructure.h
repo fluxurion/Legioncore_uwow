@@ -994,8 +994,6 @@ struct TalentSpellPos
 
 typedef std::unordered_map<uint32, TalentSpellPos> TalentSpellPosMap;
 
-typedef std::set<uint32> SpellCategorySet;
-typedef std::unordered_map<uint32, SpellCategorySet > SpellCategoryStore;
 typedef std::set<uint32> PetFamilySpellsSet;
 typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsStore;
 

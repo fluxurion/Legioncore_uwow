@@ -2892,8 +2892,8 @@ void ObjectMgr::LoadItemTemplates()
                 itemTemplate.Spells[i].SpellCategoryCooldown = fields[74 + 6 * i + 5].GetInt32();
 
                 // Add spell into the store for correct handling
-                if (itemTemplate.Spells[i].SpellCategory > 0)
-                    sSpellCategoryStore[itemTemplate.Spells[i].SpellCategory].insert(itemTemplate.Spells[i].SpellId);
+                //if (itemTemplate.Spells[i].SpellCategory > 0)
+                //   _spellCategory[itemTemplate.Spells[i].SpellCategory].insert(itemTemplate.Spells[i].SpellId);
             }
 
             itemTemplate.SpellPPMRate   = 0.0f;

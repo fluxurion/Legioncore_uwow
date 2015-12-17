@@ -173,17 +173,14 @@ void WorldSession::SendTrainerList(ObjectGuid const& guid, const std::string& st
         if (!valid)
             continue;
 
-        if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(tSpell->spell))
+        // whats the fuck?
+        /*if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(tSpell->spell))
         {
             if (spellInfo->HasAttribute(SPELL_ATTR7_HORDE_ONLY) && GetPlayer()->GetTeam() != HORDE)
                 continue;
             if (spellInfo->HasAttribute(SPELL_ATTR7_ALLIANCE_ONLY) && GetPlayer()->GetTeam() != ALLIANCE)
                 continue;
-
-            // if spell relates to some specialization and it is not our spec - do not learn
-            if (!spellInfo->SpecializationIdList.empty() && spellInfo->SpecializationIdList.find(specializationId) == spellInfo->SpecializationIdList.end())
-                continue;
-        }
+        }*/
 
         TrainerSpellState state = _player->GetTrainerSpellState(tSpell);
 

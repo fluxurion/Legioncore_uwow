@@ -933,7 +933,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
                 if (channelMask != 0x2200003)
                 {
                     // set now time for invalidate cache on client and forced request
-                    aData->Time = uint32(sWorld->GetGameTime());
+                    aData->Time = sWorld->GetGameTime();
                     replace = true;
                 }
             }

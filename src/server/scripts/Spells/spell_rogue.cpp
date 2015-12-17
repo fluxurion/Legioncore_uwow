@@ -260,7 +260,7 @@ class spell_rog_cloak_of_shadows : public SpellScriptLoader
                     {
                         // remove all harmful spells on you...
                         SpellInfo const* spell = iter->second->GetBase()->GetSpellInfo();
-                        if ((spell->DmgClass == SPELL_DAMAGE_CLASS_MAGIC // only affect magic spells
+                        if ((spell->Categories.PreventionType == SPELL_DAMAGE_CLASS_MAGIC // only affect magic spells
                             || (spell->GetDispelMask() & dispelMask) || (spell->GetSchoolMask() & SPELL_SCHOOL_MASK_MAGIC))
                             // ignore positive and passive auras
                             && !iter->second->IsPositive() && !iter->second->GetBase()->IsPassive() && m_spellInfo->CanDispelAura(spell))
@@ -841,7 +841,7 @@ class spell_rog_deadly_poison : public SpellScriptLoader
                             }
 
                             // Proc only rogue poisons
-                            if (spellInfo->SpellFamilyName != SPELLFAMILY_ROGUE || spellInfo->Dispel != DISPEL_POISON)
+                            if (spellInfo->SpellFamilyName != SPELLFAMILY_ROGUE || spellInfo->Categories.DispelType != DISPEL_POISON)
                                 continue;
 
                             // Do not reproc deadly

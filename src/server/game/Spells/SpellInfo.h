@@ -341,31 +341,13 @@ class SpellInfo
 {
 public:
     uint32 Id;
-    uint32 Category;
-    uint32 CategoryFlags;
-    uint32 CategoryCharges;
-    uint32 CategoryChargeRecoveryTime;
-    uint32 Dispel;
-    uint32 Mechanic;
     uint32 AttributesCu;
     uint32 Stances;
     uint32 StancesNot;
     uint32 GeneralTargets;      //old Targets.
     uint32 GeneralTargetCreatureType;  //old TargetCreatureType
-    uint32 RequiresSpellFocus;
-    uint32 FacingCasterFlags;
-    uint32 CasterAuraState;
-    uint32 TargetAuraState;
-    uint32 ExcludeCasterAuraState;
-    uint32 ExcludeTargetAuraState;
-    uint32 CasterAuraSpell;
-    uint32 TargetAuraSpell;
-    uint32 ExcludeCasterAuraSpell;
-    uint32 ExcludeTargetAuraSpell;
     uint32 RecoveryTime;
     uint32 CategoryRecoveryTime;
-    uint32 StartRecoveryCategory;
-    uint32 ChargeRecoveryCategory;
     uint32 StartRecoveryTime;
     uint32 InterruptFlags;
     uint32 AuraInterruptFlags;
@@ -396,9 +378,6 @@ public:
     uint32 CustomMaxAffectedTargets;      //only if not exist on dbc use it.
     uint32 SpellFamilyName;
     flag128 SpellFamilyFlags;
-    uint32 DmgClass;
-    uint32 PreventionType;
-    int32  RequiredAreasID;
     uint32 SpellScalingId;
     uint32 SpellPowerId;
     uint32 ResearchProject;
@@ -447,6 +426,47 @@ public:
         uint8 SpellProcsPerMinuteID;
     } AuraOptions;
 
+    struct SpellAuraRescrictions
+    {
+        uint32 CasterAuraSpell;
+        uint32 TargetAuraSpell;
+        uint32 ExcludeCasterAuraSpell;
+        uint32 ExcludeTargetAuraSpell;
+        uint8 CasterAuraState;
+        uint8 TargetAuraState;
+        uint8 ExcludeCasterAuraState;
+        uint8 ExcludeTargetAuraState;
+    } AuraRestrictions;
+
+    struct SpellCastingRequirements
+    {
+        uint16 MinFactionID;
+        int16 RequiredAreasID;
+        uint16 RequiresSpellFocus;
+        uint8 FacingCasterFlags;
+        uint8 MinReputation;
+        uint8 RequiredAuraVision;
+    } CastingReq;
+
+    struct SpellCategories
+    {
+        uint16 Category;
+        uint16 StartRecoveryCategory;
+        uint16 ChargeCategory;
+        uint8 DefenseType;
+        uint8 DispelType;
+        uint8 Mechanic;
+        uint8 PreventionType;
+    } Categories;
+
+    struct SpellCategory
+    {
+        int32 ChargeRecoveryTime;
+        uint8 Flags;
+        uint8 UsesPerWeek;
+        uint8 MaxCharges;
+    } Category;
+
     SpellEffectInfo Effects[MAX_SPELL_EFFECTS];
     SpellEffectInfoMap EffectsMap;
     SpellTargetRestrictionsMap RestrrictionsMap;
@@ -454,34 +474,11 @@ public:
     SpellChainNode const* ChainEntry;
     SpellPowerEntry spellPower[MAX_POWERS_FOR_SPELL];
 
-    std::set<uint32> SpecializationIdList;
-    std::set<SpecializationSpellEntry const*> SpecializationOverrideSpellList;
-
     // TalentInfo
     uint32 talentId;
 
-    // struct access functions
-    SpellTargetRestrictionsEntry const* GetSpellTargetRestrictions(uint16 diff) const;
-    SpellAuraRestrictionsEntry const* GetSpellAuraRestrictions() const;
-    SpellCastingRequirementsEntry const* GetSpellCastingRequirements() const;
-    SpellCategoriesEntry const* GetSpellCategories() const;
-    SpellClassOptionsEntry const* GetSpellClassOptions() const;
-    SpellCooldownsEntry const* GetSpellCooldowns() const;
-    SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
-    SpellInterruptsEntry const* GetSpellInterrupts() const;
-    SpellLevelsEntry const* GetSpellLevels() const;
-    SpellPowerEntry const* GetSpellPower() const;
-    SpellReagentsEntry const* GetSpellReagents() const;
-    SpellShapeshiftEntry const* GetSpellShapeshift() const;
-    SpellTotemsEntry const* GetSpellTotems() const;
-
     SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals);
     ~SpellInfo();
-
-    void LoadSpellMiscData();
-    void LoadSpellDurationData();
-    void LoadSpellScalingData();
-    void LoadSpellAuraOptionsData();
 
     SpellEffectInfo const* GetEffect(uint8 effect, uint8 difficulty = 0) const;
     bool HasEffect(SpellEffects effect) const;
@@ -633,6 +630,18 @@ public:
     bool HasPower(Powers power) const;
     bool NoPower() const;
     bool CanNonFacing(Unit const * caster) const;
+
+private:
+    SpellTargetRestrictionsEntry const* GetSpellTargetRestrictions(uint16 diff) const;
+    SpellClassOptionsEntry const* GetSpellClassOptions() const;
+    SpellCooldownsEntry const* GetSpellCooldowns() const;
+    SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
+    SpellInterruptsEntry const* GetSpellInterrupts() const;
+    SpellLevelsEntry const* GetSpellLevels() const;
+    SpellPowerEntry const* GetSpellPower() const;
+    SpellReagentsEntry const* GetSpellReagents() const;
+    SpellShapeshiftEntry const* GetSpellShapeshift() const;
+    SpellTotemsEntry const* GetSpellTotems() const;
 
     SpellVisualMap _visuals;
 };

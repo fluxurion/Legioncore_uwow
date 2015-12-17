@@ -175,7 +175,6 @@ extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
 
 extern MapDifficultyMap                          sMapDifficultyMap;
 extern PetFamilySpellsStore                      sPetFamilySpellsStore;
-extern SpellCategoryStore                        sSpellCategoryStore;
 
 void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);

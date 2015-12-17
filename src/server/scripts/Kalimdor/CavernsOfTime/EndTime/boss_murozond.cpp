@@ -387,7 +387,7 @@ class npc_murozond_mirror_image : public CreatureScript
                                 if (entry &&
                                     entry->RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
                                     entry->CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
-                                    (entry->CategoryFlags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
+                                    (entry->Category.Flags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
                                 {
                                     spell_list.push_back(itr->first);
                                 }

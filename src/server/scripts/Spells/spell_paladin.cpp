@@ -1380,7 +1380,7 @@ class spell_pal_holy_shock : public SpellScriptLoader
                     Unit* target = GetExplTargetUnit();
                     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(25912);
                     if(target && spellInfo && !target->IsFriendlyTo(caster))
-                        if((spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !caster->HasInArc(static_cast<float>(M_PI), target))
+                        if((spellInfo->CastingReq.FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !caster->HasInArc(static_cast<float>(M_PI), target))
                             return SPELL_FAILED_UNIT_NOT_INFRONT;
                 }
 

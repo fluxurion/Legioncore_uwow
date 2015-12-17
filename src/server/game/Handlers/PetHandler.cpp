@@ -472,7 +472,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
             triggered = true;
     }
 
-    if (spellInfo->StartRecoveryCategory > 0) // Check if spell is affected by GCD
+    if (spellInfo->Categories.StartRecoveryCategory) // Check if spell is affected by GCD
         if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
         {
             sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetCastSpellOpcode: Check if spell is affected by GCD");
@@ -918,7 +918,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                 return;
             }
 
-            if (spellInfo->StartRecoveryCategory > 0)
+            if (spellInfo->Categories.StartRecoveryCategory)
                 if (pet->GetCharmInfo() && pet->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
                     return;
 

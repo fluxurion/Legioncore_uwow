@@ -3514,7 +3514,7 @@ void AuraEffect::HandleAuraModSilence(AuraApplication const* aurApp, uint8 mode,
         // Stop cast only spells vs PreventionType == SPELL_PREVENTION_TYPE_SILENCE
         for (uint32 i = CURRENT_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
             if (Spell* spell = target->GetCurrentSpell(CurrentSpellTypes(i)))
-                if (spell->m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
+                if (spell->m_spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                 {
                     // Stop spells on prepare or casting state
                     target->InterruptSpell(CurrentSpellTypes(i), false);
@@ -4741,7 +4741,7 @@ void AuraEffect::HandleAuraModSchoolImmunity(AuraApplication const* aurApp, uint
 
     target->ApplySpellImmune(GetId(), IMMUNITY_SCHOOL, GetMiscValue(), (apply));
 
-    if (GetSpellInfo()->Mechanic == MECHANIC_BANISH)
+    if (GetSpellInfo()->Categories.Mechanic == MECHANIC_BANISH)
     {
         if (apply)
             target->AddUnitState(UNIT_STATE_ISOLATED);
@@ -4750,7 +4750,7 @@ void AuraEffect::HandleAuraModSchoolImmunity(AuraApplication const* aurApp, uint
             bool banishFound = false;
             Unit::AuraEffectList const& banishAuras = target->GetAuraEffectsByType(GetAuraType());
             for (Unit::AuraEffectList::const_iterator i = banishAuras.begin(); i != banishAuras.end(); ++i)
-                if ((*i)->GetSpellInfo()->Mechanic == MECHANIC_BANISH)
+                if ((*i)->GetSpellInfo()->Categories.Mechanic == MECHANIC_BANISH)
                 {
                     banishFound = true;
                     break;

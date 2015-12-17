@@ -349,18 +349,18 @@ Unit::Unit(bool isWorldObject): WorldObject(isWorldObject)
 // Methods of class GlobalCooldownMgr
 bool GlobalCooldownMgr::HasGlobalCooldown(SpellInfo const* spellInfo) const
 {
-    GlobalCooldownList::const_iterator itr = m_GlobalCooldowns.find(spellInfo->StartRecoveryCategory);
+    GlobalCooldownList::const_iterator itr = m_GlobalCooldowns.find(spellInfo->Categories.StartRecoveryCategory);
     return itr != m_GlobalCooldowns.end() && itr->second.duration && getMSTimeDiff(itr->second.cast_time, getMSTime() + 120) < itr->second.duration;
 }
 
 void GlobalCooldownMgr::AddGlobalCooldown(SpellInfo const* spellInfo, uint32 gcd)
 {
-    m_GlobalCooldowns[spellInfo->StartRecoveryCategory] = GlobalCooldown(gcd, getMSTime());
+    m_GlobalCooldowns[spellInfo->Categories.StartRecoveryCategory] = GlobalCooldown(gcd, getMSTime());
 }
 
 void GlobalCooldownMgr::CancelGlobalCooldown(SpellInfo const* spellInfo)
 {
-    m_GlobalCooldowns[spellInfo->StartRecoveryCategory].duration = 0;
+    m_GlobalCooldowns[spellInfo->Categories.StartRecoveryCategory].duration = 0;
 }
 
 ////////////////////////////////////////////////////////////
@@ -1435,7 +1435,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 
     bool blocked = false;
     // Per-school calc
-    switch (spellInfo->DmgClass)
+    switch (spellInfo->Categories.DefenseType)
     {
         // Melee and Ranged Spells
         case SPELL_DAMAGE_CLASS_RANGED:
@@ -2364,7 +2364,7 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
             uint32 m_procAttacker = PROC_FLAG_TAKEN_MELEE_AUTO_ATTACK;
             if(spellInfo)
             {
-                switch (spellInfo->DmgClass)
+                switch (spellInfo->Categories.DefenseType)
                 {
                     case SPELL_DAMAGE_CLASS_MELEE:
                         m_procVictim   = PROC_FLAG_TAKEN_SPELL_MELEE_DMG_CLASS;
@@ -2920,7 +2920,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
 
     // Check damage class instead of attack type to correctly handle judgements
     // - they are meele, but can't be dodged/parried/deflected because of ranged dmg class
-    if (spell->DmgClass == SPELL_DAMAGE_CLASS_RANGED)
+    if (spell->Categories.DefenseType == SPELL_DAMAGE_CLASS_RANGED)
         attType = RANGED_ATTACK;
 
     uint32 roll = urand (0, 10000);
@@ -3244,7 +3244,7 @@ SpellMissInfo Unit::SpellHitResult(Unit* victim, SpellInfo const* spell, bool Ca
     }
 
     Unit* checker = (GetTypeId() == TYPEID_UNIT && GetAnyOwner()) ? GetAnyOwner() : this;
-    switch (spell->DmgClass)
+    switch (spell->Categories.DefenseType)
     {
         case SPELL_DAMAGE_CLASS_RANGED:
         case SPELL_DAMAGE_CLASS_MELEE:
@@ -4978,7 +4978,7 @@ void Unit::GetDispellableAuraList(Unit* caster, uint32 dispelMask, DispelCharges
 
         if (aura->GetSpellInfo()->GetDispelMask() & dispelMask)
         {
-            if (aura->GetSpellInfo()->Dispel == DISPEL_MAGIC)
+            if (aura->GetSpellInfo()->Categories.DispelType == DISPEL_MAGIC)
             {
                 // do not remove positive auras if friendly target
                 //               negative auras if non-friendly target
@@ -5121,7 +5121,7 @@ bool Unit::HasAuraWithMechanic(uint32 mechanicMask)
     for (AuraApplicationMap::iterator iter = m_appliedAuras.begin(); iter != m_appliedAuras.end(); ++iter)
     {
         SpellInfo const* spellInfo  = iter->second->GetBase()->GetSpellInfo();
-        if (spellInfo->Mechanic && (mechanicMask & (1 << spellInfo->Mechanic)))
+        if (spellInfo->Categories.Mechanic && (mechanicMask & (1 << spellInfo->Categories.Mechanic)))
             return true;
 
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -5167,7 +5167,7 @@ uint32 Unit::GetDiseasesByCaster(ObjectGuid casterGUID, bool remove)
         for (AuraEffectList::iterator i = m_modAuras[*itr].begin(); i != m_modAuras[*itr].end();)
         {
             // Get auras with disease dispel type by caster
-            if ((*i)->GetSpellInfo()->Dispel == DISPEL_DISEASE
+            if ((*i)->GetSpellInfo()->Categories.DispelType == DISPEL_DISEASE
                 && (*i)->GetCasterGUID() == casterGUID)
             {
                 ++diseases;
@@ -9170,7 +9170,7 @@ bool Unit::HandleAuraProc(Unit* victim, DamageInfo* /*dmgInfoProc*/, Aura* trigg
                 case 51209:
                     *handled = true;
                     // Drop only in not disease case
-                    if (procSpell && procSpell->Dispel == DISPEL_DISEASE)
+                    if (procSpell && procSpell->Categories.DispelType == DISPEL_DISEASE)
                         return false;
                     return true;
             }
@@ -10785,7 +10785,7 @@ void Unit::ModifyAuraState(AuraStateType flag, bool apply)
                     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itr->first);
                     if (!spellInfo || !spellInfo->IsPassive())
                         continue;
-                    if (spellInfo->CasterAuraState == uint32(flag))
+                    if (spellInfo->AuraRestrictions.CasterAuraState == uint32(flag))
                         CastSpell(this, itr->first, true, NULL);
                 }
             }
@@ -10798,7 +10798,7 @@ void Unit::ModifyAuraState(AuraStateType flag, bool apply)
                     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itr->first);
                     if (!spellInfo || !spellInfo->IsPassive())
                         continue;
-                    if (spellInfo->CasterAuraState == uint32(flag))
+                    if (spellInfo->AuraRestrictions.CasterAuraState == uint32(flag))
                         CastSpell(this, itr->first, true, NULL);
                 }
             }
@@ -10814,7 +10814,7 @@ void Unit::ModifyAuraState(AuraStateType flag, bool apply)
             for (Unit::AuraApplicationMap::iterator itr = tAuras.begin(); itr != tAuras.end();)
             {
                 SpellInfo const* spellProto = (*itr).second->GetBase()->GetSpellInfo();
-                if (spellProto->CasterAuraState == uint32(flag))
+                if (spellProto->AuraRestrictions.CasterAuraState == uint32(flag))
                     RemoveAura(itr);
                 else
                     ++itr;
@@ -10838,7 +10838,7 @@ void Unit::ModifyExcludeCasterAuraSpell(uint32 auraId, bool apply)
                 if (spellProto->Id == auraId)
                     continue;
 
-                if (spellProto->ExcludeCasterAuraSpell == auraId && spellProto->IsPassive())
+                if (spellProto->AuraRestrictions.ExcludeCasterAuraSpell == auraId && spellProto->IsPassive())
                     removeAuraList.push_back(spellProto->Id);
             }
 
@@ -10850,7 +10850,7 @@ void Unit::ModifyExcludeCasterAuraSpell(uint32 auraId, bool apply)
                 if (spellProto->Id == auraId)
                     continue;
 
-                if (spellProto->ExcludeCasterAuraSpell == auraId && spellProto->IsPassive())
+                if (spellProto->AuraRestrictions.ExcludeCasterAuraSpell == auraId && spellProto->IsPassive())
                     removeAuraList.push_back(spellProto->Id);
             }
 
@@ -10870,7 +10870,7 @@ void Unit::ModifyExcludeCasterAuraSpell(uint32 auraId, bool apply)
                 if (!spellInfo)
                     continue;
 
-                if (spellInfo->ExcludeCasterAuraSpell == auraId && !HasAura(spellInfo->Id) && spellInfo->IsPassive())
+                if (spellInfo->AuraRestrictions.ExcludeCasterAuraSpell == auraId && !HasAura(spellInfo->Id) && spellInfo->IsPassive())
                     CastSpell(this, spellInfo->Id, true);
             }
 
@@ -10882,7 +10882,7 @@ void Unit::ModifyExcludeCasterAuraSpell(uint32 auraId, bool apply)
                 if (!spellInfo)
                     continue;
 
-                if (spellInfo->ExcludeCasterAuraSpell == auraId && !HasAura(spellInfo->Id) && spellInfo->IsPassive())
+                if (spellInfo->AuraRestrictions.ExcludeCasterAuraSpell == auraId && !HasAura(spellInfo->Id) && spellInfo->IsPassive())
                     CastSpell(this, spellInfo->Id, true);
             }
         }
@@ -11751,7 +11751,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             if ((*i)->GetId() == 76856 && !HasAuraState(AURA_STATE_ENRAGE))
                 continue;
 
-            if (ToPlayer() && ToPlayer()->HasItemFitToSpellRequirements((*i)->GetSpellInfo()) && (*i)->GetSpellInfo()->EquippedItemClass != -1 && spellProto->DmgClass == SPELL_DAMAGE_CLASS_MELEE)
+            if (ToPlayer() && ToPlayer()->HasItemFitToSpellRequirements((*i)->GetSpellInfo()) && (*i)->GetSpellInfo()->EquippedItemClass != -1 && spellProto->Categories.DefenseType == SPELL_DAMAGE_CLASS_MELEE)
                 AddPct(DoneTotalMod, (*i)->GetAmount());
             else if ((*i)->GetMiscValue() & spellProto->GetSchoolMask())
             {
@@ -11802,7 +11802,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
                     AddPct(DoneTotalMod, (*i)->GetAmount());
 
         // Add SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC percent bonus
-        AddPct(DoneTotalMod, GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC, spellProto->Mechanic));
+        AddPct(DoneTotalMod, GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC, spellProto->Categories.Mechanic));
 
         // done scripted mod (take it from owner)
         Unit* owner = GetOwner() ? GetOwner() : this;
@@ -12007,7 +12007,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             if (Player* plr = ToPlayer())
                 attType = plr->getClass() == CLASS_HUNTER ? RANGED_ATTACK: BASE_ATTACK;
             else
-                attType = (spellProto->IsRangedWeaponSpell() && spellProto->DmgClass == SPELL_DAMAGE_CLASS_RANGED) ? RANGED_ATTACK : BASE_ATTACK;
+                attType = (spellProto->IsRangedWeaponSpell() && spellProto->Categories.DefenseType == SPELL_DAMAGE_CLASS_RANGED) ? RANGED_ATTACK : BASE_ATTACK;
 
             float APbonus = float(victim->GetTotalAuraModifier(attType == BASE_ATTACK ? SPELL_AURA_MELEE_ATTACK_POWER_ATTACKER_BONUS : SPELL_AURA_RANGED_ATTACK_POWER_ATTACKER_BONUS));
             APbonus += GetTotalAttackPowerValue(attType);
@@ -12015,7 +12015,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             if (calcSPDBonus)
                 calcSPDBonus = DoneAdvertisedBenefit > APbonus;
 
-            if (!calcSPDBonus || spellProto->CasterAuraState == AURA_STATE_JUDGEMENT)
+            if (!calcSPDBonus || spellProto->AuraRestrictions.CasterAuraState == AURA_STATE_JUDGEMENT)
             {
                 DoneTotal += int32(stack * ApCoeffMod * APbonus);
 
@@ -12028,7 +12028,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             }
         }
         // Default calculation
-        if (calcSPDBonus || spellProto->CasterAuraState == AURA_STATE_JUDGEMENT)
+        if (calcSPDBonus || spellProto->AuraRestrictions.CasterAuraState == AURA_STATE_JUDGEMENT)
         {
             float factorMod = CalculateLevelPenalty(spellProto);
 
@@ -12296,7 +12296,7 @@ bool Unit::isSpellCrit(Unit* victim, SpellInfo const* spellProto, SpellSchoolMas
     if (isAnySummons() && owner)
         owner->isSpellCrit(victim, spellProto, schoolMask, attackType, crit_chance);
 
-    switch (spellProto->DmgClass)
+    switch (spellProto->Categories.DefenseType)
     {
         case SPELL_DAMAGE_CLASS_NONE:
         case SPELL_DAMAGE_CLASS_MAGIC:
@@ -12682,7 +12682,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
                 coeff = bonus->dot_damage;
                 if (bonus->ap_dot_bonus > 0)
                     DoneTotal += int32(bonus->ap_dot_bonus * stack * GetTotalAttackPowerValue(
-                        (spellProto->IsRangedWeaponSpell() && spellProto->DmgClass !=SPELL_DAMAGE_CLASS_MELEE) ? RANGED_ATTACK : BASE_ATTACK));
+                        (spellProto->IsRangedWeaponSpell() && spellProto->Categories.DefenseType !=SPELL_DAMAGE_CLASS_MELEE) ? RANGED_ATTACK : BASE_ATTACK));
             }
             else
             {
@@ -12699,7 +12699,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
             if (ApCoeffMod)
             {
                 DoneTotal += int32(ApCoeffMod * stack * GetTotalAttackPowerValue(
-                    (spellProto->IsRangedWeaponSpell() && spellProto->DmgClass !=SPELL_DAMAGE_CLASS_MELEE) ? RANGED_ATTACK : BASE_ATTACK));
+                    (spellProto->IsRangedWeaponSpell() && spellProto->Categories.DefenseType !=SPELL_DAMAGE_CLASS_MELEE) ? RANGED_ATTACK : BASE_ATTACK));
             }
         }
     }
@@ -12825,7 +12825,7 @@ uint32 Unit::SpellHealingBonusTaken(Unit* caster, SpellInfo const* spellProto, u
     {
         coeff = dbccoeff;
         // No bonus healing for SPELL_DAMAGE_CLASS_NONE class spells by default
-        if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE)
+        if (spellProto->Categories.DefenseType == SPELL_DAMAGE_CLASS_NONE)
         {
             healamount = uint32(std::max((float(healamount) * TakenTotalMod), 0.0f));
             return healamount;
@@ -13134,20 +13134,20 @@ bool Unit::IsImmunedToSpell(SpellInfo const* spellInfo)
     if (spellInfo->HasAttribute(SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY))
         return false;
 
-    if (spellInfo->Dispel)
+    if (spellInfo->Categories.DispelType)
     {
         SpellImmuneList const& dispelList = m_spellImmune[IMMUNITY_DISPEL];
         for (SpellImmuneList::const_iterator itr = dispelList.begin(); itr != dispelList.end(); ++itr)
-            if (itr->type == spellInfo->Dispel)
+            if (itr->type == spellInfo->Categories.DispelType)
                 return true;
     }
 
     // Spells that don't have effectMechanics.
-    if (spellInfo->Mechanic)
+    if (spellInfo->Categories.Mechanic)
     {
         SpellImmuneList const& mechanicList = m_spellImmune[IMMUNITY_MECHANIC];
         for (SpellImmuneList::const_iterator itr = mechanicList.begin(); itr != mechanicList.end(); ++itr)
-            if (itr->type == spellInfo->Mechanic)
+            if (itr->type == spellInfo->Categories.Mechanic)
                 return true;
     }
 
@@ -13231,8 +13231,8 @@ bool Unit::IsImmunedToSpellEffect(SpellInfo const* spellInfo, uint32 index) cons
 
         AuraEffectList const& immuneMechanicAuraApply = GetAuraEffectsByType(SPELL_AURA_MECHANIC_IMMUNITY_MASK);
         for(AuraEffectList::const_iterator i = immuneMechanicAuraApply.begin(); i != immuneMechanicAuraApply.end(); ++i)
-            if(spellInfo->GetEffect(index, GetSpawnMode())->Mechanic && spellInfo->Mechanic && ((1 << (spellInfo->GetEffect(index, GetSpawnMode())->Mechanic)) & (*i)->GetMiscValue() ||
-            (1 << (spellInfo->Mechanic)) & (*i)->GetMiscValue()))
+            if(spellInfo->GetEffect(index, GetSpawnMode())->Mechanic && spellInfo->Categories.Mechanic && ((1 << (spellInfo->GetEffect(index, GetSpawnMode())->Mechanic)) & (*i)->GetMiscValue() ||
+            (1 << (spellInfo->Categories.Mechanic)) & (*i)->GetMiscValue()))
                 return true;
     }
 
@@ -13364,7 +13364,7 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
 
     // Add SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC percent bonus
     if (spellProto)
-        AddPct(DoneTotalMod, GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC, spellProto->Mechanic));
+        AddPct(DoneTotalMod, GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_DAMAGE_DONE_FOR_MECHANIC, spellProto->Categories.Mechanic));
 
     // Add SPELL_AURA_MOD_AUTOATTACK_DAMAGE percent bonus
     if (!spellProto)
@@ -15589,8 +15589,8 @@ int32 Unit::ModSpellDuration(SpellInfo const* spellProto, Unit const* target, in
             AddPct(duration, durationMod);
 
         // there are only negative mods currently
-        durationMod_always = target->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL, spellProto->Dispel);
-        durationMod_not_stack = target->GetMaxNegativeAuraModifierByMiscValue(SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL_NOT_STACK, spellProto->Dispel);
+        durationMod_always = target->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL, spellProto->Categories.DispelType);
+        durationMod_not_stack = target->GetMaxNegativeAuraModifierByMiscValue(SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL_NOT_STACK, spellProto->Categories.DispelType);
 
         durationMod = 0;
         if (durationMod_always > durationMod_not_stack)
@@ -17076,7 +17076,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 
         // only auras that has triggered spell should proc from fully absorbed damage
         SpellInfo const* spellProto = itr->second->GetBase()->GetSpellInfo();
-        if ((procExtra & PROC_EX_ABSORB && isVictim) || ((procFlag & PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_NEG) && spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC))
+        if ((procExtra & PROC_EX_ABSORB && isVictim) || ((procFlag & PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_NEG) && spellProto->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC))
         {
             bool triggerSpell = false;
             for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -17106,7 +17106,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 
                 active = true;
             }
-            else if ((procSpell && procSpell->Mechanic == MECHANIC_DISARM) || (spellProto->HasAttribute(SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED)))
+            else if ((procSpell && procSpell->Categories.Mechanic == MECHANIC_DISARM) || (spellProto->HasAttribute(SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED)))
                 active = true;
         }
 
@@ -19040,7 +19040,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                         continue;
                     }
                     WeaponAttackType attType = BASE_ATTACK;
-                    if (procSpell->DmgClass == SPELL_DAMAGE_CLASS_RANGED)
+                    if (procSpell->Categories.DefenseType == SPELL_DAMAGE_CLASS_RANGED)
                         attType = RANGED_ATTACK;
 
                     int32 SPD = GetSpellPowerDamage(SPELL_SCHOOL_MASK_ALL);
@@ -19172,7 +19172,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                     else if (itr->bp2)
                     {
                         WeaponAttackType attType = BASE_ATTACK;
-                        if (procSpell && procSpell->DmgClass == SPELL_DAMAGE_CLASS_RANGED)
+                        if (procSpell && procSpell->Categories.DefenseType == SPELL_DAMAGE_CLASS_RANGED)
                             attType = RANGED_ATTACK;
                         limited = int32(GetTotalAttackPowerValue(attType) * itr->bp2);
                     }
@@ -19534,7 +19534,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
     bool procCheckSecondActiveted = false;
     int32 spellProcId = procSpell ? procSpell->Id : -1;
     uint32 procPowerType = procSpell ? procSpell->PowerType : 0;
-    uint32 procDmgClass = procSpell ? procSpell->DmgClass : 0;
+    uint32 procDmgClass = procSpell ? procSpell->Categories.DefenseType : 0;
     uint32 Attributes = procSpell ? procSpell->Misc.Attributes[0] : 0;
     uint32 AllEffectsMechanicMask = procSpell ? procSpell->GetAllEffectsMechanicMask() : 0;
     uint32 SpellTypeMask = procSpell ? procSpell->GetSpellTypeMask() : 1;

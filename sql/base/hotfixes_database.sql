@@ -2671,14 +2671,16 @@ CREATE TABLE `sound_entries_locale` (
 DROP TABLE IF EXISTS `spell_aura_restrictions`;
 CREATE TABLE `spell_aura_restrictions` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `CasterAuraState` int(10) unsigned NOT NULL DEFAULT '0',
-  `TargetAuraState` int(10) unsigned NOT NULL DEFAULT '0',
-  `ExcludeCasterAuraState` int(10) unsigned NOT NULL DEFAULT '0',
-  `ExcludeTargetAuraState` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `CasterAuraSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `TargetAuraSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `ExcludeCasterAuraSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `ExcludeTargetAuraSpell` int(10) unsigned NOT NULL DEFAULT '0',
+  `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `CasterAuraState` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `TargetAuraState` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ExcludeCasterAuraState` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ExcludeTargetAuraState` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2690,12 +2692,13 @@ CREATE TABLE `spell_aura_restrictions` (
 DROP TABLE IF EXISTS `spell_casting_requirements`;
 CREATE TABLE `spell_casting_requirements` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `FacingCasterFlags` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinFactionID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinReputation` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredAreasID` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredAuraVision` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiresSpellFocus` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MinFactionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `RequiredAreasID` smallint(6) NOT NULL DEFAULT '0',
+  `RequiresSpellFocus` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `FacingCasterFlags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MinReputation` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `RequiredAuraVision` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2707,12 +2710,13 @@ CREATE TABLE `spell_casting_requirements` (
 DROP TABLE IF EXISTS `spell_class_options`;
 CREATE TABLE `spell_class_options` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ModalNextSpell` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellClassMask1` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellClassMask2` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellClassMask3` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellClassMask4` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellClassSet` int(10) unsigned NOT NULL DEFAULT '0',
+  `ModalNextSpell` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SpellClassSet` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3276,7 +3280,7 @@ CREATE TABLE `spell` (
   `NameSubtext` text,
   `Description` text,
   `AuraDescription` text,
-  `UnkLegion` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellMiscDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
   `DescriptionVariablesID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)

@@ -4447,7 +4447,7 @@ bool Player::IsNeedCastPassiveSpellAtLearn(SpellInfo const* spellInfo) const
         (!form && (spellInfo->HasAttribute(SPELL_ATTR2_NOT_NEED_SHAPESHIFT))));
 
     //Check CasterAuraStates
-    return need_cast && (!spellInfo->CasterAuraState || HasAuraState(AuraStateType(spellInfo->CasterAuraState)));
+    return need_cast && (!spellInfo->AuraRestrictions.CasterAuraState || HasAuraState(AuraStateType(spellInfo->AuraRestrictions.CasterAuraState)));
 }
 
 void Player::learnSpell(uint32 spell_id, bool dependent, uint32 fromSkill, bool sendMessage)
@@ -4771,29 +4771,24 @@ void Player::RemoveSpellCooldown(uint32 spell_id, bool update /* = false */)
         SendClearCooldown(spell_id, this);
     // restore spell charges
     if(SpellInfo const* info = sSpellMgr->GetSpellInfo(spell_id))
-        if (info->ChargeRecoveryCategory)
-            RestoreSpellCategoryCharges(info->ChargeRecoveryCategory);
+        if (info->Categories.ChargeCategory)
+            RestoreSpellCategoryCharges(info->Categories.ChargeCategory);
 }
 
 // I am not sure which one is more efficient
 void Player::RemoveCategoryCooldown(uint32 cat)
 {
-    SpellCategoryStore::const_iterator i_scstore = sSpellCategoryStore.find(cat);
-    if (i_scstore != sSpellCategoryStore.end())
-        for (SpellCategorySet::const_iterator i_scset = i_scstore->second.begin(); i_scset != i_scstore->second.end(); ++i_scset)
-            RemoveSpellCooldown(*i_scset, true);
+    auto const& ctSet = sDB2Manager.GetSpellCategory(cat);
+    for (auto& _scset = ctSet->begin(); _scset != ctSet->end(); ++_scset)
+        RemoveSpellCooldown(*_scset, true);
 }
 
 void Player::RemoveSpellCategoryCooldown(uint32 cat, bool update /* = false */)
 {
-    SpellCategoryStore::const_iterator ct = sSpellCategoryStore.find(cat);
-    if (ct == sSpellCategoryStore.end())
-        return;
-
-    const SpellCategorySet& ct_set = ct->second;
+    auto const& ctSet = sDB2Manager.GetSpellCategory(cat);
     for (SpellCooldowns::const_iterator i = m_spellCooldowns.begin(); i != m_spellCooldowns.end();)
     {
-        if (ct_set.find(i->first) != ct_set.end())
+        if (ctSet->find(i->first) != ctSet->end())
             RemoveSpellCooldown((i++)->first, update);
         else
             ++i;
@@ -4814,15 +4809,15 @@ void Player::RemoveArenaSpellCooldowns(bool removeActivePetCooldowns)
         if (entry &&
             entry->RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
             entry->CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
-            (entry->CategoryFlags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
+            (entry->Category.Flags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
         {
             // remove & notify
             RemoveSpellCooldown(itr->first, true);
         }
 
         // restore spell charges
-        if (entry && entry->ChargeRecoveryCategory)
-            RestoreSpellCategoryCharges(entry->ChargeRecoveryCategory);
+        if (entry && entry->Categories.ChargeCategory)
+            RestoreSpellCategoryCharges(entry->Categories.ChargeCategory);
     }
 
     // pet cooldowns
@@ -4926,7 +4921,7 @@ void Player::_SaveSpellCooldowns(SQLTransaction& trans)
 
 bool Player::HasChargesForSpell(SpellInfo const* spellInfo) const
 {
-    SpellChargeDataMap::const_iterator itr = m_spellChargeData.find(spellInfo->ChargeRecoveryCategory);
+    SpellChargeDataMap::const_iterator itr = m_spellChargeData.find(spellInfo->Categories.ChargeCategory);
     return itr == m_spellChargeData.end() || itr->second.charges > 0;
 }
 
@@ -4955,14 +4950,14 @@ uint8 Player::GetMaxSpellCategoryCharges(uint32 category) const
 
 void Player::TakeSpellCharge(SpellInfo const* spellInfo)
 {
-    SpellChargeDataMap::iterator itr = m_spellChargeData.find(spellInfo->ChargeRecoveryCategory);
+    SpellChargeDataMap::iterator itr = m_spellChargeData.find(spellInfo->Categories.ChargeCategory);
     if (itr == m_spellChargeData.end())
     {
-        SpellCategoryEntry const* categoryEntry = sSpellCategoryStores.LookupEntry(spellInfo->ChargeRecoveryCategory);
+        SpellCategoryEntry const* categoryEntry = sSpellCategoryStores.LookupEntry(spellInfo->Categories.ChargeCategory);
         if (!categoryEntry)
             return;
 
-        SpellChargeData& data = m_spellChargeData[spellInfo->ChargeRecoveryCategory];
+        SpellChargeData& data = m_spellChargeData[spellInfo->Categories.ChargeCategory];
         data.categoryEntry = categoryEntry;
         data.chargeRegenTime = GetSpellCategoryChargesTimer(categoryEntry);
         data.charges = data.maxCharges = GetMaxSpellCategoryCharges(categoryEntry);
@@ -6863,7 +6858,7 @@ bool Player::UpdateCraftSkill(uint32 spellid)
 
             // Alchemy Discoveries here
             SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(spellid);
-            if (spellEntry && spellEntry->Mechanic == MECHANIC_DISCOVERY)
+            if (spellEntry && spellEntry->Categories.Mechanic == MECHANIC_DISCOVERY)
             {
                 if (uint32 discoveredSpell = GetSkillDiscoverySpell(_spell_idx->second->SkillLine, spellid, this))
                     learnSpell(discoveredSpell, false);
@@ -22219,14 +22214,14 @@ void Player::PetSpellInitialize()
         if (!spellInfo)
             continue;
 
-        CreatureSpellCooldowns::const_iterator categoryitr = pet->m_CreatureCategoryCooldowns.find(spellInfo->Category);
+        CreatureSpellCooldowns::const_iterator categoryitr = pet->m_CreatureCategoryCooldowns.find(spellInfo->Categories.Category);
         if (categoryitr != pet->m_CreatureCategoryCooldowns.end())
         {
             WorldPackets::PetPackets::Spells::Cooldown cooldowns;
             cooldowns.SpellID = itr->first;
             cooldowns.Duration = (itr->second > curTime) ? (itr->second - curTime) * IN_MILLISECONDS : 0;
             cooldowns.CategoryDuration = (categoryitr->second > curTime) ? (categoryitr->second - curTime) * IN_MILLISECONDS : 0;
-            cooldowns.Category = spellInfo->Category;
+            cooldowns.Category = spellInfo->Categories.Category;
             spellsMessage.Cooldowns.push_back(cooldowns);
         }
         else
@@ -22317,7 +22312,7 @@ void Player::VehicleSpellInitialize()
         if (!spellInfo)
             continue;
 
-        CreatureSpellCooldowns::const_iterator categoryitr = vehicle->m_CreatureCategoryCooldowns.find(spellInfo->Category);
+        CreatureSpellCooldowns::const_iterator categoryitr = vehicle->m_CreatureCategoryCooldowns.find(spellInfo->Categories.Category);
         time_t cooldown = (itr->second > now) ? (itr->second - now) * IN_MILLISECONDS : 0;
 
         if (categoryitr != vehicle->m_CreatureCategoryCooldowns.end())
@@ -22326,7 +22321,7 @@ void Player::VehicleSpellInitialize()
             cooldowns.SpellID = itr->first;
             cooldowns.Duration = cooldown;
             cooldowns.CategoryDuration = (categoryitr->second > now) ? (categoryitr->second - now) * IN_MILLISECONDS : 0;
-            cooldowns.Category = spellInfo->Category;
+            cooldowns.Category = spellInfo->Categories.Category;
             spellsMessage.Cooldowns.push_back(cooldowns);
         }
         else
@@ -23124,7 +23119,7 @@ void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         if (spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
             continue;
 
-        if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY || spellInfo->PreventionType == SPELL_PREVENTION_TYPE_NONE)
+        if (spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_PACIFY || spellInfo->Categories.PreventionType == SPELL_PREVENTION_TYPE_NONE)
             continue;
 
         uint32 _SchoolMask = spellInfo->GetSchoolMask();
@@ -23873,7 +23868,7 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     // if no cooldown found above then base at DBC data
     if (rec < 0.0 && catrec < 0.0)
     {
-        cat = spellInfo->Category;
+        cat = spellInfo->Categories.Category;
         rec = spellInfo->RecoveryTime;
         catrec = spellInfo->CategoryRecoveryTime;
     }
@@ -23941,7 +23936,7 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
 
     // New MoP skill cooldown
     // SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN
-    if (spellInfo->CategoryFlags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN)
+    if (spellInfo->Category.Flags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN)
     {
         int days = catrec / 1000;
         time_t cooldown = curTime + (86400 * days);
@@ -23959,16 +23954,13 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     // category spells
     if (cat && G3D::fuzzyGt(catrec, 0.0))
     {
-        SpellCategoryStore::const_iterator i_scstore = sSpellCategoryStore.find(cat);
-        if (i_scstore != sSpellCategoryStore.end())
+        auto const& ctSet = sDB2Manager.GetSpellCategory(cat);
+        for (auto& _scset = ctSet->begin(); _scset != ctSet->end(); ++_scset)
         {
-            for (SpellCategorySet::const_iterator i_scset = i_scstore->second.begin(); i_scset != i_scstore->second.end(); ++i_scset)
-            {
-                if (*i_scset == spellInfo->Id)                    // skip main spell, already handled above
-                    continue;
+            if (*_scset == spellInfo->Id)                    // skip main spell, already handled above
+                continue;
 
-                AddSpellCooldown(*i_scset, itemId, catrecTime);
-            }
+            AddSpellCooldown(*_scset, itemId, catrecTime);
         }
     }
 }
@@ -24897,7 +24889,7 @@ void Player::SendSpellHistoryData()
 
         entryData.SpellID = itr->first;
         entryData.ItemID = itr->second.itemid;
-        entryData.Category = info->Category;
+        entryData.Category = info->Categories.Category;
         entryData.RecoveryTime = cooldown;
         entryData.CategoryRecoveryTime = cooldown;
         entryData.OnHold = itr->second.end >= infTime;
