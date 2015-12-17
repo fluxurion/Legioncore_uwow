@@ -564,7 +564,7 @@ void WorldSession::HandleUpdateRaidTarget(WorldPackets::Party::UpdateRaidTarget&
     if (!group)
         return;
 
-    if (packet.Symbol == 0xFF)
+    if (packet.Symbol == -1)
         group->SendTargetIconList(this, packet.PartyIndex);
     else
     {

@@ -949,10 +949,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
 
     // start with every map explored
     if (sWorld->getBoolConfig(CONFIG_START_ALL_EXPLORED))
-    {
-        for (uint8 i=0; i<PLAYER_EXPLORED_ZONES_SIZE; i++)
-            SetFlag(PLAYER_FIELD_EXPLORED_ZONES+i, 0xFFFFFFFF);
-    }
+        for (uint16 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i)
+            SetFlag(PLAYER_FIELD_EXPLORED_ZONES + i, 0xFFFFFFFF);
 
     //Reputations if "StartAllReputation" is enabled, -- TODO: Fix this in a better way
     if (sWorld->getBoolConfig(CONFIG_START_ALL_REP))
@@ -17414,7 +17412,7 @@ void Player::MoneyChanged(uint32 count)
             continue;
 
         Quest const* qInfo = sObjectMgr->GetQuestTemplate(questid);
-        if (qInfo && qInfo->GetRewMoney() < 0)
+        if (qInfo && qInfo->GetRewMoney())
         {
             QuestStatusData& q_status = m_QuestStatus[questid];
 
@@ -20509,7 +20507,7 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setUInt32(index++, 0);
 
         ss.str("");
-        for (uint32 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i)
+        for (uint16 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i)
             ss << GetUInt32Value(PLAYER_FIELD_EXPLORED_ZONES + i) << ' ';
         stmt->setString(index++, ss.str());
 
@@ -20647,7 +20645,7 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setUInt32(index++, GetSpecializationId(1));
 
         ss.str("");
-        for (uint32 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i)
+        for (uint16 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i)
             ss << GetUInt32Value(PLAYER_FIELD_EXPLORED_ZONES + i) << ' ';
         stmt->setString(index++, ss.str());
 
@@ -28466,11 +28464,7 @@ float Player::GetAverageItemLevel()
         ++count;
     }
 
-    // impossible, but my ilvl with start items are -4
-    if (sum < 0)
-        sum = 0;
-
-    return (float)sum / count;
+    return (float)sum / count; // wrong
 }
 
 void Player::_LoadInstanceTimeRestrictions(PreparedQueryResult result)
