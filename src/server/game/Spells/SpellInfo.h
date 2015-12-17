@@ -333,6 +333,10 @@ private:
 
 typedef std::unordered_map<uint16, SpellEffectInfo> SpellEffectInfoMap;
 typedef std::unordered_map<uint16, SpellTargetRestrictionsEntry const*> SpellTargetRestrictionsMap;
+
+typedef std::vector<SpellXSpellVisualEntry const*> SpellVisualVector;
+typedef std::unordered_map<uint32, SpellVisualVector> SpellVisualMap;
+
 class SpellInfo
 {
 public:
@@ -410,7 +414,6 @@ public:
     int32  EquippedItemSubClassMask;
     int32  EquippedItemInventoryTypeMask;
     uint32 TotemCategory[2];
-    uint32 SpellVisual[2];
     uint32 SpellIconID;
     uint32 ActiveIconID;
     char const* SpellName;
@@ -470,7 +473,7 @@ public:
     SpellShapeshiftEntry const* GetSpellShapeshift() const;
     SpellTotemsEntry const* GetSpellTotems() const;
 
-    SpellInfo(SpellEntry const* spellEntry);
+    SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals);
     ~SpellInfo();
 
     SpellEffectInfo const* GetEffect(uint8 effect, uint8 difficulty = 0) const;
@@ -595,6 +598,9 @@ public:
     bool IsDifferentRankOf(SpellInfo const* spellInfo) const;
     bool IsHighRankOf(SpellInfo const* spellInfo) const;
     bool IsAfflictionPeriodicDamage() const;
+    
+    uint32 GetSpellXSpellVisualId(Difficulty difficulty) const;
+    uint32 GetSpellVisual(Difficulty difficulty, Player* forPlayer = nullptr) const;
 
     // helpers for breaking by damage spells
     bool IsBreakingCamouflage() const;
@@ -623,6 +629,8 @@ public:
     bool HasPower(Powers power) const;
     bool NoPower() const;
     bool CanNonFacing(Unit const * caster) const;
+
+    SpellVisualMap _visuals;
 };
 
 #endif // _SPELLINFO_H

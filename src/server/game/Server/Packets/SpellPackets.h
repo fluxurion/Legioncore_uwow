@@ -326,6 +326,7 @@ namespace WorldPackets
             ObjectGuid UnkLGuid1;
             ObjectGuid UnkLGuid2;
             int32 SpellID = 0;
+            uint32 SpellXSpellVisualID = 0;
             uint32 CastFlags = 0;
             uint32 CastFlagsEx = 0;
             uint32 CastTime = 0;

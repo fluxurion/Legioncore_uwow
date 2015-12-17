@@ -619,8 +619,6 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     variance = 0.0f;
     m_damage = 0;
-    m_misc.Raw.Data[0]= 0;
-    m_misc.Raw.Data[1]= 0;
     m_healing = 0;
     m_final_damage = 0;
     m_absorb = 0;
@@ -632,6 +630,9 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
     m_castFlagsEx = 0;
 
     m_caster->GetPosition(&visualPos);
+
+    memset(m_misc.Raw.Data, 0, sizeof(m_misc.Raw.Data));
+    m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 }
 
 Spell::~Spell()
@@ -4764,10 +4765,10 @@ void Spell::SendCastResult(SpellCastResult result)
     if (m_caster->ToPlayer()->GetSession()->PlayerLoading())  // don't send cast results at loading time
         return;
 
-    SendCastResult(m_caster->ToPlayer(), m_spellInfo, 0/*m_cast_count*/, result, m_customError, m_misc.Raw.Data[0]);
+    SendCastResult(m_caster->ToPlayer(), m_spellInfo, result, m_customError, m_misc.Raw.Data);
 }
 
-void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cast_count, SpellCastResult result, SpellCustomErrors customError /*= SPELL_CUSTOM_ERROR_NONE*/, uint32 misc/*=0*/, bool pet /*=false*/)
+void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCastResult result, SpellCustomErrors customError /*= SPELL_CUSTOM_ERROR_NONE*/, uint32* misc /*= nullptr*/, bool pet /*=false*/)
 {
     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "SendCastResult  Spell: %u result %u.", spellInfo->Id, result);
 
@@ -4775,7 +4776,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cas
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    packet.CastID = cast_count;
+    packet.CastID = 0;
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
 
@@ -4886,7 +4887,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cas
         }
         case  SPELL_FAILED_CANT_UNTALENT:
         {
-            if (TalentEntry const* talent = sTalentStore.LookupEntry(misc))
+            if (TalentEntry const* talent = sTalentStore.LookupEntry(misc[0]))
                 packet.FailedArg1 = talent->spellId;
             break;
         }
@@ -4960,6 +4961,7 @@ void Spell::SendSpellStart()
 
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
+    castData.SpellXSpellVisualID = m_SpellVisual;
     castData.CastFlags = castFlags;
     castData.CastFlagsEx = m_castFlagsEx;
     castData.CastTime = m_casttime;
@@ -5132,6 +5134,7 @@ void Spell::SendSpellGo()
         castData.CasterGUID = m_caster->GetGUID();
 
     castData.CasterUnit = m_caster->GetGUID();
+    castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
     castData.CastFlagsEx = m_castFlagsEx;
@@ -5359,6 +5362,7 @@ void Spell::SendInterrupted(uint8 result)
     WorldPackets::Spells::SpellFailure failurePacket;
     failurePacket.CasterUnit = m_caster->GetGUID();
     failurePacket.SpellID = m_spellInfo->Id;
+    failurePacket.SpellXSpellVisualID = m_SpellVisual;
     failurePacket.Reason = result;
     m_caster->SendMessageToSet(failurePacket.Write(), true);
 
@@ -5433,6 +5437,8 @@ void Spell::SendChannelStart(uint32 duration)
 
     if (m_spellInfo->Id != 101546)
         m_caster->SetUInt32Value(UNIT_FIELD_CHANNEL_SPELL, m_spellInfo->Id);
+
+    m_caster->SetUInt32Value(UNIT_FIELD_CHANNEL_SPELL_XSPELL_VISUAL, m_spellInfo->GetSpellXSpellVisualId(m_caster->GetMap()->GetDifficultyID()));
 }
 
 void Spell::SendResurrectRequest(Player* target)
@@ -8528,7 +8534,7 @@ bool Spell::IsAutoActionResetSpell() const
 
 bool Spell::IsNeedSendToClient() const
 {
-    return m_spellInfo->SpellVisual[0] || m_spellInfo->SpellVisual[1] || m_spellInfo->IsChanneled() ||
+    return m_spellInfo->GetSpellXSpellVisualId(m_caster->GetMap()->GetDifficultyID()) || m_spellInfo->IsChanneled() ||
         (AttributesCustomEx8 & SPELL_ATTR8_AURA_SEND_AMOUNT) || m_spellInfo->Speed > 0.0f || (!m_triggeredByAuraSpell && !IsTriggered());
 }
 

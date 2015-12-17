@@ -381,6 +381,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     data << spellCastData.UnkLGuid2;
 
     data << int32(spellCastData.SpellID);
+    data << uint32(spellCastData.SpellXSpellVisualID);
     data << uint32(spellCastData.CastFlags);
     data << uint32(spellCastData.CastTime);
     data << static_cast<uint32>(spellCastData.HitTargets.size());

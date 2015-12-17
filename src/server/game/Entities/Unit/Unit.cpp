@@ -7980,7 +7980,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                 case 70664:
                 {
                     // Proc only from normal Rejuvenation
-                    if (procSpell->SpellVisual[0] != 32)
+                    if (procSpell->GetSpellVisual(DIFFICULTY_NONE) != 32)
                         return false;
 
                     Player* caster = ToPlayer();
@@ -15710,7 +15710,7 @@ void Unit::ModSpellCastTime(SpellInfo const* spellProto, int32 & castTime, Spell
         castTime = int32(float(castTime) * GetFloatValue(UNIT_FIELD_MOD_CASTING_SPEED));
     else if (spellProto->Attributes & SPELL_ATTR0_REQ_AMMO && !(spellProto->AttributesEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG))
         castTime = int32(float(castTime) * m_modAttackSpeedPct[RANGED_ATTACK]);
-    else if (spellProto->SpellVisual[0] == 3881 && HasAura(67556)) // cooking with Chef Hat.
+    else if (spellProto->GetSpellVisual(DIFFICULTY_NONE) == 3881 && HasAura(67556)) // cooking with Chef Hat.
         castTime = 500;
 
     if(getClass() == CLASS_DEATH_KNIGHT)
@@ -24005,7 +24005,7 @@ void Unit::SendSpellCreateVisual(SpellInfo const* spellInfo, Position const* pos
         visual.Target = target->GetGUID();
     visual.TravelSpeed = spellInfo->Speed;
 
-    if (auto const* spellVisual = sSpellMgr->GetSpellVisual(spellInfo->Id))
+    if (auto const* spellVisual = sSpellMgr->GetPlaySpellVisualData(spellInfo->Id))
     {
         float chance = 100.0f / spellVisual->size();
         for (auto const& x : *spellVisual)

@@ -2892,6 +2892,24 @@ CREATE TABLE `spell_totems` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `spell_x_spell_visual`
+--
+
+DROP TABLE IF EXISTS `spell_x_spell_visual`;
+CREATE TABLE `spell_x_spell_visual` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `TravelSpeed` float NOT NULL DEFAULT '0',
+  `SpellVisualID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SpellVisualID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PlayerConditionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `taxi_nodes`
 --
 

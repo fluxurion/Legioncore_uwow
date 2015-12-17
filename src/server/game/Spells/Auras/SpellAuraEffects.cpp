@@ -3199,7 +3199,7 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         model_id = modelid;                     // Will use the default model here
 
                     // Polymorph (sheep)
-                    if (GetSpellInfo()->SpellFamilyName == SPELLFAMILY_MAGE && GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->SpellVisual[0] == 12978)
+                    if (GetSpellInfo()->SpellFamilyName == SPELLFAMILY_MAGE && GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12978)
                         if (Unit* caster = GetCaster())
                         {
                             if (caster->HasAura(52648))         // Glyph of the Penguin
@@ -3213,7 +3213,7 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         }
 
                     // Polymorph (Hex)
-                    if (GetSpellInfo()->SpellFamilyName == SPELLFAMILY_SHAMAN && GetSpellInfo()->SpellIconID == 3058 && GetSpellInfo()->SpellVisual[0] == 12780)
+                    if (GetSpellInfo()->SpellFamilyName == SPELLFAMILY_SHAMAN && GetSpellInfo()->SpellIconID == 3058 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12780)
                         if (Unit* caster = GetCaster())
                         {
                             if (caster->HasAura(147785))         // Glyph of the Compy

@@ -136,7 +136,7 @@ void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
     {
         // no script or script not process request by self
         pItem->SetInUse();
-        pUser->CastItemUseSpell(pItem, targets, 0, cast.Cast.Misc[0]);
+        pUser->CastItemUseSpell(pItem, targets, cast.Cast.Misc);
     }
 }
 
@@ -298,8 +298,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
     }
 
     Spell* spell = new Spell(mover, spellInfo, TRIGGERED_NONE, ObjectGuid::Empty, false, replaced);
-    for (uint8 i = 0; i < 2; ++i)
-        spell->m_misc.Raw.Data[i] = cast.Cast.Misc[i];
+    spell->m_misc.Raw.Data[0] = cast.Cast.Misc[0];
+    spell->m_misc.Raw.Data[1] = cast.Cast.Misc[1];
     spell->prepare(&targets);
 }
 

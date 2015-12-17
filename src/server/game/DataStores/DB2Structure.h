@@ -1478,6 +1478,17 @@ struct SpellTotemsEntry
     uint32      Totem[MAX_SPELL_TOTEMS];                    // 2
 };
 
+struct SpellXSpellVisualEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpellID;                                    // 1
+    float       TravelSpeed;                                // 2
+    uint16      SpellVisualID[2];                           // 3 - 4
+    uint16      PlayerConditionID;                          // 5
+    uint8       DifficultyID;                               // 6
+    uint8       Flags;                                      // 7
+};
+
 struct TaxiNodesEntry
 {
     uint32          ID;                                     // 0

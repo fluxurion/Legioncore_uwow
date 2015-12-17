@@ -91,7 +91,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
                     return DIMINISHING_NONE;
             }
             // Pet charge effects (Infernal Awakening, Demon Charge)
-            if (spellproto->SpellVisual[0] == 2816 && spellproto->SpellIconID == 15)
+            if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 2816 && spellproto->SpellIconID == 15)
                 return DIMINISHING_CONTROLLED_STUN;
             // Gnaw
             else if (spellproto->Id == 47481)
@@ -107,10 +107,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             if (spellproto->SpellFamilyFlags[1] & 0x80000000)
                 return DIMINISHING_ROOT;
             // Shattered Barrier
-            else if (spellproto->SpellVisual[0] == 12297)
+            else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 12297)
                 return DIMINISHING_ROOT;
             // Deep Freeze
-            else if (spellproto->SpellIconID == 2939 && spellproto->SpellVisual[0] == 9963)
+            else if (spellproto->SpellIconID == 2939 && spellproto->GetSpellVisual(DIFFICULTY_NONE) == 9963)
                 return DIMINISHING_CONTROLLED_STUN;
             // Frost Nova / Freeze (Water Elemental)
             else if (spellproto->SpellIconID == 193)
@@ -203,7 +203,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             else if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->SpellIconID == 132)
                 return DIMINISHING_SCATTER_SHOT;
             // Entrapment (own diminishing)
-            else if (spellproto->SpellVisual[0] == 7484 && spellproto->SpellIconID == 20)
+            else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 7484 && spellproto->SpellIconID == 20)
                 return DIMINISHING_ENTRAPMENT;
             // Wyvern Sting mechanic is MECHANIC_SLEEP but the diminishing is DIMINISHING_DISORIENT
             else if ((spellproto->SpellFamilyFlags[1] & 0x1000) && spellproto->SpellIconID == 1721)
@@ -1089,9 +1089,9 @@ const std::vector<SpellConcatenateAura>* SpellMgr::GetSpellConcatenateUpdate(int
     return itr != mSpellConcatenateUpdateMap.end() ? &(itr->second) : NULL;
 }
 
-const std::vector<SpellVisual>* SpellMgr::GetSpellVisual(int32 spell_id) const
+const std::vector<SpellVisual>* SpellMgr::GetPlaySpellVisualData(int32 spell_id) const
 {
-    SpellVisualMap::const_iterator itr = mSpellVisualMap.find(spell_id);
+    PlaySpellVisualMap::const_iterator itr = mSpellVisualMap.find(spell_id);
     return itr != mSpellVisualMap.end() ? &(itr->second) : NULL;
 }
 
@@ -3689,11 +3689,16 @@ void SpellMgr::LoadSpellInfoStore()
 {
     uint32 oldMSTime = getMSTime();
 
+    std::unordered_map<uint32, SpellVisualMap> visualsBySpell;
+
     UnloadSpellInfoStore();
     mSpellInfoMap.resize(sSpellStore.GetNumRows(), NULL);
 
+    for (SpellXSpellVisualEntry const* visual : sSpellXSpellVisualStore)
+        visualsBySpell[visual->SpellID][visual->DifficultyID].push_back(visual);
+
     for (SpellEntry const* spellEntry : sSpellStore)
-        mSpellInfoMap[spellEntry->ID] = new SpellInfo(spellEntry);
+        mSpellInfoMap[spellEntry->ID] = new SpellInfo(spellEntry, std::move(visualsBySpell[spellEntry->ID]));
 
     for (SpellPowerEntry const* spellPower : sSpellPowerStore)
     {
@@ -3871,7 +3876,7 @@ void SpellMgr::LoadSpellCustomAttr()
             if (spellInfo->HasEffect(SPELL_EFFECT_APPLY_AREA_AURA_ENEMY))
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_POSITIVE_FOR_CASTER;
 
-            if (spellInfo->SpellVisual[0] == 3879)
+            if (spellInfo->GetSpellVisual(DIFFICULTY_NONE) == 3879)
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_CONE_BACK;
 
             switch (spellInfo->Id)
@@ -4558,23 +4563,23 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 // Add Server-Side dummy spell for Fishing
                 // TODO : Add more generic system to load server-side spell
-                case 7733:
-                case 7734:
-                case 18249:
-                case 54083:
-                case 54084:
-                case 51293:
-                case 88869:
-                case 110412:
-                {
-                    if(SpellEntry const* spellEntry = sSpellStore.LookupEntry(131474))
-                    {
-                        SpellInfo* fishingDummy = new SpellInfo(spellEntry);
-                        fishingDummy->Id = spellInfo->Effects[EFFECT_0].TriggerSpell;
-                        mSpellInfoMap[spellInfo->Effects[EFFECT_0].TriggerSpell] = fishingDummy;
-                    }
-                    break;
-                }
+                //case 7733:
+                //case 7734:
+                //case 18249:
+                //case 54083:
+                //case 54084:
+                //case 51293:
+                //case 88869:
+                //case 110412:
+                //{
+                //    if(SpellEntry const* spellEntry = sSpellStore.LookupEntry(131474))
+                //    {
+                //        SpellInfo* fishingDummy = new SpellInfo(spellEntry);
+                //        fishingDummy->Id = spellInfo->Effects[EFFECT_0].TriggerSpell;
+                //        mSpellInfoMap[spellInfo->Effects[EFFECT_0].TriggerSpell] = fishingDummy;
+                //    }
+                //    break;
+                //}
                 // Siege of the Niuzoa temple
                 case 119941: //Puddle Void Zone
                     spellInfo->Effects[EFFECT_0].RadiusEntry = sSpellRadiusStore.LookupEntry(22);

@@ -478,7 +478,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
         if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
         {
             sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetCastSpellOpcode: Check if spell is affected by GCD");
-            Spell::SendCastResult(GetPlayer(), spellInfo, 0, SPELL_FAILED_NOT_READY, SPELL_CUSTOM_ERROR_NONE, 0, true);
+            Spell::SendCastResult(GetPlayer(), spellInfo, SPELL_FAILED_NOT_READY, SPELL_CUSTOM_ERROR_NONE, 0, true);
             return;
         }
 
@@ -496,6 +496,8 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
 
     Spell* spell = new Spell(caster, spellInfo, TriggerCastFlags(triggeredCastFlags));
     spell->m_targets = targets;
+    spell->m_misc.Raw.Data[0] = cast.Cast.Misc[0];
+    spell->m_misc.Raw.Data[1] = cast.Cast.Misc[1];
 
     // TODO: need to check victim?
     SpellCastResult result;
@@ -527,7 +529,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     {
         Creature* pet = caster->ToCreature();
         bool sendPet = !pet || !(pet->isPossessed() || pet->IsVehicle());
-        Spell::SendCastResult(GetPlayer(), spellInfo, 0, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
+        Spell::SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
 
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
@@ -1001,7 +1003,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
             }
             else
             {
-                Spell::SendCastResult(GetPlayer(), spellInfo, 0, result, SPELL_CUSTOM_ERROR_NONE, 0, !(pet->isPossessed() || pet->IsVehicle()));
+                Spell::SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, !(pet->isPossessed() || pet->IsVehicle()));
                 if (!pet->ToCreature()->HasSpellCooldown(spellid))
                     GetPlayer()->SendClearCooldown(spellid, pet);
 

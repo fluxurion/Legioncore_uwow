@@ -218,6 +218,7 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
     Aura const* aura = GetBase();
     WorldPackets::Spells::AuraDataInfo auraData;
     auraData.SpellID = overrideAura ? overrideAura : aura->GetId();
+    auraData.SpellXSpellVisualID = aura->GetSpellInfo()->GetSpellXSpellVisualId(_target->GetMap()->GetDifficultyID());
     auraData.Flags = GetFlags();
     if (aura->GetMaxDuration() > 0 && !(aura->GetSpellInfo()->AttributesEx5 & SPELL_ATTR5_HIDE_DURATION))
         auraData.Flags |= AFLAG_DURATION;
@@ -1969,7 +1970,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 if (GetSpellInfo()->SpellFamilyFlags[0] & 0x01000000)
                 {
                     // Polymorph Sound - Sheep && Penguin
-                    if (GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->SpellVisual[0] == 12978)
+                    if (GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12978)
                     {
                         // Glyph of the Penguin
                         if (caster->HasAura(52648))

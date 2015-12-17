@@ -970,8 +970,10 @@ SpellEffectInfo::StaticData  SpellEffectInfo::_data[TOTAL_SPELL_EFFECTS] =
     {EFFECT_IMPLICIT_TARGET_NONE,     TARGET_OBJECT_TYPE_NONE}, // 250 SPELL_EFFECT_TAKE_SCREENSHOT
 };
 
-SpellInfo::SpellInfo(SpellEntry const* spellEntry)
+SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
 {
+    _visuals = std::move(visuals);
+
     Id = spellEntry->ID;
     AttributesCu = 0;
 
@@ -1113,8 +1115,6 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
     RangeEntry = sSpellRangeStore.LookupEntry(rangeIndex);
 
     Speed = _misc ? _misc->Speed : 1.00f;
-    for (uint8 i = 0; i < 2; ++i)
-        SpellVisual[i] = _misc ? _misc->SpellVisualID[i] : 0;
     SpellIconID = _misc ? _misc->SpellIconID : 0;
     ActiveIconID = _misc ? _misc->ActiveIconID : 0;
     SchoolMask = _misc ? _misc->SchoolMask : 0;
@@ -3820,4 +3820,40 @@ bool SpellInfo::CanNonFacing(Unit const * caster) const
         return true;
 
     return false;
+}
+
+uint32 SpellInfo::GetSpellXSpellVisualId(Difficulty difficulty) const
+{
+    DifficultyEntry const* difficultyEntry = sDifficultyStore.LookupEntry(difficulty);
+    while (difficultyEntry)
+    {
+        SpellVisualMap::const_iterator itr = _visuals.find(difficulty);
+        if (itr != _visuals.end())
+            for (SpellXSpellVisualEntry const* visual : itr->second)
+                if (!visual->PlayerConditionID)
+                    return visual->ID;
+
+        difficultyEntry = sDifficultyStore.LookupEntry(difficultyEntry->FallbackDifficultyID);
+    }
+
+    SpellVisualMap::const_iterator itr = _visuals.find(DIFFICULTY_NONE);
+    if (itr != _visuals.end())
+        for (SpellXSpellVisualEntry const* visual : itr->second)
+            if (!visual->PlayerConditionID)
+                return visual->ID;
+
+    return 0;
+}
+
+uint32 SpellInfo::GetSpellVisual(Difficulty difficulty, Player* /*forPlayer*/ /*= nullptr*/) const
+{
+    if (SpellXSpellVisualEntry const* visual = sSpellXSpellVisualStore.LookupEntry(GetSpellXSpellVisualId(difficulty)))
+    {
+        //if (visual->SpellVisualID[1] && forPlayer->GetViolenceLevel() operator 2)
+        //    return visual->SpellVisualID[1];
+
+        return visual->SpellVisualID[0];
+    }
+
+    return 0;
 }

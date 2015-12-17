@@ -1611,14 +1611,14 @@ class spell_hun_fetch : public SpellScriptLoader
                 if (!_player->isAllowedToLoot(corps))
                 {
                     if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(125050))
-                        Spell::SendCastResult(_player, spellInfo, 1, SPELL_FAILED_BAD_TARGETS);
+                        Spell::SendCastResult(_player, spellInfo, SPELL_FAILED_BAD_TARGETS);
                     return;
                 }
 
                 if (!target->IsWithinDistInMap(_player, 40.0f))
                 {
                     if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(125050))
-                        Spell::SendCastResult(_player, spellInfo, 1, SPELL_FAILED_OUT_OF_RANGE);
+                        Spell::SendCastResult(_player, spellInfo, SPELL_FAILED_OUT_OF_RANGE);
                     return;
                 }
 

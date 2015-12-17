@@ -173,6 +173,7 @@ extern DB2Storage<SpellShapeshiftEntry>             sSpellShapeshiftStore;
 extern DB2Storage<SpellShapeshiftFormEntry>         sSpellShapeshiftFormStore;
 extern DB2Storage<SpellTargetRestrictionsEntry>     sSpellTargetRestrictionsStore;
 extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
+extern DB2Storage<SpellXSpellVisualEntry>           sSpellXSpellVisualStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
 extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;

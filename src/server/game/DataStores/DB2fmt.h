@@ -174,6 +174,7 @@ char const SpellShapeshiftFormat[] = "nixixx";
 char const SpellShapeshiftFormFormat[] = "sfittttttttttttttbbb";
 char const SpellTargetRestrictionsFormat[] = "iffittbb";
 char const SpellTotemsFormat[] = "niiii";
+char const SpellXSpellVisualFormat[] = "iiftttbb";
 char const SpellVisualFormat[] = "niiiiiiiiiiiiiiiiiiffffffiiiii";
 char const TaxiNodesFormat[] = "nifffsiiiiiff";
 char const TaxiPathFormat[] = "niii";

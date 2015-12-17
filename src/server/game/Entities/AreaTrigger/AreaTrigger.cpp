@@ -152,7 +152,7 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
 
     SetGuidValue(AREATRIGGER_FIELD_CASTER, caster->GetGUID());
     SetUInt32Value(AREATRIGGER_FIELD_SPELL_ID, info->Id);
-    SetUInt32Value(AREATRIGGER_FIELD_SPELL_VISUAL_ID, info->SpellVisual[0] ? info->SpellVisual[0] : info->SpellVisual[1]);
+    SetUInt32Value(AREATRIGGER_FIELD_SPELL_VISUAL_ID, info->GetSpellVisual(GetMap()->GetDifficultyID()));
     SetUInt32Value(AREATRIGGER_FIELD_DURATION, duration);
     SetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D, 1.0);
     SetTargetGuid(targetGuid);

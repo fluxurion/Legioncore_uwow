@@ -546,6 +546,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // SpellTotems.db2
     PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, TotemCategory1, TotemCategory2, Totem1, Totem2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // SpellXSpellVisual.db2
+    PrepareStatement(HOTFIX_SEL_SPELL_X_SPELL_VISUAL, "SELECT ID, SpellID, TravelSpeed, SpellVisualID1, SpellVisualID2, PlayerConditionID, "
+        "DifficultyID, Flags FROM spell_x_spell_visual ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // TaxiNodes.db2
     PrepareStatement(HOTFIX_SEL_TAXI_NODES, "SELECT ID, MapID, PosX, PosY, PosZ, Name, MountCreatureID, ConditionID, LearnableIndex, Flags, "
         "MapOffset FROM taxi_nodes ORDER BY ID DESC", CONNECTION_SYNCH);
