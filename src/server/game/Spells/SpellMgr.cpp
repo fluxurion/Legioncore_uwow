@@ -91,7 +91,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
                     return DIMINISHING_NONE;
             }
             // Pet charge effects (Infernal Awakening, Demon Charge)
-            if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 2816 && spellproto->SpellIconID == 15)
+            if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 2816 && spellproto->Misc.SpellIconID == 15)
                 return DIMINISHING_CONTROLLED_STUN;
             // Gnaw
             else if (spellproto->Id == 47481)
@@ -110,10 +110,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 12297)
                 return DIMINISHING_ROOT;
             // Deep Freeze
-            else if (spellproto->SpellIconID == 2939 && spellproto->GetSpellVisual(DIFFICULTY_NONE) == 9963)
+            else if (spellproto->Misc.SpellIconID == 2939 && spellproto->GetSpellVisual(DIFFICULTY_NONE) == 9963)
                 return DIMINISHING_CONTROLLED_STUN;
             // Frost Nova / Freeze (Water Elemental)
-            else if (spellproto->SpellIconID == 193)
+            else if (spellproto->Misc.SpellIconID == 193)
                 return DIMINISHING_CONTROLLED_ROOT;
             // Dragon's Breath
             else if (spellproto->SpellFamilyFlags[0] & 0x800000)
@@ -190,23 +190,23 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
              else if (spellproto->SpellFamilyFlags[2] & 0x00000001)
                  return DIMINISHING_OPENING_STUN;
             // Crippling poison - Limit to 10 seconds in PvP (No SpellFamilyFlags)
-            else if (spellproto->SpellIconID == 163)
+            else if (spellproto->Misc.SpellIconID == 163)
                 return DIMINISHING_LIMITONLY;
             break;
         }
         case SPELLFAMILY_HUNTER:
         {
             // Hunter's Mark
-            if ((spellproto->SpellFamilyFlags[0] & 0x400) && spellproto->SpellIconID == 538)
+            if ((spellproto->SpellFamilyFlags[0] & 0x400) && spellproto->Misc.SpellIconID == 538)
                 return DIMINISHING_LIMITONLY;
             // Scatter Shot (own diminishing)
-            else if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->SpellIconID == 132)
+            else if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->Misc.SpellIconID == 132)
                 return DIMINISHING_SCATTER_SHOT;
             // Entrapment (own diminishing)
-            else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 7484 && spellproto->SpellIconID == 20)
+            else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 7484 && spellproto->Misc.SpellIconID == 20)
                 return DIMINISHING_ENTRAPMENT;
             // Wyvern Sting mechanic is MECHANIC_SLEEP but the diminishing is DIMINISHING_DISORIENT
-            else if ((spellproto->SpellFamilyFlags[1] & 0x1000) && spellproto->SpellIconID == 1721)
+            else if ((spellproto->SpellFamilyFlags[1] & 0x1000) && spellproto->Misc.SpellIconID == 1721)
                 return DIMINISHING_DISORIENT;
             // Freezing Arrow
             else if (spellproto->SpellFamilyFlags[0] & 0x8)
@@ -226,10 +226,10 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_DEATHKNIGHT:
         {
             // Hungering Cold (no flags)
-            if (spellproto->SpellIconID == 2797)
+            if (spellproto->Misc.SpellIconID == 2797)
                 return DIMINISHING_DISORIENT;
             // Mark of Blood
-            else if ((spellproto->SpellFamilyFlags[0] & 0x10000000) && spellproto->SpellIconID == 2285)
+            else if ((spellproto->SpellFamilyFlags[0] & 0x10000000) && spellproto->Misc.SpellIconID == 2285)
                 return DIMINISHING_LIMITONLY;
             break;
         }
@@ -260,7 +260,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
     if (mechanic & ((1 << MECHANIC_SAPPED) | (1 << MECHANIC_POLYMORPH) | (1 << MECHANIC_SHACKLE)))
         return DIMINISHING_DISORIENT;
     // Mechanic Knockout, except Blast Wave
-    if (mechanic & (1 << MECHANIC_INCAPACITATE) && spellproto->SpellIconID != 292)
+    if (mechanic & (1 << MECHANIC_INCAPACITATE) && spellproto->Misc.SpellIconID != 292)
         return DIMINISHING_DISORIENT;
     if (mechanic & (1 << MECHANIC_DISARM))
         return DIMINISHING_DISARM;
@@ -886,7 +886,7 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellPr
         else // For spells need check school/spell family/family mask
         {
             // Check (if set) for school
-            if (spellProcEvent->schoolMask && (spellProcEvent->schoolMask & procSpell->SchoolMask) == 0)
+            if (spellProcEvent->schoolMask && (spellProcEvent->schoolMask & procSpell->Misc.SchoolMask) == 0)
                 return false;
 
             // Check (if set) for spellFamilyName
@@ -2020,7 +2020,7 @@ void SpellMgr::LoadSpellProcEvents()
 
         mSpellProcEventMap[entry].push_back(spe);
 
-        if (spell->ProcFlags == 0)
+        if (spell->AuraOptions.ProcTypeMask == 0)
         {
             if (spe.procFlags == 0)
             {
@@ -2114,11 +2114,11 @@ void SpellMgr::LoadSpellProcs()
 
             // take defaults from dbcs
             if (!procEntry.typeMask)
-                procEntry.typeMask = spellEntry->ProcFlags;
+                procEntry.typeMask = spellEntry->AuraOptions.ProcTypeMask;
             if (!procEntry.charges)
-                procEntry.charges = spellEntry->ProcCharges;
+                procEntry.charges = spellEntry->AuraOptions.ProcCharges;
             if (!procEntry.chance && !procEntry.ratePerMinute)
-                procEntry.chance = float(spellEntry->ProcChance);
+                procEntry.chance = float(spellEntry->AuraOptions.ProcChance);
 
             // validate data
             if (procEntry.schoolMask & ~SPELL_SCHOOL_MASK_ALL)
@@ -2357,7 +2357,7 @@ void SpellMgr::LoadEnchantCustomAttr()
             continue;
 
         // TODO: find a better check
-        if (!(spellInfo->AttributesEx2 & SPELL_ATTR2_PRESERVE_ENCHANT_IN_ARENA) || !(spellInfo->Attributes & SPELL_ATTR0_NOT_SHAPESHIFT))
+        if (!(spellInfo->HasAttribute(SPELL_ATTR2_PRESERVE_ENCHANT_IN_ARENA)) || !(spellInfo->HasAttribute(SPELL_ATTR0_NOT_SHAPESHIFT)))
             continue;
 
         for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
@@ -3531,7 +3531,7 @@ void SpellMgr::LoadSpellAreas()
         if (SpellInfo const* spellInfo = GetSpellInfo(spell))
         {
             if (spellArea.autocast)
-                const_cast<SpellInfo*>(spellInfo)->Attributes |= SPELL_ATTR0_CANT_CANCEL;
+                const_cast<SpellInfo*>(spellInfo)->Misc.Attributes[0] |= SPELL_ATTR0_CANT_CANCEL;
         }
         else
         {
@@ -3782,8 +3782,8 @@ void SpellMgr::LoadSpellCustomAttr()
                         spellInfo->AttributesCu |= SPELL_ATTR0_CU_NO_INITIAL_THREAT;
                         break;
                     case SPELL_AURA_PROC_MELEE_TRIGGER_SPELL:
-                        spellInfo->ProcChance = 100;
-                        spellInfo->ProcFlags = PROC_FLAG_DONE_SPELL_MELEE_DMG_CLASS | PROC_FLAG_DONE_MELEE_AUTO_ATTACK;
+                        spellInfo->AuraOptions.ProcChance = 100;
+                        spellInfo->AuraOptions.ProcTypeMask = PROC_FLAG_DONE_SPELL_MELEE_DMG_CLASS | PROC_FLAG_DONE_MELEE_AUTO_ATTACK;
                         break;
                 }
 
@@ -3888,31 +3888,31 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
                     break;
                 case 83381: // Kill Command
-                    spellInfo->Attributes |= SPELL_ATTR0_IMPOSSIBLE_DODGE_PARRY_BLOCK;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_IMPOSSIBLE_DODGE_PARRY_BLOCK;
                     break;
                 case 81751: // Atonement
-                    spellInfo->AttributesEx2 &= ~SPELL_ATTR2_CANT_CRIT;
+                    spellInfo->Misc.Attributes[2] &= ~SPELL_ATTR2_CANT_CRIT;
                     break;
                 case 147303: // Arena Deserter DR (Test Spell)
-                    spellInfo->AttributesEx |= SPELL_ATTR1_DONT_DISPLAY_IN_AURA_BAR;
-                    spellInfo->Attributes |= SPELL_ATTR0_PASSIVE;
-                    spellInfo->Attributes |= SPELL_ATTR0_HIDE_IN_COMBAT_LOG;
+                    spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_DONT_DISPLAY_IN_AURA_BAR;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_PASSIVE;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_HIDE_IN_COMBAT_LOG;
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_APPLY_AURA;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ANY;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_DUMMY;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(42);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(42);
                     break;
                 case 125761: // Arena Deserter (Test Spell)
                     spellInfo->AttributesCu  = SPELL_ATTR0_CU_NEGATIVE_EFF0;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(3);
-                    spellInfo->Attributes    = 0x2D800100;
-                    spellInfo->AttributesEx  = 0x000000A8;
-                    spellInfo->AttributesEx2 = 0x00084005;
-                    spellInfo->AttributesEx3 = 0x10100000;
-                    spellInfo->AttributesEx4 = 0x00000004;
-                    spellInfo->AttributesEx5 = 0x00060008;
-                    spellInfo->AttributesEx6 = 0x00001000;
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(3);
+                    spellInfo->Misc.Attributes[0] = 0x2D800100;
+                    spellInfo->Misc.Attributes[1] = 0x000000A8;
+                    spellInfo->Misc.Attributes[2] = 0x00084005;
+                    spellInfo->Misc.Attributes[3] = 0x10100000;
+                    spellInfo->Misc.Attributes[4] = 0x00000004;
+                    spellInfo->Misc.Attributes[5] = 0x00060008;
+                    spellInfo->Misc.Attributes[6] = 0x00001000;
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_APPLY_AURA;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ANY;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
@@ -3923,8 +3923,8 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].MiscValue = SPELLMOD_GLOBAL_COOLDOWN;
                     break;
                 case 145591: // Sha Cloud
-                    spellInfo->Attributes |= SPELL_ATTR0_CANT_USED_IN_COMBAT;
-                    spellInfo->AttributesEx4 &= ~SPELL_ATTR4_TRIGGERED;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_CANT_USED_IN_COMBAT;
+                    spellInfo->Misc.Attributes[4] &= ~SPELL_ATTR4_TRIGGERED;
                     break;
                 case 137049: // Hotfix Passive 
                     spellInfo->Effects[EFFECT_5].Effect = SPELL_EFFECT_APPLY_AURA;
@@ -3935,26 +3935,26 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_5].SpellClassMask[1] |= 16;
                     break;
                 case 101546: // Spinning Crane Kick
-                    spellInfo->Attributes &= ~SPELL_ATTR0_ABILITY;
+                    spellInfo->Misc.Attributes[0] &= ~SPELL_ATTR0_ABILITY;
                     break;
                 case 119032: // Spectral Guise
-                    spellInfo->AttributesEx4 |= SPELL_ATTR4_UNK19;
+                    spellInfo->Misc.Attributes[4] |= SPELL_ATTR4_UNK19;
                     break;
                 case 10326:  // Turn Evil
                 case 145067: // Turn Evil
                     spellInfo->Mechanic = MECHANIC_FEAR;
                     break;
                 case 86213:  // Soul Swap Exhale
-                    spellInfo->Speed = 0;
+                    spellInfo->Misc.Speed = 0.0f;
                     spellInfo->spellPower->PowerCostPercentage = 0;
                     break;
                 case 122470: // Touch of Karma
-                    spellInfo->AttributesEx6 &= ~SPELL_ATTR6_NOT_LIMIT_ABSORB;
+                    spellInfo->Misc.Attributes[6] &= ~SPELL_ATTR6_NOT_LIMIT_ABSORB;
                     break;
                 case 137594: // Fortitude Trigger
                 case 137592: // Haste Trigger
                 case 137595: // Lightning Strike Charges Trigger
-                    spellInfo->AttributesEx4 |= SPELL_ATTR4_NOT_USABLE_IN_ARENA_OR_RATED_BG;
+                    spellInfo->Misc.Attributes[4] |= SPELL_ATTR4_NOT_USABLE_IN_ARENA_OR_RATED_BG;
                     break;
                 case 115176: // Zen Meditation
                     spellInfo->ChannelInterruptFlags = 0;
@@ -3962,11 +3962,11 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 146025: // Readiness (Prot)
                 case 145955: // Readiness (DD Plate)
                 case 146019: // Readiness (Other DD)
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_DEATH_PERSISTENT;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_DEATH_PERSISTENT;
                     break;
                 case 116706: // Disable (Root)
-                    spellInfo->StackAmount = 0;
-                    spellInfo->ProcFlags = 0;
+                    spellInfo->AuraOptions.CumulativeAura = 0;
+                    spellInfo->AuraOptions.ProcTypeMask = 0;
                     break;
                 case 116023: // Sparring
                 case 111397: // Blood Horror
@@ -3977,7 +3977,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_OVERRIDE_AUTOATTACK;
                     break;
                 case 148008: // Essence of Yu'lon
-                    spellInfo->AttributesEx6 &= ~SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
+                    spellInfo->Misc.Attributes[6] &= ~SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
                     break;
                 case 51640: // Taunt Flag Targeting
                 case 107223: // Sunfire Rays
@@ -3994,11 +3994,11 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 130121: // Item - Scotty's Lucky Coin
                 case 26364:  // Lightning Shield
-                    spellInfo->AttributesEx4 &= ~SPELL_ATTR4_TRIGGERED;
+                    spellInfo->Misc.Attributes[4] &= ~SPELL_ATTR4_TRIGGERED;
                     break;
                 case 137619: // Marked for Death
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_DEATH_PERSISTENT;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_DEATH_PERSISTENT;
                     break;
                 case 53503: // Sword of Light
                     spellInfo->Effects[2].SpellClassMask[2] |= 2097152;
@@ -4011,19 +4011,19 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[2].Scaling.Coefficient = 0.00177f;
                     break;
                 case 146202: // Wrath
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_HIDE_DURATION;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(39);
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_HIDE_DURATION;
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(39);
                     break;
                 case 108371: // Harvest Life
                     spellInfo->Effects[EFFECT_0].MiscValue = SPELLMOD_DOT;
                     break;
                 case 74434: // Soulburn
                     spellInfo->Effects[EFFECT_1].SpellClassMask[0] |= 33024;
-                    spellInfo->ProcCharges = 1;
+                    spellInfo->AuraOptions.ProcCharges = 1;
                     break;
                 case 81269: // Efflorescence
                     spellInfo->Effects[EFFECT_0].Scaling.Coefficient = 1.5309f;
-                    spellInfo->AttributesEx2 |= SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS;
+                    spellInfo->Misc.Attributes[2] |= SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS;
                     break;
                 case 132464: // Chi Wave (Pos)
                 case 121093: // Monk - Gift of the Naaru
@@ -4034,12 +4034,12 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 58095: // Glyph of Mystic Shout
                 case 146631: // Glyph of Hemorrhaging Veins
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED;
                     break;
                 case 124271: // Sanguinary Vein
                 case 116000:
                 case 103785: // Black Blood of the Earth dmg
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
                     break;
                 case 108366: // Soul Leech
                 case 143597: //Generate rage energize
@@ -4047,18 +4047,18 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CASTER;
                     break;
                 case 108942: // Phantasm
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_DISABLE_PROC;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_DISABLE_PROC;
                     break;
                 case 1943:  // Rupture
                 case 2818:  // Deadly Poison
                 case 703:   // Garrote
                 case 89775: // Hemo
-                    spellInfo->AttributesEx4 |= SPELL_ATTR4_DAMAGE_DOESNT_BREAK_AURAS;
+                    spellInfo->Misc.Attributes[4] |= SPELL_ATTR4_DAMAGE_DOESNT_BREAK_AURAS;
                     break;
                 case 83968: // Mass Resurrection
                 case 6203:  // Soulstone
                 case 2641:  // Dismiss Pet
-                    spellInfo->AttributesEx2 |= SPELL_ATTR2_CAN_TARGET_DEAD;
+                    spellInfo->Misc.Attributes[2] |= SPELL_ATTR2_CAN_TARGET_DEAD;
                     break;
                 case 125883: // Zen Flight
                     spellInfo->AuraInterruptFlags |= AURA_INTERRUPT_FLAG_MELEE_ATTACK;
@@ -4068,7 +4068,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].BasePoints = 10;
                     break;
                 case 115834: // Shroud of Concealment
-                    spellInfo->AttributesEx |= SPELL_ATTR1_CANT_TARGET_IN_COMBAT;
+                    spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_CANT_TARGET_IN_COMBAT;
                     break;
                 case 1850:   // Dash
                 case 113636: // Cat Form (Passive)
@@ -4078,7 +4078,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Mechanic = MECHANIC_STUN;
                     break;
                 case 58372: // Glyph of Rude Interruption
-                    spellInfo->ProcChance = 0;
+                    spellInfo->AuraOptions.ProcChance = 0;
                     break;
                 case 115460: // Healing Sphere
                     spellInfo->PreventionType = 1;
@@ -4100,18 +4100,19 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 113092: // Frost Bomb
                 case 18153:  // Kodo Kombobulator
                 case 145110:  // Ysera's Gift
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_NO_INITIAL_AGGRO;
                     break;
                 case 79136: // Venomous Wound
                 case 127802: // Touch of the Grave
-                    spellInfo->Speed = 25.f;
+                case 145718:  // Gusting Bomb
+                    spellInfo->Misc.Speed = 25.0f;
                     break;
                 case 2094: // Blind
                 case 108446: // Soul Link
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_CANT_TRIGGER_PROC;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_CANT_TRIGGER_PROC;
                     break;
                 case 123154: // Fists of Fury Visual Target
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(36);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(36);
                     break;
                 case 53:    // Backstab
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_REQ_CASTER_NOT_FRONT_TARGET;
@@ -4122,7 +4123,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 124487: // Zen Focus
                 case 122013: // Glyph of Incite (Protection)
-                    spellInfo->AttributesEx3 = SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED;
+                    spellInfo->Misc.Attributes[3] = SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED;
                     break;
                 case 127424:
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CONE_ENEMY_54;
@@ -4246,22 +4247,22 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_NEGATIVE_EFF1;
                     break;
                 case 82691: // Ring of Frost
-                    spellInfo->AttributesEx |= SPELL_ATTR1_CANT_BE_REFLECTED;
-                    spellInfo->AttributesEx5 &= ~SPELL_ATTR5_SINGLE_TARGET_SPELL;
+                    spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_CANT_BE_REFLECTED;
+                    spellInfo->Misc.Attributes[5] &= ~SPELL_ATTR5_SINGLE_TARGET_SPELL;
                     break;
                 case 76577: // Smoke Bomb
                     spellInfo->Effects[EFFECT_1].ApplyAuraName = SPELL_AURA_DUMMY;
                     break;
                 case 130616:// Glyph of Fear
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_IGNORE_HIT_RESULT;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_IGNORE_HIT_RESULT;
                     break;
                 case 118699:// Fear Effect
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_IGNORE_HIT_RESULT;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_IGNORE_HIT_RESULT;
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_MOD_FEAR;
                     break;
                 case 124991:// Nature's Vigil (Damage)
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_DONE_BONUS;
-                    spellInfo->AttributesEx6 &= ~SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_NO_DONE_BONUS;
+                    spellInfo->Misc.Attributes[6] &= ~SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ENEMY;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     break;
@@ -4270,15 +4271,15 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     break;
                 case 114942:// Healing Tide
-                    spellInfo->AttributesEx &= ~SPELL_ATTR1_CANT_TARGET_SELF;
+                    spellInfo->Misc.Attributes[1] &= ~SPELL_ATTR1_CANT_TARGET_SELF;
                     spellInfo->SpellFamilyFlags[0] = 0x00002000;
                     break;
                 case 116943:// Earthgrab
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_START_PERIODIC_AT_APPLY;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_START_PERIODIC_AT_APPLY;
                     spellInfo->Effects[EFFECT_0].TargetB = 0;
                     break;
                 case 94339: // Fungal Area
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(18); // 20s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(18); // 20s
                     break;
                 case 81282: // Fungal Growth
                 case 23691: // Berzerker Rage Effect
@@ -4320,7 +4321,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_2].TargetA = TARGET_UNIT_CASTER_AREA_RAID;
                     break;
                 case 86674: // Ancient Healer
-                    spellInfo->ProcCharges = 5;
+                    spellInfo->AuraOptions.ProcCharges = 5;
                     break;
                 case 86657: // Ancient Guardian
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ANY;
@@ -4331,8 +4332,8 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].Mechanic = MECHANIC_NONE;
                     break;
                 case 45204: // Mirror Image - Clone Me!
-                    spellInfo->AttributesEx6 |= SPELL_ATTR6_CAN_TARGET_INVISIBLE;
-                    spellInfo->AttributesEx2 |= SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS;
+                    spellInfo->Misc.Attributes[6] |= SPELL_ATTR6_CAN_TARGET_INVISIBLE;
+                    spellInfo->Misc.Attributes[2] |= SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS;
                     break;
                 case 41055: // Copy Weapon Spells
                 case 45206:
@@ -4348,9 +4349,9 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->PreventionType = SPELL_PREVENTION_TYPE_SILENCE;
                     break;
                 case 108201:// Desecrated Ground
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_USABLE_WHILE_FEARED;
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_USABLE_WHILE_STUNNED;
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_USABLE_WHILE_CONFUSED;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_USABLE_WHILE_FEARED;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_USABLE_WHILE_STUNNED;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_USABLE_WHILE_CONFUSED;
                     break;
                 case 61336: // Survival Instincts
                     spellInfo->Effects[EFFECT_0].BasePoints = -50;
@@ -4360,7 +4361,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 1160:   // Demoralizing Shout
                 case 1966:   // Feint
                 case 50256:  // Demoralizing Roar
-                    spellInfo->AttributesEx |= SPELL_ATTR1_NOT_BREAK_STEALTH;
+                    spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_NOT_BREAK_STEALTH;
                     break;
                 case 84745: // Shallow Insight
                 case 84746: // Moderate Insight
@@ -4370,22 +4371,22 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 44457: // Living Bomb
                 case 124081: // Zen Sphere
-                    spellInfo->AttributesEx5 &= ~SPELL_ATTR5_SINGLE_TARGET_SPELL;
+                    spellInfo->Misc.Attributes[5] &= ~SPELL_ATTR5_SINGLE_TARGET_SPELL;
                     break;
                 case 44461: // Living Bomb
                     spellInfo->CustomMaxAffectedTargets = 3; //used if empty on dbc SpellTargetRestrictionsEntry
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_NO_INITIAL_AGGRO;
                     break;
                 case 114205:// Demoralizing Banner
                 case 140130: // Summon Intro Scene (hack scene)
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(8); // 15s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(8); // 15s
                     break;
                 case 324:    // Lightning Shield
                 case 50227:  // Sword and Board
                 case 113901: // Demonic Gateway
                 case 131116: // Raging Blow!
                 case 136050: // Malformed Blood
-                    spellInfo->ProcCharges = 0;
+                    spellInfo->AuraOptions.ProcCharges = 0;
                     break;
                 case 90259: // Glyph of Frost Pillar (Root Aura)
                     spellInfo->Effects[EFFECT_0].MiscValue = 0;
@@ -4414,12 +4415,12 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 123267:  // Divine Insight
                 case 152117:  // Words of Mending
                 case 155363:  // Words of Mending
-                    spellInfo->ProcCharges = 1;
+                    spellInfo->AuraOptions.ProcCharges = 1;
                     break;
                 case 89485:  // Inner Focus
-                    spellInfo->ProcChance = 100;
-                    spellInfo->ProcCharges = 1;
-                    spellInfo->ProcFlags = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS;
+                    spellInfo->AuraOptions.ProcChance = 100;
+                    spellInfo->AuraOptions.ProcCharges = 1;
+                    spellInfo->AuraOptions.ProcTypeMask = PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS;
                     spellInfo->Effects[EFFECT_1].SpellClassMask = spellInfo->Effects[EFFECT_0].SpellClassMask;
                     break;
                 case 6358:  // Seduce (succubus)
@@ -4436,7 +4437,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 77535:  // Mastery: Blood Shield
                 case 86273:  // Mastery: Illuminated Healing
                 case 83077:  // Improved Serpent Sting
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_DONE_BONUS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_NO_DONE_BONUS;
                     break;
                 case 44544: // Fingers of Frost
                     // affect Ice Lance
@@ -4467,7 +4468,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 115308: // Elusive Brew
                 case 122300: // Psyfiend Visual
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(1);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(1);
                     break;
                 case 126892:// Zen Pilgrimage
                 case 126895:// Zen Pilgrimage : Return
@@ -4484,22 +4485,22 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 127626:// Devouring plague - Heal
                     spellInfo->Effects[EFFECT_0].BasePoints = 1;
                     break;
-                case 106909:
-                    {
-                        SpellInfo const* spell = sSpellMgr->GetSpellInfo(113379);
-                        if (!spell)
-                            break;
-                        spellInfo->DurationEntry = spell->DurationEntry;
-                    }
-                    break;
-                case 113315:
-                    {
-                        SpellInfo const* spell = sSpellMgr->GetSpellInfo(113379);
-                        if (!spell)
-                            break;
-                        spellInfo->DurationEntry = spell->DurationEntry;
-                    }
-                    break;
+                //case 106909:
+                //    {
+                //        SpellInfo const* spell = sSpellMgr->GetSpellInfo(113379);
+                //        if (!spell)
+                //            break;
+                //        spellInfo->DurationEntry = spell->DurationEntry;
+                //    }
+                //    break;
+                //case 113315:
+                //    {
+                //        SpellInfo const* spell = sSpellMgr->GetSpellInfo(113379);
+                //        if (!spell)
+                //            break;
+                //        spellInfo->DurationEntry = spell->DurationEntry;
+                //    }
+                //    break;
                 case 106736:
                 case 106113:
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_TARGET_ENEMY;
@@ -4511,7 +4512,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 119931:
                 case 119932:
                 case 119933:
-                    spellInfo->Speed = 5.f;
+                    spellInfo->Misc.Speed = 5.0f;
                     break;
                 case 106112:
                     {
@@ -4534,7 +4535,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     // Wise Mari Wash Away
                 case 106334:
                 case 99508: //Bloated Frog
-                    spellInfo->AttributesEx3 &= ~SPELL_ATTR3_ONLY_TARGET_PLAYERS;
+                    spellInfo->Misc.Attributes[3] &= ~SPELL_ATTR3_ONLY_TARGET_PLAYERS;
                     break;
                 case 120552:
                     spellInfo->Effects[EFFECT_0].RadiusEntry = sSpellRadiusStore.LookupEntry(16);
@@ -4598,7 +4599,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 // Stormstout brewery
                 case 112944: //Carrot Breath - set 4 second becaus rotate not work
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(35);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(35);
                     break;
                 //Scholomance
                 case 114062: //Gravity Flux
@@ -4898,12 +4899,12 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 143297: //Sha splash
                     spellInfo->Effects[EFFECT_0].TargetA = 22;
                     spellInfo->Effects[EFFECT_0].TargetB = 15;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(65); // 1.5s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(65); // 1.5s
                     spellInfo->Effects[EFFECT_0].RadiusEntry = sSpellRadiusStore.LookupEntry(7); //2yards
                     break;
                 case 130063: //Sha splash Dummy
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_DUMMY;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(21);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(21);
                     break;
                 case 145377: //Erupting water
                 case 143524: //Purified residue
@@ -4911,8 +4912,8 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 113762: //Swirl
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 125925;
-                    spellInfo->Attributes |= SPELL_ATTR0_PASSIVE;
-                    spellInfo->Attributes |= SPELL_ATTR0_HIDDEN_CLIENTSIDE;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_PASSIVE;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_HIDDEN_CLIENTSIDE;
                     break;
                 case 143412: //Swirl dmg
                     spellInfo->Effects[EFFECT_0].TargetA = 1;
@@ -4964,7 +4965,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 //Norushen
                 case 144514:    //Lingering Corruption
                     spellInfo->CustomMaxAffectedTargets = 1; //used if empty on dbc SpellTargetRestrictionsEntry
-                    spellInfo->SchoolMask |= SPELL_SCHOOL_MASK_NORMAL;
+                    spellInfo->Misc.SchoolMask |= SPELL_SCHOOL_MASK_NORMAL;
                     break;
                 case 147082:    //Burst of Anger
                     spellInfo->TargetAuraSpell = 144421;
@@ -5023,7 +5024,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 144331: //Iron Prison
                 case 142906: //Ancient Miasma Dmg
                 case 29604:  // Jom Gabbar
-                    spellInfo->AttributesEx6 |= SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
+                    spellInfo->Misc.Attributes[6] |= SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
                     break;
                 //General Nazgrim
                 case 143872: //Ravager Summon
@@ -5139,12 +5140,12 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 // Dalaran arena knockback
                 case 61698:
-                    spellInfo->Attributes = 536871296;
-                    spellInfo->AttributesEx = 269058048;
-                    spellInfo->AttributesEx2 = 67108868;
-                    spellInfo->AttributesEx3 = 268894272;
-                    spellInfo->AttributesEx4 = 2048;
-                    spellInfo->AttributesEx6 = 1024;
+                    spellInfo->Misc.Attributes[0] = 536871296;
+                    spellInfo->Misc.Attributes[1] = 269058048;
+                    spellInfo->Misc.Attributes[2] = 67108868;
+                    spellInfo->Misc.Attributes[3] = 268894272;
+                    spellInfo->Misc.Attributes[4] = 2048;
+                    spellInfo->Misc.Attributes[6] = 1024;
                     spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(1);
                     spellInfo->EquippedItemClass = -1;
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_DUMMY;
@@ -5163,10 +5164,10 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 126413:
                 case 126549:
                 case 126550:
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(26); // 240 seconds
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(26); // 240 seconds
                     break; 
                 case 11327: //Vanish
-                    spellInfo->AttributesEx4 |= SPELL_ATTR4_TRIGGERED;
+                    spellInfo->Misc.Attributes[4] |= SPELL_ATTR4_TRIGGERED;
                     break;
                 case 8177: //totem
                     spellInfo->RecoveryTime = 25000;
@@ -5177,7 +5178,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->SpellFamilyFlags[2] = 0;
                     break;
                 case 117679:    // Incarnation (Passive)
-                    spellInfo->Attributes &= ~SPELL_ATTR0_CANT_CANCEL;
+                    spellInfo->Misc.Attributes[0] &= ~SPELL_ATTR0_CANT_CANCEL;
                     break;
                 case 55442: //Glyph of Capacitor Totem
                     spellInfo->Effects[EFFECT_0].SpellClassMask[0] = 0x00008000;
@@ -5186,20 +5187,20 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_ADD_FLAT_MODIFIER;
                     break;
                 case 132402:    // Savage Defense
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(32); // 6s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(32); // 6s
                     break;
                 case 76724: // Offering
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(3); // 60s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(3); // 60s
                     break;
                 case 122557: // The Challenger's Ring: Summon Snow Blossom Fighter
                 case 122746: // The Challenger's Ring: Yalia Sagewhisper
                 case 62772: // Summon Gorat's Spirit
                 case 62814: // Summon Elendilad
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(5); // 300s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(5); // 300s
                     break;
                 case 37062: // To Catch A Thistlehead
                 case 139999: // Mason's Folly Finale Event (hack scene)
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(4); //120s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(4); //120s
                     break;
                 case 112965:    // Fingers of Frost
                     for (int i = 0; i < 3; ++i)
@@ -5211,7 +5212,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 122137: // Summon Ghosts from Urns - Summons
                     spellInfo->Effects[EFFECT_0].BasePoints = 5;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(25); // 180s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(25); // 180s
                     break;
                 case 74793:// Summoning Ritual
                 case 134210: // Scenario: Pursuing the Black Harvest - Memory of the Reliquary
@@ -5223,35 +5224,35 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 61784: // Feast On Turkey
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_TRIGGER_SPELL;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 61842;
-                    spellInfo->ProcChance = 100;
+                    spellInfo->AuraOptions.ProcChance = 100;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_MASTER;
                     break;
                 case 61786: // Feast On Sweet Potatoes
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_TRIGGER_SPELL;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 61844;
-                    spellInfo->ProcChance = 100;
+                    spellInfo->AuraOptions.ProcChance = 100;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_MASTER;
                     break;
                 case 61788: // Feast On Stuffing
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_TRIGGER_SPELL;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 61843;
-                    spellInfo->ProcChance = 100;
+                    spellInfo->AuraOptions.ProcChance = 100;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_MASTER;
                     break;
                 case 61787: // Feast On Pie
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_TRIGGER_SPELL;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 61845;
-                    spellInfo->ProcChance = 100;
+                    spellInfo->AuraOptions.ProcChance = 100;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_MASTER;
                     break;
                 case 61785: // Feast On Cranberries
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_TRIGGER_SPELL;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 61841;
-                    spellInfo->ProcChance = 100;
+                    spellInfo->AuraOptions.ProcChance = 100;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_MASTER;
                     break;
                 case 112897: // Battle Ring
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(27); // 3s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(27); // 3s
                     break;
                 case 20711:
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_DUMMY;
@@ -5312,7 +5313,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 30823:  // Shamanistic Rage
                 case 498:    // Divine Protection
                 case 137562: // Nimble Brew
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_USABLE_WHILE_STUNNED;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_USABLE_WHILE_STUNNED;
                     break;
                 case 131086: // Bladestorm (Protection buff) DND
                     spellInfo->Effects[EFFECT_0].BasePoints = 50;
@@ -5325,8 +5326,8 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].MiscValueB = 3291;  //SUMMON_TYPE_BANNER
                     break;
                 case 33619: // Reflective Shield
-                    spellInfo->AttributesEx6 |= SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_DONE_BONUS;
+                    spellInfo->Misc.Attributes[6] |= SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_NO_DONE_BONUS;
                     break;
                 // Thrall Lighting in goblin
                 case 68441:
@@ -5334,7 +5335,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ChainTargets = 60;
                     break;
                 case 71091: // Goblin. Lost Isles. It's a Town-In-A-Box
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(63);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(63);
                     break;
                 case 71919:
                 case 71918:
@@ -5344,10 +5345,10 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 103964: // Touch of Chaos
                 case 129347: // Chaos Wave
-                    spellInfo->SchoolMask &= ~SPELL_SCHOOL_MASK_NORMAL;
+                    spellInfo->Misc.SchoolMask &= ~SPELL_SCHOOL_MASK_NORMAL;
                     break;
                 case 53257: // Cobra Strikes
-                    spellInfo->Attributes |= SPELL_ATTR0_CANT_CANCEL;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_CANT_CANCEL;
                     break;
                 case 96117: // Toss Stink Bomb Credit
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_PASSENGER_0;
@@ -5377,7 +5378,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[2].RadiusEntry = sSpellRadiusStore.LookupEntry(48);
                     break;
                 case 103178: // Earths Vengeance dmg
-                    spellInfo->SetDurationIndex(618);
+                    spellInfo->Duration.Duration = 23 * IN_MILLISECONDS;
                     break;
                 case 105241: // Absorb Blood
                 case 106444: // Impale
@@ -5393,7 +5394,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_DEST_DEST;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 0;
                     spellInfo->ExcludeCasterAuraSpell = 0;
-                    spellInfo->SetDurationIndex(36); // 1 second
+                    spellInfo->Duration.Duration = 1 * IN_MILLISECONDS;
                     break;
                 // Aspects auras
                 // Increase duration up to 10 secs
@@ -5402,13 +5403,13 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 106457:
                 case 106464:
                 case 106029:
-                    spellInfo->SetDurationIndex(1); // 10 secs
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_ONLY_TARGET_PLAYERS;
+                    spellInfo->Duration.Duration = 10 * IN_MILLISECONDS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_ONLY_TARGET_PLAYERS;
                     break;
                 case 106040: // Spellweaving
-                    spellInfo->ProcChance = 10;
-                    spellInfo->SetDurationIndex(1); // 10 secs
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_ONLY_TARGET_PLAYERS;
+                    spellInfo->AuraOptions.ProcChance = 10;
+                    spellInfo->Duration.Duration = 10 * IN_MILLISECONDS;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_ONLY_TARGET_PLAYERS;
                     break;
                 // Increase amplitude
                 case 105825:
@@ -5420,16 +5421,16 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].ApplyAuraPeriod = 7000;
                     break;
                 case 106527: // Cataclysm screen
-                    spellInfo->SetDurationIndex(1); // 10 secs
+                    spellInfo->Duration.Duration = 10 * IN_MILLISECONDS;
                     break;
                 case 105369: // Lightning Conduit dmg
-                    spellInfo->SetDurationIndex(39); // 1 secs
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_HIDE_DURATION;
+                    spellInfo->Duration.Duration = 1 * IN_MILLISECONDS;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_HIDE_DURATION;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 0;
-                    spellInfo->AttributesEx8 |= SPELL_ATTR8_DONT_RESET_PERIODIC_TIMER;
+                    spellInfo->Misc.Attributes[8] |= SPELL_ATTR8_DONT_RESET_PERIODIC_TIMER;
                     break;
                 case 105367: // Lightning Conduit dummy 1
-                    spellInfo->SetDurationIndex(39); // 1 secs
+                    spellInfo->Duration.Duration = 1 * IN_MILLISECONDS;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 0;
                     spellInfo->Effects[EFFECT_1].Effect = SPELL_EFFECT_APPLY_AURA;
                     spellInfo->Effects[EFFECT_1].ApplyAuraName = SPELL_AURA_PERIODIC_DUMMY;
@@ -5437,28 +5438,28 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_1].TargetA = TARGET_UNIT_TARGET_ANY;
                     break;
                 case 105371: // Lightning Conduit dummy 2
-                    spellInfo->SetDurationIndex(39); // 1 secs
-                    spellInfo->AttributesEx5 |= SPELL_ATTR5_HIDE_DURATION;
+                    spellInfo->Duration.Duration = 1 * IN_MILLISECONDS;
+                    spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_HIDE_DURATION;
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 0;
                     break;
                 case 58423: // Relentless Strikes
                     spellInfo->Effects[EFFECT_0].SpellClassMask[1] |= 8;
                     break;
                 case 122355: // Molten Core
-                    spellInfo->StackAmount = 10;
+                    spellInfo->AuraOptions.CumulativeAura = 10;
                     break;
                 case 109145: // Demonic Fury
                     spellInfo->Effects[EFFECT_0].BasePoints = 0;
                     break;
                 case 77489: // Echo of Light
                 case 58068: // Glyph of Soul Consumption
-                    spellInfo->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
+                    spellInfo->Misc.Attributes[2] |= SPELL_ATTR2_CANT_CRIT;
                     break;
                 // Zul'Gurub: Jindo The Godbreaker
                 case 96689: // Spirit World aura
                     spellInfo->Effects[EFFECT_1].MiscValue = 2;
                     spellInfo->Effects[EFFECT_0].TargetB = TARGET_UNIT_SRC_AREA_ENEMY;
-                    spellInfo->AttributesEx3 |= SPELL_ATTR3_IGNORE_HIT_RESULT;
+                    spellInfo->Misc.Attributes[3] |= SPELL_ATTR3_IGNORE_HIT_RESULT;
                     break;
                 case 54355: // Achiev Mine Sweeper
                 case 54402:
@@ -5469,7 +5470,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].Effect = SPELL_EFFECT_APPLY_AURA;
                     spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_DUMMY;
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CASTER;
-                    spellInfo->SetDurationIndex(21);
+                    spellInfo->Duration.Duration = -1;
                     break;
                 case 77569: // Release Aberrations
                     spellInfo->Effects[EFFECT_0].TargetB = TARGET_GAMEOBJECT_SRC_AREA;
@@ -5499,14 +5500,14 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 54700:
                 case 54742:
                 case 54744:
-                    spellInfo->AttributesEx6 |= SPELL_ATTR6_CAN_TARGET_INVISIBLE;
-                    spellInfo->AttributesEx2 |= SPELL_ATTR2_CAN_TARGET_DEAD;
+                    spellInfo->Misc.Attributes[6] |= SPELL_ATTR6_CAN_TARGET_INVISIBLE;
+                    spellInfo->Misc.Attributes[2] |= SPELL_ATTR2_CAN_TARGET_DEAD;
                     break;
                 case 1784:  //Wod:stealth
                     spellInfo->Effects[EFFECT_2].BasePoints = 25;
                     break;
 				case 166216: // Wod: Q34429
-					spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(21); // -1s
+					//spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(21); // -1s
 					break;
                 case 163772: // Wod: lost scene id.
                     spellInfo->Effects[EFFECT_0].MiscValue = 801;
@@ -5526,19 +5527,19 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 // Hacks scene
                 case 139384: // Summon Wrathion Intro
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(608);
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(608);
                     break;
                 case 140097: // Summon Intro Scene
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(600); //42s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(600); //42s
                     break;
                 case 140265: // Summon Thunder King Finale
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(23); //90s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(23); //90s
                     break;
                 case 146397: // Legendary Finale
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(567); //135s
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(567); //135s
                     break;
                 case 89496: // Gnomish Gravity Well
-                    spellInfo->AttributesEx4 &= ~SPELL_ATTR4_CAST_ONLY_IN_OUTLAND;
+                    spellInfo->Misc.Attributes[4] &= ~SPELL_ATTR4_CAST_ONLY_IN_OUTLAND;
                     break;
                 case 100752: // Darkmoon: Using Steam Tonk Controller
                     spellInfo->Effects[0].TargetB = TARGET_DEST_DB;
@@ -5551,16 +5552,13 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TriggerSpell = 6417;
                     break;
                 case 108212: // Burst of Speed
-                    spellInfo->AttributesEx |= SPELL_ATTR1_NOT_BREAK_STEALTH;
-                    spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(35); // 4s
+                    spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_NOT_BREAK_STEALTH;
+                    //spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(35); // 4s
                     spellInfo->Effects[0].BasePoints = 70;
                     break;
                 case 122016:  // Incite
-                    spellInfo->ProcCharges = 3;
-                    spellInfo->StackAmount = 0;
-                    break;
-                case 145718:  // Gusting Bomb
-                    spellInfo->Speed = 25.f;
+                    spellInfo->AuraOptions.ProcCharges = 3;
+                    spellInfo->AuraOptions.CumulativeAura = 0;
                     break;
                 case 153238:
                     spellInfo->Effects[EFFECT_0].ApplyAuraPeriod = 2500;
@@ -5573,10 +5571,10 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Effects[EFFECT_0].TargetA = TARGET_UNIT_CASTER;
                     break;
                 case 6196:  // Far Sight
-                    spellInfo->Attributes |= SPELL_ATTR0_INDOORS_ONLY;
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_INDOORS_ONLY;
                     break;
                 case 52042: // Healing Tide
-                    spellInfo->AttributesEx &= ~SPELL_ATTR1_CANT_TARGET_SELF;
+                    spellInfo->Misc.Attributes[1] &= ~SPELL_ATTR1_CANT_TARGET_SELF;
                     break;
                 case 157154:
                     spellInfo->Effects[EFFECT_0].BasePoints = 0;

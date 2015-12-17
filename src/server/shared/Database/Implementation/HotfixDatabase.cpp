@@ -517,10 +517,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_SPELL_LEARN_SPELL, "SELECT ID, LearnSpellID, SpellID, OverridesSpellID FROM spell_learn_spell ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellMisc.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_MISC, "SELECT ID, Attributes, AttributesEx, AttributesEx2, AttributesEx3, AttributesEx4, AttributesEx5, "
-        "AttributesEx6, AttributesEx7, AttributesEx8, AttributesEx9, AttributesEx10, AttributesEx11, AttributesEx12, AttributesEx13, "
-        "CastingTimeIndex, DurationIndex, RangeIndex, Speed, SpellVisualID1, SpellVisualID2, SpellIconID, ActiveIconID, SchoolMask, "
-        "MultistrikeSpeedMod FROM spell_misc ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_MISC, "SELECT ID, Attributes1, Attributes2, Attributes3, Attributes4, Attributes5, Attributes6, Attributes7, "
+        "Attributes8, Attributes9, Attributes10, Attributes11, Attributes12, Attributes13, Attributes14, Speed, MultistrikeSpeedMod, "
+        "CastingTimeIndex, DurationIndex, RangeIndex, SpellIconID, ActiveIconID, SchoolMask FROM spell_misc ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellPower.db2
     PrepareStatement(HOTFIX_SEL_SPELL_POWER, "SELECT ID, SpellID, PowerIndex, PowerType, PowerCost, PowerCostPerLevel, PowerCostPerSecond, "
@@ -664,16 +663,16 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY Coefficient DESC", CONNECTION_SYNCH);
 
     // SpellDuration.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_DURATION, "SELECT Duration, MaxDuration, DurationPerLevel, ID FROM spell_duration ORDER BY Duration DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_DURATION, "SELECT ID, Duration, MaxDuration, DurationPerLevel FROM spell_duration ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellCooldowns.db2
     PrepareStatement(HOTFIX_SEL_SPELL_COOLDOWNS, "SELECT SpellID, CategoryRecoveryTime, RecoveryTime, StartRecoveryTime, DifficultyID"
         " FROM spell_cooldowns ORDER BY SpellID DESC", CONNECTION_SYNCH);
 
     // SpellCategory.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_CATEGORY, "SELECT Name, ChargeRecoveryTime, Flags, UsesPerWeek, MaxCharges, ID FROM spell_category"
-        " ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_CATEGORY, "SELECT Name, Name_lang FROM spell_category_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_CATEGORY, "SELECT ID, Name, ChargeRecoveryTime, Flags, UsesPerWeek, MaxCharges FROM spell_category"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_CATEGORY, "SELECT ID, Name_lang FROM spell_category_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellCategories.db2
     PrepareStatement(HOTFIX_SEL_SPELL_CATEGORIES, "SELECT SpellID, Category, StartRecoveryCategory, ChargeCategory, DifficultyID, DefenseType, "

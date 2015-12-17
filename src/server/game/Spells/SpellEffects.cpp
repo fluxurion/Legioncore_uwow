@@ -507,7 +507,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
             case SPELLFAMILY_WARLOCK:
             {
                 // Incinerate Rank 1 & 2
-                if ((m_spellInfo->SpellFamilyFlags[1] & 0x000040) && m_spellInfo->SpellIconID == 2128)
+                if ((m_spellInfo->SpellFamilyFlags[1] & 0x000040) && m_spellInfo->Misc.SpellIconID == 2128)
                 {
                     // Incinerate does more dmg (dmg/6) if the target have Immolate debuff.
                     // Check aura state for speed but aura state set not only for Immolate spell
@@ -627,7 +627,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                 }
 
                 // Gore
-                if (m_spellInfo->SpellIconID == 1578)
+                if (m_spellInfo->Misc.SpellIconID == 1578)
                 {
                     if (m_caster->HasAura(57627))           // Charge 6 sec post-affect
                         damage *= 2;
@@ -1518,7 +1518,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
                 if (!spell)
                     return;
 
-                for (uint32 j = 0; j < spell->StackAmount; ++j)
+                for (uint32 j = 0; j < spell->AuraOptions.CumulativeAura; ++j)
                     m_caster->CastSpell(unitTarget, spell->Id, true);
                 return;
             }
@@ -2449,7 +2449,7 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
 
     uint32 divider = 1;
 
-    if (m_spellInfo->AttributesEx11 & SPELL_ATTR11_UNK4)
+    if (m_spellInfo->HasAttribute(SPELL_ATTR11_UNK4))
     {
         bool resetHeal = true;
         Unit::AuraEffectList const& mTotalAuraList = m_caster->GetAuraEffectsByType(SPELL_AURA_DUMMY);
@@ -2856,7 +2856,7 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
 
     Powers power = Powers(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() != power && !(m_spellInfo->AttributesEx7 & SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() != power && !(m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER)))
         return;
 
     if (unitTarget->GetMaxPower(power) == 0)
@@ -3032,7 +3032,7 @@ void Spell::EffectEnergizePct(SpellEffIndex effIndex)
 
     Powers power = Powers(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->GetMaxPower(power) == 0 && !(m_spellInfo->AttributesEx7 & SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->GetMaxPower(power) == 0 && !(m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER)))
         return;
 
     uint32 maxPower = unitTarget->GetMaxPower(power);
@@ -3717,7 +3717,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     Unit::AuraEffectList const& mTotalAuraList = m_caster->GetAuraEffectsByType(SPELL_AURA_DUMMY);
     for (Unit::AuraEffectList::const_iterator i = mTotalAuraList.begin(); i != mTotalAuraList.end(); ++i)
-        if ((*i)->GetMiscValue() == 11 && (*i)->GetSpellInfo()->SpellIconID == m_spellInfo->SpellIconID)
+        if ((*i)->GetMiscValue() == 11 && (*i)->GetSpellInfo()->Misc.SpellIconID == m_spellInfo->Misc.SpellIconID)
             (*i)->SetAmount(m_spellInfo->Id);
 
     // Ok if exist some buffs for dispel try dispel it
@@ -4588,7 +4588,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
         }
 
         float weapon_total_pct = 1.0f;
-        if (m_spellInfo->SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
+        if (m_spellInfo->Misc.SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
             weapon_total_pct = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
 
         if (fixed_bonus)
@@ -6199,7 +6199,7 @@ void Spell::EffectResurrect(SpellEffIndex effIndex)
     if (target->IsRessurectRequested())       // already have one active request
         return;
 
-    if (m_spellInfo->AttributesEx8 & SPELL_ATTR8_BATTLE_RESURRECTION)
+    if (m_spellInfo->HasAttribute(SPELL_ATTR8_BATTLE_RESURRECTION))
         if (InstanceScript* instance = target->GetInstanceScript())
             instance->SetResurectSpell();
 
@@ -6564,7 +6564,7 @@ void Spell::EffectLeapBack(SpellEffIndex effIndex)
     }
 
     //1891: Disengage and Wild Charge (moonkin form)
-    m_caster->JumpTo(speedxy, speedz, m_spellInfo->SpellIconID != 1891 && m_spellInfo->Id != 102383);
+    m_caster->JumpTo(speedxy, speedz, m_spellInfo->Misc.SpellIconID != 1891 && m_spellInfo->Id != 102383);
 }
 
 void Spell::EffectQuestClear(SpellEffIndex effIndex)
@@ -6683,7 +6683,7 @@ void Spell::EffectDispelMechanic(SpellEffIndex effIndex)
     {
         Unit::AuraEffectList const& mTotalAuraList = m_caster->GetAuraEffectsByType(SPELL_AURA_DUMMY);
         for (Unit::AuraEffectList::const_iterator i = mTotalAuraList.begin(); i != mTotalAuraList.end(); ++i)
-            if ((*i)->GetMiscValue() == 11 && (*i)->GetSpellInfo()->SpellIconID == m_spellInfo->SpellIconID)
+            if ((*i)->GetMiscValue() == 11 && (*i)->GetSpellInfo()->Misc.SpellIconID == m_spellInfo->Misc.SpellIconID)
                 (*i)->SetAmount(m_spellInfo->Id);
 
         hasPredictedDispel++; // 2 is lock
@@ -6842,7 +6842,7 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
     if (m_targets.HasDst())
         destTarget->GetPosition(fx, fy, fz);
     //FIXME: this can be better check for most objects but still hack
-    else if (m_spellInfo->GetEffect(effIndex, m_diffMode)->HasRadius() && m_spellInfo->Speed == 0)
+    else if (m_spellInfo->GetEffect(effIndex, m_diffMode)->HasRadius() && m_spellInfo->Misc.Speed == 0)
     {
         float dis = m_spellInfo->GetEffect(effIndex, m_diffMode)->CalcRadius(m_originalCaster);
         m_caster->GetClosePoint(fx, fy, fz, DEFAULT_WORLD_OBJECT_SIZE, dis);
@@ -7089,13 +7089,13 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
         if ((aura->GetSpellInfo()->GetDispelMask()) & dispelMask)
         {
             // Need check for passive? this
-            if (!aurApp->IsPositive() || aura->IsPassive() || aura->GetSpellInfo()->AttributesEx4 & SPELL_ATTR4_NOT_STEALABLE)
+            if (!aurApp->IsPositive() || aura->IsPassive() || aura->GetSpellInfo()->HasAttribute(SPELL_ATTR4_NOT_STEALABLE))
                 continue;
 
             // The charges / stack amounts don't count towards the total number of auras that can be dispelled.
             // Ie: A dispel on a target with 5 stacks of Winters Chill and a Polymorph has 1 / (1 + 1) -> 50% chance to dispell
             // Polymorph instead of 1 / (5 + 1) -> 16%.
-            bool dispel_charges = (aura->GetSpellInfo()->AttributesEx7 & SPELL_ATTR7_DISPEL_CHARGES) != 0;
+            bool dispel_charges = (aura->GetSpellInfo()->HasAttribute(SPELL_ATTR7_DISPEL_CHARGES)) != 0;
             uint8 charges = dispel_charges ? aura->GetCharges() : aura->GetStackAmount();
             if (charges > 0)
                 steal_list.push_back(std::make_pair(aura, charges));
@@ -7603,7 +7603,7 @@ void Spell::EffectCastButtons(SpellEffIndex effIndex)
         if (!p_caster->HasSpell(spell_id) || p_caster->HasSpellCooldown(spell_id))
             continue;
 
-        if (!(spellInfo->AttributesEx7 & SPELL_ATTR7_SUMMON_TOTEM))
+        if (!(spellInfo->HasAttribute(SPELL_ATTR7_SUMMON_TOTEM)))
             continue;
 
         int32 cost = spellInfo->CalcPowerCost(m_caster, spellInfo->GetSchoolMask());

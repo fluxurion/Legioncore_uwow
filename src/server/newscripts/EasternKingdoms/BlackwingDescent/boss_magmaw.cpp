@@ -364,7 +364,7 @@ public:
                 if (SpellInfo* spell = GET_SPELL(SPELL_MASSIVE_CRASH_DUMMY))
                 {
                     spell->Effects[0].Effect = 0;
-                    spell->SetDurationIndex(9);
+                    spell->Duration.Duration = 30 * IN_MILLISECONDS;
                 }
             }
             else
@@ -372,7 +372,7 @@ public:
                 if (SpellInfo* spell = GET_SPELL(SPELL_MASSIVE_CRASH_DUMMY))
                 {
                     spell->Effects[0].Effect = 3;
-                    spell->SetDurationIndex(32);
+                    spell->Duration.Duration = 6 * IN_MILLISECONDS;
                 }
             }
         }

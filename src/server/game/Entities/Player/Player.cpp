@@ -1638,13 +1638,13 @@ void Player::Update(uint32 p_time)
 
                         if (SpellInfo const* _spellInfo = (*itr)->GetSpellInfo())
                         {
-                            canCancel = !(_spellInfo->Attributes & SPELL_ATTR0_CANT_CANCEL);
+                            canCancel = !(_spellInfo->HasAttribute(SPELL_ATTR0_CANT_CANCEL));
                             auraId = _spellInfo->Id;
                         }
                     }
 
                     if (SpellInfo const* triggerSpellInfo = sSpellMgr->GetSpellInfo(triggerSpellId))
-                        isRangedSpell = !(triggerSpellInfo->AttributesEx2 & SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS);
+                        isRangedSpell = !(triggerSpellInfo->HasAttribute(SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS));
                 }
 
                 if (!isWithinMeleeRange && !isRangedSpell)
@@ -1701,13 +1701,13 @@ void Player::Update(uint32 p_time)
 
                         if (SpellInfo const* _spellInfo = (*itr)->GetSpellInfo())
                         {
-                            canCancel = !(_spellInfo->Attributes & SPELL_ATTR0_CANT_CANCEL);
+                            canCancel = !(_spellInfo->HasAttribute(SPELL_ATTR0_CANT_CANCEL));
                             auraId = _spellInfo->Id;
                         }
                     }
 
                     if (SpellInfo const* triggerSpellInfo = sSpellMgr->GetSpellInfo(triggerSpellId))
-                        isRangedSpell = !(triggerSpellInfo->AttributesEx2 & SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS);
+                        isRangedSpell = !(triggerSpellInfo->HasAttribute(SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS));
                 }
 
                 if (!isWithinMeleeRange && !isRangedSpell)
@@ -4446,7 +4446,7 @@ bool Player::IsNeedCastPassiveSpellAtLearn(SpellInfo const* spellInfo) const
     // talent dependent passives activated at form apply have proper stance data
     ShapeshiftForm form = GetShapeshiftForm();
     bool need_cast = (!spellInfo->Stances || (form && (spellInfo->Stances & (1 << (form - 1)))) ||
-        (!form && (spellInfo->AttributesEx2 & SPELL_ATTR2_NOT_NEED_SHAPESHIFT)));
+        (!form && (spellInfo->HasAttribute(SPELL_ATTR2_NOT_NEED_SHAPESHIFT))));
 
     //Check CasterAuraStates
     return need_cast && (!spellInfo->CasterAuraState || HasAuraState(AuraStateType(spellInfo->CasterAuraState)));
@@ -9397,7 +9397,7 @@ bool Player::CheckItemEquipDependentSpell(SpellInfo const* spellInfo, ObjectGuid
                             if (spellInfo->EquippedItemSubClassMask & (1 << checkItemTemplate->SubClass))
                                 resemblanceMask |= (1 << checkItemTemplate->GetInventoryType());
 
-            if (spellInfo->AttributesEx8 & SPELL_ATTR8_ARMOR_SPECIALIZATION)
+            if (spellInfo->HasAttribute(SPELL_ATTR8_ARMOR_SPECIALIZATION))
             {
                 if ((resemblanceMask | (1 << INVTYPE_ROBE)) == spellInfo->EquippedItemInventoryTypeMask ||
                     (resemblanceMask | (1 << INVTYPE_CHEST)) == spellInfo->EquippedItemInventoryTypeMask)
@@ -9653,7 +9653,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
             if (m_extraAttacks && spellInfo->HasEffect(SPELL_EFFECT_ADD_EXTRA_ATTACKS))
                 return;
 
-            float chance = (float)spellInfo->ProcChance;
+            float chance = (float)spellInfo->AuraOptions.ProcChance;
 
             if (proto->SpellPPMRate)
             {
@@ -18842,12 +18842,12 @@ void Player::_LoadAuras(PreparedQueryResult result, PreparedQueryResult resultEf
             }
 
             // prevent wrong values of remaincharges
-            if (spellInfo->ProcCharges)
+            if (spellInfo->AuraOptions.ProcCharges)
             {
                 // we have no control over the order of applying auras and modifiers allow auras
                 // to have more charges than value in SpellInfo
                 if (remaincharges <= 0/* || remaincharges > spellproto->procCharges*/)
-                    remaincharges = spellInfo->ProcCharges;
+                    remaincharges = spellInfo->AuraOptions.ProcCharges;
             }
             else
                 remaincharges = 0;
@@ -22638,7 +22638,7 @@ void Player::RemoveSpellMods(Spell* spell, bool casting)
             ++itr;
 
             // spellmods without aura set cannot be charged
-            if (!mod->ownerAura || !mod->ownerAura->IsUsingCharges() || mod->ownerAura->GetSpellInfo()->ProcFlags != 0)
+            if (!mod->ownerAura || !mod->ownerAura->IsUsingCharges() || mod->ownerAura->GetSpellInfo()->AuraOptions.ProcTypeMask != 0)
                 continue;
 
             // check if mod affected this spell
@@ -22646,9 +22646,9 @@ void Player::RemoveSpellMods(Spell* spell, bool casting)
             if (iterMod == spell->m_appliedMods.end())
                 continue;
 
-            if(casting && (mod->op != SPELLMOD_CASTING_TIME || !(mod->ownerAura->GetSpellInfo()->AttributesEx6 & SPELL_ATTR6_USE_SPELL_CAST_EVENT)))
+            if(casting && (mod->op != SPELLMOD_CASTING_TIME || !(mod->ownerAura->GetSpellInfo()->HasAttribute(SPELL_ATTR6_USE_SPELL_CAST_EVENT))))
                 continue;
-            if(!casting && mod->op == SPELLMOD_CASTING_TIME && (mod->ownerAura->GetSpellInfo()->AttributesEx6 & SPELL_ATTR6_USE_SPELL_CAST_EVENT))
+            if(!casting && mod->op == SPELLMOD_CASTING_TIME && (mod->ownerAura->GetSpellInfo()->HasAttribute(SPELL_ATTR6_USE_SPELL_CAST_EVENT)))
                 continue;
 
             // remove from list
@@ -22668,10 +22668,9 @@ void Player::DropModCharge(SpellModifier* mod, Spell* spell)
     if(!spellInfo)
         return;
 
-    if(spellInfo->ProcFlags != 0)
+    if(spellInfo->AuraOptions.ProcTypeMask && spell)
     {
-        if(spell)
-            spell->AddSpellModId(mod->spellId);
+        spell->AddSpellModId(mod->spellId);
         return;
     }
 
@@ -23124,7 +23123,7 @@ void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         }
 
         // Not send cooldown for this spells
-        if (spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
+        if (spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
             continue;
 
         if (spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY || spellInfo->PreventionType == SPELL_PREVENTION_TYPE_NONE)
@@ -23886,7 +23885,7 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     double catrecTime;
     double recTime;
 
-    if (!spellInfo->IsChanneled() && (spellInfo->AttributesEx8 & SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY))
+    if (!spellInfo->IsChanneled() && (spellInfo->HasAttribute(SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY)))
         rec *= GetFloatValue(UNIT_FIELD_MOD_SPELL_HASTE);
 
     // overwrite time for selected category
@@ -23908,7 +23907,7 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
         if (G3D::fuzzyGt(rec, 0.0))
             ApplySpellMod(spellInfo->Id, SPELLMOD_COOLDOWN, rec, spell);
 
-        if (G3D::fuzzyGt(catrec, 0.0) && !(spellInfo->AttributesEx6 & SPELL_ATTR6_IGNORE_CATEGORY_COOLDOWN_MODS))
+        if (G3D::fuzzyGt(catrec, 0.0) && !(spellInfo->HasAttribute(SPELL_ATTR6_IGNORE_CATEGORY_COOLDOWN_MODS)))
             ApplySpellMod(spellInfo->Id, SPELLMOD_COOLDOWN, catrec, spell);
 
         AuraEffectList const& spellCooldownByHaste = GetAuraEffectsByType(SPELL_AURA_MOD_SPELL_COOLDOWN_BY_HASTE);
@@ -25777,8 +25776,7 @@ bool Player::HasItemFitToSpellRequirements(SpellInfo const* spellInfo, Item cons
 bool Player::CanNoReagentCast(SpellInfo const* spellInfo) const
 {
     // don't take reagents for spells with SPELL_ATTR5_NO_REAGENT_WHILE_PREP
-    if (spellInfo->AttributesEx5 & SPELL_ATTR5_NO_REAGENT_WHILE_PREP &&
-        HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION))
+    if (spellInfo->HasAttribute(SPELL_ATTR5_NO_REAGENT_WHILE_PREP) && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION))
         return true;
 
     // Check no reagent use mask
@@ -29366,7 +29364,7 @@ bool Player::GetRPPMProcChance(double &cooldown, float RPPM, const SpellInfo* sp
     float multiplier = std::max(1.0f, 1.0f + (float(timeSinceLastSuccessfulProc / averageProcInterval) - 1.5f) * 3.0f);
     float chance = multiplier * RPPM * HasteOrCritMod * (timeSinceLastChanceToProc) / 60.0f * 100.0f;
 
-    cooldown = spellProto->procTimeRec / 1000.0;
+    cooldown = spellProto->AuraOptions.ProcCategoryRecovery / 1000.0;
 
     SetLastChanceToProc(spellProto->Id, preciseTime);
 
@@ -29559,7 +29557,7 @@ void Player::UpdateSpellHastDurationRecovery()
     //         uint32 SpellId = itr->first;
 
     if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(/*SpellId*/116847))
-        //             if (!spellInfo->IsChanneled() && (spellInfo->AttributesEx8 & SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY) && spellInfo->RecoveryTime == spellInfo->GetMaxDuration())
+        //             if (!spellInfo->IsChanneled() && (spellInfo->HasAttribute(SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY)) && spellInfo->RecoveryTime == spellInfo->GetMaxDuration())
         //             {
         _mask |= spellInfo->SpellFamilyFlags;
     //             }

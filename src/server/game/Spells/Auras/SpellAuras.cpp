@@ -178,7 +178,7 @@ void AuraApplication::_InitFlags(Unit* caster, uint32 effMask)
         _flags |= positiveFound ? AFLAG_POSITIVE : AFLAG_NEGATIVE;
     }
 
-    if (aura->GetSpellInfo()->AttributesEx8 & SPELL_ATTR8_AURA_SEND_AMOUNT)
+    if (aura->GetSpellInfo()->HasAttribute(SPELL_ATTR8_AURA_SEND_AMOUNT))
         _flags |= AFLAG_SCALABLE;
 }
 
@@ -220,7 +220,7 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
     auraData.SpellID = overrideAura ? overrideAura : aura->GetId();
     auraData.SpellXSpellVisualID = aura->GetSpellInfo()->GetSpellXSpellVisualId(_target->GetMap()->GetDifficultyID());
     auraData.Flags = GetFlags();
-    if (aura->GetMaxDuration() > 0 && !(aura->GetSpellInfo()->AttributesEx5 & SPELL_ATTR5_HIDE_DURATION))
+    if (aura->GetMaxDuration() > 0 && !(aura->GetSpellInfo()->HasAttribute(SPELL_ATTR5_HIDE_DURATION)))
         auraData.Flags |= AFLAG_DURATION;
 
     if (auraData.Flags & AFLAG_SCALABLE)
@@ -231,7 +231,7 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
 
     // send stack amount for aura which could be stacked (never 0 - causes incorrect display) or charges
     // stack amount has priority over charges (checked on retail with spell 50262)
-    auraData.Applications = uint8((aura->GetStackAmount() > 1 || !aura->GetSpellInfo()->ProcCharges) ? ((!aura->GetStackAmount() && aura->GetCharges()) ? aura->GetCharges() : aura->GetStackAmount()) : aura->GetCharges());
+    auraData.Applications = uint8((aura->GetStackAmount() > 1 || !aura->GetSpellInfo()->AuraOptions.ProcCharges) ? ((!aura->GetStackAmount() && aura->GetCharges()) ? aura->GetCharges() : aura->GetStackAmount()) : aura->GetCharges());
     if (auraData.Flags & AFLAG_NOCASTER)
         auraData.CastUnit = aura->GetCasterGUID();
 
@@ -664,20 +664,17 @@ m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAre
     m_isUsingCharges = m_procCharges != 0;
 
     //For scaling trinket
-    if((m_spellInfo->AttributesEx11 & SPELL_ATTR11_SEND_ITEM_LEVEL) && castItem)
+    if((m_spellInfo->HasAttribute(SPELL_ATTR11_SEND_ITEM_LEVEL)) && castItem)
         m_casterLevel = castItem->GetItemLevel();
 
     if (castItem && castItem->GetLevelBeforeCap() && castItem->GetItemLevel() > 650) // 650 for Wod arena season 1 and 690 for Wod arena season 2
         m_inArenaNerf = true;
 
-    if (SpellScalingEntry const* _scaling = m_spellInfo->GetSpellScaling())
-    {
-        if (_scaling->ScalesFromItemLevel && castItem)
-            m_casterLevel = castItem->GetItemLevel();
+    if (m_spellInfo->Scaling.ScalesFromItemLevel && castItem)
+        m_casterLevel = castItem->GetItemLevel();
 
-        if(_scaling->MaxScalingLevel && caster && caster->getLevel() > _scaling->MaxScalingLevel)
-            m_casterLevel = _scaling->MaxScalingLevel;
-    }
+    if (m_spellInfo->Scaling.MaxScalingLevel && caster && caster->getLevel() > m_spellInfo->Scaling.MaxScalingLevel)
+        m_casterLevel = m_spellInfo->Scaling.MaxScalingLevel;
 }
 
 void Aura::_InitEffects(uint32 effMask, Unit* caster, int32 *baseAmount)
@@ -741,7 +738,7 @@ void Aura::_ApplyForTarget(Unit* target, Unit* caster, AuraApplication * auraApp
     // set infinity cooldown state for spells
     if (caster && caster->GetTypeId() == TYPEID_PLAYER)
     {
-        if (m_spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
+        if (m_spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
         {
             Item* castItem = m_castItemGuid ? caster->ToPlayer()->GetItemByGuid(m_castItemGuid) : NULL;
             caster->ToPlayer()->AddSpellAndCategoryCooldowns(m_spellInfo, castItem ? castItem->GetEntry() : 0, NULL, true);
@@ -775,7 +772,7 @@ void Aura::_UnapplyForTarget(Unit* target, Unit* caster, AuraApplication * auraA
     // reset cooldown state for spells
     if (caster && caster->GetTypeId() == TYPEID_PLAYER)
     {
-        if (GetSpellInfo()->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE && !(GetSpellInfo()->Id == 34477 && caster->HasAura(56829) && (caster->GetPetGUID() == target->GetGUID())))
+        if (GetSpellInfo()->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE) && !(GetSpellInfo()->Id == 34477 && caster->HasAura(56829) && (caster->GetPetGUID() == target->GetGUID())))
             // note: item based cooldowns and cooldown spell mods with charges ignored (unknown existed cases)
             caster->ToPlayer()->SendCooldownEvent(GetSpellInfo());
     }
@@ -1062,7 +1059,7 @@ void Aura::Update(uint32 diff, Unit* caster)
 int32 Aura::CalcMaxDuration(Unit* caster)
 {
     Player* modOwner = NULL;
-    int32 maxDuration;
+    int32 maxDuration = m_spellInfo->Duration.MaxDuration;
 
     if (caster)
     {
@@ -1072,7 +1069,7 @@ int32 Aura::CalcMaxDuration(Unit* caster)
     else
         maxDuration = m_spellInfo->GetDuration();
 
-    if (IsPassive() && !m_spellInfo->DurationEntry)
+    if (IsPassive() && !m_spellInfo->Duration.MaxDuration)
         maxDuration = -1;
 
     CallScriptCalcMaxDurationHandlers(maxDuration);
@@ -1107,7 +1104,7 @@ void Aura::RefreshDuration(bool /*recalculate*/)
     Unit* caster = GetCaster();
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
         if (HasEffect(i))
-            GetEffect(i)->CalculatePeriodic(caster, (GetSpellInfo()->AttributesEx5 & SPELL_ATTR5_START_PERIODIC_AT_APPLY), false);
+            GetEffect(i)->CalculatePeriodic(caster, (GetSpellInfo()->HasAttribute(SPELL_ATTR5_START_PERIODIC_AT_APPLY)), false);
 
     SpellPowerEntry power;
     if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), power))
@@ -1135,7 +1132,7 @@ void Aura::SetCharges(uint8 charges)
 
 uint8 Aura::CalcMaxCharges(Unit* caster, bool add) const
 {
-    uint32 maxProcCharges = m_spellInfo->ProcCharges;
+    uint32 maxProcCharges = m_spellInfo->AuraOptions.ProcCharges;
     if (SpellProcEntry const* procEntry = sSpellMgr->GetSpellProcEntry(GetId()))
         if(add)
             maxProcCharges = procEntry->modcharges;
@@ -1150,10 +1147,10 @@ uint8 Aura::CalcMaxCharges(Unit* caster, bool add) const
 
 bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
 {
-    if (IsUsingCharges() || (m_spellInfo->ProcFlags & (PROC_FLAG_DONE_SPELL_MAGIC_DMG_POS_NEG)))
+    if (IsUsingCharges() || (m_spellInfo->AuraOptions.ProcTypeMask & (PROC_FLAG_DONE_SPELL_MAGIC_DMG_POS_NEG)))
     {
         //if aura not modify and have stack and have charges aura use stack for drop stack visual
-        if(m_spellInfo->StackAmount > 1 && GetId() != 114637 && GetId() != 128863 && GetId() != 88819)
+        if(m_spellInfo->AuraOptions.CumulativeAura > 1 && GetId() != 114637 && GetId() != 128863 && GetId() != 88819)
         {
             bool _useStack = true;
             for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
@@ -1161,7 +1158,7 @@ bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
                     if (aurEff->GetAuraType() == SPELL_AURA_ADD_FLAT_MODIFIER || aurEff->GetAuraType() == SPELL_AURA_ADD_PCT_MODIFIER)
                         _useStack = false;
 
-            if(_useStack || (m_spellInfo->ProcFlags & (PROC_FLAG_DONE_SPELL_MAGIC_DMG_POS_NEG)) || GetId() == 122355)
+            if(_useStack || (m_spellInfo->AuraOptions.ProcTypeMask & (PROC_FLAG_DONE_SPELL_MAGIC_DMG_POS_NEG)) || GetId() == 122355)
             {
                 ModStackAmount(num);
                 return false;
@@ -1186,7 +1183,7 @@ bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
     return false;
 }
 
-void Aura::SetStackAmount(uint8 stackAmount)
+void Aura::SetStackAmount(uint16 stackAmount)
 {
     m_stackAmount = stackAmount;
     Unit* caster = GetCaster();
@@ -1209,10 +1206,10 @@ void Aura::SetStackAmount(uint8 stackAmount)
     SetNeedClientUpdateForTargets();
 }
 
-bool Aura::ModStackAmount(int32 num, AuraRemoveMode removeMode)
+bool Aura::ModStackAmount(int16 num, AuraRemoveMode removeMode)
 {
-    int32 stackAmount = m_stackAmount + num;
-    int32 maxStackAmount = m_spellInfo->StackAmount;
+    int16 stackAmount = m_stackAmount + num;
+    int16 maxStackAmount = m_spellInfo->AuraOptions.CumulativeAura;
 
     if (Unit* caster = GetCaster())
         if (Player* modOwner = caster->GetSpellModOwner())
@@ -1222,7 +1219,7 @@ bool Aura::ModStackAmount(int32 num, AuraRemoveMode removeMode)
         }
 
     // limit the stack amount (only on stack increase, stack amount may be changed manually)
-    if ((num > 0) && (stackAmount > int32(maxStackAmount)))
+    if ((num > 0) && (stackAmount > maxStackAmount))
     {
         // not stackable aura - set stack amount to 1
         if (!maxStackAmount)
@@ -1268,7 +1265,7 @@ bool Aura::ModStackAmount(int32 num, AuraRemoveMode removeMode)
 
 void Aura::SetMaxStackAmount()
 {
-    int32 maxStackAmount = m_spellInfo->StackAmount;
+    int32 maxStackAmount = m_spellInfo->AuraOptions.CumulativeAura;
 
     if (Unit* caster = GetCaster())
         if (Player* modOwner = caster->GetSpellModOwner())
@@ -1970,7 +1967,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 if (GetSpellInfo()->SpellFamilyFlags[0] & 0x01000000)
                 {
                     // Polymorph Sound - Sheep && Penguin
-                    if (GetSpellInfo()->SpellIconID == 82 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12978)
+                    if (GetSpellInfo()->Misc.SpellIconID == 82 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12978)
                     {
                         // Glyph of the Penguin
                         if (caster->HasAura(52648))
@@ -2277,7 +2274,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             break;
         case SPELLFAMILY_DRUID:
             // Enrage
-            if ((GetSpellInfo()->SpellFamilyFlags[0] & 0x80000) && GetSpellInfo()->SpellIconID == 961)
+            if ((GetSpellInfo()->SpellFamilyFlags[0] & 0x80000) && GetSpellInfo()->Misc.SpellIconID == 961)
             {
                 if (target->HasAura(70726)) // Item - Druid T10 Feral 4P Bonus
                     if (apply)
@@ -2479,7 +2476,7 @@ bool Aura::CanStackWith(Aura const* existingAura) const
         if (existingAura->GetSpellInfo()->IsChanneled())
             return true;
 
-        if (m_spellInfo->AttributesEx3 & SPELL_ATTR3_STACK_FOR_DIFF_CASTERS)
+        if (m_spellInfo->HasAttribute(SPELL_ATTR3_STACK_FOR_DIFF_CASTERS))
             return true;
 
         // check same periodic auras
@@ -3151,7 +3148,7 @@ void UnitAura::FillTargetMap(std::map<Unit*, uint32> & targets, Unit* caster)
                     }
                     case SPELL_EFFECT_APPLY_AURA_ON_PET_OR_SELF:
                     {
-                        if (!(m_spellInfo->AttributesEx & SPELL_ATTR1_CANT_TARGET_SELF))
+                        if (!(m_spellInfo->HasAttribute(SPELL_ATTR1_CANT_TARGET_SELF)))
                             targetList.push_back(GetUnitOwner());
                         if (Unit* pet = GetUnitOwner()->GetGuardianPet())
                             if (GetUnitOwner()->IsWithinDistInMap(pet, radius))
@@ -3169,7 +3166,7 @@ void UnitAura::FillTargetMap(std::map<Unit*, uint32> & targets, Unit* caster)
                 existing->second |= 1<<effIndex;
             else
             {
-                if (m_spellInfo->AttributesEx7 & SPELL_ATTR7_CONSOLIDATED_RAID_BUFF)
+                if (m_spellInfo->HasAttribute(SPELL_ATTR7_CONSOLIDATED_RAID_BUFF))
                     if ((*itr)->GetTypeId() != TYPEID_PLAYER && (*itr) != caster)
                         if ((*itr)->GetOwner() && (*itr)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
                             continue;
@@ -3241,9 +3238,9 @@ void Aura::SetAuraTimer(int32 time, ObjectGuid guid)
 
 uint32 Aura::CalcAgonyTickDamage(uint32 damage)
 {
-    uint8 stack = GetStackAmount();
+    uint16 stack = GetStackAmount();
 
-    if (stack < GetSpellInfo()->StackAmount)
+    if (stack < GetSpellInfo()->AuraOptions.CumulativeAura)
         if (AuraEffect* eff = GetEffect(EFFECT_0))
         {
             m_stackAmount = stack + 1;

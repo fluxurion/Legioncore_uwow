@@ -1195,17 +1195,17 @@ bool AuraScript::DropCharge(AuraRemoveMode removeMode)
     return m_aura->DropCharge(removeMode);
 }
 
-uint8 AuraScript::GetStackAmount() const
+uint16 AuraScript::GetStackAmount() const
 {
     return m_aura->GetStackAmount();
 }
 
-void AuraScript::SetStackAmount(uint8 num)
+void AuraScript::SetStackAmount(uint16 num)
 {
     m_aura->SetStackAmount(num);
 }
 
-bool AuraScript::ModStackAmount(int32 num, AuraRemoveMode removeMode)
+bool AuraScript::ModStackAmount(int16 num, AuraRemoveMode removeMode)
 {
     return m_aura->ModStackAmount(num, removeMode);
 }

@@ -239,7 +239,7 @@ SpellInfo const* ScriptedAI::SelectSpell(Unit* target, uint32 school, uint32 mec
             continue;
 
         //Check for school if specified
-        if (school && (tempSpell->SchoolMask & school) == 0)
+        if (school && (tempSpell->Misc.SchoolMask & school) == 0)
             continue;
 
         //Check for spell mechanic if specified
@@ -564,7 +564,7 @@ void BossAI::_JustDied()
                 for (SpellCooldowns::const_iterator itr = cd_list.begin(); itr != cd_list.end(); ++itr)
                 {
                     SpellInfo const* spell = sSpellMgr->GetSpellInfo(itr->first);
-                    if (spell && spell->AttributesEx5 & SPELL_ATTR5_UNK8 && spell->AttributesEx10 & SPELL_ATTR10_UNK13)
+                    if (spell && spell->HasAttribute(SPELL_ATTR5_UNK8) && spell->HasAttribute(SPELL_ATTR10_UNK13))
                         player->RemoveSpellCooldown(itr->first, true);
                 }
 
@@ -572,7 +572,7 @@ void BossAI::_JustDied()
                 for (Unit::AuraApplicationMap::iterator itr = Auras.begin(); itr != Auras.end();)
                 {
                     SpellInfo const* aura = itr->second->GetBase()->GetSpellInfo();
-                    if (aura && aura->Attributes & 0x24000000 && aura->AttributesEx5 & 0x00000004)
+                    if (aura && aura->Misc.Attributes[0] & 0x24000000 && aura->HasAttribute(SPELL_ATTR5_UNK2))
                         player->RemoveAura(itr);
                     else
                         ++itr;

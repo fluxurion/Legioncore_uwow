@@ -1196,10 +1196,10 @@ void Pet::_LoadAuras(uint32 timediff)
             }
 
             // prevent wrong values of remaincharges
-            if (spellInfo->ProcCharges)
+            if (spellInfo->AuraOptions.ProcCharges)
             {
-                if (remaincharges <= 0 || remaincharges > spellInfo->ProcCharges)
-                    remaincharges = spellInfo->ProcCharges;
+                if (remaincharges <= 0 || remaincharges > spellInfo->AuraOptions.ProcCharges)
+                    remaincharges = spellInfo->AuraOptions.ProcCharges;
             }
             else
                 remaincharges = 0;
@@ -2064,7 +2064,7 @@ void Pet::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
             continue;
 
         // Not send cooldown for this spells
-        if (spellInfo->Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE)
+        if (spellInfo->HasAttribute(SPELL_ATTR0_DISABLED_WHILE_ACTIVE))
             continue;
 
         if (spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)

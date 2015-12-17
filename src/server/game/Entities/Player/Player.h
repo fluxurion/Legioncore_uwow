@@ -3777,7 +3777,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
         SpellInfo const* affectSpell = sSpellMgr->GetSpellInfo(mod->spellId);
         if(!affectSpell)
             continue;
-        if((affectSpell->Attributes & SPELL_ATTR0_ONLY_STEALTHED) && !HasStealthAura())
+        if((affectSpell->HasAttribute(SPELL_ATTR0_ONLY_STEALTHED)) && !HasStealthAura())
             continue;
 
         //Don`t moded value if allready max moded

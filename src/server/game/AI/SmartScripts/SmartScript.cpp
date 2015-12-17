@@ -2745,7 +2745,7 @@ void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, ui
             if (!spell)
                 return;
             if ((!e.event.spellHit.spell || spell->Id == e.event.spellHit.spell) &&
-                (!e.event.spellHit.school || (spell->SchoolMask & e.event.spellHit.school)))
+                (!e.event.spellHit.school || (spell->Misc.SchoolMask & e.event.spellHit.school)))
                 {
                     ProcessAction(e, unit, 0, 0, bvar, spell);
                     RecalcTimer(e, e.event.spellHit.cooldownMin, e.event.spellHit.cooldownMax);

@@ -1837,7 +1837,7 @@ class spell_gen_break_shield: public SpellScriptLoader
                                 if (Aura* aura = itr->second->GetBase())
                                 {
                                     SpellInfo const* auraInfo = aura->GetSpellInfo();
-                                    if (auraInfo && auraInfo->SpellIconID == 2007 && aura->HasEffectType(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN))
+                                    if (auraInfo && auraInfo->Misc.SpellIconID == 2007 && aura->HasEffectType(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN))
                                     {
                                         aura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
                                         // Remove dummys from rider (Necessary for updating visual shields)
@@ -1967,7 +1967,7 @@ class spell_gen_mounted_charge: public SpellScriptLoader
                                 if (Aura* aura = itr->second->GetBase())
                                 {
                                     SpellInfo const* auraInfo = aura->GetSpellInfo();
-                                    if (auraInfo && auraInfo->SpellIconID == 2007 && aura->HasEffectType(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN))
+                                    if (auraInfo && auraInfo->Misc.SpellIconID == 2007 && aura->HasEffectType(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN))
                                     {
                                         aura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
                                         // Remove dummys from rider (Necessary for updating visual shields)
@@ -2061,7 +2061,7 @@ class spell_gen_defend : public SpellScriptLoader
                 {
                     Unit* target = GetTarget();
 
-                    for (uint8 i = 0; i < GetSpellInfo()->StackAmount; ++i)
+                    for (uint8 i = 0; i < GetSpellInfo()->AuraOptions.CumulativeAura; ++i)
                         target->RemoveAurasDueToSpell(SPELL_VISUAL_SHIELD_1 + i);
 
                     target->CastSpell(target, SPELL_VISUAL_SHIELD_1 + GetAura()->GetStackAmount() - 1, true, NULL, aurEff);
@@ -2072,7 +2072,7 @@ class spell_gen_defend : public SpellScriptLoader
 
             void RemoveVisualShields(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
-                for (uint8 i = 0; i < GetSpellInfo()->StackAmount; ++i)
+                for (uint8 i = 0; i < GetSpellInfo()->AuraOptions.CumulativeAura; ++i)
                     GetTarget()->RemoveAurasDueToSpell(SPELL_VISUAL_SHIELD_1 + i);
             }
 

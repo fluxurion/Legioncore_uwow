@@ -40,6 +40,7 @@
 #define MAX_SPELL_REAGENTS 8
 #define MAX_OUTFIT_ITEMS 24
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
+#define MaxAttributes 14
 
 #pragma pack(push, 1)
 
@@ -1393,29 +1394,15 @@ struct SpellLearnSpellEntry
 struct SpellMiscEntry
 {
     uint32      ID;                                         // 0
-    uint32      Attributes;                                 // 1
-    uint32      AttributesEx;                               // 2
-    uint32      AttributesEx2;                              // 3
-    uint32      AttributesEx3;                              // 4
-    uint32      AttributesEx4;                              // 5
-    uint32      AttributesEx5;                              // 6
-    uint32      AttributesEx6;                              // 7
-    uint32      AttributesEx7;                              // 8
-    uint32      AttributesEx8;                              // 9
-    uint32      AttributesEx9;                              // 10
-    uint32      AttributesEx10;                             // 11
-    uint32      AttributesEx11;                             // 12
-    uint32      AttributesEx12;                             // 13
-    uint32      AttributesEx13;                             // 14
-    uint32      CastingTimeIndex;                           // 15
-    uint32      DurationIndex;                              // 16
-    uint32      RangeIndex;                                 // 17
-    float       Speed;                                      // 18
-    uint32      SpellVisualID[2];                           // 19-20
-    uint32      SpellIconID;                                // 21
-    uint32      ActiveIconID;                               // 22
-    uint32      SchoolMask;                                 // 23
-    float       MultistrikeSpeedMod;                        // 24
+    uint32      Attributes[MaxAttributes];                  // 1 - 14
+    float       Speed;                                      // 15
+    float       MultistrikeSpeedMod;                        // 16
+    uint16      CastingTimeIndex;                           // 17
+    uint16      DurationIndex;                              // 18
+    uint16      RangeIndex;                                 // 19
+    uint16      SpellIconID;                                // 20
+    uint16      ActiveIconID;                               // 21
+    uint8       SchoolMask;                                 // 22
 };
 
 struct SpellPowerEntry
@@ -1809,11 +1796,10 @@ struct SpellEffectScalingEntry
 
 struct SpellDurationEntry
 {
+    uint32      ID;
     int32       Duration;                                   // 0
     int32       MaxDuration;                                // 1
     uint16      DurationPerLevel;                           // 2
-
-    uint32 ID; // temp - for compile
 };
 
 struct SpellCooldownsEntry
@@ -1827,13 +1813,12 @@ struct SpellCooldownsEntry
 
 struct SpellCategoryEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     int32       ChargeRecoveryTime;                         // 1
     uint8       Flags;                                      // 2
     uint8       UsesPerWeek;                                // 3
     uint8       MaxCharges;                                 // 4
-
-    uint32      ID; // temp - for compile
 };
 
 struct SpellCategoriesEntry

@@ -165,10 +165,10 @@ class Aura
         bool ModCharges(int32 num, AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
         bool DropCharge(AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT) { return ModCharges(-1, removeMode); }
 
-        uint8 GetStackAmount() const { return m_stackAmount; }
-        void SetStackAmount(uint8 num);
+        uint16 GetStackAmount() const { return m_stackAmount; }
+        void SetStackAmount(uint16 num);
         void SetMaxStackAmount();
-        bool ModStackAmount(int32 num, AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
+        bool ModStackAmount(int16 num, AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
 
         //Position from spell
         void AddDst(Position const* pos) { _positions.push_back(*pos); }
@@ -183,7 +183,7 @@ class Aura
         bool IsArea() const;
         bool IsPassive() const;
         bool IsDeathPersistent() const;
-        bool IsRemovedOnShapeLost(Unit* target) const { return (GetCasterGUID() == target->GetGUID() && m_spellInfo->Stances && !(m_spellInfo->AttributesEx2 & SPELL_ATTR2_NOT_NEED_SHAPESHIFT) && !(m_spellInfo->Attributes & SPELL_ATTR0_NOT_SHAPESHIFT)); }
+        bool IsRemovedOnShapeLost(Unit* target) const { return (GetCasterGUID() == target->GetGUID() && m_spellInfo->Stances && !(m_spellInfo->HasAttribute(SPELL_ATTR2_NOT_NEED_SHAPESHIFT)) && !(m_spellInfo->HasAttribute(SPELL_ATTR0_NOT_SHAPESHIFT))); }
         bool CanBeSaved() const;
         bool IsRemoved() const { return m_isRemoved; }
         bool CanBeSentToClient() const;
@@ -299,7 +299,7 @@ class Aura
 
         uint16 m_casterLevel;                                // Aura level (store caster level for correct show level dep amount)
         uint8 m_procCharges;                                // Aura charges (0 for infinite)
-        uint8 m_stackAmount;                                // Aura stack amount
+        uint16 m_stackAmount;                                // Aura stack amount
         uint8 m_diffMode;
         int32 m_customData;
 

@@ -1126,10 +1126,10 @@ class spell_mage_alter_time : public SpellScriptLoader
                         {
                             SpellInfo const* auraInfo = aura->GetSpellInfo();
 
-                            if (auraInfo->Attributes & SPELL_ATTR0_HIDDEN_CLIENTSIDE)
+                            if (auraInfo->HasAttribute(SPELL_ATTR0_HIDDEN_CLIENTSIDE))
                                 continue;
 
-                            if (auraInfo->Attributes & SPELL_ATTR0_PASSIVE)
+                            if (auraInfo->HasAttribute(SPELL_ATTR0_PASSIVE))
                                 continue;
 
                             if (aura->IsArea() && aura->GetCasterGUID() != _player->GetGUID())

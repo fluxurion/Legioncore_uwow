@@ -202,7 +202,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
     {
         // not have spell in spellbook or spell passive and not casted by client
         if ((!mover->ToPlayer()->HasActiveSpell(cast.Cast.SpellID) || spellInfo->IsPassive()) && !spellInfo->ResearchProject && cast.Cast.SpellID != 101054 && !spellInfo->HasEffect(SPELL_EFFECT_OPEN_LOCK) && !spellInfo->HasEffect(SPELL_EFFECT_LOOT_BONUS) &&
-            !(spellInfo->AttributesEx8 & SPELL_ATTR8_RAID_MARKER))
+            !(spellInfo->HasAttribute(SPELL_ATTR8_RAID_MARKER)))
         {
             if (cast.Cast.SpellID == 101603)
             {
@@ -319,7 +319,7 @@ void WorldSession::HandleCancelAura(WorldPackets::Spells::CancelAura& packet)
     if (!spellInfo)
         return;
 
-    if (spellInfo->Attributes & SPELL_ATTR0_CANT_CANCEL)
+    if (spellInfo->HasAttribute(SPELL_ATTR0_CANT_CANCEL))
         return;
 
     if (spellInfo->IsChanneled())

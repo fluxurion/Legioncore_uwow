@@ -2738,30 +2738,28 @@ CREATE TABLE `spell_learn_spell` (
 DROP TABLE IF EXISTS `spell_misc`;
 CREATE TABLE `spell_misc` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Attributes` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx2` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx3` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx4` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx5` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx6` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx7` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx8` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx9` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx10` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx11` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx12` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttributesEx13` int(10) unsigned NOT NULL DEFAULT '0',
-  `CastingTimeIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `DurationIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `RangeIndex` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes1` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes2` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes3` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes4` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes5` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes6` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes7` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes8` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes9` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes10` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes11` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes12` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes13` int(10) unsigned NOT NULL DEFAULT '0',
+  `Attributes14` int(10) unsigned NOT NULL DEFAULT '0',
   `Speed` float NOT NULL DEFAULT '0',
-  `SpellVisualID1` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellVisualID2` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellIconID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ActiveIconID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SchoolMask` int(10) unsigned NOT NULL DEFAULT '0',
   `MultistrikeSpeedMod` float NOT NULL DEFAULT '0',
+  `CastingTimeIndex` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DurationIndex` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `RangeIndex` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SpellIconID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ActiveIconID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SchoolMask` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3517,12 +3515,12 @@ CREATE TABLE `spell_effect_scaling` (
 
 DROP TABLE IF EXISTS `spell_duration`;
 CREATE TABLE `spell_duration` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Duration` int(11) NOT NULL DEFAULT '0',
   `MaxDuration` int(11) NOT NULL DEFAULT '0',
   `DurationPerLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Duration`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3546,14 +3544,14 @@ CREATE TABLE `spell_cooldowns` (
 
 DROP TABLE IF EXISTS `spell_category`;
 CREATE TABLE `spell_category` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `ChargeRecoveryTime` int(11) NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `UsesPerWeek` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `MaxCharges` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3562,11 +3560,11 @@ CREATE TABLE `spell_category` (
 
 DROP TABLE IF EXISTS `spell_category_locale`;
 CREATE TABLE `spell_category_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --

@@ -347,20 +347,6 @@ public:
     uint32 CategoryChargeRecoveryTime;
     uint32 Dispel;
     uint32 Mechanic;
-    uint32 Attributes;
-    uint32 AttributesEx;
-    uint32 AttributesEx2;
-    uint32 AttributesEx3;
-    uint32 AttributesEx4;
-    uint32 AttributesEx5;
-    uint32 AttributesEx6;
-    uint32 AttributesEx7;
-    uint32 AttributesEx8;
-    uint32 AttributesEx9;
-    uint32 AttributesEx10;
-    uint32 AttributesEx11;
-    uint32 AttributesEx12;
-    uint32 AttributesEx13;
     uint32 AttributesCu;
     uint32 Stances;
     uint32 StancesNot;
@@ -384,15 +370,9 @@ public:
     uint32 InterruptFlags;
     uint32 AuraInterruptFlags;
     uint32 ChannelInterruptFlags;
-    uint32 ProcFlags;
-    uint32 ProcChance;
-    uint32 ProcCharges;
-    uint32 procTimeRec;
-    uint32 procPerMinId;
     uint32 MaxLevel;
     uint32 BaseLevel;
     uint32 SpellLevel;
-    SpellDurationEntry const* DurationEntry;
     uint32 PowerType;
     uint32 PowerCost;
     uint32 PowerCostPerSecond;
@@ -402,8 +382,6 @@ public:
     float PowerGetPercentHp;
     uint32 RuneCostID;
     SpellRangeEntry const* RangeEntry;
-    float  Speed;
-    uint32 StackAmount;
     uint32 Totem[2];
     int32  Reagent[MAX_SPELL_REAGENTS];
     uint32 ReagentCount[MAX_SPELL_REAGENTS];
@@ -413,10 +391,7 @@ public:
     int32  EquippedItemSubClassMask;
     int32  EquippedItemInventoryTypeMask;
     uint32 TotemCategory[2];
-    uint32 SpellIconID;
-    uint32 ActiveIconID;
     char const* SpellName;
-    char const* Rank;
     uint32 MaxTargetLevel;
     uint32 CustomMaxAffectedTargets;      //only if not exist on dbc use it.
     uint32 SpellFamilyName;
@@ -424,7 +399,6 @@ public:
     uint32 DmgClass;
     uint32 PreventionType;
     int32  RequiredAreasID;
-    uint32 SchoolMask;
     uint32 SpellScalingId;
     uint32 SpellPowerId;
     uint32 ResearchProject;
@@ -443,6 +417,36 @@ public:
         int16 PerLevel;
     } CastTimes;
 
+    struct SpellMisc
+    {
+        uint32 Attributes[MaxAttributes];
+        float Speed;
+        float MultistrikeSpeedMod;
+        uint16 CastingTimeIndex;
+        uint16 DurationIndex;
+        uint16 RangeIndex;
+        uint16 SpellIconID;
+        uint16 ActiveIconID;
+        uint8 SchoolMask;
+    } Misc;
+
+    struct SpellDuration
+    {
+        int32 Duration;
+        int32 MaxDuration;
+        uint16 DurationPerLevel;
+    } Duration;
+
+    struct SpellAuraOptions
+    {
+        uint32 ProcCharges;
+        uint32 ProcTypeMask;
+        uint32 ProcCategoryRecovery;
+        uint16 CumulativeAura;
+        uint8 ProcChance;
+        uint8 SpellProcsPerMinuteID;
+    } AuraOptions;
+
     SpellEffectInfo Effects[MAX_SPELL_EFFECTS];
     SpellEffectInfoMap EffectsMap;
     SpellTargetRestrictionsMap RestrrictionsMap;
@@ -458,7 +462,6 @@ public:
 
     // struct access functions
     SpellTargetRestrictionsEntry const* GetSpellTargetRestrictions(uint16 diff) const;
-    SpellAuraOptionsEntry const* GetSpellAuraOptions() const;
     SpellAuraRestrictionsEntry const* GetSpellAuraRestrictions() const;
     SpellCastingRequirementsEntry const* GetSpellCastingRequirements() const;
     SpellCategoriesEntry const* GetSpellCategories() const;
@@ -468,14 +471,17 @@ public:
     SpellInterruptsEntry const* GetSpellInterrupts() const;
     SpellLevelsEntry const* GetSpellLevels() const;
     SpellPowerEntry const* GetSpellPower() const;
-    SpellMiscEntry const* GetSpellMisc() const;
     SpellReagentsEntry const* GetSpellReagents() const;
-    SpellScalingEntry const* GetSpellScaling() const;
     SpellShapeshiftEntry const* GetSpellShapeshift() const;
     SpellTotemsEntry const* GetSpellTotems() const;
 
     SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals);
     ~SpellInfo();
+
+    void LoadSpellMiscData();
+    void LoadSpellDurationData();
+    void LoadSpellScalingData();
+    void LoadSpellAuraOptionsData();
 
     SpellEffectInfo const* GetEffect(uint8 effect, uint8 difficulty = 0) const;
     bool HasEffect(SpellEffects effect) const;
@@ -486,20 +492,20 @@ public:
     bool IsNotProcSpell() const;
     uint32 GetBattlePetEntry() const;
 
-    inline bool HasAttribute(SpellAttr0 attribute) const { return !!(Attributes & attribute); }
-    inline bool HasAttribute(SpellAttr1 attribute) const { return !!(AttributesEx & attribute); }
-    inline bool HasAttribute(SpellAttr2 attribute) const { return !!(AttributesEx2 & attribute); }
-    inline bool HasAttribute(SpellAttr3 attribute) const { return !!(AttributesEx3 & attribute); }
-    inline bool HasAttribute(SpellAttr4 attribute) const { return !!(AttributesEx4 & attribute); }
-    inline bool HasAttribute(SpellAttr5 attribute) const { return !!(AttributesEx5 & attribute); }
-    inline bool HasAttribute(SpellAttr6 attribute) const { return !!(AttributesEx6 & attribute); }
-    inline bool HasAttribute(SpellAttr7 attribute) const { return !!(AttributesEx7 & attribute); }
-    inline bool HasAttribute(SpellAttr8 attribute) const { return !!(AttributesEx8 & attribute); }
-    inline bool HasAttribute(SpellAttr9 attribute) const { return !!(AttributesEx9 & attribute); }
-    inline bool HasAttribute(SpellAttr10 attribute) const { return !!(AttributesEx10 & attribute); }
-    inline bool HasAttribute(SpellAttr11 attribute) const { return !!(AttributesEx11 & attribute); }
-    inline bool HasAttribute(SpellAttr12 attribute) const { return !!(AttributesEx12 & attribute); }
-    inline bool HasAttribute(SpellAttr13 attribute) const { return !!(AttributesEx13 & attribute); }
+    inline bool HasAttribute(SpellAttr0 attribute) const { return !!(Misc.Attributes[0] & attribute); }
+    inline bool HasAttribute(SpellAttr1 attribute) const { return !!(Misc.Attributes[1] & attribute); }
+    inline bool HasAttribute(SpellAttr2 attribute) const { return !!(Misc.Attributes[2] & attribute); }
+    inline bool HasAttribute(SpellAttr3 attribute) const { return !!(Misc.Attributes[3] & attribute); }
+    inline bool HasAttribute(SpellAttr4 attribute) const { return !!(Misc.Attributes[4] & attribute); }
+    inline bool HasAttribute(SpellAttr5 attribute) const { return !!(Misc.Attributes[5] & attribute); }
+    inline bool HasAttribute(SpellAttr6 attribute) const { return !!(Misc.Attributes[6] & attribute); }
+    inline bool HasAttribute(SpellAttr7 attribute) const { return !!(Misc.Attributes[7] & attribute); }
+    inline bool HasAttribute(SpellAttr8 attribute) const { return !!(Misc.Attributes[8] & attribute); }
+    inline bool HasAttribute(SpellAttr9 attribute) const { return !!(Misc.Attributes[9] & attribute); }
+    inline bool HasAttribute(SpellAttr10 attribute) const { return !!(Misc.Attributes[10] & attribute); }
+    inline bool HasAttribute(SpellAttr11 attribute) const { return !!(Misc.Attributes[11] & attribute); }
+    inline bool HasAttribute(SpellAttr12 attribute) const { return !!(Misc.Attributes[12] & attribute); }
+    inline bool HasAttribute(SpellAttr13 attribute) const { return !!(Misc.Attributes[13] & attribute); }
     inline bool HasAttribute(SpellCustomAttributes customAttribute) const { return !!(AttributesCu & customAttribute); }
 
     bool IsExplicitDiscovery() const;
@@ -614,8 +620,6 @@ public:
     bool _IsPositiveSpell() const;
     static bool _IsPositiveTarget(uint32 targetA, uint32 targetB);
 
-    // correction helpers
-    void SetDurationIndex(uint32 index);
     void SetRangeIndex(uint32 index);
 
     // unloading helpers

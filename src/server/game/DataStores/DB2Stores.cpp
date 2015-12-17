@@ -412,7 +412,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20796
     //LOAD_DB2(sSpellLearnSpellStore);
     //LOAD_DB2(sSpellLevelsStore);              // 20796
-    //LOAD_DB2(sSpellMiscStore);
+    //LOAD_DB2(sSpellMiscStore);                // 20796
     //LOAD_DB2(sSpellPowerStore);
     //LOAD_DB2(sSpellProcsPerMinuteModStore);   // 20796
     //LOAD_DB2(sSpellProcsPerMinuteStore);      // 20796
@@ -426,7 +426,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSpellStore);                    // 20796
     //LOAD_DB2(sSpellTargetRestrictionsStore);  // 20796
     //LOAD_DB2(sSpellTotemsStore);
-    //LOAD_DB2(sSpellXSpellVisualStore);
+    //LOAD_DB2(sSpellXSpellVisualStore);        // 20796
     //LOAD_DB2(sSpellVisualStore);
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
@@ -725,7 +725,7 @@ void DB2Manager::InitDB2CustomStores()
 
         /*if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
         {
-            if (spellMisc->Attributes & SPELL_ATTR0_PASSIVE)
+            if (spellMisc->HasAttribute(SPELL_ATTR0_PASSIVE))
             {
                 for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
                 {

@@ -533,7 +533,7 @@ SpellValue::SpellValue(SpellInfo const* proto, uint8 diff)
 
 Spell::Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID, bool skipCheck, bool replaced) :
 m_spellInfo(info),
-m_caster((info->AttributesEx6 & SPELL_ATTR6_CAST_BY_CHARMER && caster->GetCharmerOrOwner()) ? caster->GetCharmerOrOwner() : caster),
+m_caster((info->HasAttribute(SPELL_ATTR6_CAST_BY_CHARMER) && caster->GetCharmerOrOwner()) ? caster->GetCharmerOrOwner() : caster),
 m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(0), m_selfContainer(NULL), m_spellDynObjGuid(),
 m_referencedFromCurrentSpell(false), m_executedCurrently(false), m_needComboPoints(info->NeedsComboPoints()), hasPredictedDispel(NULL),
 m_comboPointGain(0), m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
@@ -590,7 +590,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
             m_originalCaster = NULL;
     }
 
-    if (info->AttributesEx4 & SPELL_ATTR4_TRIGGERED)
+    if (info->HasAttribute(SPELL_ATTR4_TRIGGERED))
         _triggeredCastFlags = TRIGGERED_FULL_MASK;
     if(m_replaced || AttributesCustomEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG) //If spell casted as replaced, enable proc from him
         _triggeredCastFlags &= ~TRIGGERED_DISALLOW_PROC_EVENTS;
@@ -850,14 +850,14 @@ void Spell::SelectSpellTargets()
             if (speed > 0.0f)
                 m_delayMoment = (uint64)floor(m_targets.GetDist2d() / speed * 1000.0f);
         }
-        else if (m_spellInfo->Speed > 0.0f)
+        else if (m_spellInfo->Misc.Speed > 0.0f)
         {
             float dist = m_caster->GetDistance(*m_targets.GetDstPos());
 
             if (!(AttributesCustomEx9 & SPELL_ATTR9_SPECIAL_DELAY_CALCULATION))
-                m_delayMoment = uint64(floor(dist / m_spellInfo->Speed * 1000.0f));
+                m_delayMoment = uint64(floor(dist / m_spellInfo->Misc.Speed * 1000.0f));
             else
-                m_delayMoment = uint64(m_spellInfo->Speed * 1000.0f);
+                m_delayMoment = uint64(m_spellInfo->Misc.Speed * 1000.0f);
         }
     }
 }
@@ -2552,7 +2552,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
 
     // Spell have speed - need calculate incoming time
     // Incoming time is zero for self casts. At least I think so.
-    if (m_spellInfo->Speed > 0.0f && m_caster != target)
+    if (m_spellInfo->Misc.Speed > 0.0f && m_caster != target)
     {
         float mindist = 5.0f;
         switch (m_spellInfo->Id)
@@ -2572,9 +2572,9 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
             dist = mindist;
 
         if (!(AttributesCustomEx9 & SPELL_ATTR9_SPECIAL_DELAY_CALCULATION))
-            targetInfo.timeDelay = uint64(floor(dist / m_spellInfo->Speed * 1000.0f));
+            targetInfo.timeDelay = uint64(floor(dist / m_spellInfo->Misc.Speed * 1000.0f));
         else
-            targetInfo.timeDelay = uint64(m_spellInfo->Speed * 1000.0f);
+            targetInfo.timeDelay = uint64(m_spellInfo->Misc.Speed * 1000.0f);
 
         // Calculate minimum incoming time
         if (m_delayMoment == 0 || m_delayMoment > targetInfo.timeDelay)
@@ -2588,7 +2588,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
             targetInfo.timeDelay = 200LL;
             m_delayMoment = 200LL;
         }
-        if (!m_spellInfo->IsPositive() && (!_triggeredCastFlags || m_spellInfo->SpellIconID == 156) && m_spellInfo->ExplicitTargetMask != TARGET_FLAG_DEST_LOCATION)
+        if (!m_spellInfo->IsPositive() && (!_triggeredCastFlags || m_spellInfo->Misc.SpellIconID == 156) && m_spellInfo->ExplicitTargetMask != TARGET_FLAG_DEST_LOCATION)
         {
             switch(m_spellInfo->Effects[0].Effect)
             {
@@ -2620,7 +2620,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
         // process reflect removal (not delayed)
         if (!targetInfo.timeDelay)
         {
-            DamageInfo dmgInfoProc = DamageInfo(m_caster, target, 1, m_spellInfo, m_spellInfo ? SpellSchoolMask(m_spellInfo->SchoolMask) : SPELL_SCHOOL_MASK_NORMAL, SPELL_DIRECT_DAMAGE, targetInfo.damageBeforeHit);
+            DamageInfo dmgInfoProc = DamageInfo(m_caster, target, 1, m_spellInfo, m_spellInfo ? SpellSchoolMask(m_spellInfo->Misc.SchoolMask) : SPELL_SCHOOL_MASK_NORMAL, SPELL_DIRECT_DAMAGE, targetInfo.damageBeforeHit);
             m_caster->ProcDamageAndSpell(target, PROC_FLAG_NONE, PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG, PROC_EX_REFLECT, &dmgInfoProc, BASE_ATTACK, m_spellInfo);
         }
 
@@ -2704,16 +2704,16 @@ void Spell::AddGOTarget(GameObject* go, uint32 effectMask)
     target.processed  = false;                              // Effects not apply on target
 
     // Spell have speed - need calculate incoming time
-    if (m_spellInfo->Speed > 0.0f)
+    if (m_spellInfo->Misc.Speed > 0.0f)
     {
         // calculate spell incoming interval
         float dist = m_caster->GetDistance(go->GetPositionX(), go->GetPositionY(), go->GetPositionZ());
         if (dist < 5.0f)
             dist = 5.0f;
        if (!(AttributesCustomEx9 & SPELL_ATTR9_SPECIAL_DELAY_CALCULATION))
-           target.timeDelay = uint64(floor(dist / m_spellInfo->Speed * 1000.0f));
+           target.timeDelay = uint64(floor(dist / m_spellInfo->Misc.Speed * 1000.0f));
        else
-           target.timeDelay = uint64(m_spellInfo->Speed * 1000.0f);
+           target.timeDelay = uint64(m_spellInfo->Misc.Speed * 1000.0f);
 
         if (m_delayMoment == 0 || m_delayMoment > target.timeDelay)
             m_delayMoment = target.timeDelay;
@@ -3009,7 +3009,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (canEffectTrigger && missInfo != SPELL_MISS_REFLECT)
         {
-            DamageInfo dmgInfoProc = DamageInfo(m_caster, unitTarget, addhealth, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
+            DamageInfo dmgInfoProc = DamageInfo(m_caster, unitTarget, addhealth, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell);
         }
     }
@@ -3019,7 +3019,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         if (canEffectTrigger && missInfo != SPELL_MISS_REFLECT)
         {
             procEx |= PROC_EX_NORMAL_HIT;
-            DamageInfo dmgInfoProc = DamageInfo(m_caster, m_targets.GetUnitTarget() ? m_targets.GetUnitTarget() : m_caster, 0, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
+            DamageInfo dmgInfoProc = DamageInfo(m_caster, m_targets.GetUnitTarget() ? m_targets.GetUnitTarget() : m_caster, 0, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
             dmgInfoProc.SetAddPower(m_addpower);
             dmgInfoProc.SetAddPType(m_addptype);
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell);
@@ -3082,7 +3082,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (canEffectTrigger && missInfo != SPELL_MISS_REFLECT)
         {
-            DamageInfo dmgInfoProc = DamageInfo(m_caster, unit, 0, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, damageInfo.damageBeforeHit);
+            DamageInfo dmgInfoProc = DamageInfo(m_caster, unit, 0, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, damageInfo.damageBeforeHit);
             caster->ProcDamageAndSpell(unit, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell);
         }
 
@@ -3101,7 +3101,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     // process reflect removal (delayed)
     if (missInfo == SPELL_MISS_REFLECT && target->timeDelay)
     {
-        DamageInfo dmgInfoProc = DamageInfo(m_caster, unit, 1, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
+        DamageInfo dmgInfoProc = DamageInfo(m_caster, unit, 1, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, target->damageBeforeHit);
         caster->ProcDamageAndSpell(unit, PROC_FLAG_NONE, PROC_FLAG_TAKEN_SPELL_MAGIC_DMG_CLASS_NEG, PROC_EX_REFLECT, &dmgInfoProc, BASE_ATTACK, m_spellInfo);
     }
 
@@ -3154,7 +3154,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
         return SPELL_MISS_EVADE;
 
     // For delayed spells immunity may be applied between missile launch and hit - check immunity for that case
-    if (m_spellInfo->Speed && (unit->IsImmunedToDamage(m_spellInfo) || unit->IsImmunedToSpell(m_spellInfo)))
+    if (m_spellInfo->Misc.Speed && (unit->IsImmunedToDamage(m_spellInfo) || unit->IsImmunedToSpell(m_spellInfo)))
         return SPELL_MISS_IMMUNE;
 
     // disable effects to which unit is immune
@@ -3209,7 +3209,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
     if (m_caster != unit)
     {
         // Recheck  UNIT_FLAG_NON_ATTACKABLE for delayed spells
-        if (m_spellInfo->Speed > 0.0f && unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE) && unit->GetCharmerOrOwnerGUID() != m_caster->GetGUID())
+        if (m_spellInfo->Misc.Speed > 0.0f && unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE) && unit->GetCharmerOrOwnerGUID() != m_caster->GetGUID())
             return SPELL_MISS_EVADE;
 
         if (m_caster->_IsValidAttackTarget(unit, m_spellInfo))
@@ -3224,7 +3224,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
                     positive = m_spellInfo->IsPositiveEffect(effIndex);
             // for delayed spells ignore negative spells (after duel end) for friendly targets
             // TODO: this cause soul transfer bugged
-            if (m_spellInfo->Speed > 0.0f && unit->GetTypeId() == TYPEID_PLAYER && !positive)
+            if (m_spellInfo->Misc.Speed > 0.0f && unit->GetTypeId() == TYPEID_PLAYER && !positive)
                 return SPELL_MISS_EVADE;
 
             // assisting case, healing and resurrection
@@ -3509,7 +3509,7 @@ void Spell::DoAllEffectOnTarget(ItemTargetInfo* target)
 bool Spell::UpdateChanneledTargetList()
 {
     // Automatically forces player to face target
-    if((m_spellInfo->AttributesEx & SPELL_ATTR1_CHANNEL_TRACK_TARGET) && !m_caster->HasInArc(static_cast<float>(M_PI), m_targets.GetUnitTarget()))
+    if((m_spellInfo->HasAttribute(SPELL_ATTR1_CHANNEL_TRACK_TARGET)) && !m_caster->HasInArc(static_cast<float>(M_PI), m_targets.GetUnitTarget()))
         if (m_targets.GetUnitTarget())
             m_caster->SetInFront(m_targets.GetUnitTarget());
 
@@ -3996,7 +3996,7 @@ void Spell::cast(bool skipCheck)
         m_caster->ToPlayer()->RemoveSpellMods(this, true);
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
-    if (((m_spellInfo->Speed > 0.0f || m_delayMoment) && !m_spellInfo->IsChanneled() && !m_spellInfo->IsNonNeedDelay() && m_spellInfo->Id != 114157) || m_spellInfo->AttributesEx4 & SPELL_ATTR4_UNK4 || m_spellInfo->Id == 54957 || m_spellInfo->Id == 139569)
+    if (((m_spellInfo->Misc.Speed > 0.0f || m_delayMoment) && !m_spellInfo->IsChanneled() && !m_spellInfo->IsNonNeedDelay() && m_spellInfo->Id != 114157) || m_spellInfo->HasAttribute(SPELL_ATTR4_UNK4) || m_spellInfo->Id == 54957 || m_spellInfo->Id == 139569)
     {
         // Remove used for cast item if need (it can be already NULL after TakeReagents call
         // in case delayed spell remove item at cast delay start
@@ -4135,12 +4135,12 @@ void Spell::cast(bool skipCheck)
                 {
                     SpellNonMeleeDamage damageInfo(caster, procTarget, m_spellInfo->Id, m_spellSchoolMask);
                     procEx |= createProcExtendMask(&damageInfo, infoTarget->missCondition);
-                    DamageInfo dmgInfoProc = DamageInfo(caster, procTarget, procDamage, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, procDamage);
+                    DamageInfo dmgInfoProc = DamageInfo(caster, procTarget, procDamage, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, procDamage);
                     caster->ProcDamageAndSpell(procTarget, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell, GetSpellMods());
                 }
                 else
                 {
-                    DamageInfo dmgInfoProc = DamageInfo(caster, procTarget, procDamage, m_spellInfo, SpellSchoolMask(m_spellInfo->SchoolMask), SPELL_DIRECT_DAMAGE, procDamage);
+                    DamageInfo dmgInfoProc = DamageInfo(caster, procTarget, procDamage, m_spellInfo, SpellSchoolMask(m_spellInfo->Misc.SchoolMask), SPELL_DIRECT_DAMAGE, procDamage);
                     caster->ProcDamageAndSpell(procTarget, procAttacker, procVictim, procEx, &dmgInfoProc, m_attackType, m_spellInfo, m_triggeredByAuraSpell, GetSpellMods());
                 }
             }
@@ -4361,7 +4361,7 @@ void Spell::_handle_immediate_phase()
         if (m_targets.HasDst())
         {
             // Proc the spells that have DEST target
-            DamageInfo dmgInfoProc = DamageInfo(m_caster, NULL, 0, m_spellInfo, m_spellInfo ? SpellSchoolMask(m_spellInfo->SchoolMask) : SPELL_SCHOOL_MASK_NORMAL, SPELL_DIRECT_DAMAGE, 0);
+            DamageInfo dmgInfoProc = DamageInfo(m_caster, NULL, 0, m_spellInfo, m_spellInfo ? SpellSchoolMask(m_spellInfo->Misc.SchoolMask) : SPELL_SCHOOL_MASK_NORMAL, SPELL_DIRECT_DAMAGE, 0);
             m_originalCaster->ProcDamageAndSpell(NULL, procAttacker, 0, m_procEx | PROC_EX_NORMAL_HIT, &dmgInfoProc, BASE_ATTACK, m_spellInfo, m_triggeredByAuraSpell);
         }
     }
@@ -4381,7 +4381,7 @@ void Spell::_handle_immediate_phase()
                 Unit::AuraEffectList const& mModCastingSpeedNotStack = m_caster->GetAuraEffectsByType(*auratype);
                 for (Unit::AuraEffectList::const_iterator i = mModCastingSpeedNotStack.begin(); i != mModCastingSpeedNotStack.end(); ++i)
                     if (SpellInfo const* sinfo = (*i)->GetSpellInfo())
-                        if (sinfo->ProcCharges && !(*i)->HasSpellClassMask())
+                        if (sinfo->AuraOptions.ProcCharges && !(*i)->HasSpellClassMask())
                             spellId.push_back(sinfo->Id);
             }
 
@@ -4605,7 +4605,7 @@ void Spell::finish(bool ok)
         // Unsummon statue
         uint32 spell = m_caster->GetUInt32Value(UNIT_FIELD_CREATED_BY_SPELL);
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spell);
-        if (spellInfo && spellInfo->SpellIconID == 2056)
+        if (spellInfo && spellInfo->Misc.SpellIconID == 2056)
         {
             sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Statue %d is unsummoned in spell %d finish", m_caster->GetGUIDLow(), m_spellInfo->Id);
             m_caster->setDeathState(JUST_DIED);
@@ -7505,7 +7505,7 @@ SpellCastResult Spell::CheckCasterAuras() const
                 SpellInfo const* auraInfo = aura->GetSpellInfo();
                 if (auraInfo->GetAllEffectsMechanicMask() & mechanic_immune)
                     continue;
-                if (auraInfo->GetSchoolMask() & school_immune && !(auraInfo->AttributesEx & SPELL_ATTR1_UNAFFECTED_BY_SCHOOL_IMMUNE))
+                if (auraInfo->GetSchoolMask() & school_immune && !(auraInfo->HasAttribute(SPELL_ATTR1_UNAFFECTED_BY_SCHOOL_IMMUNE)))
                     continue;
                 if (auraInfo->GetDispelMask() & dispel_immune)
                     continue;
@@ -7596,7 +7596,7 @@ bool Spell::CanAutoCast(Unit* target)
             {
                 if(!withDamage)
                 {
-                    if (m_spellInfo->StackAmount <= 1)
+                    if (m_spellInfo->AuraOptions.CumulativeAura <= 1)
                     {
                         if (target->HasAuraEffect(m_spellInfo->Id, j))
                             return false;
@@ -7604,7 +7604,7 @@ bool Spell::CanAutoCast(Unit* target)
                     else
                     {
                         if (AuraEffect* aureff = target->GetAuraEffect(m_spellInfo->Id, j))
-                            if (aureff->GetBase()->GetStackAmount() >= m_spellInfo->StackAmount)
+                            if (aureff->GetBase()->GetStackAmount() >= m_spellInfo->AuraOptions.CumulativeAura)
                                 return false;
                     }
                 }
@@ -8535,7 +8535,7 @@ bool Spell::IsAutoActionResetSpell() const
 bool Spell::IsNeedSendToClient() const
 {
     return m_spellInfo->GetSpellXSpellVisualId(m_caster->GetMap()->GetDifficultyID()) || m_spellInfo->IsChanneled() ||
-        (AttributesCustomEx8 & SPELL_ATTR8_AURA_SEND_AMOUNT) || m_spellInfo->Speed > 0.0f || (!m_triggeredByAuraSpell && !IsTriggered());
+        (AttributesCustomEx8 & SPELL_ATTR8_AURA_SEND_AMOUNT) || m_spellInfo->Misc.Speed > 0.0f || (!m_triggeredByAuraSpell && !IsTriggered());
 }
 
 bool Spell::HaveTargetsForEffect(uint8 effect) const
@@ -8773,9 +8773,9 @@ void Spell::DoAllEffectOnLaunchTarget(TargetInfo& targetInfo, float* multiplier)
             {
                 if (m_spellInfo->GetEffect(i, m_diffMode)->IsTargetingArea())
                 {
-                    m_damage = int32(float(m_damage) * unit->GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_AOE_DAMAGE_AVOIDANCE, m_spellInfo->SchoolMask));
+                    m_damage = int32(float(m_damage) * unit->GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_AOE_DAMAGE_AVOIDANCE, m_spellInfo->Misc.SchoolMask));
                     if (m_caster->GetTypeId() == TYPEID_UNIT)
-                        m_damage = int32(float(m_damage) * unit->GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_CREATURE_AOE_DAMAGE_AVOIDANCE, m_spellInfo->SchoolMask));
+                        m_damage = int32(float(m_damage) * unit->GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_CREATURE_AOE_DAMAGE_AVOIDANCE, m_spellInfo->Misc.SchoolMask));
 
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     {
@@ -9468,7 +9468,7 @@ void Spell::CallScriptObjectTargetSelectHandlers(WorldObject*& target, SpellEffI
 
 bool Spell::CanExecuteTriggersOnHit(uint32 effMask, SpellInfo const* triggeredByAura) const
 {
-    bool only_on_caster = (triggeredByAura && (triggeredByAura->AttributesEx4 & SPELL_ATTR4_PROC_ONLY_ON_CASTER));
+    bool only_on_caster = (triggeredByAura && (triggeredByAura->HasAttribute(SPELL_ATTR4_PROC_ONLY_ON_CASTER)));
     // If triggeredByAura has SPELL_ATTR4_PROC_ONLY_ON_CASTER then it can only proc on a casted spell with TARGET_UNIT_CASTER
     for (uint8 i = 0;i < MAX_SPELL_EFFECTS; ++i)
     {
@@ -9624,20 +9624,20 @@ bool Spell::IsCritForTarget(Unit* target) const
 
 void Spell::LoadAttrDummy()
 {
-    AttributesCustom = m_spellInfo->Attributes;
-    AttributesCustomEx = m_spellInfo->AttributesEx;
-    AttributesCustomEx2 = m_spellInfo->AttributesEx2;
-    AttributesCustomEx3 = m_spellInfo->AttributesEx3;
-    AttributesCustomEx4 = m_spellInfo->AttributesEx4;
-    AttributesCustomEx5 = m_spellInfo->AttributesEx5;
-    AttributesCustomEx6 = m_spellInfo->AttributesEx6;
-    AttributesCustomEx7 = m_spellInfo->AttributesEx7;
-    AttributesCustomEx8 = m_spellInfo->AttributesEx8;
-    AttributesCustomEx9 = m_spellInfo->AttributesEx9;
-    AttributesCustomEx10 = m_spellInfo->AttributesEx10;
-    AttributesCustomEx11 = m_spellInfo->AttributesEx11;
-    AttributesCustomEx12 = m_spellInfo->AttributesEx12;
-    AttributesCustomEx13 = m_spellInfo->AttributesEx13;
+    AttributesCustom = m_spellInfo->Misc.Attributes[0];
+    AttributesCustomEx = m_spellInfo->Misc.Attributes[1];
+    AttributesCustomEx2 = m_spellInfo->Misc.Attributes[2];
+    AttributesCustomEx3 = m_spellInfo->Misc.Attributes[3];
+    AttributesCustomEx4 = m_spellInfo->Misc.Attributes[4];
+    AttributesCustomEx5 = m_spellInfo->Misc.Attributes[5];
+    AttributesCustomEx6 = m_spellInfo->Misc.Attributes[6];
+    AttributesCustomEx7 = m_spellInfo->Misc.Attributes[7];
+    AttributesCustomEx8 = m_spellInfo->Misc.Attributes[8];
+    AttributesCustomEx9 = m_spellInfo->Misc.Attributes[9];
+    AttributesCustomEx10 = m_spellInfo->Misc.Attributes[10];
+    AttributesCustomEx11 = m_spellInfo->Misc.Attributes[11];
+    AttributesCustomEx12 = m_spellInfo->Misc.Attributes[12];
+    AttributesCustomEx13 = m_spellInfo->Misc.Attributes[13];
     AttributesCustomCu = m_spellInfo->AttributesCu;
 
     if (std::vector<SpellAuraDummy> const* spellAuraDummy = sSpellMgr->GetSpellAuraDummy(m_spellInfo->Id))
@@ -9811,7 +9811,7 @@ bool Spell::CanSpellProc(Unit* target, uint32 mask) const
         return false;
     if (AttributesCustomEx6 & SPELL_ATTR6_CANT_PROC)
         return false;
-    if (m_spellInfo->AttributesEx7 & SPELL_ATTR7_CONSOLIDATED_RAID_BUFF)
+    if (m_spellInfo->HasAttribute(SPELL_ATTR7_CONSOLIDATED_RAID_BUFF))
         return false;
     if (AttributesCustomEx2 & SPELL_ATTR2_FOOD_BUFF)
         return false;

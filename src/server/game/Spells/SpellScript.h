@@ -849,9 +849,9 @@ class AuraScript : public _SpellScript
         bool DropCharge(AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
 
         // stack amount manipulation
-        uint8 GetStackAmount() const;
-        void SetStackAmount(uint8 num);
-        bool ModStackAmount(int32 num, AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
+        uint16 GetStackAmount() const;
+        void SetStackAmount(uint16 num);
+        bool ModStackAmount(int16 num, AuraRemoveMode removeMode = AURA_REMOVE_BY_DEFAULT);
 
         // passive - "working in background", not saved, not removed by immunities, not seen by player
         bool IsPassive() const;

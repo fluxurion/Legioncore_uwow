@@ -175,9 +175,9 @@ void WorldSession::SendTrainerList(ObjectGuid const& guid, const std::string& st
 
         if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(tSpell->spell))
         {
-            if (spellInfo->AttributesEx7 & SPELL_ATTR7_HORDE_ONLY && GetPlayer()->GetTeam() != HORDE)
+            if (spellInfo->HasAttribute(SPELL_ATTR7_HORDE_ONLY) && GetPlayer()->GetTeam() != HORDE)
                 continue;
-            if (spellInfo->AttributesEx7 & SPELL_ATTR7_ALLIANCE_ONLY && GetPlayer()->GetTeam() != ALLIANCE)
+            if (spellInfo->HasAttribute(SPELL_ATTR7_ALLIANCE_ONLY) && GetPlayer()->GetTeam() != ALLIANCE)
                 continue;
 
             // if spell relates to some specialization and it is not our spec - do not learn

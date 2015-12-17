@@ -1510,7 +1510,7 @@ class spell_taldaram_ball_of_inferno_flame : public SpellScriptLoader
             void ModAuraStack()
             {
                 if (Aura* aur = GetHitAura())
-                    aur->SetStackAmount(uint8(GetSpellInfo()->StackAmount));
+                    aur->SetStackAmount(GetSpellInfo()->AuraOptions.CumulativeAura);
             }
 
             void Register()

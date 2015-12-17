@@ -411,11 +411,10 @@ namespace Trinity
                     return false;
 
                 // Sacrifice
-                if ((spellProtoA->SpellFamilyName == SPELLFAMILY_WARLOCK) &&
-                    (spellProtoA->SpellIconID == 693))
+                if ((spellProtoA->SpellFamilyName == SPELLFAMILY_WARLOCK) && (spellProtoA->Misc.SpellIconID == 693))
                     return true;
-                if ((spellProtoB->SpellFamilyName == SPELLFAMILY_WARLOCK) &&
-                    (spellProtoB->SpellIconID == 693))
+
+                if ((spellProtoB->SpellFamilyName == SPELLFAMILY_WARLOCK) && (spellProtoB->Misc.SpellIconID == 693))
                     return false;
 
                 return false;

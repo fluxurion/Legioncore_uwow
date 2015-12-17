@@ -918,7 +918,7 @@ public:
 
         void SpellHit(Unit* /*caster*/, const SpellInfo* pSpell)
         {
-            if (pSpell->SchoolMask & SPELL_SCHOOL_MASK_FIRE && !me->HasAura(SPELL_BLAZE))
+            if (pSpell->Misc.SchoolMask & SPELL_SCHOOL_MASK_FIRE && !me->HasAura(SPELL_BLAZE))
                 me->CastSpell(me, SPELL_BLAZE, true);
         }
     };
