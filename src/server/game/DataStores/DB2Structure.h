@@ -70,9 +70,9 @@ struct AreaGroupEntry
 
 struct AreaGroupMemberEntry
 {
-    uint32      ID;                                                 // 0
-    uint32      AreaGroupID;                                        // 1
-    uint32      AreaID;                                             // 2
+    uint32      ID;
+    uint16      AreaGroupID;                                // 0
+    uint16      AreaID;                                     // 1
 };
 
 struct AuctionHouseEntry
@@ -1280,11 +1280,11 @@ struct CurrencyTypesEntry
 
 struct QuestPackageItemEntry
 {
-    uint32 ID;                                                      // 0
-    uint32 QuestPackageID;                                          // 1
-    uint32 ItemID;                                                  // 2
-    uint32 ItemCount;                                               // 3
-    uint32 FilterType;                                              // 4
+    uint32      ID;
+    uint32      ItemID;                                             // 0
+    uint16      QuestPackageID;                                     // 1
+    uint8       ItemCount;                                          // 2
+    uint8       FilterType;                                         // 3
 };
 
 struct MountEntry
@@ -1464,9 +1464,9 @@ struct ToyEntry
 
 struct PvpItemEntry
 {
-    uint32 ID;
-    uint32 ItemID;
-    uint32 BonusIlvl;
+    uint32      ID;
+    uint32      ItemID;                                     // 0
+    uint8       BonusIlvl;                                  // 1
 };
 
 struct SpellTotemsEntry

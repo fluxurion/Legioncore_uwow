@@ -468,7 +468,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM currency_types_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // QuestPackageItem.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_PACKAGE_ITEM, "SELECT ID, QuestPackageID, ItemID, ItemCount, FilterType FROM quest_package_item ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_PACKAGE_ITEM, "SELECT ID, ItemID, QuestPackageID, ItemCount, FilterType FROM quest_package_item ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Mount.db2
     PrepareStatement(HOTFIX_SEL_MOUNT, "SELECT Id, MountTypeId, DisplayId, Flags, Name, Description, SourceDescription, Source, SpellId, "

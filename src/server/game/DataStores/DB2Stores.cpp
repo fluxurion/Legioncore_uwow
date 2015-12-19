@@ -266,9 +266,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    //LOAD_DB2(sAchievementStore);                // 20796
+    //LOAD_DB2(sAchievementStore);              // 20796
     //LOAD_DB2(sAreaGroupMemberStore);
-    //LOAD_DB2(sAreaGroupStore);
+    //LOAD_DB2(sAreaGroupStore);                // 20796
     //LOAD_DB2(sArmorLocationStore);            // 20796
     //LOAD_DB2(sAuctionHouseStore);             // 20796
     //LOAD_DB2(sBankBagSlotPricesStore);        // 20796
@@ -302,7 +302,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sDurabilityQualityStore);        // 20796
     //LOAD_DB2(sGameObjectDisplayInfoStore);    // 20796
     //LOAD_DB2(sGameObjectsStore);
-    LOAD_DB2(sGameTablesStore);               // 20796
+    LOAD_DB2(sGameTablesStore);                 // 20796
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
     //LOAD_DB2(sGarrBuildingPlotInstStore);
@@ -360,7 +360,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemSparseStore);
     //LOAD_DB2(sItemSpecOverrideStore);         // 20796
     //LOAD_DB2(sItemSpecStore);                 // 20796
-    //LOAD_DB2(sItemStore);                       // 20796
+    //LOAD_DB2(sItemStore);                     // 20796
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
@@ -376,9 +376,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sNameGenStore);                  // 20796
     //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseGroupStore);
-    //LOAD_DB2(sPvpItemStore);
+    //LOAD_DB2(sPvpItemStore);                  // 20796
     //LOAD_DB2(sQuestFactionRewardStore);       // 20796
-    //LOAD_DB2(sQuestPackageItemStore);
+    //LOAD_DB2(sQuestPackageItemStore);         // 20796
     //LOAD_DB2(sQuestPOIPointStore);            // 20796
     //LOAD_DB2(sQuestSortStore);                // 20796
     //LOAD_DB2(sQuestV2Store);                  // 20796

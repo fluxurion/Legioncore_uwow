@@ -126,7 +126,6 @@ extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
 extern DB2Storage<PhaseGroupEntry>                  sPhaseGroupStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
-extern DB2Storage<QuestPackageItemEntry>            sQuestPackageItemStore;
 extern DB2Storage<QuestPOIPointEntry>               sQuestPOIPointStore;
 extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
 extern DB2Storage<QuestXPEntry>                     sQuestXPStore;

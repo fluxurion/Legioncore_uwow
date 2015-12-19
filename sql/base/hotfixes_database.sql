@@ -56,8 +56,8 @@ CREATE TABLE `area_group` (
 DROP TABLE IF EXISTS `area_group_member`;
 CREATE TABLE `area_group_member` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AreaGroupID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AreaID` int(10) unsigned NOT NULL DEFAULT '0',
+  `AreaGroupID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AreaID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2437,10 +2437,10 @@ CREATE TABLE `currency_types_locale` (
 DROP TABLE IF EXISTS `quest_package_item`;
 CREATE TABLE `quest_package_item` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `QuestPackageID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ItemCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `FilterType` int(10) unsigned NOT NULL DEFAULT '0',
+  `QuestPackageID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ItemCount` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `FilterType` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2886,7 +2886,7 @@ DROP TABLE IF EXISTS `pvp_item`;
 CREATE TABLE `pvp_item` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusIlvl` int(10) unsigned NOT NULL DEFAULT '0',
+  `BonusIlvl` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
