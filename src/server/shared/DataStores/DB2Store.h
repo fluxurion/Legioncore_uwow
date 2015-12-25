@@ -153,9 +153,9 @@ public:
         {
             _stringPoolList.push_back(stringHolders);
 
-            //// load strings from db2 data
-            //if (char* stringBlock = db2.AutoProduceStrings(_format, (char*)_dataTable, locale))
-            //    _stringPoolList.push_back(stringBlock);
+            // load strings from db2 data
+            if (char* stringBlock = db2.AutoProduceStrings(_format, (char*)_dataTable, locale))
+                _stringPoolList.push_back(stringBlock);
         }
 
         // error in db2 file at loading if NULL
@@ -174,9 +174,9 @@ public:
             return false;
 
         // load strings from another locale db2 data
-        //if (DB2FileLoader::GetFormatLocalizedStringFieldCount(_format))
-        //    if (char* stringBlock = db2.AutoProduceStrings(_format, (char*)_dataTable, locale))
-        //        _stringPoolList.push_back(stringBlock);
+        if (DB2FileLoader::GetFormatLocalizedStringFieldCount(_format))
+            if (char* stringBlock = db2.AutoProduceStrings(_format, (char*)_dataTable, locale))
+                _stringPoolList.push_back(stringBlock);
         return true;
     }
 

@@ -26,7 +26,7 @@ DB2FileLoader::DB2FileLoader()
     fieldsOffset = nullptr;
     recordTable = nullptr;
     stringTable = nullptr;
-    
+
     header.RecordSize = 0;
     header.RecordCount = 0;
     header.FieldCount = 0;
@@ -52,14 +52,14 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     FILE* f = fopen(filename, "rb");
     if (!f)
     {
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
     if (fread(&header.Signature, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -75,7 +75,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.RecordCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -84,7 +84,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.FieldCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -93,7 +93,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.RecordSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -102,7 +102,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.StringBlockSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -111,7 +111,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Hash, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -120,7 +120,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Build, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -129,7 +129,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Unknown, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -138,7 +138,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Min, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -147,7 +147,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Max, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -156,7 +156,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Locale, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
@@ -165,17 +165,11 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.ReferenceDataSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
 
     EndianConvert(header.ReferenceDataSize);
-
-    if (header.Max != 0)
-    {
-        int32 diff = header.Max - header.Min + 1;
-        fseek(f, diff * 4 + diff * 2, SEEK_CUR);    // diff * 4: an index for rows, diff * 2: a memory allocation bank
-    }
 
     fieldsOffset = new uint32[header.FieldCount];
     fieldsOffset[0] = 0;
@@ -196,10 +190,10 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(recordTable, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
         return false;
     }
-    
+
     fclose(f);
     return true;
 }
@@ -223,7 +217,7 @@ uint32 DB2FileLoader::GetFormatRecordSize(const char * format, int32* index_pos)
 {
     uint32 recordsize = 0;
     int32 i = -1;
-    for (uint32 x=0; format[x]; ++x)
+    for (uint32 x = 0; format[x]; ++x)
     {
         switch (format[x])
         {
@@ -647,7 +641,8 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
 
         ASSERT(offset == recordSize);
         ++rec;
-    } while (result->NextRow());
+    }
+    while (result->NextRow());
 
     if (!newRecords)
     {
@@ -737,7 +732,8 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
             ASSERT(offset == recordSize);
         }
 
-    } while (result->NextRow());
+    }
+    while (result->NextRow());
 
     return;
 }
