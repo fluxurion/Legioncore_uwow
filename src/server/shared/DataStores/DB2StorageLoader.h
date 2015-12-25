@@ -26,6 +26,7 @@
 
 static const int32 HeaderSize = 48;
 static const uint32 DB3FmtSig = 0x33424457;
+static const uint32 DB2FmtSig = 0x32424457;
 
 class DB2FileLoader
 {
@@ -40,38 +41,38 @@ class DB2FileLoader
     public:
         float getFloat(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             float val = *reinterpret_cast<float*>(offset + file.GetOffset(field));
             EndianConvert(val);
             return val;
         }
         uint32 getUInt(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             uint32 val = *reinterpret_cast<uint32*>(offset + file.GetOffset(field));
             EndianConvert(val);
             return val;
         }
         uint8 getUInt8(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             return *reinterpret_cast<uint8*>(offset + file.GetOffset(field));
         }
         uint16 getUInt16(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             return *reinterpret_cast<uint16*>(offset + file.GetOffset(field));
         }
         uint64 getUInt64(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             uint64 val = *reinterpret_cast<uint64*>(offset + file.GetOffset(field));
             EndianConvert(val);
             return val;
         }
         const char *getString(size_t field) const
         {
-            assert(field < file.fieldCount);
+            assert(field < file.header.FieldCount);
             size_t stringOffset = getUInt(field);
             //assert(stringOffset < file.stringSize); //Crash on windows on debug mode
             return reinterpret_cast<char*>(file.stringTable + stringOffset);
@@ -93,7 +94,7 @@ class DB2FileLoader
     uint32 GetCols() const { return header.FieldCount; }
     uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < header.FieldCount) ? fieldsOffset[id] : 0; }
     uint32 GetHash() const { return header.Hash; }
-    bool IsLoaded() const { return (data != nullptr); }
+    bool IsLoaded() const { return (recordTable != nullptr); }
     char* AutoProduceData(const char* fmt, uint32& count, char**& indexTable);
     char* AutoProduceStringsArrayHolders(const char* fmt, char* dataTable);
     char* AutoProduceStrings(const char* fmt, char* dataTable, uint32 locale);
@@ -103,9 +104,9 @@ class DB2FileLoader
 private:
     char const* fileName;
 
-    uint32 *fieldsOffset;
-    unsigned char *data;
-    unsigned char *stringTable;
+    uint32* fieldsOffset;
+    unsigned char* recordTable;
+    unsigned char* stringTable;
 
     struct
     {
@@ -122,6 +123,7 @@ private:
         int32 Max;
         int32 Locale;
         int32 ReferenceDataSize;
+        int32 MetaFlags;
     } header;
 };
 

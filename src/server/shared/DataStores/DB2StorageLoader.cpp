@@ -24,7 +24,7 @@ DB2FileLoader::DB2FileLoader()
 {
     fileName = nullptr;
     fieldsOffset = nullptr;
-    data = nullptr;
+    recordTable = nullptr;
     stringTable = nullptr;
     
     header.RecordSize = 0;
@@ -43,10 +43,10 @@ DB2FileLoader::DB2FileLoader()
 
 bool DB2FileLoader::Load(const char *filename, const char *fmt)
 {
-    if (data)
+    if (recordTable)
     {
-        delete[] data;
-        data = nullptr;
+        delete[] recordTable;
+        recordTable = nullptr;
     }
 
     FILE* f = fopen(filename, "rb");
@@ -65,12 +65,12 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.Signature);
 
-    if (header.Signature != DB3FmtSig)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
-        return false;
-    }
+    //if (header.Signature != DB2FmtSig)
+    //{
+    //    fclose(f);
+    //    sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
+    //    return false;
+    //}
 
     if (fread(&header.RecordCount, sizeof(uint32), 1, f) != 1)
     {
@@ -171,10 +171,6 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
     EndianConvert(header.ReferenceDataSize);
 
-    int stringTableStart = HeaderSize + header.RecordCount * header.RecordSize;
-    int stringTableEnd = stringTableStart + header.StringBlockSize;
-    bool hasIndex = stringTableEnd + header.ReferenceDataSize < f->_bufsiz;
-    sLog->outError(LOG_FILTER_GENERAL, "hasIndex %u Function: %s Line: %u", hasIndex, "DB2FileLoader::Load", __LINE__);
     if (header.Max != 0)
     {
         int32 diff = header.Max - header.Min + 1;
@@ -194,8 +190,10 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
             fieldsOffset[i] += 4;
     }
 
-    data = new unsigned char[header.RecordSize * header.RecordCount + header.StringBlockSize];
-    if (fread(data, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
+    recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.StringBlockSize];
+    stringTable = recordTable + header.RecordSize * header.RecordCount;
+
+    if (fread(recordTable, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL,"%s %u", "DB2FileLoader::Load", __LINE__);
@@ -208,16 +206,17 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
 
 DB2FileLoader::~DB2FileLoader()
 {
-    if (data)
-        delete [] data;
+    if (recordTable)
+        delete[] recordTable;
+
     if (fieldsOffset)
-        delete [] fieldsOffset;
+        delete[] fieldsOffset;
 }
 
 DB2FileLoader::Record DB2FileLoader::getRecord(size_t id)
 {
-    assert(data);
-    return Record(*this, data + id * header.RecordSize);
+    assert(recordTable);
+    return Record(*this, recordTable + id * header.RecordSize);
 }
 
 uint32 DB2FileLoader::GetFormatRecordSize(const char * format, int32* index_pos)
@@ -511,6 +510,7 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
 
 char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements preparedStatement, uint32& records, char**& indexTable, char*& stringHolders, std::list<char*>& stringPool)
 {
+    return nullptr;
     // Even though this query is executed only once, prepared statement is used to send data from mysql server in binary format
     PreparedQueryResult result = HotfixDatabase.Query(HotfixDatabase.GetPreparedStatement(preparedStatement));
     if (!result)
@@ -674,6 +674,8 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
 
 void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements preparedStatement, uint32 locale, char**& indexTable, std::list<char*>& stringPool)
 {
+    return;
+
     PreparedStatement* stmt = HotfixDatabase.GetPreparedStatement(preparedStatement);
     stmt->setString(0, localeNames[locale]);
     PreparedQueryResult result = HotfixDatabase.Query(stmt);

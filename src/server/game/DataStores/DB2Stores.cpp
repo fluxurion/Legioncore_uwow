@@ -225,16 +225,16 @@ inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, D
 
     if (storage->Load(db2Path + localeNames[defaultLocale] + '/', defaultLocale))
     {
-        storage->LoadFromDB();
+        //storage->LoadFromDB();
 
-        for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
-        {
-            if (availableDb2Locales & (1 << i))
-                if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
-                    availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
+        //for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        //{
+        //    if (availableDb2Locales & (1 << i))
+        //        if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
+        //            availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
 
-            storage->LoadStringsFromDB(i);
-        }
+        //    storage->LoadStringsFromDB(i);
+        //}
     }
     else
     {
