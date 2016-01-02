@@ -81,7 +81,7 @@ namespace WorldPackets
         };
 
         //< CMSG_CHALLENGE_MODE_REQUEST_MAP_STATS
-        //< CMSG_GET_CHALLENGE_MODE_REWARDS
+        //< CMSG_REQUEST_CHALLENGE_MODE_REWARDS
         class Misc final : public ClientPacket
         {
         public:
@@ -93,7 +93,7 @@ namespace WorldPackets
         class RequestLeaders final : public ClientPacket
         {
         public:
-            RequestLeaders(WorldPacket&& packet) : ClientPacket(CMSG_CHALLENGE_MODE_REQUEST_LEADERS, std::move(packet)) { }
+            RequestLeaders(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_CHALLENGE_MODE_LEADERS, std::move(packet)) { }
 
             void Read() override;
 

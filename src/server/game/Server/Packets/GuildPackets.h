@@ -969,7 +969,7 @@ namespace WorldPackets
         class GuildDelete final : public ClientPacket
         {
         public:
-            GuildDelete(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_DELETE, std::move(packet)) { }
+            GuildDelete(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_DISBAND, std::move(packet)) { }
 
             void Read() override { }
         };
