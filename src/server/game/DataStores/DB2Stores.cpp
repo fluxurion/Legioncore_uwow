@@ -302,7 +302,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sDurabilityQualityStore);        // 20796
     //LOAD_DB2(sGameObjectDisplayInfoStore);    // 20796
     //LOAD_DB2(sGameObjectsStore);
-    LOAD_DB2(sGameTablesStore);                 // 20796
+    LOAD_DB2(sGameTablesStore);                 // 20810
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
     //LOAD_DB2(sGarrBuildingPlotInstStore);
@@ -391,45 +391,45 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sScalingStatDistributionStore);  // 20796
     //LOAD_DB2(sScenarioStepStore);             // 20796
     //LOAD_DB2(sScenarioStore);                 // 20796
-    //LOAD_DB2(sSkillLineAbilityStore);         // 20796
-    //LOAD_DB2(sSkillLineStore);                // 20796
-    //LOAD_DB2(sSkillRaceClassInfoStore);       // 20796
+    LOAD_DB2(sSkillLineAbilityStore);           // 20810
+    LOAD_DB2(sSkillLineStore);                  // 20810
+    LOAD_DB2(sSkillRaceClassInfoStore);         // 20810
     //LOAD_DB2(sSoundEntriesStore);
-    //LOAD_DB2(sSpecializationSpellStore);      // 20796
-    //LOAD_DB2(sSpellAuraOptionsStore);         // 20796
-    //LOAD_DB2(sSpellAuraRestrictionsStore);    // 20796
-    //LOAD_DB2(sSpellCastingRequirementsStore); // 20796
-    //LOAD_DB2(sSpellCastTimesStore);           // 20796
-    //LOAD_DB2(sSpellCategoriesStore);          // 20796
-    //LOAD_DB2(sSpellCategoryStores);           // 20796
-    //LOAD_DB2(sSpellClassOptionsStore);        // 20796
-    //LOAD_DB2(sSpellCooldownsStore);           // 20796
-    //LOAD_DB2(sSpellDurationStore);            // 20796
-    //LOAD_DB2(sSpellEffectScalingStore);       // 20796
-    //LOAD_DB2(sSpellEffectStore);              // 20796
-    //LOAD_DB2(sSpellEquippedItemsStore);       // 20796
-    //LOAD_DB2(sSpellFocusObjectStore);         // 20796
-    //LOAD_DB2(sSpellInterruptsStore);          // 20796
-    //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20796
+    LOAD_DB2(sSpecializationSpellStore);        // 20810
+    LOAD_DB2(sSpellAuraOptionsStore);           // 20810
+    LOAD_DB2(sSpellAuraRestrictionsStore);      // 20810
+    LOAD_DB2(sSpellCastingRequirementsStore);   // 20810
+    LOAD_DB2(sSpellCastTimesStore);             // 20810
+    LOAD_DB2(sSpellCategoriesStore);            // 20810
+    LOAD_DB2(sSpellCategoryStores);             // 20810
+    LOAD_DB2(sSpellClassOptionsStore);          // 20810
+    LOAD_DB2(sSpellCooldownsStore);             // 20810
+    LOAD_DB2(sSpellDurationStore);              // 20810
+    LOAD_DB2(sSpellEffectScalingStore);         // 20810
+    LOAD_DB2(sSpellEffectStore);                // 20810
+    LOAD_DB2(sSpellEquippedItemsStore);         // 20810
+    LOAD_DB2(sSpellFocusObjectStore);           // 20810
+    LOAD_DB2(sSpellInterruptsStore);            // 20810
+    //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20810 DB2FileLoader::Load 193 - not compatible and empty
     //LOAD_DB2(sSpellLearnSpellStore);
-    //LOAD_DB2(sSpellLevelsStore);              // 20796
-    //LOAD_DB2(sSpellMiscStore);                // 20796
-    //LOAD_DB2(sSpellPowerStore);               // 20796
+    LOAD_DB2(sSpellLevelsStore);                // 20810
+    LOAD_DB2(sSpellMiscStore);                  // 20810
+    LOAD_DB2(sSpellPowerStore);                 // 20810
     // SpellPowerDifficulty.db2
-    //LOAD_DB2(sSpellProcsPerMinuteModStore);   // 20796
-    //LOAD_DB2(sSpellProcsPerMinuteStore);      // 20796
-    //LOAD_DB2(sSpellRadiusStore);              // 20796
-    //LOAD_DB2(sSpellRangeStore);               // 20796
-    //LOAD_DB2(sSpellReagentsStore);            // 20796
-    //LOAD_DB2(sSpellReagentsCurrencyStore);    // 20796
-    //LOAD_DB2(sSpellRuneCostStore);
-    //LOAD_DB2(sSpellScalingStore);             // 20796
-    //LOAD_DB2(sSpellShapeshiftFormStore);      // 20796
-    //LOAD_DB2(sSpellShapeshiftStore);          // 20796
-    //LOAD_DB2(sSpellStore);                    // 20796
-    //LOAD_DB2(sSpellTargetRestrictionsStore);  // 20796
-    //LOAD_DB2(sSpellTotemsStore);              // 20796
-    //LOAD_DB2(sSpellXSpellVisualStore);        // 20796
+    LOAD_DB2(sSpellProcsPerMinuteModStore);     // 20810
+    LOAD_DB2(sSpellProcsPerMinuteStore);        // 20810
+    LOAD_DB2(sSpellRadiusStore);                // 20810
+    LOAD_DB2(sSpellRangeStore);                 // 20810
+    LOAD_DB2(sSpellReagentsStore);              // 20810
+    LOAD_DB2(sSpellReagentsCurrencyStore);      // 20810
+    //LOAD_DB2(sSpellRuneCostStore); deprecated
+    LOAD_DB2(sSpellScalingStore);               // 20810
+    LOAD_DB2(sSpellShapeshiftFormStore);        // 20810
+    LOAD_DB2(sSpellShapeshiftStore);            // 20810
+    LOAD_DB2(sSpellStore);                      // 20810
+    LOAD_DB2(sSpellTargetRestrictionsStore);    // 20810
+    LOAD_DB2(sSpellTotemsStore);                // 20810
+    LOAD_DB2(sSpellXSpellVisualStore);          // 20810
     //LOAD_DB2(sSpellVisualStore);
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
@@ -444,7 +444,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #undef LOAD_DB2
 
-    //InitDB2CustomStores();
+    InitDB2CustomStores();
 
     // error checks
     if (bad_db2_files.size() >= DB2FilesCount)
@@ -455,7 +455,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     else if (!bad_db2_files.empty())
     {
         std::string str;
-        for (std::list<std::string>::iterator i = bad_db2_files.begin(); i != bad_db2_files.end(); ++i)
+        for (DB2StoreProblemList::iterator i = bad_db2_files.begin(); i != bad_db2_files.end(); ++i)
             str += *i + "\n";
 
         sLog->outError(LOG_FILTER_GENERAL, "\nSome required *.db2 files (%u from %d) not found or not compatible:\n%s", (uint32)bad_db2_files.size(), DB2FilesCount, str.c_str());
@@ -759,7 +759,7 @@ void DB2Manager::InitDB2CustomStores()
     }
     
     for (SpellProcsPerMinuteModEntry const* sppm : sSpellProcsPerMinuteModStore)
-        _spellProcsPerMinuteModEntryList[sppm->SpellProcsPerMinuteID].push_back(sppm->Id);
+        _spellProcsPerMinuteModEntryList[sppm->SpellProcsPerMinuteID].push_back(sppm->ID);
     
     for (SpellTargetRestrictionsEntry const* restriction : sSpellTargetRestrictionsStore)
         _spellRestrictionDiff[restriction->SpellID].insert(restriction);

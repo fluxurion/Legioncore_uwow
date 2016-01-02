@@ -4366,12 +4366,12 @@ bool Player::addSpell(uint32 spellId, bool active, bool learning, bool dependent
             if (!pSkill)
                 continue;
 
-            if (pSkill->id == fromSkill)
+            if (pSkill->ID == fromSkill)
                 continue;
 
             // Runeforging special case
-            if ((_spell_idx->second->AquireMethod == SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN && !HasSkill(pSkill->id)) || ((pSkill->id == SKILL_RUNEFORGING_2) && _spell_idx->second->TrivialSkillLineRankHigh == 0))
-                if (SkillRaceClassInfoEntry const* rcInfo = sDB2Manager.GetSkillRaceClassInfo(pSkill->id, getRace(), getClass()))
+            if ((_spell_idx->second->AquireMethod == SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN && !HasSkill(pSkill->ID)) || ((pSkill->ID == SKILL_RUNEFORGING_2) && _spell_idx->second->TrivialSkillLineRankHigh == 0))
+                if (SkillRaceClassInfoEntry const* rcInfo = sDB2Manager.GetSkillRaceClassInfo(pSkill->ID, getRace(), getClass()))
                     LearnDefaultSkill(rcInfo);
         }
     }
@@ -24019,7 +24019,6 @@ bool Player::EnchantmentFitsRequirements(uint32 enchantmentcondition, int8 slot)
         return true;
 
     SpellItemEnchantmentConditionEntry const* Condition = sSpellItemEnchantmentConditionStore.LookupEntry(enchantmentcondition);
-
     if (!Condition)
         return true;
 

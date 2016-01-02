@@ -379,14 +379,14 @@ SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* 
     Amplitude = _effect ? _effect->EffectAmplitude : 0.0f;
     ChainAmplitude = _effect ? _effect->EffectChainAmplitude : 0.0f;
     BonusCoefficient = _effect ? _effect->EffectBonusCoefficient : 0.0f;
-    MiscValue = _effect ? _effect->EffectMiscValue : 0;
-    MiscValueB = _effect ? _effect->EffectMiscValueB : 0;
+    MiscValue = _effect ? _effect->EffectMiscValue[0] : 0;
+    MiscValueB = _effect ? _effect->EffectMiscValue[1] : 0;
     Mechanic = Mechanics(_effect ? _effect->EffectMechanic : 0);
     TargetA = SpellImplicitTargetInfo(_effect ? _effect->ImplicitTarget[0] : 0);
     TargetB = SpellImplicitTargetInfo(_effect ? _effect->ImplicitTarget[1] : 0);
-    RadiusEntry = _effect && _effect->EffectRadiusIndex ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusIndex) : NULL;
+    RadiusEntry = _effect && _effect->EffectRadiusIndex[0] ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusIndex[0]) : nullptr;
     if (!RadiusEntry)
-        RadiusEntry = _effect && _effect->EffectRadiusMaxIndex ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusMaxIndex) : NULL;
+        RadiusEntry = _effect && _effect->EffectRadiusIndex[1] ? sSpellRadiusStore.LookupEntry(_effect->EffectRadiusIndex[1]) : nullptr;
     ChainTargets = _effect ? _effect->EffectChainTargets : 0;
     ItemType = _effect ? _effect->EffectItemType : 0;
     TriggerSpell = _effect ? _effect->EffectTriggerSpell : 0;
@@ -1013,20 +1013,12 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     Duration.MaxDuration = durationStore ? durationStore->MaxDuration : 0;
     Duration.DurationPerLevel = durationStore ? durationStore->DurationPerLevel : 0;
 
-    SpellScalingEntry const* scalingStore = nullptr;
-    for (auto const& _scalingStore : sSpellScalingStore)
-        if (_scalingStore->SpellID == Id)
-            scalingStore = _scalingStore;
-
+    SpellScalingEntry const* scalingStore = sSpellScalingStore.LookupEntry(Id);
     Scaling.Class = scalingStore ? scalingStore->ScalingClass : 0;
     Scaling.MaxScalingLevel = scalingStore ? scalingStore->MaxScalingLevel : 0;
     Scaling.ScalesFromItemLevel = scalingStore ? scalingStore->ScalesFromItemLevel : 0;
 
-    SpellAuraOptionsEntry const* auraOpStore = nullptr;
-    for (auto const& _auraOpStore : sSpellAuraOptionsStore)
-        if (_auraOpStore->SpellID == Id)
-            auraOpStore = _auraOpStore;
-
+    SpellAuraOptionsEntry const* auraOpStore = sSpellAuraOptionsStore.LookupEntry(Id);
     AuraOptions.ProcCharges = auraOpStore ? auraOpStore->ProcCharges : 0;
     AuraOptions.ProcTypeMask = auraOpStore ? auraOpStore->ProcTypeMask : 0;
     AuraOptions.ProcCategoryRecovery = auraOpStore ? auraOpStore->ProcCategoryRecovery : 0;
@@ -1034,11 +1026,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     AuraOptions.ProcChance = auraOpStore ? auraOpStore->ProcChance : 0;
     AuraOptions.SpellProcsPerMinuteID = auraOpStore ? auraOpStore->SpellProcsPerMinuteID : 0;
 
-    SpellAuraRestrictionsEntry const* auraRest = nullptr;
-    for (auto const& _auraRest : sSpellAuraRestrictionsStore)
-        if (_auraRest->SpellID == Id)
-            auraRest = _auraRest;
-
+    SpellAuraRestrictionsEntry const* auraRest = sSpellAuraRestrictionsStore.LookupEntry(Id);
     AuraRestrictions.CasterAuraSpell = auraRest ? auraRest->CasterAuraSpell : 0;
     AuraRestrictions.TargetAuraSpell = auraRest ? auraRest->TargetAuraSpell : 0;
     AuraRestrictions.ExcludeCasterAuraSpell = auraRest ? auraRest->ExcludeCasterAuraSpell : 0;
@@ -1048,11 +1036,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     AuraRestrictions.ExcludeCasterAuraState = auraRest ? auraRest->ExcludeCasterAuraState : 0;
     AuraRestrictions.ExcludeTargetAuraState = auraRest ? auraRest->ExcludeTargetAuraState : 0;
 
-    SpellCastingRequirementsEntry const* castingReq = nullptr;
-    for (auto const& _castingReq : sSpellCastingRequirementsStore)
-        if (_castingReq->SpellID == Id)
-            castingReq = _castingReq;
-
+    SpellCastingRequirementsEntry const* castingReq = sSpellCastingRequirementsStore.LookupEntry(Id);
     CastingReq.MinFactionID = castingReq ? castingReq->MinFactionID : 0;
     CastingReq.RequiredAreasID = castingReq ? castingReq->RequiredAreasID : -1;
     CastingReq.RequiresSpellFocus = castingReq ? castingReq->RequiresSpellFocus : 0;
@@ -1060,11 +1044,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     CastingReq.MinReputation = castingReq ? castingReq->MinReputation : 0;
     CastingReq.RequiredAuraVision = castingReq ? castingReq->RequiredAuraVision : 0;
 
-    SpellCategoriesEntry const* categories = nullptr;
-    for (auto const& _castegories : sSpellCategoriesStore)
-        if (_castegories->SpellID == Id)
-            categories = _castegories;
-
+    SpellCategoriesEntry const* categories = sSpellCategoriesStore.LookupEntry(Id);
     Categories.Category = categories ? categories->Category : 0;
     Categories.StartRecoveryCategory = categories ? categories->StartRecoveryCategory : 0;
     Categories.ChargeCategory = categories ? categories->ChargeCategory : 0;
@@ -1080,26 +1060,26 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     Category.ChargeRecoveryTime = categoryStore ? categoryStore->ChargeRecoveryTime : 0;
     Category.MaxCharges = categoryStore ? categoryStore->MaxCharges : 0;
 
-    SpellClassOptionsEntry const* _class = GetSpellClassOptions();
+    SpellClassOptionsEntry const* _class = sSpellClassOptionsStore.LookupEntry(Id);
     SpellFamilyName = _class ? _class->SpellClassSet : 0;
     SpellFamilyFlags = _class ? _class->SpellClassMask : flag128(0);
 
-    SpellCooldownsEntry const* _cooldowns = GetSpellCooldowns();
+    SpellCooldownsEntry const* _cooldowns = sSpellCooldownsStore.LookupEntry(Id);
     RecoveryTime = _cooldowns ? _cooldowns->RecoveryTime : 0;
     CategoryRecoveryTime = _cooldowns ? _cooldowns->CategoryRecoveryTime : 0;
     StartRecoveryTime = _cooldowns ? _cooldowns->StartRecoveryTime : 0;
 
-    SpellEquippedItemsEntry const* _equipped = GetSpellEquippedItems();
+    SpellEquippedItemsEntry const* _equipped = sSpellEquippedItemsStore.LookupEntry(Id);
     EquippedItemClass = _equipped ? _equipped->EquippedItemClass : -1;
     EquippedItemSubClassMask = _equipped ? _equipped->EquippedItemSubClassMask : -1;
     EquippedItemInventoryTypeMask = _equipped ? _equipped->EquippedItemInventoryTypeMask : -1;
 
-    SpellInterruptsEntry const* _interrupt = GetSpellInterrupts();
+    SpellInterruptsEntry const* _interrupt = sSpellInterruptsStore.LookupEntry(Id);
     InterruptFlags = _interrupt ? _interrupt->InterruptFlags : 0;
     AuraInterruptFlags = _interrupt ? _interrupt->AuraInterruptFlags[0] : 0;
     ChannelInterruptFlags = _interrupt ? _interrupt->ChannelInterruptFlags[0] : 0;
 
-    SpellLevelsEntry const* _levels = GetSpellLevels();
+    SpellLevelsEntry const* _levels = sSpellLevelsStore.LookupEntry(Id);
     MaxLevel = _levels ? _levels->MaxLevel : 0;
     BaseLevel = _levels ? _levels->BaseLevel : 0;
     SpellLevel = _levels ? _levels->SpellLevel : 0;
@@ -1137,26 +1117,18 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     CastTimes.Minimum = _castTimes ? _castTimes->Minimum : 0;
     CastTimes.PerLevel = _castTimes ? _castTimes->PerLevel : 0;
 
-    SpellReagentsEntry const* reagentsStore = nullptr;
-    for (auto const& _reagentsStore : sSpellReagentsStore)
-        if (_reagentsStore->SpellID == Id)
-            reagentsStore = _reagentsStore;
-
+    SpellReagentsEntry const* reagentsStore = sSpellReagentsStore.LookupEntry(Id);
     for (uint8 i = 0; i < MAX_SPELL_REAGENTS; ++i)
     {
         Reagents.Reagent[i] = reagentsStore ? reagentsStore->Reagent[i] : 0;
         Reagents.ReagentCount[i] = reagentsStore ? reagentsStore->ReagentCount[i] : 0;
     }
 
-    SpellReagentsCurrencyEntry const* reagentsCurrencyStore = nullptr;
-    for (auto const& _reagentsCurrencyStore : sSpellReagentsCurrencyStore)
-        if (_reagentsCurrencyStore->SpellID == Id)
-            reagentsCurrencyStore = _reagentsCurrencyStore;
-
+    SpellReagentsCurrencyEntry const* reagentsCurrencyStore = sSpellReagentsCurrencyStore.LookupEntry(Id);
     Reagents.CurrencyID = reagentsCurrencyStore ? reagentsCurrencyStore->CurrencyID : 0;
     Reagents.CurrencyCount = reagentsCurrencyStore ? reagentsCurrencyStore->CurrencyCount : 0;
 
-    SpellShapeshiftEntry const* _shapeshift = GetSpellShapeshift();
+    SpellShapeshiftEntry const* _shapeshift = sSpellShapeshiftStore.LookupEntry(Id);
     Stances = _shapeshift ? _shapeshift->ShapeshiftMask[0] : 0;
     StancesNot = _shapeshift ? _shapeshift->ShapeshiftExclude[0] : 0;
 
@@ -1184,11 +1156,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
             GeneralTargetCreatureType = _restr->TargetCreatureType;
     }
 
-    SpellTotemsEntry const* totemsStore = nullptr;
-    for (auto const& _totemStore : sSpellTotemsStore)
-        if (_totemStore->SpellID == Id)
-            totemsStore = _totemStore;
-
+    SpellTotemsEntry const* totemsStore = sSpellTotemsStore.LookupEntry(Id);
     for (uint8 i = 0; i < 2; ++i)
     {
         Totems.TotemCategory[i] = totemsStore ? totemsStore->TotemCategory[i] : 0;
@@ -1322,7 +1290,7 @@ SpellEffectInfo const* SpellInfo::GetEffect(uint8 effect, uint8 difficulty) cons
     if (difficulty)
     {
         SpellEffectInfoMap::const_iterator itr = EffectsMap.find(MAKE_PAIR16(effect, difficulty));
-        if(itr != EffectsMap.end())
+        if (itr != EffectsMap.end())
             return &itr->second;
     }
 
@@ -1364,7 +1332,7 @@ bool SpellInfo::IsMountOrCompanions() const
                 return true;
         if (Effects[i].Effect == SPELL_EFFECT_BATTLE_PET)
             return true;
-        
+
         switch (Id)
         {
             case 125439:
@@ -1382,7 +1350,7 @@ bool SpellInfo::IsNotProcSpell() const
             return true;
         if (Effects[i].IsAura(SPELL_AURA_MOD_STAT))
             return true;
-        switch(Effects[i].Effect)
+        switch (Effects[i].Effect)
         {
             case SPELL_EFFECT_SUMMON:
             {
@@ -3415,60 +3383,6 @@ uint32 SpellInfo::GetTargetCreatureType(uint16 diff) const
         return 0;
 
     return restr->TargetCreatureType;
-}
-
-SpellEquippedItemsEntry const* SpellInfo::GetSpellEquippedItems() const
-{
-    for (auto const& v : sSpellEquippedItemsStore)
-        if (v->SpellID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellInterruptsEntry const* SpellInfo::GetSpellInterrupts() const
-{
-    for (auto const& v : sSpellInterruptsStore)
-        if (v->SpellID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellLevelsEntry const* SpellInfo::GetSpellLevels() const
-{
-    for (auto const& v : sSpellLevelsStore)
-        if (v->SpellID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellShapeshiftEntry const* SpellInfo::GetSpellShapeshift() const
-{
-    for (auto const& v : sSpellShapeshiftStore)
-        if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellClassOptionsEntry const* SpellInfo::GetSpellClassOptions() const
-{
-    for (auto const& v : sSpellClassOptionsStore)
-        if (v->ID == Id)
-            return v;
-
-    return nullptr;
-}
-
-SpellCooldownsEntry const* SpellInfo::GetSpellCooldowns() const
-{
-    for (auto const& v : sSpellCooldownsStore)
-        if (v->SpellID == Id)
-            return v;
-
-    return nullptr;
 }
 
 void SpellInfo::SetRangeIndex(uint32 index)

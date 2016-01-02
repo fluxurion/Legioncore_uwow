@@ -3390,7 +3390,6 @@ void ObjectMgr::LoadPlayerInfo()
         }
     }
 
-    // Load playercreate skills
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Skill Data...");
     {
         uint32 oldMSTime = getMSTime();
@@ -3404,64 +3403,8 @@ void ObjectMgr::LoadPlayerInfo()
                                 if (PlayerInfo* info = _playerInfo[raceIndex][classIndex])
                                     info->skills.push_back(rcInfo);
 
-        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded player create skills in %u ms", GetMSTimeDiffToNow(oldMSTime));
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded player create skills in %u s", GetMSTimeDiffToNow(oldMSTime) / IN_MILLISECONDS);
     }
-
-    // Load playercreate spells
-   /* sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Spell Data...");
-    {
-        uint32 oldMSTime = getMSTime();
-
-        std::string tableName = sWorld->getBoolConfig(CONFIG_START_ALL_SPELLS) ? "playercreateinfo_spell_custom" : "playercreateinfo_spell";
-        QueryResult result = WorldDatabase.PQuery("SELECT race, class, Spell FROM %s", tableName.c_str());
-
-        if (!result)
-        {
-            sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 player create spells. DB table `%s` is empty.", sWorld->getBoolConfig(CONFIG_START_ALL_SPELLS) ? "playercreateinfo_spell_custom" : "playercreateinfo_spell");
-
-        }
-        else
-        {
-            uint32 count = 0;
-
-            do
-            {
-                Field* fields = result->Fetch();
-
-                uint32 current_race = fields[0].GetUInt8();
-                if (current_race >= MAX_RACES)
-                {
-                    sLog->outError(LOG_FILTER_SQL, "Wrong race %u in `playercreateinfo_spell` table, ignoring.", current_race);
-                    continue;
-                }
-
-                uint32 current_class = fields[1].GetUInt8();
-                if (current_class >= MAX_CLASSES)
-                {
-                    sLog->outError(LOG_FILTER_SQL, "Wrong class %u in `playercreateinfo_spell` table, ignoring.", current_class);
-                    continue;
-                }
-
-                if (!current_race || !current_class)
-                {
-                    uint32 min_race = current_race ? current_race : 1;
-                    uint32 max_race = current_race ? current_race + 1 : MAX_RACES;
-                    uint32 min_class = current_class ? current_class : 1;
-                    uint32 max_class = current_class ? current_class + 1 : MAX_CLASSES;
-                    for (uint32 r = min_race; r < max_race; ++r)
-                        for (uint32 c = min_class; c < max_class; ++c)
-                            _playerInfo[r][c].spell.push_back(fields[2].GetUInt32());
-                }
-                else
-                    _playerInfo[current_race][current_class].spell.push_back(fields[2].GetUInt32());
-
-                ++count;
-            }
-            while (result->NextRow());
-
-            sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u player create spells in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-        }
-    }*/
 
     // Load playercreate actions
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Action Data...");

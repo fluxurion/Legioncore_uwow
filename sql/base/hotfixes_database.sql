@@ -2798,7 +2798,7 @@ CREATE TABLE `spell_power` (
 
 DROP TABLE IF EXISTS `spell_reagents`;
 CREATE TABLE `spell_reagents` (
-  `Id` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `Reagent1` int(11) NOT NULL DEFAULT '0',
   `Reagent2` int(11) NOT NULL DEFAULT '0',
@@ -2817,7 +2817,7 @@ CREATE TABLE `spell_reagents` (
   `ReagentCount7` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ReagentCount8` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3178,23 +3178,16 @@ CREATE TABLE `item_x_bonus_tree` (
 DROP TABLE IF EXISTS `spell_effect`;
 CREATE TABLE `spell_effect` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Effect` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectAmplitude` float NOT NULL DEFAULT '0',
-  `EffectAura` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectAuraPeriod` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectBasePoints` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectBonusCoefficient` float NOT NULL DEFAULT '0',
   `EffectChainAmplitude` float NOT NULL DEFAULT '0',
-  `EffectChainTargets` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectDieSides` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectItemType` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectMechanic` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectMiscValue` int(11) NOT NULL DEFAULT '0',
-  `EffectMiscValueB` int(11) NOT NULL DEFAULT '0',
+  `EffectMiscValue1` int(11) NOT NULL DEFAULT '0',
+  `EffectMiscValue2` int(11) NOT NULL DEFAULT '0',
   `EffectPointsPerResource` float NOT NULL DEFAULT '0',
-  `EffectRadiusIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectRadiusMaxIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectRealPointsPerLevel` float NOT NULL DEFAULT '0',
   `EffectSpellClassMask1` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectSpellClassMask2` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3202,12 +3195,19 @@ CREATE TABLE `spell_effect` (
   `EffectSpellClassMask4` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectTriggerSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectPosFacing` float NOT NULL DEFAULT '0',
-  `ImplicitTarget1` int(10) unsigned NOT NULL DEFAULT '0',
-  `ImplicitTarget2` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectAttributes` int(10) unsigned NOT NULL DEFAULT '0',
   `BonusCoefficientFromAP` float NOT NULL DEFAULT '0',
+  `EffectAura` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `EffectChainTargets` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DifficultyID` tinyint(4) NOT NULL DEFAULT '0',
+  `Effect` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `EffectMechanic` tinyint(4) NOT NULL DEFAULT '0',
+  `EffectRadiusIndex1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `EffectRadiusIndex2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ImplicitTarget1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ImplicitTarget2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `EffectIndex` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3218,6 +3218,7 @@ CREATE TABLE `spell_effect` (
 
 DROP TABLE IF EXISTS `spell_shapeshift_form`;
 CREATE TABLE `spell_shapeshift_form` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `UnkLegion` float NOT NULL DEFAULT '0',
   `Flags` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3231,9 +3232,8 @@ CREATE TABLE `spell_shapeshift_form` (
   `CreatureType` tinyint(4) NOT NULL DEFAULT '0',
   `MountTypeID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `ExitSoundEntriesID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3242,11 +3242,11 @@ CREATE TABLE `spell_shapeshift_form` (
 
 DROP TABLE IF EXISTS `spell_shapeshift_form_locale`;
 CREATE TABLE `spell_shapeshift_form_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3256,11 +3256,12 @@ CREATE TABLE `spell_shapeshift_form_locale` (
 DROP TABLE IF EXISTS `spell_shapeshift`;
 CREATE TABLE `spell_shapeshift` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `ShapeshiftExclude1` int(10) unsigned NOT NULL DEFAULT '0',
   `ShapeshiftExclude2` int(10) unsigned NOT NULL DEFAULT '0',
   `ShapeshiftMask1` int(10) unsigned NOT NULL DEFAULT '0',
   `ShapeshiftMask2` int(10) unsigned NOT NULL DEFAULT '0',
-  `StanceBarOrder` int(10) unsigned NOT NULL DEFAULT '0',
+  `StanceBarOrder` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3271,6 +3272,7 @@ CREATE TABLE `spell_shapeshift` (
 
 DROP TABLE IF EXISTS `spell_target_restrictions`;
 CREATE TABLE `spell_target_restrictions` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `ConeAngle` float NOT NULL DEFAULT '0',
   `Width` float NOT NULL DEFAULT '0',
@@ -3280,7 +3282,7 @@ CREATE TABLE `spell_target_restrictions` (
   `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `MaxAffectedTargets` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3322,12 +3324,13 @@ CREATE TABLE `spell_locale` (
 
 DROP TABLE IF EXISTS `spell_scaling`;
 CREATE TABLE `spell_scaling` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `ScalesFromItemLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ScalingClass` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `MaxScalingLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3336,6 +3339,7 @@ CREATE TABLE `spell_scaling` (
 
 DROP TABLE IF EXISTS `spell_range`;
 CREATE TABLE `spell_range` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `MinRangeHostile` float NOT NULL DEFAULT '0',
   `MinRangeFriend` float NOT NULL DEFAULT '0',
   `MaxRangeHostile` float NOT NULL DEFAULT '0',
@@ -3343,9 +3347,8 @@ CREATE TABLE `spell_range` (
   `DisplayName` text,
   `DisplayNameShort` text,
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MinRangeHostile`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3354,12 +3357,12 @@ CREATE TABLE `spell_range` (
 
 DROP TABLE IF EXISTS `spell_range_locale`;
 CREATE TABLE `spell_range_locale` (
-  `MinRangeHostile` float NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `DisplayName_lang` text,
   `DisplayNameShort_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MinRangeHostile`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3368,12 +3371,13 @@ CREATE TABLE `spell_range_locale` (
 
 DROP TABLE IF EXISTS `spell_radius`;
 CREATE TABLE `spell_radius` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Radius` float NOT NULL DEFAULT '0',
   `RadiusPerLevel` float NOT NULL DEFAULT '0',
   `RadiusMin` float NOT NULL DEFAULT '0',
   `RadiusMax` float NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Radius`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3382,10 +3386,11 @@ CREATE TABLE `spell_radius` (
 
 DROP TABLE IF EXISTS `spell_procs_per_minute`;
 CREATE TABLE `spell_procs_per_minute` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseProcRate` float NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`BaseProcRate`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3394,13 +3399,13 @@ CREATE TABLE `spell_procs_per_minute` (
 
 DROP TABLE IF EXISTS `spell_procs_per_minute_mod`;
 CREATE TABLE `spell_procs_per_minute_mod` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `PpmRateMod` float NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpecID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellProcsPerMinuteID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Id` int(10) unsigned NOT NULL DEFAULT '0',
+  `Type` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SpecID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpellProcsPerMinuteID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`PpmRateMod`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3409,13 +3414,14 @@ CREATE TABLE `spell_procs_per_minute_mod` (
 
 DROP TABLE IF EXISTS `spell_levels`;
 CREATE TABLE `spell_levels` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `MaxLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `SpellLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3424,6 +3430,7 @@ CREATE TABLE `spell_levels` (
 
 DROP TABLE IF EXISTS `spell_item_enchantment_condition`;
 CREATE TABLE `spell_item_enchantment_condition` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Color1` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Color2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Color3` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -3455,7 +3462,7 @@ CREATE TABLE `spell_item_enchantment_condition` (
   `Logic4` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Logic5` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Color[MAX_ITEM_ENCHANTS]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3464,6 +3471,7 @@ CREATE TABLE `spell_item_enchantment_condition` (
 
 DROP TABLE IF EXISTS `spell_interrupts`;
 CREATE TABLE `spell_interrupts` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `AuraInterruptFlags1` int(10) unsigned NOT NULL DEFAULT '0',
   `AuraInterruptFlags2` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3472,7 +3480,7 @@ CREATE TABLE `spell_interrupts` (
   `InterruptFlags` smallint(5) unsigned NOT NULL DEFAULT '0',
   `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3481,9 +3489,10 @@ CREATE TABLE `spell_interrupts` (
 
 DROP TABLE IF EXISTS `spell_focus_object`;
 CREATE TABLE `spell_focus_object` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3492,11 +3501,11 @@ CREATE TABLE `spell_focus_object` (
 
 DROP TABLE IF EXISTS `spell_focus_object_locale`;
 CREATE TABLE `spell_focus_object_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3505,12 +3514,13 @@ CREATE TABLE `spell_focus_object_locale` (
 
 DROP TABLE IF EXISTS `spell_equipped_items`;
 CREATE TABLE `spell_equipped_items` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `EquippedItemInventoryTypeMask` int(11) NOT NULL DEFAULT '0',
   `EquippedItemSubClassMask` int(11) NOT NULL DEFAULT '0',
   `EquippedItemClass` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3519,12 +3529,13 @@ CREATE TABLE `spell_equipped_items` (
 
 DROP TABLE IF EXISTS `spell_effect_scaling`;
 CREATE TABLE `spell_effect_scaling` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Coefficient` float NOT NULL DEFAULT '0',
   `Variance` float NOT NULL DEFAULT '0',
   `ResourceCoefficient` float NOT NULL DEFAULT '0',
   `SpellEffectId` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Coefficient`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3547,13 +3558,14 @@ CREATE TABLE `spell_duration` (
 
 DROP TABLE IF EXISTS `spell_cooldowns`;
 CREATE TABLE `spell_cooldowns` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `CategoryRecoveryTime` int(10) unsigned NOT NULL DEFAULT '0',
   `RecoveryTime` int(10) unsigned NOT NULL DEFAULT '0',
   `StartRecoveryTime` int(10) unsigned NOT NULL DEFAULT '0',
   `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3591,6 +3603,7 @@ CREATE TABLE `spell_category_locale` (
 
 DROP TABLE IF EXISTS `spell_categories`;
 CREATE TABLE `spell_categories` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `Category` smallint(5) unsigned NOT NULL DEFAULT '0',
   `StartRecoveryCategory` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -3601,7 +3614,7 @@ CREATE TABLE `spell_categories` (
   `Mechanic` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `PreventionType` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3610,11 +3623,12 @@ CREATE TABLE `spell_categories` (
 
 DROP TABLE IF EXISTS `spell_cast_times`;
 CREATE TABLE `spell_cast_times` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Base` int(11) NOT NULL DEFAULT '0',
   `Minimum` int(11) NOT NULL DEFAULT '0',
   `PerLevel` smallint(6) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Base`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3623,6 +3637,7 @@ CREATE TABLE `spell_cast_times` (
 
 DROP TABLE IF EXISTS `spell_aura_options`;
 CREATE TABLE `spell_aura_options` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `ProcCharges` int(10) unsigned NOT NULL DEFAULT '0',
   `ProcTypeMask` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3632,7 +3647,7 @@ CREATE TABLE `spell_aura_options` (
   `ProcChance` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `SpellProcsPerMinuteID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3670,6 +3685,7 @@ CREATE TABLE `specialization_spell_locale` (
 
 DROP TABLE IF EXISTS `skill_race_class_info`;
 CREATE TABLE `skill_race_class_info` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `RaceMask` int(11) NOT NULL DEFAULT '0',
   `SkillID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ClassMask` smallint(6) NOT NULL DEFAULT '0',
@@ -3678,7 +3694,7 @@ CREATE TABLE `skill_race_class_info` (
   `Availability` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `MinLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`RaceMask`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3687,6 +3703,7 @@ CREATE TABLE `skill_race_class_info` (
 
 DROP TABLE IF EXISTS `skill_line`;
 CREATE TABLE `skill_line` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `DisplayName` text,
   `Description` text,
   `AlternateVerb` text,
@@ -3695,9 +3712,8 @@ CREATE TABLE `skill_line` (
   `CategoryID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `CanLink` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `ParentSkillLineID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `id` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`DisplayName`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3706,13 +3722,13 @@ CREATE TABLE `skill_line` (
 
 DROP TABLE IF EXISTS `skill_line_locale`;
 CREATE TABLE `skill_line_locale` (
-  `DisplayName` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `DisplayName_lang` text,
   `Description_lang` text,
   `AlternateVerb_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`DisplayName`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3721,6 +3737,7 @@ CREATE TABLE `skill_line_locale` (
 
 DROP TABLE IF EXISTS `skill_line_ability`;
 CREATE TABLE `skill_line_ability` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `RaceMask` int(10) unsigned NOT NULL DEFAULT '0',
   `ClassMask` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3734,7 +3751,7 @@ CREATE TABLE `skill_line_ability` (
   `AquireMethod` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `NumSkillUps` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SpellID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --

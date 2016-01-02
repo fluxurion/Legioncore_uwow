@@ -20361,24 +20361,24 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* victim, SpellInfo const* spellProto
     if (spellProto->AuraOptions.SpellProcsPerMinuteID)
     {
         float spellPPM = 0.0f;
-        if(SpellProcsPerMinuteEntry const* procPPM = sSpellProcsPerMinuteStore.LookupEntry(spellProto->AuraOptions.SpellProcsPerMinuteID))
+        if (SpellProcsPerMinuteEntry const* procPPM = sSpellProcsPerMinuteStore.LookupEntry(spellProto->AuraOptions.SpellProcsPerMinuteID))
         {
             spellPPM = procPPM->BaseProcRate;
 
-            if(Player* player = ToPlayer())
+            if (Player* player = ToPlayer())
             {
                 uint32 specId = player->GetSpecializationId(player->GetActiveSpec());
-                if(std::list<uint32> const* modList = sDB2Manager.GetSpellProcsPerMinuteModList(spellProto->AuraOptions.SpellProcsPerMinuteID))
+                if (std::list<uint32> const* modList = sDB2Manager.GetSpellProcsPerMinuteModList(spellProto->AuraOptions.SpellProcsPerMinuteID))
                     for (std::list<uint32>::const_iterator itr = modList->begin(); itr != modList->end(); ++itr)
                     {
-                        if(SpellProcsPerMinuteModEntry const* procPPMmod = sSpellProcsPerMinuteModStore.LookupEntry((*itr)))
-                            if(procPPMmod->SpecID == specId)
+                        if (SpellProcsPerMinuteModEntry const* procPPMmod = sSpellProcsPerMinuteModStore.LookupEntry((*itr)))
+                            if (procPPMmod->SpecID == specId)
                                 spellPPM *= procPPMmod->PpmRateMod + 1;
                     }
 
                 double cooldown = player->GetPPPMSpellCooldownDelay(spellProto->Id); //base cap
                 bool procked = player->GetRPPMProcChance(cooldown, spellPPM, spellProto);
-                if(procked)
+                if (procked)
                 {
                     player->SetLastSuccessfulProc(spellProto->Id, getPreciseTime());
                     player->AddRPPMSpellCooldown(spellProto->Id, 0, getPreciseTime() + cooldown);

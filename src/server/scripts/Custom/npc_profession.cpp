@@ -29,7 +29,7 @@ class npc_profession : public CreatureScript
         pPlayer->PlayerTalkClass->SendGossipMenu(20011, _creature->GetGUID());
         return true;
     }
-                
+
     bool PlayerAlreadyHasTwoProfessions(const Player *pPlayer) const
     {
         uint32 skillCount = 0;
@@ -56,8 +56,7 @@ class npc_profession : public CreatureScript
             if ((SkillInfo->CategoryID != SKILL_CATEGORY_PROFESSION) || !SkillInfo->CanLink)
                 continue;
 
-            const uint32 skillID = SkillInfo->id;
-            if (pPlayer->HasSkill(skillID))
+            if (pPlayer->HasSkill(SkillInfo->ID))
                 skillCount++;
 
             if (skillCount >= 2)
@@ -77,15 +76,15 @@ class npc_profession : public CreatureScript
         {
             //sLog->outError("Profession NPC: received non-valid skill ID (LearnAllRecipesInProfession)");
             return false;
-        }       
+        }
 
-        LearnSkillRecipesHelper(pPlayer, SkillInfo->id);
+        LearnSkillRecipesHelper(pPlayer, SkillInfo->ID);
 
-        pPlayer->SetSkill(SkillInfo->id, pPlayer->GetSkillStep(SkillInfo->id), 600, 600);
-        handler.PSendSysMessage(LANG_COMMAND_LEARN_ALL_RECIPES, skill_name);                                    
+        pPlayer->SetSkill(SkillInfo->ID, pPlayer->GetSkillStep(SkillInfo->ID), 600, 600);
+        handler.PSendSysMessage(LANG_COMMAND_LEARN_ALL_RECIPES, skill_name);
         return true;
     }
-        
+
     void LearnSkillRecipesHelper(Player *player, uint32 skill_id)
     {
         uint32 classmask = player->getClassMask();
@@ -135,176 +134,176 @@ class npc_profession : public CreatureScript
                 pCreature->MonsterWhisper("Внутренняя ошибка!", pPlayer->GetGUID());
         }
     }
-        
+
     bool OnGossipSelect(Player* pPlayer, Creature* _creature, uint32 /*uiSender*/, uint32 uiAction)
-    {                      
+    {
         pPlayer->PlayerTalkClass->ClearMenus();
-                                
+
         switch (uiAction)
         {
             case 200:
-            pPlayer->ADD_GOSSIP_ITEM(9, "Список профессий", GOSSIP_SENDER_MAIN, 196);
-            pPlayer->ADD_GOSSIP_ITEM(7, "Прощайте", GOSSIP_SENDER_MAIN, 220);
-            pPlayer->PlayerTalkClass->SendGossipMenu(20011, _creature->GetGUID());                            
-            break;
-                                        
-            case 220:
-            pPlayer->PlayerTalkClass->SendCloseGossip();
-            break;
-                                        
-            case 196:                                                
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Алхимия", GOSSIP_SENDER_MAIN, 1);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кузнечное дело", GOSSIP_SENDER_MAIN, 2);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кожевничество", GOSSIP_SENDER_MAIN, 3);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Портняжное дело", GOSSIP_SENDER_MAIN, 4);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Инженерное дело", GOSSIP_SENDER_MAIN, 5);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Наложение чар", GOSSIP_SENDER_MAIN, 6);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Ювелирное дело", GOSSIP_SENDER_MAIN, 7);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Начертание", GOSSIP_SENDER_MAIN, 8);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кулинария", GOSSIP_SENDER_MAIN, 9);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Первая помощь", GOSSIP_SENDER_MAIN, 10);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Травничество", GOSSIP_SENDER_MAIN, 11);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Снятие шкур", GOSSIP_SENDER_MAIN, 12);
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Горное дело", GOSSIP_SENDER_MAIN, 13);
-                    pPlayer->ADD_GOSSIP_ITEM(4, "Вернуться в главное меню!", GOSSIP_SENDER_MAIN, 200);
-                    pPlayer->PlayerTalkClass->SendGossipMenu(20011, _creature->GetGUID());                                                
-                    break;
-            case 1:
-                    if(pPlayer->HasSkill(SKILL_ALCHEMY))
-                    {
-                            _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                            pPlayer->PlayerTalkClass->SendCloseGossip();
-                            break;
-                    }
+                pPlayer->ADD_GOSSIP_ITEM(9, "Список профессий", GOSSIP_SENDER_MAIN, 196);
+                pPlayer->ADD_GOSSIP_ITEM(7, "Прощайте", GOSSIP_SENDER_MAIN, 220);
+                pPlayer->PlayerTalkClass->SendGossipMenu(20011, _creature->GetGUID());
+                break;
 
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_ALCHEMY);                                                
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 2:
-                    if(pPlayer->HasSkill(SKILL_BLACKSMITHING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_BLACKSMITHING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 3:
-                    if(pPlayer->HasSkill(SKILL_LEATHERWORKING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_LEATHERWORKING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 4:
-                    if(pPlayer->HasSkill(SKILL_TAILORING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_TAILORING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 5:
-                    if(pPlayer->HasSkill(SKILL_ENGINEERING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_ENGINEERING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 6:
-                    if(pPlayer->HasSkill(SKILL_ENCHANTING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_ENCHANTING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 7:
-                    if(pPlayer->HasSkill(SKILL_JEWELCRAFTING))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_JEWELCRAFTING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 8:
-                    if(pPlayer->HasSkill(SKILL_INSCRIPTION))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_INSCRIPTION);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 9:
-                    if(pPlayer->HasSkill(SKILL_COOKING))
-                    {    
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_COOKING);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 10:
-                    if(pPlayer->HasSkill(SKILL_FIRST_AID))
-                    {
-                        _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
-                        break;
-                    }
-                    CompleteLearnProfession(pPlayer, _creature, SKILL_FIRST_AID);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    break;
-            case 11:
-                if(pPlayer->HasSkill(SKILL_HERBALISM))
+            case 220:
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+
+            case 196:
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Алхимия", GOSSIP_SENDER_MAIN, 1);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кузнечное дело", GOSSIP_SENDER_MAIN, 2);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кожевничество", GOSSIP_SENDER_MAIN, 3);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Портняжное дело", GOSSIP_SENDER_MAIN, 4);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Инженерное дело", GOSSIP_SENDER_MAIN, 5);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Наложение чар", GOSSIP_SENDER_MAIN, 6);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Ювелирное дело", GOSSIP_SENDER_MAIN, 7);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Начертание", GOSSIP_SENDER_MAIN, 8);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Кулинария", GOSSIP_SENDER_MAIN, 9);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Первая помощь", GOSSIP_SENDER_MAIN, 10);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Травничество", GOSSIP_SENDER_MAIN, 11);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Снятие шкур", GOSSIP_SENDER_MAIN, 12);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, "Горное дело", GOSSIP_SENDER_MAIN, 13);
+                pPlayer->ADD_GOSSIP_ITEM(4, "Вернуться в главное меню!", GOSSIP_SENDER_MAIN, 200);
+                pPlayer->PlayerTalkClass->SendGossipMenu(20011, _creature->GetGUID());
+                break;
+            case 1:
+                if (pPlayer->HasSkill(SKILL_ALCHEMY))
                 {
                     _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
                     pPlayer->PlayerTalkClass->SendCloseGossip();
                     break;
                 }
-                                            
+
+                CompleteLearnProfession(pPlayer, _creature, SKILL_ALCHEMY);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 2:
+                if (pPlayer->HasSkill(SKILL_BLACKSMITHING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_BLACKSMITHING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 3:
+                if (pPlayer->HasSkill(SKILL_LEATHERWORKING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_LEATHERWORKING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 4:
+                if (pPlayer->HasSkill(SKILL_TAILORING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_TAILORING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 5:
+                if (pPlayer->HasSkill(SKILL_ENGINEERING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_ENGINEERING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 6:
+                if (pPlayer->HasSkill(SKILL_ENCHANTING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_ENCHANTING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 7:
+                if (pPlayer->HasSkill(SKILL_JEWELCRAFTING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_JEWELCRAFTING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 8:
+                if (pPlayer->HasSkill(SKILL_INSCRIPTION))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_INSCRIPTION);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 9:
+                if (pPlayer->HasSkill(SKILL_COOKING))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_COOKING);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 10:
+                if (pPlayer->HasSkill(SKILL_FIRST_AID))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+                CompleteLearnProfession(pPlayer, _creature, SKILL_FIRST_AID);
+                pPlayer->PlayerTalkClass->SendCloseGossip();
+                break;
+            case 11:
+                if (pPlayer->HasSkill(SKILL_HERBALISM))
+                {
+                    _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
+                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    break;
+                }
+
                 CompleteLearnProfession(pPlayer, _creature, SKILL_HERBALISM);
                 pPlayer->PlayerTalkClass->SendCloseGossip();
                 break;
             case 12:
-                if(pPlayer->HasSkill(SKILL_SKINNING))
+                if (pPlayer->HasSkill(SKILL_SKINNING))
                 {
                     _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
                     pPlayer->PlayerTalkClass->SendCloseGossip();
                     break;
                 }
-                                            
+
                 CompleteLearnProfession(pPlayer, _creature, SKILL_SKINNING);
                 pPlayer->PlayerTalkClass->SendCloseGossip();
                 break;
             case 13:
-                if(pPlayer->HasSkill(SKILL_MINING))
+                if (pPlayer->HasSkill(SKILL_MINING))
                 {
                     _creature->MonsterWhisper("Вы уже освоили эту профессию!", pPlayer->GetGUID());
                     pPlayer->PlayerTalkClass->SendCloseGossip();
                     break;
                 }
-                                            
+
                 CompleteLearnProfession(pPlayer, _creature, SKILL_MINING);
                 pPlayer->PlayerTalkClass->SendCloseGossip();
                 break;
         }
-                    
+
         return true;
     }
 };

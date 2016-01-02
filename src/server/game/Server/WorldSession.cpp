@@ -925,7 +925,7 @@ void WorldSession::ReadAddonsInfo(ByteBuffer &data)
             addonInfo >> addonName;
             addonInfo >> hasPubKey >> CRC >> urlCRC;
 
-            sLog->outInfo(LOG_FILTER_GENERAL, "ADDON: Name: %s, hasPubKey: 0x%x, CRC: 0x%x, urlCRC: 0x%x", addonName.c_str(), hasPubKey, CRC, urlCRC);
+            sLog->outTrace(LOG_FILTER_GENERAL, "ADDON: Name: %s, hasPubKey: 0x%x, CRC: 0x%x, urlCRC: 0x%x", addonName.c_str(), hasPubKey, CRC, urlCRC);
 
             AddonInfo addon(addonName, hasPubKey, CRC, 2, true);
 
@@ -938,14 +938,14 @@ void WorldSession::ReadAddonsInfo(ByteBuffer &data)
                     match = false;
 
                 if (!match)
-                    sLog->outInfo(LOG_FILTER_GENERAL, "ADDON: %s was known, but didn't match known CRC (0x%x)!", addon.Name.c_str(), savedAddon->CRC);
+                    sLog->outTrace(LOG_FILTER_GENERAL, "ADDON: %s was known, but didn't match known CRC (0x%x)!", addon.Name.c_str(), savedAddon->CRC);
                 else
-                    sLog->outInfo(LOG_FILTER_GENERAL, "ADDON: %s was known, CRC is correct (0x%x)", addon.Name.c_str(), savedAddon->CRC);
+                    sLog->outTrace(LOG_FILTER_GENERAL, "ADDON: %s was known, CRC is correct (0x%x)", addon.Name.c_str(), savedAddon->CRC);
             }
             else
             {
                 AddonMgr::SaveAddon(addon);
-                sLog->outInfo(LOG_FILTER_GENERAL, "ADDON: %s (0x%x) was not known, saving...", addon.Name.c_str(), addon.CRC);
+                sLog->outTrace(LOG_FILTER_GENERAL, "ADDON: %s (0x%x) was not known, saving...", addon.Name.c_str(), addon.CRC);
             }
 
             // TODO: Find out when to not use CRC/pubkey, and other possible states.
@@ -954,10 +954,10 @@ void WorldSession::ReadAddonsInfo(ByteBuffer &data)
 
         uint32 latestBannedAddonTimeStamp;
         addonInfo >> latestBannedAddonTimeStamp;
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "ADDON: latestBannedAddonTimeStamp: %u", latestBannedAddonTimeStamp);
+        sLog->outTrace(LOG_FILTER_NETWORKIO, "ADDON: latestBannedAddonTimeStamp: %u", latestBannedAddonTimeStamp);
 
         if (addonInfo.rpos() != addonInfo.size())
-            sLog->outDebug(LOG_FILTER_NETWORKIO, "packet under-read!");
+            sLog->outTrace(LOG_FILTER_NETWORKIO, "packet under-read!");
     }
     else
         sLog->outError(LOG_FILTER_GENERAL, "Addon packet uncompress error!");

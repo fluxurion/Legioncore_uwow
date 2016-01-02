@@ -3687,12 +3687,14 @@ void SpellMgr::LoadSpellAreas()
 
 void SpellMgr::LoadSpellInfoStore()
 {
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading SpellInfo store...");
+
     uint32 oldMSTime = getMSTime();
 
     std::unordered_map<uint32, SpellVisualMap> visualsBySpell;
 
     UnloadSpellInfoStore();
-    mSpellInfoMap.resize(sSpellStore.GetNumRows(), NULL);
+    mSpellInfoMap.resize(sSpellStore.GetNumRows(), nullptr);
 
     for (SpellXSpellVisualEntry const* visual : sSpellXSpellVisualStore)
         visualsBySpell[visual->SpellID][visual->DifficultyID].push_back(visual);
@@ -3725,7 +3727,7 @@ void SpellMgr::LoadSpellInfoStore()
             spellEntry->talentId = talentInfo->Id;
     }
 
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded spell info store in %u ms", GetMSTimeDiffToNow(oldMSTime));
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded SpellInfo store in %u seconds", GetMSTimeDiffToNow(oldMSTime) / 1000);
 }
 
 void SpellMgr::UnloadSpellInfoStore()
@@ -3746,6 +3748,9 @@ void SpellMgr::UnloadSpellInfoImplicitTargetConditionLists()
 
 void SpellMgr::LoadSpellCustomAttr()
 {
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading spell custom attributes... DISABLED");
+    return;
+
     uint32 oldMSTime = getMSTime();
 
     SpellInfo* spellInfo = NULL;

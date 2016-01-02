@@ -1429,7 +1429,7 @@ struct SpellPowerEntry
 
 struct SpellReagentsEntry
 {
-    uint32      Id;
+    uint32      ID;
     uint32      SpellID;                                    // 0
     int32       Reagent[MAX_SPELL_REAGENTS];                // 1-8
     uint16      ReagentCount[MAX_SPELL_REAGENTS];           // 9-16
@@ -1635,36 +1635,35 @@ struct ItemXBonusTreeEntry
 struct SpellEffectEntry
 {
     uint32      ID;                                         // 0
-    uint32      DifficultyID;                               // 1
-    uint32      Effect;                                     // 2
-    float       EffectAmplitude;                            // 3
-    uint32      EffectAura;                                 // 4
-    uint32      EffectAuraPeriod;                           // 5
-    uint32      EffectBasePoints;                           // 6
-    float       EffectBonusCoefficient;                     // 7
-    float       EffectChainAmplitude;                       // 8
-    uint32      EffectChainTargets;                         // 9
-    uint32      EffectDieSides;                             // 10
-    uint32      EffectItemType;                             // 11
-    uint32      EffectMechanic;                             // 12
-    int32       EffectMiscValue;                            // 13
-    int32       EffectMiscValueB;                           // 14
-    float       EffectPointsPerResource;                    // 15
-    uint32      EffectRadiusIndex;                          // 16
-    uint32      EffectRadiusMaxIndex;                       // 17
-    float       EffectRealPointsPerLevel;                   // 18
-    flag128     EffectSpellClassMask;                       // 19-22
-    uint32      EffectTriggerSpell;                         // 23
-    float       EffectPosFacing;                            // 24
-    uint32      ImplicitTarget[2];                          // 25-26
-    uint32      SpellID;                                    // 27
-    uint32      EffectIndex;                                // 28
-    uint32      EffectAttributes;                           // 29
-    float       BonusCoefficientFromAP;                     // 30
+    float       EffectAmplitude;                            // 1
+    uint32      EffectAuraPeriod;                           // 2
+    uint32      EffectBasePoints;                           // 3
+    float       EffectBonusCoefficient;                     // 4
+    float       EffectChainAmplitude;                       // 5
+    uint32      EffectDieSides;                             // 6
+    uint32      EffectItemType;                             // 7
+    int32       EffectMiscValue[2];                         // 8 - 9
+    float       EffectPointsPerResource;                    // 10
+    float       EffectRealPointsPerLevel;                   // 11
+    flag128     EffectSpellClassMask;                       // 12 - 15
+    uint32      EffectTriggerSpell;                         // 16
+    float       EffectPosFacing;                            // 17
+    uint32      SpellID;                                    // 18
+    uint32      EffectAttributes;                           // 19
+    float       BonusCoefficientFromAP;                     // 20
+    uint16      EffectAura;                                 // 21
+    uint16      EffectChainTargets;                         // 22
+    int8        DifficultyID;                               // 23
+    uint8       Effect;                                     // 24
+    int8        EffectMechanic;                             // 25
+    uint8       EffectRadiusIndex[2];                       // 26 - 27
+    uint8       ImplicitTarget[2];                          // 28 - 29
+    int8        EffectIndex;                                // 30
 };
 
 struct SpellShapeshiftFormEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     float       UnkLegion;                                  // 1 seems related to bonus stats
     uint32      Flags;                                      // 2
@@ -1675,20 +1674,20 @@ struct SpellShapeshiftFormEntry
     int8        CreatureType;                               // 17
     uint8       MountTypeID;                                // 18
     uint8       ExitSoundEntriesID;                         // 19
-
-    uint32 ID; // temp - for compile
 };
 
 struct SpellShapeshiftEntry
 {
-    uint32      ID;                                         // 0
+    uint32      ID;
+    uint32      SpellID;                                    // 0
     uint32      ShapeshiftExclude[2];                       // 1-2
     uint32      ShapeshiftMask[2];                          // 3-4
-    uint32      StanceBarOrder;                             // 5
+    int8        StanceBarOrder;                             // 5
 };
 
 struct SpellTargetRestrictionsEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     float       ConeAngle;                                  // 1
     float       Width;                                      // 2
@@ -1714,6 +1713,7 @@ struct SpellEntry
 
 struct SpellScalingEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint16      ScalesFromItemLevel;                        // 1
     uint8       ScalingClass;                               // 2
@@ -1722,6 +1722,7 @@ struct SpellScalingEntry
 
 struct SpellRangeEntry
 {
+    uint32      ID;
     float       MinRangeHostile;                            // 0
     float       MinRangeFriend;                             // 1
     float       MaxRangeHostile;                            // 2
@@ -1729,12 +1730,11 @@ struct SpellRangeEntry
     LocalizedString* DisplayName;                           // 4
     LocalizedString* DisplayNameShort;                      // 5
     uint8       Flags;                                      // 6
-
-    uint8       ID; // temp - for compile
 };
 
 struct SpellRadiusEntry
 {
+    uint32      ID;
     float       Radius;                                     // 0
     float       RadiusPerLevel;                             // 1
     float       RadiusMin;                                  // 2
@@ -1743,22 +1743,23 @@ struct SpellRadiusEntry
 
 struct SpellProcsPerMinuteEntry
 {
+    uint32      ID;
     float       BaseProcRate;                               // 0
     uint8       Flags;                                      // 1
 };
 
 struct SpellProcsPerMinuteModEntry
 {
+    uint32      ID;
     float       PpmRateMod;                                 // 0
-    uint32      Type;                                       // 1
-    uint32      SpecID;                                     // 2
-    uint32      SpellProcsPerMinuteID;                      // 3
-
-    uint32 Id; // temp - for compile
+    uint16      Type;                                       // 1
+    uint8       SpecID;                                     // 2
+    uint8       SpellProcsPerMinuteID;                      // 3
 };
 
 struct SpellLevelsEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint16      BaseLevel;                                  // 1
     uint16      MaxLevel;                                   // 2
@@ -1768,6 +1769,7 @@ struct SpellLevelsEntry
 
 struct SpellItemEnchantmentConditionEntry
 {
+    uint32      ID;
     uint8       Color[MAX_ITEM_ENCHANTS];                   // 0 - 4
     uint8       LtOperandType[MAX_ITEM_ENCHANTS];           // 5 - 9
     uint8       Comparator[MAX_ITEM_ENCHANTS];              // 10 - 14
@@ -1778,6 +1780,7 @@ struct SpellItemEnchantmentConditionEntry
 
 struct SpellInterruptsEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint32      AuraInterruptFlags[2];                      // 1 - 2
     uint32      ChannelInterruptFlags[2];                   // 3 - 4
@@ -1787,11 +1790,13 @@ struct SpellInterruptsEntry
 
 struct SpellFocusObjectEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
 };
 
 struct SpellEquippedItemsEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     int32       EquippedItemInventoryTypeMask;              // 1
     int32       EquippedItemSubClassMask;                   // 2
@@ -1800,6 +1805,7 @@ struct SpellEquippedItemsEntry
 
 struct SpellEffectScalingEntry
 {
+    uint32      ID;
     float       Coefficient;                                // 0
     float       Variance;                                   // 1
     float       ResourceCoefficient;                        // 2
@@ -1816,6 +1822,7 @@ struct SpellDurationEntry
 
 struct SpellCooldownsEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint32      CategoryRecoveryTime;                       // 1
     uint32      RecoveryTime;                               // 2
@@ -1835,6 +1842,7 @@ struct SpellCategoryEntry
 
 struct SpellCategoriesEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint16      Category;                                   // 1
     uint16      StartRecoveryCategory;                      // 2
@@ -1848,6 +1856,7 @@ struct SpellCategoriesEntry
 
 struct SpellCastTimesEntry
 {
+    uint32      ID;
     int32       Base;                                       // 0
     int32       Minimum;                                    // 1
     int16       PerLevel;                                   // 2
@@ -1855,6 +1864,7 @@ struct SpellCastTimesEntry
 
 struct SpellAuraOptionsEntry
 {
+    uint32      ID;                                         // 0
     uint32      SpellID;                                    // 0
     uint32      ProcCharges;                                // 1
     uint32      ProcTypeMask;                               // 2
@@ -1877,6 +1887,7 @@ struct SpecializationSpellEntry
 
 struct SkillRaceClassInfoEntry
 {
+    uint32      ID;
     int32       RaceMask;                                   // 0
     uint16      SkillID;                                    // 1
     int16       ClassMask;                                  // 2
@@ -1888,6 +1899,7 @@ struct SkillRaceClassInfoEntry
 
 struct SkillLineEntry
 {
+    uint32      ID;
     LocalizedString* DisplayName;                           // 0
     LocalizedString* Description;                           // 1
     LocalizedString* AlternateVerb;                         // 2
@@ -1896,12 +1908,11 @@ struct SkillLineEntry
     uint8       CategoryID;                                 // 5
     uint8       CanLink;                                    // 6
     uint8       ParentSkillLineID;                          // 7
-
-    uint32 id; // temp - for compile
 };
 
 struct SkillLineAbilityEntry
 {
+    uint32      ID;
     uint32      SpellID;                                    // 0
     uint32      RaceMask;                                   // 1
     uint32      ClassMask;                                  // 2

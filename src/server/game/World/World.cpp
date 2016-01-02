@@ -1567,7 +1567,6 @@ void World::SetInitialWorldSettings()
 
     InitDBCCustomStores();  //init DBC custom conteiners after load DBC & DB
 
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading SpellInfo store...");
     sSpellMgr->LoadSpellInfoStore();
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading TalentSpellInfo store....");
@@ -1579,7 +1578,6 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading SkillLineAbilityMultiMap Data...");
     sSpellMgr->LoadSkillLineAbilityMap();
 
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading spell custom attributes...");
     sSpellMgr->LoadSpellCustomAttr();
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading GameObject models...");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -24,10 +24,10 @@
 
 void HotfixDatabaseConnection::DoPrepareStatements()
 {
-    return;
-
     if (!m_reconnecting)
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
+
+    return;
 
     // Achievement.db2
     PrepareStatement(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Name, Description, Flags, Reward, MapID, ParentAchievement, CategoryID, OrderInCategory, "
@@ -527,9 +527,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM spell_power ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellReagents.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS, "SELECT Id, SpellID, Reagent1, Reagent2, Reagent3, Reagent4, Reagent5, Reagent6, Reagent7, Reagent8, "
+    PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS, "SELECT ID, SpellID, Reagent1, Reagent2, Reagent3, Reagent4, Reagent5, Reagent6, Reagent7, Reagent8, "
         "ReagentCount1, ReagentCount2, ReagentCount3, ReagentCount4, ReagentCount5, ReagentCount6, ReagentCount7, ReagentCount8 FROM spell_reagents"
-        " ORDER BY Id DESC", CONNECTION_SYNCH);
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellReagentsCurrency.db2
     PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS_CURRENCY, "SELECT ID, SpellID, CurrencyID, CurrencyCount FROM spell_reagents_currency ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -594,25 +594,25 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_ITEM_X_BONUS_TREE, "SELECT ID, ItemID, BonusTreeID FROM item_x_bonus_tree ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellEffect.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_EFFECT, "SELECT ID, DifficultyID, Effect, EffectAmplitude, EffectAura, EffectAuraPeriod, EffectBasePoints, "
-        "EffectBonusCoefficient, EffectChainAmplitude, EffectChainTargets, EffectDieSides, EffectItemType, EffectMechanic, EffectMiscValue, "
-        "EffectMiscValueB, EffectPointsPerResource, EffectRadiusIndex, EffectRadiusMaxIndex, EffectRealPointsPerLevel, EffectSpellClassMask1, "
-        "EffectSpellClassMask2, EffectSpellClassMask3, EffectSpellClassMask4, EffectTriggerSpell, EffectPosFacing, ImplicitTarget1, ImplicitTarget2, "
-        "SpellID, EffectIndex, EffectAttributes, BonusCoefficientFromAP FROM spell_effect ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_EFFECT, "SELECT ID, EffectAmplitude, EffectAuraPeriod, EffectBasePoints, EffectBonusCoefficient, "
+        "EffectChainAmplitude, EffectDieSides, EffectItemType, EffectMiscValue1, EffectMiscValue2, EffectPointsPerResource, EffectRealPointsPerLevel, "
+        "EffectSpellClassMask1, EffectSpellClassMask2, EffectSpellClassMask3, EffectSpellClassMask4, EffectTriggerSpell, EffectPosFacing, SpellID, "
+        "EffectAttributes, BonusCoefficientFromAP, EffectAura, EffectChainTargets, DifficultyID, Effect, EffectMechanic, EffectRadiusIndex1, "
+        "EffectRadiusIndex2, ImplicitTarget1, ImplicitTarget2, EffectIndex FROM spell_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellShapeshiftForm.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT Name, UnkLegion, Flags, AttackIconID, CombatRoundTime, CreatureDisplayID1, "
-        "CreatureDisplayID2, CreatureDisplayID3, CreatureDisplayID4, PresetSpellID, CreatureType, MountTypeID, ExitSoundEntriesID, ID"
-        " FROM spell_shapeshift_form ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT Name, Name_lang FROM spell_shapeshift_form_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT ID, Name, UnkLegion, Flags, AttackIconID, CombatRoundTime, CreatureDisplayID1, "
+        "CreatureDisplayID2, CreatureDisplayID3, CreatureDisplayID4, PresetSpellID, CreatureType, MountTypeID, ExitSoundEntriesID"
+        " FROM spell_shapeshift_form ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT ID, Name_lang FROM spell_shapeshift_form_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellShapeshift.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_SHAPESHIFT, "SELECT ID, ShapeshiftExclude1, ShapeshiftExclude2, ShapeshiftMask1, ShapeshiftMask2, "
+    PrepareStatement(HOTFIX_SEL_SPELL_SHAPESHIFT, "SELECT ID, SpellID, ShapeshiftExclude1, ShapeshiftExclude2, ShapeshiftMask1, ShapeshiftMask2, "
         "StanceBarOrder FROM spell_shapeshift ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellTargetRestrictions.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_TARGET_RESTRICTIONS, "SELECT SpellID, ConeAngle, Width, Targets, MaxTargetLevel, TargetCreatureType, "
-        "DifficultyID, MaxAffectedTargets FROM spell_target_restrictions ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_TARGET_RESTRICTIONS, "SELECT ID, SpellID, ConeAngle, Width, Targets, MaxTargetLevel, TargetCreatureType, "
+        "DifficultyID, MaxAffectedTargets FROM spell_target_restrictions ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Spell.db2
     PrepareStatement(HOTFIX_SEL_SPELL, "SELECT ID, Name, NameSubtext, Description, AuraDescription, SpellMiscDifficultyID, DescriptionVariablesID"
@@ -621,56 +621,55 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellScaling.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_SCALING, "SELECT SpellID, ScalesFromItemLevel, ScalingClass, MaxScalingLevel FROM spell_scaling"
-        " ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_SCALING, "SELECT ID, SpellID, ScalesFromItemLevel, ScalingClass, MaxScalingLevel FROM spell_scaling"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellRange.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_RANGE, "SELECT MinRangeHostile, MinRangeFriend, MaxRangeHostile, MaxRangeFriend, DisplayName, DisplayNameShort, "
-        "Flags, ID FROM spell_range ORDER BY MinRangeHostile DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_RANGE, "SELECT MinRangeHostile, DisplayName_lang, DisplayNameShort_lang FROM spell_range_locale"
-        " WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_RANGE, "SELECT ID, MinRangeHostile, MinRangeFriend, MaxRangeHostile, MaxRangeFriend, DisplayName, "
+        "DisplayNameShort, Flags FROM spell_range ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_RANGE, "SELECT ID, DisplayName_lang, DisplayNameShort_lang FROM spell_range_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellRadius.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_RADIUS, "SELECT Radius, RadiusPerLevel, RadiusMin, RadiusMax FROM spell_radius ORDER BY Radius DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_RADIUS, "SELECT ID, Radius, RadiusPerLevel, RadiusMin, RadiusMax FROM spell_radius ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellProcsPerMinute.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_PROCS_PER_MINUTE, "SELECT BaseProcRate, Flags FROM spell_procs_per_minute ORDER BY BaseProcRate DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_PROCS_PER_MINUTE, "SELECT ID, BaseProcRate, Flags FROM spell_procs_per_minute ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellProcsPerMinuteMod.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_PROCS_PER_MINUTE_MOD, "SELECT PpmRateMod, Type, SpecID, SpellProcsPerMinuteID, Id"
-        " FROM spell_procs_per_minute_mod ORDER BY PpmRateMod DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_PROCS_PER_MINUTE_MOD, "SELECT ID, PpmRateMod, Type, SpecID, SpellProcsPerMinuteID"
+        " FROM spell_procs_per_minute_mod ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellLevels.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_LEVELS, "SELECT SpellID, BaseLevel, MaxLevel, SpellLevel, DifficultyID FROM spell_levels ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_LEVELS, "SELECT ID, SpellID, BaseLevel, MaxLevel, SpellLevel, DifficultyID FROM spell_levels ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellItemEnchantmentCondition.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT_CONDITION, "SELECT Color1, Color2, Color3, Color4, Color5, LtOperandType1, LtOperandType2, "
+    PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT_CONDITION, "SELECT ID, Color1, Color2, Color3, Color4, Color5, LtOperandType1, LtOperandType2, "
         "LtOperandType3, LtOperandType4, LtOperandType5, Comparator1, Comparator2, Comparator3, Comparator4, Comparator5, CompareColor1, "
         "CompareColor2, CompareColor3, CompareColor4, CompareColor5, Value1, Value2, Value3, Value4, Value5, Logic1, Logic2, Logic3, Logic4, Logic5"
-        " FROM spell_item_enchantment_condition ORDER BY Color[MAX_ITEM_ENCHANTS] DESC", CONNECTION_SYNCH);
+        " FROM spell_item_enchantment_condition ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellInterrupts.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_INTERRUPTS, "SELECT SpellID, AuraInterruptFlags1, AuraInterruptFlags2, ChannelInterruptFlags1, "
-        "ChannelInterruptFlags2, InterruptFlags, DifficultyID FROM spell_interrupts ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_INTERRUPTS, "SELECT ID, SpellID, AuraInterruptFlags1, AuraInterruptFlags2, ChannelInterruptFlags1, "
+        "ChannelInterruptFlags2, InterruptFlags, DifficultyID FROM spell_interrupts ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellFocusObject.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_FOCUS_OBJECT, "SELECT Name FROM spell_focus_object ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_FOCUS_OBJECT, "SELECT Name, Name_lang FROM spell_focus_object_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_FOCUS_OBJECT, "SELECT ID, Name FROM spell_focus_object ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_FOCUS_OBJECT, "SELECT ID, Name_lang FROM spell_focus_object_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellEquippedItems.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_EQUIPPED_ITEMS, "SELECT SpellID, EquippedItemInventoryTypeMask, EquippedItemSubClassMask, EquippedItemClass"
-        " FROM spell_equipped_items ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_EQUIPPED_ITEMS, "SELECT ID, SpellID, EquippedItemInventoryTypeMask, EquippedItemSubClassMask, "
+        "EquippedItemClass FROM spell_equipped_items ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellEffectScaling.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_EFFECT_SCALING, "SELECT Coefficient, Variance, ResourceCoefficient, SpellEffectId FROM spell_effect_scaling"
-        " ORDER BY Coefficient DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_EFFECT_SCALING, "SELECT ID, Coefficient, Variance, ResourceCoefficient, SpellEffectId FROM spell_effect_scaling"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellDuration.db2
     PrepareStatement(HOTFIX_SEL_SPELL_DURATION, "SELECT ID, Duration, MaxDuration, DurationPerLevel FROM spell_duration ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellCooldowns.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_COOLDOWNS, "SELECT SpellID, CategoryRecoveryTime, RecoveryTime, StartRecoveryTime, DifficultyID"
-        " FROM spell_cooldowns ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_COOLDOWNS, "SELECT ID, SpellID, CategoryRecoveryTime, RecoveryTime, StartRecoveryTime, DifficultyID"
+        " FROM spell_cooldowns ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellCategory.db2
     PrepareStatement(HOTFIX_SEL_SPELL_CATEGORY, "SELECT ID, Name, ChargeRecoveryTime, Flags, UsesPerWeek, MaxCharges FROM spell_category"
@@ -678,15 +677,15 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_CATEGORY, "SELECT ID, Name_lang FROM spell_category_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellCategories.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_CATEGORIES, "SELECT SpellID, Category, StartRecoveryCategory, ChargeCategory, DifficultyID, DefenseType, "
-        "DispelType, Mechanic, PreventionType FROM spell_categories ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_CATEGORIES, "SELECT ID, SpellID, Category, StartRecoveryCategory, ChargeCategory, DifficultyID, DefenseType, "
+        "DispelType, Mechanic, PreventionType FROM spell_categories ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellCastTimes.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_CAST_TIMES, "SELECT Base, Minimum, PerLevel FROM spell_cast_times ORDER BY Base DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_CAST_TIMES, "SELECT ID, Base, Minimum, PerLevel FROM spell_cast_times ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellAuraOptions.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_AURA_OPTIONS, "SELECT SpellID, ProcCharges, ProcTypeMask, ProcCategoryRecovery, CumulativeAura, DifficultyID, "
-        "ProcChance, SpellProcsPerMinuteID FROM spell_aura_options ORDER BY SpellID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_AURA_OPTIONS, "SELECT ID, SpellID, ProcCharges, ProcTypeMask, ProcCategoryRecovery, CumulativeAura, "
+        "DifficultyID, ProcChance, SpellProcsPerMinuteID FROM spell_aura_options ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpecializationSpell.db2
     PrepareStatement(HOTFIX_SEL_SPECIALIZATION_SPELL, "SELECT ID, SpellID, OverridesSpellID, DescriptionLang, SpecID, UnkLegion"
@@ -694,19 +693,19 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SPECIALIZATION_SPELL, "SELECT ID, DescriptionLang_lang FROM specialization_spell_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SkillRaceClassInfo.db2
-    PrepareStatement(HOTFIX_SEL_SKILL_RACE_CLASS_INFO, "SELECT RaceMask, SkillID, ClassMask, Flags, SkillTierID, Availability, MinLevel"
-        " FROM skill_race_class_info ORDER BY RaceMask DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SKILL_RACE_CLASS_INFO, "SELECT ID, RaceMask, SkillID, ClassMask, Flags, SkillTierID, Availability, MinLevel"
+        " FROM skill_race_class_info ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SkillLine.db2
-    PrepareStatement(HOTFIX_SEL_SKILL_LINE, "SELECT DisplayName, Description, AlternateVerb, SpellIconID, Flags, CategoryID, CanLink, "
-        "ParentSkillLineID, id FROM skill_line ORDER BY DisplayName DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_SKILL_LINE, "SELECT DisplayName, DisplayName_lang, Description_lang, AlternateVerb_lang FROM skill_line_locale"
+    PrepareStatement(HOTFIX_SEL_SKILL_LINE, "SELECT ID, DisplayName, Description, AlternateVerb, SpellIconID, Flags, CategoryID, CanLink, "
+        "ParentSkillLineID FROM skill_line ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SKILL_LINE, "SELECT ID, DisplayName_lang, Description_lang, AlternateVerb_lang FROM skill_line_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 
     // SkillLineAbility.db2
-    PrepareStatement(HOTFIX_SEL_SKILL_LINE_ABILITY, "SELECT SpellID, RaceMask, ClassMask, SupercedesSpell, SkillLine, MinSkillLineRank, "
+    PrepareStatement(HOTFIX_SEL_SKILL_LINE_ABILITY, "SELECT ID, SpellID, RaceMask, ClassMask, SupercedesSpell, SkillLine, MinSkillLineRank, "
         "TrivialSkillLineRankHigh, TrivialSkillLineRankLow, UniqueBit, TradeSkillCategoryID, AquireMethod, NumSkillUps FROM skill_line_ability"
-        " ORDER BY SpellID DESC", CONNECTION_SYNCH);
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Scenario.db2
     PrepareStatement(HOTFIX_SEL_SCENARIO, "SELECT Name, Flags, UnkLegion FROM scenario ORDER BY Name DESC", CONNECTION_SYNCH);

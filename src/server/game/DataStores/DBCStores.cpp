@@ -206,11 +206,8 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
     {
         bool found = false;
         // Find table definition in GameTables.dbc
-       
-        sLog->outError(LOG_FILTER_SERVER_LOADING, ">> sGameTablesStore size %u", sGameTablesStore.GetNumRows());
         for (GameTablesEntry const* gt : sGameTablesStore)
         {
-
             if (tableName == gt->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE])
             {
                 found = true;
@@ -260,7 +257,7 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DBC(sChrSpecializationsStore,          "ChrSpecialization.dbc");
     LOAD_DBC(sCreatureFamilyStore,              "CreatureFamily.dbc");
     //LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
-    //LOAD_DBC(sDifficultyStore,                  "Difficulty.dbc");
+    LOAD_DBC(sDifficultyStore,                  "Difficulty.dbc");
     LOAD_DBC(sDungeonEncounterStore,            "DungeonEncounter.dbc");
     LOAD_DBC(sEmotesStore,                      "Emotes.dbc");
     LOAD_DBC(sEmotesTextStore,                  "EmotesText.dbc");

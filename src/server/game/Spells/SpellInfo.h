@@ -650,12 +650,6 @@ public:
 
 private:
     SpellTargetRestrictionsEntry const* GetSpellTargetRestrictions(uint16 diff) const;
-    SpellClassOptionsEntry const* GetSpellClassOptions() const;
-    SpellCooldownsEntry const* GetSpellCooldowns() const;
-    SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
-    SpellInterruptsEntry const* GetSpellInterrupts() const;
-    SpellLevelsEntry const* GetSpellLevels() const;
-    SpellShapeshiftEntry const* GetSpellShapeshift() const;
 
     SpellVisualMap _visuals;
 };

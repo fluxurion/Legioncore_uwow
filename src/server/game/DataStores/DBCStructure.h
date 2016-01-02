@@ -271,6 +271,7 @@ struct DifficultyEntry
     //uint32    GroupSizeSpellPointsCurveID;                // 10
     //char const* NameLang;                                 // 11
     uint32    ItemBonusTreeModID;                           // 12
+    //uint32 unkLegion
 };
 
 struct DungeonEncounterEntry
