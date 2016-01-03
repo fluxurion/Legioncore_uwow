@@ -206,6 +206,7 @@ CREATE TABLE `curve_point` (
 
 DROP TABLE IF EXISTS `criteria`;
 CREATE TABLE `criteria` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `CreatureID` int(10) unsigned NOT NULL DEFAULT '0',
   `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `SkillID` int(10) unsigned NOT NULL DEFAULT '0',
@@ -249,9 +250,8 @@ CREATE TABLE `criteria` (
   `FailEvent` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `EligibilityWorldStateID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `EligibilityWorldStateValue` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`CreatureID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -260,6 +260,7 @@ CREATE TABLE `criteria` (
 
 DROP TABLE IF EXISTS `criteria_tree`;
 CREATE TABLE `criteria_tree` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Amount` int(10) unsigned NOT NULL DEFAULT '0',
   `DescriptionLang` text,
   `CriteriaID` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -267,9 +268,8 @@ CREATE TABLE `criteria_tree` (
   `flags2` smallint(5) unsigned NOT NULL DEFAULT '0',
   `UNK` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Amount`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -278,11 +278,11 @@ CREATE TABLE `criteria_tree` (
 
 DROP TABLE IF EXISTS `criteria_tree_locale`;
 CREATE TABLE `criteria_tree_locale` (
-  `Amount` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `DescriptionLang_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Amount`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -291,10 +291,11 @@ CREATE TABLE `criteria_tree_locale` (
 
 DROP TABLE IF EXISTS `character_loadout_item`;
 CREATE TABLE `character_loadout_item` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `LoadOutID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`LoadOutID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -303,6 +304,7 @@ CREATE TABLE `character_loadout_item` (
 
 DROP TABLE IF EXISTS `char_start_outfit`;
 CREATE TABLE `char_start_outfit` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID1` int(11) NOT NULL DEFAULT '0',
   `ItemID2` int(11) NOT NULL DEFAULT '0',
   `ItemID3` int(11) NOT NULL DEFAULT '0',
@@ -334,7 +336,7 @@ CREATE TABLE `char_start_outfit` (
   `OutfitID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `PetFamilyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ItemID[MAX_OUTFIT_ITEMS]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -343,10 +345,11 @@ CREATE TABLE `char_start_outfit` (
 
 DROP TABLE IF EXISTS `chr_classes_x_power_types`;
 CREATE TABLE `chr_classes_x_power_types` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ClassID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `PowerID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ClassID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -425,6 +428,7 @@ CREATE TABLE `chr_races_locale` (
 
 DROP TABLE IF EXISTS `creature_display_info_extra`;
 CREATE TABLE `creature_display_info_extra` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `NPCItemDisplay1` int(10) unsigned NOT NULL DEFAULT '0',
   `NPCItemDisplay2` int(10) unsigned NOT NULL DEFAULT '0',
   `NPCItemDisplay3` int(10) unsigned NOT NULL DEFAULT '0',
@@ -449,7 +453,7 @@ CREATE TABLE `creature_display_info_extra` (
   `Tato3` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`NPCItemDisplay[10]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -505,10 +509,11 @@ CREATE TABLE `creature_display_info_locale` (
 
 DROP TABLE IF EXISTS `creature_type`;
 CREATE TABLE `creature_type` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -517,11 +522,11 @@ CREATE TABLE `creature_type` (
 
 DROP TABLE IF EXISTS `creature_type_locale`;
 CREATE TABLE `creature_type_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -612,6 +617,7 @@ CREATE TABLE `durability_quality` (
 
 DROP TABLE IF EXISTS `game_object_display_info`;
 CREATE TABLE `game_object_display_info` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `FileDataID` int(10) unsigned NOT NULL DEFAULT '0',
   `GeoBoxMinX` float NOT NULL DEFAULT '0',
   `GeoBoxMinY` float NOT NULL DEFAULT '0',
@@ -633,7 +639,7 @@ CREATE TABLE `game_object_display_info` (
   `Sound10` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ObjectEffectPackageID` smallint(6) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`FileDataID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -642,12 +648,13 @@ CREATE TABLE `game_object_display_info` (
 
 DROP TABLE IF EXISTS `import_price_armor`;
 CREATE TABLE `import_price_armor` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ClothModifier` float NOT NULL DEFAULT '0',
   `LeatherModifier` float NOT NULL DEFAULT '0',
   `ChainModifier` float NOT NULL DEFAULT '0',
   `PlateModifier` float NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ClothModifier`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -656,9 +663,10 @@ CREATE TABLE `import_price_armor` (
 
 DROP TABLE IF EXISTS `import_price_quality`;
 CREATE TABLE `import_price_quality` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Data` float NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Data`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -667,9 +675,10 @@ CREATE TABLE `import_price_quality` (
 
 DROP TABLE IF EXISTS `import_price_shield`;
 CREATE TABLE `import_price_shield` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Data` float NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Data`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -678,9 +687,10 @@ CREATE TABLE `import_price_shield` (
 
 DROP TABLE IF EXISTS `import_price_weapon`;
 CREATE TABLE `import_price_weapon` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Data` float NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Data`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -689,6 +699,7 @@ CREATE TABLE `import_price_weapon` (
 
 DROP TABLE IF EXISTS `item_armor_quality`;
 CREATE TABLE `item_armor_quality` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `QualityMod1` float NOT NULL DEFAULT '0',
   `QualityMod2` float NOT NULL DEFAULT '0',
   `QualityMod3` float NOT NULL DEFAULT '0',
@@ -698,7 +709,7 @@ CREATE TABLE `item_armor_quality` (
   `QualityMod7` float NOT NULL DEFAULT '0',
   `ItemLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`QualityMod[7]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -707,6 +718,7 @@ CREATE TABLE `item_armor_quality` (
 
 DROP TABLE IF EXISTS `item_armor_shield`;
 CREATE TABLE `item_armor_shield` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `QualityMod1` float NOT NULL DEFAULT '0',
   `QualityMod2` float NOT NULL DEFAULT '0',
   `QualityMod3` float NOT NULL DEFAULT '0',
@@ -716,7 +728,7 @@ CREATE TABLE `item_armor_shield` (
   `QualityMod7` float NOT NULL DEFAULT '0',
   `ItemLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`QualityMod[7]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -725,13 +737,14 @@ CREATE TABLE `item_armor_shield` (
 
 DROP TABLE IF EXISTS `item_armor_total`;
 CREATE TABLE `item_armor_total` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Value1` float NOT NULL DEFAULT '0',
   `Value2` float NOT NULL DEFAULT '0',
   `Value3` float NOT NULL DEFAULT '0',
   `Value4` float NOT NULL DEFAULT '0',
   `ItemLevel` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Value[4]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -740,6 +753,7 @@ CREATE TABLE `item_armor_total` (
 
 DROP TABLE IF EXISTS `item_damage`;
 CREATE TABLE `item_damage` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Quality1` float NOT NULL DEFAULT '0',
   `Quality2` float NOT NULL DEFAULT '0',
   `Quality3` float NOT NULL DEFAULT '0',
@@ -749,7 +763,7 @@ CREATE TABLE `item_damage` (
   `Quality7` float NOT NULL DEFAULT '0',
   `ItemLevel` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Quality[7]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -758,11 +772,12 @@ CREATE TABLE `item_damage` (
 
 DROP TABLE IF EXISTS `item_class`;
 CREATE TABLE `item_class` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Class` int(10) unsigned NOT NULL DEFAULT '0',
   `PriceFactor` float NOT NULL DEFAULT '0',
   `Name` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Class`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -771,11 +786,11 @@ CREATE TABLE `item_class` (
 
 DROP TABLE IF EXISTS `item_class_locale`;
 CREATE TABLE `item_class_locale` (
-  `Class` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Class`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -784,15 +799,15 @@ CREATE TABLE `item_class_locale` (
 
 DROP TABLE IF EXISTS `item_disenchant_loot`;
 CREATE TABLE `item_disenchant_loot` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `MinLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `MaxLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
   `SkillRequired` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ItemClass` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ItemSubClass` smallint(6) NOT NULL DEFAULT '0',
-  `Quality` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Id` int(10) unsigned NOT NULL DEFAULT '0',
+  `ItemClass` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ItemSubClass` tinyint(4) NOT NULL DEFAULT '0',
+  `Quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MinLevel`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -801,11 +816,12 @@ CREATE TABLE `item_disenchant_loot` (
 
 DROP TABLE IF EXISTS `item_limit_category`;
 CREATE TABLE `item_limit_category` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `NameLang` text,
   `Quantity` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`NameLang`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -814,11 +830,11 @@ CREATE TABLE `item_limit_category` (
 
 DROP TABLE IF EXISTS `item_limit_category_locale`;
 CREATE TABLE `item_limit_category_locale` (
-  `NameLang` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `NameLang_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`NameLang`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -907,10 +923,11 @@ CREATE TABLE `item_random_suffix_locale` (
 
 DROP TABLE IF EXISTS `item_spec_override`;
 CREATE TABLE `item_spec_override` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpecID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ItemID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -2379,15 +2396,15 @@ DROP TABLE IF EXISTS `creature_difficulty`;
 CREATE TABLE `creature_difficulty` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `CreatureID` int(10) unsigned NOT NULL DEFAULT '0',
-  `FactionID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Expansion` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `MaxLevel` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags1` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags2` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags3` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags4` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags5` int(10) unsigned NOT NULL DEFAULT '0',
+  `FactionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Expansion` tinyint(4) NOT NULL DEFAULT '0',
+  `MinLevel` tinyint(4) NOT NULL DEFAULT '0',
+  `MaxLevel` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

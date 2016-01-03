@@ -95,11 +95,8 @@ extern DB2Storage<ItemCurrencyCostEntry>            sItemCurrencyCostStore;
 extern DB2Storage<ItemDamageEntry>                  sItemDamageAmmoStore;
 extern DB2Storage<ItemDamageEntry>                  sItemDamageOneHandCasterStore;
 extern DB2Storage<ItemDamageEntry>                  sItemDamageOneHandStore;
-extern DB2Storage<ItemDamageEntry>                  sItemDamageRangedStore;
-extern DB2Storage<ItemDamageEntry>                  sItemDamageThrownStore;
 extern DB2Storage<ItemDamageEntry>                  sItemDamageTwoHandCasterStore;
 extern DB2Storage<ItemDamageEntry>                  sItemDamageTwoHandStore;
-extern DB2Storage<ItemDamageEntry>                  sItemDamageWandStore;
 extern DB2Storage<ItemDisenchantLootEntry>          sItemDisenchantLootStore;
 extern DB2Storage<ItemEffectEntry>                  sItemEffectStore;
 extern DB2Storage<ItemEntry>                        sItemStore;
@@ -348,6 +345,7 @@ public:
     uint32 GetSpellByTrigger(uint32 trigerSpell);
     SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
     std::set<uint32> const* GetSpellCategory(uint32 category);
+    std::vector<ItemSpecOverrideEntry const*> const* GetItemSpecOverrides(uint32 itemId) const;
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;

@@ -72,8 +72,8 @@ namespace Movement
 
         int32           time_passed;
         // currently duration mods are unused, but its _currently_
-        //float           duration_mod;
-        //float           duration_mod_next;
+        float           durationModifier;
+        float           nextDurationModifier;
         float           vertical_acceleration;
         float           initialOrientation;
         int32           effect_start_time;

@@ -374,8 +374,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         bool HasFall = HasFallDirection || movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING;
         bool HasSpline = unit->IsSplineEnabled();
 
-        *data << GetPackGUID();                                         // MoverGUID
-
+        *data << GetGUID();                                             // MoverGUID
         *data << uint32(unit->m_movementInfo.time);                     // MoveIndex
         *data << float(unit->GetPositionX());
         *data << float(unit->GetPositionY());
@@ -396,13 +395,13 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 
         uint32 removeMovementForcesCount = 0;
         *data << uint32(removeMovementForcesCount);                     // Count of RemoveForcesIDs
-        *data << uint32(0);                                             // Unknown
+        *data << uint32(0);                                             // Int168
 
         //for (uint32 i = 0; i < removeMovementForcesCount; ++i)
         //    *data << ObjectGuid(RemoveForcesIDs);
 
         data->WriteBits(movementFlags, 30);
-        data->WriteBits(movementFlagsExtra, 15);
+        data->WriteBits(movementFlagsExtra, 18);
         data->WriteBit(!unit->m_movementInfo.transport.guid.IsEmpty()); // HasTransport
         data->WriteBit(HasFall);                                        // HasFall
         data->WriteBit(HasSpline);                                      // HasSpline - marks that the unit uses spline movement
@@ -454,17 +453,8 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 
         uint32 MovementForceCount = 0;
         *data << uint32(MovementForceCount);
-
         //for (uint32 i = 0; i < MovementForceCount; ++i)
-        //{
-        //    *data << ObjectGuid(ID);
-        //    *data << Vector3(Direction);
-        //    *data << int32(TransportID);
-        //    *data << float(Magnitude);
-        //    *data << uint8(Type);
-        //}
-
-        // HasMovementSpline - marks that spline data is present in packet
+        //    WorldPackets::Movement::MovementForce(*data);
 
         if (data->WriteBit(HasSpline))
             WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(*unit->movespline, *data);

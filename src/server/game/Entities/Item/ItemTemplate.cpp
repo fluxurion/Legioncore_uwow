@@ -80,23 +80,19 @@ DB2Storage<ItemDamageEntry>* ItemTemplate::GetItemDamageStore() const
         case INVTYPE_RANGED:
         case INVTYPE_THROWN:
         case INVTYPE_RANGEDRIGHT:
-            switch (GetSubClass())
-            {
-                case ITEM_SUBCLASS_WEAPON_WAND:
-                    store = &sItemDamageWandStore;
-                    break;
-                case ITEM_SUBCLASS_WEAPON_THROWN:
-                    store = &sItemDamageThrownStore;
-                    break;
-                case ITEM_SUBCLASS_WEAPON_BOW:
-                case ITEM_SUBCLASS_WEAPON_GUN:
-                case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-                    store = &sItemDamageRangedStore;
-                    break;
-                default:
-                    return store;
-            }
-            break;
+        //@TODO:Legion check how this calc now...
+            //switch (GetSubClass())
+            //{
+            //    case ITEM_SUBCLASS_WEAPON_WAND:
+            //    case ITEM_SUBCLASS_WEAPON_BOW:
+            //    case ITEM_SUBCLASS_WEAPON_GUN:
+            //    case ITEM_SUBCLASS_WEAPON_CROSSBOW:
+            //    case ITEM_SUBCLASS_WEAPON_THROWN:
+            //        break;
+            //    default:
+            //        return store;
+            //}
+            //break;
         case INVTYPE_WEAPON:
         case INVTYPE_WEAPONMAINHAND:
         case INVTYPE_WEAPONOFFHAND:

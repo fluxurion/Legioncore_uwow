@@ -99,11 +99,8 @@ DB2Storage<ItemCurrencyCostEntry>           sItemCurrencyCostStore("ItemCurrency
 DB2Storage<ItemDamageEntry>                 sItemDamageAmmoStore("ItemDamageAmmo.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
 DB2Storage<ItemDamageEntry>                 sItemDamageOneHandCasterStore("ItemDamageOneHandCaster.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
 DB2Storage<ItemDamageEntry>                 sItemDamageOneHandStore("ItemDamageOneHand.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
-DB2Storage<ItemDamageEntry>                 sItemDamageRangedStore("ItemDamageRanged.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
-DB2Storage<ItemDamageEntry>                 sItemDamageThrownStore("ItemDamageThrown.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
 DB2Storage<ItemDamageEntry>                 sItemDamageTwoHandCasterStore("ItemDamageTwoHandCaster.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
 DB2Storage<ItemDamageEntry>                 sItemDamageTwoHandStore("ItemDamageTwoHand.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
-DB2Storage<ItemDamageEntry>                 sItemDamageWandStore("ItemDamageWand.db2", ItemDamageFormat, HOTFIX_SEL_ITEM_DAMAGE);
 DB2Storage<ItemDisenchantLootEntry>         sItemDisenchantLootStore("ItemDisenchantLoot.db2", ItemDisenchantLootFormat, HOTFIX_SEL_ITEM_DISENCHANT_LOOT);
 DB2Storage<ItemEffectEntry>                 sItemEffectStore("ItemEffect.db2", ItemEffectFormat, HOTFIX_SEL_ITEM_EFFECT);
 DB2Storage<ItemEntry>                       sItemStore("Item.db2", ItemFormat, HOTFIX_SEL_ITEM);
@@ -285,22 +282,22 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     //LOAD_DB2(sBattlePetStateStore);
     //LOAD_DB2(sBroadcastTextStore);
-    //LOAD_DB2(sCharacterLoadoutItemStore);     // 20796
-    //LOAD_DB2(sCharStartOutfitStore);          // 20796
-    //LOAD_DB2(sChrClassesXPowerTypesStore);    // 20796
-    //LOAD_DB2(sChrRacesStore);                 // 20796
-    //LOAD_DB2(sCreatureDifficultyStore);
-    //LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20796
+    LOAD_DB2(sCharacterLoadoutItemStore);       // 20810
+    LOAD_DB2(sCharStartOutfitStore);            // 20810
+    LOAD_DB2(sChrClassesXPowerTypesStore);      // 20810
+    LOAD_DB2(sChrRacesStore);                   // 20810
+    LOAD_DB2(sCreatureDifficultyStore);         // 20810
+    // LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20810  @TODO:Legion smthng wrong here... idh any ideas
     //LOAD_DB2(sCreatureDisplayInfoStore);      //@TODO:Legion check struct
-    //LOAD_DB2(sCreatureTypeStore);             // 20796
-    //LOAD_DB2(sCriteriaStore);                 // 20796
-    //LOAD_DB2(sCriteriaTreeStore);             // 20796
+    LOAD_DB2(sCreatureTypeStore);               // 20810
+    LOAD_DB2(sCriteriaStore);                   // 20810
+    LOAD_DB2(sCriteriaTreeStore);               // 20810
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
     //LOAD_DB2(sDestructibleModelDataStore);    // 20796
     //LOAD_DB2(sDurabilityCostsStore);          // 20796
     //LOAD_DB2(sDurabilityQualityStore);        // 20796
-    //LOAD_DB2(sGameObjectDisplayInfoStore);    // 20796
+    LOAD_DB2(sGameObjectDisplayInfoStore);      // 20810
     //LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameTablesStore);                 // 20810
     //LOAD_DB2(sGarrAbilityEffectStore);
@@ -328,39 +325,36 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGuildPerkSpellsStore);          // 20796
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
-    //LOAD_DB2(sImportPriceArmorStore);         // 20796
-    //LOAD_DB2(sImportPriceQualityStore);       // 20796
-    //LOAD_DB2(sImportPriceShieldStore);        // 20796
-    //LOAD_DB2(sImportPriceWeaponStore);        // 20796
+    LOAD_DB2(sImportPriceArmorStore);           // 20810
+    LOAD_DB2(sImportPriceQualityStore);         // 20810
+    LOAD_DB2(sImportPriceShieldStore);          // 20810
+    LOAD_DB2(sImportPriceWeaponStore);          // 20810
     //LOAD_DB2(sItemAppearanceStore);
-    //LOAD_DB2(sItemArmorQualityStore);         // 20796
-    //LOAD_DB2(sItemArmorShieldStore);          // 20796
-    //LOAD_DB2(sItemArmorTotalStore);           // 20796
+    LOAD_DB2(sItemArmorQualityStore);           // 20810
+    LOAD_DB2(sItemArmorShieldStore);            // 20810
+    LOAD_DB2(sItemArmorTotalStore);             // 20810
     //LOAD_DB2(sItemBonusStore);
     //LOAD_DB2(sItemBonusTreeNodeStore);
-    //LOAD_DB2(sItemClassStore);                // 20796
+    LOAD_DB2(sItemClassStore);                  // 20810
     //LOAD_DB2(sItemCurrencyCostStore);
-    //LOAD_DB2(sItemDamageAmmoStore);           // 20796
-    //LOAD_DB2(sItemDamageOneHandCasterStore);  // 20796
-    //LOAD_DB2(sItemDamageOneHandStore);        // 20796
-    //LOAD_DB2(sItemDamageRangedStore);         // 20796
-    //LOAD_DB2(sItemDamageThrownStore);         // 20796
-    //LOAD_DB2(sItemDamageTwoHandCasterStore);  // 20796
-    //LOAD_DB2(sItemDamageTwoHandStore);        // 20796
-    //LOAD_DB2(sItemDamageWandStore);           // 20796
-    //LOAD_DB2(sItemDisenchantLootStore);       // 20796
+    LOAD_DB2(sItemDamageAmmoStore);             // 20810
+    LOAD_DB2(sItemDamageOneHandCasterStore);    // 20810
+    LOAD_DB2(sItemDamageOneHandStore);          // 20810
+    LOAD_DB2(sItemDamageTwoHandCasterStore);    // 20810
+    LOAD_DB2(sItemDamageTwoHandStore);          // 20810
+    LOAD_DB2(sItemDisenchantLootStore);         // 20810
     //LOAD_DB2(sItemEffectStore);
     //LOAD_DB2(sItemExtendedCostStore);
-    //LOAD_DB2(sItemLimitCategoryStore);        // 20796
+    LOAD_DB2(sItemLimitCategoryStore);          // 20810
     //LOAD_DB2(sItemModifiedAppearanceStore);
     //LOAD_DB2(sItemPriceBaseStore);            // 20796
     //LOAD_DB2(sItemRandomPropertiesStore);     // 20796
     //LOAD_DB2(sItemRandomSuffixStore);         // 20796
     //LOAD_DB2(sItemSetSpellStore               // 20796
     //LOAD_DB2(sItemSparseStore);
-    //LOAD_DB2(sItemSpecOverrideStore);         // 20796
+    LOAD_DB2(sItemSpecOverrideStore);           // 20810
     //LOAD_DB2(sItemSpecStore);                 // 20796
-    //LOAD_DB2(sItemStore);                     // 20796
+    LOAD_DB2(sItemStore);                       // 20810
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
@@ -664,15 +658,18 @@ void DB2Manager::InitDB2CustomStores()
     for (ItemSetSpellEntry const* itemSetSpell : sItemSetSpellStore)
         _itemSetSpells[itemSetSpell->ItemSetID].push_back(itemSetSpell);
 
-    for (ItemSpecOverrideEntry const* isp : sItemSpecOverrideStore)
-        _itemSpec[isp->ItemID].push_back(isp->SpecID);
+    for (ItemSpecOverrideEntry const* entry : sItemSpecOverrideStore)
+    {
+        _itemSpec[entry->ItemID].push_back(entry->SpecID);
+        _itemSpecOverrides[entry->ItemID].push_back(entry);
+    }
 
     for (ModifierTreeEntry const* mt : sModifierTreeStore)
         if (mt->Parent)
             _modifierTree[mt->Parent].push_back(mt);
 
     for (NameGenEntry const* entry : sNameGenStore)
-        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]));
+        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {
@@ -695,11 +692,6 @@ void DB2Manager::InitDB2CustomStores()
             continue;
 
         _researchProjectContainer.insert(rp);
-    }
-
-    for (TransportRotationEntry const* rot : sTransportRotationStore)
-    {
-        //sTransportMgr->AddPathRotationToTransport(rot->GameObjectsID, rot->TimeIndex, rot);
     }
 
     for (TransportAnimationEntry const* entry : sTransportAnimationStore)
@@ -751,7 +743,7 @@ void DB2Manager::InitDB2CustomStores()
     for (SpecializationSpellEntry const* specSpells : sSpecializationSpellStore)
         _specializationSpellsBySpec[specSpells->SpecID].push_back(specSpells);
 
-    for (auto const& v : sSpellStore)
+    for (SpellEntry const* v : sSpellStore)
     {
         SpellCategoriesEntry const* spell = sSpellCategoriesStore.LookupEntry(v->ID);
         if (spell && spell->Category)
@@ -796,7 +788,6 @@ void DB2Manager::LoadHotfixData()
     uint32 oldMSTime = getMSTime();
 
     QueryResult result = HotfixDatabase.Query("SELECT TableHash, RecordID, `Timestamp`, Deleted FROM hotfix_data");
-
     if (!result)
         return;
 
@@ -1380,6 +1371,15 @@ std::set<uint32> const* DB2Manager::GetSpellCategory(uint32 category)
     SpellCategoryContainer::const_iterator v = _spellCategory.find(category);
     if (v != _spellCategory.end())
         return &v->second;
+
+    return nullptr;
+}
+
+std::vector<ItemSpecOverrideEntry const*> const* DB2Manager::GetItemSpecOverrides(uint32 itemId) const
+{
+    auto itr = _itemSpecOverrides.find(itemId);
+    if (itr != _itemSpecOverrides.end())
+        return &itr->second;
 
     return nullptr;
 }

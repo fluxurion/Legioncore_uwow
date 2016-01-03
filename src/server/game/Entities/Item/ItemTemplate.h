@@ -754,6 +754,7 @@ struct ItemTemplate
     uint32 MaxMoneyLoot;
     bool   ItemSpecExist;
     uint32 FlagsCu;
+    std::unordered_set<uint32> Specializations[2];  // one set for 1-40 level range and another for 41-100
 
     uint32 GetClass() const { return Class/*BasicData->Class*/; }
     uint32 GetSubClass() const { return SubClass/*BasicData->SubClass*/; }
@@ -835,9 +836,6 @@ struct ItemTemplate
     void GetDamage(uint32 itemLevel, float& minDamage, float& maxDamage) const;
     uint32 GetDPS(uint32 itemLevel) const;
     bool CanWinForPlayer(Player const* player) const;
-
-private:
-    std::unordered_set<uint32> Specializations[2];  // one set for 1-40 level range and another for 41-100
 };
 
 // Benchmarked: Faster than std::map (insert/find)

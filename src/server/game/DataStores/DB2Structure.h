@@ -131,6 +131,7 @@ struct CurvePointEntry
 
 struct CriteriaEntry
 {
+    uint32 ID;
     union //int32 Asset;
     {
         // ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE                  = 0
@@ -260,12 +261,11 @@ struct CriteriaEntry
     uint8       FailEvent;                                  // 8
     uint8       EligibilityWorldStateID;                    // 9
     uint8       EligibilityWorldStateValue;                 // 10
-
-    uint32 ID; // temp - for compile
 };
 
 struct CriteriaTreeEntry
 {
+    uint32      ID;
     uint32      Amount;                                     // 0
     LocalizedString* DescriptionLang;                       // 1
     uint16      CriteriaID;                                 // 2
@@ -273,18 +273,18 @@ struct CriteriaTreeEntry
     uint16      flags2;                                     // 4 Operator/OrderIndex
     uint16      UNK;                                        // 5 Operator/OrderIndex
     uint8       Flags;                                      // 6
-
-    uint32      ID; // temp - for compile
 };
 
 struct CharacterLoadoutItemEntry
 {
+    uint32      ID;
     uint32      LoadOutID;
     uint16      ItemID;
 };
 
 struct CharStartOutfitEntry
 {
+    uint32      ID;
     int32       ItemID[MAX_OUTFIT_ITEMS];                   // 0-23
     int32       PetDisplayID;                               // 24
     uint8       RaceID;                                     // 25
@@ -296,8 +296,9 @@ struct CharStartOutfitEntry
 
 struct ChrClassesXPowerTypesEntry
 {
-    uint8        ClassID;                                    // 0
-    uint8        PowerID;                                    // 1
+    uint32      ID;
+    uint8       ClassID;                                    // 0
+    uint8       PowerID;                                    // 1
 };
 
 struct ChrRacesEntry
@@ -341,6 +342,7 @@ struct ChrRacesEntry
 
 struct CreatureDisplayInfoExtraEntry
 {
+    uint32      ID;
     uint32      NPCItemDisplay[10];                         // 0-10
     uint32      FileDataID;                                 // 11
     uint32      Unk;                                        // 12
@@ -380,6 +382,7 @@ struct CreatureDisplayInfoEntry
 
 struct CreatureTypeEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     uint8       Flags;                                      // 1
 };
@@ -423,6 +426,7 @@ struct DurabilityQualityEntry
 
 struct GameObjectDisplayInfoEntry
 {
+    uint32      ID;
     uint32      FileDataID;                             // 0
     DBCPosition3D GeoBoxMin;                            // 1-3
     DBCPosition3D GeoBoxMax;                            // 4-6
@@ -434,6 +438,7 @@ struct GameObjectDisplayInfoEntry
 
 struct ImportPriceArmorEntry
 {
+    uint32      ID;
     float       ClothModifier;                          // 0
     float       LeatherModifier;                        // 1
     float       ChainModifier;                          // 2
@@ -442,45 +447,53 @@ struct ImportPriceArmorEntry
 
 struct ImportPriceQualityEntry
 {
+    uint32      ID;
     float       Data;                                   // 0
 };
 
 struct ImportPriceShieldEntry
 {
+    uint32      ID;
     float       Data;                                   // 0
 };
 
 struct ImportPriceWeaponEntry
 {
+    uint32      ID;
     float       Data;                                   // 0
 };
 
 struct ItemArmorQualityEntry
 {
+    uint32      ID;
     float       QualityMod[7];                          // 0 - 6
     uint16      ItemLevel;                              // 7
 };
 
 struct ItemArmorShieldEntry
 {
+    uint32      ID;
     float       QualityMod[7];                          // 0 - 6
     uint16      ItemLevel;                              // 7
 };
 
 struct ItemArmorTotalEntry
 {
+    uint32      ID;
     float       Value[4];                               // 0 - 3
     uint32      ItemLevel;                              // 4
 };
 
 struct ItemDamageEntry
 {
+    uint32      ID;
     float       Quality[7];                             // 0 - 6
     uint32      ItemLevel;                              // 7
 };
 
 struct ItemClassEntry
 {
+    uint32      ID;
     uint32      Class;                                  // 0
     float       PriceFactor;                            // 1
     LocalizedString* Name;                              // 2
@@ -488,18 +501,18 @@ struct ItemClassEntry
 
 struct ItemDisenchantLootEntry
 {
+    uint32      ID;
     uint16      MinLevel;                               // 0
     uint16      MaxLevel;                               // 1
     uint16      SkillRequired;                          // 2
-    uint16      ItemClass;                              // 3
-    int16       ItemSubClass;                           // 4
-    uint16      Quality;                                // 5
-
-    uint32 Id; // temp - for compile
+    uint8       ItemClass;                              // 3
+    int8        ItemSubClass;                           // 4
+    uint8       Quality;                                // 5
 };
 
 struct ItemLimitCategoryEntry
 {
+    uint32      ID;
     LocalizedString* NameLang;                          // 0
     uint8       Quantity;                               // 1
     uint8       Flags;                                  // 2
@@ -532,6 +545,7 @@ struct ItemRandomSuffixEntry
 
 struct ItemSpecOverrideEntry
 {
+    uint32      ID;
     uint32      ItemID;                                 // 0
     uint16      SpecID;                                 // 1
 };
@@ -1252,11 +1266,11 @@ struct CreatureDifficultyEntry
 {
     uint32      ID;
     uint32      CreatureID;
-    uint32      FactionID;
-    uint32      Expansion;
-    uint32      MinLevel;
-    uint32      MaxLevel;
     uint32      Flags[5];
+    uint16      FactionID;
+    int8        Expansion;
+    int8        MinLevel;
+    int8        MaxLevel;
 };
 
 struct CurrencyTypesEntry

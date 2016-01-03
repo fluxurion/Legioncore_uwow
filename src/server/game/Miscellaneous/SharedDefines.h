@@ -216,11 +216,11 @@ enum Races
     //RACE_GILNEAN            = 23
     RACE_PANDAREN_NEUTRAL   = 24,
     RACE_PANDAREN_ALLIANCE  = 25,
-    RACE_PANDAREN_HORDE     = 26
+    RACE_PANDAREN_HORDE     = 26,
+
+    MAX_RACES
 };
 
-// max+1 for player race
-#define MAX_RACES           27
 #define MAX_PLAYABLE_RACES  15
 
 #define RACEMASK_ALL_PLAYABLE \

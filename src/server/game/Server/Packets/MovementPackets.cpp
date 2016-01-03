@@ -300,7 +300,15 @@ void WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(::
 
         ::Movement::MoveSplineFlag const& splineFlags = moveSpline.splineflags;
 
-        data.WriteBits(moveSpline.splineflags.raw(), 25);
+        data << splineFlags.raw();
+        data << int32(moveSpline.timePassed());
+        data << uint32(moveSpline.Duration());
+        data << float(moveSpline.durationModifier);
+        data << float(moveSpline.nextDurationModifier);
+
+        uint32 PointsCount = moveSpline.getPath().size();
+        data << uint32(PointsCount);
+        data.append<G3D::Vector3>(&moveSpline.getPath()[0], PointsCount);
 
         uint8 face = MONSTER_MOVE_NORMAL;
         if (splineFlags.final_angle)
@@ -312,21 +320,11 @@ void WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(::
 
         data.WriteBits(face, 2);
 
-        bool HasJumpGravity = data.WriteBit(moveSpline.splineflags & (::Movement::MoveSplineFlag::Parabolic | ::Movement::MoveSplineFlag::Animation));                 // HasJumpGravity
-        bool HasSpecialTime = data.WriteBit((moveSpline.splineflags & ::Movement::MoveSplineFlag::Parabolic) && moveSpline.effect_start_time < moveSpline.Duration()); // HasSpecialTime
-
+        bool HasJumpGravity = data.WriteBit(splineFlags & (::Movement::MoveSplineFlag::Parabolic | ::Movement::MoveSplineFlag::Animation));
+        bool HasSpecialTime = data.WriteBit((splineFlags & ::Movement::MoveSplineFlag::Parabolic) && moveSpline.effect_start_time < moveSpline.Duration());
         data.WriteBits(uint8(moveSpline.spline.mode()), 2);
-
-        data.WriteBit(0);                                                       // HasSplineFilterKey
-
-        data << int32(moveSpline.timePassed());
-        data << uint32(moveSpline.Duration());
-        data << float(1.0f);                                                    // DurationModifier
-        data << float(1.0f);                                                    // NextDurationModifier
-
-        uint32 PointsCount = moveSpline.getPath().size();
-        data << uint32(PointsCount);
-
+        data.WriteBit(0); // HasSplineFilterKey
+        data.WriteBit(0); // byte70
         switch (face)
         {
             case MONSTER_MOVE_FACING_SPOT:
@@ -358,7 +356,12 @@ void WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(::
         //    data.WriteBits(FilterFlags, 2);
         //}
 
-        data.append<G3D::Vector3>(&moveSpline.getPath()[0], PointsCount);
+        //if (byte70)
+        //{
+        //    packet.ReadPackedGuid128("unk spline guid", index);
+        //    packet.ReadInt32("unk spline int32_1", index);
+        //    packet.ReadInt32("unk spline int32_2", index);
+        //}
     }
 }
 
@@ -374,7 +377,7 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
     splineFlags.enter_cycle = moveSpline.isCyclic();
     movementSpline.Flags = uint32(splineFlags & uint32(~::Movement::MoveSplineFlag::Mask_No_Monster_Move));
 
-    switch (moveSpline.splineflags & ::Movement::MoveSplineFlag::Mask_Final_Facing)
+    switch (splineFlags & ::Movement::MoveSplineFlag::Mask_Final_Facing)
     {
         case ::Movement::MoveSplineFlag::Final_Point:
             movementSpline.Face = MONSTER_MOVE_FACING_SPOT;

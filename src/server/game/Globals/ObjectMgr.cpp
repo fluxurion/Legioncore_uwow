@@ -1239,7 +1239,6 @@ void ObjectMgr::LoadCreatureModelInfo()
     uint32 oldMSTime = getMSTime();
 
     QueryResult result = WorldDatabase.Query("SELECT DisplayID, BoundingRadius, CombatReach, DisplayID_Other_Gender, hostileId FROM creature_model_info");
-
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creature model definitions. DB table `creature_model_info` is empty.");
@@ -2591,18 +2590,18 @@ void FillDisenchantFields(uint32* disenchantID, uint32* requiredDisenchantSkill,
             disenchant->MinLevel <= itemTemplate.ItemLevel &&
             disenchant->MaxLevel >= itemTemplate.ItemLevel)
         {
-            if (disenchant->Id == 60 || disenchant->Id == 61)   // epic item disenchant ilvl range 66-99 (classic)
+            if (disenchant->ID == 60 || disenchant->ID == 61)   // epic item disenchant ilvl range 66-99 (classic)
             {
                 if (itemTemplate.RequiredLevel > 60 || itemTemplate.RequiredSkillRank > 300)
                     continue;                                   // skip to epic item disenchant ilvl range 90-199 (TBC)
             }
-            else if (disenchant->Id == 66 || disenchant->Id == 67)  // epic item disenchant ilvl range 90-199 (TBC)
+            else if (disenchant->ID == 66 || disenchant->ID == 67)  // epic item disenchant ilvl range 90-199 (TBC)
             {
                 if (itemTemplate.RequiredLevel <= 60 || (itemTemplate.RequiredSkill && itemTemplate.RequiredSkillRank <= 300))
                     continue;
             }
 
-            *disenchantID = disenchant->Id;
+            *disenchantID = disenchant->ID;
             *requiredDisenchantSkill = disenchant->SkillRequired;
             //return;
         }
@@ -2615,16 +2614,15 @@ void ObjectMgr::LoadItemTemplates()
     uint32 sparseCount = 0;
     uint32 dbCount = 0;
 
-    for (uint32 itemId = 0; itemId < sItemSparseStore.GetNumRows(); ++itemId)
+    for (ItemSparseEntry const* sparse : sItemSparseStore)
     {
-        ItemSparseEntry const* sparse = sItemSparseStore.LookupEntry(itemId);
-        ItemEntry const* db2Data = sItemStore.LookupEntry(itemId);
-        if (!sparse || !db2Data)
+        ItemEntry const* db2Data = sItemStore.LookupEntry(sparse->ID);
+        if (!db2Data)
             continue;
 
-        ItemTemplate& itemTemplate = _itemTemplateStore[itemId];
+        ItemTemplate& itemTemplate = _itemTemplateStore[sparse->ID];
 
-        itemTemplate.ItemId = itemId;
+        itemTemplate.ItemId = sparse->ID;
         itemTemplate.Class = db2Data->Class;
         itemTemplate.SubClass = db2Data->SubClass;
         itemTemplate.SoundOverrideSubclass = db2Data->SoundOverrideSubclass;
@@ -2722,13 +2720,22 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.MaxMoneyLoot = 0;
         itemTemplate.FlagsCu = 0;
         ++sparseCount;
+        itemTemplate.ItemSpecExist = sDB2Manager.GetItemSpecsList(sparse->ID).empty() ? 0 : 1;
 
-        /*ItemSpecStats itemSpecStats(db2Data, sparse);
-        if (itemSpecStats.ItemSpecStatCount)
+        if (std::vector<ItemSpecOverrideEntry const*> const* itemSpecOverrides = sDB2Manager.GetItemSpecOverrides(sparse->ID))
         {
-            for (uint32 i = 0; i < sItemSpecStore.GetNumRows(); ++i)
+            for (ItemSpecOverrideEntry const* itemSpecOverride : *itemSpecOverrides)
+                itemTemplate.Specializations[0].insert(itemSpecOverride->SpecID);
+
+            itemTemplate.Specializations[1] = itemTemplate.Specializations[0];
+        }
+        else
+        {
+            ItemSpecStats itemSpecStats(db2Data, sparse);
+
+            if (itemSpecStats.ItemSpecStatCount)
             {
-                if (ItemSpecEntry const* itemSpec = sItemSpecStore.LookupEntry(i))
+                for (ItemSpecEntry const* itemSpec : sItemSpecStore)
                 {
                     if (itemSpecStats.ItemType != itemSpec->ItemType)
                         continue;
@@ -2747,12 +2754,11 @@ void ObjectMgr::LoadItemTemplates()
                         continue;
 
                     if (ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(itemSpec->SpecID))
-                        if ((1 << specialization->classId) & sparse->AllowableClass)
-                            sDB2Manager.AddSpecdtoItem(itemId, itemSpec->SpecID);
+                        if ((1 << (specialization->ClassID - 1)) & sparse->AllowableClass)
+                            itemTemplate.Specializations[itemSpec->MaxLevel > 40].insert(itemSpec->SpecID);
                 }
             }
-        }*/
-        itemTemplate.ItemSpecExist = sDB2Manager.GetItemSpecsList(itemId).empty() ? 0 : 1;
+        }
 
         // Mantid Amber Sliver
         if (itemTemplate.ItemId == 95373)
@@ -2779,181 +2785,16 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.Spells[effectEntry->OrderIndex] = effect;
     }
 
-
-    // Load missing items from item_template AND overwrite data from Item-sparse.db2 (item_template is supposed to contain Item-sparse.adb data)
-    //                                               0      1      2         3                      4     5          6        7      8       9       10        11        12        13        14
-    QueryResult result = WorldDatabase.Query("SELECT entry, Class, SubClass, SoundOverrideSubClass, Name, DisplayId, Quality, Flags, Flags2, Flags3, Unk430_1, Unk430_2, BuyCount, BuyPrice, SellPrice, "
-    //                                        15             16              17             18         19             20             21                 22
-                                             "InventoryType, AllowableClass, AllowableRace, ItemLevel, RequiredLevel, RequiredSkill, RequiredSkillRank, RequiredSpell, "
-    //                                        23                 24                25                         26                      27        28         29
-                                             "RequiredHonorRank, RequiredCityRank, RequiredReputationFaction, RequiredReputationRank, MaxCount, Stackable, ContainerSlots, "
-    //                                        30          31           32           33           34          35           36           37
-                                             "stat_type1, stat_value1, stat_unk1_1, stat_unk2_1, stat_type2, stat_value2, stat_unk1_2, stat_unk2_2, "
-    //                                        38          39           40           41           42          43           44           45
-                                             "stat_type3, stat_value3, stat_unk1_3, stat_unk2_3, stat_type4, stat_value4, stat_unk1_4, stat_unk2_4, "
-    //                                        46          47           48           49           50          51           52           53
-                                             "stat_type5, stat_value5, stat_unk1_5, stat_unk2_5, stat_type6, stat_value6, stat_unk1_6, stat_unk2_6, "
-    //                                        54          55           56           57           58          59           60           61
-                                             "stat_type7, stat_value7, stat_unk1_7, stat_unk2_7, stat_type8, stat_value8, stat_unk1_8, stat_unk2_8, "
-    //                                        62          63           64           65           66           67            68            69
-                                             "stat_type9, stat_value9, stat_unk1_9, stat_unk2_9, stat_type10, stat_value10, stat_unk1_10, stat_unk2_10, "
-    //                                        70                       71          72     73
-                                             "ScalingStatDistribution, DamageType, Delay, RangedModRange, "
-    //                                        74         75              76              77               78               79
-                                             "spellid_1, spelltrigger_1, spellcharges_1, spellcooldown_1, spellcategory_1, spellcategorycooldown_1, "
-    //                                        80         81              82              83               84               85
-                                             "spellid_2, spelltrigger_2, spellcharges_2, spellcooldown_2, spellcategory_2, spellcategorycooldown_2, "
-    //                                        86         87              88              89               90               91
-                                             "spellid_3, spelltrigger_3, spellcharges_3, spellcooldown_3, spellcategory_3, spellcategorycooldown_3, "
-    //                                        92         93              94              95               96               97
-                                             "spellid_4, spelltrigger_4, spellcharges_4, spellcooldown_4, spellcategory_4, spellcategorycooldown_4, "
-    //                                        98         99              100             101              102              103
-                                             "spellid_5, spelltrigger_5, spellcharges_5, spellcooldown_5, spellcategory_5, spellcategorycooldown_5, "
-    //                                        104      105          106       107         108           109         110     111
-                                             "Bonding, Description, PageText, LanguageID, PageMaterial, StartQuest, LockID, Material, "
-    //                                        112     113             114           115      116   117  118        119
-                                             "Sheath, RandomProperty, RandomSuffix, ItemSet, Area, Map, BagFamily, TotemCategory, "
-    //                                        120            121              122            123              124            125              126
-                                             "SocketColor_1, SocketContent_1, SocketColor_2, SocketContent_2, SocketColor_3, SocketContent_3, SocketBonus, "
-    //                                        127            128                  129       130                131        132
-                                             "GemProperties, ArmorDamageModifier, Duration, ItemLimitCategory, HolidayId, StatScalingFactor, "
-    //                                        133                     134
-                                             "CurrencySubstitutionId, CurrencySubstitutionCount "
-                                             "FROM item_template");
-
-    if (result)
-    {
-        do
-        {
-            Field* fields = result->Fetch();
-            uint32 itemId = fields[0].GetUInt32();
-            if (_itemTemplateStore.find(itemId) != _itemTemplateStore.end())
-            {
-                //QueryResult result = WorldDatabase.PQuery("DELETE FROM item_template WHERE entry IN (%u);", itemId);
-                --sparseCount;
-                //continue;
-            }
-
-            ItemTemplate& itemTemplate = _itemTemplateStore[itemId];
-
-            itemTemplate.ItemId                    = itemId;
-            itemTemplate.Class                     = uint32(fields[1].GetUInt8());
-            itemTemplate.SubClass                  = uint32(fields[2].GetUInt8());
-            itemTemplate.SoundOverrideSubclass     = int32(fields[3].GetInt8());
-            itemTemplate.Name1                     = fields[4].GetString();
-            itemTemplate.Quality                   = uint32(fields[6].GetUInt8());
-            itemTemplate.Flags                     = uint32(fields[7].GetInt64());
-            itemTemplate.Flags2                    = fields[8].GetUInt32();
-            itemTemplate.Flags3                    = fields[9].GetUInt32();
-            itemTemplate.Unk430_1                  = fields[10].GetFloat();
-            itemTemplate.Unk430_2                  = fields[11].GetFloat();
-            itemTemplate.BuyCount                  = uint32(fields[12].GetUInt8());
-            itemTemplate.BuyPrice                  = int32(fields[13].GetInt64());
-            itemTemplate.SellPrice                 = fields[14].GetUInt32();
-
-            itemTemplate._InventoryType             = uint32(fields[15].GetUInt8());
-            itemTemplate.AllowableClass            = fields[16].GetInt32();
-            itemTemplate.AllowableRace             = fields[17].GetInt32();
-            itemTemplate.ItemLevel                 = uint32(fields[18].GetUInt16());
-            itemTemplate.RequiredLevel             = uint32(fields[19].GetUInt8());
-            itemTemplate.RequiredSkill             = uint32(fields[20].GetUInt16());
-            itemTemplate.RequiredSkillRank         = uint32(fields[21].GetUInt16());
-            itemTemplate.RequiredSpell             = fields[22].GetUInt32();
-            itemTemplate.RequiredHonorRank         = fields[23].GetUInt32();
-            itemTemplate.RequiredCityRank          = fields[24].GetUInt32();
-            itemTemplate.RequiredReputationFaction = uint32(fields[25].GetUInt16());
-            itemTemplate.RequiredReputationRank    = uint32(fields[26].GetUInt16());
-            itemTemplate.MaxCount                  = fields[27].GetInt32();
-            itemTemplate.Stackable                 = fields[28].GetInt32();
-            itemTemplate.ContainerSlots            = uint32(fields[29].GetUInt8());
-            for (uint32 i = 0; i < MAX_ITEM_PROTO_STATS; ++i)
-            {
-                itemTemplate.ItemStat[i].ItemStatType  = uint32(fields[30 + i * 4 + 0].GetUInt8());
-                itemTemplate.ItemStat[i].ItemStatValue = int32(fields[30 + i * 4 + 1].GetInt16());
-                itemTemplate.ItemStat[i].ItemStatAllocation = fields[30 + i * 4 + 2].GetInt32();
-                itemTemplate.ItemStat[i].ItemStatSocketCostMultiplier = fields[30 + i * 4 + 3].GetFloat();
-            }
-
-            itemTemplate.ScalingStatDistribution = uint32(fields[70].GetUInt16());
-            itemTemplate.DamageType                = fields[71].GetUInt8();
-            //itemTemplate.Armor                     = GetItemArmor(itemTemplate.ItemLevel, itemTemplate.Class,
-            //                                                      itemTemplate.SubClass, itemTemplate.Quality,
-            //                                                      itemTemplate.GetInventoryType());
-
-            itemTemplate.Delay                     = fields[72].GetUInt16();
-            itemTemplate.RangedModRange            = fields[73].GetFloat();
-            for (uint32 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-            {
-                itemTemplate.Spells[i].SpellId               = fields[74 + 6 * i + 0].GetInt32();
-                itemTemplate.Spells[i].SpellTrigger          = uint32(fields[74 + 6 * i + 1].GetUInt8());
-                itemTemplate.Spells[i].SpellCharges          = int32(fields[74 + 6 * i + 2].GetInt16());
-                itemTemplate.Spells[i].SpellCooldown         = fields[74 + 6 * i + 3].GetInt32();
-                itemTemplate.Spells[i].SpellCategory         = uint32(fields[74 + 6 * i + 4].GetUInt16());
-                itemTemplate.Spells[i].SpellCategoryCooldown = fields[74 + 6 * i + 5].GetInt32();
-
-                // Add spell into the store for correct handling
-                //if (itemTemplate.Spells[i].SpellCategory > 0)
-                //   _spellCategory[itemTemplate.Spells[i].SpellCategory].insert(itemTemplate.Spells[i].SpellId);
-            }
-
-            itemTemplate.SpellPPMRate   = 0.0f;
-            itemTemplate.Bonding        = uint32(fields[104].GetUInt8());
-            itemTemplate.Description    = fields[105].GetString();
-            itemTemplate.PageText       = fields[106].GetUInt32();
-            itemTemplate.LanguageID     = uint32(fields[107].GetUInt8());
-            itemTemplate.PageMaterial   = uint32(fields[108].GetUInt8());
-            itemTemplate.StartQuest     = fields[109].GetUInt32();
-            itemTemplate.LockID         = fields[110].GetUInt32();
-            itemTemplate.Material       = int32(fields[111].GetInt8());
-            itemTemplate.Sheath         = uint32(fields[112].GetUInt8());
-            itemTemplate.RandomProperty = fields[113].GetUInt32();
-            itemTemplate.RandomSuffix   = fields[114].GetInt32();
-            itemTemplate.ItemSet        = fields[115].GetUInt32();
-            itemTemplate.MaxDurability  = FillMaxDurability(itemTemplate.Class, itemTemplate.SubClass,
-            itemTemplate._InventoryType, itemTemplate.Quality, itemTemplate.ItemLevel);
-
-            itemTemplate.Area           = fields[116].GetUInt32();
-            itemTemplate.Map            = uint32(fields[117].GetUInt16());
-            itemTemplate.BagFamily      = fields[118].GetUInt32();
-            itemTemplate.TotemCategory  = fields[119].GetUInt32();
-            for (uint32 i = 0; i < MAX_ITEM_PROTO_SOCKETS; ++i)
-            {
-                itemTemplate.Socket[i].Color   = uint32(fields[120 + i*2].GetUInt8());
-                itemTemplate.Socket[i].Content = fields[120 + i * 2 + 1].GetUInt32();
-            }
-
-            itemTemplate.socketBonus         = fields[126].GetUInt32();
-            itemTemplate.GemProperties       = fields[127].GetUInt32();
-            FillDisenchantFields(&itemTemplate.DisenchantID, &itemTemplate.RequiredDisenchantSkill, itemTemplate);
-
-            itemTemplate.ArmorDamageModifier       = fields[128].GetFloat();
-            itemTemplate.Duration                  = fields[129].GetUInt32();
-            itemTemplate.ItemLimitCategory         = uint32(fields[130].GetInt16());
-            itemTemplate.HolidayId                 = fields[131].GetUInt32();
-            itemTemplate.StatScalingFactor         = fields[132].GetFloat();
-            itemTemplate.CurrencySubstitutionId    = fields[133].GetInt32();
-            itemTemplate.CurrencySubstitutionCount = fields[134].GetInt32();
-            itemTemplate.ScriptId                  = 0;
-            itemTemplate.FoodType                  = 0;
-            itemTemplate.MinMoneyLoot              = 0;
-            itemTemplate.MaxMoneyLoot              = 0;
-            itemTemplate.ItemSpecExist             = sDB2Manager.GetItemSpecsList(itemId).empty() ? 0 : 1;
-            itemTemplate.FlagsCu                   = 0;
-            ++dbCount;
-        } while (result->NextRow());
-    }
-
     // Check if item templates for DBC referenced character start outfit are present
     std::set<uint32> notFoundOutfit;
     for (CharStartOutfitEntry const* entry : sCharStartOutfitStore)
     {
-        for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
+        for (uint8 j = 0; j < MAX_OUTFIT_ITEMS; ++j)
         {
             if (entry->ItemID[j] <= 0)
                 continue;
 
             uint32 item_id = entry->ItemID[j];
-
             if (!GetItemTemplate(item_id))
                 notFoundOutfit.insert(item_id);
         }
@@ -3234,22 +3075,20 @@ void ObjectMgr::PlayerCreateInfoAddItemHelper(uint32 race_, uint32 class_, uint3
 
 void ObjectMgr::LoadPlayerInfo()
 {
-    // Load playercreate
+    uint32 oldMSTime = getMSTime();
     {
-        uint32 oldMSTime = getMSTime();
+        // Load playercreate
         //                                                0     1      2    3        4          5           6
         QueryResult result = WorldDatabase.Query("SELECT race, class, map, zone, position_x, position_y, position_z, orientation FROM playercreateinfo");
 
         if (!result)
         {
-
             sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 player create definitions. DB table `playercreateinfo` is empty.");
             exit(1);
         }
         else
         {
             uint32 count = 0;
-
             do
             {
                 Field* fields = result->Fetch();
@@ -3323,18 +3162,14 @@ void ObjectMgr::LoadPlayerInfo()
     // Load playercreate items
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Items Data...");
     {
-        uint32 oldMSTime = getMSTime();
+        oldMSTime = getMSTime();
         //                                                0     1      2       3
         QueryResult result = WorldDatabase.Query("SELECT race, class, itemid, amount FROM playercreateinfo_item");
-
         if (!result)
-        {
             sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 custom player create items. DB table `playercreateinfo_item` is empty.");
-        }
         else
         {
             uint32 count = 0;
-
             do
             {
                 Field* fields = result->Fetch();
@@ -3354,7 +3189,6 @@ void ObjectMgr::LoadPlayerInfo()
                 }
 
                 uint32 item_id = fields[2].GetUInt32();
-
                 if (!GetItemTemplate(item_id))
                 {
                     sLog->outError(LOG_FILTER_SQL, "Item id %u (race %u class %u) in `playercreateinfo_item` table but not listed in `item_template`, ignoring.", item_id, current_race, current_class);
@@ -3362,7 +3196,6 @@ void ObjectMgr::LoadPlayerInfo()
                 }
 
                 int32 amount   = fields[3].GetUInt32();
-
                 if (!amount)
                 {
                     sLog->outError(LOG_FILTER_SQL, "Item id %u (class %u race %u) have amount == 0 in `playercreateinfo_item` table, ignoring.", item_id, current_race, current_class);
@@ -3392,7 +3225,7 @@ void ObjectMgr::LoadPlayerInfo()
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Skill Data...");
     {
-        uint32 oldMSTime = getMSTime();
+        oldMSTime = getMSTime();
 
         for (SkillRaceClassInfoEntry const* rcInfo : sSkillRaceClassInfoStore)
             if (rcInfo->Availability == 1)
@@ -3409,20 +3242,14 @@ void ObjectMgr::LoadPlayerInfo()
     // Load playercreate actions
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Action Data...");
     {
-        uint32 oldMSTime = getMSTime();
-
+        oldMSTime = getMSTime();
         //                                                0     1      2       3       4
         QueryResult result = WorldDatabase.Query("SELECT race, class, button, action, type FROM playercreateinfo_action");
-
         if (!result)
-        {
             sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 player create actions. DB table `playercreateinfo_action` is empty.");
-
-        }
         else
         {
             uint32 count = 0;
-
             do
             {
                 Field* fields = result->Fetch();
@@ -3455,20 +3282,16 @@ void ObjectMgr::LoadPlayerInfo()
     // Loading levels data (class/race dependent)
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create Level Stats Data...");
     {
-        uint32 oldMSTime = getMSTime();
-
+        oldMSTime = getMSTime();
         //                                                 0     1      2      3    4    5    6    7
         QueryResult result = WorldDatabase.Query("SELECT race, class, level, str, agi, sta, inte, spi FROM player_levelstats");
-
         if (!result)
         {
             sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 level stats definitions. DB table `player_levelstats` is empty.");
-
             exit(1);
         }
 
         uint32 count = 0;
-
         do
         {
             Field* fields = result->Fetch();
@@ -3515,13 +3338,13 @@ void ObjectMgr::LoadPlayerInfo()
         while (result->NextRow());
 
         // Fill gaps and check integrity
-        for (int race = 0; race < MAX_RACES; ++race)
+        for (uint8 race = 0; race < MAX_RACES; ++race)
         {
             // skip non existed races
             if (!sChrRacesStore.LookupEntry(race))
                 continue;
 
-            for (int class_ = 0; class_ < MAX_CLASSES; ++class_)
+            for (uint8 class_ = 0; class_ < MAX_CLASSES; ++class_)
             {
                 // skip non existed classes
                 if (!sChrClassesStore.LookupEntry(class_))
@@ -3537,6 +3360,9 @@ void ObjectMgr::LoadPlayerInfo()
 
                 // skip expansion classes if not playing with expansion
                 if (sWorld->getIntConfig(CONFIG_EXPANSION) < 2 && class_ == CLASS_DEATH_KNIGHT)
+                    continue;
+
+                if (class_ == CLASS_DEMON_HUNTER)
                     continue;
 
                 // fatal error if no level 1 data
@@ -3564,23 +3390,15 @@ void ObjectMgr::LoadPlayerInfo()
     // Loading xp per level data
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Player Create XP Data...");
     {
-        uint32 oldMSTime = getMSTime();
+        oldMSTime = getMSTime();
 
         _playerXPperLevel.resize(sGtOCTLevelExperienceStore.GetTableRowCount() + 1, 0);
-
-        // load the DBC's levels at first...
-        GtOCTLevelExperienceEntry const* exp;
         for (uint32 level = 0; level < sGtOCTLevelExperienceStore.GetTableRowCount(); ++level)
-        {
-            exp = sGtOCTLevelExperienceStore.EvaluateTable(level, 0);
-            _playerXPperLevel[level + 1] = exp->Data;
-        }
+            _playerXPperLevel[level + 1] = sGtOCTLevelExperienceStore.EvaluateTable(level, 0)->Data;
 
         //                                                 0        1
         QueryResult result  = WorldDatabase.Query("SELECT Level, Experience FROM player_xp_for_level");
-
         uint32 count = 0;
-
         if (result)
         {
             do

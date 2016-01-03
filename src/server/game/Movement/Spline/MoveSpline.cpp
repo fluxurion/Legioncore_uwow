@@ -171,6 +171,8 @@ void MoveSpline::Initialize(const MoveSplineInitArgs& args)
     time_passed = 0;
     vertical_acceleration = 0.f;
     effect_start_time = 0;
+    durationModifier = 0.0f;
+    nextDurationModifier = 0.0f;
 
     // Check if its a stop spline
     if (args.flags.done)

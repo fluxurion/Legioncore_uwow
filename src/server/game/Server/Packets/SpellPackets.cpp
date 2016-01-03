@@ -375,10 +375,12 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellHealPredicti
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData const& spellCastData)
 {
-    data << spellCastData.CasterGUID;
+    //data << spellCastData.CasterGUID;
+    //data << spellCastData.CasterUnit;
     data << spellCastData.CasterUnit;
-    data << spellCastData.UnkLGuid1;
-    data << spellCastData.UnkLGuid2;
+    data << ObjectGuid();
+    data << ObjectGuid();
+    data << ObjectGuid();
 
     data << int32(spellCastData.SpellID);
     data << uint32(spellCastData.SpellXSpellVisualID);
