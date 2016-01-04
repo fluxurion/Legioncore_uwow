@@ -287,7 +287,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sChrClassesXPowerTypesStore);      // 20810
     LOAD_DB2(sChrRacesStore);                   // 20810
     LOAD_DB2(sCreatureDifficultyStore);         // 20810
-    // LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20810  @TODO:Legion smthng wrong here... idh any ideas
+    //LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20810  @TODO:Legion smthng wrong here... idh any ideas
     //LOAD_DB2(sCreatureDisplayInfoStore);      //@TODO:Legion check struct
     LOAD_DB2(sCreatureTypeStore);               // 20810
     LOAD_DB2(sCriteriaStore);                   // 20810

@@ -1890,7 +1890,7 @@ void Player::UpdateMasteryAuras()
     SetFloatValue(PLAYER_FIELD_MASTERY, masteryValue);
 
     // TODO: rewrite 115556 Master Demonologist
-    ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(GetSpecializationId(GetActiveSpec()));
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(GetSpecializationId(GetActiveSpec()));
     if (!specialization)
         return;
 

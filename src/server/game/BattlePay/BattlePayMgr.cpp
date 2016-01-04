@@ -249,7 +249,7 @@ void BattlePayMgr::LevelUp(WorldPackets::BattlePay::DistributionAssignToTarget c
     if (!session->HasAuthFlag(AT_AUTH_FLAG_90_LVL_UP))
         return;
 
-    ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(packet.SpecializationID);
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(packet.SpecializationID);
     if (!specialization)
         return;
 
@@ -381,7 +381,7 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
 
     Purchase const &purchase = data->second;
 
-    ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(purchase.specID);
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(purchase.specID);
     if (!specialization || specialization->ClassID != pCurrChar->getClass())
     {
         sLog->outDebug(LOG_FILTER_NETWORKIO, "BattlePayMgr::HandlePlayerLevelUp unsuported specID %u for class %u", purchase.specID, pCurrChar->getClass());

@@ -3574,7 +3574,7 @@ void Player::RemoveSpecializationSpells()
 {
     for (uint32 i = 0; i < 4; ++i)
     {
-        if (ChrSpecializationsEntry const* specialization = sChrSpecializationByIndexStore[getClass()][i])
+        if (ChrSpecializationEntry const* specialization = sChrSpecializationByIndexStore[getClass()][i])
         {
             if (std::vector<SpecializationSpellEntry const*> const* specSpells = sDB2Manager.GetSpecializationSpells(specialization->ID))
             {
@@ -28127,7 +28127,7 @@ void Player::ActivateSpec(uint8 spec)
     SendActionButtons(1);
     InitialPowers();
 
-    if (!sChrSpecializationsStore.LookupEntry(GetSpecializationId(GetActiveSpec())))
+    if (!sChrSpecializationStore.LookupEntry(GetSpecializationId(GetActiveSpec())))
         ResetTalents(true);
 }
 

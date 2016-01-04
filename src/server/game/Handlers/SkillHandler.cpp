@@ -35,7 +35,7 @@ void WorldSession::HandleSetSpecialization(WorldPackets::Talent::SetSpecializati
     if (packet.SpecGroupIndex >= 4)
         return;
 
-    ChrSpecializationsEntry const* chrSpec = sChrSpecializationByIndexStore[player->getClass()][packet.SpecGroupIndex];
+    ChrSpecializationEntry const* chrSpec = sChrSpecializationByIndexStore[player->getClass()][packet.SpecGroupIndex];
     if (!chrSpec)
         return;
 

@@ -84,7 +84,7 @@ public:
         if (row > (int32)_gtEntry->NumRows || column > (int32)_gtEntry->NumColumns)
         {
             sLog->outU(" >> GameTable::EvaluateTable dbc %s request (row: %i, column: %i) max(row: %u, column: %u)", _gtEntry->Name, row, column, _gtEntry->NumRows, _gtEntry->NumColumns);
-            return NULL;
+            return nullptr;
         }
         ASSERT(row < (int32)_gtEntry->NumRows);
         ASSERT(column < (int32)_gtEntry->NumColumns);
@@ -117,7 +117,7 @@ extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
 extern DBCStorage<CharTitlesEntry>              sCharTitlesStore;
 extern DBCStorage<ChatChannelsEntry>            sChatChannelsStore;
 extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
-extern DBCStorage<ChrSpecializationsEntry>      sChrSpecializationsStore;
+extern DBCStorage<ChrSpecializationEntry>       sChrSpecializationStore;
 extern DBCStorage<CinematicSequencesEntry>      sCinematicSequencesStore;
 extern DBCStorage<CreatureFamilyEntry>          sCreatureFamilyStore;
 extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
@@ -185,7 +185,7 @@ AreaTableEntry const* FindAreaEntry(uint32 area);
 DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
 uint32 GetParentZoneOrSelf(uint32 zone);
 
-typedef ChrSpecializationsEntry const* ChrSpecializationByIndexArray[MAX_CLASSES][4];
+typedef ChrSpecializationEntry const* ChrSpecializationByIndexArray[MAX_CLASSES][4];
 extern ChrSpecializationByIndexArray             sChrSpecializationByIndexStore;
 
 typedef std::vector<TalentEntry const*> TalentsByPosition[MAX_CLASSES][7][3];

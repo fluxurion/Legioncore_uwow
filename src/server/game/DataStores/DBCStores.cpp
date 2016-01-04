@@ -74,7 +74,7 @@ DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterL
 DBCStorage<CharTitlesEntry>                 sCharTitlesStore(CharTitlesEntryfmt);
 DBCStorage<ChatChannelsEntry>               sChatChannelsStore(ChatChannelsEntryfmt);
 DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
-DBCStorage<ChrSpecializationsEntry>         sChrSpecializationsStore(ChrSpecializationsfmt);
+DBCStorage<ChrSpecializationEntry>          sChrSpecializationStore(ChrSpecializationfmt);
 DBCStorage<CinematicSequencesEntry>         sCinematicSequencesStore(CinematicSequencesEntryfmt);
 DBCStorage<CreatureFamilyEntry>             sCreatureFamilyStore(CreatureFamilyfmt);
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
@@ -148,14 +148,14 @@ static bool LoadDBC_assert_print(uint32 fsize, uint32 rsize, std::string const& 
 }
 
 template<class T>
-inline void LoadDBC(uint32& availableDbcLocales, StoreProblemList& errors, DBCStorage<T>& storage, std::string const& dbcPath, std::string const& filename, uint32 defaultLocale, std::string const* customFormat = NULL, std::string const* customIndexName = NULL)
+inline void LoadDBC(uint32& availableDbcLocales, StoreProblemList& errors, DBCStorage<T>& storage, std::string const& dbcPath, std::string const& filename, uint32 defaultLocale, std::string const* customFormat = nullptr, std::string const* customIndexName = nullptr)
 {
     // compatibility format and C++ structure sizes
     ASSERT(DBCFileLoader::GetFormatRecordSize(storage.GetFormat()) == sizeof(T) || LoadDBC_assert_print(DBCFileLoader::GetFormatRecordSize(storage.GetFormat()), sizeof(T), filename));
 
     ++DBCFileCount;
     std::string dbcFilename = dbcPath + localeNames[defaultLocale] + '/' + filename;
-    SqlDbc * sql = NULL;
+    SqlDbc * sql = nullptr;
     if (customFormat)
         sql = new SqlDbc(&filename, customFormat, customIndexName, storage.GetFormat());
 
@@ -254,7 +254,7 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DBC(sCharTitlesStore,                  "CharTitles.dbc");
     LOAD_DBC(sChatChannelsStore,                "ChatChannels.dbc");
     LOAD_DBC(sChrClassesStore,                  "ChrClasses.dbc");
-    //LOAD_DBC(sChrSpecializationsStore,          "ChrSpecialization.dbc");
+    LOAD_DBC(sChrSpecializationStore,          "ChrSpecialization.dbc");
     LOAD_DBC(sCreatureFamilyStore,              "CreatureFamily.dbc");
     //LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
     LOAD_DBC(sDifficultyStore,                  "Difficulty.dbc");
@@ -425,7 +425,7 @@ void InitDBCCustomStores()
             sDungeonEncounterByDisplayID[store->creatureDisplayID] = store;
 
     memset(sChrSpecializationByIndexStore, 0, sizeof(sChrSpecializationByIndexStore));
-    for (ChrSpecializationsEntry const* chrSpec : sChrSpecializationsStore)
+    for (ChrSpecializationEntry const* chrSpec : sChrSpecializationStore)
         sChrSpecializationByIndexStore[chrSpec->ClassID][chrSpec->OrderIndex] = chrSpec;
 
     memset(sMinorTalentByIndexStore, 0, sizeof(sMinorTalentByIndexStore));
@@ -439,25 +439,25 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction)
     if (itr != sFactionTeamMap.end())
         return &itr->second;
 
-    return NULL;
+    return nullptr;
 }
 
 char const* GetPetName(uint32 petfamily, uint32 /*dbclang*/)
 {
     if (!petfamily)
-        return NULL;
+        return nullptr;
     CreatureFamilyEntry const* pet_family = sCreatureFamilyStore.LookupEntry(petfamily);
     if (!pet_family)
-        return NULL;
-    return pet_family->Name ? pet_family->Name : NULL;
+        return nullptr;
+    return pet_family->Name ? pet_family->Name : nullptr;
 }
 
 TalentSpellPos const* GetTalentSpellPos(uint32 spellId)
 {
-    return NULL;
+    return nullptr;
     /*TalentSpellPosMap::const_iterator itr = sTalentSpellPosMap.find(spellId);
     if (itr == sTalentSpellPosMap.end())
-    return NULL;
+    return nullptr;
 
     return &itr->second;*/
 }
@@ -483,7 +483,7 @@ WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid
 {
     WMOAreaInfoByTripple::iterator i = sWMOAreaInfoByTripple.find(WMOAreaTableTripple(rootid, adtid, groupid));
     if (i == sWMOAreaInfoByTripple.end())
-        return NULL;
+        return nullptr;
     return i->second;
 }
 
@@ -491,7 +491,7 @@ AreaTableEntry const* GetAreaEntryByAreaID(uint32 area_id)
 {
     int32 areaflag = GetAreaFlagByAreaID(area_id);
     if (areaflag < 0)
-        return NULL;
+        return nullptr;
 
     return sAreaStore.LookupEntry(areaflag);
 }
@@ -504,7 +504,7 @@ AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 area_flag, uint32 map_
     if (MapEntry const* mapEntry = sMapStore.LookupEntry(map_id))
         return GetAreaEntryByAreaID(mapEntry->linked_zone);
 
-    return NULL;
+    return nullptr;
 }
 
 uint32 GetAreaFlagByMapId(uint32 mapid)
@@ -659,7 +659,7 @@ MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficult
 
 PvPDifficultyEntry const* GetBattlegroundBracketByLevel(uint32 mapid, uint32 level)
 {
-    PvPDifficultyEntry const* maxEntry = NULL;              // used for level > max listed level case
+    PvPDifficultyEntry const* maxEntry = nullptr;              // used for level > max listed level case
     for (PvPDifficultyEntry const* entry : sPvPDifficultyStore)
     {
         // skip unrelated and too-high brackets
@@ -684,15 +684,15 @@ PvPDifficultyEntry const* GetBattlegroundBracketById(uint32 mapid, BattlegroundB
         if (entry->mapId == mapid && entry->GetBracketId() == id)
             return entry;
 
-    return NULL;
+    return nullptr;
 }
 
 std::vector<uint32> const* GetTalentTreePrimarySpells(uint32 talentTree)
 {
-    return NULL;
+    return nullptr;
     /*TalentTreePrimarySpellsMap::const_iterator itr = sTalentTreePrimarySpellsMap.find(talentTree);
     if (itr == sTalentTreePrimarySpellsMap.end())
-        return NULL;
+        return nullptr;
 
     return &itr->second;*/
 }
@@ -741,7 +741,7 @@ AreaTableEntry const* FindAreaEntry(uint32 area)
 {
     auto data = sAreaEntry.find(area);
     if (data == sAreaEntry.end())
-        return NULL;
+        return nullptr;
     return data->second;
 }
 
@@ -757,6 +757,6 @@ DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID)
 {
     auto data = sDungeonEncounterByDisplayID.find(displayID);
     if (data == sDungeonEncounterByDisplayID.end())
-        return NULL;
+        return nullptr;
     return data->second;
 }

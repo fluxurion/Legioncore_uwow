@@ -2753,7 +2753,7 @@ void ObjectMgr::LoadItemTemplates()
                     if (!hasPrimary || !hasSecondary)
                         continue;
 
-                    if (ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(itemSpec->SpecID))
+                    if (ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(itemSpec->SpecID))
                         if ((1 << (specialization->ClassID - 1)) & sparse->AllowableClass)
                             itemTemplate.Specializations[itemSpec->MaxLevel > 40].insert(itemSpec->SpecID);
                 }

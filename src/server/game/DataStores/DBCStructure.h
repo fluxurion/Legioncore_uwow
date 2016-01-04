@@ -193,7 +193,7 @@ struct ChrClassesEntry
     //uint32    Unk1;                                       // 18
 };
 
-struct ChrSpecializationsEntry
+struct ChrSpecializationEntry
 {
     uint32      ID;                                         // 0 Specialization ID
     //char*     BackgroundFile;                             // 1
@@ -204,11 +204,10 @@ struct ChrSpecializationsEntry
     uint32      Role;                                       // 6 (0 - Tank, 1 - Healer, 2 - DPS)
     uint32      SpellIconID;                                // 7
     uint32      RaidBuffs;                                  // 8
-    uint32      Flags;                                      // 9
-    //char*     Name_lang;                                  // 10
-    //char*     Name2_lang;                                 // 11 Same as name_lang?
-    //char*     Description_lang;                           // 12
-    uint32      PrimaryStatOrder[2];                        // 13-14
+    //char*     Name;                                       // 9
+    //char*     Name2;                                      // 10 Same as name_lang?
+    //char*     Description;                                // 11
+    uint32      PrimaryStatOrder[2];                        // 12-13
 };
 
 struct CinematicSequencesEntry

@@ -571,7 +571,7 @@ void WorldSession::HandleSetLootSpecialization(WorldPackets::Loot::SetLootSpecia
     }
 
     uint8 classId = _player->getClass();
-    ChrSpecializationsEntry const* specialization = sChrSpecializationsStore.LookupEntry(packet.SpecID);
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(packet.SpecID);
     if (specialization && specialization->ClassID == classId)
         _player->SetLootSpecID(packet.SpecID);   
 }
