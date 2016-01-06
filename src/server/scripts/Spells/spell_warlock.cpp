@@ -404,7 +404,7 @@ class spell_warl_molten_core_dot : public SpellScriptLoader
                         if (roll_chance_i(8))
                             GetCaster()->CastSpell(GetCaster(), WARLOCK_MOLTEN_CORE, true);
 
-                    GetCaster()->EnergizeBySpell(GetCaster(), aurEff->GetSpellInfo()->Id, 2, POWER_DEMONIC_FURY);
+                    GetCaster()->EnergizeBySpell(GetCaster(), aurEff->GetSpellInfo()->Id, 2, POWER_OBSOLETE2);
                 }
             }
 
@@ -495,14 +495,14 @@ class spell_warl_metamorphosis_cost : public SpellScriptLoader
             /*void OnTick(AuraEffect const* aurEff)
             {
                 if (Unit* caster = GetCaster())
-                    caster->EnergizeBySpell(caster, WARLOCK_METAMORPHOSIS, -6, POWER_DEMONIC_FURY);
+                    caster->EnergizeBySpell(caster, WARLOCK_METAMORPHOSIS, -6, POWER_OBSOLETE2);
             }*/
 
             void OnUpdate(uint32 diff, AuraEffect* aurEff)
             {
                 if (Unit* caster = GetCaster())
                 {
-                    if (caster->GetPower(POWER_DEMONIC_FURY) <= 40)
+                    if (caster->GetPower(POWER_OBSOLETE2) <= 40)
                          GetAura()->Remove();
                 }
             }
@@ -542,7 +542,7 @@ class spell_warl_immolation_aura : public SpellScriptLoader
             {
                 if (GetCaster())
                 {
-                    GetCaster()->EnergizeBySpell(GetCaster(), GetSpellInfo()->Id, -25, POWER_DEMONIC_FURY);
+                    GetCaster()->EnergizeBySpell(GetCaster(), GetSpellInfo()->Id, -25, POWER_OBSOLETE2);
                     if(aurEff->GetSpellInfo()->Id == 104025)
                         GetCaster()->CastSpell(GetCaster(), 129476, true);
                     else
@@ -719,7 +719,7 @@ class spell_warl_hellfire : public SpellScriptLoader
                                 }
                             }
 
-                            _player->EnergizeBySpell(_player, GetSpellInfo()->Id, bp, POWER_DEMONIC_FURY);
+                            _player->EnergizeBySpell(_player, GetSpellInfo()->Id, bp, POWER_OBSOLETE2);
                         }
             }
 
@@ -1099,7 +1099,7 @@ class spell_warl_shadowburn : public SpellScriptLoader
                 {
                     AuraRemoveMode removeMode = GetTargetApplication()->GetRemoveMode();
                     if (removeMode == AURA_REMOVE_BY_DEATH)
-                        GetCaster()->ModifyPower(POWER_BURNING_EMBERS, 20); // Give 2 Burning Embers
+                        GetCaster()->ModifyPower(POWER_OBSOLETE, 20); // Give 2 Burning Embers
                     else if (removeMode == AURA_REMOVE_BY_EXPIRE)
                         GetCaster()->CastSpell(GetCaster(), WARLOCK_SHADOWBURN_ENERGIZE, true);
                 }
@@ -1136,9 +1136,9 @@ class spell_warl_burning_embers : public SpellScriptLoader
                     if (Unit* target = GetHitUnit())
                     {
                         if (GetSpell()->IsCritForTarget(target))
-                            _player->ModifyPower(POWER_BURNING_EMBERS, 2);
+                            _player->ModifyPower(POWER_OBSOLETE, 2);
                         else
-                            _player->ModifyPower(POWER_BURNING_EMBERS, 1);
+                            _player->ModifyPower(POWER_OBSOLETE, 1);
                     }
                 }
             }
@@ -1175,9 +1175,9 @@ class spell_warl_fel_flame : public SpellScriptLoader
                         if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_WARLOCK_DESTRUCTION)
                         {
                             if (GetSpell()->IsCritForTarget(target))
-                                _player->ModifyPower(POWER_BURNING_EMBERS, 2);
+                                _player->ModifyPower(POWER_OBSOLETE, 2);
                             else
-                                _player->ModifyPower(POWER_BURNING_EMBERS, 1);
+                                _player->ModifyPower(POWER_OBSOLETE, 1);
                         }
                     }
                 }
@@ -1211,7 +1211,7 @@ class spell_warl_drain_life : public SpellScriptLoader
                 {
                     // In Demonology spec : Generates 10 Demonic Fury per second
                     if (GetSpellInfo()->Effects[2].IsAura(SPELL_AURA_DUMMY))
-                        caster->EnergizeBySpell(caster, 689, GetSpellInfo()->Effects[2].BasePoints, POWER_DEMONIC_FURY);
+                        caster->EnergizeBySpell(caster, 689, GetSpellInfo()->Effects[2].BasePoints, POWER_OBSOLETE2);
 
                     int32 modPct = caster->HasAura(157069) ? aurEff->GetTickNumber() * 10 : 0; // Empowered Drain Life
                     float pct = GetSpellInfo()->Effects[1].BasePoints / aurEff->GetTotalTicks();
@@ -1351,7 +1351,7 @@ class spell_warl_harvest_life : public SpellScriptLoader
                         _player->AddSpellCooldown(WARLOCK_HARVEST_LIFE_HEAL, 0, getPreciseTime() + 1.0);
                     }
 
-                    _player->EnergizeBySpell(_player, aurEff->GetSpellInfo()->Id, 4, POWER_DEMONIC_FURY);
+                    _player->EnergizeBySpell(_player, aurEff->GetSpellInfo()->Id, 4, POWER_OBSOLETE2);
                 }
             }
 
@@ -1872,7 +1872,7 @@ class spell_warl_rain_of_fire_damage : public SpellScriptLoader
 
                 if (Unit* caster = GetCaster())
                     if (roll_chance_i(30))
-                        caster->ModifyPower(POWER_BURNING_EMBERS, 1);
+                        caster->ModifyPower(POWER_OBSOLETE, 1);
             }
 
             void Register()
@@ -1943,7 +1943,7 @@ class spell_warl_corruption : public SpellScriptLoader
                 {
                     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(172);
                     int32 bp = spellInfo->Effects[EFFECT_1].CalcValue(caster);
-                    caster->EnergizeBySpell(caster, aurEff->GetSpellInfo()->Id, bp, POWER_DEMONIC_FURY);
+                    caster->EnergizeBySpell(caster, aurEff->GetSpellInfo()->Id, bp, POWER_OBSOLETE2);
                 }
             }
 
@@ -2125,7 +2125,7 @@ class spell_warl_fire_and_brimstone : public SpellScriptLoader
             {
                 if(Unit* caster = GetCaster())
                 {
-                    if(caster->GetPower(POWER_BURNING_EMBERS) < 10)
+                    if(caster->GetPower(POWER_OBSOLETE) < 10)
                         return SPELL_FAILED_NOT_READY;
                 }
 
@@ -2316,7 +2316,7 @@ class spell_warl_demonic_slash : public SpellScriptLoader
             {
                 if (Player* _player = GetCaster()->ToPlayer())
                     if (Unit* target = GetHitUnit())
-                        _player->EnergizeBySpell(_player, GetSpellInfo()->Id, 60, POWER_DEMONIC_FURY);
+                        _player->EnergizeBySpell(_player, GetSpellInfo()->Id, 60, POWER_OBSOLETE2);
             }
 
             void Register()
@@ -2548,7 +2548,7 @@ class spell_warl_burning_embers_aoe : public SpellScriptLoader
                     return;
 
                 if (Unit* caster = GetCaster())
-                    caster->ModifyPower(POWER_BURNING_EMBERS, 1);
+                    caster->ModifyPower(POWER_OBSOLETE, 1);
             }
 
             void Register()

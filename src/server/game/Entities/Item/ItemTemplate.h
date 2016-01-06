@@ -19,11 +19,11 @@
 #ifndef _ITEMPROTOTYPE_H
 #define _ITEMPROTOTYPE_H
 
+#include <unordered_set>
+
 #include "Common.h"
 #include "SharedDefines.h"
 #include "DBCEnums.h"
-
-#include <unordered_set>
 
 class Player;
 
@@ -644,18 +644,6 @@ struct _ItemStat
     float   ItemStatSocketCostMultiplier;
 };
 
-struct _Spell
-{
-    _Spell() : SpellId(0), SpellTrigger(0), SpellCharges(0), SpellCooldown(-1), SpellCategory(0), SpellCategoryCooldown(0) {}
-
-    int32 SpellId;                                         // id from Spell.dbc
-    uint32 SpellTrigger;
-    int32  SpellCharges;
-    int32  SpellCooldown;
-    uint32 SpellCategory;                                   // id from SpellCategory.dbc
-    int32  SpellCategoryCooldown;
-};
-
 struct _Socket
 {
     uint32 Color;
@@ -674,6 +662,7 @@ struct _Socket
 template<class T> class DBCStorage;
 template<class T> class DB2Storage;
 struct ItemDamageEntry;
+struct ItemEffectEntry;
 
 struct ItemTemplate
 {
@@ -714,7 +703,6 @@ struct ItemTemplate
     uint32 DamageType;                                      // id from Resistances.dbc
     uint32 Delay;
     float  RangedModRange;
-    _Spell Spells[MAX_ITEM_PROTO_SPELLS];
     uint32 Bonding;
     std::string Description;
     uint32 PageText;
@@ -743,6 +731,7 @@ struct ItemTemplate
     uint32 CurrencySubstitutionId;                          // May be used instead of a currency
     uint32 CurrencySubstitutionCount;
     uint32 ItemNameDescriptionID;
+    std::vector<ItemEffectEntry const*> Effects;
 
     // extra fields, not part of db2 files
     float  SpellPPMRate;
@@ -794,19 +783,6 @@ struct ItemTemplate
             case ITEM_CLASS_PROJECTILE:
                 return true;
         }
-
-        return false;
-    }
-
-    bool IsPvPItem() const
-    {
-        for (uint8 i = 0; i < MAX_ITEM_PROTO_STATS; ++i)
-            if (ItemStat[i].ItemStatType == ITEM_MOD_PVP_POWER)
-                return true;
-
-        for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-            if (Spells[i].SpellId == 132586)
-                return true;
 
         return false;
     }

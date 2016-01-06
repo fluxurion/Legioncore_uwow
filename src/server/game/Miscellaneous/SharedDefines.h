@@ -316,6 +316,7 @@ enum Stats
 
 enum Powers
 {
+
     POWER_MANA                          = 0,
     POWER_RAGE                          = 1,
     POWER_FOCUS                         = 2,
@@ -324,16 +325,20 @@ enum Powers
     POWER_RUNES                         = 5,
     POWER_RUNIC_POWER                   = 6,
     POWER_SOUL_SHARDS                   = 7,
-    POWER_ECLIPSE                       = 8,
+    POWER_LUNAR_POWER                   = 8,
     POWER_HOLY_POWER                    = 9,
     POWER_ALTERNATE_POWER               = 10,           // Used in some quests
-    POWER_DARK_FORCE                    = 11,
+    POWER_MAELSTROM                     = 11,
     POWER_CHI                           = 12,
-    POWER_SHADOW_ORBS                   = 13,
-    POWER_BURNING_EMBERS                = 14,
-    POWER_DEMONIC_FURY                  = 15,
+    POWER_INSANITY                      = 13,
+    POWER_OBSOLETE                      = 14,
+    POWER_OBSOLETE2                     = 15,
     POWER_ARCANE_CHARGES                = 16,
-    MAX_POWERS                          = 17,
+    POWER_FURY                          = 17,
+    POWER_PAIN                          = 18,
+
+    MAX_POWERS,
+
     POWER_NULL                          = 126,
     POWER_ALL                           = 127,          // default for class?
     POWER_HEALTH                        = 0xFFFFFFFE    // (-2 as signed value)

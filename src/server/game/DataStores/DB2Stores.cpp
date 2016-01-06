@@ -263,11 +263,11 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    //LOAD_DB2(sAchievementStore);              // 20796
+    LOAD_DB2(sAchievementStore);                // 20810
     //LOAD_DB2(sAreaGroupMemberStore);
-    //LOAD_DB2(sAreaGroupStore);                // 20796
-    //LOAD_DB2(sArmorLocationStore);            // 20796
-    //LOAD_DB2(sAuctionHouseStore);             // 20796
+    //LOAD_DB2(sAreaGroupStore);                // 20810 smthng wrong
+    LOAD_DB2(sArmorLocationStore);              // 20810
+    LOAD_DB2(sAuctionHouseStore);               // 20810
     //LOAD_DB2(sBankBagSlotPricesStore);        // 20796
     //LOAD_DB2(sBarberShopStyleStore);          // 20796
     //LOAD_DB2(sBattlePetAbilityEffectStore);
@@ -287,16 +287,16 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sChrClassesXPowerTypesStore);      // 20810
     LOAD_DB2(sChrRacesStore);                   // 20810
     LOAD_DB2(sCreatureDifficultyStore);         // 20810
-    //LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20810  @TODO:Legion smthng wrong here... idh any ideas
-    //LOAD_DB2(sCreatureDisplayInfoStore);      //@TODO:Legion check struct
+    //LOAD_DB2(sCreatureDisplayInfoExtraStore); // 20810 smthng wrong
+    //LOAD_DB2(sCreatureDisplayInfoStore);      // 20810 smthng wrong
     LOAD_DB2(sCreatureTypeStore);               // 20810
     LOAD_DB2(sCriteriaStore);                   // 20810
     LOAD_DB2(sCriteriaTreeStore);               // 20810
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
-    //LOAD_DB2(sDestructibleModelDataStore);    // 20796
-    //LOAD_DB2(sDurabilityCostsStore);          // 20796
-    //LOAD_DB2(sDurabilityQualityStore);        // 20796
+    LOAD_DB2(sDestructibleModelDataStore);      // 20810
+    LOAD_DB2(sDurabilityCostsStore);            // 20810
+    LOAD_DB2(sDurabilityQualityStore);          // 20810
     LOAD_DB2(sGameObjectDisplayInfoStore);      // 20810
     //LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameTablesStore);                 // 20810
@@ -322,7 +322,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGarrSiteLevelPlotInstStore);
     //LOAD_DB2(sGarrSiteLevelStore);
     //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.dbc"); // DEPRECATED
-    //LOAD_DB2(sGuildPerkSpellsStore);          // 20796
+    LOAD_DB2(sGuildPerkSpellsStore);            // 20810
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
     LOAD_DB2(sImportPriceArmorStore);           // 20810
@@ -347,27 +347,27 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemExtendedCostStore);
     LOAD_DB2(sItemLimitCategoryStore);          // 20810
     //LOAD_DB2(sItemModifiedAppearanceStore);
-    //LOAD_DB2(sItemPriceBaseStore);            // 20796
-    //LOAD_DB2(sItemRandomPropertiesStore);     // 20796
-    //LOAD_DB2(sItemRandomSuffixStore);         // 20796
-    //LOAD_DB2(sItemSetSpellStore               // 20796
+    LOAD_DB2(sItemPriceBaseStore);              // 20810
+    LOAD_DB2(sItemRandomPropertiesStore);       // 20810
+    LOAD_DB2(sItemRandomSuffixStore);           // 20810
+    LOAD_DB2(sItemSetSpellStore);               // 20810
     //LOAD_DB2(sItemSparseStore);
     LOAD_DB2(sItemSpecOverrideStore);           // 20810
-    //LOAD_DB2(sItemSpecStore);                 // 20796
+    LOAD_DB2(sItemSpecStore);                   // 20810
     LOAD_DB2(sItemStore);                       // 20810
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
     //LOAD_DB2(sKeyChainStore);
     //LOAD_DB2(sLanguageWordsStore);
-    //LOAD_DB2(sMailTemplateStore);             // 20796
+    LOAD_DB2(sMailTemplateStore);               // 20810
     //LOAD_DB2(sMapChallengeModeStore);
-    //LOAD_DB2(sModifierTreeStore);             // 20796
-    //LOAD_DB2(sMountCapabilityStore);          // 20796
+    LOAD_DB2(sModifierTreeStore);               // 20810
+    //LOAD_DB2(sMountCapabilityStore);          // 20810 smthng wrong
     //LOAD_DB2(sMountStore);
-    //LOAD_DB2(sMountTypeStore);                // 20796
+    //LOAD_DB2(sMountTypeStore);                // 20810 smthng wrong
     //LOAD_DB2(sMountTypeXCapabilityStore);     // 20796
-    //LOAD_DB2(sNameGenStore);                  // 20796
+    LOAD_DB2(sNameGenStore);                    // 20810
     //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseGroupStore);
     //LOAD_DB2(sPvpItemStore);                  // 20796
@@ -382,9 +382,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
-    //LOAD_DB2(sScalingStatDistributionStore);  // 20796
-    //LOAD_DB2(sScenarioStepStore);             // 20796
-    //LOAD_DB2(sScenarioStore);                 // 20796
+    LOAD_DB2(sScalingStatDistributionStore);    // 20810
+    LOAD_DB2(sScenarioStepStore);               // 20810
+    LOAD_DB2(sScenarioStore);                   // 20810
     LOAD_DB2(sSkillLineAbilityStore);           // 20810
     LOAD_DB2(sSkillLineStore);                  // 20810
     LOAD_DB2(sSkillRaceClassInfoStore);         // 20810
@@ -428,13 +428,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
-    //LOAD_DB2(sTotemCategoryStore);            // 20796
+    LOAD_DB2(sTotemCategoryStore);              // 20810
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sTransportAnimationStore);       // 20796
     //LOAD_DB2(sTransportRotationStore);        // 20796
-    //LOAD_DB2(sUnitPowerBarStore);             // 20796
-    //LOAD_DB2(sWorldMapOverlayStore);          // 20796
-    //LOAD_DB2(sWorldMapTransformsStore);       // 20796
+    LOAD_DB2(sUnitPowerBarStore);               // 20810
+    LOAD_DB2(sWorldMapOverlayStore);            // 20810
+    LOAD_DB2(sWorldMapTransformsStore);         // 20810
 
 #undef LOAD_DB2
 
@@ -668,8 +668,8 @@ void DB2Manager::InitDB2CustomStores()
         if (mt->Parent)
             _modifierTree[mt->Parent].push_back(mt);
 
-    for (NameGenEntry const* entry : sNameGenStore)
-        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
+    //for (NameGenEntry const* entry : sNameGenStore)
+    //    _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {

@@ -781,7 +781,7 @@ class spell_pri_devouring_plague : public SpellScriptLoader
                     {
                         if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
                         {
-                            int32 currentPower = _player->GetPower(POWER_SHADOW_ORBS) + 1; // Don't forget PowerCost
+                            int32 currentPower = _player->GetPower(POWER_INSANITY) + 1; // Don't forget PowerCost
 
                             if(Aura* aura = _player->GetAura(145179)) // Item - Priest T16 Shadow 4P Bonus
                                 aura->GetEffect(0)->SetAmount(20 * currentPower);
@@ -1449,8 +1449,8 @@ class spell_pri_psychic_horror : public SpellScriptLoader
                         Player* _player = caster->ToPlayer();
                         if (_player && _player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
                         {
-                            int32 currentPower = caster->GetPower(POWER_SHADOW_ORBS) + 1;
-                            caster->ModifyPower(POWER_SHADOW_ORBS, -currentPower, true);
+                            int32 currentPower = caster->GetPower(POWER_INSANITY) + 1;
+                            caster->ModifyPower(POWER_INSANITY, -currentPower, true);
 
                             // +1s per Shadow Orb consumed
                             if (Aura* psychicHorror = target->GetAura(64044))

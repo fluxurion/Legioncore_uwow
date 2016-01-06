@@ -14550,7 +14550,7 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
             }
             break;
         }
-        case POWER_DEMONIC_FURY:
+        case POWER_OBSOLETE2:
         {
             if(specId != SPEC_WARLOCK_DEMONOLOGY)
             {
@@ -14580,7 +14580,7 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
             }
             break;
         }
-        case POWER_BURNING_EMBERS:
+        case POWER_OBSOLETE:
         {
             if(specId != SPEC_WARLOCK_DESTRUCTION)
             {
@@ -14653,7 +14653,7 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
             }
             break;
         }
-        case POWER_SHADOW_ORBS:
+        case POWER_INSANITY:
         {
             if(specId != SPEC_PRIEST_SHADOW)
             {
@@ -14797,7 +14797,7 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
             SetPower(power, GetMinPower(power));
         else
             SetInt32Value(UNIT_FIELD_POWER + powerIndex, GetMinPower(power));
-        if (power == POWER_ECLIPSE)
+        if (power == POWER_LUNAR_POWER)
             TriggerEclipse(curPower);
         return -curPower;
     }
@@ -14821,10 +14821,10 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
         gain = maxPower - curPower;
     }
 
-    if (gain && power == POWER_ECLIPSE)
+    if (gain && power == POWER_LUNAR_POWER)
         TriggerEclipse(curPower);
 
-    if(power == POWER_BURNING_EMBERS)
+    if(power == POWER_OBSOLETE)
     {
         if(val >= maxPower && curPower < maxPower)
             SetPower(power, val);
@@ -14839,7 +14839,7 @@ void Unit::TriggerEclipse(int32 oldPower)
     if (!spellInfo)
         return;
 
-    int32 newPower = GetPower(POWER_ECLIPSE);
+    int32 newPower = GetPower(POWER_LUNAR_POWER);
     if (newPower == oldPower)
         return;
 
@@ -16215,15 +16215,15 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return 1000;
         case POWER_RUNES:
             return 0;
-        case POWER_SHADOW_ORBS:
+        case POWER_INSANITY:
             return 3;
-        case POWER_BURNING_EMBERS:
+        case POWER_OBSOLETE:
             return 40;
-        case POWER_DEMONIC_FURY:
+        case POWER_OBSOLETE2:
             return 1000;
         case POWER_SOUL_SHARDS:
             return 400;
-        case POWER_ECLIPSE:
+        case POWER_LUNAR_POWER:
             return 100; // Should be -100 to 100 this needs the power to be int32 instead of uint32
         case POWER_HOLY_POWER:
             return HasAura(115675) ? 5 : 3;
@@ -16251,11 +16251,11 @@ int32 Unit::GetPowerForReset(Powers power, bool maxpower, uint16 powerDisplayID/
 
     switch (power)
     {
-        case POWER_BURNING_EMBERS:
+        case POWER_OBSOLETE:
             return  10;
         case POWER_SOUL_SHARDS:
             return  400;
-        case POWER_DEMONIC_FURY:
+        case POWER_OBSOLETE2:
             return  200;
         case POWER_MANA:
         case POWER_ENERGY:
@@ -17041,12 +17041,12 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 
     // Hack Fix Immolate - Critical strikes generate burning embers
     if (GetTypeId() == TYPEID_PLAYER && procSpell && (procSpell->Id == 348 || procSpell->Id == 108686) && procExtra & PROC_EX_CRITICAL_HIT)
-        ModifyPower(POWER_BURNING_EMBERS, 1);
+        ModifyPower(POWER_OBSOLETE, 1);
 
     // Hack Rain of Fire - Has a chance to generate burning embers
     if (GetTypeId() == TYPEID_PLAYER && procSpell && procSpell->Id == 42223)
         if (roll_chance_i(30))
-            ModifyPower(POWER_BURNING_EMBERS, 1);
+            ModifyPower(POWER_OBSOLETE, 1);
 
     Unit* actor = isVictim ? target : this;
     Unit* actionTarget = !isVictim ? target : this;

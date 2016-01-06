@@ -2888,7 +2888,7 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
         {
             if (power.PowerIndex == POWER_INDEX_SECOND)
                 modOwner->ApplySpellMod(Id, SPELLMOD_SPELL_COST2, powerCost);
-            else if(power.PowerType != POWER_BURNING_EMBERS)
+            else if(power.PowerType != POWER_OBSOLETE)
                 modOwner->ApplySpellMod(Id, SPELLMOD_COST, powerCost);
         }
 

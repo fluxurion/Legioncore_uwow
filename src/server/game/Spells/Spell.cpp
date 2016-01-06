@@ -5491,30 +5491,27 @@ void Spell::TakeCastItem()
     bool expendable = false;
     bool withoutCharges = false;
 
-    for (int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
+    for (auto const& v : proto->Effects)
     {
-        if (proto->Spells[i].SpellId)
+        if (!v->SpellID)
+            continue;
+
+        if (v->Charges)
         {
-            // item has limited charges
-            if (proto->Spells[i].SpellCharges)
+            if (v->Charges < 0)
+                expendable = true;
+
+            int32 charges = m_CastItem->GetSpellCharges(v->ID);
+
+            if (charges)
             {
-                if (proto->Spells[i].SpellCharges < 0)
-                    expendable = true;
-
-                int32 charges = m_CastItem->GetSpellCharges(i);
-
-                // item has charges left
-                if (charges)
-                {
-                    (charges > 0) ? --charges : ++charges;  // abs(charges) less at 1 after use
-                    if (proto->Stackable == 1)
-                        m_CastItem->SetSpellCharges(i, charges);
-                    m_CastItem->SetState(ITEM_CHANGED, (Player*)m_caster);
-                }
-
-                // all charges used
-                withoutCharges = (charges == 0);
+                (charges > 0) ? --charges : ++charges;
+                if (proto->Stackable == 1)
+                    m_CastItem->SetSpellCharges(v->ID, charges);
+                m_CastItem->SetState(ITEM_CHANGED, (Player*)m_caster);
             }
+
+            withoutCharges = (charges == 0);
         }
     }
 
@@ -5564,7 +5561,7 @@ void Spell::TakePower()
                         {
                         case POWER_CHI:
                         case POWER_HOLY_POWER:
-                        case POWER_SHADOW_ORBS:
+                        case POWER_INSANITY:
                         case POWER_SOUL_SHARDS:
                             ifMissedPowerCost = 0;
                             break;
@@ -6019,11 +6016,11 @@ void Spell::TakeReagents()
         // if CastItem is also spell reagent
         if (castItemTemplate && castItemTemplate->ItemId == itemid)
         {
-            for (int s = 0; s < MAX_ITEM_PROTO_SPELLS; ++s)
+            for (auto const& v : castItemTemplate->Effects)
             {
                 // CastItem will be used up and does not count as reagent
-                int32 charges = m_CastItem->GetSpellCharges(s);
-                if (castItemTemplate->Spells[s].SpellCharges < 0 && abs(charges) < 2)
+                int32 charges = m_CastItem->GetSpellCharges(v->ID);
+                if (v->Charges < 0 && abs(charges) < 2)
                 {
                     ++itemcount;
                     break;
@@ -7845,9 +7842,9 @@ SpellCastResult Spell::CheckItems()
         if (!proto)
             return SPELL_FAILED_ITEM_NOT_READY;
 
-        for (int i = 0; i < MAX_ITEM_SPELLS; ++i)
-            if (proto->Spells[i].SpellCharges)
-                if (m_CastItem->GetSpellCharges(i) == 0)
+        for (ItemEffectEntry const* effectData : proto->Effects)
+            if (effectData->Charges)
+                if (m_CastItem->GetSpellCharges(effectData->ID) == 0)
                     return SPELL_FAILED_NO_CHARGES_REMAIN;
 
         // consumable cast item checks
@@ -7975,11 +7972,12 @@ SpellCastResult Spell::CheckItems()
                     ItemTemplate const* proto = m_CastItem->GetTemplate();
                     if (!proto)
                         return SPELL_FAILED_ITEM_NOT_READY;
-                    for (int s=0; s < MAX_ITEM_PROTO_SPELLS; ++s)
+
+                    for (auto const& v : proto->Effects)
                     {
                         // CastItem will be used up and does not count as reagent
-                        int32 charges = m_CastItem->GetSpellCharges(s);
-                        if (proto->Spells[s].SpellCharges < 0 && abs(charges) < 2)
+                        int32 charges = m_CastItem->GetSpellCharges(v->ID);
+                        if (v->Charges < 0 && abs(charges) < 2)
                         {
                             ++itemcount;
                             break;
@@ -8100,12 +8098,11 @@ SpellCastResult Spell::CheckItems()
                     return SPELL_FAILED_LOWLEVEL;
 
                 bool isItemUsable = false;
-                for (uint8 e = 0; e < MAX_ITEM_PROTO_SPELLS; ++e)
+                
+                ItemTemplate const* proto = targetItem->GetTemplate();
+                for (auto const& v : proto->Effects)
                 {
-                    ItemTemplate const* proto = targetItem->GetTemplate();
-                    if (proto->Spells[e].SpellId && (
-                        proto->Spells[e].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE ||
-                        proto->Spells[e].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE))
+                    if (v->SpellID && (v->Trigger == ITEM_SPELLTRIGGER_ON_USE || v->Trigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE))
                     {
                         isItemUsable = true;
                         break;
@@ -8265,8 +8262,8 @@ SpellCastResult Spell::CheckItems()
 
                  if (Item* pitem = p_caster->GetItemByEntry(item_id))
                  {
-                     for (int x = 0; x < MAX_ITEM_PROTO_SPELLS; ++x)
-                         if (pProto->Spells[x].SpellCharges != 0 && pitem->GetSpellCharges(x) == pProto->Spells[x].SpellCharges)
+                     for (auto const& v : pProto->Effects)
+                         if (v->Charges != 0 && pitem->GetSpellCharges(v->ID) == v->Charges)
                              return SPELL_FAILED_ITEM_AT_MAX_CHARGES;
                  }
                  break;

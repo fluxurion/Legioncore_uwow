@@ -928,7 +928,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     // set starting level
     uint32 start_level = getClass() != CLASS_DEATH_KNIGHT
         ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
-        : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL);
+        : (getClass() == CLASS_DEMON_HUNTER ? 98 : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL));
 
     if (!AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
     {
@@ -1135,7 +1135,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             // special amount for food/drink
             if (iProto->Class == ITEM_CLASS_CONSUMABLE && iProto->SubClass == ITEM_SUBCLASS_FOOD_DRINK)
             {
-                switch (iProto->Spells[0].SpellCategory)
+                switch (iProto->Effects[0]->Category)
                 {
                     case SPELL_CATEGORY_FOOD:                                // food
                         count = getClass() == CLASS_DEATH_KNIGHT ? 10 : 4;
@@ -2387,7 +2387,7 @@ void Player::ProcessDelayedOperations()
 
         SetPower(POWER_RAGE, 0);
         SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
-        SetPower(POWER_ECLIPSE, 0, false);
+        SetPower(POWER_LUNAR_POWER, 0, false);
 
         if (uint32 aura = _resurrectionData->Aura)
             CastSpell(this, aura, true, NULL, NULL, _resurrectionData->GUID);
@@ -2606,7 +2606,7 @@ void Player::RegenerateAll()
         if (m_demonicFuryPowerRegenTimerCount <= m_regenTimer)
         {
             m_demonicFuryPowerRegenTimerCount = 320;
-            Regenerate(POWER_DEMONIC_FURY, m_demonicFuryPowerRegenTimerCount);
+            Regenerate(POWER_OBSOLETE2, m_demonicFuryPowerRegenTimerCount);
         }
         else
             m_demonicFuryPowerRegenTimerCount -= m_regenTimer;
@@ -2624,7 +2624,7 @@ void Player::RegenerateAll()
             if (AuraEffect* aurEff = GetAuraEffect(108647, 0))
                 aurEff->ChangeAmount(0);
             m_burningEmbersRegenTimerCount = 2500;
-            Regenerate(POWER_BURNING_EMBERS, m_burningEmbersRegenTimerCount);
+            Regenerate(POWER_OBSOLETE, m_burningEmbersRegenTimerCount);
         }
         else
             m_burningEmbersRegenTimerCount -= m_regenTimer;
@@ -2729,7 +2729,7 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
         case POWER_HEALTH:
             break;
         // Regenerate Demonic Fury
-        case POWER_DEMONIC_FURY:
+        case POWER_OBSOLETE2:
         {
             if (curValue > 200)
                 addvalue -= 0.0125f * saveTimer;    // remove 1 each 100ms
@@ -2742,7 +2742,7 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
             break;
         }
         // Regenerate Burning Embers
-        case POWER_BURNING_EMBERS:
+        case POWER_OBSOLETE:
         {
             // After 15s return to one embers if no one
             // or return to one if more than one
@@ -2933,12 +2933,12 @@ void Player::ResetAllPowers(bool preparation)
             SetPower(POWER_CHI, preparation ? GetMaxPower(POWER_CHI) : 0);
             break;
         case CLASS_PRIEST:
-            SetPower(POWER_SHADOW_ORBS, 0);
+            SetPower(POWER_INSANITY, 0);
             break;
         case CLASS_WARLOCK:
             SetPower(POWER_SOUL_SHARDS, 400, false);
-            SetPower(POWER_DEMONIC_FURY, 200, false);
-            SetPower(POWER_BURNING_EMBERS, 10, false);
+            SetPower(POWER_OBSOLETE2, 200, false);
+            SetPower(POWER_OBSOLETE, 10, false);
             break;
         case CLASS_PALADIN:
             SetPower(POWER_HOLY_POWER, 0);
@@ -2948,7 +2948,7 @@ void Player::ResetAllPowers(bool preparation)
 
 void Player::ResetEclipseState()
 {
-    SetPower(POWER_ECLIPSE, 0, false);
+    SetPower(POWER_LUNAR_POWER, 0, false);
 
     // remove Eclipse
     RemoveAurasDueToSpell(48517);
@@ -3361,7 +3361,7 @@ void Player::GiveLevel(uint8 level)
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         packet.StatDelta[i] = int32(info.stats[i]) - GetCreateStat(Stats(i));
 
-    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? DefaultTalentRowLevels : DKTalentRowLevels;
+    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
     packet.Cp = std::find(rowLevels, rowLevels + 7, level) != (rowLevels + 7);
 
     GetSession()->SendPacket(packet.Write());
@@ -5908,12 +5908,12 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         SetPower(POWER_RAGE, 0);
         SetPower(POWER_ENERGY, uint32(GetMaxPower(POWER_ENERGY)*restore_percent));
         SetPower(POWER_FOCUS, uint32(GetMaxPower(POWER_FOCUS)*restore_percent));
-        SetPower(POWER_ECLIPSE, 0, false);
-        SetPower(POWER_DEMONIC_FURY, 200, false);
-        SetPower(POWER_BURNING_EMBERS, 10, false);
+        SetPower(POWER_LUNAR_POWER, 0, false);
+        SetPower(POWER_OBSOLETE2, 200, false);
+        SetPower(POWER_OBSOLETE, 10, false);
         SetPower(POWER_SOUL_SHARDS, 100, false);
         SetPower(POWER_CHI, 0);
-        SetPower(POWER_SHADOW_ORBS, 0);
+        SetPower(POWER_INSANITY, 0);
     }
 
     // trigger update zone for alive state zone updates
@@ -9418,24 +9418,18 @@ void Player::ApplyItemEquipSpell(Item* item, bool apply, bool form_change)
     if (!proto)
         return;
 
-    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
+    for (ItemEffectEntry const* effectData : proto->Effects)
     {
-        _Spell const& spellData = proto->Spells[i];
-
-        // no spell
-        if (!spellData.SpellId)
+        if (apply && effectData->Trigger != ITEM_SPELLTRIGGER_ON_EQUIP)
             continue;
 
-        // wrong triggering type
-        if (apply && spellData.SpellTrigger != ITEM_SPELLTRIGGER_ON_EQUIP)
-            continue;
-
-        // check if it is valid spell
-        SpellInfo const* spellproto = sSpellMgr->GetSpellInfo(spellData.SpellId);
+        SpellInfo const* spellproto = sSpellMgr->GetSpellInfo(effectData->SpellID);
         if (!spellproto)
             continue;
 
-        if (spellproto->HasAura(SPELL_AURA_MOD_XP_PCT) && !_collectionMgr->CanApplyHeirloomXpBonus(item->GetEntry(), getLevel()))
+        if (spellproto->HasAura(SPELL_AURA_MOD_XP_PCT) &&
+            !GetCollectionMgr()->CanApplyHeirloomXpBonus(item->GetEntry(), getLevel()) &&
+            sDB2Manager.GetHeirloomByItemId(item->GetEntry()))
             continue;
 
         ApplyEquipSpell(spellproto, item, apply, form_change);
@@ -9562,21 +9556,19 @@ void Player::UpdateEquipSpellsAtFormChange()
         }
     }
 
-    // item set bonuses not dependent from item broken state
-    for (size_t setindex = 0; setindex < ItemSetEff.size(); ++setindex)
+    for (ItemSetEffect const* eff : ItemSetEff)
     {
-        ItemSetEffect* eff = ItemSetEff[setindex];
-        if (!eff)
-            continue;
-
-        for (uint32 y = 0; y < MAX_ITEM_SET_SPELLS; ++y)
+        for (ItemSetSpellEntry const* itemSetSpell : eff->SetBonuses)
         {
-            SpellInfo const* spellInfo = eff->spells[y];
-            if (!spellInfo)
-                continue;
+            SpellInfo const* spellInfo = sSpellMgr->AssertSpellInfo(itemSetSpell->SpellID);
 
-            ApplyEquipSpell(spellInfo, NULL, false, true);       // remove spells that not fit to form
-            ApplyEquipSpell(spellInfo, NULL, true, true);        // add spells that fit form but not active
+            if (itemSetSpell->ChrSpecID && itemSetSpell->ChrSpecID != GetSpecializationId(GetActiveSpec()))
+                ApplyEquipSpell(spellInfo, nullptr, false, false);  // item set aura is not for current spec
+            else
+            {
+                ApplyEquipSpell(spellInfo, nullptr, false, false); // remove spells that not fit to form - removal is skipped if shapeshift condition is satisfied
+                ApplyEquipSpell(spellInfo, nullptr, true, false);  // add spells that fit form but not active
+            }
         }
     }
 }
@@ -9623,22 +9615,15 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
     if (procVictim & PROC_FLAG_TAKEN_DAMAGE)
     //if (damageInfo->procVictim & PROC_FLAG_TAKEN_ANY_DAMAGE)
     {
-        for (uint8 i = 0; i < MAX_ITEM_SPELLS; ++i)
+        for (ItemEffectEntry const* effectData : proto->Effects)
         {
-            _Spell const& spellData = proto->Spells[i];
-
-            // no spell
-            if (!spellData.SpellId)
+            if (effectData->Trigger != ITEM_SPELLTRIGGER_CHANCE_ON_HIT)
                 continue;
 
-            // wrong triggering type
-            if (spellData.SpellTrigger != ITEM_SPELLTRIGGER_CHANCE_ON_HIT)
-                continue;
-
-            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellData.SpellId);
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(effectData->SpellID);
             if (!spellInfo)
             {
-                sLog->outError(LOG_FILTER_PLAYER_ITEMS, "WORLD: unknown Item spellid %i", spellData.SpellId);
+                sLog->outError(LOG_FILTER_PLAYER_ITEMS, "WORLD: unknown Item spellid %i", effectData->SpellID);
                 continue;
             }
 
@@ -9650,7 +9635,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
 
             if (proto->SpellPPMRate)
             {
-                if (spellData.SpellId == 52781) // Persuasive Strike
+                if (effectData->SpellID == 52781) // Persuasive Strike
                 {
                     switch (target->GetEntry())
                     {
@@ -9662,13 +9647,10 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
                             break;
                     }
                 }
-                uint32 WeaponSpeed = GetAttackTime(attType);
-                chance = GetPPMProcChance(WeaponSpeed, proto->SpellPPMRate, spellInfo);
+                chance = GetPPMProcChance(GetAttackTime(attType), proto->SpellPPMRate, spellInfo);
             }
             else if (chance > 100.0f)
-            {
                 chance = GetWeaponProcChance();
-            }
 
             if (roll_chance_f(chance))
                 CastSpell(target, spellInfo->Id, true, item);
@@ -9740,32 +9722,33 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
 {
     ItemTemplate const* proto = item->GetTemplate();
     // special learning case
-    if (proto->Spells[0].SpellId == 483 || proto->Spells[0].SpellId == 55884)
-    {
-        uint32 learn_spell_id = proto->Spells[0].SpellId;
-        uint32 learning_spell_id = proto->Spells[1].SpellId;
-
-        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(learn_spell_id);
-        if (!spellInfo)
+    if (proto->Effects.size() >= 2)
+        if (proto->Effects[0]->SpellID == 483 || proto->Effects[0]->SpellID == 55884)
         {
-            sLog->outError(LOG_FILTER_PLAYER, "Player::CastItemUseSpell: Item (Entry: %u) in have wrong spell id %u, ignoring ", proto->ItemId, learn_spell_id);
-            SendEquipError(EQUIP_ERR_INTERNAL_BAG_ERROR, item, NULL);
+            uint32 learn_spell_id = proto->Effects[0]->SpellID;
+            uint32 learning_spell_id = proto->Effects[1]->SpellID;
+
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(learn_spell_id);
+            if (!spellInfo)
+            {
+                sLog->outError(LOG_FILTER_PLAYER, "Player::CastItemUseSpell: Item (Entry: %u) in have wrong spell id %u, ignoring ", proto->ItemId, learn_spell_id);
+                SendEquipError(EQUIP_ERR_INTERNAL_BAG_ERROR, item, NULL);
+                return;
+            }
+
+            Spell* spell = new Spell(this, spellInfo, TRIGGERED_NONE);
+            spell->m_CastItem = item;
+            spell->SetSpellValue(SPELLVALUE_BASE_POINT0, learning_spell_id);
+            spell->prepare(&targets);
             return;
         }
 
-        Spell* spell = new Spell(this, spellInfo, TRIGGERED_NONE);
-        spell->m_CastItem = item;
-        spell->SetSpellValue(SPELLVALUE_BASE_POINT0, learning_spell_id);
-        spell->prepare(&targets);
-        return;
-    }
-
     // special case for rewards curency
-    if (proto->Spells[0].SpellId == 13)
+    if (proto->Effects[0]->SpellID == 13)
     {
         uint32 countefirs = GetItemCount(proto->ItemId, false);
-        uint32 curency = proto->Spells[1].SpellId;
-        uint32 curency_count = proto->Spells[1].SpellCooldown;
+        uint32 curency = proto->Effects[1]->SpellID;
+        uint32 curency_count = proto->Effects[1]->Cooldown;
         if(curency > 0 && curency_count > 0 && countefirs > 0)
         {
             ModifyCurrency(curency, curency_count);
@@ -9777,25 +9760,14 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
     // use triggered flag only for items with many spell casts and for not first cast
     uint8 count = 0;
 
-    // item spells casted at use
-    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
+    for (ItemEffectEntry const* effectData : proto->Effects)
     {
-        _Spell const& spellData = proto->Spells[i];
-
-        // no spell
-        if (!spellData.SpellId)
+        if (effectData->Trigger != ITEM_SPELLTRIGGER_ON_USE)
             continue;
 
-        // wrong triggering type
-        if (spellData.SpellTrigger != ITEM_SPELLTRIGGER_ON_USE)
-            continue;
-
-        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellData.SpellId);
+        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(effectData->SpellID);
         if (!spellInfo)
-        {
-            sLog->outError(LOG_FILTER_PLAYER, "Player::CastItemUseSpell: Item (Entry: %u) in have wrong spell id %u, ignoring", proto->ItemId, spellData.SpellId);
             continue;
-        }
 
         Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
         spell->m_CastItem = item;
@@ -12911,15 +12883,14 @@ static bool castItemSpells(Item* pItem, Player* player, uint8 bag)
 {
     bool res = true;
     const ItemTemplate* proto = pItem->GetTemplate();
-    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-        if (proto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && proto->Spells[i].SpellId > 0) // On obtain trigger
+    for (ItemEffectEntry const* effectData : proto->Effects)
+        if (effectData->Trigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && effectData->SpellID) // On obtain trigger
             if (bag == INVENTORY_SLOT_BAG_0 || (bag >= INVENTORY_SLOT_BAG_START && bag < INVENTORY_SLOT_BAG_END))
-                if (!player->HasAura(proto->Spells[i].SpellId))
+                if (!player->HasAura(effectData->SpellID))
                 {
-                    if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(proto->Spells[i].SpellId))
+                    if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(effectData->SpellID))
                     {
                         player->CastSpell(player, spellInfo, true, pItem);
-                        //delete this item
                         if (spellInfo->HasEffect(SPELL_EFFECT_ADD_GARRISON_FOLLOWER))
                             res = false;
                     }
@@ -13511,10 +13482,10 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
         pItem->ClearSoulboundTradeable(this);
         RemoveTradeableItem(pItem);
 
-        const ItemTemplate* proto = pItem->GetTemplate();
-        for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-            if (proto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && proto->Spells[i].SpellId > 0) // On obtain trigger
-                RemoveAurasDueToSpell(proto->Spells[i].SpellId);
+        ItemTemplate const* proto = pItem->GetTemplate();
+        for (ItemEffectEntry const* effectData : proto->Effects)
+            if (effectData->Trigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && effectData->SpellID)
+                RemoveAurasDueToSpell(effectData->SpellID);
 
         ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());
 
@@ -23852,13 +23823,13 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     {
         if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemId))
         {
-            for (uint8 idx = 0; idx < MAX_ITEM_SPELLS; ++idx)
+            for (ItemEffectEntry const* effectData : proto->Effects)
             {
-                if (uint32(proto->Spells[idx].SpellId) == spellInfo->Id)
+                if (effectData->SpellID == spellInfo->Id)
                 {
-                    cat    = proto->Spells[idx].SpellCategory;
-                    rec    = proto->Spells[idx].SpellCooldown;
-                    catrec = proto->Spells[idx].SpellCategoryCooldown;
+                    cat = effectData->Category;
+                    rec = effectData->Cooldown;
+                    catrec = effectData->CategoryCooldown;
                     break;
                 }
             }
@@ -24000,9 +23971,9 @@ void Player::UpdatePotionCooldown(Spell* spell)
     {
         // spell/item pair let set proper cooldown (except not existed charged spell cooldown spellmods for potions)
         if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(m_lastPotionId))
-            for (uint8 idx = 0; idx < MAX_ITEM_SPELLS; ++idx)
-                if (proto->Spells[idx].SpellId && proto->Spells[idx].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE)
-                    if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(proto->Spells[idx].SpellId))
+            for (ItemEffectEntry const* effectData : proto->Effects)
+                if (effectData->Trigger == ITEM_SPELLTRIGGER_ON_USE)
+                    if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(effectData->SpellID))
                         SendCooldownEvent(spellInfo, m_lastPotionId);
     }
     // from spell cases (m_lastPotionId set in Spell::SendSpellCooldown)
@@ -24970,23 +24941,17 @@ void Player::ApplyEquipCooldown(Item* pItem)
     if (pItem->HasFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_PROTO_FLAG_NO_EQUIP_COOLDOWN))
         return;
 
-    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
+    ItemTemplate const* proto = pItem->GetTemplate();
+    for (ItemEffectEntry const* effectData : proto->Effects)
     {
-        _Spell const& spellData = pItem->GetTemplate()->Spells[i];
-
-        // no spell
-        if (!spellData.SpellId)
+        if (effectData->Trigger != ITEM_SPELLTRIGGER_ON_USE)
             continue;
 
-        // wrong triggering type (note: ITEM_SPELLTRIGGER_ON_NO_DELAY_USE not have cooldown)
-        if (spellData.SpellTrigger != ITEM_SPELLTRIGGER_ON_USE)
-            continue;
-
-        AddSpellCooldown(spellData.SpellId, pItem->GetEntry(), getPreciseTime() + 30.0);
+        AddSpellCooldown(effectData->SpellID, pItem->GetEntry(), getPreciseTime() + 30.0);
 
         WorldPackets::Item::ItemCooldown data;
         data.ItemGuid = pItem->GetGUID();
-        data.SpellID = spellData.SpellId;
+        data.SpellID = effectData->SpellID;
         GetSession()->SendPacket(data.Write());
     }
 }
@@ -26017,11 +25982,11 @@ void Player::ResurectUsingRequestData()
     SetPower(POWER_RAGE, 0);
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
     SetPower(POWER_FOCUS, GetMaxPower(POWER_FOCUS));
-    SetPower(POWER_ECLIPSE, 0, false);
-    SetPower(POWER_BURNING_EMBERS, 10, false);
+    SetPower(POWER_LUNAR_POWER, 0, false);
+    SetPower(POWER_OBSOLETE, 10, false);
     SetPower(POWER_SOUL_SHARDS, 100, false);
-    SetPower(POWER_DEMONIC_FURY, 200, false);
-    SetPower(POWER_SHADOW_ORBS, 0);
+    SetPower(POWER_OBSOLETE2, 200, false);
+    SetPower(POWER_INSANITY, 0);
     SetPower(POWER_CHI, 0);
 
     if (uint32 aura = _resurrectionData->Aura)
@@ -27081,7 +27046,7 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
 
 uint32 Player::CalculateTalentsPoints() const
 {
-    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? DefaultTalentRowLevels : DKTalentRowLevels;
+    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
     for (uint32 i = 7; i; --i)
         if (getLevel() >= rowLevels[i - 1])
             return i;

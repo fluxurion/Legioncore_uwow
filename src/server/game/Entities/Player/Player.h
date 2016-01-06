@@ -1343,7 +1343,8 @@ private:
 };
 
 static uint32 const DefaultTalentRowLevels[7] = { 15, 30, 45, 60, 75, 90, 100 };
-static uint32 const DKTalentRowLevels[7] = { 57, 58, 59, 60, 75, 90, 100 };
+static uint32 const DKTalentRowLevels[7] = { 56, 57, 58, 60, 75, 90, 100 };
+static uint32 const DHTalentRowLevels[7] = { 99, 100, 102, 104, 106, 108, 110 };
 
 struct PlayerTalentInfo
 {

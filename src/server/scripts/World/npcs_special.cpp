@@ -3923,7 +3923,7 @@ class npc_wild_imp : public CreatureScript
                 if ((me->getVictim() || me->GetOwner()->getAttackerForHelper()))
                 {
                     me->CastSpell(me->getVictim() ? me->getVictim() : me->GetOwner()->getAttackerForHelper(), FIREBOLT, false);
-                    me->GetOwner()->EnergizeBySpell(me->GetOwner(), FIREBOLT, 5, POWER_DEMONIC_FURY);
+                    me->GetOwner()->EnergizeBySpell(me->GetOwner(), FIREBOLT, 5, POWER_OBSOLETE2);
                     charges--;
                     me->SetPower(POWER_ENERGY, charges);
 
@@ -3936,7 +3936,7 @@ class npc_wild_imp : public CreatureScript
                     if (pet->getAttackerForHelper())
                     {
                         me->CastSpell(me->getVictim() ? me->getVictim() : pet->getAttackerForHelper(), FIREBOLT, false);
-                        me->GetOwner()->EnergizeBySpell(me->GetOwner(), FIREBOLT, 5, POWER_DEMONIC_FURY);
+                        me->GetOwner()->EnergizeBySpell(me->GetOwner(), FIREBOLT, 5, POWER_OBSOLETE2);
                         charges--;
                         me->SetPower(POWER_ENERGY, charges);
 

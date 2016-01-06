@@ -77,16 +77,16 @@ struct AreaGroupMemberEntry
 
 struct AuctionHouseEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     uint32      FactionID;                                  // 1
     uint32      DepositRate;                                // 2
     uint32      ConsignmentRate;                            // 3
-
-    uint32      houseId; // temp - for compile
 };
 
 struct ArmorLocationEntry
 {
+    uint32      ID;
     float       Value[5];                                           // 0 - 4 multiplier for armor types: cloth...plate
 };
 
@@ -389,6 +389,7 @@ struct CreatureTypeEntry
 
 struct DestructibleModelDataEntry
 {
+    uint32      ID;
     uint16      StateDamagedDisplayID;                      // 0
     uint16      StateDestroyedDisplayID;                    // 1
     uint16      StateRebuildingDisplayID;                   // 2
@@ -415,12 +416,14 @@ struct DestructibleModelDataEntry
 
 struct DurabilityCostsEntry
 {
+    uint32      ID;
     uint16      WeaponSubstructCost[21];                    // 0-20
     uint16      ArmorSubstructCost[8];                      // 21-29
 };
 
 struct DurabilityQualityEntry
 {
+    uint32      ID;
     float       Data;                                       // 0
 };
 
@@ -520,6 +523,7 @@ struct ItemLimitCategoryEntry
 
 struct ItemPriceBaseEntry
 {
+    uint32      ID;
     float       Armor;                                  // 0
     float       Weapon;                                 // 1
     uint16      ItemLevel;                              // 2
@@ -527,20 +531,18 @@ struct ItemPriceBaseEntry
 
 struct ItemRandomPropertiesEntry
 {
+    uint32      ID;
     LocalizedString* Name;                              // 0
     uint32      Enchantment[MAX_ITEM_ENCHANTS];         // 1 - 5
-
-    uint32 ID; // temp - for compile
 };
 
 struct ItemRandomSuffixEntry
 {
+    uint32      ID;
     LocalizedString* Name;                              // 0
     LocalizedString* IternalName;                       // 1
     uint32      Enchantment[MAX_ITEM_ENCHANTS];         // 2 - 6
     uint32      AllocationPct[MAX_ITEM_ENCHANTS];       // 7 - 11
-
-    uint32 ID; // temp - for compile
 };
 
 struct ItemSpecOverrideEntry
@@ -552,6 +554,7 @@ struct ItemSpecOverrideEntry
 
 struct ItemSpecEntry
 {
+    uint32      ID;
     uint16      SpecID;                                 // 0
     uint8       MinLevel;                               // 1
     uint8       MaxLevel;                               // 2
@@ -562,6 +565,7 @@ struct ItemSpecEntry
 
 struct ItemSetSpellEntry
 {
+    uint32      ID; 
     uint32      SpellID;                                // 0
     uint16      ItemSetID;                              // 1
     uint16      ChrSpecID;                              // 2
@@ -570,6 +574,7 @@ struct ItemSetSpellEntry
 
 struct GuildPerkSpellsEntry
 {
+    uint32      ID;
     uint32      SpellId;
     uint8       Level;
 };
@@ -625,11 +630,13 @@ struct ItemAppearanceEntry
 
 struct MailTemplateEntry
 {
+    uint32      ID;
     LocalizedString* Content;                               // 0
 };
 
 struct ModifierTreeEntry
 {
+    uint32      ID;
     uint32      Asset;                                      // 0
     uint32      SecondaryAsset;                             // 1
     uint16      Parent;                                     // 2
@@ -637,12 +644,11 @@ struct ModifierTreeEntry
     uint8       UnkLegion;                                  // 4
     uint8       Operator;                                   // 5
     uint8       Amount;                                     // 6
-
-    uint32 ID; // temp - for compile
 };
 
 struct MountCapabilityEntry
 {
+    uint32      ID;
     uint32      Unknown0;
     uint32      ReqSpellKnownID;
     uint32      ModSpellAuraID;
@@ -655,6 +661,7 @@ struct MountCapabilityEntry
 
 struct MountTypeEntry
 {
+    uint32      ID;
     uint32      MountTypeID;
 };
 
@@ -667,6 +674,7 @@ struct MountTypeXCapabilityEntry
 
 struct NameGenEntry
 {
+    uint32      ID;
     LocalizedString* Name;
     uint32      RaceID;
     uint32      Gender;
@@ -793,7 +801,7 @@ struct ItemEffectEntry
     uint32      OrderIndex;                                 // 2
     uint32      SpellID;                                    // 3
     uint32      Trigger;                                    // 4
-    uint32      Charges;                                    // 5
+    int32       Charges;                                    // 5
     int32       Cooldown;                                   // 6
     uint32      Category;                                   // 7
     int32       CategoryCooldown;                           // 8
@@ -1943,6 +1951,7 @@ struct SkillLineAbilityEntry
 
 struct ScenarioEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     uint8       Flags;                                      // 1
     uint8       UnkLegion;                                  // 2
@@ -1953,6 +1962,7 @@ struct ScenarioEntry
 
 struct ScenarioStepEntry
 {
+    uint32      ID;
     LocalizedString* DescriptionLang;                       // 0
     LocalizedString* TitleLang;                             // 1
     uint16      Criteriatreeid;                             // 2
@@ -1968,6 +1978,7 @@ struct ScenarioStepEntry
 
 struct ScalingStatDistributionEntry
 {
+    uint32      ID;
     uint16      ItemLevelCurveID;                           // 0
     uint8       MinLevel;                                   // 1
     uint8       MaxLevel;                                   // 2
@@ -1975,6 +1986,7 @@ struct ScalingStatDistributionEntry
 
 struct TotemCategoryEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     uint32      TotemCategoryType;                          // 1
     uint8       TotemCategoryMask;                          // 2
@@ -2003,6 +2015,7 @@ struct TransportRotationEntry
 
 struct UnitPowerBarEntry
 {
+    uint32      ID;
     uint32      MaxPower;                                   // 0
     float       RegenerationPeace;                          // 1
     float       RegenerationCombat;                         // 2
@@ -2023,6 +2036,7 @@ struct UnitPowerBarEntry
 
 struct WorldMapOverlayEntry
 {
+    uint32      ID;
     LocalizedString* TextureName;                           // 0
     uint16      MapAreaID;                                  // 1
     uint16      AreaID[MAX_WORLD_MAP_OVERLAY_AREA_IDX];     // 2 - 5
@@ -2039,6 +2053,7 @@ struct WorldMapOverlayEntry
 
 struct WorldMapTransformsEntry
 {
+    uint32      ID;
     DBCPosition3D RegionMin;                                // 0 - 2
     DBCPosition3D RegionMax;                                // 3 - 5
     DBCPosition2D RegionOffset;                             // 6 - 7

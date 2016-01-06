@@ -689,7 +689,7 @@ enum OpcodeClient : uint16
     CMSG_TRAINER_LIST                                 = 0xBADD,
     CMSG_TRANSMOGRIFY_ITEMS                           = 0xBADD,
     CMSG_TURN_IN_PETITION                             = 0xBADD,
-    CMSG_TUTORIAL                                     = 0xBADD,
+    CMSG_TUTORIAL_FLAG                                = 0x36E2,
     CMSG_TWITTER_CHECK_STATUS                         = 0x312A,
     CMSG_TWITTER_CONNECT                              = 0x3127,
     CMSG_TWITTER_DISCONNECT                           = 0x312B,

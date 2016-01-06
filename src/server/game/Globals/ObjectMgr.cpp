@@ -2666,17 +2666,6 @@ void ObjectMgr::LoadItemTemplates()
         //itemTemplate.Armor = GetItemArmor(sparse->ItemLevel, db2Data->Class, db2Data->SubClass, sparse->Quality, sparse->InventoryType);
         itemTemplate.Delay = sparse->Delay;
         itemTemplate.RangedModRange = sparse->RangedModRange;
-        // now only init.
-        for (uint32 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-        {
-            itemTemplate.Spells[i].SpellId = 0;
-            itemTemplate.Spells[i].SpellTrigger = 0;
-            itemTemplate.Spells[i].SpellCharges = 0;
-            itemTemplate.Spells[i].SpellCooldown = -1;
-            itemTemplate.Spells[i].SpellCategory = 0;
-            itemTemplate.Spells[i].SpellCategoryCooldown = 0;
-        }
-
         itemTemplate.SpellPPMRate = 0.0f;
         itemTemplate.Bonding = sparse->Bonding;
         itemTemplate.Description = sparse->Description[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
@@ -2766,23 +2755,13 @@ void ObjectMgr::LoadItemTemplates()
                 itemTemplate.CurrencySubstitutionId = curr->SpellCategory;
     }
 
-    // Load item effects (spells)
     for (ItemEffectEntry const* effectEntry : sItemEffectStore)
     {
         auto itemItr = _itemTemplateStore.find(effectEntry->ItemID);
         if (itemItr == _itemTemplateStore.end())
             continue;
 
-        ItemTemplate& itemTemplate = itemItr->second;
-
-        _Spell effect;
-        effect.SpellId = effectEntry->SpellID;
-        effect.SpellTrigger = effectEntry->Trigger;
-        effect.SpellCharges = effectEntry->Charges;
-        effect.SpellCooldown = effectEntry->Cooldown;
-        effect.SpellCategory = effectEntry->Category;
-        effect.SpellCategoryCooldown = effectEntry->CategoryCooldown;
-        itemTemplate.Spells[effectEntry->OrderIndex] = effect;
+        itemItr->second.Effects.push_back(effectEntry);
     }
 
     // Check if item templates for DBC referenced character start outfit are present

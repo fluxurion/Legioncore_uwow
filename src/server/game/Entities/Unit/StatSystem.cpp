@@ -1246,13 +1246,13 @@ void Unit::UpdatePowerRegen(uint32 power)
             break;
         }
         // Regenerate Demonic Fury
-        case POWER_DEMONIC_FURY:
+        case POWER_OBSOLETE2:
         {
             addvalue -= 1.0f * 12.5f;
             break;
         }
         // Regenerate Burning Embers
-        case POWER_BURNING_EMBERS:
+        case POWER_OBSOLETE:
         {
             addvalue -= 1.0f / 2.5f;
             break;
@@ -1264,7 +1264,7 @@ void Unit::UpdatePowerRegen(uint32 power)
             break;
         }
         // Regenerate Soul Shards
-        case POWER_ECLIPSE:
+        case POWER_LUNAR_POWER:
         {
             addvalue += 1.0f;
             break;

@@ -34,21 +34,16 @@ void AddItemsSetItem(Player* player, Item* item)
     uint32 setid = proto->ItemSet;
 
     ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
-
     if (!set)
-    {
-        sLog->outError(LOG_FILTER_SQL, "Item set %u for item (id %u) not found, mods not applied.", setid, proto->ItemId);
         return;
-    }
 
     if (set->required_skill_id && player->GetSkillValue(set->required_skill_id) < set->required_skill_value)
         return;
 
-    ItemSetEffect* eff = NULL;
-
+    ItemSetEffect* eff = nullptr;
     for (size_t x = 0; x < player->ItemSetEff.size(); ++x)
     {
-        if (player->ItemSetEff[x] && player->ItemSetEff[x]->setid == setid)
+        if (player->ItemSetEff[x] && player->ItemSetEff[x]->ItemSetID == setid)
         {
             eff = player->ItemSetEff[x];
             break;
@@ -58,7 +53,8 @@ void AddItemsSetItem(Player* player, Item* item)
     if (!eff)
     {
         eff = new ItemSetEffect();
-        eff->setid = setid;
+        eff->ItemSetID = setid;
+        eff->EquippedItemCount = 0;
 
         size_t x = 0;
         for (; x < player->ItemSetEff.size(); ++x)
@@ -71,44 +67,24 @@ void AddItemsSetItem(Player* player, Item* item)
             player->ItemSetEff.push_back(eff);
     }
 
-    ++eff->item_count;
+    ++eff->EquippedItemCount;
 
-    auto spells = sDB2Manager._itemSetSpells[setid];
-    for (size_t x = 0; x < spells.size(); ++x)
+    DB2Manager::ItemSetSpells& spells = sDB2Manager._itemSetSpells[setid];
+    for (ItemSetSpellEntry const* itemSetSpell : spells)
     {
-        //not enough for  spell
-        if (spells[x]->Threshold > eff->item_count)
+        if (itemSetSpell->Threshold > eff->EquippedItemCount)
             continue;
 
-        uint32 z = 0;
-        for (; z < MAX_ITEM_SET_SPELLS; ++z)
-            if (eff->spells[z] && eff->spells[z]->Id == spells[x]->SpellID)
-                break;
-
-        if (z < MAX_ITEM_SET_SPELLS)
+        if (eff->SetBonuses.count(itemSetSpell))
             continue;
 
-        //new spell
-        for (uint32 y = 0; y < MAX_ITEM_SET_SPELLS; ++y)
-        {
-            if (!eff->spells[y])                             // free slot
-            {
-                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spells[x]->SpellID);
-                if (!spellInfo)
-                {
-                    sLog->outError(LOG_FILTER_PLAYER_ITEMS, "WORLD: unknown spell id %u in items set %u effects", spells[x]->SpellID, setid);
-                    break;
-                }
+        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itemSetSpell->SpellID);
+        if (!spellInfo)
+            continue;
 
-                // spell casted only if fit form requirement, in other case will casted at form change
-                if (player->GetSpecializationId(player->GetActiveSpec()) != spells[x]->ChrSpecID)
-                    continue;
-
-                player->ApplyEquipSpell(spellInfo, NULL, true);
-                eff->spells[y] = spellInfo;
-                break;
-            }
-        }
+        eff->SetBonuses.insert(itemSetSpell);
+        if (!itemSetSpell->ChrSpecID || itemSetSpell->ChrSpecID == player->GetSpecializationId(player->GetActiveSpec()))
+            player->ApplyEquipSpell(spellInfo, nullptr, true);
     }
 }
 
@@ -117,56 +93,43 @@ void RemoveItemsSetItem(Player*player, ItemTemplate const* proto)
     uint32 setid = proto->ItemSet;
 
     ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
-
     if (!set)
-    {
-        sLog->outError(LOG_FILTER_SQL, "Item set #%u for item #%u not found, mods not removed.", setid, proto->ItemId);
         return;
-    }
 
-    ItemSetEffect* eff = NULL;
+    ItemSetEffect* eff = nullptr;
     size_t setindex = 0;
     for (; setindex < player->ItemSetEff.size(); setindex++)
     {
-        if (player->ItemSetEff[setindex] && player->ItemSetEff[setindex]->setid == setid)
+        if (player->ItemSetEff[setindex] && player->ItemSetEff[setindex]->ItemSetID == setid)
         {
             eff = player->ItemSetEff[setindex];
             break;
         }
     }
 
-    // can be in case now enough skill requirement for set appling but set has been appliend when skill requirement not enough
     if (!eff)
         return;
 
-    --eff->item_count;
-    auto spells = sDB2Manager._itemSetSpells[setid];
-    for (size_t x = 0; x < spells.size(); ++x)
+    --eff->EquippedItemCount;
+
+    DB2Manager::ItemSetSpells const& spells = sDB2Manager._itemSetSpells[setid];
+    for (ItemSetSpellEntry const* itemSetSpell : spells)
     {
-        // enough for spell
-        if (spells[x]->Threshold <= eff->item_count)
+        if (itemSetSpell->Threshold <= eff->EquippedItemCount)
             continue;
 
-        for (uint32 z = 0; z < MAX_ITEM_SET_SPELLS; z++)
-        {
-            if (eff->spells[z] && eff->spells[z]->Id == spells[x]->SpellID)
-            {
-                // spell can be not active if not fit form requirement
-                if (player->GetSpecializationId(player->GetActiveSpec()) != spells[x]->ChrSpecID)
-                    continue;
+        if (!eff->SetBonuses.count(itemSetSpell))
+            continue;
 
-                player->ApplyEquipSpell(eff->spells[z], NULL, false);
-                eff->spells[z] = NULL;
-                break;
-            }
-        }
+        player->ApplyEquipSpell(sSpellMgr->AssertSpellInfo(itemSetSpell->SpellID), nullptr, false);
+        eff->SetBonuses.erase(itemSetSpell);
     }
 
-    if (!eff->item_count)                                    //all items of a set were removed
+    if (!eff->EquippedItemCount)
     {
         ASSERT(eff == player->ItemSetEff[setindex]);
         delete eff;
-        player->ItemSetEff[setindex] = NULL;
+        player->ItemSetEff[setindex] = nullptr;
     }
 }
 
@@ -289,8 +252,8 @@ bool Item::Create(ObjectGuid::LowType const& guidlow, uint32 itemid, Player cons
     SetUInt32Value(ITEM_FIELD_MAX_DURABILITY, itemProto->MaxDurability);
     SetUInt32Value(ITEM_FIELD_DURABILITY, itemProto->MaxDurability);
 
-    for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-        SetSpellCharges(i, itemProto->Spells[i].SpellCharges);
+    for (uint8 i = 0; i < itemProto->Effects.size() && i < MAX_ITEM_PROTO_SPELLS; ++i)
+        SetSpellCharges(i, itemProto->Effects[i]->Charges);
 
     SetUInt32Value(ITEM_FIELD_EXPIRATION, itemProto->Duration);
     SetUInt32Value(ITEM_FIELD_CREATE_PLAYED_TIME, 0);
@@ -355,16 +318,17 @@ void Item::SaveToDB(SQLTransaction& trans)
             stmt->setUInt32(++index, GetUInt32Value(ITEM_FIELD_EXPIRATION));
 
             std::ostringstream ssSpells;
-            for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-            {
-                if (GetEntry() == 38186 && GetSpellCharges(i)) //Efir not have charges
+            if (ItemTemplate const* itemProto = sObjectMgr->GetItemTemplate(GetEntry()))
+                for (uint8 i = 0; i < itemProto->Effects.size(); ++i)
                 {
-                    sWorld->BanAccount(BAN_CHARACTER, GetOwner()->GetName(), "-1", "Dupe efir", "System");
-                    delete this;
-                    return;
+                    if (GetEntry() == 38186 && GetSpellCharges(i)) //Efir not have charges
+                    {
+                        sWorld->BanAccount(BAN_CHARACTER, GetOwner()->GetName(), "-1", "Dupe efir", "System");
+                        delete this;
+                        return;
+                    }
+                    ssSpells << GetSpellCharges(i) << ' ';
                 }
-                ssSpells << GetSpellCharges(i) << ' ';
-            }
             stmt->setString(++index, ssSpells.str());
 
             stmt->setUInt32(++index, GetUInt32Value(ITEM_FIELD_DYNAMIC_FLAGS));
@@ -484,14 +448,10 @@ bool Item::LoadFromDB(ObjectGuid::LowType const& guid, ObjectGuid const& owner_g
         need_save = true;
     }
 
-    std::string charges = fields[4].GetString();
-    if (charges.size() > MAX_ITEM_PROTO_SPELLS)
-    {
-        Tokenizer tokens(charges.c_str(), ' ', MAX_ITEM_PROTO_SPELLS);
-        if (tokens.size() == MAX_ITEM_PROTO_SPELLS)
-            for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-                SetSpellCharges(i, atoi(tokens[i]));
-    }
+    Tokenizer tokens(fields[4].GetString(), ' ', proto->Effects.size());
+    if (tokens.size() == proto->Effects.size())
+        for (uint8 i = 0; i < proto->Effects.size(); ++i)
+            SetSpellCharges(i, atoi(tokens[i]));
 
     SetUInt32Value(ITEM_FIELD_DYNAMIC_FLAGS, fields[5].GetUInt32());
     // Remove bind flag for items vs NO_BIND set

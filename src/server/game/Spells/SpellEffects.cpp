@@ -1498,7 +1498,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
             case 104330:
             {
                 if (Unit* owner = m_caster->GetAnyOwner())
-                    m_caster->EnergizeBySpell(owner, m_spellInfo->Id, damage, POWER_DEMONIC_FURY);
+                    m_caster->EnergizeBySpell(owner, m_spellInfo->Id, damage, POWER_OBSOLETE2);
                 return;
             }
             // Vanish (not exist)
@@ -2779,7 +2779,7 @@ void Spell::EffectCreateItem3(SpellEffIndex effIndex)
     {
         if (m_spellInfo->IsLootCrafting())
         {
-            if (player->AutoStoreLoot(item->GetTemplate()->Spells[0].SpellId, LootTemplates_Spell, 535))
+            if (player->AutoStoreLoot(item->GetTemplate()->Effects[0]->SpellID, LootTemplates_Spell, 535))
                 player->DestroyItemCount(item->GetEntry(), 1, true);
         }
     }
@@ -2919,11 +2919,11 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
         damage -= level_multiplier * level_diff;
 
     // now alter power used as mana too as it's some kind of category not power.
-    //if (damage < 0 && power != POWER_ECLIPSE && power != POWER_ALTERNATE_POWER)
+    //if (damage < 0 && power != POWER_LUNAR_POWER && power != POWER_ALTERNATE_POWER)
     //    return;
 
     // Do not energize when in Celestial Alignment
-    //if (power == POWER_ECLIPSE && m_caster->HasAura(112071))
+    //if (power == POWER_LUNAR_POWER && m_caster->HasAura(112071))
         //return;
 
     if (power == POWER_RAGE && m_caster->HasAura(138222) && unitTarget->HasAura(5229)) // Item - Druid T15 Guardian 4P Bonus
@@ -7624,7 +7624,6 @@ void Spell::EffectRechargeManaGem(SpellEffIndex /*effIndex*/)
         return;
 
     Player* player = m_caster->ToPlayer();
-
     if (!player)
         return;
 
@@ -7639,8 +7638,9 @@ void Spell::EffectRechargeManaGem(SpellEffIndex /*effIndex*/)
 
     if (Item* pItem = player->GetItemByEntry(item_id))
     {
-        for (int x = 0; x < MAX_ITEM_PROTO_SPELLS; ++x)
-            pItem->SetSpellCharges(x, pProto->Spells[x].SpellCharges);
+        for (auto const& v : pProto->Effects)
+            pItem->SetSpellCharges(v->ID, v->Charges);
+
         pItem->SetState(ITEM_CHANGED, player);
     }
 }

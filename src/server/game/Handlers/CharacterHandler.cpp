@@ -1199,7 +1199,7 @@ void WorldSession::HandleTutorialFlag(WorldPackets::Misc::TutorialSetFlag& packe
                 SetTutorialInt(i, 0x00000000);
             break;
         default:
-            sLog->outError(LOG_FILTER_NETWORKIO, "CMSG_TUTORIAL received unknown TutorialAction %u.", packet.Action);
+            sLog->outError(LOG_FILTER_NETWORKIO, "CMSG_TUTORIAL_FLAG received unknown TutorialAction %u.", packet.Action);
             return;
     }
 }
