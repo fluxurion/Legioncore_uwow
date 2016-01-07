@@ -819,68 +819,69 @@ struct ItemModifiedAppearanceEntry
 
 struct ItemSparseEntry
 {
-    uint32      ID;                                                 // 0
-    uint32      Quality;                                            // 1
-    uint32      Flags[MAX_ITEM_PROTO_FLAGS];                        // 2-4
-    float       Unk1;                                               // 5
-    float       Unk2;                                               // 6
-    uint32      BuyCount;                                           // 7
-    uint32      BuyPrice;                                           // 8
-    uint32      SellPrice;                                          // 9
-    uint32      InventoryType;                                      // 10
-    int32       AllowableClass;                                     // 11
-    int32       AllowableRace;                                      // 12
-    uint32      ItemLevel;                                          // 13
-    int32       RequiredLevel;                                      // 14
-    uint32      RequiredSkill;                                      // 15
-    uint32      RequiredSkillRank;                                  // 16
-    uint32      RequiredSpell;                                      // 17
-    uint32      RequiredHonorRank;                                  // 18
-    uint32      RequiredCityRank;                                   // 19
-    uint32      RequiredReputationFaction;                          // 20
-    uint32      RequiredReputationRank;                             // 21
-    uint32      MaxCount;                                           // 22
-    uint32      Stackable;                                          // 23
-    uint32      ContainerSlots;                                     // 24
-    int32       ItemStatType[MAX_ITEM_PROTO_STATS];                 // 25 - 34
-    int32       ItemStatValue[MAX_ITEM_PROTO_STATS];                // 35 - 44
-    int32       ItemStatAllocation[MAX_ITEM_PROTO_STATS];           // 45 - 54
-    float       ItemStatSocketCostMultiplier[MAX_ITEM_PROTO_STATS]; // 55 - 64
-    uint32      ScalingStatDistribution;                            // 65
-    uint32      DamageType;                                         // 66
-    uint32      Delay;                                              // 67
-    float       RangedModRange;                                     // 68
-    uint32      Bonding;                                            // 69
-    LocalizedString* Name;                                          // 70
-    LocalizedString* Name2;                                         // 71
-    LocalizedString* Name3;                                         // 72
-    LocalizedString* Name4;                                         // 73
-    LocalizedString* Description;                                   // 74
-    uint32      PageText;                                           // 75
-    uint32      LanguageID;                                         // 76
-    uint32      PageMaterial;                                       // 77
-    uint32      StartQuest;                                         // 78
-    uint32      LockID;                                             // 79
-    int32       Material;                                           // 80
-    uint32      Sheath;                                             // 81
-    uint32      RandomProperty;                                     // 82
-    uint32      RandomSuffix;                                       // 83
-    uint32      ItemSet;                                            // 84
-    uint32      Area;                                               // 85
-    uint32      Map;                                                // 86
-    uint32      BagFamily;                                          // 87
-    uint32      TotemCategory;                                      // 88
-    uint32      SocketColor[MAX_ITEM_PROTO_SOCKETS];                // 89-91
-    uint32      SocketBonus;                                        // 92
-    uint32      GemProperties;                                      // 93
-    float       ArmorDamageModifier;                                // 94
-    uint32      Duration;                                           // 95
-    uint32      ItemLimitCategory;                                  // 96
-    uint32      HolidayID;                                          // 97
-    float       StatScalingFactor;                                  // 98
-    uint32      CurrencySubstitutionID;                             // 99
-    uint32      CurrencySubstitutionCount;                          // 100
-    uint32      ItemNameDescriptionID;                              // 101
+    uint32      ID;
+    uint32      Flags[MAX_ITEM_PROTO_FLAGS];                        // 0 - 2
+    float       UnkFloat1;                                          // 3
+    float       UnkFloat2;                                          // 4
+    uint32      BuyPrice;                                           // 5
+    uint32      SellPrice;                                          // 6
+    int32       AllowableClass;                                     // 7
+    int32       AllowableRace;                                      // 8
+    uint32      RequiredSpell;                                      // 9
+    int32       MaxCount;                                           // 10
+    int32       Stackable;                                          // 11
+    int32       ItemStatAllocation[MAX_ITEM_PROTO_STATS];           // 12 - 21
+    float       ItemStatSocketCostMultiplier[MAX_ITEM_PROTO_STATS]; // 22 - 31
+    float       RangedModRange;                                     // 32
+    LocalizedString* Name;                                          // 33
+    LocalizedString* Name2;                                         // 34
+    LocalizedString* Name3;                                         // 35
+    LocalizedString* Name4;                                         // 36
+    LocalizedString* Description;                                   // 37
+    uint32      BagFamily;                                          // 38
+    float       ArmorDamageModifier;                                // 39
+    uint32      Duration;                                           // 40
+    float       StatScalingFactor;                                  // 41
+    uint16      ItemLevel;                                          // 42
+    uint16      RequiredSkill;                                      // 43
+    uint16      RequiredSkillRank;                                  // 44
+    uint16      RequiredReputationFaction;                          // 45
+    int16       ItemStatValue[MAX_ITEM_PROTO_STATS];                // 46 - 55
+    uint16      ScalingStatDistribution;                            // 56
+    uint16      Delay;                                              // 57
+    uint16      PageText;                                           // 58
+    uint16      StartQuest;                                         // 59
+    uint16      LockID;                                             // 60
+    uint16      RandomProperty;                                     // 61
+    uint16      RandomSuffix;                                       // 62
+    uint16      ItemSet;                                            // 63
+    uint16      Area;                                               // 64
+    uint16      Map;                                                // 65
+    uint16      SocketBonus;                                        // 66
+    uint16      GemProperties;                                      // 67
+    uint16      ItemLimitCategory;                                  // 68
+    uint16      HolidayID;                                          // 69
+    uint16      ItemNameDescriptionID;                              // 70
+    uint8       Quality;                                            // 71
+    uint8       BuyCount;                                           // 72
+    uint8       InventoryType;                                      // 73
+    int8        RequiredLevel;                                      // 74
+    uint8       RequiredHonorRank;                                  // 75 looks unused now
+    uint8       RequiredCityRank;                                   // 76 looks unused now
+    uint8       RequiredReputationRank;                             // 77
+    uint8       ContainerSlots;                                     // 78
+    int8        ItemStatType[MAX_ITEM_PROTO_STATS];                 // 79 - 88
+    uint8       DamageType;                                         // 89
+    uint8       Bonding;                                            // 90
+    uint8       LanguageID;                                         // 91
+    uint8       PageMaterial;                                       // 92
+    int8        Material;                                           // 93
+    uint8       Sheath;                                             // 94
+    uint8       TotemCategory;                                      // 95
+    uint8       SocketColor[MAX_ITEM_PROTO_SOCKETS];                // 96
+    uint8       CurrencySubstitutionID;                             // 97
+    uint8       CurrencySubstitutionCount;                          // 98
+    uint8       ArtifactUNK;                                        // 99 - related to artefact categories ?
 };
 
 struct ItemExtendedCostEntry

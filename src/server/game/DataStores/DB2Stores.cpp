@@ -351,7 +351,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemRandomPropertiesStore);       // 20810
     LOAD_DB2(sItemRandomSuffixStore);           // 20810
     LOAD_DB2(sItemSetSpellStore);               // 20810
-    //LOAD_DB2(sItemSparseStore);
+    LOAD_DB2(sItemSparseStore);                 // 20810
     LOAD_DB2(sItemSpecOverrideStore);           // 20810
     LOAD_DB2(sItemSpecStore);                   // 20810
     LOAD_DB2(sItemStore);                       // 20810

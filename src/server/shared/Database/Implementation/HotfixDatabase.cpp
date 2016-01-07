@@ -305,13 +305,14 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM item_modified_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemSparse.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Quality, Flags, Unk1, Unk2, BuyCount, BuyPrice, SellPrice, InventoryType, AllowableClass, "
-        "AllowableRace, ItemLevel, RequiredLevel, RequiredSkill, RequiredSkillRank, RequiredSpell, RequiredHonorRank, RequiredCityRank, "
-        "RequiredReputationFaction, RequiredReputationRank, MaxCount, Stackable, ContainerSlots, ItemStatType, ItemStatValue, ItemStatAllocation, "
-        "ItemStatSocketCostMultiplier, ScalingStatDistribution, DamageType, Delay, RangedModRange, Bonding, Name, Name2, Name3, Name4, Description, "
-        "PageText, LanguageID, PageMaterial, StartQuest, LockID, Material, Sheath, RandomProperty, RandomSuffix, ItemSet, Area, Map, BagFamily, "
-        "TotemCategory, SocketColor, SocketBonus, GemProperties, ArmorDamageModifier, Duration, ItemLimitCategory, HolidayID, StatScalingFactor, "
-        "CurrencySubstitutionID, CurrencySubstitutionCount, ItemNameDescriptionID FROM item_sparse ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Flags, UnkFloat1, UnkFloat2, BuyPrice, SellPrice, AllowableClass, AllowableRace, "
+        "RequiredSpell, MaxCount, Stackable, ItemStatAllocation, ItemStatSocketCostMultiplier, RangedModRange, Name, Name2, Name3, Name4, "
+        "Description, BagFamily, ArmorDamageModifier, Duration, StatScalingFactor, ItemLevel, RequiredSkill, RequiredSkillRank, "
+        "RequiredReputationFaction, ItemStatValue, ScalingStatDistribution, Delay, PageText, StartQuest, LockID, RandomProperty, RandomSuffix, "
+        "ItemSet, Area, Map, SocketBonus, GemProperties, ItemLimitCategory, HolidayID, ItemNameDescriptionID, Quality, BuyCount, InventoryType, "
+        "RequiredLevel, RequiredHonorRank, RequiredCityRank, RequiredReputationRank, ContainerSlots, ItemStatType, DamageType, Bonding, LanguageID, "
+        "PageMaterial, Material, Sheath, TotemCategory, SocketColor, CurrencySubstitutionID, CurrencySubstitutionCount, ArtifactUNK FROM item_sparse"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Name_lang, Name2_lang, Name3_lang, Name4_lang, Description_lang FROM item_sparse_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 
