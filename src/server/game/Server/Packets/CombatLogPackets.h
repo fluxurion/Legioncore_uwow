@@ -243,7 +243,7 @@ namespace WorldPackets
         class SpellMissLog final : public ServerPacket
         {
         public:
-            SpellMissLog() : ServerPacket(SMSG_SPELL_MISS_LOG) { }
+            SpellMissLog() : ServerPacket(SMSG_SPELL_MISS_LOG, 4 + 16 + 4) { }
 
             WorldPacket const* Write() override;
 

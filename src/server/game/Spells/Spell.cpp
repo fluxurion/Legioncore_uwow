@@ -4778,22 +4778,18 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    packet.CastID = 0;
+    packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
 
     switch (result)
     {
         case SPELL_FAILED_NOT_READY:
-        {
             packet.FailedArg1 = 0;                                    // unknown (value 1 update cooldowns on client flag)                       
             break;
-        }
         case SPELL_FAILED_REQUIRES_SPELL_FOCUS:
-        {
             packet.FailedArg1 = spellInfo->CastingReq.RequiresSpellFocus;
             break;
-        }
         case SPELL_FAILED_REQUIRES_AREA:                    // AreaTable.dbc id
         {
             // hardcode areas limitation case
@@ -4816,13 +4812,10 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
             break;
         }
         case SPELL_FAILED_TOTEMS:
-        {
             packet.FailedArg1 = spellInfo->Totems.Totem[0];
             packet.FailedArg2 = spellInfo->Totems.Totem[1];
             break;
-        }
         case SPELL_FAILED_TOTEM_CATEGORY:
-        {
             packet.FailedArg1 = spellInfo->Totems.TotemCategory[0];
             packet.FailedArg2 = spellInfo->Totems.TotemCategory[1];
 
@@ -4830,15 +4823,12 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
             //    sLog->OutCS(">>> SPELL_FAILED_TOTEM_CATEGORY ");
 
             break;
-        }
         case SPELL_FAILED_EQUIPPED_ITEM_CLASS:
         case SPELL_FAILED_EQUIPPED_ITEM_CLASS_MAINHAND:
         case SPELL_FAILED_EQUIPPED_ITEM_CLASS_OFFHAND:
-        {
             packet.FailedArg1 = spellInfo->EquippedItemClass;
             packet.FailedArg2 = spellInfo->EquippedItemSubClassMask;
             break;
-        }
         case SPELL_FAILED_TOO_MANY_OF_ITEM:
         {
             for (uint32 eff = 0; eff < MAX_SPELL_EFFECTS; ++eff)
@@ -4851,48 +4841,32 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
             break;
         }
         case SPELL_FAILED_PREVENTED_BY_MECHANIC:
-        {
             packet.FailedArg1 = spellInfo->GetAllEffectsMechanicMask();   // SpellMechanic.dbc id
             break;
-        }
         case SPELL_FAILED_NEED_EXOTIC_AMMO:
-        {
             packet.FailedArg1 = spellInfo->EquippedItemSubClassMask;          // seems correct...
             break;
-        }
         case SPELL_FAILED_NEED_MORE_ITEMS:
-        {
             //param1 = 0;                              // Item count?
             //param2 = 0;                              // Item id
             break;
-        }
         case SPELL_FAILED_MIN_SKILL:
-        {
             //param1 = 0;                              // SkillLine.dbc id
             //param2 = 0;                              // required skill value
             break;
-        }
         case SPELL_FAILED_FISHING_TOO_LOW:
-        {
             //param1 = 0;                              // required fishing skill
             break;
-        }
         case SPELL_FAILED_CUSTOM_ERROR:
-        {
             packet.FailedArg1 = customError;
             break;
-        }
         case SPELL_FAILED_SILENCED:
-        {
             //param1 = 0;                              // Unknown
             break;
-        }
         case  SPELL_FAILED_CANT_UNTALENT:
-        {
             if (TalentEntry const* talent = sTalentStore.LookupEntry(misc[0]))
                 packet.FailedArg1 = talent->spellId;
             break;
-        }
         case SPELL_FAILED_REAGENTS:
         {
             for (uint32 i = 0; i < MAX_SPELL_REAGENTS; i++)
@@ -5370,7 +5344,7 @@ void Spell::SendInterrupted(uint8 result)
 
     WorldPackets::Spells::SpellFailedOther failedPacket;
     failedPacket.CasterUnit = m_caster->GetGUID();
-    failedPacket.CastID = 0/*m_cast_count*/;
+    failedPacket.SpellXSpellVisualID = m_SpellVisual;
     failedPacket.SpellID = m_spellInfo->Id;
     failedPacket.Reason = result;
     m_caster->SendMessageToSet(failedPacket.Write(), true);

@@ -432,7 +432,7 @@ namespace WorldPackets
         class StandStateUpdate final : public ServerPacket
         {
         public:
-            StandStateUpdate() : ServerPacket(SMSG_STAND_STATE_UPDATE, 1) { }
+            StandStateUpdate() : ServerPacket(SMSG_STAND_STATE_UPDATE, 4 + 1) { }
 
             WorldPacket const* Write() override;
 

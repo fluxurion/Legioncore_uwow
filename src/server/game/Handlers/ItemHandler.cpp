@@ -1310,27 +1310,6 @@ void WorldSession::HandleUpgradeItem(WorldPacket& recvData)
 
     recvData >> upgradeId >> unk1 >> unk2;
 
-    //recvData.ReadGuidMask<4, 3>(itemGuid);
-    //recvData.ReadGuidMask<4, 6, 7, 3>(npcGuid);
-    //recvData.ReadGuidMask<7>(itemGuid);
-    //recvData.ReadGuidMask<1, 0>(npcGuid);
-    //recvData.ReadGuidMask<0>(itemGuid);
-    //recvData.ReadGuidMask<5>(npcGuid);
-    //recvData.ReadGuidMask<6, 2, 5>(itemGuid);
-    //recvData.ReadGuidMask<2>(npcGuid);
-    //recvData.ReadGuidMask<1>(itemGuid);
-
-    //recvData.ReadGuidBytes<0>(itemGuid);
-    //recvData.ReadGuidBytes<2, 3>(npcGuid);
-    //recvData.ReadGuidBytes<5, 3>(itemGuid);
-    //recvData.ReadGuidBytes<5>(npcGuid);
-    //recvData.ReadGuidBytes<2, 7>(itemGuid);
-    //recvData.ReadGuidBytes<1, 6>(npcGuid);
-    //recvData.ReadGuidBytes<4>(itemGuid);
-    //recvData.ReadGuidBytes<7>(npcGuid);
-    //recvData.ReadGuidBytes<1, 6>(itemGuid);
-    //recvData.ReadGuidBytes<0, 4>(npcGuid);
-
     if (!player->GetNPCIfCanInteractWith(npcGuid, UNIT_NPC_FLAG_NONE, UNIT_NPC_FLAG2_UPGRADE_MASTER))
     {
         sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleUpgradeItem - Unit (GUID: %u) not found or player can't interact with it.", npcGuid.GetGUIDLow());

@@ -245,9 +245,6 @@ bool Item::Create(ObjectGuid::LowType const& guidlow, uint32 itemid, Player cons
 
     _bonusData.Initialize(itemProto, GetOwner());
 
-    //for (uint32 i = 0; i < ITEM_DYN_MOD_END; ++i)
-    //    AddDynamicValue(ITEM_DYNAMIC_FIELD_MODIFIERS, 0);
-
     SetUInt32Value(ITEM_FIELD_STACK_COUNT, 1);
     SetUInt32Value(ITEM_FIELD_MAX_DURABILITY, itemProto->MaxDurability);
     SetUInt32Value(ITEM_FIELD_DURABILITY, itemProto->MaxDurability);
@@ -424,9 +421,6 @@ bool Item::LoadFromDB(ObjectGuid::LowType const& guid, ObjectGuid const& owner_g
         return false;
 
     _bonusData.Initialize(proto, GetOwner());
-
-    //for (uint32 i = 0; i < ITEM_DYN_MOD_END; ++i)
-    //    AddDynamicValue(ITEM_DYNAMIC_FIELD_MODIFIERS, 0);
 
     // set owner (not if item is only loaded for gbank/auction/mail
     if (!owner_guid.IsEmpty())

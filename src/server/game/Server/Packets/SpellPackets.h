@@ -398,9 +398,9 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             ObjectGuid CasterUnit;
+            uint32 SpellXSpellVisualID = 0;
             uint32 SpellID = 0;
             uint8 Reason = 0;
-            uint8 CastID = 0;
         };
 
         //< SMSG_CAST_FAILED
@@ -411,12 +411,12 @@ namespace WorldPackets
             CastFailed(OpcodeServer opcode) : ServerPacket(opcode, 4 + 4 + 4 + 4 + 1) { }
 
             WorldPacket const* Write() override;
-
+            
+            uint32 SpellXSpellVisualID = 0;
             int32 Reason = 0;
             int32 FailedArg1 = -1;
             int32 FailedArg2 = -1;
             int32 SpellID = 0;
-            uint8 CastID = 0;
         };
 
         struct SpellModifierData

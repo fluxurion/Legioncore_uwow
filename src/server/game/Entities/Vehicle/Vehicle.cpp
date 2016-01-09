@@ -590,7 +590,7 @@ void Vehicle::RemovePassenger(Unit* unit)
     }
 
     if (_me->IsInWorld())
-        unit->m_movementInfo.transport.Reset();
+        unit->m_movementInfo.ResetTransport();
 
     // only for flyable vehicles
     if (unit->IsFlying())

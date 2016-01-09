@@ -353,7 +353,7 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
                 if (!foundNewTransport)
                 {
                     plrMover->m_transport = NULL;
-                    plrMover->m_movementInfo.transport.Reset();
+                    plrMover->m_movementInfo.ResetTransport();
                 }
             }
         }
@@ -373,7 +373,7 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
             plrMover->m_transport = NULL;
         }
         plrMover->m_temp_transport = NULL;
-        movementInfo.transport.Reset();
+        movementInfo.ResetTransport();
     }
 
     if (plrMover && plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && plrMover && !plrMover->isInFlight())

@@ -2633,9 +2633,9 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.Flags = sparse->Flags[0];
         itemTemplate.Flags2 = sparse->Flags[1];
         itemTemplate.Flags3 = sparse->Flags[2];
-        itemTemplate.Unk430_1 = sparse->Unk1;
-        itemTemplate.Unk430_2 = sparse->Unk2;
-        itemTemplate.BuyCount = std::max(sparse->BuyCount, 1u);
+        itemTemplate.Unk430_1 = sparse->UnkFloat1;
+        itemTemplate.Unk430_2 = sparse->UnkFloat2;
+        itemTemplate.BuyCount = sparse->BuyCount;
         itemTemplate.BuyPrice = sparse->BuyPrice;
         itemTemplate.SellPrice = sparse->SellPrice;
         itemTemplate._InventoryType = db2Data->InventoryType;
@@ -2763,24 +2763,6 @@ void ObjectMgr::LoadItemTemplates()
 
         itemItr->second.Effects.push_back(effectEntry);
     }
-
-    // Check if item templates for DBC referenced character start outfit are present
-    std::set<uint32> notFoundOutfit;
-    for (CharStartOutfitEntry const* entry : sCharStartOutfitStore)
-    {
-        for (uint8 j = 0; j < MAX_OUTFIT_ITEMS; ++j)
-        {
-            if (entry->ItemID[j] <= 0)
-                continue;
-
-            uint32 item_id = entry->ItemID[j];
-            if (!GetItemTemplate(item_id))
-                notFoundOutfit.insert(item_id);
-        }
-    }
-
-    for (std::set<uint32>::const_iterator itr = notFoundOutfit.begin(); itr != notFoundOutfit.end(); ++itr)
-        sLog->outError(LOG_FILTER_SQL, "Item (Entry: %u) does not exist in `item_template` but is referenced in `CharStartOutfit.dbc`", *itr);
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u item templates from Item-sparse.db2 and %u from database in %u ms", sparseCount, dbCount, GetMSTimeDiffToNow(oldMSTime));
 }

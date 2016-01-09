@@ -442,13 +442,4 @@ enum EConversationDynamicFields
     CONVERSATION_DYNAMIC_END = OBJECT_DYNAMIC_END + 0x2
 };
 
-enum ItemDynamicModifiersOffset
-{
-    ITEM_DYN_MOD_1 = 0,
-    ITEM_DYN_MOD_2 = 1,
-    ITEM_DYN_MOD_3 = 2,
-    ITEM_DYN_MOD_4 = 3,
-    ITEM_DYN_MOD_END = 4,
-};
-
 #endif // _UPDATEFIELDS_H

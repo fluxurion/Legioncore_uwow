@@ -2097,7 +2097,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         {
             m_transport->RemovePassenger(this);
             m_transport = NULL;
-            m_movementInfo.transport.Reset();
+            m_movementInfo.ResetTransport();
             RepopAtGraveyard();                             // teleport to near graveyard if on transport, looks blizz like :)
         }
 
@@ -28116,7 +28116,7 @@ void Player::SendTimeSync()
     m_timeSyncServer = getMSTime();
 
     if (m_timeSyncQueue.size() > 3)
-        sLog->outError(LOG_FILTER_NETWORKIO, "Not received CMSG_TIME_SYNC_RESP for over 30 seconds from 5s (%s), possible cheater", GetGUID().ToString().c_str());
+        sLog->outTrace(LOG_FILTER_NETWORKIO, "Not received CMSG_TIME_SYNC_RESP for over 30 seconds from 5s (%s), possible cheater", GetGUID().ToString().c_str());
 }
 
 void Player::SetReputation(uint32 factionentry, uint32 value)
