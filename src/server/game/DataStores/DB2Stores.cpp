@@ -366,19 +366,19 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sMountCapabilityStore);          // 20810 smthng wrong
     //LOAD_DB2(sMountStore);
     //LOAD_DB2(sMountTypeStore);                // 20810 smthng wrong
-    //LOAD_DB2(sMountTypeXCapabilityStore);     // 20796
+    LOAD_DB2(sMountTypeXCapabilityStore);       // 20810
     LOAD_DB2(sNameGenStore);                    // 20810
     //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseGroupStore);
-    //LOAD_DB2(sPvpItemStore);                  // 20796
-    //LOAD_DB2(sQuestFactionRewardStore);       // 20796
-    //LOAD_DB2(sQuestPackageItemStore);         // 20796
-    //LOAD_DB2(sQuestPOIPointStore);            // 20796
-    //LOAD_DB2(sQuestSortStore);                // 20796
-    //LOAD_DB2(sQuestV2Store);                  // 20796
-    //LOAD_DB2(sQuestXPStore);                  // 20796
-    //LOAD_DB2(sRandPropPointsStore);           // 20796
-    //LOAD_DB2(sResearchBranchStore);           // 20796
+    LOAD_DB2(sPvpItemStore);                    // 20810
+    LOAD_DB2(sQuestFactionRewardStore);         // 20810
+    LOAD_DB2(sQuestPackageItemStore);           // 20810
+    LOAD_DB2(sQuestPOIPointStore);              // 20810
+    LOAD_DB2(sQuestSortStore);                  // 20810
+    LOAD_DB2(sQuestV2Store);                    // 20810
+    LOAD_DB2(sQuestXPStore);                    // 20810
+    LOAD_DB2(sRandPropPointsStore);             // 20810
+    LOAD_DB2(sResearchBranchStore);             // 20810
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
@@ -430,7 +430,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiPathStore);
     LOAD_DB2(sTotemCategoryStore);              // 20810
     //LOAD_DB2(sToyStore);
-    //LOAD_DB2(sTransportAnimationStore);       // 20796
+    LOAD_DB2(sTransportAnimationStore);         // 20810
     //LOAD_DB2(sTransportRotationStore);        // 20796
     LOAD_DB2(sUnitPowerBarStore);               // 20810
     LOAD_DB2(sWorldMapOverlayStore);            // 20810
@@ -1165,11 +1165,6 @@ std::vector<CriteriaTreeEntry const*> const* DB2Manager::GetCriteriaTreeList(uin
 std::list<uint32> DB2Manager::GetItemSpecsList(uint32 itemID)
 {
     return _itemSpec[itemID];
-}
-
-void DB2Manager::AddSpecdtoItem(uint32 itemID, uint32 specID)
-{
-    _itemSpec[itemID].push_back(specID);
 }
 
 std::vector<ModifierTreeEntry const*> const* DB2Manager::GetModifierTreeList(uint32 parent)

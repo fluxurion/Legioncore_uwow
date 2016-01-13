@@ -1195,11 +1195,12 @@ CREATE TABLE `mount_type` (
 
 DROP TABLE IF EXISTS `mount_type_x_capability`;
 CREATE TABLE `mount_type_x_capability` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `MountTypeID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `MountCapabilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `OrderIndex` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MountTypeID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1235,6 +1236,7 @@ CREATE TABLE `name_gen_locale` (
 
 DROP TABLE IF EXISTS `quest_faction_rew`;
 CREATE TABLE `quest_faction_rew` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Difficulty1` int(11) NOT NULL DEFAULT '0',
   `Difficulty2` int(11) NOT NULL DEFAULT '0',
   `Difficulty3` int(11) NOT NULL DEFAULT '0',
@@ -1246,7 +1248,7 @@ CREATE TABLE `quest_faction_rew` (
   `Difficulty9` int(11) NOT NULL DEFAULT '0',
   `Difficulty10` int(11) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Difficulty[10]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1269,9 +1271,10 @@ CREATE TABLE `quest_p_o_i_point` (
 
 DROP TABLE IF EXISTS `quest_sort`;
 CREATE TABLE `quest_sort` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SortName` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SortName`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1280,11 +1283,11 @@ CREATE TABLE `quest_sort` (
 
 DROP TABLE IF EXISTS `quest_sort_locale`;
 CREATE TABLE `quest_sort_locale` (
-  `SortName` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `SortName_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`SortName`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1293,9 +1296,10 @@ CREATE TABLE `quest_sort_locale` (
 
 DROP TABLE IF EXISTS `quest_v2`;
 CREATE TABLE `quest_v2` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `UniqueBitFlag` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`UniqueBitFlag`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1304,6 +1308,7 @@ CREATE TABLE `quest_v2` (
 
 DROP TABLE IF EXISTS `quest_x_p`;
 CREATE TABLE `quest_x_p` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Difficulty1` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Difficulty2` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Difficulty3` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1315,7 +1320,7 @@ CREATE TABLE `quest_x_p` (
   `Difficulty9` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Difficulty10` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Difficulty[10]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1324,6 +1329,7 @@ CREATE TABLE `quest_x_p` (
 
 DROP TABLE IF EXISTS `rand_prop_points`;
 CREATE TABLE `rand_prop_points` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `EpicPropertiesPoints1` smallint(5) unsigned NOT NULL DEFAULT '0',
   `EpicPropertiesPoints2` smallint(5) unsigned NOT NULL DEFAULT '0',
   `EpicPropertiesPoints3` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1340,7 +1346,7 @@ CREATE TABLE `rand_prop_points` (
   `UncommonPropertiesPoints4` smallint(5) unsigned NOT NULL DEFAULT '0',
   `UncommonPropertiesPoints5` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`EpicPropertiesPoints[5]`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1349,14 +1355,14 @@ CREATE TABLE `rand_prop_points` (
 
 DROP TABLE IF EXISTS `research_branch`;
 CREATE TABLE `research_branch` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Texture` text,
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
   `CurrencyID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ResearchFieldID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1365,12 +1371,12 @@ CREATE TABLE `research_branch` (
 
 DROP TABLE IF EXISTS `research_branch_locale`;
 CREATE TABLE `research_branch_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `Texture_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -3904,6 +3910,7 @@ CREATE TABLE `item_to_battle_pet_species` (
 
 DROP TABLE IF EXISTS `transport_animation`;
 CREATE TABLE `transport_animation` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `TransportID` int(10) unsigned NOT NULL DEFAULT '0',
   `TimeIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `PosX` float NOT NULL DEFAULT '0',
@@ -3911,7 +3918,7 @@ CREATE TABLE `transport_animation` (
   `PosZ` float NOT NULL DEFAULT '0',
   `SequenceID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`TransportID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --

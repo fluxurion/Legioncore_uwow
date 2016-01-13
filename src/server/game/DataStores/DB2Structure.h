@@ -667,6 +667,7 @@ struct MountTypeEntry
 
 struct MountTypeXCapabilityEntry
 {
+    uint32      ID;
     uint16      MountTypeID;                                // 0
     uint16      MountCapabilityID;                          // 1
     uint8       OrderIndex;                                 // 2
@@ -682,6 +683,7 @@ struct NameGenEntry
 
 struct QuestFactionRewEntry
 {
+    uint32      ID;
     int32       Difficulty[10];
 };
 
@@ -695,21 +697,25 @@ struct QuestPOIPointEntry
 
 struct QuestSortEntry
 {
+    uint32      ID;
     LocalizedString* SortName;                              // 0
 };
 
 struct QuestV2Entry
 {
+    uint32      ID;
     uint16      UniqueBitFlag;                              // 0
 };
 
 struct QuestXPEntry
 {
+    uint32      ID;
     uint16      Difficulty[10];
 };
 
 struct RandPropPointsEntry
 {
+    uint32      ID;
     uint16      EpicPropertiesPoints[5];                    // 0 - 4
     uint16      RarePropertiesPoints[5];                    // 5 - 9
     uint16      UncommonPropertiesPoints[5];                // 10 - 14
@@ -717,13 +723,12 @@ struct RandPropPointsEntry
 
 struct ResearchBranchEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 0
     LocalizedString* Texture;                               // 1
     uint32      ItemID;                                     // 2
     uint16      CurrencyID;                                 // 3
     uint8       ResearchFieldID;                            // 4
-
-    uint32 ID; // temp - for compile
 };
 
 struct ResearchProjectEntry
@@ -2001,6 +2006,7 @@ struct ItemToBattlePetSpeciesEntry
 
 struct TransportAnimationEntry
 {
+    uint32      ID;
     uint32      TransportID;                                // 0
     uint32      TimeIndex;                                  // 1
     DBCPosition3D Pos;                                      // 2 - 4

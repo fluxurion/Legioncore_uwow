@@ -241,41 +241,40 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_MOUNT_TYPE, "SELECT ID, MountTypeID FROM mount_type ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountTypeXCapability.db2
-    PrepareStatement(HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY, "SELECT MountTypeID, MountCapabilityID, OrderIndex FROM mount_type_x_capability"
-        " ORDER BY MountTypeID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY, "SELECT ID, MountTypeID, MountCapabilityID, OrderIndex FROM mount_type_x_capability"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // NameGen.db2
     PrepareStatement(HOTFIX_SEL_NAME_GEN, "SELECT ID, Name, RaceID, Gender FROM name_gen ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_NAME_GEN, "SELECT ID, Name_lang FROM name_gen_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // QuestFactionRew.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_FACTION_REW, "SELECT Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, Difficulty7, "
-        "Difficulty8, Difficulty9, Difficulty10 FROM quest_faction_rew ORDER BY Difficulty[10] DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_FACTION_REW, "SELECT ID, Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, "
+        "Difficulty7, Difficulty8, Difficulty9, Difficulty10 FROM quest_faction_rew ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // QuestPOIPoint.db2
     PrepareStatement(HOTFIX_SEL_QUEST_P_O_I_POINT, "SELECT ID, QuestPOIBlobID, X, Y FROM quest_p_o_i_point ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // QuestSort.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_SORT, "SELECT SortName FROM quest_sort ORDER BY SortName DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_SORT, "SELECT SortName, SortName_lang FROM quest_sort_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_SORT, "SELECT ID, SortName FROM quest_sort ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_SORT, "SELECT ID, SortName_lang FROM quest_sort_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // QuestV2.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_V2, "SELECT UniqueBitFlag FROM quest_v2 ORDER BY UniqueBitFlag DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_V2, "SELECT ID, UniqueBitFlag FROM quest_v2 ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // QuestXP.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_X_P, "SELECT Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, Difficulty7, "
-        "Difficulty8, Difficulty9, Difficulty10 FROM quest_x_p ORDER BY Difficulty[10] DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_X_P, "SELECT ID, Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, Difficulty7, "
+        "Difficulty8, Difficulty9, Difficulty10 FROM quest_x_p ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // RandPropPoints.db2
-    PrepareStatement(HOTFIX_SEL_RAND_PROP_POINTS, "SELECT EpicPropertiesPoints1, EpicPropertiesPoints2, EpicPropertiesPoints3, EpicPropertiesPoints4, "
-        "EpicPropertiesPoints5, RarePropertiesPoints1, RarePropertiesPoints2, RarePropertiesPoints3, RarePropertiesPoints4, RarePropertiesPoints5, "
-        "UncommonPropertiesPoints1, UncommonPropertiesPoints2, UncommonPropertiesPoints3, UncommonPropertiesPoints4, UncommonPropertiesPoints5"
-        " FROM rand_prop_points ORDER BY EpicPropertiesPoints[5] DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_RAND_PROP_POINTS, "SELECT ID, EpicPropertiesPoints1, EpicPropertiesPoints2, EpicPropertiesPoints3, "
+        "EpicPropertiesPoints4, EpicPropertiesPoints5, RarePropertiesPoints1, RarePropertiesPoints2, RarePropertiesPoints3, RarePropertiesPoints4, "
+        "RarePropertiesPoints5, UncommonPropertiesPoints1, UncommonPropertiesPoints2, UncommonPropertiesPoints3, UncommonPropertiesPoints4, "
+        "UncommonPropertiesPoints5 FROM rand_prop_points ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ResearchBranch.db2
-    PrepareStatement(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT Name, Texture, ItemID, CurrencyID, ResearchFieldID, ID FROM research_branch"
-        " ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT Name, Name_lang, Texture_lang FROM research_branch_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT ID, Name, Texture, ItemID, CurrencyID, ResearchFieldID FROM research_branch ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT ID, Name_lang, Texture_lang FROM research_branch_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ResearchProject.db2
     PrepareStatement(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT Name, Description, rare, branchId, SpellID, Complexity, RequiredCurrencyAmount, ID"
@@ -729,8 +728,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES, "SELECT ID, BattlePetSpeciesID FROM item_to_battle_pet_species ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TransportAnimation.db2
-    PrepareStatement(HOTFIX_SEL_TRANSPORT_ANIMATION, "SELECT TransportID, TimeIndex, PosX, PosY, PosZ, SequenceID FROM transport_animation"
-        " ORDER BY TransportID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TRANSPORT_ANIMATION, "SELECT ID, TransportID, TimeIndex, PosX, PosY, PosZ, SequenceID FROM transport_animation"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TransportRotation.db2
     PrepareStatement(HOTFIX_SEL_TRANSPORT_ROTATION, "SELECT TransportID, TimeIndex, RotX, RotY, RotZ, RotO FROM transport_rotation"
