@@ -567,7 +567,9 @@ void Vehicle::RemovePassenger(Unit* unit)
         return;
 
     SeatMap::iterator seat = GetSeatIteratorForPassenger(unit);
-    ASSERT(seat != Seats.end());
+    //ASSERT(seat != Seats.end());
+    if (seat == Seats.end())
+        return;
 
     sLog->outDebug(LOG_FILTER_VEHICLES, "Unit %s exit vehicle entry %u id %u dbguid %u seat %d", 
         unit->GetName(), _me->GetEntry(), _vehicleInfo->ID, _me->GetGUIDLow(), (int32)seat->first);
