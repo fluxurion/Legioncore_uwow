@@ -641,7 +641,7 @@ void Loot::FillNotNormalLootFor(Player* player, bool presentAtLooting)
             if (i->chance < 100.0f && i->chance < Roll)
                 continue;
 
-            uint32 amount = urand(i->CurrencyAmount, i->currencyMaxAmount) * proto->GetPrecision();
+            uint32 amount = urand(i->CurrencyAmount, i->currencyMaxAmount) * GetCurrencyPrecision(proto->ID);
             if (m_lootOwner)
             {
                 amount = uint32(0.5f + amount * m_lootOwner->GetTotalAuraMultiplierByMiscValue(SPELL_AURA_MOD_CURRENCY_LOOT, proto->CategoryID));

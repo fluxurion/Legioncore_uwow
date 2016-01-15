@@ -2871,22 +2871,6 @@ CREATE TABLE `spell_reagents_currency` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Table structure for table `spell_rune_cost`
---
-
-DROP TABLE IF EXISTS `spell_rune_cost`;
-CREATE TABLE `spell_rune_cost` (
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `RuneCost1` int(10) unsigned NOT NULL DEFAULT '0',
-  `RuneCost2` int(10) unsigned NOT NULL DEFAULT '0',
-  `RuneCost3` int(10) unsigned NOT NULL DEFAULT '0',
-  `RuneCost4` int(10) unsigned NOT NULL DEFAULT '0',
-  `RunePowerGain` int(10) unsigned NOT NULL DEFAULT '0',
-  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
 -- Table structure for table `toy`
 --
 
@@ -4050,6 +4034,331 @@ CREATE TABLE `world_map_transforms` (
   `NewDungeonMapID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `NewAreaID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `chat_channels`
+--
+
+DROP TABLE IF EXISTS `chat_channels`;
+CREATE TABLE `chat_channels` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `FactionGroup` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Shortcut` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `chat_channels_locale`
+--
+
+DROP TABLE IF EXISTS `chat_channels_locale`;
+CREATE TABLE `chat_channels_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `Shortcut_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `chr_specialization`
+--
+
+DROP TABLE IF EXISTS `chr_specialization`;
+CREATE TABLE `chr_specialization` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `BackgroundFile` text,
+  `ClassID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MasterySpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `OrderIndex` int(10) unsigned NOT NULL DEFAULT '0',
+  `PetTalentType` int(10) unsigned NOT NULL DEFAULT '0',
+  `Role` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellIconID` int(10) unsigned NOT NULL DEFAULT '0',
+  `RaidBuffs` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Name2` text,
+  `Description` text,
+  `PrimaryStatOrder1` int(10) unsigned NOT NULL DEFAULT '0',
+  `PrimaryStatOrder2` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `chr_specialization_locale`
+--
+
+DROP TABLE IF EXISTS `chr_specialization_locale`;
+CREATE TABLE `chr_specialization_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `BackgroundFile_lang` text,
+  `Name_lang` text,
+  `Name2_lang` text,
+  `Description_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `emotes`
+--
+
+DROP TABLE IF EXISTS `emotes`;
+CREATE TABLE `emotes` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `AnimationID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `EmoteType` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnitStandState` int(10) unsigned NOT NULL DEFAULT '0',
+  `SoundID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UNK` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `emotes_locale`
+--
+
+DROP TABLE IF EXISTS `emotes_locale`;
+CREATE TABLE `emotes_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `gem_properties`
+--
+
+DROP TABLE IF EXISTS `gem_properties`;
+CREATE TABLE `gem_properties` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `EnchantID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MaxCountInv` int(10) unsigned NOT NULL DEFAULT '0',
+  `MaxCountItem` int(10) unsigned NOT NULL DEFAULT '0',
+  `Type` int(10) unsigned NOT NULL DEFAULT '0',
+  `MinItemLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `glyph_properties`
+--
+
+DROP TABLE IF EXISTS `glyph_properties`;
+CREATE TABLE `glyph_properties` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
+  `TypeFlags` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellIconID` int(10) unsigned NOT NULL DEFAULT '0',
+  `GlyphExclusiveCategoryID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `item_set`
+--
+
+DROP TABLE IF EXISTS `item_set`;
+CREATE TABLE `item_set` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
+  `RequiredSkill` int(10) unsigned NOT NULL DEFAULT '0',
+  `RequiredSkillValue` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `item_set_locale`
+--
+
+DROP TABLE IF EXISTS `item_set_locale`;
+CREATE TABLE `item_set_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `lock`
+--
+
+DROP TABLE IF EXISTS `lock`;
+CREATE TABLE `lock` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Type` int(10) unsigned NOT NULL DEFAULT '0',
+  `Index` int(10) unsigned NOT NULL DEFAULT '0',
+  `Skill` int(10) unsigned NOT NULL DEFAULT '0',
+  `Action` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `movie`
+--
+
+DROP TABLE IF EXISTS `movie`;
+CREATE TABLE `movie` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk1` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `power_display`
+--
+
+DROP TABLE IF EXISTS `power_display`;
+CREATE TABLE `power_display` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `GlobalStringBaseTag` text,
+  `PowerType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Red` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Green` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Blue` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `power_display_locale`
+--
+
+DROP TABLE IF EXISTS `power_display_locale`;
+CREATE TABLE `power_display_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `GlobalStringBaseTag_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `pv_p_difficulty`
+--
+
+DROP TABLE IF EXISTS `pv_p_difficulty`;
+CREATE TABLE `pv_p_difficulty` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
+  `BracketID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MinLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `MaxLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `summon_properties`
+--
+
+DROP TABLE IF EXISTS `summon_properties`;
+CREATE TABLE `summon_properties` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Category` int(10) unsigned NOT NULL DEFAULT '0',
+  `Faction` int(10) unsigned NOT NULL DEFAULT '0',
+  `Type` int(10) unsigned NOT NULL DEFAULT '0',
+  `Slot` int(11) NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `vehicle_seat`
+--
+
+DROP TABLE IF EXISTS `vehicle_seat`;
+CREATE TABLE `vehicle_seat` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `AttachmentID` int(11) NOT NULL DEFAULT '0',
+  `AttachmentOffsetX` float NOT NULL DEFAULT '0',
+  `AttachmentOffsetY` float NOT NULL DEFAULT '0',
+  `AttachmentOffsetZ` float NOT NULL DEFAULT '0',
+  `EnterPreDelay` float NOT NULL DEFAULT '0',
+  `EnterSpeed` float NOT NULL DEFAULT '0',
+  `EnterGravity` float NOT NULL DEFAULT '0',
+  `EnterMinDuration` float NOT NULL DEFAULT '0',
+  `EnterMaxDuration` float NOT NULL DEFAULT '0',
+  `EnterMinArcHeight` float NOT NULL DEFAULT '0',
+  `EnterMaxArcHeight` float NOT NULL DEFAULT '0',
+  `EnterAnimStart` int(11) NOT NULL DEFAULT '0',
+  `EnterAnimLoop` int(11) NOT NULL DEFAULT '0',
+  `RideAnimStart` int(11) NOT NULL DEFAULT '0',
+  `RideAnimLoop` int(11) NOT NULL DEFAULT '0',
+  `RideUpperAnimStart` int(11) NOT NULL DEFAULT '0',
+  `RideUpperAnimLoop` int(11) NOT NULL DEFAULT '0',
+  `ExitPreDelay` float NOT NULL DEFAULT '0',
+  `ExitSpeed` float NOT NULL DEFAULT '0',
+  `ExitGravity` float NOT NULL DEFAULT '0',
+  `ExitMinDuration` float NOT NULL DEFAULT '0',
+  `ExitMaxDuration` float NOT NULL DEFAULT '0',
+  `ExitMinArcHeight` float NOT NULL DEFAULT '0',
+  `ExitMaxArcHeight` float NOT NULL DEFAULT '0',
+  `ExitAnimStart` int(11) NOT NULL DEFAULT '0',
+  `ExitAnimLoop` int(11) NOT NULL DEFAULT '0',
+  `ExitAnimEnd` int(11) NOT NULL DEFAULT '0',
+  `PassengerYaw` float NOT NULL DEFAULT '0',
+  `PassengerPitch` float NOT NULL DEFAULT '0',
+  `PassengerRoll` float NOT NULL DEFAULT '0',
+  `PassengerAttachmentID` int(11) NOT NULL DEFAULT '0',
+  `VehicleEnterAnim` int(11) NOT NULL DEFAULT '0',
+  `VehicleExitAnim` int(11) NOT NULL DEFAULT '0',
+  `VehicleRideAnimLoop` int(11) NOT NULL DEFAULT '0',
+  `VehicleEnterAnimBone` int(11) NOT NULL DEFAULT '0',
+  `VehicleExitAnimBone` int(11) NOT NULL DEFAULT '0',
+  `VehicleRideAnimLoopBone` int(11) NOT NULL DEFAULT '0',
+  `VehicleEnterAnimDelay` float NOT NULL DEFAULT '0',
+  `VehicleExitAnimDelay` float NOT NULL DEFAULT '0',
+  `VehicleAbilityDisplay` int(10) unsigned NOT NULL DEFAULT '0',
+  `EnterUISoundID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ExitUISoundID` int(10) unsigned NOT NULL DEFAULT '0',
+  `FlagsB` int(10) unsigned NOT NULL DEFAULT '0',
+  `CameraEnteringDelay` float NOT NULL DEFAULT '0',
+  `CameraEnteringDuration` float NOT NULL DEFAULT '0',
+  `CameraExitingDelay` float NOT NULL DEFAULT '0',
+  `CameraExitingDuration` float NOT NULL DEFAULT '0',
+  `CameraOffsetX` float NOT NULL DEFAULT '0',
+  `CameraOffsetY` float NOT NULL DEFAULT '0',
+  `CameraOffsetZ` float NOT NULL DEFAULT '0',
+  `CameraPosChaseRate` float NOT NULL DEFAULT '0',
+  `CameraFacingChaseRate` float NOT NULL DEFAULT '0',
+  `CameraEnteringZoom` float NOT NULL DEFAULT '0',
+  `CameraSeatZoomMin` float NOT NULL DEFAULT '0',
+  `CameraSeatZoomMax` float NOT NULL DEFAULT '0',
+  `EnterAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `RideAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ExitAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VehicleEnterAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VehicleRideAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VehicleExitAnimKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `CameraModeID` int(10) unsigned NOT NULL DEFAULT '0',
+  `FlagsC` int(10) unsigned NOT NULL DEFAULT '0',
+  `UISkinFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
+  `|` ERROR TYPE VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

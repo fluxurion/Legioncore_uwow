@@ -9125,26 +9125,26 @@ bool Unit::HandleAuraProc(Unit* victim, DamageInfo* /*dmgInfoProc*/, Aura* trigg
             {
                 if (Player* plr = ToPlayer())
                 {
-                    SpellRuneCostEntry const* runeCostData = sSpellRuneCostStore.LookupEntry(procSpell->RuneCostID);
-                    if (!runeCostData || (runeCostData->NoRuneCost()))
-                        return false;
+                    //SpellRuneCostEntry const* runeCostData = sSpellRuneCostStore.LookupEntry(procSpell->RuneCostID);
+                    //if (!runeCostData || (runeCostData->NoRuneCost()))
+                    //    return false;
 
-                    uint8 runeCost[NUM_RUNE_TYPES];
-                    for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
-                        runeCost[i] = runeCostData->RuneCost[i];
+                    //uint8 runeCost[NUM_RUNE_TYPES];
+                    //for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
+                    //    runeCost[i] = runeCostData->RuneCost[i];
 
-                    for (uint8 i = 0; i < MAX_RUNES; ++i)
-                    {
-                        RuneType baseRune = plr->GetBaseRune(i);
-                        if (plr->IsLastRuneUsed(i))
-                        {
-                            if (runeCost[baseRune])
-                            {
-                                plr->SetConvertIn(i, RUNE_DEATH);
-                                plr->ConvertRune(i, RUNE_DEATH);
-                            }
-                        }
-                    }
+                    //for (uint8 i = 0; i < MAX_RUNES; ++i)
+                    //{
+                    //    RuneType baseRune = plr->GetBaseRune(i);
+                    //    if (plr->IsLastRuneUsed(i))
+                    //    {
+                    //        if (runeCost[baseRune])
+                    //        {
+                    //            plr->SetConvertIn(i, RUNE_DEATH);
+                    //            plr->ConvertRune(i, RUNE_DEATH);
+                    //        }
+                    //    }
+                    //}
                 }
                 return false;
             }

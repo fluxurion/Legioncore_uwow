@@ -3574,7 +3574,7 @@ void Player::RemoveSpecializationSpells()
 {
     for (uint32 i = 0; i < 4; ++i)
     {
-        if (ChrSpecializationEntry const* specialization = sChrSpecializationByIndexStore[getClass()][i])
+        if (ChrSpecializationEntry const* specialization = sDB2Manager.GetChrSpecializationByID(getClass(), i))
         {
             if (std::vector<SpecializationSpellEntry const*> const* specSpells = sDB2Manager.GetSpecializationSpells(specialization->ID))
             {
@@ -4561,7 +4561,7 @@ void Player::removeSpell(uint32 spell_id, bool disabled, bool learn_low_rank, bo
     // unlearn non talent higher ranks (recursive)
     if (uint32 nextSpell = sSpellMgr->GetNextSpellInChain(spell_id))
     {
-        if (HasSpell(nextSpell)/* && !GetTalentSpellPos(nextSpell)*/)
+        if (HasSpell(nextSpell))
             removeSpell(nextSpell, disabled, false);
     }
     //unlearn spells dependent from recently removed spells
@@ -6450,7 +6450,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
                 else
                     currentNameExt = current_zone_name.c_str();
 
-                snprintf(new_channel_name_buf, 100, channel->Name_lang, currentNameExt);
+                snprintf(new_channel_name_buf, 100, channel->Name->Str[sObjectMgr->GetDBCLocaleIndex()], currentNameExt);
 
                 joinChannel = cMgr->GetJoinChannel(new_channel_name_buf, channel->ID);
                 if (usedChannel)
@@ -6465,7 +6465,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
                 }
             }
             else
-                joinChannel = cMgr->GetJoinChannel(channel->Name_lang, channel->ID);
+                joinChannel = cMgr->GetJoinChannel(channel->Name->Str[sObjectMgr->GetDBCLocaleIndex()], channel->ID);
         }
         else
             removeChannel = usedChannel;
@@ -8470,7 +8470,7 @@ uint32 Player::GetCurrencyWeekCap(CurrencyTypesEntry const* currency)
             // should add precision mod = 100
             if (curentCap == 0)
             {
-                cap = Trinity::Currency::ConquestRatingCalculator(GetMaxMMR()) * currency->GetPrecision();
+                cap = Trinity::Currency::ConquestRatingCalculator(GetMaxMMR()) * GetCurrencyPrecision(currency->ID);
                 if (itr != _currencyStorage.end())
                     itr->second.curentCap = cap;
             }
@@ -8483,7 +8483,7 @@ uint32 Player::GetCurrencyWeekCap(CurrencyTypesEntry const* currency)
             {
                 if (Bracket* rbg = getBracket(BRACKET_TYPE_RATED_BG))
                 {
-                    cap = Trinity::Currency::BgConquestRatingCalculator(rbg->getRating()) * currency->GetPrecision();
+                    cap = Trinity::Currency::BgConquestRatingCalculator(rbg->getRating()) * GetCurrencyPrecision(currency->ID);
                     if (itr != _currencyStorage.end())
                         itr->second.curentCap = cap;
                 }
@@ -16058,7 +16058,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
                 {
                     if (int32 reqCountCurrency = obj.Amount)
                     {
-                        reqCountCurrency *= reqCurrency->GetPrecision();
+                        reqCountCurrency *= GetCurrencyPrecision(reqCurrency->ID);
                         ModifyCurrency(obj.ObjectID, -reqCountCurrency);
                     }
                 }
@@ -16133,10 +16133,10 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
             if (uint32 currencyId = quest->RewardCurrencyId[i])
             {
                 CurrencyTypesEntry const* currency = sCurrencyTypesStore.LookupEntry(currencyId);
-                if(uint32 countCurrency = quest->RewardCurrencyCount[i])
+                if (uint32 countCurrency = quest->RewardCurrencyCount[i])
                 {
-                    countCurrency *= currency->GetPrecision();
-                    ModifyCurrency(currencyId,countCurrency);
+                    countCurrency *= GetCurrencyPrecision(currency->ID);
+                    ModifyCurrency(currencyId, countCurrency);
                 }
             }
         }
@@ -23441,7 +23441,7 @@ bool Player::BuyCurrencyFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorSlot,
     if (crItem->ExtendedCost)
         TakeExtendedCost(crItem->ExtendedCost, count);
 
-    ModifyCurrency(currency, crItem->maxcount * proto->GetPrecision(), true, true);
+    ModifyCurrency(currency, crItem->maxcount * GetCurrencyPrecision(proto->ID), true, true);
 
     return true;
 }
@@ -26908,7 +26908,7 @@ bool Player::AutoStoreLoot(uint8 bag, uint8 slot, uint32 loot_id, LootStore cons
             if (!id)
                 continue;
 
-            uint32 amount = lootItem->count * entry->GetPrecision();
+            uint32 amount = lootItem->count * GetCurrencyPrecision(entry->ID);
 
             if (uint32 totalCap = entry->MaxQty)
             {
@@ -26970,7 +26970,7 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
     if (currency)
     {
         if (CurrencyTypesEntry const * currencyEntry = sCurrencyTypesStore.LookupEntry(item->item.ItemID))
-            ModifyCurrency(item->item.ItemID, int32(item->count * currencyEntry->GetPrecision()));
+            ModifyCurrency(item->item.ItemID, int32(item->count * GetCurrencyPrecision(currencyEntry->ID)));
 
         SendNotifyLootItemRemoved(lootSlot, loot);
         currency->is_looted = true;

@@ -661,13 +661,11 @@ void WorldSession::SendListInventory(ObjectGuid const& vendorGuid)
             if (vendorItem->ExtendedCost == 0)
                 continue;
 
-            uint32 precision = currencyTemplate->GetPrecision();
-
             item.MuID = slot + 1; // client expects counting to start at 1
             item.ExtendedCostID = vendorItem->ExtendedCost;
             item.Item.ItemID = vendorItem->item;
             item.Type = vendorItem->Type;
-            item.StackCount = vendorItem->maxcount * precision;
+            item.StackCount = vendorItem->maxcount * GetCurrencyPrecision(currencyTemplate->ID);
         }
 
         if (++realCount >= MAX_VENDOR_ITEMS)

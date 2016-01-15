@@ -36,6 +36,7 @@ EndScriptData */
 #include "Packets/ChatPackets.h"
 #include "Packets/MiscPackets.h"
 #include "DisableMgr.h"
+#include "DB2Stores.h"
 
 #include <fstream>
 
@@ -918,7 +919,7 @@ public:
         BattlegroundQueueTypeId bgQueueTypeId = BattlegroundMgr::BGQueueTypeId(bgTypeId, Jointype);
         BattlegroundQueue &bgQueue = sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId);
 
-        PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bg->GetMapId(), player->getLevel());
+        PvPDifficultyEntry const* bracketEntry = sDB2Manager.GetBattlegroundBracketByLevel(bg->GetMapId(), player->getLevel());
         if (!bracketEntry)
             return false;
 

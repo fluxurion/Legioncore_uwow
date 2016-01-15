@@ -37,7 +37,7 @@ void AddItemsSetItem(Player* player, Item* item)
     if (!set)
         return;
 
-    if (set->required_skill_id && player->GetSkillValue(set->required_skill_id) < set->required_skill_value)
+    if (set->RequiredSkill && player->GetSkillValue(set->RequiredSkill) < set->RequiredSkillValue)
         return;
 
     ItemSetEffect* eff = nullptr;

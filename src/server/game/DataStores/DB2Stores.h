@@ -120,6 +120,7 @@ extern DB2Storage<MountTypeEntry>                   sMountTypeStore;
 extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
 extern DB2Storage<PhaseGroupEntry>                  sPhaseGroupStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
+extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
 extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
 extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
@@ -160,7 +161,6 @@ extern DB2Storage<SpellRadiusEntry>                 sSpellRadiusStore;
 extern DB2Storage<SpellRangeEntry>                  sSpellRangeStore;
 extern DB2Storage<SpellReagentsEntry>               sSpellReagentsStore;
 extern DB2Storage<SpellReagentsCurrencyEntry>       sSpellReagentsCurrencyStore;
-extern DB2Storage<SpellRuneCostEntry>               sSpellRuneCostStore;
 extern DB2Storage<SpellScalingEntry>                sSpellScalingStore;
 extern DB2Storage<SpellShapeshiftEntry>             sSpellShapeshiftStore;
 extern DB2Storage<SpellShapeshiftFormEntry>         sSpellShapeshiftFormStore;
@@ -173,6 +173,16 @@ extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
 extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
 extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
+extern DB2Storage<ChrSpecializationEntry>           sChrSpecializationStore;
+extern DB2Storage<EmotesEntry>                      sEmotesStore;
+extern DB2Storage<GemPropertiesEntry>               sGemPropertiesStore;
+extern DB2Storage<GlyphPropertiesEntry>             sGlyphPropertiesStore;
+extern DB2Storage<ItemSetEntry>                     sItemSetStore;
+extern DB2Storage<LockEntry>                        sLockStore;
+extern DB2Storage<MovieEntry>                       sMovieStore;
+extern DB2Storage<PowerDisplayEntry>                sPowerDisplayStore;
+extern DB2Storage<SummonPropertiesEntry>            sSummonPropertiesStore;
+extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
 extern TaxiMask                                     sOldContinentsNodesMask;
@@ -183,7 +193,7 @@ extern TaxiPathNodesByPath                          sTaxiPathNodesByPath;
 
 struct ResearchSiteData
 {
-    ResearchSiteData() : zone(0), level(0xFF), branch_id(0), entry(NULL) { }
+    ResearchSiteData() : zone(0), level(0xFF), branch_id(0), entry(nullptr) { }
 
     ResearchSiteEntry const* entry;
     uint16 zone;
@@ -282,6 +292,7 @@ public:
     typedef std::unordered_map<uint32, SpellEffectDiff> SpellEffectDiffContainer;
     typedef std::unordered_map<uint32, SpellEffect> SpellEffectContainer;
     typedef std::unordered_map<uint32, std::set<uint32>/*category*/> SpellCategoryContainer;
+    typedef ChrSpecializationEntry const* ChrSpecializationByIndexContainer[MAX_CLASSES][4];
 
     static DB2Manager& Instance()
     {
@@ -341,6 +352,9 @@ public:
     SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, uint32 effect, uint8 difficulty);
     std::set<uint32> const* GetSpellCategory(uint32 category);
     std::vector<ItemSpecOverrideEntry const*> const* GetItemSpecOverrides(uint32 itemId) const;
+    PvPDifficultyEntry const* GetBattlegroundBracketByLevel(uint32 mapID, uint32 level);
+    PvPDifficultyEntry const* GetBattlegroundBracketById(uint32 mapID, BattlegroundBracketId id);
+    ChrSpecializationEntry const* GetChrSpecializationByID(uint8 classID, uint32 ID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -392,6 +406,7 @@ private:
     SpellEffectDiffContainer _spellEffectDiff;
     SpellEffectContainer _spellEffectMap;
     SpellCategoryContainer _spellCategory;
+    ChrSpecializationByIndexContainer _chrSpecializationByIndex;
 };
 
 #define sDB2Manager DB2Manager::Instance()

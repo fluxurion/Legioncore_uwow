@@ -444,33 +444,29 @@ public:
         uint32 maxResults = sWorld->getIntConfig(CONFIG_MAX_RESULTS_LOOKUP_COMMANDS);
 
         // Search in ItemSet.dbc
-        for (uint32 id = 0; id < sItemSetStore.GetNumRows(); id++)
+        for (ItemSetEntry const* set : sItemSetStore)
         {
-            ItemSetEntry const* set = sItemSetStore.LookupEntry(id);
-            if (set)
+            std::string name = set->Name->Str[sObjectMgr->GetDBCLocaleIndex()];
+            if (name.empty())
+                continue;
+
+            if (!Utf8FitTo(name, wNamePart))
+                continue;
+
+            if (maxResults && count++ == maxResults)
             {
-                std::string name = set->name;
-                if (name.empty())
-                    continue;
-
-                if (!Utf8FitTo(name, wNamePart))
-                    continue;
-
-                if (maxResults && count++ == maxResults)
-                {
-                    handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
-                    return true;
-                }
-
-                // send item set in "id - [namedlink locale]" format
-                if (handler->GetSession())
-                    handler->PSendSysMessage(LANG_ITEMSET_LIST_CHAT, id, id, name.c_str(), "");
-                else
-                    handler->PSendSysMessage(LANG_ITEMSET_LIST_CONSOLE, id, name.c_str(), "");
-
-                if (!found)
-                    found = true;
+                handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
+                return true;
             }
+
+            // send item set in "id - [namedlink locale]" format
+            if (handler->GetSession())
+                handler->PSendSysMessage(LANG_ITEMSET_LIST_CHAT, set->ID, set->ID, name.c_str(), "");
+            else
+                handler->PSendSysMessage(LANG_ITEMSET_LIST_CONSOLE, set->ID, name.c_str(), "");
+
+            if (!found)
+                found = true;
         }
         if (!found)
             handler->SendSysMessage(LANG_COMMAND_NOITEMSETFOUND);

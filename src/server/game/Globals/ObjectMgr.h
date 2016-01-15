@@ -712,15 +712,6 @@ struct DungeonEncounter
 typedef std::list<DungeonEncounter const*> DungeonEncounterList;
 typedef std::unordered_map<uint32, DungeonEncounterList> DungeonEncounterContainer;
 
-struct HotfixInfo
-{
-    uint32 Type;
-    uint32 Timestamp;
-    uint32 Entry;
-};
-
-typedef std::map<uint32, bool> UpdateSkipData;
-
 typedef std::map<uint32, AreaTriggerInfo > AreaTriggerInfoMap;
 
 class PlayerDumpReader;

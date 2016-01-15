@@ -68,9 +68,6 @@ MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficult
 
 uint32 GetLiquidFlags(uint32 liquidType);
 
-PvPDifficultyEntry const* GetBattlegroundBracketByLevel(uint32 mapid, uint32 level);
-PvPDifficultyEntry const* GetBattlegroundBracketById(uint32 mapid, BattlegroundBracketId id);
-
 template<class T>
 class GameTable
 {
@@ -110,37 +107,26 @@ extern DBCStorage<AreaTriggerEntry>             sAreaTriggerStore;
 extern DBCStorage<BannedAddOnsEntry>            sBannedAddOnsStore;
 extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
 extern DBCStorage<CharTitlesEntry>              sCharTitlesStore;
-extern DBCStorage<ChatChannelsEntry>            sChatChannelsStore;
 extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
-extern DBCStorage<ChrSpecializationEntry>       sChrSpecializationStore;
 extern DBCStorage<CinematicSequencesEntry>      sCinematicSequencesStore;
 extern DBCStorage<CreatureFamilyEntry>          sCreatureFamilyStore;
 extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
 extern DBCStorage<DifficultyEntry>              sDifficultyStore;
 extern DBCStorage<DungeonEncounterEntry>        sDungeonEncounterStore;
-extern DBCStorage<EmotesEntry>                  sEmotesStore;
 extern DBCStorage<EmotesTextEntry>              sEmotesTextStore;
 extern DBCStorage<FactionEntry>                 sFactionStore;
 extern DBCStorage<FactionTemplateEntry>         sFactionTemplateStore;
-extern DBCStorage<GemPropertiesEntry>           sGemPropertiesStore;
-extern DBCStorage<GlyphPropertiesEntry>         sGlyphPropertiesStore;
 extern DBCStorage<GlyphSlotEntry>               sGlyphSlotStore;
-extern DBCStorage<ItemSetEntry>                 sItemSetStore;
 extern DBCStorage<LFGDungeonEntry>              sLFGDungeonStore;
 extern DBCStorage<LiquidTypeEntry>              sLiquidTypeStore;
-extern DBCStorage<LockEntry>                    sLockStore;
 extern DBCStorage<MapDifficultyEntry>           sMapDifficultyStore; // use GetMapDifficultyData instead
 extern DBCStorage<MapEntry>                     sMapStore;
 extern DBCStorage<MinorTalentEntry>             sMinorTalentStore;
-extern DBCStorage<MovieEntry>                   sMovieStore;
 extern DBCStorage<PhaseEntry>                   sPhaseStores;
-extern DBCStorage<PowerDisplayEntry>            sPowerDisplayStore;
 extern DBCStorage<QuestPOIBlobEntry>            sQuestPOIBlobStore;
 extern DBCStorage<SpellItemEnchantmentEntry>    sSpellItemEnchantmentStore;
-extern DBCStorage<SummonPropertiesEntry>        sSummonPropertiesStore;
 extern DBCStorage<TalentEntry>                  sTalentStore;
 extern DBCStorage<VehicleEntry>                 sVehicleStore;
-extern DBCStorage<VehicleSeatEntry>             sVehicleSeatStore;
 extern DBCStorage<WMOAreaTableEntry>            sWMOAreaTableStore;
 extern DBCStorage<WorldMapAreaEntry>            sWorldMapAreaStore; //-- use Zone2MapCoordinates and Map2ZoneCoordinates
 extern DBCStorage<WorldSafeLocsEntry>           sWorldSafeLocsStore;
@@ -179,9 +165,6 @@ bool IsValidDifficulty(uint32 diff, bool isRaid);
 AreaTableEntry const* FindAreaEntry(uint32 area);
 DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
 uint32 GetParentZoneOrSelf(uint32 zone);
-
-typedef ChrSpecializationEntry const* ChrSpecializationByIndexArray[MAX_CLASSES][4];
-extern ChrSpecializationByIndexArray             sChrSpecializationByIndexStore;
 
 typedef std::vector<TalentEntry const*> TalentsByPosition[MAX_CLASSES][7][3];
 extern TalentsByPosition                         sTalentByPos;

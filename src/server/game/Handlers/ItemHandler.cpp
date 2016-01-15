@@ -936,9 +936,9 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
 
     uint32 GemEnchants[MAX_GEM_SOCKETS];
     uint32 OldEnchants[MAX_GEM_SOCKETS];
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)                //get new and old enchantments
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)                //get new and old enchantments
     {
-        GemEnchants[i] = (GemProps[i]) ? GemProps[i]->spellitemenchantement : 0;
+        GemEnchants[i] = (GemProps[i]) ? GemProps[i]->EnchantID : 0;
         OldEnchants[i] = itemTarget->GetEnchantmentId(EnchantmentSlot(SOCK_ENCHANTMENT_SLOT+i));
     }
 

@@ -178,15 +178,15 @@ void BattlegroundMgr::SendBattlegroundList(Player* player, ObjectGuid const& gui
     if (!bgTemplate)
         return;
 
-    PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), player->getLevel());
+    PvPDifficultyEntry const* bracketEntry = sDB2Manager.GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), player->getLevel());
     if (!bracketEntry)
         return;
 
     WorldPackets::Battleground::BattlefieldList battlefieldList;
     battlefieldList.BattlemasterGuid = guid;
     battlefieldList.BattlemasterListID = bgTypeId;
-    battlefieldList.MinLevel = bracketEntry->minLevel;
-    battlefieldList.MaxLevel = bracketEntry->maxLevel;
+    battlefieldList.MinLevel = bracketEntry->MinLevel;
+    battlefieldList.MaxLevel = bracketEntry->MaxLevel;
     battlefieldList.PvpAnywhere = guid.IsEmpty();
     battlefieldList.HasRandomWinToday = player->GetRandomWinner();
     battlefieldList.HasHolidayWinToday = player->GetRandomWinner();
@@ -195,7 +195,7 @@ void BattlegroundMgr::SendBattlegroundList(Player* player, ObjectGuid const& gui
     {
         if (Battleground* bgTemplate = sBattlegroundMgr->GetBattlegroundTemplate(bgTypeId))
         {
-            if (PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), player->getLevel()))
+            if (PvPDifficultyEntry const* bracketEntry = sDB2Manager.GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), player->getLevel()))
             {
                 for (auto const& x : m_ClientBattlegroundIds[bgTypeId][bracketEntry->GetBracketId()])
                     battlefieldList.Battlefields.push_back(x);

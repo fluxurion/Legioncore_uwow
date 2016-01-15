@@ -3404,7 +3404,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
     // however so far noone found a generic check to find all of those (there's no related data in summonproperties.dbc
     // and in spell attributes, possibly we need to add a table for those)
     // so here's a list of MiscValueB values, which is currently most generic check
-    switch (properties->Id)
+    switch (properties->ID)
     {
         case 64:
         case 61:
@@ -3527,7 +3527,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 }
                 default:
                 {
-                    if (properties->Flags & 512 || properties->Id == 2921)
+                    if (properties->Flags & 512 || properties->ID == 2921)
                     {
                         SummonGuardian(effIndex, entry, properties, numSummons);
                         break;
@@ -3549,7 +3549,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                         if (!summon)
                             continue;
 
-                        switch (properties->Id)
+                        switch (properties->ID)
                         {
                             case 3347: // Orphelins
                             {

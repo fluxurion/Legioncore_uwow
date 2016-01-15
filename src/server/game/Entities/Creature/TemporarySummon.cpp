@@ -549,7 +549,7 @@ Guardian::Guardian(SummonPropertiesEntry const* properties, Unit* owner, bool is
 
     if (properties)
     {
-        switch (properties->Id)
+        switch (properties->ID)
         {
             case 3459:
             case 3097:

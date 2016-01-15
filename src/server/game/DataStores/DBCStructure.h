@@ -161,15 +161,6 @@ struct CharTitlesEntry
     //uint32    Flags;                                      // 5
 };
 
-struct ChatChannelsEntry
-{
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
-    //uint32    FactionGroup                                // 2
-    char*     Name_lang;                                    // 3
-    //char*     Shortcut_lang;                              // 4
-};
-
 struct ChrClassesEntry
 {
     uint32      ID;                                         // 0
@@ -191,23 +182,6 @@ struct ChrClassesEntry
     //uint32    LowResScreenFileDataID;                     // 16
     //uint32    IconFileDataID;                             // 17
     //uint32    Unk1;                                       // 18
-};
-
-struct ChrSpecializationEntry
-{
-    uint32      ID;                                         // 0 Specialization ID
-    //char*     BackgroundFile;                             // 1
-    uint32      ClassID;                                    // 2
-    uint32      MasterySpellID[MAX_MASTERY_SPELLS];         // 3
-    uint32      OrderIndex;                                 // 4
-    uint32      PetTalentType;                              // 5
-    uint32      Role;                                       // 6 (0 - Tank, 1 - Healer, 2 - DPS)
-    uint32      SpellIconID;                                // 7
-    uint32      RaidBuffs;                                  // 8
-    //char*     Name;                                       // 9
-    //char*     Name2;                                      // 10 Same as name_lang?
-    //char*     Description;                                // 11
-    uint32      PrimaryStatOrder[2];                        // 12-13
 };
 
 struct CinematicSequencesEntry
@@ -284,18 +258,6 @@ struct DungeonEncounterEntry
     uint32 creatureDisplayID;                               // 6
     uint32 spellIconID;                                     // 7
     //uint32 flags;                                         // 8
-};
-
-struct EmotesEntry
-{
-    uint32  Id;                                             // 0
-    //char* Name;                                           // 1, internal name
-    //uint32 AnimationId;                                   // 2, ref to animationData
-    uint32  Flags;                                          // 3, bitmask, may be unit_flags
-    uint32  EmoteType;                                      // 4, Can be 0, 1 or 2 (determine how emote are shown)
-    uint32  UnitStandState;                                 // 5, uncomfirmed, may be enum UnitStandStateType
-    //uint32 SoundId;                                       // 6, ref to soundEntries
-    //uint32 unk7                                           // 7
 };
 
 struct EmotesTextEntry
@@ -384,25 +346,6 @@ struct FactionTemplateEntry
         return hostileMask == 0 && friendlyMask == 0;
     }
     bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
-};
-
-struct GemPropertiesEntry
-{
-    uint32      ID;                                         // 0        m_id
-    uint32      spellitemenchantement;                      // 1        m_enchant_id
-    //uint32    MaxCountInv;                                // 2
-    //uint32    MaxCountItem;                               // 3
-    uint32      Type;                                       // 4
-    uint32      MinItemLevel;                               // 5
-};
-
-struct GlyphPropertiesEntry
-{
-    uint32      Id;
-    uint32      SpellId;
-    uint32      TypeFlags;
-    uint32      SpellIconID;                                // 3 GlyphIconId (SpellIcon.dbc)
-    //uint32    GlyphExclusiveCategoryID;                   // 4
 };
 
 struct GlyphSlotEntry
@@ -510,15 +453,6 @@ struct GtItemSocketCostPerLevelEntry
 struct GtNPCManaCostScalerEntry
 {
     float    ratio;
-};
-
-struct ItemSetEntry
-{
-    uint32      ID;                                         // 0
-    char* name;                                             // 1        m_name_lang
-    uint32    itemId[MAX_ITEM_SET_ITEMS];                   // 2-18     m_itemID
-    uint32    required_skill_id;                            // 19       m_requiredSkill
-    uint32    required_skill_value;                         // 20       m_requiredSkillRank
 };
 
 struct LFGDungeonEntry
@@ -637,15 +571,6 @@ struct LiquidTypeEntry
     //uint32    Unk3[5];                                    // 46-50
 };
 
-struct LockEntry
-{
-    uint32      ID;                                         // 0        m_ID
-    uint32      Type[MAX_LOCK_CASE];                        // 1-8      m_Type
-    uint32      Index[MAX_LOCK_CASE];                       // 9-16     m_Index
-    uint32      Skill[MAX_LOCK_CASE];                       // 17-24    m_Skill
-    uint32      Action[MAX_LOCK_CASE];                      // 25-32    m_Action
-};
-
 struct PhaseEntry
 {
     uint32      ID;                                         // 0
@@ -730,43 +655,12 @@ struct MapDifficultyEntry
     uint32      ItemBonusTreeModID;                         // 7
 };
 
-struct MovieEntry
-{
-    uint32      Id;                                         // 0 index
-    //char*       filename;                                 // 1
-    //uint32      unk1;                                     // 2        m_volume
-    //uint32      unk2;                                     // 3 4.0.0
-    //uint32      unk3;                                     // 4 5.0.0
-};
-
-struct PvPDifficultyEntry
-{
-    //uint32      id;                                       // 0        m_ID
-    uint32      mapId;                                      // 1
-    uint32      bracketId;                                  // 2
-    uint32      minLevel;                                   // 3
-    uint32      maxLevel;                                   // 4
-
-    // helpers
-    BattlegroundBracketId GetBracketId() const { return BattlegroundBracketId(bracketId); }
-};
-
 struct QuestPOIBlobEntry
 {
     uint32    ID;                                           // 0 ID
     uint32    Count;                                        // 1 m_NumPoints
     uint32    MapID;                                        // 2 m_MapID
     //uint32 unk;                                           // 4 m_WorldMapAreaID
-};
-
-struct PowerDisplayEntry
-{
-    uint32    Id;                                           // 0 m_ID
-    uint32    PowerType;                                    // 1 m_actualType
-    //char* m_globalStringBaseTag;                          // 2 m_globalStringBaseTag
-    //uint32    red;                                        // 3 m_red
-    //uint32    green;                                      // 4 m_green
-    //uint32    blue;                                       // 5 m_blue
 };
 
 struct SpellItemEnchantmentEntry
@@ -795,16 +689,6 @@ struct StableSlotPricesEntry
 {
     uint32 Slot;
     uint32 Price;
-};
-
-struct SummonPropertiesEntry
-{
-    uint32  Id;                                             // 0
-    uint32  Category;                                       // 1, 0 - can't be controlled?, 1 - something guardian?, 2 - pet?, 3 - something controllable?, 4 - taxi/mount?
-    uint32  Faction;                                        // 2, 14 rows > 0
-    uint32  Type;                                           // 3, see enum
-    int32   Slot;                                           // 4, 0-6
-    uint32  Flags;                                          // 5
 };
 
 struct TalentEntry
@@ -861,79 +745,6 @@ struct VehicleEntry
     float       MsslTrgtImpactTexRadius;                    // 36
     uint32      VehicleUIIndicatorID;                       // 37
     uint32      PowerDisplayID[3];                          // 38-40
-};
-
-struct VehicleSeatEntry
-{
-    uint32          ID;                                     // 0
-    uint32          Flags;                                  // 1
-    int32           AttachmentID;                           // 2
-    DBCPosition3D   AttachmentOffset;                       // 3-5
-    float           EnterPreDelay;                          // 6
-    float           EnterSpeed;                             // 7
-    float           EnterGravity;                           // 8
-    float           EnterMinDuration;                       // 9
-    float           EnterMaxDuration;                       // 10
-    float           EnterMinArcHeight;                      // 11
-    float           EnterMaxArcHeight;                      // 12
-    int32           EnterAnimStart;                         // 13
-    int32           EnterAnimLoop;                          // 14
-    int32           RideAnimStart;                          // 15
-    int32           RideAnimLoop;                           // 16
-    int32           RideUpperAnimStart;                     // 17
-    int32           RideUpperAnimLoop;                      // 18
-    float           ExitPreDelay;                           // 19
-    float           ExitSpeed;                              // 20
-    float           ExitGravity;                            // 21
-    float           ExitMinDuration;                        // 22
-    float           ExitMaxDuration;                        // 23
-    float           ExitMinArcHeight;                       // 24
-    float           ExitMaxArcHeight;                       // 25
-    int32           ExitAnimStart;                          // 26
-    int32           ExitAnimLoop;                           // 27
-    int32           ExitAnimEnd;                            // 28
-    float           PassengerYaw;                           // 29
-    float           PassengerPitch;                         // 30
-    float           PassengerRoll;                          // 31
-    int32           PassengerAttachmentID;                  // 32
-    int32           VehicleEnterAnim;                       // 33
-    int32           VehicleExitAnim;                        // 34
-    int32           VehicleRideAnimLoop;                    // 35
-    int32           VehicleEnterAnimBone;                   // 36
-    int32           VehicleExitAnimBone;                    // 37
-    int32           VehicleRideAnimLoopBone;                // 38
-    float           VehicleEnterAnimDelay;                  // 39
-    float           VehicleExitAnimDelay;                   // 40
-    uint32          VehicleAbilityDisplay;                  // 41
-    uint32          EnterUISoundID;                         // 42
-    uint32          ExitUISoundID;                          // 43
-    uint32          FlagsB;                                 // 44
-    float           CameraEnteringDelay;                    // 45
-    float           CameraEnteringDuration;                 // 46
-    float           CameraExitingDelay;                     // 47
-    float           CameraExitingDuration;                  // 48
-    DBCPosition3D   CameraOffset;                           // 49-51
-    float           CameraPosChaseRate;                     // 52
-    float           CameraFacingChaseRate;                  // 53
-    float           CameraEnteringZoom;                     // 54
-    float           CameraSeatZoomMin;                      // 55
-    float           CameraSeatZoomMax;                      // 56
-    uint32          EnterAnimKitID;                         // 57
-    uint32          RideAnimKitID;                          // 58
-    uint32          ExitAnimKitID;                          // 59
-    uint32          VehicleEnterAnimKitID;                  // 60
-    uint32          VehicleRideAnimKitID;                   // 61
-    uint32          VehicleExitAnimKitID;                   // 62
-    uint32          CameraModeID;                           // 63
-    uint32          FlagsC;                                 // 64
-    uint32          UISkinFileDataID;                       // 65
-
-    bool CanEnterOrExit() const { return Flags & VEHICLE_SEAT_FLAG_CAN_ENTER_OR_EXIT; }
-    bool CanSwitchFromSeat() const { return Flags & VEHICLE_SEAT_FLAG_CAN_SWITCH; }
-    bool IsUsableByOverride() const { return (Flags & VEHICLE_SEAT_FLAG_UNCONTROLLED)
-                                    || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
-                                        VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)); }
-    bool IsEjectable() const { return FlagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE; }
 };
 
 struct WMOAreaTableEntry

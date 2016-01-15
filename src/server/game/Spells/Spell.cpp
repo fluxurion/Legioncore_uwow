@@ -5646,19 +5646,18 @@ SpellCastResult Spell::CheckRuneCost(uint32 runeCostID)
     if (player->getClass() != CLASS_DEATH_KNIGHT)
         return SPELL_CAST_OK;
 
-    SpellRuneCostEntry const* src = sSpellRuneCostStore.LookupEntry(runeCostID);
-
-    if (!src)
+    //SpellRuneCostEntry const* src = sSpellRuneCostStore.LookupEntry(runeCostID);
+    //if (!src)
         return SPELL_CAST_OK;
 
-    if (src->NoRuneCost())
-        return SPELL_CAST_OK;
+    //if (src->NoRuneCost())
+    //    return SPELL_CAST_OK;
 
     int32 runeCost[NUM_RUNE_TYPES];                         // blood, frost, unholy, death
 
     for (uint32 i = 0; i < NUM_RUNE_TYPES; ++i)
     {
-        runeCost[i] = src->RuneCost[i];
+    //    runeCost[i] = src->RuneCost[i];
         if (Player* modOwner = m_caster->GetSpellModOwner())
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_COST, runeCost[i], this);
     }
@@ -5687,9 +5686,9 @@ void Spell::TakeRunePower(bool didHit)
     if (m_caster->GetTypeId() != TYPEID_PLAYER || m_caster->getClass() != CLASS_DEATH_KNIGHT)
         return;
 
-    SpellRuneCostEntry const* runeCostData = sSpellRuneCostStore.LookupEntry(m_spellInfo->RuneCostID);
-    if (!runeCostData || (runeCostData->NoRuneCost() && runeCostData->NoRunicPowerGain()))
-        return;
+    //SpellRuneCostEntry const* runeCostData = sSpellRuneCostStore.LookupEntry(m_spellInfo->RuneCostID);
+    //if (!runeCostData || (runeCostData->NoRuneCost() && runeCostData->NoRunicPowerGain()))
+    //    return;
 
     Player* player = m_caster->ToPlayer();
     m_runesState = player->GetRunesState();                 // store previous state
@@ -5698,7 +5697,7 @@ void Spell::TakeRunePower(bool didHit)
 
     for (uint32 i = 0; i < NUM_RUNE_TYPES; ++i)
     {
-        runeCost[i] = runeCostData->RuneCost[i];
+    //    runeCost[i] = runeCostData->RuneCost[i];
         if (Player* modOwner = m_caster->GetSpellModOwner())
         {
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_COST, runeCost[i], this);
@@ -5783,15 +5782,15 @@ void Spell::TakeRunePower(bool didHit)
         }
 
     // you can gain some runic power when use runes
-    if (didHit)
-        if (int32 rp = int32(runeCostData->RunePowerGain * sWorld->getRate(RATE_POWER_RUNICPOWER_INCOME)))
-        {
-            Unit::AuraEffectList const& ModRuneRegen = player->GetAuraEffectsByType(SPELL_AURA_MOD_RUNE_REGEN_SPEED);
-            for (Unit::AuraEffectList::const_iterator i = ModRuneRegen.begin(); i != ModRuneRegen.end(); ++i)
-                AddPct(rp, (*i)->GetAmount());
+    //if (didHit)
+    //    if (int32 rp = int32(runeCostData->RunePowerGain * sWorld->getRate(RATE_POWER_RUNICPOWER_INCOME)))
+    //    {
+    //        Unit::AuraEffectList const& ModRuneRegen = player->GetAuraEffectsByType(SPELL_AURA_MOD_RUNE_REGEN_SPEED);
+    //        for (Unit::AuraEffectList::const_iterator i = ModRuneRegen.begin(); i != ModRuneRegen.end(); ++i)
+    //            AddPct(rp, (*i)->GetAmount());
 
-            player->ModifyPower(POWER_RUNIC_POWER, int32(rp));
-        }
+    //        player->ModifyPower(POWER_RUNIC_POWER, int32(rp));
+    //    }
 }
 
 void Spell::LinkedSpell(Unit* _caster, Unit* _target, SpellLinkedType type)

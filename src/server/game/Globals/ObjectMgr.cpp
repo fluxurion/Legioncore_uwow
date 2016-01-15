@@ -4160,13 +4160,6 @@ void ObjectMgr::LoadQuests()
                     qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
                 qinfo->RewardDisplaySpell = 0;                        // no spell reward will display for this quest
             }
-
-            /*else if (GetTalentSpellCost(qinfo->RewardDisplaySpell))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardDisplaySpell` = %u but spell %u is talent, quest will not have a spell reward.",
-                    qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
-                qinfo->RewardDisplaySpell = 0;                        // no spell reward will display for this quest
-            }*/
         }
 
         if (qinfo->RewardSpell > 0)
@@ -4186,13 +4179,6 @@ void ObjectMgr::LoadQuests()
                     qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
                 qinfo->RewardSpell = 0;                    // no spell will be casted on player
             }
-
-            /*else if (GetTalentSpellCost(qinfo->RewardSpell))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardDisplaySpell` = %u but spell %u is talent, quest will not have a spell reward.",
-                    qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
-                qinfo->RewardSpell = 0;                    // no spell will be casted on player
-            }*/
         }
 
         if (qinfo->RewardMailTemplateId)
@@ -8245,12 +8231,6 @@ void ObjectMgr::AddSpellToTrainer(uint32 entry, uint32 spell, uint32 spellCost, 
         sLog->outError(LOG_FILTER_SQL, "Table `npc_trainer` contains an entry (Entry: %u) for a broken spell (Spell: %u), ignoring", entry, spell);
         return;
     }
-
-/*    if (GetTalentSpellCost(spell))
-    {
-        sLog->outError(LOG_FILTER_SQL, "Table `npc_trainer` contains an entry (Entry: %u) for a non-existing spell (Spell: %u) which is a talent, ignoring", entry, spell);
-        return;
-    }*/
 
     TrainerSpellData& data = _cacheTrainerSpellStore[entry];
 

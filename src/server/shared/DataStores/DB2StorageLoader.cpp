@@ -52,14 +52,14 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     FILE* f = fopen(filename, "rb");
     if (!f)
     {
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
     if (fread(&header.Signature, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -75,7 +75,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.RecordCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -84,7 +84,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.FieldCount, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -93,7 +93,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.RecordSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -102,7 +102,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.StringBlockSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -111,7 +111,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Hash, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -120,7 +120,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Build, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -129,7 +129,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Unknown, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -138,7 +138,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Min, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -147,7 +147,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Max, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -156,7 +156,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.Locale, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -165,7 +165,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(&header.ReferenceDataSize, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -190,7 +190,7 @@ bool DB2FileLoader::Load(const char *filename, const char *fmt)
     if (fread(recordTable, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
     {
         fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "%s %u", "DB2FileLoader::Load", __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 

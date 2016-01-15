@@ -175,7 +175,6 @@ DB2Storage<SpellRadiusEntry>                sSpellRadiusStore("SpellRadius.db2",
 DB2Storage<SpellRangeEntry>                 sSpellRangeStore("SpellRange.db2", SpellRangeFormat, HOTFIX_SEL_SPELL_RANGE);
 DB2Storage<SpellReagentsEntry>              sSpellReagentsStore("SpellReagents.db2", SpellReagentsFormat, HOTFIX_SEL_SPELL_REAGENTS);
 DB2Storage<SpellReagentsCurrencyEntry>      sSpellReagentsCurrencyStore("SpellReagentsCurrency.db2", SpellReagentsCurrencyFormat, HOTFIX_SEL_SPELL_REAGENTS_CURRENCY);
-DB2Storage<SpellRuneCostEntry>              sSpellRuneCostStore("SpellRuneCost.db2", SpellRuneCostFormat, HOTFIX_SEL_SPELL_RUNE_COST);
 DB2Storage<SpellScalingEntry>               sSpellScalingStore("SpellScaling.db2", SpellScalingFormat, HOTFIX_SEL_SPELL_SCALING);
 DB2Storage<SpellShapeshiftEntry>            sSpellShapeshiftStore("SpellShapeshift.db2", SpellShapeshiftFormat, HOTFIX_SEL_SPELL_SHAPESHIFT);
 DB2Storage<SpellShapeshiftFormEntry>        sSpellShapeshiftFormStore("SpellShapeshiftForm.db2", SpellShapeshiftFormFormat, HOTFIX_SEL_SPELL_SHAPESHIFT_FORM);
@@ -193,6 +192,18 @@ DB2Storage<TransportRotationEntry>          sTransportRotationStore("TransportRo
 DB2Storage<UnitPowerBarEntry>               sUnitPowerBarStore("UnitPowerBar.db2", UnitPowerBarFormat, HOTFIX_SEL_UNIT_POWER_BAR);
 DB2Storage<WorldMapOverlayEntry>            sWorldMapOverlayStore("WorldMapOverlay.db2", WorldMapOverlayFormat, HOTFIX_SEL_WORLD_MAP_OVERLAY);
 DB2Storage<WorldMapTransformsEntry>         sWorldMapTransformsStore("WorldMapTransforms.db2", WorldMapTransformsFormat, HOTFIX_SEL_WORLD_MAP_TRANSFORMS);
+DB2Storage<ChatChannelsEntry>               sChatChannelsStore("ChatChannels.dbc", ChatChannelsEntryFormat, HOTFIX_SEL_CHAT_CHANNELS);
+DB2Storage<ChrSpecializationEntry>          sChrSpecializationStore("ChrSpecialization.db2", ChrSpecializationFormat, HOTFIX_SEL_CHR_SPECIALIZATION);
+DB2Storage<EmotesEntry>                     sEmotesStore("Emotes.dbc", EmotesEntryFormat, HOTFIX_SEL_EMOTES);
+DB2Storage<GemPropertiesEntry>              sGemPropertiesStore("GemProperties.dbc", GemPropertiesFormat, HOTFIX_SEL_GEM_PROPERTIES);
+DB2Storage<GlyphPropertiesEntry>            sGlyphPropertiesStore("GlyphProperties.dbc", GlyphPropertiesFormat, HOTFIX_SEL_GLYPH_PROPERTIES);
+DB2Storage<ItemSetEntry>                    sItemSetStore("ItemSet.dbc", ItemSetFormat, HOTFIX_SEL_ITEM_SET);
+DB2Storage<LockEntry>                       sLockStore("Lock.dbc", LockFormat, HOTFIX_SEL_LOCK);
+DB2Storage<MovieEntry>                      sMovieStore("Movie.dbc", MovieFormat, HOTFIX_SEL_MOVIE);
+DB2Storage<PowerDisplayEntry>               sPowerDisplayStore("PowerDisplay.dbc", PowerDisplayFormat, HOTFIX_SEL_POWER_DISPLAY);
+DB2Storage<PvPDifficultyEntry>              sPvPDifficultyStore("PvpDifficulty.dbc", PvPDifficultyFormat, HOTFIX_SEL_PV_P_DIFFICULTY);
+DB2Storage<SummonPropertiesEntry>           sSummonPropertiesStore("SummonProperties.dbc", SummonPropertiesFormat, HOTFIX_SEL_SUMMON_PROPERTIES);
+DB2Storage<VehicleSeatEntry>                sVehicleSeatStore("VehicleSeat.dbc", VehicleSeatFormat, HOTFIX_SEL_VEHICLE_SEAT);
 
 TaxiMask                                    sTaxiNodesMask;
 TaxiMask                                    sOldContinentsNodesMask;
@@ -263,6 +274,20 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
+    //LOAD_DB2(sChatChannelsStore);             // 20914
+    //LOAD_DB2(sChrSpecializationStore);        // 20914
+    //LOAD_DB2(sEmotesStore);                   // 20914
+    //LOAD_DB2(sGemPropertiesStore);            // 20914
+    //LOAD_DB2(sGlyphPropertiesStore);          // 20914
+    //LOAD_DB2(sItemSetStore);                  // 20914
+    //LOAD_DB2(sLockStore);                     // 20914
+    //LOAD_DB2(sMovieStore);                    // 20914
+    //LOAD_DBC(sPowerDisplayStore);             // 20914
+    //LOAD_DBC(sPvPDifficultyStore);            // 20914
+    //LOAD_DBC(sSummonPropertiesStore);         // 20914
+    //LOAD_DBC(sVehicleSeatStore);              // 20914
+
+
     LOAD_DB2(sAchievementStore);                // 20810
     //LOAD_DB2(sAreaGroupMemberStore);
     //LOAD_DB2(sAreaGroupStore);                // 20810 smthng wrong
@@ -297,7 +322,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sDestructibleModelDataStore);      // 20810
     LOAD_DB2(sDurabilityCostsStore);            // 20810
     LOAD_DB2(sDurabilityQualityStore);          // 20810
-    LOAD_DB2(sGameObjectDisplayInfoStore);      // 20810
+    //LOAD_DB2(sGameObjectDisplayInfoStore);      // 20810
     //LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameTablesStore);                 // 20810
     //LOAD_DB2(sGarrAbilityEffectStore);
@@ -370,7 +395,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sNameGenStore);                    // 20810
     //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseGroupStore);
-    LOAD_DB2(sPvpItemStore);                    // 20810
+    //LOAD_DB2(sPvpItemStore);                    // 20810
     LOAD_DB2(sQuestFactionRewardStore);         // 20810
     LOAD_DB2(sQuestPackageItemStore);           // 20810
     LOAD_DB2(sQuestPOIPointStore);              // 20810
@@ -406,7 +431,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellInterruptsStore);            // 20810
     //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20810 DB2FileLoader::Load 193 - not compatible and empty
     //LOAD_DB2(sSpellLearnSpellStore);
-    LOAD_DB2(sSpellLevelsStore);                // 20810
+    //LOAD_DB2(sSpellLevelsStore);                // 20810
     LOAD_DB2(sSpellMiscStore);                  // 20810
     LOAD_DB2(sSpellPowerStore);                 // 20810
     // SpellPowerDifficulty.db2
@@ -416,7 +441,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellRangeStore);                 // 20810
     LOAD_DB2(sSpellReagentsStore);              // 20810
     LOAD_DB2(sSpellReagentsCurrencyStore);      // 20810
-    //LOAD_DB2(sSpellRuneCostStore); deprecated
     LOAD_DB2(sSpellScalingStore);               // 20810
     LOAD_DB2(sSpellShapeshiftFormStore);        // 20810
     LOAD_DB2(sSpellShapeshiftStore);            // 20810
@@ -771,6 +795,16 @@ void DB2Manager::InitDB2CustomStores()
 
         if (spellEffect->EffectTriggerSpell)
             _reversTriggerSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
+    }
+
+     memset(_chrSpecializationByIndex, 0, sizeof(_chrSpecializationByIndex));
+    for (ChrSpecializationEntry const* chrSpec : sChrSpecializationStore)
+        _chrSpecializationByIndex[chrSpec->ClassID][chrSpec->OrderIndex] = chrSpec;
+
+    for (PvPDifficultyEntry const* entry : sPvPDifficultyStore)
+    {
+        if (entry->BracketID > MAX_BATTLEGROUND_BRACKETS)
+            ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by DBC data");
     }
 }
 
@@ -1377,4 +1411,36 @@ std::vector<ItemSpecOverrideEntry const*> const* DB2Manager::GetItemSpecOverride
         return &itr->second;
 
     return nullptr;
+}
+
+PvPDifficultyEntry const* DB2Manager::GetBattlegroundBracketByLevel(uint32 mapid, uint32 level)
+{
+    PvPDifficultyEntry const* maxEntry = nullptr;
+    for (PvPDifficultyEntry const* entry : sPvPDifficultyStore)
+    {
+        if (entry->MapID != mapid || entry->MinLevel > level)
+            continue;
+
+        if (entry->MaxLevel >= level)
+            return entry;
+
+        if (!maxEntry || maxEntry->MaxLevel < entry->MaxLevel)
+            maxEntry = entry;
+    }
+
+    return maxEntry;
+}
+
+PvPDifficultyEntry const* DB2Manager::GetBattlegroundBracketById(uint32 mapid, BattlegroundBracketId id)
+{
+    for (PvPDifficultyEntry const* entry : sPvPDifficultyStore)
+        if (entry->MapID == mapid && entry->GetBracketId() == id)
+            return entry;
+
+    return nullptr;
+}
+
+ChrSpecializationEntry const* DB2Manager::GetChrSpecializationByID(uint8 classID, uint32 ID)
+{
+    return _chrSpecializationByIndex[classID][ID];
 }

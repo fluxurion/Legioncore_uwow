@@ -1471,16 +1471,6 @@ struct SpellReagentsCurrencyEntry
     uint16      CurrencyCount;                              // 2
 };
 
-struct SpellRuneCostEntry
-{
-    uint32      ID;                                         // 0
-    uint32      RuneCost[4];                                // 1-4 (0=blood, 1=frost, 2=unholy)
-    uint32      RunePowerGain;                              // 5
-
-    bool NoRuneCost() const { return RuneCost[0] == 0 && RuneCost[1] == 0 && RuneCost[2] == 0; }
-    bool NoRunicPowerGain() const { return RunePowerGain == 0; }
-};
-
 struct ToyEntry
 {
     uint32 ID;                                                      // 0
@@ -2072,14 +2062,199 @@ struct WorldMapTransformsEntry
     uint8       Flags;                                      // 13
 };
 
+struct ChatChannelsEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Flags;                                      // 1
+    uint32      FactionGroup;                               // 2
+    LocalizedString* Name;                                  // 3
+    LocalizedString* Shortcut;                              // 4
+};
+
+struct ChrSpecializationEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* BackgroundFile;                        // 1
+    uint32      ClassID;                                    // 2
+    uint32      MasterySpellID[MAX_MASTERY_SPELLS];         // 3
+    uint32      OrderIndex;                                 // 4
+    uint32      PetTalentType;                              // 5
+    uint32      Role;                                       // 6
+    uint32      SpellIconID;                                // 7
+    uint32      RaidBuffs;                                  // 8
+    LocalizedString* Name;                                  // 9
+    LocalizedString* Name2;                                 // 10
+    LocalizedString* Description;                           // 11
+    uint32      PrimaryStatOrder[2];                        // 12 - 13
+};
+
+struct EmotesEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      AnimationID;                                // 2
+    uint32      Flags;                                      // 3
+    uint32      EmoteType;                                  // 4
+    uint32      UnitStandState;                             // 5
+    uint32      SoundID;                                    // 6
+    uint32      UNK;                                        // 7
+};
+
+struct GemPropertiesEntry
+{
+    uint32      ID;                                         // 0
+    uint32      EnchantID;                                  // 1
+    uint32      MaxCountInv;                                // 2
+    uint32      MaxCountItem;                               // 3
+    uint32      Type;                                       // 4
+    uint32      MinItemLevel;                               // 5
+};
+
+struct GlyphPropertiesEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpellId;                                    // 1
+    uint32      TypeFlags;                                  // 2
+    uint32      SpellIconID;                                // 3
+    uint32      GlyphExclusiveCategoryID;                   // 4
+};
+
+struct ItemSetEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      ItemID[MAX_ITEM_SET_ITEMS];                 // 2 - 18
+    uint32      RequiredSkill;                              // 19
+    uint32      RequiredSkillValue;                         // 20 
+};
+
+struct LockEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Type[MAX_LOCK_CASE];                        // 1-8
+    uint32      Index[MAX_LOCK_CASE];                       // 9-16
+    uint32      Skill[MAX_LOCK_CASE];                       // 17-24
+    uint32      Action[MAX_LOCK_CASE];                      // 25-32
+};
+
+struct MovieEntry
+{
+    uint32      ID;                                         // 0
+    uint32      unk1;                                       // 1
+    uint8       unk2;                                       // 2
+    uint8       unk3;                                       // 3
+};
+
+struct PowerDisplayEntry
+{
+    uint32      ID;                                         // 0  
+    LocalizedString* GlobalStringBaseTag;                   // 2  
+    uint8       PowerType;                                  // 1
+    uint8       Red;                                        // 3
+    uint8       Green;                                      // 4
+    uint8       Blue;                                       // 5
+};
+
+struct PvPDifficultyEntry
+{
+    uint32      ID;                                         // 0
+    uint32      MapID;                                      // 1
+    uint32      BracketID;                                  // 2
+    uint32      MinLevel;                                   // 3
+    uint32      MaxLevel;                                   // 4
+
+    BattlegroundBracketId GetBracketId() const { return BattlegroundBracketId(BracketID); }
+};
+
+struct SummonPropertiesEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Category;                                   // 1
+    uint32      Faction;                                    // 2
+    uint32      Type;                                       // 3
+    int32       Slot;                                       // 4
+    uint32      Flags;                                      // 5
+};
+
+struct VehicleSeatEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Flags;                                      // 1
+    int32       AttachmentID;                               // 2
+    DBCPosition3D AttachmentOffset;                         // 3-5
+    float       EnterPreDelay;                              // 6
+    float       EnterSpeed;                                 // 7
+    float       EnterGravity;                               // 8
+    float       EnterMinDuration;                           // 9
+    float       EnterMaxDuration;                           // 10
+    float       EnterMinArcHeight;                          // 11
+    float       EnterMaxArcHeight;                          // 12
+    int32       EnterAnimStart;                             // 13
+    int32       EnterAnimLoop;                              // 14
+    int32       RideAnimStart;                              // 15
+    int32       RideAnimLoop;                               // 16
+    int32       RideUpperAnimStart;                         // 17
+    int32       RideUpperAnimLoop;                          // 18
+    float       ExitPreDelay;                               // 19
+    float       ExitSpeed;                                  // 20
+    float       ExitGravity;                                // 21
+    float       ExitMinDuration;                            // 22
+    float       ExitMaxDuration;                            // 23
+    float       ExitMinArcHeight;                           // 24
+    float       ExitMaxArcHeight;                           // 25
+    int32       ExitAnimStart;                              // 26
+    int32       ExitAnimLoop;                               // 27
+    int32       ExitAnimEnd;                                // 28
+    float       PassengerYaw;                               // 29
+    float       PassengerPitch;                             // 30
+    float       PassengerRoll;                              // 31
+    int32       PassengerAttachmentID;                      // 32
+    int32       VehicleEnterAnim;                           // 33
+    int32       VehicleExitAnim;                            // 34
+    int32       VehicleRideAnimLoop;                        // 35
+    int32       VehicleEnterAnimBone;                       // 36
+    int32       VehicleExitAnimBone;                        // 37
+    int32       VehicleRideAnimLoopBone;                    // 38
+    float       VehicleEnterAnimDelay;                      // 39
+    float       VehicleExitAnimDelay;                       // 40
+    uint32      VehicleAbilityDisplay;                      // 41
+    uint32      EnterUISoundID;                             // 42
+    uint32      ExitUISoundID;                              // 43
+    uint32      FlagsB;                                     // 44
+    float       CameraEnteringDelay;                        // 45
+    float       CameraEnteringDuration;                     // 46
+    float       CameraExitingDelay;                         // 47
+    float       CameraExitingDuration;                      // 48
+    DBCPosition3D CameraOffset;                             // 49-51
+    float       CameraPosChaseRate;                         // 52
+    float       CameraFacingChaseRate;                      // 53
+    float       CameraEnteringZoom;                         // 54
+    float       CameraSeatZoomMin;                          // 55
+    float       CameraSeatZoomMax;                          // 56
+    uint32      EnterAnimKitID;                             // 57
+    uint32      RideAnimKitID;                              // 58
+    uint32      ExitAnimKitID;                              // 59
+    uint32      VehicleEnterAnimKitID;                      // 60
+    uint32      VehicleRideAnimKitID;                       // 61
+    uint32      VehicleExitAnimKitID;                       // 62
+    uint32      CameraModeID;                               // 63
+    uint32      FlagsC;                                     // 64
+    uint32      UISkinFileDataID;                           // 65
+
+    bool CanEnterOrExit() const { return Flags & VEHICLE_SEAT_FLAG_CAN_ENTER_OR_EXIT; }
+    bool CanSwitchFromSeat() const { return Flags & VEHICLE_SEAT_FLAG_CAN_SWITCH; }
+    bool IsUsableByOverride() const { return (Flags & VEHICLE_SEAT_FLAG_UNCONTROLLED)
+                                    || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
+                                        VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)); }
+    bool IsEjectable() const { return FlagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE; }
+};
+
 #pragma pack(pop)
 
 struct TaxiPathBySourceAndDestination
 {
-    TaxiPathBySourceAndDestination() : ID(0), price(0)
-    { }
-    TaxiPathBySourceAndDestination(uint32 _id, uint32 _price) : ID(_id), price(_price)
-    { }
+    TaxiPathBySourceAndDestination() : ID(0), price(0) { }
+    TaxiPathBySourceAndDestination(uint32 _id, uint32 _price) : ID(_id), price(_price) { }
 
     uint32    ID;
     uint32    price;

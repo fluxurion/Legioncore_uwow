@@ -169,7 +169,6 @@ char const SpellRadiusFormat[] = "nffff";
 char const SpellRangeFormat[] = "nffffssb";
 char const SpellReagentsFormat[] = "iniiiiiiiitttttttt";
 char const SpellReagentsCurrencyFormat[] = "intt";
-char const SpellRuneCostFormat[] = "niiiii";
 char const SpellScalingFormat[] = "intbb";
 char const SpellShapeshiftFormat[] = "iniiiib";
 char const SpellShapeshiftFormFormat[] = "nsfittttttttttttttbbb";
@@ -187,6 +186,19 @@ char const TransportRotationFormat[] = "iiffff";
 char const UnitPowerBarFormat[] = "niffiiiiiiiiiiiissssffttbbb";
 char const WorldMapOverlayFormat[] = "nstttttttttttttt";
 char const WorldMapTransformsFormat[] = "nfffffffffttttb";
+char const ChatChannelsEntryFormat[] = "niiss";
+char const ChrSpecializationFormat[] = "nsiiiiiiiisssii";
+char const EmotesEntryFormat[] = "nsiiiiii";
+char const GemPropertiesFormat[] = "niiiii";
+char const GlyphPropertiesFormat[] = "niiii";
+char const ItemSetFormat[] = "nsiiiiiiiiiiiiiiiiiii";
+char const LockFormat[] = "niiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii";
+char const MovieFormat[] = "nibb";
+
+char const PowerDisplayFormat[]= "nixxxx";
+char const PvPDifficultyFormat[] = "diiii";
+char const SummonPropertiesFormat[] = "niiiii";
+char const VehicleSeatFormat[] = "niiffffffffffiiiiiifffffffiiifffiiiiiiiffiiiiffffffffffffiiiiiiiii";
 
 #endif
 
