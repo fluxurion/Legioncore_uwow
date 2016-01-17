@@ -358,7 +358,7 @@ public:
                 {
                     if (!isQuest)
                     {
-                        int32 count = urand(3, 8);
+                        int32 count = urand(3, 7);
                         WorldPackets::Chat::WorldText packet;
                         packet.Guid = ObjectGuid::Empty;
                         packet.Arg1 = count;
@@ -409,14 +409,6 @@ public:
                     break;
                 }
             }
-
-            //if (GameObject *tree = player->FindNearestGameObject(player->GetTeam() == ALLIANCE ? GO_TREE_A : GO_TREE_H, 50.0f))
-            //{
-            //    Position pos;
-            //    tree->GetRandomNearPosition(pos, 5.0f);
-            //    me->GetMotionMaster()->MovePoint(1, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
-            //    treeGUID = tree->GetGUID();
-            //}
         }
 
         void UpdateAI(uint32 diff)
@@ -430,6 +422,12 @@ public:
                     switch (eventId)
                     {
                         case EVENT_1:
+                            if (GameObject * tree = me->GetMap()->GetGameObject(treeGUID))
+                            {
+                                me->CastSpell(me, SPELL_STUMP, true);
+                                tree->setVisibilityCDForPlayer(plrGUID, 300);
+                                tree->DestroyForPlayer(player);
+                            }
                             me->CastSpell(me, SPELL_CARRY_LUMBER, true);
                             _events.ScheduleEvent(EVENT_2, 5000);
                             me->GetMotionMaster()->MovePoint(2, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ());

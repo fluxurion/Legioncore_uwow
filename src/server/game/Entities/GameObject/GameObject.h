@@ -53,6 +53,8 @@ enum GoVisualCounter
     GO_VISUAL_AFTER_COMPLETEQUEST = 1,
 };
 
+typedef std::map<ObjectGuid, uint32/*time*/> lastUserList;
+
 // from `gameobject_template`
 struct GameObjectTemplate
 {
@@ -1061,7 +1063,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         bool IsAlwaysVisibleFor(WorldObject const* seer) const;
         bool IsInvisibleDueToDespawn() const;
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* obj) const;
 
         uint8 getLevelForTarget(WorldObject const* target) const
         {
@@ -1109,7 +1111,10 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void EnableOrDisableGo(bool activate, bool alternative = false);
 
         uint32 GetVignetteId() const { return m_goInfo ? m_goInfo->GetVignetteId() : 0; }
+
+        void setVisibilityCDForPlayer(ObjectGuid const& guid, uint32 sec = 300);
     protected:
+        lastUserList m_lastUser;
         bool AIM_Initialize();
         GameObjectModel* CreateModel();
         uint32      m_spellId;

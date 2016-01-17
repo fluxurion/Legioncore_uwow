@@ -1719,7 +1719,7 @@ bool Creature::CanAlwaysSee(WorldObject const* obj) const
     return false;
 }
 
-bool Creature::IsNeverVisible() const
+bool Creature::IsNeverVisible(WorldObject const* /*seer*/) const
 {
     //At challenge we should see only at start. At start we change spawnMode, so just no see at DIFFICULTY_CHALLENGE ;)
     CreatureData const* data = GetCreatureData();

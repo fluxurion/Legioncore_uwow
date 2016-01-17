@@ -1032,7 +1032,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
 
         bool IsInvisibleDueToDespawn() const;
         bool CanAlwaysSee(WorldObject const* obj) const;
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* seer = NULL) const;
     private:
 
         //WaypointMovementGenerator vars

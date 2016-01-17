@@ -24347,7 +24347,7 @@ WorldLocation Player::GetStartPosition() const
     return WorldLocation(mapId, info->positionX, info->positionY, info->positionZ, 0);
 }
 
-bool Player::IsNeverVisible() const
+bool Player::IsNeverVisible(WorldObject const* /*seer*/) const
 {
     if (Unit::IsNeverVisible())
         return true;

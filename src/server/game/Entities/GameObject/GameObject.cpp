@@ -945,8 +945,12 @@ bool GameObject::IsAlwaysVisibleFor(WorldObject const* seer) const
     return false;
 }
 
-bool GameObject::IsNeverVisible() const
+bool GameObject::IsNeverVisible(WorldObject const* obj) const
 {
+    auto last = m_lastUser.find(obj->GetGUID());
+    if (last != m_lastUser.end() && time(nullptr) < last->second)
+        return true;
+
     const GameObjectData* data = GetGOData();
     if (data && data->spawnMask == 256)  // only challenge go check. for hiding them after start.
     {
@@ -1366,7 +1370,7 @@ void GameObject::Use(Unit* user)
             else
                 SetGoState(GO_STATE_ACTIVE);
 
-            m_cooldownTime = time(NULL) + info->GetAutoCloseTime();
+            m_cooldownTime = time(NULL) + (info->GetAutoCloseTime() ? info->GetAutoCloseTime() : 60);
 
             // cast this spell later if provided
             spellId = info->goober.spell;
@@ -2280,6 +2284,12 @@ bool GameObject::IsPersonalLoot() const
             return true;
 
     return false;
+}
+
+void GameObject::setVisibilityCDForPlayer(ObjectGuid const& guid, uint32 sec/* = 300*/)
+{
+    // By default set 5 min.
+    m_lastUser[guid] = time(nullptr) + sec;
 }
 
 class GameObjectModelOwnerImpl : public GameObjectModelOwnerBase

@@ -3004,7 +3004,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveFromExtraLook(WorldObject *u) { m_extraLookList.erase(u->GetGUID()); } 
         bool HaveExtraLook(ObjectGuid guid) const { return m_extraLookList.find(guid) != m_extraLookList.end(); }
 
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* seer = NULL) const;
 
         bool IsVisibleGloballyFor(Player const* player) const;
 
