@@ -10,6 +10,7 @@
 #include "CreatureTextMgr.h"
 #include "GameObjectAI.h"
 #include "Garrison.h"
+#include "ChatPackets.h"
 
 Position const hearhstoneHorde[3] = {
     {5560.4f, 4507.7f, 132.67f, 206.1f},         // Horde lvl1 map 1152
@@ -254,6 +255,195 @@ public:
         return new spell_interract_SpellScript();
     }
 };
+
+// Lumber mill
+// Summon Lumberjack Faction Picker
+//! Spell: 168641 -> 167962 -> H: 167961 A: 167902 (NPC: H:83985, A: 83950)
+//! Q: A: 36189, H: 36137
+//! Go: 234021
+
+class spell_garr_lumberjack : public SpellScriptLoader
+{
+public:
+    spell_garr_lumberjack() : SpellScriptLoader("spell_garr_lumberjack") { }
+
+    class spell_garr_lumberjack_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_garr_lumberjack_SpellScript);
+
+        void HandleEffect(SpellEffIndex effIndex)
+        {
+            PreventHitDefaultEffect(effIndex);
+            if (Unit* caster = GetCaster())
+            {
+                Player* plr = caster->ToPlayer();
+                if (!plr)
+                    return;
+
+                if (plr->GetTeam() == ALLIANCE)
+                    plr->CastSpell(plr, 167902, false);
+                else
+                    plr->CastSpell(plr, 167961, false); 
+            }
+        }
+
+        void Register()
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_garr_lumberjack_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_garr_lumberjack_SpellScript();
+    }
+};
+
+// 83985 83950
+class mob_garr_lumberjack : public CreatureScript
+{
+public:
+    mob_garr_lumberjack() : CreatureScript("mob_garr_lumberjack") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new mob_garr_lumberjackAI(creature);
+    }
+
+    struct mob_garr_lumberjackAI : public ScriptedAI
+    {
+
+        mob_garr_lumberjackAI(Creature* creature) : ScriptedAI(creature), isQuest(false)
+        {
+        }
+
+        enum data
+        {
+            SOUNDID = 7514,
+            GO_TREE_H = 233922,
+            GO_TREE_A = 234021,
+            SPELL_PEON_AXE = 167957,
+            SPELL_CARRY_LUMBER = 167958,//Carry Lumber
+            SPELL_CREATE_TIMBER = 168647,
+
+            SPELL_STUMP = 170079,
+
+            SPELL_TIMBER_5 = 168523,
+        };
+
+        ObjectGuid treeGUID;
+        ObjectGuid plrGUID;
+        EventMap _events;
+        bool isQuest;
+
+        void MovementInform(uint32 type, uint32 id)
+        {
+            if (type != POINT_MOTION_TYPE)
+                return;
+
+            if (id == 1)
+            {
+                if (GameObject * tree = me->GetMap()->GetGameObject(treeGUID))
+                    me->SetFacingToObject(tree);
+
+                me->CastSpell(me, SPELL_PEON_AXE, true);
+                me->HandleEmoteCommand(EMOTE_STATE_WORK_CHOPWOOD_2);
+                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_WORK_CHOPWOOD_2);
+                _events.ScheduleEvent(EVENT_1, 5000);
+            }
+            else
+            {
+                sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0);
+                if (Player* player = ObjectAccessor::FindPlayer(plrGUID))
+                {
+                    if (!isQuest)
+                    {
+                        int32 count = urand(3, 8);
+                        WorldPackets::Chat::WorldText packet;
+                        packet.Guid = ObjectGuid::Empty;
+                        packet.Arg1 = count;
+                        packet.Arg2 = 0;
+                        packet.Text = sObjectMgr->GetTrinityStringForDBCLocale(LANG_LUMBER_RESULT);
+                        player->GetSession()->SendPacket(packet.Write());
+                        me->CastCustomSpell(player, SPELL_TIMBER_5, &count, NULL, NULL, false);
+                    }else
+                        me->CastSpell(player, SPELL_CREATE_TIMBER, true);
+                }
+                me->DespawnOrUnsummon(1);
+            }
+        }
+
+        void IsSummonedBy(Unit* summoner)
+        {
+            Player *player = summoner->ToPlayer();
+            if (!player)
+            {
+                me->MonsterSay("SCRIPT::mob_garr_lumberjack summoner is not player", LANG_UNIVERSAL, ObjectGuid::Empty);
+                return;
+            }
+            plrGUID = summoner->GetGUID();
+            me->PlayDirectSound(SOUNDID, player);
+
+            QuestStatus status = player->GetQuestStatus(player->GetTeam() == ALLIANCE ? 36189 : 36137);
+            isQuest = !(status == QUEST_STATUS_REWARDED);
+
+            std::list<GameObject*> gameobjectList;
+            CellCoord pair(Trinity::ComputeCellCoord(summoner->GetPositionX(), summoner->GetPositionY()));
+            Cell cell(pair);
+            cell.SetNoCreate();
+
+            Trinity::GameObjectInRangeCheck check(summoner->GetPositionX(), summoner->GetPositionY(), summoner->GetPositionZ(), 10.0f);
+            Trinity::GameObjectListSearcher<Trinity::GameObjectInRangeCheck> searcher(summoner, gameobjectList, check);
+            TypeContainerVisitor<Trinity::GameObjectListSearcher<Trinity::GameObjectInRangeCheck>, GridTypeMapContainer> visitor(searcher);
+
+            cell.Visit(pair, visitor, *(summoner->GetMap()), *summoner, 10.0f);
+            for (auto tree : gameobjectList)
+            {
+                if (tree->GetUInt32Value(GAMEOBJECT_FIELD_FLAGS) & GO_FLAG_LUMBER)
+                {
+                    Position pos;
+                    tree->GetRandomNearPosition(pos, 5.0f);
+                    me->GetMotionMaster()->MovePoint(1, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
+                    treeGUID = tree->GetGUID();
+
+                    break;
+                }
+            }
+
+            //if (GameObject *tree = player->FindNearestGameObject(player->GetTeam() == ALLIANCE ? GO_TREE_A : GO_TREE_H, 50.0f))
+            //{
+            //    Position pos;
+            //    tree->GetRandomNearPosition(pos, 5.0f);
+            //    me->GetMotionMaster()->MovePoint(1, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
+            //    treeGUID = tree->GetGUID();
+            //}
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                if (Player* player = ObjectAccessor::FindPlayer(plrGUID))
+                {
+                    switch (eventId)
+                    {
+                        case EVENT_1:
+                            me->CastSpell(me, SPELL_CARRY_LUMBER, true);
+                            _events.ScheduleEvent(EVENT_2, 5000);
+                            me->GetMotionMaster()->MovePoint(2, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ());
+                            break;
+                        case EVENT_2:
+                            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0);
+                            me->CastSpell(player, SPELL_CREATE_TIMBER, true);
+                            break;
+                    }
+                }
+            }
+        }
+    };
+};
 void AddSC_garrison_general()
 {
     new spell_garrison_hearthstone();
@@ -261,4 +451,6 @@ void AddSC_garrison_general()
     new spell_q34824();
     new spell_161033();
     new spell_interract();
+    new spell_garr_lumberjack();
+    new mob_garr_lumberjack();
 }

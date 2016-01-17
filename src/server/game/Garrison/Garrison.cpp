@@ -64,6 +64,8 @@ uint32 getQuestIdReqForShipment(uint32 siteID, uint32 buildingType)
             return siteID == SITE_ID_GARRISON_ALLIANCE ? 36646 : 37571;
         case GARR_BTYPE_SCRIBE:
             return siteID == SITE_ID_GARRISON_ALLIANCE ? 36647 : 37572;
+        case GARR_BTYPE_LUMBER_MILL:
+            return siteID == SITE_ID_GARRISON_ALLIANCE ? 36189 : 36137;
         default:
             return 0;
     }
@@ -100,6 +102,8 @@ uint32 getProgressShipment(uint32 questID)
         //GARR_BTYPE_SCRIBE
         case 36647: return 117;
         case 37572: return 130;
+        //GARR_BTYPE_LUMBER_MILL
+        case 36189: case 36137: return 0;
     }
     ASSERT(false);
     return 0;
@@ -162,7 +166,8 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
             if (!plot)
                 continue;
 
-            if (!sGarrBuildingStore.LookupEntry(buildingId))
+            const GarrBuildingEntry *building = sGarrBuildingStore.LookupEntry(buildingId);
+            if (!building)
                 continue;
 
             plot->BuildingInfo.PacketInfo = boost::in_place();
@@ -173,6 +178,28 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
 
             if (!plot->BuildingInfo.PacketInfo->Active)
                 plot->buildingActivationWaiting = true;
+            else
+            {
+                uint32 questID = getQuestIdReqForShipment(_siteLevel->SiteID, building->Type);
+                if (!questID)
+                    continue;
+
+                QuestStatus status = _owner->GetQuestStatus(questID);
+                switch (building->Type)
+                {
+                    case GARR_BTYPE_LUMBER_MILL:
+                        if (status == QUEST_STATUS_REWARDED)
+                        {
+                            _owner->learnSpell(167911, true);
+                            _owner->learnSpell(167895, true);
+                            _owner->learnSpell(167898, true);
+                            
+                        }
+                        break;
+                }
+                
+            }
+
         }
         while (buildings->NextRow());
     }
