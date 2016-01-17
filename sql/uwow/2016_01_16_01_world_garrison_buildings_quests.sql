@@ -11,8 +11,8 @@ REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('167962', '
 UPDATE `creature_template` SET `ScriptName` = 'mob_garr_lumberjack' WHERE `creature_template`.`entry` in (83950, 83985);
 
 REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
-(83950, 0, 0, 'Ну, я пошел.', 12, 0, 100, 0, 0, 6286, 'Дровосек to Player'),
-(83985, 0, 0, 'Дело сделано!', 12, 0, 100, 0, 0, 6199, 'Батрак to Player');
+(83950, 0, 0, 'РќСѓ, СЏ РїРѕС€РµР».', 12, 0, 100, 0, 0, 6286, 'Р”СЂРѕРІРѕСЃРµРє to Player'),
+(83985, 0, 0, 'Р”РµР»Рѕ СЃРґРµР»Р°РЅРѕ!', 12, 0, 100, 0, 0, 6199, 'Р‘Р°С‚СЂР°Рє to Player');
 
 REPLACE INTO `trinity_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `content_loc9`, `content_loc10`) VALUES 
-('22000', '|cffADFF2Ftimber: +$1i|r', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '|cffADFF2FДревесина: +$1i|r', NULL, NULL);
+('22000', '|cffADFF2Ftimber: +$1i|r', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '|cffADFF2FР”СЂРµРІРµСЃРёРЅР°: +$1i|r', NULL, NULL);
