@@ -43,20 +43,7 @@ WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId);
 int32 GetMapFromZone(uint32 zoneId);
 
-enum ContentLevels
-{
-    CONTENT_1_60    = 0,
-    CONTENT_61_70   = 1,
-    CONTENT_71_80   = 2,
-    CONTENT_81_85   = 3,
-    CONTENT_86_90   = 4,
-    MAX_CONTENT
-};
-
-uint32 GetMaxLevelForExpansion(uint32 expansion);
 uint32 GetExpansionForLevel(uint32 level);
-
-ContentLevels GetContentLevelsForMapAndZone(uint32 mapid, uint32 zoneId);
 
 void Zone2MapCoordinates(float &x, float &y, uint32 zone);
 void Map2ZoneCoordinates(float &x, float &y, uint32 zone);
@@ -131,8 +118,8 @@ extern DBCStorage<WMOAreaTableEntry>            sWMOAreaTableStore;
 extern DBCStorage<WorldMapAreaEntry>            sWorldMapAreaStore; //-- use Zone2MapCoordinates and Map2ZoneCoordinates
 extern DBCStorage<WorldSafeLocsEntry>           sWorldSafeLocsStore;
 
-extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
 extern GameTable<GtArmorMitigationByLvlEntry>   sGtArmorMitigationByLvlStore;
+extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
 extern GameTable<GtBattlePetTypeDamageModEntry> sGtBattlePetTypeDamageModStore;
 extern GameTable<GtChanceToMeleeCritBaseEntry>  sGtChanceToMeleeCritBaseStore;
 extern GameTable<GtChanceToMeleeCritEntry>      sGtChanceToMeleeCritStore;
@@ -140,12 +127,20 @@ extern GameTable<GtChanceToSpellCritBaseEntry>  sGtChanceToSpellCritBaseStore;
 extern GameTable<GtChanceToSpellCritEntry>      sGtChanceToSpellCritStore;
 extern GameTable<GtCombatRatingsEntry>          sGtCombatRatingsStore;
 extern GameTable<GtItemSocketCostPerLevelEntry> sGtItemSocketCostPerLevelStore;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStore;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp1;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp2;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp3;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp4;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp5;
+extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp6;
 extern GameTable<GtNPCManaCostScalerEntry>      sGtNPCManaCostScalerStore;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp1Store;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp2Store;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp3Store;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp4Store;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp5Store;
+extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp6Store;
 extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpStore;
 extern GameTable<GtOCTBaseHPByClassEntry>       sGtOCTBaseHPByClassStore;
 extern GameTable<GtOCTBaseMPByClassEntry>       sGtOCTBaseMPByClassStore;

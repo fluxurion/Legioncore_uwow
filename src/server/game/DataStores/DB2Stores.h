@@ -48,7 +48,6 @@ extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
 extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
 extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
 extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
-extern DB2Storage<CreatureDisplayInfoExtraEntry>    sCreatureDisplayInfoExtraStore;
 extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
 extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
 extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;

@@ -27,7 +27,7 @@
 
 char const AchievementCriteriafmt[] = "niiiiiiiixxx";
 char const AreaPOIEntryfmt[] = "niiiiiiiiiiiffixixxixxx";
-char const AreaTableEntryfmt[] = "iiiniixxxxsxisiiiiixixxxxxiix";
+char const AreaTableEntryfmt[] = "iiiniixxxxsxisiiiiixixxxxiix";
 char const AreaTriggerEntryfmt[] = "nifffxxxfffffxxxx";
 char const BannedAddOnsfmt[] = "nxxxxxxxxxx";
 char const BattlemasterListEntryfmt[] = "niiiiiiiiiiiiiiiiixsiiiiiiiixxx";

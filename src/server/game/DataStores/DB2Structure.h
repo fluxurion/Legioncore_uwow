@@ -340,44 +340,38 @@ struct ChrRacesEntry
     uint8       CharComponentTextureLayoutID;               // 38
 };
 
-struct CreatureDisplayInfoExtraEntry
-{
-    uint32      ID;
-    uint32      NPCItemDisplay[10];                         // 0-10
-    uint32      FileDataID;                                 // 11
-    uint32      Unk;                                        // 12
-    uint8       DisplayRaceID;                              // 13
-    uint8       DisplaySexID;                               // 14
-    uint8       SkinID;                                     // 15
-    uint8       FaceID;                                     // 16
-    uint8       HairStyleID;                                // 17
-    uint8       HairColorID;                                // 18
-    uint8       FacialHairID;                               // 19
-    uint8       Tato[3];                                    // 20 @TODO:Legion check name
-    uint8       Flags;                                      // 21
-};
-
 struct CreatureDisplayInfoEntry
 {
     uint32      ID;                                         // 0
-    uint32      ModelID;                                    // 1
-    uint32      SoundID;                                    // 2
-    uint32      ExtendedDisplayInfoID;                      // 3
-    float       CreatureModelScale;                         // 4
-    uint32      CreatureModelAlpha;                         // 5
-    LocalizedString* TextureVariation[3];                   // 6-8
-    LocalizedString* PortraitTextureName;                   // 9
-    uint32      PortraitCreatureDisplayInfoID;              // 10
-    uint32      SizeClass;                                  // 11
-    uint32      BloodID;                                    // 12
-    uint32      NPCSoundID;                                 // 13
-    uint32      ParticleColorID;                            // 14
-    uint32      CreatureGeosetData;                         // 15
-    uint32      ObjectEffectPackageID;                      // 16
-    uint32      AnimReplacementSetID;                       // 17
-    uint32      Flags;                                      // 18
-    int32       Gender;                                     // 19
-    uint32      StateSpellVisualKitID;                      // 20
+    uint32      ExtendedDisplayInfoID;                      // 1
+    float       CreatureModelScale;                         // 2
+    float       Unknown620;                                 // 3
+    uint32      Unknown701[3];                              // 4 - 6
+    LocalizedString* PortraitTextureName;                   // 7
+    uint32      PortraitCreatureDisplayInfoID;              // 8
+    uint32      Unknown0;                                   // 9
+    int32       Unknown1;                                   // 10
+    uint16      ModelID;                                    // 11
+    uint16      SoundID;                                    // 12
+    uint16      NPCSoundID;                                 // 13
+    uint16      Unknown2;                                   // 14
+    uint16      Unknown3;                                   // 15
+    uint16      Unknown5;                                   // 16
+    uint8       CreatureModelAlpha;                         // 17
+    int8        SizeClass;                                  // 18
+    uint8       Unknown6;                                   // 19
+    uint8       Unknown7;                                   // 20
+    int8        Gender;                                     // 21
+    int8        Unknown8;                                   // 22
+
+    //@TODO:Legino - find their places =/
+    //uint32      BloodID;
+    //uint32      ParticleColorID;
+    //uint32      CreatureGeosetData;
+    //uint32      ObjectEffectPackageID;
+    //uint32      AnimReplacementSetID;
+    //uint32      Flags;
+    //uint32      StateSpellVisualKitID;
 };
 
 struct CreatureTypeEntry
@@ -801,15 +795,16 @@ struct ItemCurrencyCostEntry
 
 struct ItemEffectEntry
 {
-    uint32      ID;                                         // 0
+    uint32      ID;
     uint32      ItemID;                                     // 1
-    uint32      OrderIndex;                                 // 2
-    uint32      SpellID;                                    // 3
-    uint32      Trigger;                                    // 4
-    int32       Charges;                                    // 5
-    int32       Cooldown;                                   // 6
-    uint32      Category;                                   // 7
-    int32       CategoryCooldown;                           // 8
+    uint32      SpellID;                                    // 2
+    int32       Cooldown;                                   // 3
+    int32       CategoryCooldown;                           // 4
+    int16       Charges;                                    // 5
+    uint16      Category;                                   // 6
+    uint8       SpecID;                                     // 7
+    uint8       OrderIndex;                                 // 8
+    uint8       Trigger;                                    // 9
 };
 
 struct ItemModifiedAppearanceEntry
@@ -1783,6 +1778,7 @@ struct SpellLevelsEntry
     uint16      MaxLevel;                                   // 2
     uint16      SpellLevel;                                 // 3
     uint8       DifficultyID;                               // 4
+    uint8       Unk701;                                     // 5
 };
 
 struct SpellItemEnchantmentConditionEntry
@@ -2003,13 +1999,6 @@ struct TransportAnimationEntry
     uint8       SequenceID;                                 // 5
 };
 
-struct TransportRotationEntry
-{
-    uint32      TransportID;                                // 0
-    uint32      TimeIndex;                                  // 1
-    DBCPosition4D Rot;                                      // 2 - 5
-};
-
 struct UnitPowerBarEntry
 {
     uint32      ID;
@@ -2064,11 +2053,11 @@ struct WorldMapTransformsEntry
 
 struct ChatChannelsEntry
 {
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
-    uint32      FactionGroup;                               // 2
-    LocalizedString* Name;                                  // 3
-    LocalizedString* Shortcut;                              // 4
+    uint32      ID;
+    uint32      Flags;                                      // 0
+    LocalizedString* Name;                                  // 1
+    LocalizedString* Shortcut;                              // 2
+    uint8       FactionGroup;                               // 3
 };
 
 struct ChrSpecializationEntry
@@ -2102,12 +2091,12 @@ struct EmotesEntry
 
 struct GemPropertiesEntry
 {
-    uint32      ID;                                         // 0
-    uint32      EnchantID;                                  // 1
-    uint32      MaxCountInv;                                // 2
-    uint32      MaxCountItem;                               // 3
-    uint32      Type;                                       // 4
-    uint32      MinItemLevel;                               // 5
+    uint32      ID;
+    uint16      Type;                                       // 0
+    uint16      EnchantID;                                  // 1
+    uint8       MaxCountInv;                                // 2
+    uint8       MaxCountItem;                               // 3
+    uint8       MinItemLevel;                               // 4
 };
 
 struct GlyphPropertiesEntry
@@ -2158,10 +2147,10 @@ struct PowerDisplayEntry
 struct PvPDifficultyEntry
 {
     uint32      ID;                                         // 0
-    uint32      MapID;                                      // 1
-    uint32      BracketID;                                  // 2
-    uint32      MinLevel;                                   // 3
-    uint32      MaxLevel;                                   // 4
+    uint16      MapID;                                      // 1
+    uint8       BracketID;                                  // 2
+    uint8       MinLevel;                                   // 3
+    uint8       MaxLevel;                                   // 4
 
     BattlegroundBracketId GetBracketId() const { return BattlegroundBracketId(BracketID); }
 };

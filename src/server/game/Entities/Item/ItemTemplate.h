@@ -402,7 +402,7 @@ enum ItemSubclassWeapon
     ITEM_SUBCLASS_WEAPON_POLEARM                = 6,
     ITEM_SUBCLASS_WEAPON_SWORD                  = 7,  // One-Handed Swords
     ITEM_SUBCLASS_WEAPON_SWORD2                 = 8,  // Two-Handed Swords
-    ITEM_SUBCLASS_WEAPON_Obsolete               = 9,
+    ITEM_SUBCLASS_WEAPON_WARGLAIVES             = 9,
     ITEM_SUBCLASS_WEAPON_STAFF                  = 10,
     ITEM_SUBCLASS_WEAPON_EXOTIC                 = 11, // One-Handed Exotics
     ITEM_SUBCLASS_WEAPON_EXOTIC2                = 12, // Two-Handed Exotics
@@ -413,14 +413,14 @@ enum ItemSubclassWeapon
     ITEM_SUBCLASS_WEAPON_SPEAR                  = 17,
     ITEM_SUBCLASS_WEAPON_CROSSBOW               = 18,
     ITEM_SUBCLASS_WEAPON_WAND                   = 19,
-    ITEM_SUBCLASS_WEAPON_FISHING_POLE           = 20
+    ITEM_SUBCLASS_WEAPON_FISHING_POLE           = 20,
+
+    MAX_ITEM_SUBCLASS_WEAPON
 };
 
 #define ITEM_SUBCLASS_MASK_WEAPON_RANGED (\
     (1 << ITEM_SUBCLASS_WEAPON_BOW) | (1 << ITEM_SUBCLASS_WEAPON_GUN) |\
     (1 << ITEM_SUBCLASS_WEAPON_CROSSBOW) | (1 << ITEM_SUBCLASS_WEAPON_THROWN))
-
-#define MAX_ITEM_SUBCLASS_WEAPON                  21
 
 enum ItemSubclassGem
 {

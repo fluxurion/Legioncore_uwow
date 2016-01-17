@@ -2094,7 +2094,7 @@ uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage, SpellInfo
     if (armor < 0.0f)
         armor = 0.0f;
 
-    //GtArmorMitigationByLvlEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(getLevel() - 1);
+    GtArmorMitigationByLvlEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(getLevel() - 1, 0);
     float percReduced = 0.1f;/*armor / (armor + gtArmorMitigation->Armor);*/
 
     if (percReduced < 0.0f)

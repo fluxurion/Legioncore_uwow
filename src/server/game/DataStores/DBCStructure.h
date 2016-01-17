@@ -67,7 +67,6 @@ struct AreaTableEntry
     uint32    MountFlags;                                   // 20
     //uint32    UWIntroMusic;                               // 21
     //uint32    UWZoneMusic;                                // 22
-    //uint32    UWAmbience;                                 // 23
     //uint32    WorldPvPID;                                 // 24 World_PVP_Area.dbc
     //uint32    PvPCombastWorldStateID;                     // 25
     uint32    m_wildBattlePetLevelMin;                      // 26
@@ -392,6 +391,11 @@ struct GtChanceToSpellCritEntry
 struct GtNpcTotalHpEntry
 {
     float    HP;
+};
+
+struct GtNpcDamageByClassEntry
+{
+    float    Value;
 };
 
 struct GtArmorMitigationByLvlEntry

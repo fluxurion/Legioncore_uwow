@@ -106,12 +106,20 @@ GameTable<GtChanceToSpellCritBaseEntry>     sGtChanceToSpellCritBaseStore(GtChan
 GameTable<GtChanceToSpellCritEntry>         sGtChanceToSpellCritStore(GtChanceToSpellCritfmt);
 GameTable<GtCombatRatingsEntry>             sGtCombatRatingsStore(GtCombatRatingsfmt);
 GameTable<GtItemSocketCostPerLevelEntry>    sGtItemSocketCostPerLevelStore(GtItemSocketCostPerLevelfmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStore(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp1(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp2(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp3(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp4(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp5(GameTablefmt);
+GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp6(GameTablefmt);
 GameTable<GtNPCManaCostScalerEntry>         sGtNPCManaCostScalerStore(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp1Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp2Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp3Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp4Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp5Store(GameTablefmt);
+GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp6Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpStore(GameTablefmt);
 GameTable<GtOCTBaseHPByClassEntry>          sGtOCTBaseHPByClassStore(GtOCTBaseHPByClassfmt);
 GameTable<GtOCTBaseMPByClassEntry>          sGtOCTBaseMPByClassStore(GtOCTBaseMPByClassfmt);
@@ -291,24 +299,21 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_GT(tableName, store, file) LoadGameTable(bad_dbc_files, tableName, store, dbcPath, file)
 
     LOAD_GT("ArmorMitigationByLvl",    sGtArmorMitigationByLvlStore,    "gtArmorMitigationByLvl.dbc");
-    //gtArtifactLevelXP.dbc
     LOAD_GT("BarberShopCostBase",      sGtBarberShopCostBaseStore,      "gtBarberShopCostBase.dbc");
     LOAD_GT("BattlePetTypeDamageMod",  sGtBattlePetTypeDamageModStore,  "gtBattlePetTypeDamageMod.dbc");
-    //gtBattlePetXP.dbc
     LOAD_GT("ChanceToMeleeCrit",       sGtChanceToMeleeCritStore,       "gtChanceToMeleeCrit.dbc");
     LOAD_GT("ChanceToMeleeCritBase",   sGtChanceToMeleeCritBaseStore,   "gtChanceToMeleeCritBase.dbc");
     LOAD_GT("ChanceToSpellCrit",       sGtChanceToSpellCritStore,       "gtChanceToSpellCrit.dbc");
     LOAD_GT("ChanceToSpellCritBase",   sGtChanceToSpellCritBaseStore,   "gtChanceToSpellCritBase.dbc");
     LOAD_GT("CombatRatings",           sGtCombatRatingsStore,           "gtCombatRatings.dbc");
-    //gtHonorLevel.dbc
     LOAD_GT("ItemSocketCostPerLevel",  sGtItemSocketCostPerLevelStore,  "gtItemSocketCostPerLevel.dbc");
-    //gtNpcDamageByClass.dbc
-    //gtNpcDamageByClassExp1.dbc
-    //gtNpcDamageByClassExp2.dbc
-    //gtNpcDamageByClassExp3.dbc
-    //gtNpcDamageByClassExp4.dbc
-    //gtNpcDamageByClassExp5.dbc
-    //gtNpcDamageByClassExp6.dbc
+    LOAD_GT("NpcDamageByClass",        sGtNpcDamageByClassStore,        "gtNpcDamageByClass.dbc");
+    LOAD_GT("NpcDamageByClassExp1",    sGtNpcDamageByClassStoreExp1,    "gtNpcDamageByClassExp1.dbc");
+    LOAD_GT("NpcDamageByClassExp2",    sGtNpcDamageByClassStoreExp2,    "gtNpcDamageByClassExp2.dbc");
+    LOAD_GT("NpcDamageByClassExp3",    sGtNpcDamageByClassStoreExp3,    "gtNpcDamageByClassExp3.dbc");
+    LOAD_GT("NpcDamageByClassExp4",    sGtNpcDamageByClassStoreExp4,    "gtNpcDamageByClassExp4.dbc");
+    LOAD_GT("NpcDamageByClassExp5",    sGtNpcDamageByClassStoreExp5,    "gtNpcDamageByClassExp5.dbc");
+    LOAD_GT("NpcDamageByClassExp6",    sGtNpcDamageByClassStoreExp6,    "gtNpcDamageByClassExp6.dbc");
     LOAD_GT("NPCManaCostScaler",       sGtNPCManaCostScalerStore,       "gtNPCManaCostScaler.dbc");
     LOAD_GT("NpcTotalHp",              sGtNpcTotalHpStore,              "gtNpcTotalHp.dbc");
     LOAD_GT("NpcTotalHpExp1",          sGtNpcTotalHpExp1Store,          "gtNpcTotalHpExp1.dbc");
@@ -316,15 +321,13 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     LOAD_GT("NpcTotalHpExp3",          sGtNpcTotalHpExp3Store,          "gtNpcTotalHpExp3.dbc");
     LOAD_GT("NpcTotalHpExp4",          sGtNpcTotalHpExp4Store,          "gtNpcTotalHpExp4.dbc");
     LOAD_GT("NpcTotalHpExp5",          sGtNpcTotalHpExp5Store,          "gtNpcTotalHpExp5.dbc");
-    //gtNpcTotalHpExp6.dbc
+    LOAD_GT("NpcTotalHpExp6",          sGtNpcTotalHpExp6Store,          "gtNpcTotalHpExp6.dbc");
     LOAD_GT("OCTBaseHPByClass",        sGtOCTBaseHPByClassStore,        "gtOCTBaseHPByClass.dbc");
     LOAD_GT("OCTBaseMPByClass",        sGtOCTBaseMPByClassStore,        "gtOCTBaseMPByClass.dbc");
     LOAD_GT("OCTHPPerStamina",         sGtOCTHpPerStaminaStore,         "gtOCTHpPerStamina.dbc");
     LOAD_GT("OCTLevelExperience",      sGtOCTLevelExperienceStore,      "gtOCTLevelExperience.dbc");
     LOAD_GT("RegenMPPerSpt",           sGtRegenMPPerSptStore,           "gtRegenMPPerSpt.dbc");
     LOAD_GT("SpellScaling",            sGtSpellScalingStore,            "gtSpellScaling.dbc");
-    //gtSandboxScaling.dbc
-    //gtResilienceDR.dbc
 
 #undef LOAD_GT
 
@@ -482,27 +485,6 @@ int32 GetMapFromZone(uint32 zoneId)
     return -1;
 }
 
-uint32 GetMaxLevelForExpansion(uint32 expansion)
-{
-    switch (expansion)
-    {
-        case CONTENT_1_60:
-            return 60;
-        case CONTENT_61_70:
-            return 70;
-        case CONTENT_71_80:
-            return 80;
-        case CONTENT_81_85:
-            return 85;
-        case CONTENT_86_90:
-            return 90;
-        default:
-            break;
-
-    }
-    return 0;
-}
-
 uint32 GetExpansionForLevel(uint32 level)
 {
     if (level < 60)
@@ -515,6 +497,10 @@ uint32 GetExpansionForLevel(uint32 level)
         return EXPANSION_CATACLYSM;
     else if (level < 90)
         return EXPANSION_MISTS_OF_PANDARIA;
+    else if (level < 100)
+        return EXPANSION_WARLORDS_OF_DRAENOR;
+    else if (level < 110)
+        return EXPANSION_LEGION;
     else
         return CURRENT_EXPANSION;
 }

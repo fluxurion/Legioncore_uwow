@@ -49,7 +49,6 @@ enum GuildMisc
     GUILD_WITHDRAW_MONEY_UNLIMITED      = 0xFFFFFFFF,
     GUILD_WITHDRAW_SLOT_UNLIMITED       = 0xFFFFFFFF,
     GUILD_EVENT_LOG_GUID_UNDEFINED      = 0xFFFFFFFF,
-    GUILD_EXPERIENCE_UNCAPPED_LEVEL     = 20,                   ///> Hardcoded in client, starting from this level, guild daily experience gain is unlimited.
     TAB_UNDEFINED                       = 0xFF,
 };
 
@@ -274,7 +273,7 @@ struct GuildReward
     std::vector<uint32> AchievementsRequired;
 };
 
-uint32 const MinNewsItemLevel[MAX_CONTENT] = { 61, 90, 200, 353 }; /*@todo: update me for 5.0.5 ?*/
+uint32 const MinNewsItemLevel[5] = { 61, 90, 200, 353 }; /*@todo: update me for 5.0.5 ?*/
 
 typedef std::map<uint32, GuildNewsEntry> GuildNewsLogMap;
 
@@ -283,7 +282,6 @@ const uint32 GuildChallengeGoldReward[GUILD_CHALLENGES_TYPES]         = { 0, 250
 const uint32 GuildChallengeMaxLevelGoldReward[GUILD_CHALLENGES_TYPES] = { 0, 125,    500,     250,   125,   250 };
 const uint32 GuildChallengesMaxCount[GUILD_CHALLENGES_TYPES]          = { 0, 7,      1,       3,     0,     3 };
 
-#define GUILD_EXPERIENCE_UNCAPPED_LEVEL 20  ///> Hardcoded in client, starting from this level, guild daily experience 
 #define GUILD_WEEKLY_REP_CAP            4375                        // Amount of personal guild rep members can earn per day.
 
 ////////////////////////////////////////////////////////////////////////////////////////////

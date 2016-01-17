@@ -925,19 +925,27 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 0);
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, 0);
 
-    // set starting level
-    uint32 start_level = getClass() != CLASS_DEATH_KNIGHT
-        ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
-        : (getClass() == CLASS_DEMON_HUNTER ? 98 : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL));
+    uint32 startLevel = sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL);
+    switch (getClass())
+    {
+        case CLASS_DEATH_KNIGHT:
+            startLevel = START_DK_LEVEL;
+            break;
+        case CLASS_DEMON_HUNTER:
+            startLevel = START_DH_LEVEL;
+            break;
+        default:
+            break;
+    }
 
     if (!AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
     {
-        uint32 gm_level = sWorld->getIntConfig(CONFIG_START_GM_LEVEL);
-        if (gm_level > start_level)
-            start_level = gm_level;
+        uint32 gmLevel = sWorld->getIntConfig(CONFIG_START_GM_LEVEL);
+        if (gmLevel > startLevel)
+            startLevel = gmLevel;
     }
 
-    SetUInt32Value(UNIT_FIELD_LEVEL, start_level);
+    SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
     InitRunes();
     InitBrackets();
@@ -12710,10 +12718,10 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
 
     const static uint32 item_weapon_skills[MAX_ITEM_SUBCLASS_WEAPON] =
     {
-        SKILL_AXES,     SKILL_2H_AXES,  SKILL_BOWS,          SKILL_GUNS,      SKILL_MACES,
-        SKILL_2H_MACES, SKILL_POLEARMS, SKILL_SWORDS,        SKILL_2H_SWORDS, 0,
-        SKILL_STAVES,   0,              0,                   SKILL_FIST_WEAPONS,   0,
-        SKILL_DAGGERS,  SKILL_THROWN,   SKILL_ASSASSINATION, SKILL_CROSSBOWS, SKILL_WANDS,
+        SKILL_AXES,     SKILL_2H_AXES,  SKILL_BOWS,          SKILL_GUNS,            SKILL_MACES,
+        SKILL_2H_MACES, SKILL_POLEARMS, SKILL_SWORDS,        SKILL_2H_SWORDS,       SKILL_WARGLAIVES,
+        SKILL_STAVES,   0,              0,                   SKILL_FIST_WEAPONS,    0,
+        SKILL_DAGGERS,  SKILL_THROWN,   SKILL_ASSASSINATION, SKILL_CROSSBOWS,       SKILL_WANDS,
         SKILL_FISHING
     }; //Copy from function Item::GetSkill()
 

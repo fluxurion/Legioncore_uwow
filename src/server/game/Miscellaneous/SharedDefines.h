@@ -174,10 +174,13 @@ enum Expansions
     EXPANSION_MISTS_OF_PANDARIA        = 4,
     EXPANSION_WARLORDS_OF_DRAENOR      = 5,
     EXPANSION_LEGION                   = 6,
-    MAX_EXPANSIONS                     = 6
+
+    MAX_EXPANSIONS
 };
 
-#define CURRENT_EXPANSION EXPANSION_WARLORDS_OF_DRAENOR;
+#define CURRENT_EXPANSION EXPANSION_LEGION
+static uint16 const START_DK_LEVEL = 55;
+static uint16 const START_DH_LEVEL = 98;
 
 enum Gender
 {
@@ -2259,7 +2262,7 @@ enum GameobjectTypes // 6.2.2
     GAMEOBJECT_TYPE_GARRISON_MONUMENT           = 44,
     GAMEOBJECT_TYPE_GARRISON_SHIPMENT           = 45,
     GAMEOBJECT_TYPE_GARRISON_MONUMENT_PLAQUE    = 46,
-    GAMEOBJECT_TYPE_DO_NOT_USE_3                = 47,
+    GAMEOBJECT_TYPE_ARTIFACT_FORGE              = 47,
     GAMEOBJECT_TYPE_UI_LINK                     = 48,
 
     MAX_GAMEOBJECT_TYPE
@@ -4225,14 +4228,15 @@ enum SkillType
     SKILL_PET_EXOTIC_HOOK_WASP     = 1818,
     SKILL_PET_RIVERBEAST           = 1819,
     SKILL_UNUSED                   = 1830,
+    SKILL_DEMON_HUNTER             = 1848,
     SKILL_LOGGING                  = 1945,
     SKILL_PET_TERRORGUARD          = 1981,
     SKILL_PET_ABYSSAL              = 1982,
     SKILL_PET_STAG                 = 1993,
-    SKILL_TRADING_POST             = 2000
+    SKILL_TRADING_POST             = 2000,
+    SKILL_WARGLAIVES               = 2152,
+    SKILL_PET_MECHANICAL           = 2189
 };
-
-#define MAX_SKILL_TYPE                     2000
 
 inline SkillType SkillByLockType(LockType locktype)
 {

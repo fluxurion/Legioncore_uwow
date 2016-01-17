@@ -281,12 +281,13 @@ ObjectMgr::~ObjectMgr()
     for (QuestMap::iterator i = _questTemplates.begin(); i != _questTemplates.end(); ++i)
         delete i->second;
 
-    for (int race = 0; race < MAX_RACES; ++race)
+    for (uint8 race = 0; race < MAX_RACES; ++race)
     {
-        for (int class_ = 0; class_ < MAX_CLASSES; ++class_)
+        for (uint8 class_ = 0; class_ < MAX_CLASSES; ++class_)
         {
             if (_playerInfo[race][class_])
                 delete[] _playerInfo[race][class_]->levelInfo;
+
             delete _playerInfo[race][class_];
         }
     }
@@ -954,13 +955,13 @@ void ObjectMgr::CheckCreatureTemplate(CreatureTemplate const* cInfo)
         const_cast<CreatureTemplate*>(cInfo)->expansion = CURRENT_EXPANSION;
     }
 
-    if (cInfo->minlevel < 1 || cInfo->minlevel > STRONG_MAX_LEVEL)
+    if (cInfo->minlevel < 1 || cInfo->minlevel >= STRONG_MAX_LEVEL)
     {
         sLog->outError(LOG_FILTER_SQL, "Creature (ID: %u): MinLevel %i is not within [1, 255], value has been set to 1.", cInfo->Entry, cInfo->minlevel);
         const_cast<CreatureTemplate*>(cInfo)->minlevel = 1;
     }
 
-    if (cInfo->maxlevel < 1 || cInfo->maxlevel > STRONG_MAX_LEVEL)
+    if (cInfo->maxlevel < 1 || cInfo->maxlevel >= STRONG_MAX_LEVEL)
     {
         sLog->outError(LOG_FILTER_SQL, "Creature (ID: %u): MaxLevel %i is not within [1, 255], value has been set to 1.", cInfo->Entry, cInfo->maxlevel);
         const_cast<CreatureTemplate*>(cInfo)->maxlevel = 1;
@@ -2542,7 +2543,7 @@ uint32 FillMaxDurability(uint32 itemClass, uint32 itemSubClass, uint32 inventory
         1.03f, // ITEM_SUBCLASS_WEAPON_POLEARM
         0.89f, // ITEM_SUBCLASS_WEAPON_SWORD
         1.03f, // ITEM_SUBCLASS_WEAPON_SWORD2
-        0.00f, // ITEM_SUBCLASS_WEAPON_Obsolete
+        0.89f, // ITEM_SUBCLASS_WEAPON_WARGLAIVES
         1.03f, // ITEM_SUBCLASS_WEAPON_STAFF
         0.00f, // ITEM_SUBCLASS_WEAPON_EXOTIC
         0.00f, // ITEM_SUBCLASS_WEAPON_EXOTIC2
@@ -2663,7 +2664,6 @@ void ObjectMgr::LoadItemTemplates()
 
         itemTemplate.ScalingStatDistribution = sparse->ScalingStatDistribution;
         itemTemplate.DamageType = sparse->DamageType;
-        //itemTemplate.Armor = GetItemArmor(sparse->ItemLevel, db2Data->Class, db2Data->SubClass, sparse->Quality, sparse->InventoryType);
         itemTemplate.Delay = sparse->Delay;
         itemTemplate.RangedModRange = sparse->RangedModRange;
         itemTemplate.SpellPPMRate = 0.0f;
@@ -3272,7 +3272,7 @@ void ObjectMgr::LoadPlayerInfo()
             }
 
             uint32 current_level = fields[2].GetUInt8();
-            if (current_level > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
+            if (current_level > MAX_LEVEL)
             {
                 if (current_level > STRONG_MAX_LEVEL)        // hardcoded level maximum
                     sLog->outError(LOG_FILTER_SQL, "Wrong (> %u) level %u in `player_levelstats` table, ignoring.", STRONG_MAX_LEVEL, current_level);
@@ -3287,10 +3287,10 @@ void ObjectMgr::LoadPlayerInfo()
             if (PlayerInfo* info = _playerInfo[current_race][current_class])
             {
                 if (!info->levelInfo)
-                    info->levelInfo = new PlayerLevelInfo[sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL)];
+                    info->levelInfo = new PlayerLevelInfo[MAX_LEVEL];
 
                 PlayerLevelInfo& levelInfo = info->levelInfo[current_level - 1];
-                for (int i = 0; i < MAX_STATS; i++)
+                for (uint8 i = 0; i < MAX_STATS; i++)
                     levelInfo.stats[i] = fields[i + 3].GetUInt16();
             }
 
@@ -3307,7 +3307,6 @@ void ObjectMgr::LoadPlayerInfo()
 
             for (uint8 class_ = 0; class_ < MAX_CLASSES; ++class_)
             {
-                // skip non existed classes
                 if (!sChrClassesStore.LookupEntry(class_))
                     continue;
 
@@ -3315,26 +3314,35 @@ void ObjectMgr::LoadPlayerInfo()
                 if (!info)
                     continue;
 
-                // skip expansion races if not playing with expansion
-                if (sWorld->getIntConfig(CONFIG_EXPANSION) < 1 && (race == RACE_BLOODELF || race == RACE_DRAENEI))
+                /*if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_THE_BURNING_CRUSADE && (race == RACE_BLOODELF || race == RACE_DRAENEI))
                     continue;
 
-                // skip expansion classes if not playing with expansion
-                if (sWorld->getIntConfig(CONFIG_EXPANSION) < 2 && class_ == CLASS_DEATH_KNIGHT)
+                if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_WRATH_OF_THE_LICH_KING && class_ == CLASS_DEATH_KNIGHT)
                     continue;
 
-                if (class_ == CLASS_DEMON_HUNTER)
-                    continue;
+                if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_LEGION && class_ == CLASS_DEMON_HUNTER)
+                    continue;*/
 
-                // fatal error if no level 1 data
-                if (!info->levelInfo || info->levelInfo[0].stats[0] == 0)
+                uint8 level = 1;
+                switch (class_)
                 {
-                    sLog->outError(LOG_FILTER_SQL, "Race %i Class %i Level 1 does not have stats data!", race, class_);
+                    case CLASS_DEATH_KNIGHT:
+                        level = START_DK_LEVEL;
+                        break;
+                    case CLASS_DEMON_HUNTER:
+                        level = START_DH_LEVEL;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!info->levelInfo || info->levelInfo[level - 1].stats[0] == 0)
+                {
+                    sLog->outError(LOG_FILTER_SQL, "Race %i Class %i does not have stats data for base lvl (%i)!", race, class_, level - 1);
                     exit(1);
                 }
 
-                // fill level gaps
-                for (uint8 level = 1; level < sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL); ++level)
+                for (level; level < MAX_LEVEL; ++level)
                 {
                     if (info->levelInfo[level].stats[0] == 0)
                     {
@@ -3380,7 +3388,7 @@ void ObjectMgr::LoadPlayerInfo()
                     }
                     continue;
                 }
-                //PlayerXPperLevel
+
                 _playerXPperLevel[current_level] = current_xp;
                 ++count;
             }
@@ -8789,8 +8797,8 @@ CreatureBaseStats const* ObjectMgr::GetCreatureBaseStats(uint8 level, uint8 unit
 void ObjectMgr::LoadCreatureClassLevelStats()
 {
     uint32 oldMSTime = getMSTime();
-    //                                                  0     1       2        3            4               5               6               7           8           9           10              11
-    QueryResult result = WorldDatabase.Query("SELECT level, class, basemana, basearmor, attackpower, rangedattackpower, damage_base, damage_exp1, damage_exp2, damage_exp3, damage_exp4, damage_exp5 FROM creature_classlevelstats");
+    //                                                  0     1       2        3            4
+    QueryResult result = WorldDatabase.Query("SELECT level, class, basemana, attackpower, rangedattackpower FROM creature_classlevelstats");
 
     if (!result)
     {
@@ -8808,41 +8816,26 @@ void ObjectMgr::LoadCreatureClassLevelStats()
         uint8 Level = fields[0].GetUInt8();
         uint8 Class = fields[1].GetUInt8();
 
-        GameTable<GtNpcTotalHpEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, NULL };
-        //GtArmorMitigationByLvlEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1);
+        GameTable<GtNpcTotalHpEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, &sGtNpcTotalHpExp6Store, nullptr };
+        GameTable<GtNpcDamageByClassEntry>* dmgTables[] = { &sGtNpcDamageByClassStore, &sGtNpcDamageByClassStoreExp1, &sGtNpcDamageByClassStoreExp2, &sGtNpcDamageByClassStoreExp3, &sGtNpcDamageByClassStoreExp4, &sGtNpcDamageByClassStoreExp5, &sGtNpcDamageByClassStoreExp6, nullptr };
+        GtArmorMitigationByLvlEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1, 0);
 
         CreatureBaseStats stats;
-
         stats.BaseMana = fields[2].GetUInt32();
-        stats.BaseArmor = uint32(500/*gtArmorMitigation->Armor*/);
-        stats.AttackPower = fields[4].GetUInt16();
-        stats.RangedAttackPower = fields[5].GetUInt16();
+        stats.BaseArmor = armor ? armor->Armor : 1; //@TODO:Legion - recheck
+        stats.AttackPower = fields[3].GetUInt16();
+        stats.RangedAttackPower = fields[4].GetUInt16();
 
         if (!Class || ((1 << (Class - 1)) & CLASSMASK_ALL_CREATURES) == 0)
             sLog->outError(LOG_FILTER_SQL, "Creature base stats for level %u has invalid class %u", Level, Class);
 
-        for (auto i = 0; hpTables[i]; ++i)
+        for (uint8 i = 0; hpTables[i]; ++i)
             if (hpTables[i]->HasEntry(Level - 1, Class - 1))
                 stats.BaseHealth[i] = hpTables[i]->EvaluateTable(Level - 1, Class - 1)->HP;
 
-        for (uint8 i = 0; i < MAX_EXPANSIONS; ++i)
-        {
-            if (stats.BaseHealth[i] < 0.0f)
-            {
-                sLog->outError(LOG_FILTER_SQL, "Creature base stats for class %u, level %u has invalid zero base HP[%u] - set to 1", Class, Level, i);
-                stats.BaseHealth[i] = 1;
-            }
-        }
-
-        for (uint8 i = 0; i < MAX_EXPANSIONS; ++i)
-        {
-            stats.BaseDamage[i] = fields[6 + i].GetFloat();
-            if (stats.BaseDamage[i] < 0.0f)
-            {
-                sLog->outError(LOG_FILTER_SQL, "Creature base stats for class %u, level %u has invalid negative base damage[%u] - set to 0.0", Class, Level, i);
-                stats.BaseDamage[i] = 0.0f;
-            }
-        }
+        for (uint8 i = 0; dmgTables[i]; ++i)
+            if (dmgTables[i]->HasEntry(Level - 1, Class - 1))
+                stats.BaseDamage[i] = dmgTables[i]->EvaluateTable(Level - 1, Class - 1)->Value;
 
         _creatureBaseStatsStore[MAKE_PAIR16(Level, Class)] = stats;
 
@@ -8852,13 +8845,9 @@ void ObjectMgr::LoadCreatureClassLevelStats()
 
     CreatureTemplateContainer const* ctc = sObjectMgr->GetCreatureTemplates();
     for (CreatureTemplateContainer::const_iterator itr = ctc->begin(); itr != ctc->end(); ++itr)
-    {
         for (uint16 lvl = itr->second.minlevel; lvl <= itr->second.maxlevel; ++lvl)
-        {
             if (_creatureBaseStatsStore.find(MAKE_PAIR16(lvl, itr->second.unit_class)) == _creatureBaseStatsStore.end())
                 sLog->outError(LOG_FILTER_SQL, "Missing base stats for creature class %u level %u", itr->second.unit_class, lvl);
-        }
-    }
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u creature base stats in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
