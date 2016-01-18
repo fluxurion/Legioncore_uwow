@@ -23,7 +23,6 @@
 #include "Define.h"
 #include "Path.h"
 
-#define MAX_CREATURE_SPELL_DATA_SLOT 4
 #define MAX_BROADCAST_TEXT_EMOTES 3
 #define MAX_HOLIDAY_DURATIONS 10
 #define MAX_HOLIDAY_DATES 16
@@ -41,6 +40,10 @@
 #define MAX_OUTFIT_ITEMS 24
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 #define MaxAttributes 14
+#define MAX_MASTERY_SPELLS 2
+#define MAX_ITEM_SET_ITEMS 17
+#define MAX_LOCK_CASE 8
+#define MAX_SHAPESHIFT_SPELLS 8
 
 #pragma pack(push, 1)
 
@@ -61,11 +64,6 @@ struct AchievementEntry
     uint8       FactionFlag;                                // 12
     uint32      RewardPoints;                               // 13
     uint8       Amount;                                     // 14
-};
-
-struct AreaGroupEntry
-{
-    uint32      ID;                                                 // 0
 };
 
 struct AreaGroupMemberEntry
@@ -92,11 +90,13 @@ struct ArmorLocationEntry
 
 struct BankBagSlotPricesEntry
 {
-    uint32      price;
+    uint32      ID;
+    uint32      Price;
 };
 
 struct BarberShopStyleEntry
 {
+    uint32      ID;
     uint32      Type;                                               // 0
     LocalizedString* Name;                                          // 1        
     LocalizedString* Description;                                   // 2        
@@ -298,7 +298,7 @@ struct ChrClassesXPowerTypesEntry
 {
     uint32      ID;
     uint8       ClassID;                                    // 0
-    uint8       PowerID;                                    // 1
+    uint8       PowerType;                                  // 1
 };
 
 struct ChrRacesEntry
@@ -429,7 +429,6 @@ struct GameObjectDisplayInfoEntry
     DBCPosition3D GeoBoxMax;                            // 4-6
     float       OverrideLootEffectScale;                // 7
     float       OverrideNameScale;                      // 8
-    uint16      Sound[10];                              // 9-18
     int16       ObjectEffectPackageID;                  // 19
 };
 
@@ -643,12 +642,12 @@ struct ModifierTreeEntry
 struct MountCapabilityEntry
 {
     uint32      ID;
-    uint32      Unknown0;
-    uint32      ReqSpellKnownID;
-    uint32      ModSpellAuraID;
-    uint16      ReqRidingSkill;
-    uint16      ReqAreaID;
-    uint16      ReqMapID;
+    uint32      SpeedModSpell;
+    uint32      RequiredSpell;
+    uint32      RequiredAura;
+    uint16      RequiredRidingSkill;
+    uint16      RequiredArea;
+    uint16      RequiredMap;
     uint8       Flags;
     uint8       Unknown7;
 };
@@ -671,8 +670,8 @@ struct NameGenEntry
 {
     uint32      ID;
     LocalizedString* Name;
-    uint32      RaceID;
-    uint32      Gender;
+    uint8       RaceID;
+    uint8       Gender;
 };
 
 struct QuestFactionRewEntry
@@ -1326,9 +1325,9 @@ struct MountEntry
 
 struct LanguageWordsEntry
 {
-    uint32 Id;                                            // 0
-    uint32 langId;                                          // 1
-    LocalizedString* word;                                             // 2
+    uint32      ID;
+    LocalizedString* Word;                                      // 0
+    uint8       Lang;                                           // 1
 };
 
 struct KeyChainEntry
@@ -1343,13 +1342,6 @@ struct OverrideSpellDataEntry
     uint32 SpellID[MAX_OVERRIDE_SPELL];                             // 1-10
     uint32 Flags;                                                   // 11
     uint32 PlayerActionbarFileDataID;                               // 12
-};
-
-struct PhaseGroupEntry
-{
-    uint32      ID;
-    uint32      PhaseID;
-    uint32      PhaseGroupID;
 };
 
 struct SoundEntriesEntry
@@ -2110,11 +2102,11 @@ struct GlyphPropertiesEntry
 
 struct ItemSetEntry
 {
-    uint32      ID;                                         // 0
-    LocalizedString* Name;                                  // 1
-    uint32      ItemID[MAX_ITEM_SET_ITEMS];                 // 2 - 18
-    uint32      RequiredSkill;                              // 19
-    uint32      RequiredSkillValue;                         // 20 
+    uint32      ID;
+    LocalizedString* Name;                                  // 0ItemSet
+    uint32      ItemID[MAX_ITEM_SET_ITEMS];                 // 1 - 16
+    uint16      RequiredSkill;                              // 17
+    uint8       RequiredSkillValue;                         // 18
 };
 
 struct LockEntry
@@ -2128,10 +2120,11 @@ struct LockEntry
 
 struct MovieEntry
 {
-    uint32      ID;                                         // 0
-    uint32      unk1;                                       // 1
-    uint8       unk2;                                       // 2
-    uint8       unk3;                                       // 3
+    uint32      ID;
+    uint32      unk1;                                       // 0
+    uint32      unk2;                                       // 1
+    uint8       unk3;                                       // 2
+    uint8       unk4;                                       // 3
 };
 
 struct PowerDisplayEntry

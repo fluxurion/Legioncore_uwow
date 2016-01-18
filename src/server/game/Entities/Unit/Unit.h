@@ -1558,8 +1558,7 @@ class Unit : public WorldObject
         int32 ModifyPowerPct(Powers power, float pct, bool apply = true);
         void TriggerEclipse(int32 power);
 
-        uint32 GetPowerIndex(Powers power) const { return GetPowerIndexByClass(power, getClass()); }
-        uint32 GetPowerIndexByClass(uint32 powerId, uint32 classId) const;
+        uint32 GetPowerIndex(uint32 powerType) const;
 
         uint32 GetAttackTime(WeaponAttackType att) const
         {

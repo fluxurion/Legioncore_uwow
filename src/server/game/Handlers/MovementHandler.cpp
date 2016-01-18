@@ -671,9 +671,10 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
 
             if (plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING_FAR))
             {
+                static const int16 maxMapDepth = -5000; // Temporary define until max depth is found somewhere (adt?)
                 float groundZ = plrMover->GetMap()->GetGridMapHeigh(plrMover->GetPositionX(), plrMover->GetPositionY());
                 if (groundZ == VMAP_INVALID_HEIGHT_VALUE)
-                    groundZ = MAX_MAP_DEPTH;
+                    groundZ = maxMapDepth;
 
                 if ((groundZ - 500.0f) > movementInfo.pos.GetPositionZ())
                     if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))

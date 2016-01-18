@@ -24,7 +24,6 @@
 #include "World.h"
 
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
-DB2Storage<AreaGroupEntry>                  sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<ArmorLocationEntry>              sArmorLocationStore("ArmorLocation.db2", ArmorLocationFormat, HOTFIX_SEL_ARMOR_LOCATION);
 DB2Storage<AuctionHouseEntry>               sAuctionHouseStore("AuctionHouse.db2", AuctionHouseFormat, HOTFIX_SEL_AUCTION_HOUSE);
@@ -135,7 +134,6 @@ DB2Storage<MountTypeXCapabilityEntry>       sMountTypeXCapabilityStore("MountTyp
 DB2Storage<MovieEntry>                      sMovieStore("Movie.db2", MovieFormat, HOTFIX_SEL_MOVIE);
 DB2Storage<NameGenEntry>                    sNameGenStore("NameGen.db2", NameGenFormat, HOTFIX_SEL_NAME_GEN);
 DB2Storage<OverrideSpellDataEntry>          sOverrideSpellDataStore("OverrideSpellData.db2", OverrideSpellDataFormat, HOTFIX_SEL_OVERRIDE_SPELL_DATA);
-DB2Storage<PhaseGroupEntry>                 sPhaseGroupStore("PhaseXPhaseGroup.db2", PhaseGroupFormat, HOTFIX_SEL_PHASE_GROUP);
 DB2Storage<PowerDisplayEntry>               sPowerDisplayStore("PowerDisplay.db2", PowerDisplayFormat, HOTFIX_SEL_POWER_DISPLAY);
 DB2Storage<PvPDifficultyEntry>              sPvPDifficultyStore("PvpDifficulty.db2", PvPDifficultyFormat, HOTFIX_SEL_PV_P_DIFFICULTY);
 DB2Storage<PvpItemEntry>                    sPvpItemStore("PvpItem.db2", PvpItemFormat, HOTFIX_SEL_PVP_ITEM);
@@ -273,9 +271,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     //LOAD_DB2(sAreaGroupMemberStore);
-    //LOAD_DB2(sAreaGroupStore);                // 20810 smthng wrong
-    //LOAD_DB2(sBankBagSlotPricesStore);        // 20796
-    //LOAD_DB2(sBarberShopStyleStore);          // 20796
     //LOAD_DB2(sBattlePetAbilityEffectStore);
     //LOAD_DB2(sBattlePetAbilityStateStore);
     //LOAD_DB2(sBattlePetAbilityStore);
@@ -292,7 +287,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
     //LOAD_DB2(sEmotesStore);                   // 20914
-    //LOAD_DB2(sGameObjectDisplayInfoStore);      // 20810
     //LOAD_DB2(sGameObjectsStore);
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
@@ -325,19 +319,12 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemCurrencyCostStore);
     //LOAD_DB2(sItemExtendedCostStore);
     //LOAD_DB2(sItemModifiedAppearanceStore);
-    //LOAD_DB2(sItemSetStore);                  // 20914
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
-    //LOAD_DB2(sKeyChainStore);
-    //LOAD_DB2(sLanguageWordsStore);
     //LOAD_DB2(sMapChallengeModeStore);
-    //LOAD_DB2(sMountCapabilityStore);          // 20810 smthng wrong
     //LOAD_DB2(sMountStore);
-    //LOAD_DB2(sMountTypeStore);                // 20810 smthng wrong
     //LOAD_DB2(sOverrideSpellDataStore);
-    //LOAD_DB2(sPhaseGroupStore);
-    //LOAD_DB2(sPvpItemStore);                  // 20810
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
@@ -349,12 +336,15 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
     //LOAD_DB2(sToyStore);
-    //LOAD_DB2(sVehicleSeatStore);              // 20914
-    //LOAD_DB2(sMovieStore);                      // 20914
+    //LOAD_DB2(sVehicleSeatStore);                // 20914
+    //LOAD_DB2(sMountCapabilityStore);            // 20914
+    //LOAD_DB2(sMountTypeStore);                  // 20914
+    //LOAD_DB2(sBarberShopStyleStore);            // 20914
     
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914
+    LOAD_DB2(sBankBagSlotPricesStore);          // 20914
     LOAD_DB2(sCharacterLoadoutItemStore);       // 20914
     LOAD_DB2(sCharStartOutfitStore);            // 20914
     LOAD_DB2(sChatChannelsStore);               // 20914
@@ -368,6 +358,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sDestructibleModelDataStore);      // 20914
     LOAD_DB2(sDurabilityCostsStore);            // 20914
     LOAD_DB2(sDurabilityQualityStore);          // 20914
+    LOAD_DB2(sGameObjectDisplayInfoStore);      // 20914
     LOAD_DB2(sGameTablesStore);                 // 20914
     LOAD_DB2(sGemPropertiesStore);              // 20914
     LOAD_DB2(sGuildPerkSpellsStore);            // 20914
@@ -391,17 +382,22 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemRandomPropertiesStore);       // 20914
     LOAD_DB2(sItemRandomSuffixStore);           // 20914
     LOAD_DB2(sItemSetSpellStore);               // 20914
+    LOAD_DB2(sItemSetStore);                    // 20914
     LOAD_DB2(sItemSparseStore);                 // 20914
     LOAD_DB2(sItemSpecOverrideStore);           // 20914
     LOAD_DB2(sItemSpecStore);                   // 20914
     LOAD_DB2(sItemStore);                       // 20914
+    LOAD_DB2(sKeyChainStore);                   // 20914
+    LOAD_DB2(sLanguageWordsStore);              // 20914
     LOAD_DB2(sLockStore);                       // 20914
     LOAD_DB2(sMailTemplateStore);               // 20914
     LOAD_DB2(sModifierTreeStore);               // 20914
     LOAD_DB2(sMountTypeXCapabilityStore);       // 20914
+    LOAD_DB2(sMovieStore);                      // 20914
     LOAD_DB2(sNameGenStore);                    // 20914
     LOAD_DB2(sPowerDisplayStore);               // 20914
     LOAD_DB2(sPvPDifficultyStore);              // 20914
+    LOAD_DB2(sPvpItemStore);                    // 20914
     LOAD_DB2(sQuestFactionRewardStore);         // 20914
     LOAD_DB2(sQuestPackageItemStore);           // 20914
     LOAD_DB2(sQuestPOIPointStore);              // 20914
@@ -510,7 +506,7 @@ void DB2Manager::InitDB2CustomStores()
         _garrMissionRewardByMissionID[entry->MissionID] = entry;
 
     for (LanguageWordsEntry const* entry : sLanguageWordsStore)
-        sLanguageWordsMapStore[entry->langId][strlen(entry->word[DEFAULT_LOCALE].Str[DEFAULT_LOCALE])].push_back(entry->word[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
+        _languageWordsMap[entry->Lang][strlen(entry->Word->Str[DEFAULT_LOCALE])].push_back(entry->Word->Str[DEFAULT_LOCALE]);
 
     for (ToyEntry const* toy : sToyStore)
         _toys.push_back(toy->ItemID);
@@ -686,8 +682,8 @@ void DB2Manager::InitDB2CustomStores()
         if (mt->Parent)
             _modifierTree[mt->Parent].push_back(mt);
 
-    //for (NameGenEntry const* entry : sNameGenStore)
-    //    _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
+    for (NameGenEntry const* entry : sNameGenStore)
+        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {
@@ -728,30 +724,23 @@ void DB2Manager::InitDB2CustomStores()
 
     for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
     {
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(skillLine->SpellID);
-        if (!spellInfo)
+        SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(skillLine->SpellID);
+        if (!spellMisc)
             continue;
 
-        /*SpellLevelsEntry const* levels = sSpellLevelsStore.LookupEntry(spellInfo->LevelsID);
-        if (spellInfo->LevelsID && (!levels || levels->SpellLevel))
-            continue;*/
-
-        /*if (SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(spellInfo->MiscID))
+        if (spellMisc->Attributes[0] & SPELL_ATTR0_PASSIVE)
         {
-            if (spellMisc->HasAttribute(SPELL_ATTR0_PASSIVE))
+            for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
             {
-                for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
-                {
-                    if (skillLine->SkillLine != cFamily->skillLine[0] && skillLine->SkillLine != cFamily->skillLine[1])
-                        continue;
+                if (skillLine->SkillLine != cFamily->skillLine[0] && skillLine->SkillLine != cFamily->skillLine[1])
+                    continue;
 
-                    if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
-                        continue;
+                if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
+                    continue;
 
-                    sPetFamilySpellsStore[cFamily->ID].insert(spellInfo->ID);
-                }
+                _petFamilySpells[cFamily->ID].insert(skillLine->SpellID);
             }
-        }*/
+        }
     }
 
     for (SkillRaceClassInfoEntry const* entry : sSkillRaceClassInfoStore)
@@ -767,10 +756,10 @@ void DB2Manager::InitDB2CustomStores()
         if (spell && spell->Category)
             _spellCategory[spell->Category].insert(v->ID);
     }
-    
+
     for (SpellProcsPerMinuteModEntry const* sppm : sSpellProcsPerMinuteModStore)
         _spellProcsPerMinuteModEntryList[sppm->SpellProcsPerMinuteID].push_back(sppm->ID);
-    
+
     for (SpellTargetRestrictionsEntry const* restriction : sSpellTargetRestrictionsStore)
         _spellRestrictionDiff[restriction->SpellID].insert(restriction);
 
@@ -791,7 +780,7 @@ void DB2Manager::InitDB2CustomStores()
             _reversTriggerSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
     }
 
-     memset(_chrSpecializationByIndex, 0, sizeof(_chrSpecializationByIndex));
+    memset(_chrSpecializationByIndex, 0, sizeof(_chrSpecializationByIndex));
     for (ChrSpecializationEntry const* chrSpec : sChrSpecializationStore)
         _chrSpecializationByIndex[chrSpec->ClassID][chrSpec->OrderIndex] = chrSpec;
 
@@ -799,6 +788,21 @@ void DB2Manager::InitDB2CustomStores()
     {
         if (entry->BracketID > MAX_BATTLEGROUND_BRACKETS)
             ASSERT(false && "Need update MAX_BATTLEGROUND_BRACKETS by db2 data");
+    }
+
+    sChrClassesXPowerTypesStore.Sort(&ChrClassesXPowerTypesEntryComparator::Compare);
+    for (uint32 i = 0; i < MAX_CLASSES; ++i)
+        for (uint32 j = 0; j < MAX_POWERS; ++j)
+            _powersByClass[i][j] = MAX_POWERS;
+
+    for (ChrClassesXPowerTypesEntry const* power : sChrClassesXPowerTypesStore)
+    {
+        uint32 index = 0;
+        for (uint32 j = 0; j < MAX_POWERS; ++j)
+            if (_powersByClass[power->ClassID][j] != MAX_POWERS)
+                ++index;
+
+        _powersByClass[power->ClassID][power->PowerType] = index;
     }
 }
 
@@ -931,8 +935,8 @@ DB2Manager::ItemBonusContainer const* DB2Manager::GetItemBonusList(uint32 bonusL
 
 DB2Manager::LanguageWordsContainer const* DB2Manager::GetLanguageWordMap(uint32 langID)
 {
-    std::map<uint32, LanguageWordsContainer>::const_iterator itr = sLanguageWordsMapStore.find(langID);
-    return itr != sLanguageWordsMapStore.end() ? &itr->second : nullptr;
+    std::map<uint32, LanguageWordsContainer>::const_iterator itr = _languageWordsMap.find(langID);
+    return itr != _languageWordsMap.end() ? &itr->second : nullptr;
 }
 
 StringVector const* DB2Manager::GetLanguageWordsBySize(uint32 langID, uint32 size)
@@ -1021,21 +1025,18 @@ HeirloomEntry const* DB2Manager::GetHeirloomByItemId(uint32 itemId) const
 HeirloomEntry const* DB2Manager::GetHeirloomByOldItem(uint32 itemId) const
 {
     for (HeirloomEntry const* heirloom : sHeirloomStore)
-    {
         if (heirloom->OldItem[0] == itemId || heirloom->OldItem[1] == itemId)
             return heirloom;
-    }
 
     return nullptr;
 }
 
 bool DB2Manager::MountTypeXCapabilityEntryComparator::Compare(MountTypeXCapabilityEntry const* left, MountTypeXCapabilityEntry const* right)
 {
-    //@TODO Legion - index?
-    //if (left->MountTypeID == right->MountTypeID)
-    //    return left->OrderIndex < right->OrderIndex;
-    //return left->ID < right->ID;
-    return true;
+    if (left->MountTypeID == right->MountTypeID)
+        return left->OrderIndex < right->OrderIndex;
+
+    return left->ID < right->ID;
 }
 
 DB2Manager::MountTypeXCapabilitySet const* DB2Manager::GetMountCapabilities(uint32 mountType) const
@@ -1437,4 +1438,26 @@ PvPDifficultyEntry const* DB2Manager::GetBattlegroundBracketById(uint32 mapid, B
 ChrSpecializationEntry const* DB2Manager::GetChrSpecializationByID(uint8 classID, uint32 ID)
 {
     return _chrSpecializationByIndex[classID][ID];
+}
+
+ DB2Manager::PetFamilySpellsSet const* DB2Manager::GetPetFamilySpells(uint32 family)
+ {
+    auto itr = _petFamilySpells.find(family);
+    if (itr != _petFamilySpells.end())
+        return &itr->second;
+
+    return nullptr;
+ }
+
+bool DB2Manager::ChrClassesXPowerTypesEntryComparator::Compare(ChrClassesXPowerTypesEntry const* left, ChrClassesXPowerTypesEntry const* right)
+{
+    if (left->ClassID != right->ClassID)
+        return left->ClassID < right->ClassID;
+
+    return left->PowerType < right->PowerType;
+}
+
+uint32 DB2Manager::GetPowerIndexByClass(uint32 powerType, uint32 classId) const
+{
+    return _powersByClass[classId][powerType];
 }

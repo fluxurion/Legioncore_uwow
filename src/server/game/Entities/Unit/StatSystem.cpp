@@ -924,8 +924,8 @@ void Player::_RemoveAllStatBonuses()
 void Unit::UpdateManaRegen()
 {
     // Skip regeneration for power type we cannot have
-    uint32 powerIndex = GetPowerIndexByClass(POWER_MANA, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(POWER_MANA);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
     // Mana regen from spirit
@@ -1209,8 +1209,8 @@ void Unit::UpdateFocusRegen()
 
 void Unit::UpdatePowerRegen(uint32 power)
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
     float meleeHaste = GetFloatValue(UNIT_FIELD_MOD_HASTE);

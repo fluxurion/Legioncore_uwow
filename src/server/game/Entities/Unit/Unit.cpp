@@ -13746,30 +13746,31 @@ void Unit::Dismount()
     }
 }
 
-void Unit::UpdateMount()
+void Unit::UpdateMount() //@TODO:Legion - is this really needed?
 {
-    MountCapabilityEntry const* newMount = NULL;
-    AuraEffect* effect = NULL;
+    MountCapabilityEntry const* newMount = nullptr;
+    AuraEffect* effect = nullptr;
 
-    // First get the mount type
-    MountTypeEntry const* mountType = NULL;
+    MountTypeEntry const* mountType = nullptr;
+    AuraEffectList const& auras = GetAuraEffectsByType(SPELL_AURA_MOUNTED);
+    for (AuraEffectList::const_reverse_iterator itr = auras.rbegin(); itr != auras.rend(); ++itr)
     {
-        AuraEffectList const& auras = GetAuraEffectsByType(SPELL_AURA_MOUNTED);
-        for (AuraEffectList::const_reverse_iterator itr = auras.rbegin(); itr != auras.rend(); ++itr)
+        AuraEffect* aura = *itr;
+        if (MountEntry const* mountEntry = sDB2Manager.GetMount(aura->GetId()))
+            mountType = sMountTypeStore.LookupEntry(mountEntry->MountTypeId);
+        if (mountType)
         {
-            AuraEffect* aura = *itr;
-            if(MountEntry const* mountEntry = sDB2Manager.GetMount(aura->GetId()))
-                mountType = sMountTypeStore.LookupEntry(mountEntry->MountTypeId);
-            if (mountType)
-            {
-                effect = aura;
-                break;
-            }
+            effect = aura;
+            break;
         }
     }
 
     if (mountType)
     {
+        DB2Manager::MountTypeXCapabilitySet const* capabilities = sDB2Manager.GetMountCapabilities(mountType->MountTypeID);
+        if (!capabilities)
+            return;
+
         uint32 zoneId, areaId;
         GetZoneAndAreaId(zoneId, areaId);
 
@@ -13777,71 +13778,52 @@ void Unit::UpdateMount()
         if (GetTypeId() == TYPEID_PLAYER)
             ridingSkill = ToPlayer()->GetSkillValue(SKILL_RIDING);
 
-        // Find the currently allowed mount flags
-        uint32 currentMountFlags;
+        uint32 currentMountFlags = 0;
+        AuraEffectList const& auras = GetAuraEffectsByType(SPELL_AURA_MOD_FLYING_RESTRICTIONS);
+        if (!auras.empty())
         {
-            AuraEffectList const& auras = GetAuraEffectsByType(SPELL_AURA_MOD_FLYING_RESTRICTIONS);
-            if (!auras.empty())
-            {
-                currentMountFlags = 0;
-                for (AuraEffectList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
-                    currentMountFlags |= (*itr)->GetMiscValue();
-            }
-            else
-            {
-                AreaTableEntry const* entry;
-                entry = GetAreaEntryByAreaID(areaId);
-                if (!entry)
-                    entry = GetAreaEntryByAreaID(zoneId);
-
-                if (entry)
-                    currentMountFlags = entry->MountFlags;
-            }
+            for (AuraEffectList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                currentMountFlags |= (*itr)->GetMiscValue();
+        }
+        else
+        {
+            AreaTableEntry const* entry = GetAreaEntryByAreaID(areaId);
+            if (!entry)
+                entry = GetAreaEntryByAreaID(zoneId);
+            if (entry)
+                currentMountFlags = entry->MountFlags;
         }
 
-        /*@TODO:Legion this data are gone
-        for (uint32 i = MAX_MOUNT_CAPABILITIES-1; i < MAX_MOUNT_CAPABILITIES; --i)
+        for (MountTypeXCapabilityEntry const* mountTypeXCapability : *capabilities)
         {
-            uint32 id = mountType->MountCapability[i];
-            if (!id)
-                continue;
-
-            MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(id);
+            MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(mountTypeXCapability->MountCapabilityID);
             if (!mountCapability)
                 continue;
 
             if (ridingSkill < mountCapability->RequiredRidingSkill)
                 continue;
 
-            // Flags required to use this mount
             uint32 reqFlags = mountCapability->Flags;
 
-            if (reqFlags&1 && !(currentMountFlags&1))
+            if (reqFlags & 1 && !(currentMountFlags & 1))
                 continue;
 
-            if (reqFlags&2 && !(currentMountFlags&2))
+            if (reqFlags & 2 && !(currentMountFlags & MOUNT_FLAG_SELF_MOUNT))
                 continue;
 
-            if (reqFlags&4 && !(currentMountFlags&4))
+            if (reqFlags & MOUNT_CAPABILITY_FLAG_CAN_PITCH && !(currentMountFlags & 4))
                 continue;
 
-            if (reqFlags&8 && !(currentMountFlags&8))
+            if (reqFlags & MOUNT_CAPABILITY_FLAG_CAN_SWIM && !(currentMountFlags & 8))
                 continue;
 
             if (m_movementInfo.hasPitch)
-            {
-                if (!(reqFlags & MOUNT_FLAG_CAN_PITCH))
+                if (!(reqFlags & MOUNT_CAPABILITY_FLAG_CAN_PITCH))
                     continue;
-            }
 
             if (HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
-            {
-                if (!(reqFlags & MOUNT_FLAG_CAN_SWIM))
+                if (!(reqFlags & MOUNT_CAPABILITY_FLAG_CAN_SWIM))
                     continue;
-            }
-
-            //if (!(reqFlags & 3))
-                //continue;
 
             if (mountCapability->RequiredMap != -1 && GetMapId() != uint32(mountCapability->RequiredMap))
                 continue;
@@ -13857,19 +13839,19 @@ void Unit::UpdateMount()
 
             newMount = mountCapability;
             break;
-        }*/
+        }
     }
 
-    /*if (_mount != newMount)
+    if (_mount != newMount)
     {
         uint32 oldSpell = _mount ? _mount->SpeedModSpell : 0;
         bool oldFlyer = _mount ? (_mount->Flags & 2) : false;
         uint32 newSpell = newMount ? newMount->SpeedModSpell : 0;
         bool newFlyer = newMount ? (newMount->Flags & 2) : false;
 
-         This is required for displaying speeds on aura
+        // This is required for displaying speeds on aura
         if (effect)
-            effect->SetAmount(newMount ? newMount->Id : 0);
+            effect->SetAmount(newMount ? newMount->ID : 0);
 
         if (oldSpell != newSpell)
         {
@@ -13877,7 +13859,7 @@ void Unit::UpdateMount()
                 RemoveAurasDueToSpell(oldSpell);
 
             if (newSpell)
-                CastSpell(this, newSpell, true, NULL, effect);
+                CastSpell(this, newSpell, true, nullptr, effect);
         }
 
         if (oldFlyer != newFlyer)
@@ -13891,17 +13873,17 @@ void Unit::UpdateMount()
             player = m_movedPlayer;
 
         _mount = newMount;
-    }*/
+    }
 }
 
 MountCapabilityEntry const* Unit::GetMountCapability(uint32 mountType) const
 {
     if (!mountType)
-        return NULL;
+        return nullptr;
 
-    MountTypeEntry const* mountTypeEntry = sMountTypeStore.LookupEntry(mountType);
-    if (!mountTypeEntry)
-        return NULL;
+    DB2Manager::MountTypeXCapabilitySet const* capabilities = sDB2Manager.GetMountCapabilities(mountType);
+    if (!capabilities)
+        return nullptr;
 
     uint32 zoneId, areaId;
     GetZoneAndAreaId(zoneId, areaId);
@@ -13909,48 +13891,47 @@ MountCapabilityEntry const* Unit::GetMountCapability(uint32 mountType) const
     if (GetTypeId() == TYPEID_PLAYER)
         ridingSkill = ToPlayer()->GetSkillValue(SKILL_RIDING);
 
-    for (uint32 i = MAX_MOUNT_CAPABILITIES; i > 0; --i)
+    for (MountTypeXCapabilityEntry const* mountTypeXCapability : *capabilities)
     {
-        //@TODO:Legion - this data are gone
-        //MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(mountTypeEntry->MountCapability[i - 1]);
-        //if (!mountCapability)
-        //    continue;
+        MountCapabilityEntry const* mountCapability = sMountCapabilityStore.LookupEntry(mountTypeXCapability->MountCapabilityID);
+        if (!mountCapability)
+            continue;
 
-        //if (ridingSkill < mountCapability->RequiredRidingSkill)
-        //    continue;
+        if (ridingSkill < mountCapability->RequiredRidingSkill)
+            continue;
 
-        ///*if (HasExtraUnitMovementFlag(MOVEMENTFLAG2_FULL_SPEED_PITCHING))
-        //{
-        //    if (!(mountCapability->Flags & MOUNT_FLAG_CAN_PITCH))
-        //        continue;
-        //}*/
-        //else if (HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
-        //{
-        //    if (!(mountCapability->Flags & MOUNT_FLAG_CAN_SWIM))
-        //        continue;
-        //}
-        //else if (!(mountCapability->Flags & 0x1))   // unknown flags, checked in 4.2.2 14545 client
-        //{
-        //    if (!(mountCapability->Flags & 0x2))
-        //        continue;
-        //}
+        if (HasExtraUnitMovementFlag(MOVEMENTFLAG2_FULL_SPEED_PITCHING))
+        {
+            if (!(mountCapability->Flags & MOUNT_CAPABILITY_FLAG_CAN_PITCH))
+                continue;
+        }
+        else if (HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
+        {
+            if (!(mountCapability->Flags & MOUNT_CAPABILITY_FLAG_CAN_SWIM))
+                continue;
+        }
+        else if (!(mountCapability->Flags & 0x1))
+        {
+            if (!(mountCapability->Flags & 0x2))
+                continue;
+        }
 
-        //if (mountCapability->RequiredMap != -1 && int32(GetMapId()) != mountCapability->RequiredMap)
-        //    continue;
+        if (mountCapability->RequiredMap != -1 && int32(GetMapId()) != mountCapability->RequiredMap)
+            continue;
 
-        //if (mountCapability->RequiredArea && (mountCapability->RequiredArea != zoneId && mountCapability->RequiredArea != areaId))
-        //    continue;
+        if (mountCapability->RequiredArea && (mountCapability->RequiredArea != zoneId && mountCapability->RequiredArea != areaId))
+            continue;
 
-        //if (mountCapability->RequiredAura && !HasAura(mountCapability->RequiredAura))
-        //    continue;
+        if (mountCapability->RequiredAura && !HasAura(mountCapability->RequiredAura))
+            continue;
 
-        //if (mountCapability->RequiredSpell && (GetTypeId() != TYPEID_PLAYER || !ToPlayer()->HasSpell(mountCapability->RequiredSpell)))
-        //    continue;
+        if (mountCapability->RequiredSpell && (GetTypeId() != TYPEID_PLAYER || !ToPlayer()->HasSpell(mountCapability->RequiredSpell)))
+            continue;
 
-        //return mountCapability;
+        return mountCapability;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void Unit::SetInCombatWith(Unit* enemy)
@@ -14775,8 +14756,8 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
 // returns negative amount on power reduction
 int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return 0;
 
     int32 gain = 0;
@@ -16139,41 +16120,19 @@ void Unit::SetMaxHealth(uint32 val)
         SetHealth(val);
 }
 
-uint32 Unit::GetPowerIndexByClass(uint32 powerId, uint32 classId) const
+uint32 Unit::GetPowerIndex(uint32 powerType) const
 {
-    if (GetTypeId() != TYPEID_PLAYER)
-    {
-        if (powerId == POWER_ALTERNATE_POWER)
-            return 1;
-        return 0;
-    }
+    uint32 classId = getClass();
+    if (ToPet() && ToPet()->getPetType() == HUNTER_PET)
+        classId = CLASS_HUNTER;
 
-    ChrClassesEntry const* classEntry = sChrClassesStore.LookupEntry(classId);
-
-    //ASSERT(classEntry && "Class not found");
-    if(!classEntry)
-        return 0;
-
-    uint32 index = 0;
-    for (ChrClassesXPowerTypesEntry const* powerEntry : sChrClassesXPowerTypesStore)
-    {
-        if (powerEntry->ClassID != classId)
-            continue;
-
-        if (powerEntry->PowerID == powerId)
-            return index;
-
-        ++index;
-    }
-
-    // return invalid value - this class doesn't use this power
-    return MAX_POWERS;
-};
+    return sDB2Manager.GetPowerIndexByClass(powerType, classId);
+}
 
 int32 Unit::GetPower(Powers power) const
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return 0;
 
     return GetInt32Value(UNIT_FIELD_POWER + powerIndex);
@@ -16181,8 +16140,8 @@ int32 Unit::GetPower(Powers power) const
 
 int32 Unit::GetMaxPower(Powers power) const
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return 0;
 
     return GetInt32Value(UNIT_FIELD_MAX_POWER + powerIndex);
@@ -16290,7 +16249,7 @@ void Unit::InitialPowers(bool maxpower)
         if (powerEntry->ClassID != classId)
             continue;
 
-        Powers power = Powers(powerEntry->PowerID);
+        Powers power = Powers(powerEntry->PowerType);
         int32 curval = GetPowerForReset(power, maxpower);
 
         if (power != POWER_ALTERNATE_POWER)
@@ -16318,8 +16277,8 @@ void Unit::InitialPowers(bool maxpower)
 
 void Unit::SetPower(Powers power, int32 val, bool send)
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
     int32 maxPower = int32(GetMaxPower(power));
@@ -16357,9 +16316,8 @@ void Unit::SetPower(Powers power, int32 val, bool send)
 
 void Unit::SetMaxPower(Powers power, int32 val)
 {
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
-   
-    if (powerIndex == MAX_POWERS)
+    uint32 powerIndex = GetPowerIndex(power);
+    if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
     int32 cur_power = GetPower(power);

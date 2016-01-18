@@ -7972,7 +7972,7 @@ SpellCastResult Spell::CheckItems()
 
         // check totem-item requirements (items presence in inventory)
         uint32 totems = 2;
-        for (int i = 0; i < 2; ++i)
+        for (uint8 i = 0; i < MAX_SPELL_TOTEMS; ++i)
         {
             if (m_spellInfo->Totems.Totem[i] != 0)
             {
@@ -7981,8 +7981,9 @@ SpellCastResult Spell::CheckItems()
                     totems -= 1;
                     continue;
                 }
-            }else
-            totems -= 1;
+            }
+            else
+                totems -= 1;
         }
         if (totems != 0)
             return SPELL_FAILED_TOTEMS;

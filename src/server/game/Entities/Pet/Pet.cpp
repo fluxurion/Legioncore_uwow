@@ -598,7 +598,7 @@ void Creature::Regenerate(Powers power)
 {
     int32 maxValue = GetMaxPower(power);
 
-    uint32 powerIndex = GetPowerIndexByClass(power, getClass());
+    uint32 powerIndex = GetPowerIndex(power);
     if (powerIndex == MAX_POWERS)
         return;
 
@@ -1602,7 +1602,6 @@ bool Pet::HasSpell(uint32 spell) const
     return itr != m_spells.end() && itr->second.state != PETSPELL_REMOVED;
 }
 
-// Get all passive spells in our skill line
 void TempSummon::LearnPetPassives()
 {
     CreatureTemplate const* cInfo = GetCreatureTemplate();
@@ -1613,15 +1612,12 @@ void TempSummon::LearnPetPassives()
     if (!cFamily)
         return;
 
-    PetFamilySpellsStore::const_iterator petStore = sPetFamilySpellsStore.find(cFamily->ID);
-    if (petStore != sPetFamilySpellsStore.end())
-    {
-        // For general hunter pets skill 270
-        // Passive 01~10, Passive 00 (20782, not used), Ferocious Inspiration (34457)
-        // Scale 01~03 (34902~34904, bonus from owner, not used)
-        for (PetFamilySpellsSet::const_iterator petSet = petStore->second.begin(); petSet != petStore->second.end(); ++petSet)
-            addSpell(*petSet, ACT_DECIDE, PETSPELL_NEW, PETSPELL_FAMILY);
-    }
+    DB2Manager::PetFamilySpellsSet const* spells = sDB2Manager.GetPetFamilySpells(cInfo->family);
+    if (!spells)
+        return;
+
+    for (DB2Manager::PetFamilySpellsSet::const_iterator petSet = spells->begin(); petSet != spells->end(); ++petSet)
+        addSpell(*petSet, ACT_DECIDE, PETSPELL_NEW, PETSPELL_FAMILY);
 }
 
 void TempSummon::CastPetAuras(bool apply, uint32 spellId)

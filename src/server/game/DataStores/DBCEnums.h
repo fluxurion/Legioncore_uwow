@@ -712,10 +712,19 @@ enum LfgType
     LFG_TYPE_SCENARIO                            = 7,       // not exist in dbc
 };
 
+enum MountCapabilityFlags
+{
+    MOUNT_CAPABILITY_FLAG_CAN_PITCH     = 0x4,  // client checks MOVEMENTFLAG2_FULL_SPEED_PITCHING
+    MOUNT_CAPABILITY_FLAG_CAN_SWIM      = 0x8,  // client checks MOVEMENTFLAG_SWIMMING
+};
+
 enum MountFlags
 {
-    MOUNT_FLAG_CAN_PITCH                = 0x4,                    // client checks MOVEMENTFLAG2_FULL_SPEED_PITCHING
-    MOUNT_FLAG_CAN_SWIM                 = 0x8                     // client checks MOVEMENTFLAG_SWIMMING
+    MOUNT_FLAG_SELF_MOUNT               = 0x02, // Player becomes the mount himself
+    MOUNT_FLAG_FACTION_SPECIFIC         = 0x04,
+    MOUNT_FLAG_PREFERRED_SWIMMING       = 0x10,
+    MOUNT_FLAG_PREFERRED_WATER_WALKING  = 0x20,
+    MOUNT_FLAG_HIDE_IF_UNKNOWN          = 0x40
 };
 
 enum TotemCategoryType

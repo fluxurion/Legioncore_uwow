@@ -1418,6 +1418,19 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 amount = target->GetMap()->GetDifficultyID();
             break;
         }
+        case SPELL_AURA_MOUNTED:
+        {
+            uint32 mountType = uint32(GetMiscValueB());
+            if (MountEntry const* mountEntry = sDB2Manager.GetMount(GetId()))
+                mountType = mountEntry->MountTypeId;
+
+            if (MountCapabilityEntry const* mountCapability = GetBase()->GetUnitOwner()->GetMountCapability(mountType))
+            {
+                amount = mountCapability->ID;
+                m_canBeRecalculated = false;
+            }
+            break;
+        }
         default:
             break;
     }

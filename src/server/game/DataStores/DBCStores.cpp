@@ -61,7 +61,6 @@ static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
 static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 
 MapDifficultyMap                            sMapDifficultyMap;
-PetFamilySpellsStore                        sPetFamilySpellsStore;
 TalentsByPosition                           sTalentByPos;
 MinorTalentByIndexArray                     sMinorTalentByIndexStore;
 
@@ -72,7 +71,6 @@ DBCStorage<BannedAddOnsEntry>               sBannedAddOnsStore(BannedAddOnsfmt);
 DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterListEntryfmt);
 DBCStorage<CharTitlesEntry>                 sCharTitlesStore(CharTitlesEntryfmt);
 DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
-DBCStorage<CinematicSequencesEntry>         sCinematicSequencesStore(CinematicSequencesEntryfmt);
 DBCStorage<CreatureFamilyEntry>             sCreatureFamilyStore(CreatureFamilyfmt);
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
 DBCStorage<DifficultyEntry>                 sDifficultyStore(Difficultyfmt);

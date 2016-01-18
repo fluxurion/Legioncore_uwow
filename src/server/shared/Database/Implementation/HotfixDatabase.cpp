@@ -34,9 +34,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "IconID, RefAchievement, CriteriaTree, FactionFlag, RewardPoints, Amount FROM achievement ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Name_lang, Description_lang, Reward_lang FROM achievement_locale WHERE locale = ?", CONNECTION_SYNCH);
 
-    // AreaGroup.db2
-    PrepareStatement(HOTFIX_SEL_AREA_GROUP, "SELECT ID FROM area_group ORDER BY ID DESC", CONNECTION_SYNCH);
-
     // AreaGroupMember.db2
     PrepareStatement(HOTFIX_SEL_AREA_GROUP_MEMBER, "SELECT ID, AreaGroupID, AreaID FROM area_group_member ORDER BY ID DESC", CONNECTION_SYNCH);
 
@@ -48,12 +45,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_ARMOR_LOCATION, "SELECT ID, Value1, Value2, Value3, Value4, Value5 FROM armor_location ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BankBagSlotPrices.db2
-    PrepareStatement(HOTFIX_SEL_BANK_BAG_SLOT_PRICES, "SELECT price FROM bank_bag_slot_prices ORDER BY price DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BANK_BAG_SLOT_PRICES, "SELECT ID, Price FROM bank_bag_slot_prices ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BarberShopStyle.db2
-    PrepareStatement(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT Type, Name, Description, CostMultiplier, Race, Gender, HairID, Tato FROM barber_shop_style"
-        " ORDER BY Type DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT Type, Name_lang, Description_lang FROM barber_shop_style_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Type, Name, Description, CostMultiplier, Race, Gender, HairID, Tato"
+        " FROM barber_shop_style ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Name_lang, Description_lang FROM barber_shop_style_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BroadcastText.db2
     PrepareStatement(HOTFIX_SEL_BROADCAST_TEXT, "SELECT ID, Language, MaleText, FemaleText, EmoteID1, EmoteID2, EmoteID3, EmoteDelay1, EmoteDelay2, "
@@ -84,7 +81,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "ItemID24, PetDisplayID, RaceID, ClassID, GenderID, OutfitID, PetFamilyID FROM char_start_outfit ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ChrClassesXPowerTypes.db2
-    PrepareStatement(HOTFIX_SEL_CHR_CLASSES_X_POWER_TYPES, "SELECT ID, ClassID, PowerID FROM chr_classes_x_power_types ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHR_CLASSES_X_POWER_TYPES, "SELECT ID, ClassID, PowerType FROM chr_classes_x_power_types ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ChrRaces.db2
     PrepareStatement(HOTFIX_SEL_CHR_RACES, "SELECT ID, Flags, ClientPrefix, ClientFileString, Name, NameFemale, NameMale, FacialHairCustomization1, "
@@ -97,19 +94,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CHR_RACES, "SELECT ID, ClientPrefix_lang, ClientFileString_lang, Name_lang, NameFemale_lang, NameMale_lang, "
         "FacialHairCustomization1_lang, FacialHairCustomization2_lang, HairCustomization_lang FROM chr_races_locale WHERE locale = ?", CONNECTION_SYNCH);
 
-    // CreatureDisplayInfoExtra.db2
-    PrepareStatement(HOTFIX_SEL_CREATURE_DISPLAY_INFO_EXTRA, "SELECT ID, NPCItemDisplay1, NPCItemDisplay2, NPCItemDisplay3, NPCItemDisplay4, "
-        "NPCItemDisplay5, NPCItemDisplay6, NPCItemDisplay7, NPCItemDisplay8, NPCItemDisplay9, NPCItemDisplay10, FileDataID, Unk, DisplayRaceID, "
-        "DisplaySexID, SkinID, FaceID, HairStyleID, HairColorID, FacialHairID, Tato1, Tato2, Tato3, Flags FROM creature_display_info_extra"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
-
     // CreatureDisplayInfo.db2
-    PrepareStatement(HOTFIX_SEL_CREATURE_DISPLAY_INFO, "SELECT ID, ModelID, SoundID, ExtendedDisplayInfoID, CreatureModelScale, CreatureModelAlpha, "
-        "TextureVariation1, TextureVariation2, TextureVariation3, PortraitTextureName, PortraitCreatureDisplayInfoID, SizeClass, BloodID, NPCSoundID, "
-        "ParticleColorID, CreatureGeosetData, ObjectEffectPackageID, AnimReplacementSetID, Flags, Gender, StateSpellVisualKitID"
-        " FROM creature_display_info ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_CREATURE_DISPLAY_INFO, "SELECT ID, TextureVariation1_lang, TextureVariation2_lang, TextureVariation3_lang, "
-        "PortraitTextureName_lang FROM creature_display_info_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CREATURE_DISPLAY_INFO, "SELECT ID, ExtendedDisplayInfoID, CreatureModelScale, Unknown620, Unknown7011, Unknown7012, "
+        "Unknown7013, PortraitTextureName, PortraitCreatureDisplayInfoID, Unknown0, Unknown1, ModelID, SoundID, NPCSoundID, Unknown2, Unknown3, "
+        "Unknown5, CreatureModelAlpha, SizeClass, Unknown6, Unknown7, Gender, Unknown8 FROM creature_display_info ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_CREATURE_DISPLAY_INFO, "SELECT ID, PortraitTextureName_lang FROM creature_display_info_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CreatureType.db2
     PrepareStatement(HOTFIX_SEL_CREATURE_TYPE, "SELECT ID, Name, Flags FROM creature_type ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -136,8 +125,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
 
     // GameObjectDisplayInfo.db2
     PrepareStatement(HOTFIX_SEL_GAME_OBJECT_DISPLAY_INFO, "SELECT ID, FileDataID, GeoBoxMinX, GeoBoxMinY, GeoBoxMinZ, GeoBoxMaxX, GeoBoxMaxY, "
-        "GeoBoxMaxZ, OverrideLootEffectScale, OverrideNameScale, Sound1, Sound2, Sound3, Sound4, Sound5, Sound6, Sound7, Sound8, Sound9, Sound10, "
-        "ObjectEffectPackageID FROM game_object_display_info ORDER BY ID DESC", CONNECTION_SYNCH);
+        "GeoBoxMaxZ, OverrideLootEffectScale, OverrideNameScale, ObjectEffectPackageID FROM game_object_display_info ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ImportPriceArmor.db2
     PrepareStatement(HOTFIX_SEL_IMPORT_PRICE_ARMOR, "SELECT ID, ClothModifier, LeatherModifier, ChainModifier, PlateModifier FROM import_price_armor"
@@ -234,8 +222,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountCapability.db2
-    PrepareStatement(HOTFIX_SEL_MOUNT_CAPABILITY, "SELECT ID, Unknown0, ReqSpellKnownID, ModSpellAuraID, ReqRidingSkill, ReqAreaID, ReqMapID, Flags, "
-        "Unknown7 FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MOUNT_CAPABILITY, "SELECT ID, SpeedModSpell, RequiredSpell, RequiredAura, RequiredRidingSkill, RequiredArea, "
+        "RequiredMap, Flags, Unknown7 FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountType.db2
     PrepareStatement(HOTFIX_SEL_MOUNT_TYPE, "SELECT ID, MountTypeID FROM mount_type ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -296,8 +284,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_ITEM_CURRENCY_COST, "SELECT ID, ItemId FROM item_currency_cost ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemEffect.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_EFFECT, "SELECT ID, ItemID, OrderIndex, SpellID, `Trigger`, Charges, Cooldown, Category, CategoryCooldown"
-        " FROM item_effect ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_EFFECT, "SELECT ID, ItemID, SpellID, Cooldown, CategoryCooldown, Charges, Category, SpecID, OrderIndex, "
+        "`Trigger` FROM item_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemModifiedAppearance.db2
     PrepareStatement(HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE, "SELECT ID, ItemID, AppearanceModID, AppearanceID, IconFileDataID, `Index`"
@@ -476,8 +464,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MOUNT, "SELECT Id, Name_lang, Description_lang, SourceDescription_lang FROM mount_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // LanguageWords.db2
-    PrepareStatement(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT Id, langId, word FROM language_words ORDER BY Id DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT Id, word_lang FROM language_words_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT ID, Word, Lang FROM language_words ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT ID, Word_lang FROM language_words_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // KeyChain.db2
     PrepareStatement(HOTFIX_SEL_KEY_CHAIN, "SELECT Id, Key1, Key2, Key3, Key4, Key5, Key6, Key7, Key8, Key9, Key10, Key11, Key12, Key13, Key14, "
@@ -487,9 +475,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // OverrideSpellData.db2
     PrepareStatement(HOTFIX_SEL_OVERRIDE_SPELL_DATA, "SELECT ID, SpellID1, SpellID2, SpellID3, SpellID4, SpellID5, SpellID6, SpellID7, SpellID8, "
         "SpellID9, SpellID10, Flags, PlayerActionbarFileDataID FROM override_spell_data ORDER BY ID DESC", CONNECTION_SYNCH);
-
-    // PhaseGroup.db2
-    PrepareStatement(HOTFIX_SEL_PHASE_GROUP, "SELECT ID, PhaseID, PhaseGroupID FROM phase_group ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SoundEntries.db2
     PrepareStatement(HOTFIX_SEL_SOUND_ENTRIES, "SELECT ID, SoundType, Name, FileDataID1, FileDataID2, FileDataID3, FileDataID4, FileDataID5, "
@@ -598,8 +583,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
 
     // SpellShapeshiftForm.db2
     PrepareStatement(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT ID, Name, UnkLegion, Flags, AttackIconID, CombatRoundTime, CreatureDisplayID1, "
-        "CreatureDisplayID2, CreatureDisplayID3, CreatureDisplayID4, PresetSpellID, CreatureType, MountTypeID, ExitSoundEntriesID"
-        " FROM spell_shapeshift_form ORDER BY ID DESC", CONNECTION_SYNCH);
+        "CreatureDisplayID2, CreatureDisplayID3, CreatureDisplayID4, PresetSpellID1, PresetSpellID2, PresetSpellID3, PresetSpellID4, PresetSpellID5, "
+        "PresetSpellID6, PresetSpellID7, PresetSpellID8, CreatureType, MountTypeID, ExitSoundEntriesID FROM spell_shapeshift_form ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_SHAPESHIFT_FORM, "SELECT ID, Name_lang FROM spell_shapeshift_form_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellShapeshift.db2
@@ -636,7 +621,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM spell_procs_per_minute_mod ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellLevels.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_LEVELS, "SELECT ID, SpellID, BaseLevel, MaxLevel, SpellLevel, DifficultyID FROM spell_levels ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_LEVELS, "SELECT ID, SpellID, BaseLevel, MaxLevel, SpellLevel, DifficultyID, Unk701 FROM spell_levels"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellItemEnchantmentCondition.db2
     PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT_CONDITION, "SELECT ID, Color1, Color2, Color3, Color4, Color5, LtOperandType1, LtOperandType2, "
@@ -727,10 +713,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_TRANSPORT_ANIMATION, "SELECT ID, TransportID, TimeIndex, PosX, PosY, PosZ, SequenceID FROM transport_animation"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
-    // TransportRotation.db2
-    PrepareStatement(HOTFIX_SEL_TRANSPORT_ROTATION, "SELECT TransportID, TimeIndex, RotX, RotY, RotZ, RotO FROM transport_rotation"
-        " ORDER BY TransportID DESC", CONNECTION_SYNCH);
-
     // UnitPowerBar.db2
     PrepareStatement(HOTFIX_SEL_UNIT_POWER_BAR, "SELECT ID, MaxPower, RegenerationPeace, RegenerationCombat, FileDataID1, FileDataID2, FileDataID3, "
         "FileDataID4, FileDataID5, FileDataID6, Color1, Color2, Color3, Color4, Color5, Color6, Name, Cost, OutOfError, ToolTip, StartInset, "
@@ -749,12 +731,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "RegionOffsetX, RegionOffsetY, RegionScale, MapID, NewMapID, NewDungeonMapID, NewAreaID, Flags FROM world_map_transforms ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ChatChannels.db2
-    PrepareStatement(HOTFIX_SEL_CHAT_CHANNELS, "SELECT ID, Flags, FactionGroup, Name, Shortcut FROM chat_channels ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHAT_CHANNELS, "SELECT ID, Flags, Name, Shortcut, FactionGroup FROM chat_channels ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CHAT_CHANNELS, "SELECT ID, Name_lang, Shortcut_lang FROM chat_channels_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ChrSpecialization.db2
-    PrepareStatement(HOTFIX_SEL_CHR_SPECIALIZATION, "SELECT ID, BackgroundFile, ClassID, MasterySpellID, OrderIndex, PetTalentType, Role, "
-        "SpellIconID, RaidBuffs, Name, Name2, Description, PrimaryStatOrder1, PrimaryStatOrder2 FROM chr_specialization ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHR_SPECIALIZATION, "SELECT ID, BackgroundFile, ClassID, MasterySpellID1, MasterySpellID2, OrderIndex, PetTalentType, "
+        "Role, SpellIconID, RaidBuffs, Name, Name2, Description, PrimaryStatOrder1, PrimaryStatOrder2 FROM chr_specialization ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CHR_SPECIALIZATION, "SELECT ID, BackgroundFile_lang, Name_lang, Name2_lang, Description_lang"
         " FROM chr_specialization_locale WHERE locale = ?", CONNECTION_SYNCH);
 
@@ -763,7 +745,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_EMOTES, "SELECT ID, Name_lang FROM emotes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // GemProperties.db2
-    PrepareStatement(HOTFIX_SEL_GEM_PROPERTIES, "SELECT ID, EnchantID, MaxCountInv, MaxCountItem, Type, MinItemLevel FROM gem_properties"
+    PrepareStatement(HOTFIX_SEL_GEM_PROPERTIES, "SELECT ID, Type, EnchantID, MaxCountInv, MaxCountItem, MinItemLevel FROM gem_properties"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GlyphProperties.db2
@@ -771,14 +753,18 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemSet.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_SET, "SELECT ID, Name, ItemID, RequiredSkill, RequiredSkillValue FROM item_set ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_SET, "SELECT ID, Name, ItemID1, ItemID2, ItemID3, ItemID4, ItemID5, ItemID6, ItemID7, ItemID8, ItemID9, "
+        "ItemID10, ItemID11, ItemID12, ItemID13, ItemID14, ItemID15, ItemID16, ItemID17, RequiredSkill, RequiredSkillValue FROM item_set"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SET, "SELECT ID, Name_lang FROM item_set_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Lock.db2
-    PrepareStatement(HOTFIX_SEL_LOCK, "SELECT ID, Type, `Index`, Skill, Action FROM lock ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_LOCK, "SELECT ID, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Index1, Index2, Index3, Index4, Index5, "
+        "Index6, Index7, Index8, Skill1, Skill2, Skill3, Skill4, Skill5, Skill6, Skill7, Skill8, Action1, Action2, Action3, Action4, Action5, "
+        "Action6, Action7, Action8 FROM lock ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Movie.db2
-    PrepareStatement(HOTFIX_SEL_MOVIE, "SELECT ID, unk1, unk2, unk3 FROM movie ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MOVIE, "SELECT ID, unk1, unk2, unk3, unk4 FROM movie ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // PowerDisplay.db2
     PrepareStatement(HOTFIX_SEL_POWER_DISPLAY, "SELECT ID, GlobalStringBaseTag, PowerType, Red, Green, Blue FROM power_display ORDER BY ID DESC", CONNECTION_SYNCH);

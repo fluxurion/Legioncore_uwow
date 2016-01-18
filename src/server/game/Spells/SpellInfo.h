@@ -39,6 +39,11 @@ struct SpellEntry;
 struct SpellCastTimesEntry;
 struct Condition;
 
+#define MAX_SPELL_EFFECTS_DIFF 32
+#define MAX_EFFECT_MASK 4294967295
+#define MAX_POWERS_FOR_SPELL 4
+#define MAX_CREATURE_SPELL_DATA_SLOT 4
+
 enum SpellCastTargetFlags
 {
     TARGET_FLAG_NONE            = 0x00000000,
@@ -456,8 +461,8 @@ public:
 
     struct SpellTotems
     {
-        uint32 Totem[2];
-        uint8 TotemCategory[2];
+        uint32 Totem[MAX_SPELL_TOTEMS];
+        uint8 TotemCategory[MAX_SPELL_TOTEMS];
     } Totems;
 
     struct SpellReagents

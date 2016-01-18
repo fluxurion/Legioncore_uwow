@@ -110,14 +110,12 @@ extern DB2Storage<ItemSpecOverrideEntry>            sItemSpecOverrideStore;
 extern DB2Storage<ItemToBattlePetSpeciesEntry>      sItemToBattlePetSpeciesStore;
 extern DB2Storage<ItemUpgradeEntry>                 sItemUpgradeStore;
 extern DB2Storage<KeyChainEntry>                    sKeyChainStore;
-extern DB2Storage<LanguageWordsEntry>               sLanguageWordsStore;
 extern DB2Storage<MailTemplateEntry>                sMailTemplateStore;
 extern DB2Storage<MapChallengeModeEntry>            sMapChallengeModeStore;
 extern DB2Storage<ModifierTreeEntry>                sModifierTreeStore;
 extern DB2Storage<MountCapabilityEntry>             sMountCapabilityStore;
 extern DB2Storage<MountTypeEntry>                   sMountTypeStore;
 extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
-extern DB2Storage<PhaseGroupEntry>                  sPhaseGroupStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
 extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
@@ -235,6 +233,7 @@ class DB2Manager
 {
 public:
     DEFINE_DB2_SET_COMPARATOR(MountTypeXCapabilityEntry);
+    DEFINE_DB2_SET_COMPARATOR(ChrClassesXPowerTypesEntry);
 
     typedef std::map<uint32 /*hash*/, DB2StorageBase*> StorageMap;
 
@@ -292,6 +291,8 @@ public:
     typedef std::unordered_map<uint32, SpellEffect> SpellEffectContainer;
     typedef std::unordered_map<uint32, std::set<uint32>/*category*/> SpellCategoryContainer;
     typedef ChrSpecializationEntry const* ChrSpecializationByIndexContainer[MAX_CLASSES][4];
+    typedef std::set<uint32> PetFamilySpellsSet;
+    typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsContainer;
 
     static DB2Manager& Instance()
     {
@@ -354,6 +355,9 @@ public:
     PvPDifficultyEntry const* GetBattlegroundBracketByLevel(uint32 mapID, uint32 level);
     PvPDifficultyEntry const* GetBattlegroundBracketById(uint32 mapID, BattlegroundBracketId id);
     ChrSpecializationEntry const* GetChrSpecializationByID(uint8 classID, uint32 ID);
+    PetFamilySpellsSet const* GetPetFamilySpells(uint32 family);
+    uint32 GetPowerIndexByClass(uint32 powerType, uint32 classId) const;
+
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -376,7 +380,7 @@ private:
     MountContainer _mountsBySpellId;
     MountCapabilitiesByTypeContainer _mountCapabilitiesByType;
     std::list<uint32> _gameObjectsList;
-    std::map<uint32 /*landID*/, LanguageWordsContainer> sLanguageWordsMapStore;
+    std::map<uint32 /*landID*/, LanguageWordsContainer> _languageWordsMap;
     AreaGroupMemberContainer _areaGroupMembers;
     ItemUpgradeDataContainer _itemUpgradeDataMap;
     QuestPackageItemContainer _questPackages;
@@ -406,6 +410,8 @@ private:
     SpellEffectContainer _spellEffectMap;
     SpellCategoryContainer _spellCategory;
     ChrSpecializationByIndexContainer _chrSpecializationByIndex;
+    PetFamilySpellsContainer _petFamilySpells;
+    uint32 _powersByClass[MAX_CLASSES][MAX_POWERS];
 };
 
 #define sDB2Manager DB2Manager::Instance()

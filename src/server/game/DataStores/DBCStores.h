@@ -95,7 +95,6 @@ extern DBCStorage<BannedAddOnsEntry>            sBannedAddOnsStore;
 extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
 extern DBCStorage<CharTitlesEntry>              sCharTitlesStore;
 extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
-extern DBCStorage<CinematicSequencesEntry>      sCinematicSequencesStore;
 extern DBCStorage<CreatureFamilyEntry>          sCreatureFamilyStore;
 extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
 extern DBCStorage<DifficultyEntry>              sDifficultyStore;
@@ -150,7 +149,6 @@ extern GameTable<GtRegenMPPerSptEntry>          sGtRegenMPPerSptStore;
 extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
 
 extern MapDifficultyMap                          sMapDifficultyMap;
-extern PetFamilySpellsStore                      sPetFamilySpellsStore;
 
 void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);

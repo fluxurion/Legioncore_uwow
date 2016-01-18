@@ -33,7 +33,6 @@ char const BannedAddOnsfmt[] = "nxxxxxxxxxx";
 char const BattlemasterListEntryfmt[] = "niiiiiiiiiiiiiiiiixsiiiiiiiixxx";
 char const CharTitlesEntryfmt[] = "nxssix";
 char const ChrClassesEntryfmt[] = "nixsxxxixiiiiixxxxx";
-char const CinematicSequencesEntryfmt[] = "nxxxxxxxxx";
 char const CreatureFamilyfmt[] = "nfifiiiiixsx";
 char const CreatureModelDatafmt[] = "nxxxxxxxxxxxxxffxxxxxxxxxxxxxxxxxx";
 char const Difficultyfmt[] = "niiiixiixxxxix";

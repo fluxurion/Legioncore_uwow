@@ -31,19 +31,8 @@
 
 #pragma pack(push, 1)
 
-#define MAX_MAP_DEPTH -5000 // Temporary define until max depth is found somewhere (adt?)
-#define MAX_MASTERY_SPELLS 2
-#define MAX_PERKS_COUNT 4
 #define MAX_FACTION_RELATIONS 4
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
-#define MAX_ITEM_SET_ITEMS 17
-#define MAX_ITEM_SET_SPELLS 8
-#define MAX_LOCK_CASE 8
-#define MAX_MOUNT_CAPABILITIES 24
-#define MAX_SPELL_EFFECTS_DIFF 32
-#define MAX_EFFECT_MASK 4294967295
-#define MAX_POWERS_FOR_SPELL 4
-#define MAX_SHAPESHIFT_SPELLS 8
 #define MAX_VEHICLE_SEATS 8
 
 struct AreaTableEntry
@@ -181,14 +170,6 @@ struct ChrClassesEntry
     //uint32    LowResScreenFileDataID;                     // 16
     //uint32    IconFileDataID;                             // 17
     //uint32    Unk1;                                       // 18
-};
-
-struct CinematicSequencesEntry
-{
-    uint32      Id;                                         // 0 index
-    //uint32      unk1;                                     // 1 always 0
-    //uint32      cinematicCamera;                          // 2 id in CinematicCamera.dbc
-                                                            // 3-9 always 0
 };
 
 struct CreatureFamilyEntry
@@ -808,9 +789,6 @@ struct TalentSpellPos
 };
 
 typedef std::unordered_map<uint32, TalentSpellPos> TalentSpellPosMap;
-
-typedef std::set<uint32> PetFamilySpellsSet;
-typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsStore;
 
 float GetCurrencyPrecision(uint32 currencyId);
 

@@ -987,7 +987,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
         Effects[i] = SpellEffectInfo(spellEntry, this, i, spellEntry->GetSpellEffect(i, 0));
 
-    for (int difficulty = 1; difficulty < MAX_DIFFICULTY; ++difficulty)
+    for (uint8 difficulty = 1; difficulty < MAX_DIFFICULTY; ++difficulty)
         for (uint8 i = 0; i < MAX_SPELL_EFFECTS_DIFF; ++i)
             if (SpellEffectEntry const* _effect = spellEntry->GetSpellEffect(i, difficulty))
                 EffectsMap[MAKE_PAIR16(i, difficulty)] = SpellEffectInfo(spellEntry, this, i, _effect);
@@ -1157,7 +1157,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     }
 
     SpellTotemsEntry const* totemsStore = sSpellTotemsStore.LookupEntry(Id);
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_SPELL_TOTEMS; ++i)
     {
         Totems.TotemCategory[i] = totemsStore ? totemsStore->TotemCategory[i] : 0;
         Totems.Totem[i] = totemsStore ? totemsStore->Totem[i] : 0;
@@ -2175,7 +2175,10 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
                 }
                 case SPELL_AURA_MOUNTED:
                 {
-                    if (Effects[i].MiscValueB && !player->GetMountCapability(Effects[i].MiscValueB))
+                    uint32 mountType = Effects[i].MiscValueB;
+                    if (MountEntry const* mountEntry = sDB2Manager.GetMount(Id))
+                        mountType = mountEntry->MountTypeId;
+                    if (mountType && !player->GetMountCapability(mountType))
                         return SPELL_FAILED_NOT_HERE;
                     break;
                 }

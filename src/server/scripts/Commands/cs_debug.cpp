@@ -176,14 +176,6 @@ public:
         }
 
         uint32 id = atoi((char*)args);
-
-        if (!sCinematicSequencesStore.LookupEntry(id))
-        {
-            handler->PSendSysMessage(LANG_CINEMATIC_NOT_EXIST, id);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
-
         handler->GetSession()->GetPlayer()->SendCinematicStart(id);
         return true;
     }
