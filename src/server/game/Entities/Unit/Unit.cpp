@@ -16182,6 +16182,8 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return 1000;
         case POWER_SOUL_SHARDS:
             return 400;
+        case POWER_FURY:
+        case POWER_PAIN:
         case POWER_LUNAR_POWER:
             return 100; // Should be -100 to 100 this needs the power to be int32 instead of uint32
         case POWER_HOLY_POWER:

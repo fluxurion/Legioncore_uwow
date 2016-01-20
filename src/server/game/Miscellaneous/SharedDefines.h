@@ -312,10 +312,10 @@ enum Stats
     STAT_AGILITY                       = 1,
     STAT_STAMINA                       = 2,
     STAT_INTELLECT                     = 3,
-    STAT_SPIRIT                        = 4
-};
+    STAT_SPIRIT                        = 4,
 
-#define MAX_STATS                        5
+    MAX_STATS
+};
 
 enum Powers
 {
@@ -363,10 +363,9 @@ enum PowerIndex
     POWER_INDEX_SECOND                  = 1,
     POWER_INDEX_THIRD                   = 2,
     POWER_INDEX_FOURTH                  = 3,
-    POWER_INDEX_MAX                     = 6,
-};
 
-#define MAX_POWERS_PER_CLASS              6
+    MAX_POWERS_PER_CLASS                = 6
+};
 
 enum SpellSchools : int32
 {
@@ -376,10 +375,10 @@ enum SpellSchools : int32
     SPELL_SCHOOL_NATURE                 = 3,
     SPELL_SCHOOL_FROST                  = 4,
     SPELL_SCHOOL_SHADOW                 = 5,
-    SPELL_SCHOOL_ARCANE                 = 6
-};
+    SPELL_SCHOOL_ARCANE                 = 6,
 
-#define MAX_SPELL_SCHOOL                  7
+    MAX_SPELL_SCHOOL
+};
 
 enum SpellSchoolMask
 {
@@ -423,10 +422,10 @@ enum ItemQualities
     ITEM_QUALITY_EPIC                  = 4,                 //PURPLE
     ITEM_QUALITY_LEGENDARY             = 5,                 //ORANGE
     ITEM_QUALITY_ARTIFACT              = 6,                 //LIGHT YELLOW
-    ITEM_QUALITY_HEIRLOOM              = 7
-};
+    ITEM_QUALITY_HEIRLOOM              = 7,
 
-#define MAX_ITEM_QUALITY                 8
+    MAX_ITEM_QUALITY
+};
 
 enum SpellCategory
 {
@@ -983,10 +982,10 @@ enum SheathTypes
     SHEATHETYPE_LARGEWEAPONRIGHT       = 4,
     SHEATHETYPE_HIPWEAPONLEFT          = 5,
     SHEATHETYPE_HIPWEAPONRIGHT         = 6,
-    SHEATHETYPE_SHIELD                 = 7
-};
+    SHEATHETYPE_SHIELD                 = 7,
 
-#define MAX_SHEATHETYPE                  8
+    MAX_SHEATHETYPE
+};
 
 enum CharacterFlags
 {
@@ -2008,10 +2007,10 @@ enum SpellImmunity
     IMMUNITY_DAMAGE                = 3,                     // enum SpellSchoolMask
     IMMUNITY_DISPEL                = 4,                     // enum DispelType
     IMMUNITY_MECHANIC              = 5,                     // enum Mechanics
-    IMMUNITY_ID                    = 6
-};
+    IMMUNITY_ID                    = 6,
 
-#define MAX_SPELL_IMMUNITY           7
+    MAX_SPELL_IMMUNITY
+};
 
 // target enum name consist of:
 // TARGET_[OBJECT_TYPE]_[REFERENCE_TYPE(skipped for caster)]_[SELECTION_TYPE(skipped for default)]_[additional specifiers(friendly, BACK_LEFT, etc.]
@@ -3706,10 +3705,10 @@ enum TrainerType                                            // this is important
     TRAINER_TYPE_CLASS             = 0,                     // TODO: Not in MoP
     TRAINER_TYPE_MOUNTS            = 1,                     // on blizz it's 2
     TRAINER_TYPE_TRADESKILLS       = 2,
-    TRAINER_TYPE_PETS              = 3
-};
+    TRAINER_TYPE_PETS              = 3,
 
-#define MAX_TRAINER_TYPE 4
+    MAX_TRAINER_TYPE
+};
 
 // CreatureType.dbc
 enum CreatureType
@@ -4477,10 +4476,10 @@ enum PetDiet
     PET_DIET_FUNGAS     = 5,
     PET_DIET_FRUIT      = 6,
     PET_DIET_RAW_MEAT   = 7,
-    PET_DIET_RAW_FISH   = 8
-};
+    PET_DIET_RAW_FISH   = 8,
 
-#define MAX_PET_DIET 9
+    MAX_PET_DIET
+};
 
 #define CHAIN_SPELL_JUMP_RADIUS 8
 
@@ -4763,7 +4762,6 @@ inline BracketType &operator++(BracketType &i){ return i = BracketType(i + 1); }
 
 #define MAX_ARENA_SLOT 3                                    // 0..2 slots
 #define MAX_BRACKET_SLOT 4
-#define MAX_ARENA_TYPE 6                                    // type : 2, 3 or 5
 
 enum MailResponseType
 {

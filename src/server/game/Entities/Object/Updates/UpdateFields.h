@@ -111,7 +111,7 @@ enum EUnitFields
     UNIT_FIELD_MOD_HASTE = OBJECT_END + 0x6D, // Size: 1 Flags: Public
     UNIT_FIELD_MOD_RANGED_HASTE = OBJECT_END + 0x6E, // Size: 1 Flags: Public
     UNIT_FIELD_MOD_HASTE_REGEN = OBJECT_END + 0x6F, // Size: 1 Flags: Public
-    UNIT_FIELD_MOD_GLOBAL_COOLDOWN_RATE = OBJECT_END + 0x70, // Size: 1 Flags: Public
+    UNIT_FIELD_MOD_TIME_RATE = OBJECT_END + 0x70, // Size: 1 Flags: Public
     UNIT_FIELD_CREATED_BY_SPELL = OBJECT_END + 0x71, // Size: 1 Flags: Public
     UNIT_FIELD_NPC_FLAGS = OBJECT_END + 0x72, // Size: 2 Flags: Public, Dynamic
     UNIT_FIELD_NPC_FLAGS2 = UNIT_FIELD_NPC_FLAGS + 1,

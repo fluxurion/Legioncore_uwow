@@ -2395,6 +2395,8 @@ void Player::ProcessDelayedOperations()
 
         SetPower(POWER_RAGE, 0);
         SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+        SetPower(POWER_FURY, GetMaxPower(POWER_FURY));
+        SetPower(POWER_PAIN, GetMaxPower(POWER_PAIN));
         SetPower(POWER_LUNAR_POWER, 0, false);
 
         if (uint32 aura = _resurrectionData->Aura)
@@ -2926,6 +2928,12 @@ void Player::ResetAllPowers(bool preparation)
             break;
         case POWER_RUNIC_POWER:
             SetPower(POWER_RUNIC_POWER, 0);
+            break;
+        case POWER_FURY:
+            SetPower(POWER_FURY, 100);
+            break;
+        case POWER_PAIN:
+            SetPower(POWER_PAIN, 100);
             break;
         default:
             break;
@@ -3616,7 +3624,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     PlayerLevelInfo info;
     sObjectMgr->GetPlayerLevelInfo(getRace(), getClass(), getLevel(), &info);
 
-    SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL));
+    SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, MAX_LEVEL);
     SetUInt32Value(PLAYER_FIELD_NEXT_LEVEL_XP, sObjectMgr->GetXPForLevel(getLevel()));
 
     // reset before any aura state sources (health set/aura apply)
@@ -13199,9 +13207,6 @@ void Player::QuickEquipItem(uint16 pos, Item* pItem)
 
 void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
 {
-    if (m_vis)
-        return;
-
     if (pItem)
     {
         SetUInt32Value(PLAYER_FIELD_VISIBLE_ITEMS + (slot * 2), pItem->GetVisibleEntry());
@@ -27578,6 +27583,7 @@ void Player::SendTalentsInfoData(bool pet)
 
     WorldPackets::Talent::UpdateTalentData packet;
     packet.Info.ActiveGroup = GetActiveSpec();
+    packet.Info.LegionUnkInt = 1;
     for (uint8 i = 0; i < GetSpecsCount(); ++i)
     {
         WorldPackets::Talent::TalentGroupInfo groupInfoPkt;
@@ -27607,49 +27613,6 @@ void Player::SendTalentsInfoData(bool pet)
     }
 
     SendDirectMessage(packet.Write());
-}
-
-void Player::BuildEnchantmentsInfoData(WorldPacket* data)
-{
-    uint32 slotUsedMask = 0;
-    size_t slotUsedMaskPos = data->wpos();
-    *data << uint32(slotUsedMask);                          // slotUsedMask < 0x80000
-
-    for (uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
-    {
-        Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-
-        if (!item)
-            continue;
-
-        slotUsedMask |= (1 << i);
-
-        *data << uint32(item->GetEntry());                  // item entry
-
-        uint16 enchantmentMask = 0;
-        size_t enchantmentMaskPos = data->wpos();
-        *data << uint16(enchantmentMask);                   // enchantmentMask < 0x1000
-
-        for (uint32 j = 0; j < MAX_ENCHANTMENT_SLOT; ++j)
-        {
-            uint32 enchId = item->GetEnchantmentId(EnchantmentSlot(j));
-
-            if (!enchId)
-                continue;
-
-            enchantmentMask |= (1 << j);
-
-            *data << uint16(enchId);                        // enchantmentId?
-        }
-
-        data->put<uint16>(enchantmentMaskPos, enchantmentMask);
-
-        *data << uint16(0);                                 // unknown
-        data->appendPackGUID(item->GetUInt64Value(ITEM_FIELD_CREATOR)); // item creator
-        *data << uint32(0);                                 // seed?
-    }
-
-    data->put<uint32>(slotUsedMaskPos, slotUsedMask);
 }
 
 void Player::SendEquipmentSetList()

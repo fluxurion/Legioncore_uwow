@@ -1850,7 +1850,6 @@ class Player : public Unit, public GridObject<Player>
         void ApplyEnchantment(Item* item, bool apply);
         void UpdateSkillEnchantments(uint16 skill_id, uint16 curr_value, uint16 new_value);
         void SendEnchantmentDurations();
-        void BuildEnchantmentsInfoData(WorldPacket* data);
         void AddItemDurations(Item* item);
         void RemoveItemDurations(Item* item);
         void SendItemDurations();

@@ -40,13 +40,13 @@ namespace WorldPackets
                 uint8 Flags;
             };
 
-            ChannelListResponse() : ServerPacket(SMSG_CHANNEL_LIST) { }
+            ChannelListResponse() : ServerPacket(SMSG_CHANNEL_LIST, 4 + 4 + 4 + 1) { }
 
             WorldPacket const* Write() override;
 
             std::vector<ChannelPlayer> _Members;
             std::string _Channel;
-            uint8 _ChannelFlags = 0;
+            uint32 _ChannelFlags = 0;
             bool _Display = false;
         };
 
@@ -80,14 +80,14 @@ namespace WorldPackets
             std::string ChannelWelcomeMsg;
             int32 ChatChannelID = 0;
             int32 InstanceID = 0;
-            uint8 _ChannelFlags = 0;
+            uint32 _ChannelFlags = 0;
             std::string _Channel;
         };
 
         class ChannelNotifyLeft final : public ServerPacket
         {
         public:
-            ChannelNotifyLeft() : ServerPacket(SMSG_CHANNEL_NOTIFY_LEFT, 30) { }
+            ChannelNotifyLeft() : ServerPacket(SMSG_CHANNEL_NOTIFY_LEFT, 4 + 4 + 1) { }
 
             WorldPacket const* Write() override;
 
