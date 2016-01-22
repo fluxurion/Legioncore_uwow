@@ -227,12 +227,12 @@ bool WorldSocket::ReadDataHandler()
                     HandleAuthSession(authSession);
                     break;
                 }
-                //case CMSG_KEEP_ALIVE:
-                //    #ifdef WIN32
-                //    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                //    #endif
-                //    sScriptMgr->OnPacketReceive(_worldSession, packet);
-                //    break;
+                case CMSG_KEEP_ALIVE:
+                    #ifdef WIN32
+                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
+                    #endif
+                    sScriptMgr->OnPacketReceive(_worldSession, packet);
+                    break;
                 case CMSG_LOG_DISCONNECT:
                     packet.rfinish();   // contains uint32 disconnectReason;
                     #ifdef WIN32

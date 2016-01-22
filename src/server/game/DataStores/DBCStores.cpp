@@ -165,7 +165,7 @@ inline void LoadDBC(uint32& availableDbcLocales, StoreProblemList& errors, DBCSt
             localizedName.append(filename);
 
             if (!storage.LoadStringsFrom(localizedName.c_str()))
-                availableDbcLocales &= ~(1<<i);             // mark as not available for speedup next checks
+                availableDbcLocales &= ~(1 << i);             // mark as not available for speedup next checks
         }
     }
     else
@@ -408,13 +408,15 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction)
     return nullptr;
 }
 
-char const* GetPetName(uint32 petfamily, uint32 /*dbclang*/)
+char const* GetPetName(uint32 petfamily)
 {
     if (!petfamily)
         return nullptr;
+
     CreatureFamilyEntry const* pet_family = sCreatureFamilyStore.LookupEntry(petfamily);
     if (!pet_family)
         return nullptr;
+
     return pet_family->Name ? pet_family->Name : nullptr;
 }
 

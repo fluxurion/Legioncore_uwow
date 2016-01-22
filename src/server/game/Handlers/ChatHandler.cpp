@@ -110,27 +110,27 @@ void WorldSession::HandleChatMessageOpcode(WorldPackets::Chat::ChatMessage& pack
         case CMSG_CHAT_MESSAGE_SAY:
             type = CHAT_MSG_SAY;
             break;
-        //case CMSG_CHAT_MESSAGE_YELL:
-        //    type = CHAT_MSG_YELL;
-        //    break;
+        case CMSG_CHAT_MESSAGE_YELL:
+            type = CHAT_MSG_YELL;
+            break;
         //case CMSG_CHAT_MESSAGE_CHANNEL:
         //    type = CHAT_MSG_CHANNEL;
         //    break;
-        //case CMSG_CHAT_MESSAGE_WHISPER:
-        //    type = CHAT_MSG_WHISPER;
-        //    break;
-        //case CMSG_CHAT_MESSAGE_GUILD:
-        //    type = CHAT_MSG_GUILD;
-        //    break;
-        //case CMSG_CHAT_MESSAGE_OFFICER:
-        //    type = CHAT_MSG_OFFICER;
-        //    break;
-        //case CMSG_CHAT_MESSAGE_DND:
-        //    type = CHAT_MSG_DND;
-        //    break;
-        //case CMSG_CHAT_MESSAGE_EMOTE:
-        //    type = CHAT_MSG_EMOTE;
-        //    break;
+        case CMSG_CHAT_MESSAGE_WHISPER:
+            type = CHAT_MSG_WHISPER;
+            break;
+        case CMSG_CHAT_MESSAGE_GUILD:
+            type = CHAT_MSG_GUILD;
+            break;
+        case CMSG_CHAT_MESSAGE_OFFICER:
+            type = CHAT_MSG_OFFICER;
+            break;
+        case CMSG_CHAT_MESSAGE_DND:
+            type = CHAT_MSG_DND;
+            break;
+        case CMSG_CHAT_MESSAGE_EMOTE:
+            type = CHAT_MSG_EMOTE;
+            break;
         //case CMSG_CHAT_MESSAGE_PARTY:
         //    type = CHAT_MSG_PARTY;
         //    break;

@@ -968,6 +968,8 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         features.BpayStoreEnabled    = true/*sWorld->getBoolConfig(CONFIG_PURCHASE_SHOP_ENABLED)*/;
         features.BpayStoreAvailable = true;
         features.CommerceSystemEnabled = true;
+        features.TutorialsEnabled = true;
+        features.NPETutorialsEnabled = true;
         SendPacket(features.Write());
     }
 
