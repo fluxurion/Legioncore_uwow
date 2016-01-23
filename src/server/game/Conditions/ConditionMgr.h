@@ -76,7 +76,8 @@ enum ConditionTypes
     CONDITION_SCENE_SEEN            = 40,                   // SceneID
     CONDITION_QUEST_OBJECTIVE_DONE  = 41,                   // QuestID          ObjectiveID    Count   
     CONDITION_SCENE_TRIGER_EVENT    = 42,                   // SceneID
-    CONDITION_MAX                   = 43                    // MAX
+    CONDITION_GARRRISON_BUILDING    = 43,                   // BuildType        Lvl
+    CONDITION_MAX                   = 44                    // MAX
 };
 
 /*! Documentation on implementing a new ConditionSourceType:

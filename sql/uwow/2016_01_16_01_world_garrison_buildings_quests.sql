@@ -16,3 +16,8 @@ REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `languag
 
 REPLACE INTO `trinity_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `content_loc9`, `content_loc10`) VALUES 
 ('22000', '|cffADFF2Ftimber: +$1i|r', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '|cffADFF2FДревесина: +$1i|r', NULL, NULL);
+
+-- lumber mill lvl 2 36194 36142
+REPLACE INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(19, 0, 36194, 0, 0, 43, 0, 4, 2, 0, 0, 0, '', 'req lumber mill lvl2'),
+(19, 0, 36142, 0, 0, 43, 0, 4, 2, 0, 0, 0, '', 'req lumber mill lvl2');

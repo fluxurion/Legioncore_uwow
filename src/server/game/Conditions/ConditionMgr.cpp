@@ -26,6 +26,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "Spell.h"
+#include "Garrison.h"
 
 // Checks if object meets the condition
 // Can have CONDITION_SOURCE_TYPE_NONE && !mReferenceId if called from a special event (ie: SmartAI)
@@ -194,6 +195,17 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         {
             if (Player* player = object->ToPlayer())
                 condMeets = player->HasSceneStatus(ConditionValue1, SCENE_TRIGER);
+            break;
+        }
+        case CONDITION_GARRRISON_BUILDING:
+        {
+            condMeets = false;
+            if (Player* player = object->ToPlayer())
+                if (Garrison * g = player->GetGarrison())
+                    if (Garrison::Plot *plot = g->GetPlotWithBuildingType(ConditionValue1))
+                        if (GarrBuildingEntry const* existingBuilding = sGarrBuildingStore.AssertEntry(plot->BuildingInfo.PacketInfo->GarrBuildingID))
+                            if (plot->BuildingInfo.PacketInfo->Active)
+                                condMeets = existingBuilding->Level >= ConditionValue2;
             break;
         }
         case CONDITION_ACTIVE_EVENT:
