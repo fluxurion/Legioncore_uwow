@@ -520,7 +520,19 @@ void WorldSession::HandleQuestgiverCompleteQuest(WorldPackets::Quest::QuestGiver
         }
         else
         {
+            bool reqItem = false;
             if (quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER))                  // some items required
+            {
+                reqItem = true;
+                for (QuestObjective const& obj : quest->GetObjectives())
+                {
+                    if (obj.Type != QUEST_OBJECTIVE_ITEM)
+                        continue;
+                    if (obj.Flags & 0x4)
+                        reqItem = false;
+                }
+            }
+            if (reqItem)                  // some items required
                 _player->PlayerTalkClass->SendQuestGiverRequestItems(quest, packet.QuestGiverGUID, _player->CanRewardQuest(quest, false), false);
             else                                                                    // no items required
                 _player->PlayerTalkClass->SendQuestGiverOfferReward(quest, packet.QuestGiverGUID, !autoCompleteMode);

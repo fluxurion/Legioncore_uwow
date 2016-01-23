@@ -15877,6 +15877,8 @@ bool Player::CanRewardQuest(Quest const* quest, bool msg)
         {
             if (obj.Type != QUEST_OBJECTIVE_ITEM)
                 continue;
+            if (obj.Flags & 0x4)
+                continue;
 
             if (GetItemCount(obj.ObjectID) < uint32(obj.Amount))
             {
@@ -16105,6 +16107,8 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
         switch (obj.Type)
         {
             case QUEST_OBJECTIVE_ITEM:
+                if (obj.Flags & 0x4)
+                    continue;
                 if (!(quest->GetFlagsEx() & QUEST_FLAGS_EX_KEEP_ADDITIONAL_ITEMS))
                     DestroyItemCount(obj.ObjectID, obj.Amount, true);
                 break;
@@ -16980,6 +16984,9 @@ void Player::AdjustQuestReqItemCount(Quest const* quest)
             if (obj.Type != QUEST_OBJECTIVE_ITEM)
                 continue;
 
+            if (obj.Flags & 0x4)
+                continue;
+
             uint32 reqItemCount = obj.Amount;
             uint32 curItemCount = GetItemCount(obj.ObjectID, true);
             SetQuestObjectiveData(quest, &obj, std::min(curItemCount, reqItemCount));
@@ -17179,6 +17186,8 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
         for (QuestObjective const& obj : qInfo->GetObjectives())
         {
             if (obj.Type != QUEST_OBJECTIVE_ITEM)
+                continue;
+            if (obj.Flags & 0x4)
                 continue;
 
             uint32 reqItem = obj.ObjectID;
