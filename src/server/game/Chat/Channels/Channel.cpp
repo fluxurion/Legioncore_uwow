@@ -15,17 +15,19 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#include <cwctype>
 
+#include "AccountMgr.h"
 #include "Channel.h"
+#include "ChannelPackets.h"
 #include "Chat.h"
+#include "ChatPackets.h"
+#include "DatabaseEnv.h"
 #include "ObjectMgr.h"
 #include "SocialMgr.h"
+#include "WordFilterMgr.h"
 #include "World.h"
-#include "DatabaseEnv.h"
-#include "AccountMgr.h"
-#include <cwctype>
-#include "ChannelPackets.h"
-#include "ChatPackets.h"
 
 Channel::Channel(const std::string& name, uint32 channel_id, uint32 Team)
  : m_announce(true), m_ownership(true), m_name(name), m_password(""), m_flags(0), m_channelId(channel_id), m_ownerGUID(), m_Team(Team), _special(false)
@@ -169,7 +171,7 @@ void Channel::CleanOldChannelsInDB()
     }
 }
 
-void Channel::JoinChannel(Player* player, const char *pass, bool clientRequest)
+void Channel::JoinChannel(Player* player, std::string const& pass, bool clientRequest)
 {
     ObjectGuid const& guid = player->GetGUID();
 
@@ -192,7 +194,7 @@ void Channel::JoinChannel(Player* player, const char *pass, bool clientRequest)
         return;
     }
 
-    if (m_password.length() > 0 && strcmp(pass, m_password.c_str()))
+    if (!m_password.empty() && pass != m_password)
     {
         WorldPackets::Channel::ChannelNotify notify;
         MakeWrongPassword(notify);
@@ -311,7 +313,7 @@ void Channel::LeaveChannel(Player* player, bool send, bool clientRequest)
     }
 }
 
-void Channel::KickOrBan(Player const* player, const char *badname, bool ban)
+void Channel::KickOrBan(Player const* player, std::string const& badname, bool ban)
 {
     ObjectGuid const& good = player->GetGUID();
 
@@ -331,7 +333,7 @@ void Channel::KickOrBan(Player const* player, const char *badname, bool ban)
     }
     else
     {
-        Player* bad = sObjectAccessor->FindPlayerByName(badname);
+        Player* bad = ObjectAccessor::FindConnectedPlayerByName(badname);
         ObjectGuid victim = bad ? bad->GetGUID() : ObjectGuid::Empty;
         if (bad == NULL || !IsOn(bad->GetGUID()))
         {
@@ -381,7 +383,7 @@ void Channel::KickOrBan(Player const* player, const char *badname, bool ban)
     }
 }
 
-void Channel::UnBan(Player const* player, const char *badname)
+void Channel::UnBan(Player const* player, std::string const& badname)
 {
     ObjectGuid const& good = player->GetGUID();
     uint32 sec = player->GetSession()->GetSecurity();
@@ -400,7 +402,7 @@ void Channel::UnBan(Player const* player, const char *badname)
     }
     else
     {
-        Player* bad = sObjectAccessor->FindPlayerByName(badname);
+        Player* bad = ObjectAccessor::FindConnectedPlayerByName(badname);
         if (bad == NULL || !IsBanned(bad->GetGUID()))
         {
             WorldPackets::Channel::ChannelNotify notify;
@@ -420,7 +422,7 @@ void Channel::UnBan(Player const* player, const char *badname)
     }
 }
 
-void Channel::Password(Player const* player, const char *pass)
+void Channel::Password(Player const* player, std::string const& pass)
 {
     uint32 sec = player->GetSession()->GetSecurity();
     ObjectGuid const& guid = player->GetGUID();
@@ -455,7 +457,7 @@ void Channel::Password(Player const* player, const char *pass)
     }
 }
 
-void Channel::SetMode(Player const* player, const char *p2n, bool mod, bool set)
+void Channel::SetMode(Player const* player, std::string const& p2n, bool mod, bool set)
 {
     ObjectGuid const& guid = player->GetGUID();
     uint32 sec = player->GetSession()->GetSecurity();
@@ -474,7 +476,7 @@ void Channel::SetMode(Player const* player, const char *p2n, bool mod, bool set)
     }
     else
     {
-        Player* newp = sObjectAccessor->FindPlayerByName(p2n);
+        Player* newp = ObjectAccessor::FindConnectedPlayerByName(p2n);
         if (!newp)
         {
             WorldPackets::Channel::ChannelNotify notify;
@@ -520,7 +522,7 @@ void Channel::SetMode(Player const* player, const char *p2n, bool mod, bool set)
     }
 }
 
-void Channel::SetOwner(Player const* player, const char *newname)
+void Channel::SetOwner(Player const* player, std::string const& newname)
 {
     ObjectGuid const& guid = player->GetGUID();
     uint32 sec = player->GetSession()->GetSecurity();
@@ -541,7 +543,7 @@ void Channel::SetOwner(Player const* player, const char *newname)
         return;
     }
 
-    Player* newp = sObjectAccessor->FindPlayerByName(newname);
+    Player* newp = ObjectAccessor::FindConnectedPlayerByName(newname);
     if (newp == NULL || !IsOn(newp->GetGUID()))
     {
         WorldPackets::Channel::ChannelNotify notify;
@@ -617,39 +619,40 @@ void Channel::Announce(Player const* player)
         WorldPackets::Channel::ChannelNotify notify;
         MakeNotMember(notify);
         player->SendDirectMessage(notify.Write());
+        return;
     }
-    else if (!players[guid].IsModerator() && !AccountMgr::IsModeratorAccount(sec))
+    
+    if (!players[guid].IsModerator() && !AccountMgr::IsModeratorAccount(sec))
     {
         WorldPackets::Channel::ChannelNotify notify;
         MakeNotModerator(notify);
         player->SendDirectMessage(notify.Write());
+        return;
     }
+
+    m_announce = !m_announce;
+
+    WorldPackets::Channel::ChannelNotify notify;
+    if (m_announce)
+        MakeAnnouncementsOn(notify, guid);
     else
-    {
-        m_announce = !m_announce;
+        MakeAnnouncementsOff(notify, guid);
+    SendToAll(notify.Write());
 
-        WorldPackets::Channel::ChannelNotify notify;
-        if (m_announce)
-            MakeAnnouncementsOn(notify, guid);
-        else
-            MakeAnnouncementsOff(notify, guid);
-        SendToAll(notify.Write());
-
-        UpdateChannelInDB();
-    }
+    UpdateChannelInDB();
 }
 
-void Channel::Say(ObjectGuid const& guid, const char *what, uint32 lang)
+void Channel::Say(ObjectGuid const& guid, std::string const& what, uint32 lang)
 {
-    if (!what)
+    if (what.empty())
         return;
+
     Player* player = ObjectAccessor::FindPlayer(guid);
     if (player)
         lang = player->GetTeam() == HORDE ? LANG_ORCISH : LANG_COMMON;
 
     if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHANNEL))
         lang = LANG_UNIVERSAL;
-
 
     if (!IsOn(guid))
     {
@@ -697,10 +700,13 @@ void Channel::Say(ObjectGuid const& guid, const char *what, uint32 lang)
     }*/
 }
 
-void Channel::Invite(Player const* player, const char *newname)
+void Channel::Invite(Player const* player, std::string const& newname)
 {
-    ObjectGuid const& guid = player->GetGUID();
+    if (sWorld->getBoolConfig(CONFIG_WORD_FILTER_ENABLE))
+        if (!sWordFilterMgr->FindBadWord(newname, true).empty())
+            return;
 
+    ObjectGuid const& guid = player->GetGUID();
     if (!IsOn(guid))
     {
         WorldPackets::Channel::ChannelNotify notify;
@@ -709,7 +715,7 @@ void Channel::Invite(Player const* player, const char *newname)
         return;
     }
 
-    Player* newp = sObjectAccessor->FindPlayerByName(newname);
+    Player* newp = ObjectAccessor::FindConnectedPlayerByName(newname);
     if (!newp || !newp->isGMVisible())
     {
         WorldPackets::Channel::ChannelNotify notify;
@@ -819,17 +825,34 @@ void Channel::SendToOne(WorldPacket const* data, ObjectGuid const& who)
         player->GetSession()->SendPacket(data);
 }
 
-void Channel::Voice(ObjectGuid const& /*guid1*/, ObjectGuid const& /*guid2*/)
+void Channel::DeclineInvite(Player const* /*player*/)
 {
-
 }
 
-void Channel::DeVoice(ObjectGuid const& /*guid1*/, ObjectGuid const& /*guid2*/)
+void Channel::Voice(Player const* /*player*/)
 {
-
 }
 
-// done
+void Channel::DeVoice(Player const* /*player*/)
+{
+}
+
+void Channel::SilenceAll(Player const* /*player*/, std::string const& /*name*/)
+{
+}
+
+void Channel::SilenceVoice(Player const* /*player*/, std::string const& /*name*/)
+{
+}
+
+void Channel::UnsilenceAll(Player const* /*player*/, std::string const& /*name*/)
+{
+}
+
+void Channel::UnsilenceVoice(Player const* /*player*/, std::string const& /*name*/)
+{
+}
+
 void Channel::MakeNotifyPacket(WorldPackets::Channel::ChannelNotify& data, uint8 notifyType)
 {
     data.Type = notifyType;

@@ -17,7 +17,7 @@
  */
 
 #include "ChannelMgr.h"
-
+#include "ChannelPackets.h"
 #include "World.h"
 
 ChannelMgr* channelMgr(uint32 team)
@@ -33,13 +33,13 @@ ChannelMgr* channelMgr(uint32 team)
     if (team == HORDE)
         return &hordeChannelMgr;
 
-    return NULL;
+    return nullptr;
 }
 
 ChannelMgr::~ChannelMgr()
 {
-    for (ChannelMap::iterator itr = channels.begin(); itr != channels.end(); ++itr)
-        delete itr->second;
+    for (auto const& v : channels)
+        delete v.second;
 
     channels.clear();
 }
@@ -47,7 +47,9 @@ ChannelMgr::~ChannelMgr()
 Channel* ChannelMgr::GetJoinChannel(std::string name, uint32 channel_id)
 {
     std::wstring wname;
-    Utf8toWStr(name, wname);
+    if (!Utf8toWStr(name, wname))
+        return nullptr;
+
     wstrToLower(wname);
 
     if (channels.find(wname) == channels.end())
@@ -60,27 +62,24 @@ Channel* ChannelMgr::GetJoinChannel(std::string name, uint32 channel_id)
     return channels[wname];
 }
 
-Channel* ChannelMgr::GetChannel(std::string name, Player* p, bool pkt)
+Channel* ChannelMgr::GetChannel(std::string const& name, Player* player, bool notify /*= true*/)
 {
     std::wstring wname;
-    Utf8toWStr(name, wname);
+    if (!Utf8toWStr(name, wname))
+        return nullptr;
+
     wstrToLower(wname);
 
     ChannelMap::const_iterator i = channels.find(wname);
-
     if (i == channels.end())
     {
-        if (pkt)
-        {
-            WorldPacket data;
-            MakeNotOnPacket(&data, name);
-            p->GetSession()->SendPacket(&data);
-        }
+        if (notify)
+            SendNotOnChannelNotify(player, name);
 
-        return NULL;
+        return nullptr;
     }
-    else
-        return i->second;
+
+    return i->second;
 }
 
 void ChannelMgr::LeftChannel(std::string name)
@@ -90,7 +89,6 @@ void ChannelMgr::LeftChannel(std::string name)
     wstrToLower(wname);
 
     ChannelMap::const_iterator i = channels.find(wname);
-
     if (i == channels.end())
         return;
 
@@ -103,8 +101,10 @@ void ChannelMgr::LeftChannel(std::string name)
     }
 }
 
-void ChannelMgr::MakeNotOnPacket(WorldPacket* data, std::string name)
+void ChannelMgr::SendNotOnChannelNotify(Player const* player, std::string const& name)
 {
-    data->Initialize(SMSG_CHANNEL_NOTIFY, (1+10));  // we guess size
-    (*data) << (uint8)0x05 << name;
+    WorldPackets::Channel::ChannelNotify notify;
+    notify.Type = CHAT_NOT_MEMBER_NOTICE;
+    notify._Channel = name;
+    player->SendDirectMessage(notify.Write());
 }

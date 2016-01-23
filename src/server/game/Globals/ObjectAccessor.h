@@ -205,6 +205,7 @@ class ObjectAccessor
         static Player* FindPlayer(ObjectGuid const& g, bool inWorld = true);
         static Unit* FindUnit(ObjectGuid const& g);
         static Player* FindPlayerByName(const char* name);
+        static Player* FindConnectedPlayerByName(std::string const& name);
 
         // when using this, you must use the hashmapholder's lock
         static HashMapHolder<Player>::MapType const& GetPlayers()

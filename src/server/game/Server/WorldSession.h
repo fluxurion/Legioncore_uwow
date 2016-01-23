@@ -23,24 +23,27 @@
 #ifndef __WORLDSESSION_H
 #define __WORLDSESSION_H
 
-#include "Common.h"
-#include "SharedDefines.h"
 #include "AddonMgr.h"
+#include "Common.h"
+#include "Cryptography/BigNumber.h"
 #include "DatabaseEnv.h"
+#include "EventProcessor.h"
+#include "Opcodes.h"
+#include "Packet.h"
+#include "SharedDefines.h"
 #include "World.h"
 #include "WorldPacket.h"
-#include "Cryptography/BigNumber.h"
-#include "Opcodes.h"
-#include "EventProcessor.h"
-#include "Packet.h"
 
+class BattlePayMgr;
 class BlackMarketEntry;
+class Channel;
 class CollectionMgr;
 class Creature;
 class GameObject;
 class InstanceSave;
 class Item;
 class Object;
+class ObjectGuid;
 class Player;
 class Quest;
 class SpellCastTargets;
@@ -55,8 +58,6 @@ struct BlackMarketTemplate;
 struct DeclinedName;
 struct ItemTemplate;
 struct MovementInfo;
-class ObjectGuid;
-class BattlePayMgr;
 
 namespace lfg
 {
@@ -1399,26 +1400,15 @@ class WorldSession
         void HandleQueryCorpseTransport(WorldPackets::Query::QueryCorpseTransport& packet);
         void HandleResurrectResponse(WorldPackets::Misc::ResurrectResponse& packet);
         void HandleSummonResponse(WorldPackets::Movement::SummonResponse& packet);
+        
+        template<void(Channel::*CommandFunction)(Player const*)>
+        void HandleChannelCommand(WorldPackets::Channel::ChannelPlayerCommand& packet);
+
+        template<void(Channel::*CommandFunction)(Player const*, std::string const&)>
+        void HandleChannelPlayerCommand(WorldPackets::Channel::ChannelPlayerCommand& packet);
 
         void HandleJoinChannel(WorldPackets::Channel::JoinChannel& packet);
         void HandleLeaveChannel(WorldPackets::Channel::LeaveChannel& packet);
-        void HandleChannelList(WorldPacket& recvPacket);
-        void HandleChannelPassword(WorldPacket& recvPacket);
-        void HandleChannelSetOwner(WorldPacket& recvPacket);
-        void HandleChannelOwner(WorldPacket& recvPacket);
-        void HandleChannelModerator(WorldPacket& recvPacket);
-        void HandleChannelUnmoderator(WorldPacket& recvPacket);
-        void HandleChannelMute(WorldPacket& recvPacket);
-        void HandleChannelUnmute(WorldPacket& recvPacket);
-        void HandleChannelInvite(WorldPacket& recvPacket);
-        void HandleChannelKick(WorldPacket& recvPacket);
-        void HandleChannelBan(WorldPacket& recvPacket);
-        void HandleChannelUnban(WorldPacket& recvPacket);
-        void HandleChannelAnnouncements(WorldPacket& recvPacket);
-        void HandleChannelModerate(WorldPacket& recvPacket);
-        void HandleChannelDeclineInvite(WorldPacket& recvPacket);
-        void HandleChannelDisplayListQuery(WorldPacket& recvPacket);
-        void HandleSetChannelWatch(WorldPacket& recvPacket);
 
         void HandleCompleteCinematic(WorldPackets::Misc::CompleteCinematic& packet);
         void HandleNextCinematicCamera(WorldPackets::Misc::NextCinematicCamera& packet);
@@ -1539,7 +1529,6 @@ class WorldSession
         void HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo& packet);
         void HandleItemRefund(WorldPacket& recvData);
         void HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packet);
-        void HandleChannelVoiceOnOpcode(WorldPacket& recvData);
         void HandleVoiceSessionEnableOpcode(WorldPacket& recvData);
         void HandleSetActiveVoiceChannel(WorldPacket& recvData);
         void HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData);

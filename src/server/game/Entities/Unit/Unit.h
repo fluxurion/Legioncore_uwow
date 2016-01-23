@@ -582,10 +582,10 @@ enum UnitMoveType
     MOVE_TURN_RATE      = 5,
     MOVE_FLIGHT         = 6,
     MOVE_FLIGHT_BACK    = 7,
-    MOVE_PITCH_RATE     = 8
-};
+    MOVE_PITCH_RATE     = 8,
 
-#define MAX_MOVE_TYPE     9
+    MAX_MOVE_TYPE
+};
 
 extern float baseMoveSpeed[MAX_MOVE_TYPE];
 extern float playerBaseMoveSpeed[MAX_MOVE_TYPE];

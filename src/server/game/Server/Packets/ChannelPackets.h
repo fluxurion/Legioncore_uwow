@@ -53,21 +53,21 @@ namespace WorldPackets
         class ChannelNotify final : public ServerPacket
         {
         public:
-            ChannelNotify() : ServerPacket(SMSG_CHANNEL_NOTIFY, 80) { }
+            ChannelNotify() : ServerPacket(SMSG_CHANNEL_NOTIFY, 16 * 3 + 4 * 3 + 4 * 2 + 1 * 3) { }
 
             WorldPacket const* Write() override;
-
-            std::string Sender;
+            
             ObjectGuid SenderGuid;
             ObjectGuid SenderAccountID;
+            ObjectGuid TargetGuid;
+            uint32 SenderVirtualRealm = 0;
+            uint32 TargetVirtualRealm = 0;
+            int32 ChatChannelID = 0;
+            std::string Sender;
+            std::string _Channel;
             uint8 Type = 0;
             uint8 OldFlags = 0;
             uint8 NewFlags = 0;
-            std::string _Channel;
-            uint32 SenderVirtualRealm = 0;
-            ObjectGuid TargetGuid;
-            uint32 TargetVirtualRealm = 0;
-            int32 ChatChannelID = 0;
         };
 
         class ChannelNotifyJoined final : public ServerPacket

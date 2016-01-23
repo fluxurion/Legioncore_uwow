@@ -29,15 +29,6 @@ void WorldSession::HandleVoiceSessionEnableOpcode(WorldPacket& recvData)
     recvData.read_skip<uint8>();
 }
 
-void WorldSession::HandleChannelVoiceOnOpcode(WorldPacket& /*recvData*/)
-{
-    // Enable Voice button in channel context menu
-    /* structure:
-        8 bits -> channel name length
-        string -> channel name
-    */
-}
-
 void WorldSession::HandleSetActiveVoiceChannel(WorldPacket& recvData)
 {
     recvData.read_skip<uint32>();

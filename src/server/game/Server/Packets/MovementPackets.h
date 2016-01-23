@@ -196,6 +196,10 @@ namespace WorldPackets
         // SMSG_MOVE_UNROOT
         // SMSG_MOVE_UNSET_CAN_FLY
         // SMSG_MOVE_UNSET_IGNORE_MOVEMENT_FORCES
+        // SMSG_MOVE_ENABLE_COLLISION
+        // SMSG_MOVE_DISABLE_COLLISION
+        // SMSG_MOVE_SET_CAN_TURN_WHILE_FALLING
+        // SMSG_MOVE_UNSET_HOVERING
         class MoveSetFlag final : public ServerPacket
         {
         public:

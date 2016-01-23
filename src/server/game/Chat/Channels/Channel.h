@@ -24,11 +24,10 @@
 #include <string>
 
 #include "Common.h"
-
+#include "LockedMap.h"
 #include "Opcodes.h"
 #include "Player.h"
 #include "WorldPacket.h"
-#include "LockedMap.h"
 
 namespace WorldPackets
 {
@@ -247,29 +246,34 @@ class Channel
         uint8 GetFlags() const { return m_flags; }
         bool HasFlag(uint8 flag) const { return m_flags & flag; }
 
-        void JoinChannel(Player* player, const char *pass, bool clientRequest = false);
+        void JoinChannel(Player* player, std::string const& pass, bool clientRequest = false);
         void LeaveChannel(Player* player, bool send = true, bool clientRequest = false);
-        void KickOrBan(Player const* player, const char *badname, bool ban);
-        void Kick(Player const* player, const char *badname) { KickOrBan(player, badname, false); }
-        void Ban(Player const* player, const char *badname) { KickOrBan(player, badname, true); }
-        void UnBan(Player const* player, const char *badname);
-        void Password(Player const* player, const char *pass);
-        void SetMode(Player const* player, const char *p2n, bool mod, bool set);
+        void KickOrBan(Player const* player, std::string const& badname, bool ban);
+        void Kick(Player const* player, std::string const& badname) { KickOrBan(player, badname, false); }
+        void Ban(Player const* player, std::string const& badname) { KickOrBan(player, badname, true); }
+        void UnBan(Player const* player, std::string const& badname);
+        void Password(Player const* player, std::string const& pass);
+        void SetMode(Player const* player, std::string const& p2n, bool mod, bool set);
         void SetOwner(ObjectGuid const& p, bool exclaim = true);
-        void SetOwner(Player const* player, const char *newname);
+        void SetOwner(Player const* player, std::string const& newname);
         void SendWhoOwner(Player const* player);
-        void SetModerator(Player const* player, const char *newname) { SetMode(player, newname, true, true); }
-        void UnsetModerator(Player const* player, const char *newname) { SetMode(player, newname, true, false); }
-        void SetMute(Player const* player, const char *newname) { SetMode(player, newname, false, true); }
-        void UnsetMute(Player const* player, const char *newname) { SetMode(player, newname, false, false); }
+        void SetModerator(Player const* player, std::string const& newname) { SetMode(player, newname, true, true); }
+        void UnsetModerator(Player const* player, std::string const& newname) { SetMode(player, newname, true, false); }
+        void SetMute(Player const* player, std::string const& newname) { SetMode(player, newname, false, true); }
+        void UnsetMute(Player const* player, std::string const& newname) { SetMode(player, newname, false, false); }
         void List(Player const* player);
         void Announce(Player const* player);
-        void Say(ObjectGuid const& p, const char *what, uint32 lang);
-        void Invite(Player const* player, const char *newp);
-        void Voice(ObjectGuid const& guid1, ObjectGuid const& guid2);
-        void DeVoice(ObjectGuid const& guid1, ObjectGuid const& guid2);
+        void Say(ObjectGuid const& p, std::string const& what, uint32 lang);
+        void Invite(Player const* player, std::string const& newp);
+        void DeclineInvite(Player const* player);
+        void Voice(Player const* player);
+        void DeVoice(Player const* player);
         void JoinNotify(ObjectGuid const& guid);                                    // invisible notify
         void LeaveNotify(ObjectGuid const& guid);                                          // invisible notify
+        void SilenceAll(Player const* player, std::string const& name);
+        void SilenceVoice(Player const* player, std::string const& name);
+        void UnsilenceAll(Player const* player, std::string const& name);
+        void UnsilenceVoice(Player const* player, std::string const& name);
         void SetOwnership(bool ownership) { m_ownership = ownership; };
         static void CleanOldChannelsInDB();
 };

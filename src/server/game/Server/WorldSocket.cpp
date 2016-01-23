@@ -203,10 +203,10 @@ bool WorldSocket::ReadDataHandler()
         if (sPacketLog->CanLogPacket())
             sPacketLog->LogPacket(packet, CLIENT_TO_SERVER, GetRemoteIpAddress(), GetRemotePort());
 
-        #ifdef WIN32
         std::string opcodeName = GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode));
-        sLog->outTrace(LOG_FILTER_NETWORKIO, "C->S: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), opcodeName.c_str());
-        #endif
+        sLog->outError(LOG_FILTER_GENERAL, "C->S: %s %s",
+            (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), opcodeName.c_str());
+
         try
         {
             switch (opcode)

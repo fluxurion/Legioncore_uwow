@@ -36,12 +36,12 @@ class ChannelMgr
         typedef std::map<std::wstring, Channel*> ChannelMap;
 
         Channel* GetJoinChannel(std::string name, uint32 channel_id);
-        Channel* GetChannel(std::string name, Player* p, bool pkt = true);
+        Channel* GetChannel(std::string const& name, Player* player, bool notify = true);
         void LeftChannel(std::string name);
 
     private:
         ChannelMap channels;
-        void MakeNotOnPacket(WorldPacket* data, std::string name);
+        static void SendNotOnChannelNotify(Player const* player, std::string const& name);
 };
 
 ChannelMgr* channelMgr(uint32 team);

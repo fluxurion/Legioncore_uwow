@@ -710,11 +710,6 @@ void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recvData)
     player->GetSession()->SendPacket(&data);
 }
 
-void WorldSession::HandleChannelDeclineInvite(WorldPacket &recvPacket)
-{
-    recvPacket.rfinish();
-}
-
 void WorldSession::SendPlayerNotFoundNotice(std::string name)
 {
     SendPacket(WorldPackets::Chat::ChatPlayerNotfound(name).Write());
