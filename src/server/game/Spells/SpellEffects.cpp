@@ -315,7 +315,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //235 SPELL_EFFECT_235
     &Spell::EffectGieveExperience,                          //236 SPELL_EFFECT_GIVE_EXPERIENCE
     &Spell::EffectNULL,                                     //237 SPELL_EFFECT_GIVE_RESTED_EXPERIENCE_BONUS
-    &Spell::EffectNULL,                                     //238 SPELL_EFFECT_INCREASE_SKILL
+    &Spell::EffectIncreaseSkill,                            //238 SPELL_EFFECT_INCREASE_SKILL
     &Spell::EffectNULL,                                     //239 SPELL_EFFECT_END_GARRISON_BUILDING_CONSTRUCTION
     &Spell::EffectNULL,                                     //240 SPELL_EFFECT_240
     &Spell::EffectNULL,                                     //241 SPELL_EFFECT_241
@@ -3917,6 +3917,25 @@ void Spell::EffectLearnSkill(SpellEffIndex effIndex)
         unitTarget->ToPlayer()->GenerateResearchSites();
         unitTarget->ToPlayer()->GenerateResearchProjects();
     }
+}
+
+void Spell::EffectIncreaseSkill(SpellEffIndex effIndex)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    if (damage < 0)
+        return;
+
+    uint32 skillid = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue;
+    SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(skillid, unitTarget->getRace(), unitTarget->getClass());
+    if (!rcEntry)
+        return;
+
+    unitTarget->ToPlayer()->SetSkill(skillid, unitTarget->ToPlayer()->GetSkillStep(skillid), m_spellInfo->GetEffect(effIndex, m_diffMode)->CalcValue(), unitTarget->ToPlayer()->GetMaxSkillValue(skillid));
 }
 
 void Spell::EffectPlayMovie(SpellEffIndex effIndex)

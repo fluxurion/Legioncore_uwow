@@ -4336,7 +4336,7 @@ bool Player::addSpell(uint32 spellId, bool active, bool learning, bool dependent
         if (IsNeedCastPassiveSpellAtLearn(spellInfo))
             CastSpell(this, spellId, true);
     }
-    else if (spellInfo->HasEffect(SPELL_EFFECT_SKILL_STEP))
+    else if (spellInfo->HasEffect(SPELL_EFFECT_SKILL_STEP) || spellInfo->HasEffect(SPELL_EFFECT_INCREASE_SKILL))
     {
         CastSpell(this, spellId, true);
         return false;
