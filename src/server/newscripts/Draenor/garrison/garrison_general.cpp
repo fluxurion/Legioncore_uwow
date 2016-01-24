@@ -359,7 +359,7 @@ public:
                 {
                     if (!isQuest)
                     {
-                        int32 count = urand(3, 7);
+                        int32 count = urand(5, 7);
                         WorldPackets::Chat::WorldText packet;
                         packet.Guid = ObjectGuid::Empty;
                         packet.Arg1 = count;
@@ -512,7 +512,7 @@ public:
 
             SPELL_STUMP = 170079,
 
-            SPELL_TIMBER_5 = 168523,
+            SPELL_TIMBER_10 = 168524,
         };
 
         ObjectGuid treeGUID;
@@ -598,14 +598,14 @@ public:
                 {
                     if (!isQuest)
                     {
-                        int32 count = urand(3, 7);
+                        int32 count = urand(10, 15);
                         WorldPackets::Chat::WorldText packet;
                         packet.Guid = ObjectGuid::Empty;
                         packet.Arg1 = count;
                         packet.Arg2 = 0;
                         packet.Text = sObjectMgr->GetTrinityStringForDBCLocale(LANG_LUMBER_RESULT);
                         player->GetSession()->SendPacket(packet.Write());
-                        me->CastCustomSpell(player, SPELL_TIMBER_5, &count, NULL, NULL, false);
+                        me->CastCustomSpell(player, SPELL_TIMBER_10, &count, NULL, NULL, false);
                     }
                     else
                         me->CastSpell(player, SPELL_CREATE_TIMBER2, true);
@@ -655,6 +655,7 @@ public:
                             me->RemoveAurasDueToSpell(168028);
                             if (GameObject * tree = me->GetMap()->GetGameObject(treeGUID))
                             {
+                                me->CastSpell(me, SPELL_STUMP, true);
                                 me->CastSpell(me, 167958, true);
                                 tree->setVisibilityCDForPlayer(plrGUID, 300);
                                 tree->DestroyForPlayer(player);
