@@ -21,3 +21,12 @@ REPLACE INTO `trinity_string` (`entry`, `content_default`, `content_loc1`, `cont
 REPLACE INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
 (19, 0, 36194, 0, 0, 43, 0, 4, 2, 0, 0, 0, '', 'req lumber mill lvl2'),
 (19, 0, 36142, 0, 0, 43, 0, 4, 2, 0, 0, 0, '', 'req lumber mill lvl2');
+REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('167970', 'spell_garr_lumberjack_lvl2');
+UPDATE `creature_template` SET `ScriptName` = 'mob_garr_lumberjack2' WHERE `creature_template`.`entry` in (84003, 84004);
+DELETE FROM  `creature_template_addon` where entry in (84003, 84004);
+
+REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
+(84004, 0, 0, 'Слушай, иди занимайся своими делами, а я буду делать свою работу – валить деревья.', 12, 0, 100, 0, 0, 0, 'Дроворуб Орды to Player'),
+(84004, 0, 1, 'Да, представь, это циркулярные пилы. А теперь в сторону! Мне тут дерево спилить надо!', 12, 0, 100, 0, 0, 0, 'Дроворуб Орды to Player'),
+(84003, 0, 0, 'А тебе известно, что вероятность выживания боевых дровосеков в диких землях равна лишь двадцати процентам? ', 12, 0, 100, 0, 0, 0, 'Боевой дровосек to Player'),
+(84003, 0, 1, '$n, разве тебе не надо еще мир спасать, а? Так что грязную работенку оставь мне!', 12, 0, 100, 0, 0, 0, 'Боевой дровосек to Player');
