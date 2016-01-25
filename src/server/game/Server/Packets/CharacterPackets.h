@@ -468,11 +468,11 @@ namespace WorldPackets
             { }
 
             WorldPacket const* Write() override;
-
-            uint8 ServerExpansionTier = 0;
-            uint8 ServerExpansionLevel = 0;
+            
             time_t RaidOrigin = time_t(1135753200); // 28/12/2005 07:00:00
             int32 ServerRegionID = 3;   // Cfg_Regions.dbc, EU
+            uint8 ServerExpansionTier = 0;
+            uint8 ServerExpansionLevel = 0;
         };
 
         class SetActionBarToggles final : public ClientPacket

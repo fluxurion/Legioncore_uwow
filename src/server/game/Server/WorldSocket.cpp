@@ -344,7 +344,7 @@ void WorldSocket::SendPacket(WorldPacket const& packet)
         if (sPacketLog->CanLogPacket())
             sPacketLog->LogPacket(packet, SERVER_TO_CLIENT, GetRemoteIpAddress(), GetRemotePort());
 
-        sLog->outTrace(LOG_FILTER_NETWORKIO, "S->C: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
+        sLog->outError(LOG_FILTER_GENERAL, "S->C: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
     }
 
     //if (_worldSession && packet.size() > 0x400 && !packet.IsCompressed())
@@ -416,10 +416,7 @@ void WorldSocket::HandleAuthSession(WorldPackets::Auth::AuthSession& authSession
     Field* fields = result->Fetch();
 
     //uint8 expansion = fields[4].GetUInt8();
-    uint8 expansion = 5;
-    uint32 world_expansion = sWorld->getIntConfig(CONFIG_EXPANSION);
-    if (expansion > world_expansion)
-        expansion = world_expansion;
+    uint8 expansion = CURRENT_EXPANSION;
 
     // For hook purposes, we get Remoteaddress at this point.
     std::string address = GetRemoteIpAddress().to_string();

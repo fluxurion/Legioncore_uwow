@@ -152,13 +152,13 @@ void WorldSession::HandleSwapItem(WorldPackets::Item::SwapItem& swapItem)
 
     if (!_player->IsValidPos(swapItem.ContainerSlotA, swapItem.SlotA, true))
     {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
+        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr);
         return;
     }
 
     if (!_player->IsValidPos(swapItem.ContainerSlotB, swapItem.SlotB, true))
     {
-        _player->SendEquipError(EQUIP_ERR_WRONG_SLOT, nullptr, nullptr);
+        _player->SendEquipError(EQUIP_ERR_WRONG_SLOT, nullptr);
         return;
     }
 
@@ -190,7 +190,7 @@ void WorldSession::HandleAutoEquipItem(WorldPackets::Item::AutoEquipItem& autoEq
     InventoryResult msg = _player->CanEquipItem(NULL_SLOT, dest, pSrcItem, !pSrcItem->IsBag());
     if (msg != EQUIP_ERR_OK)
     {
-        _player->SendEquipError(msg, pSrcItem, nullptr);
+        _player->SendEquipError(msg, pSrcItem);
         return;
     }
 
@@ -221,7 +221,7 @@ void WorldSession::HandleAutoEquipItem(WorldPackets::Item::AutoEquipItem& autoEq
         msg = _player->CanUnequipItem(dest, !pSrcItem->IsBag());
         if (msg != EQUIP_ERR_OK)
         {
-            _player->SendEquipError(msg, pDstItem, nullptr);
+            _player->SendEquipError(msg, pDstItem);
             return;
         }
 
@@ -289,13 +289,13 @@ void WorldSession::HandleDestroyItemOpcode(WorldPackets::Item::DestroyItem& dest
     Item* item  = _player->GetItemByPos(destroyItem.ContainerId, destroyItem.SlotNum);
     if (!item)
     {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
+        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr);
         return;
     }
 
     if (item->GetTemplate()->Flags & ITEM_PROTO_FLAG_INDESTRUCTIBLE)
     {
-        _player->SendEquipError(EQUIP_ERR_DROP_BOUND_ITEM, nullptr, nullptr);
+        _player->SendEquipError(EQUIP_ERR_DROP_BOUND_ITEM, nullptr);
         return;
     }
     
@@ -303,7 +303,7 @@ void WorldSession::HandleDestroyItemOpcode(WorldPackets::Item::DestroyItem& dest
     {
         if (tradeData->GetTradeSlotForItem(item->GetGUID()) != TRADE_SLOT_INVALID)
         {
-            _player->SendEquipError(EQUIP_ERR_OBJECT_IS_BUSY, nullptr, nullptr);
+            _player->SendEquipError(EQUIP_ERR_OBJECT_IS_BUSY, nullptr);
             return;
         }
     }

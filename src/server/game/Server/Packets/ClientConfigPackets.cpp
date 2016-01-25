@@ -95,6 +95,13 @@ WorldPacket const* WorldPackets::ClientConfig::ClientCacheVersion::Write()
     return &_worldPacket;
 }
 
+WorldPacket const* WorldPackets::ClientConfig::DisplayPromotion::Write()
+{
+    _worldPacket << PromotionID;
+
+    return &_worldPacket;
+}
+
 void WorldPackets::ClientConfig::RequestAccountData::Read()
 {
     _worldPacket >> PlayerGuid;

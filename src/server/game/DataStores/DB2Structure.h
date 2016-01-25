@@ -2071,14 +2071,14 @@ struct ChrSpecializationEntry
 
 struct EmotesEntry
 {
-    uint32      ID;                                         // 0
-    LocalizedString* Name;                                  // 1
-    uint32      AnimationID;                                // 2
-    uint32      Flags;                                      // 3
-    uint32      EmoteType;                                  // 4
-    uint32      UnitStandState;                             // 5
-    uint32      SoundID;                                    // 6
-    uint32      UNK;                                        // 7
+    uint32      ID;
+    LocalizedString* EmoteSlashCommand;                     // 0
+    uint32      EmoteFlags;                                 // 1
+    uint32      SpellVisualKitID;                           // 2
+    uint16      AnimID;                                     // 3
+    uint16      EmoteSoundID;                               // 4
+    uint8       EmoteSpecProc;                              // 5
+    uint8       EmoteSpecProcParam;                         // 6
 };
 
 struct GemPropertiesEntry

@@ -61,6 +61,16 @@ namespace WorldPackets
             uint32 CacheVersion = 0;
         };
 
+        class DisplayPromotion final : public ServerPacket
+        {
+        public:
+            DisplayPromotion(uint32 ID) : ServerPacket(SMSG_DISPLAY_PROMOTION, 4), PromotionID(ID) { }
+
+            WorldPacket const* Write() override;
+
+            uint32 PromotionID = 0;
+        };
+
         class RequestAccountData final : public ClientPacket
         {
         public:

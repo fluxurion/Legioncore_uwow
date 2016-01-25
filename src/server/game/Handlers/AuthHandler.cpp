@@ -58,6 +58,8 @@ void WorldSession::SendAuthResponse(uint8 code, bool hasAccountData, bool queued
         response.SuccessInfo->VirtualRealms.emplace_back(GetVirtualRealmAddress(), true, false, realmName, realmName);
         response.SuccessInfo->AvailableClasses = &sObjectMgr->GetClassExpansionRequirements();
         response.SuccessInfo->AvailableRaces = &sObjectMgr->GetRaceExpansionRequirements();
+        response.SuccessInfo->IsExpansionTrial = false;
+        response.SuccessInfo->IsVeteranTrial = false;
     }
 
     SendPacket(response.Write());
@@ -72,21 +74,21 @@ void WorldSession::SendClientCacheVersion(uint32 version)
 
 void WorldSession::SendDisplayPromo(int32 promo)
 {
-    WorldPacket data(SMSG_DISPLAY_PROMOTION, 7);
-    data << promo;
-    SendPacket(&data);
+    SendPacket(WorldPackets::ClientConfig::DisplayPromotion(promo).Write());
 }
 
 void WorldSession::SendFeatureSystemStatusGlueScreen()
 {
     WorldPackets::System::FeatureSystemStatusGlueScreen features;
+    features.TokenPollTimeSeconds = 300;
+    features.TokenRedeemIndex = 0;
     features.BpayStoreAvailable = true;
     features.BpayStoreDisabledByParentalControls = false;
     features.CharUndeleteEnabled = HasAuthFlag(AT_AUTH_FLAG_RESTORE_DELETED_CHARACTER);
     features.BpayStoreEnabled = sWorld->getBoolConfig(CONFIG_FEATURE_SYSTEM_BPAY_STORE_ENABLED);
     features.CommerceSystemEnabled = true;
     features.Unk14 = true;
-    features.TokenPollTimeSeconds = 300;
+    features.WillKickFromWorld = false;
     SendPacket(features.Write());
 }
 

@@ -23694,7 +23694,7 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorguid, uint32 vendorslot, uin
 
     if (crItem->maxcount != 0) // bought
     { 
-        if (pProto->Quality > ITEM_QUALITY_EPIC || (pProto->Quality == ITEM_QUALITY_EPIC && pProto->ItemLevel >= MinNewsItemLevel[sWorld->getIntConfig(CONFIG_EXPANSION)]))
+        if (pProto->Quality > ITEM_QUALITY_EPIC || (pProto->Quality == ITEM_QUALITY_EPIC && pProto->ItemLevel >= MinNewsItemLevel[CURRENT_EXPANSION]))
             if (!pProto->IsNotAppearInGuildNews())
                 if (Guild* guild = sGuildMgr->GetGuildById(GetGuildId()))
                     guild->AddGuildNews(GUILD_NEWS_ITEM_PURCHASED, GetGUID(), 0, item);
@@ -24730,8 +24730,6 @@ void Player::SendInitialPacketsBeforeAddToMap()
     loginSetTimeSpeed.ServerTimeHolidayOffset = 0; /// @todo
     SendDirectMessage(loginSetTimeSpeed.Write());
 
-    // SMSG_SET_FORCED_REACTIONS by CMSG_REQUEST_FORCED_REACTIONS
-
     // SMSG_UPDATE_WORLD_STATE
     // SMSG_PHASE_SHIFT_CHANGE
     // SMSG_SET_MAX_WEEKLY_QUANTITY
@@ -24745,7 +24743,7 @@ void Player::SendInitialPacketsBeforeAddToMap()
     SendDirectMessage(toysUpdate.Write());
 
     WorldPackets::Character::InitialSetup initialSetup;
-    initialSetup.ServerExpansionLevel = sWorld->getIntConfig(CONFIG_EXPANSION);
+    initialSetup.ServerExpansionLevel = CURRENT_EXPANSION;
     SendDirectMessage(initialSetup.Write());
 
     // SMSG_0x010E
@@ -27038,7 +27036,7 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
 
         if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(item->item.ItemID))
         {
-            if (proto->Quality > ITEM_QUALITY_EPIC || (proto->Quality == ITEM_QUALITY_EPIC && proto->ItemLevel >= MinNewsItemLevel[sWorld->getIntConfig(CONFIG_EXPANSION)]))
+            if (proto->Quality > ITEM_QUALITY_EPIC || (proto->Quality == ITEM_QUALITY_EPIC && proto->ItemLevel >= MinNewsItemLevel[CURRENT_EXPANSION]))
                 if (Guild* guild = sGuildMgr->GetGuildById(GetGuildId()))
                     if (!proto->IsNotAppearInGuildNews())
                         guild->AddGuildNews(GUILD_NEWS_ITEM_LOOTED, GetGUID(), 0, item->item.ItemID);

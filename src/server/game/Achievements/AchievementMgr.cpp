@@ -4177,11 +4177,9 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                     break;
                 }
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_EXPANSION_LESS: // 92
-                {
-                    if (reqValue >= (int32)sWorld->getIntConfig(CONFIG_EXPANSION))
+                    if (reqValue >= (int32)CURRENT_EXPANSION)
                         check = false;
                     break;
-                }
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_REPUTATION: // 95
                 {
                     if (referencePlayer->GetReputationMgr().GetReputation(reqValue) < int32(reqCount))

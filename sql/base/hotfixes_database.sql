@@ -4041,13 +4041,13 @@ CREATE TABLE `chr_specialization_locale` (
 DROP TABLE IF EXISTS `emotes`;
 CREATE TABLE `emotes` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Name` text,
-  `AnimationID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteType` int(10) unsigned NOT NULL DEFAULT '0',
-  `UnitStandState` int(10) unsigned NOT NULL DEFAULT '0',
-  `SoundID` int(10) unsigned NOT NULL DEFAULT '0',
-  `UNK` int(10) unsigned NOT NULL DEFAULT '0',
+  `EmoteSlashCommand` text,
+  `EmoteFlags` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellVisualKitID` int(10) unsigned NOT NULL DEFAULT '0',
+  `AnimID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `EmoteSoundID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `EmoteSpecProc` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `EmoteSpecProcParam` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4060,7 +4060,7 @@ DROP TABLE IF EXISTS `emotes_locale`;
 CREATE TABLE `emotes_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `Name_lang` text,
+  `EmoteSlashCommand_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

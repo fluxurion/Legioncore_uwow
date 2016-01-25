@@ -297,6 +297,7 @@ namespace WorldPackets
         class WorldTeleport;
         class ConfirmRespecWipe;
         class ShowTradeSkill;
+        class CompleteMovie;
     }
 
     namespace Movement
@@ -1103,7 +1104,7 @@ class WorldSession
         void HandleWhoOpcode(WorldPackets::Who::WhoRequestPkt& whoRequest);
         void HandleLogoutRequestOpcode(WorldPacket& recvPacket);
         void HandlePlayerLogoutOpcode(WorldPacket& recvPacket);
-        void HandleLogoutCancelOpcode(WorldPacket& recvPacket);
+        void HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet);
 
         // GM Ticket opcodes
         void HandleGMTicketCreateOpcode(WorldPacket& recvPacket);
@@ -1412,7 +1413,7 @@ class WorldSession
 
         void HandleCompleteCinematic(WorldPackets::Misc::CompleteCinematic& packet);
         void HandleNextCinematicCamera(WorldPackets::Misc::NextCinematicCamera& packet);
-        void HandleCompleteMovie(WorldPacket& recvPacket);
+        void HandleCompleteMovie(WorldPackets::Misc::CompleteMovie& packet);
 
         void HandleQueryPageText(WorldPackets::Query::QueryPageText& packet);
 

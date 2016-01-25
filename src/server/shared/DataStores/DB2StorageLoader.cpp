@@ -41,7 +41,7 @@ DB2FileLoader::DB2FileLoader()
     header.ReferenceDataSize = 0;
 }
 
-bool DB2FileLoader::Load(const char *filename, const char *fmt)
+bool DB2FileLoader::Load(char const* filename, char const* fmt)
 {
     if (recordTable)
     {

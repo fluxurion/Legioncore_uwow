@@ -741,8 +741,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM chr_specialization_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Emotes.db2
-    PrepareStatement(HOTFIX_SEL_EMOTES, "SELECT ID, Name, AnimationID, Flags, EmoteType, UnitStandState, SoundID, UNK FROM emotes ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_EMOTES, "SELECT ID, Name_lang FROM emotes_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_EMOTES, "SELECT ID, EmoteSlashCommand, EmoteFlags, SpellVisualKitID, AnimID, EmoteSoundID, EmoteSpecProc, "
+        "EmoteSpecProcParam FROM emotes ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_EMOTES, "SELECT ID, EmoteSlashCommand_lang FROM emotes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // GemProperties.db2
     PrepareStatement(HOTFIX_SEL_GEM_PROPERTIES, "SELECT ID, Type, EnchantID, MaxCountInv, MaxCountItem, MinItemLevel FROM gem_properties"

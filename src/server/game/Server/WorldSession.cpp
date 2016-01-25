@@ -200,12 +200,12 @@ void WorldSession::SendPacket(WorldPacket const* packet, bool forced /*= false*/
 
     if (packet->GetOpcode() == NULL_OPCODE)
     {
-        sLog->outError(LOG_FILTER_OPCODES, "Prevented sending of NULL_OPCODE to %s", GetPlayerName(false).c_str());
+        sLog->outError(LOG_FILTER_GENERAL, "Prevented sending of NULL_OPCODE to %s", GetPlayerName(false).c_str());
         return;
     }
     else if (packet->GetOpcode() == UNKNOWN_OPCODE)
     {
-        sLog->outError(LOG_FILTER_OPCODES, "Prevented sending of UNKNOWN_OPCODE to %s", GetPlayerName(false).c_str());
+        sLog->outError(LOG_FILTER_GENERAL, "Prevented sending of UNKNOWN_OPCODE to %s", GetPlayerName(false).c_str());
         return;
     }
 
@@ -216,7 +216,7 @@ void WorldSession::SendPacket(WorldPacket const* packet, bool forced /*= false*/
         if (!handler || handler->Status == STATUS_UNHANDLED)
         {
             #ifdef WIN32
-            sLog->outError(LOG_FILTER_OPCODES, "Prevented sending disabled opcode %s to %s", GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet->GetOpcode())).c_str(), GetPlayerName(false).c_str());
+            sLog->outError(LOG_FILTER_GENERAL, "Prevented sending disabled opcode %s to %s", GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet->GetOpcode())).c_str(), GetPlayerName(false).c_str());
             #endif
             return;
         }

@@ -138,30 +138,24 @@ void WorldSession::HandlePlayerLogoutOpcode(WorldPacket& recvData)
         recvData >> Unused<uint32>();
 }
 
-void WorldSession::HandleLogoutCancelOpcode(WorldPacket& /*recvData*/)
+void WorldSession::HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet)
 {
-    // Player have already logged out serverside, too late to cancel
-    if (!GetPlayer())
+    Player* player = GetPlayer();
+    if (!player)
         return;
 
     LogoutRequest(0);
 
     SendPacket(WorldPackets::Character::LogoutCancelAck().Write());
 
-    // not remove flags if can't free move - its not set in Logout request code.
-    if (GetPlayer()->CanFreeMove())
+    if (player->CanFreeMove())
     {
-        //!we can move again
-        GetPlayer()->SetRooted(false);
-
-        //! Stand Up
-        GetPlayer()->SetStandState(UNIT_STAND_STATE_STAND);
-
-        //! DISABLE_ROTATE
-        GetPlayer()->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+        player->SetRooted(false);
+        player->SetStandState(UNIT_STAND_STATE_STAND);
+        player->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
     }
 
-    GetPlayer()->PetSpellInitialize();
+    player->PetSpellInitialize();
 }
 
 void WorldSession::HandleTogglePvP(WorldPackets::Misc::TogglePvP& /*packet*/)
@@ -226,7 +220,8 @@ void WorldSession::HandleStandStateChangeOpcode(WorldPackets::Misc::StandStateCh
 
 void WorldSession::HandleAddFriendOpcodeCallBack(PreparedQueryResult result, std::string friendNote)
 {
-    if (!GetPlayer())
+    Player* player = GetPlayer();
+    if (!player)
         return;
 
     ObjectGuid friendGuid;
@@ -248,31 +243,31 @@ void WorldSession::HandleAddFriendOpcodeCallBack(PreparedQueryResult result, std
         {
             if (!friendGuid.IsEmpty())
             {
-                if (friendGuid == GetPlayer()->GetGUID())
+                if (friendGuid == player->GetGUID())
                     friendResult = FRIEND_SELF;
-                else if (GetPlayer()->GetTeam() != team && !sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_ADD_FRIEND) && AccountMgr::IsPlayerAccount(GetSecurity()))
+                else if (player->GetTeam() != team && !sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_ADD_FRIEND) && AccountMgr::IsPlayerAccount(GetSecurity()))
                     friendResult = FRIEND_ENEMY;
-                else if (GetPlayer()->GetSocial()->HasFriend(friendGuid))
+                else if (player->GetSocial()->HasFriend(friendGuid))
                     friendResult = FRIEND_ALREADY;
                 else
                 {
                     Player* pFriend = ObjectAccessor::FindPlayer(friendGuid);
-                    if (pFriend && pFriend->IsInWorld() && pFriend->IsVisibleGloballyFor(GetPlayer()))
+                    if (pFriend && pFriend->IsInWorld() && pFriend->IsVisibleGloballyFor(player))
                         friendResult = FRIEND_ADDED_ONLINE;
                     else
                         friendResult = FRIEND_ADDED_OFFLINE;
-                    if (!GetPlayer()->GetSocial()->AddToSocialList(friendGuid, SOCIAL_FLAG_FRIEND))
+                    if (!player->GetSocial()->AddToSocialList(friendGuid, SOCIAL_FLAG_FRIEND))
                     {
                         friendResult = FRIEND_LIST_FULL;
-                        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: %s's friend list is full.", GetPlayer()->GetName());
+                        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: %s's friend list is full.", player->GetName());
                     }
                 }
-                GetPlayer()->GetSocial()->SetFriendNote(friendGuid, friendNote);
+                player->GetSocial()->SetFriendNote(friendGuid, friendNote);
             }
         }
     }
 
-    sSocialMgr->SendFriendStatus(GetPlayer(), friendResult, friendGuid, false);
+    sSocialMgr->SendFriendStatus(player, friendResult, friendGuid, false);
 }
 
 //! 5.4.1
@@ -293,7 +288,7 @@ void WorldSession::HandleBugOpcode(WorldPacket& recvData)
     CharacterDatabase.Execute(stmt);
 }
 
-void WorldSession::HandleReclaimCorpse(WorldPackets::Misc::ReclaimCorpse& packet)
+void WorldSession::HandleReclaimCorpse(WorldPackets::Misc::ReclaimCorpse& /*packet*/)
 {
     Player* player = GetPlayer();
     if (!player)
@@ -473,13 +468,14 @@ void WorldSession::HandleCompleteCinematic(WorldPackets::Misc::CompleteCinematic
 
 void WorldSession::HandleNextCinematicCamera(WorldPackets::Misc::NextCinematicCamera& /*packet*/) { }
 
-void WorldSession::HandleCompleteMovie(WorldPacket& /*recvData*/)
+void WorldSession::HandleCompleteMovie(WorldPackets::Misc::CompleteMovie& /*packet*/)
 {
-    if (!_player)
+    Player* player = GetPlayer();
+    if (!player)
         return;
 
-    _player->setWatchinMovie(false);
-    _player->SetCanDelayTeleport(false);
+    player->setWatchinMovie(false);
+    player->SetCanDelayTeleport(false);
 }
 
 void WorldSession::HandleComplainOpcode(WorldPacket& recvData)

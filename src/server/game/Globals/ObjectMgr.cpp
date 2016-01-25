@@ -3314,14 +3314,14 @@ void ObjectMgr::LoadPlayerInfo()
                 if (!info)
                     continue;
 
-                /*if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_THE_BURNING_CRUSADE && (race == RACE_BLOODELF || race == RACE_DRAENEI))
+                if (CURRENT_EXPANSION < EXPANSION_THE_BURNING_CRUSADE && (race == RACE_BLOODELF || race == RACE_DRAENEI))
                     continue;
 
-                if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_WRATH_OF_THE_LICH_KING && class_ == CLASS_DEATH_KNIGHT)
+                if (CURRENT_EXPANSION < EXPANSION_WRATH_OF_THE_LICH_KING && class_ == CLASS_DEATH_KNIGHT)
                     continue;
 
-                if (sWorld->getIntConfig(CONFIG_EXPANSION) < EXPANSION_LEGION && class_ == CLASS_DEMON_HUNTER)
-                    continue;*/
+                if (CURRENT_EXPANSION < EXPANSION_LEGION && class_ == CLASS_DEMON_HUNTER)
+                    continue;
 
                 uint8 level = 1;
                 switch (class_)
