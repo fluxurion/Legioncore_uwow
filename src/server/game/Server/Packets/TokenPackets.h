@@ -24,25 +24,58 @@ namespace WorldPackets
 {
     namespace Token
     {
-        struct AuctionableListResponse
-        {
-            uint64 DistributionID = 0;
-            uint64 BuyoutPrice = 0;
-            time_t DateCreated = time_t(0);
-            uint32 Owner = 0;
-            uint32 EndTime = 0;
-        };
-
-        class UpdateWowTokenAuctionableListResponse final : public ServerPacket
+        class UpdateListedAuctionableTokens final : public ClientPacket
         {
         public:
-            UpdateWowTokenAuctionableListResponse() : ServerPacket(SMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST_RESPONSE, 12) { }
+            UpdateListedAuctionableTokens(WorldPacket&& packet) : ClientPacket(CMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 UnkInt = 0;
+        };
+
+        class UpdateListedAuctionableTokensResponse final : public ServerPacket
+        {
+        public:
+            UpdateListedAuctionableTokensResponse() : ServerPacket(SMSG_WOW_TOKEN_UPDATE_AUCTIONABLE_LIST_RESPONSE, 12) { }
 
             WorldPacket const* Write() override;
-            
-            std::vector<AuctionableListResponse> List;
-            int32 UnkInt = 0;
+
+            struct AuctionableTokenAuctionable
+            {
+                uint64 DistributionID = 0;
+                uint32 DateCreated = 0;
+                uint32 Owner = 0;
+                uint64 BuyoutPrice = 0;
+                uint32 EndTime = 0;
+            };
+
+            uint32 UnkInt = 0; // send CMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST
             uint32 Result = 0;
+            std::vector<AuctionableTokenAuctionable> AuctionableTokenAuctionableList;
+        };
+
+        class RequestWowTokenMarketPrice final : public ClientPacket
+        {
+        public:
+            RequestWowTokenMarketPrice(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_WOW_TOKEN_MARKET_PRICE, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 UnkInt = 0;
+        };
+
+        class WowTokenMarketPriceResponse final : public ServerPacket
+        {
+        public:
+            WowTokenMarketPriceResponse() : ServerPacket(SMSG_WOW_TOKEN_MARKET_PRICE_RESPONSE, 8 + 4 * 3) { }
+
+            WorldPacket const* Write() override;
+
+            uint64 CurrentMarketPrice = 0;
+            uint32 UnkInt = 0;
+            uint32 Result = 0;
+            uint32 UnkInt2 = 0;
         };
     }
 }

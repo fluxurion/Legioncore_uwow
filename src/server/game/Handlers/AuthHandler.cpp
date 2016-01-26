@@ -15,14 +15,15 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "AuthenticationPackets.h"
+#include "BattlePayPackets.h"
+#include "ClientConfigPackets.h"
 #include "Opcodes.h"
 #include "SharedDefines.h"
-#include "WorldSession.h"
-#include "WorldPacket.h"
-#include "AuthenticationPackets.h"
-#include "ClientConfigPackets.h"
 #include "SystemPackets.h"
-#include "BattlePayPackets.h"
+#include "TokenPackets.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
 
 void WorldSession::SendAuthResponse(uint8 code, bool hasAccountData, bool queued, uint32 queuePos)
 {
@@ -101,13 +102,31 @@ void WorldSession::HandleGetUndeleteCharacterCooldownStatus(WorldPackets::Charac
     SendPacket(&data);
 }
 
-//! 6.1.2
-void WorldSession::HandleWowTokenMarketPrice(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleWowTokenMarketPrice(WorldPackets::Token::RequestWowTokenMarketPrice& packet)
 {
-    WorldPacket data(SMSG_REQUEST_WOW_TOKEN_MARKET_PRICE_RESPONSE, 20);
-    data << uint64(416460000);                                          //CurrentMarketPrice
-    data << uint32(0);
-    data << uint32(TOKEN_RESULT_SUCCESS);
-    data << uint32(14400);
-    SendPacket(&data);
+    WorldPackets::Token::WowTokenMarketPriceResponse response;
+    response.CurrentMarketPrice = 60000 * GOLD;
+    response.Result = TOKEN_RESULT_ERROR_DISABLED;
+    response.UnkInt = packet.UnkInt;
+    response.UnkInt2 = 14400;
+    SendPacket(response.Write());
+}
+
+void WorldSession::HandleUpdateListedAuctionableTokens(WorldPackets::Token::UpdateListedAuctionableTokens& packet)
+{
+    WorldPackets::Token::UpdateListedAuctionableTokensResponse response;
+    response.UnkInt = packet.UnkInt;
+    response.Result = TOKEN_RESULT_ERROR_DISABLED;
+    response.AuctionableTokenAuctionableList.resize(0);
+    for (uint8 v : {0})
+    {
+        WorldPackets::Token::UpdateListedAuctionableTokensResponse::AuctionableTokenAuctionable token;
+        token.BuyoutPrice = 60000 * GOLD;
+        token.DistributionID = 0;
+        token.DateCreated = 0;
+        token.Owner = 0;
+        token.EndTime = 0;
+        response.AuctionableTokenAuctionableList.push_back(token);
+    }
+    SendPacket(response.Write());
 }

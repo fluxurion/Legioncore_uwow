@@ -17,16 +17,20 @@
 
 #include "TokenPackets.h"
 
-WorldPacket const* WorldPackets::Token::UpdateWowTokenAuctionableListResponse::Write()
+void WorldPackets::Token::UpdateListedAuctionableTokens::Read()
+{
+    _worldPacket >> UnkInt;
+}
+
+WorldPacket const* WorldPackets::Token::UpdateListedAuctionableTokensResponse::Write()
 {
     _worldPacket << UnkInt;
     _worldPacket << Result;
-    _worldPacket << static_cast<uint32>(List.size());
-
-    for (auto const& v : List)
+    _worldPacket << static_cast<uint32>(AuctionableTokenAuctionableList.size());
+    for (auto const& v : AuctionableTokenAuctionableList)
     {
         _worldPacket << v.DistributionID;
-        _worldPacket << uint32(v.DateCreated);
+        _worldPacket << v.DateCreated;
         _worldPacket << v.Owner;
         _worldPacket << v.BuyoutPrice;
         _worldPacket << v.EndTime;
@@ -35,3 +39,17 @@ WorldPacket const* WorldPackets::Token::UpdateWowTokenAuctionableListResponse::W
     return &_worldPacket;
 }
 
+void WorldPackets::Token::RequestWowTokenMarketPrice::Read()
+{
+    _worldPacket >> UnkInt;
+}
+
+WorldPacket const* WorldPackets::Token::WowTokenMarketPriceResponse::Write()
+{
+    _worldPacket << CurrentMarketPrice;
+    _worldPacket << UnkInt;
+    _worldPacket << Result;
+    _worldPacket << UnkInt2;
+
+    return &_worldPacket;
+}

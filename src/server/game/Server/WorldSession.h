@@ -688,6 +688,12 @@ namespace WorldPackets
         class TaxiRequestEarlyLanding;
     }
 
+    namespace Token
+    {
+        class RequestWowTokenMarketPrice;
+        class UpdateListedAuctionableTokens;
+    }
+
     class Null final : public ClientPacket
     {
     public:
@@ -1690,7 +1696,8 @@ class WorldSession
 
         void SuspendTokenResponse(WorldPacket& recvPacket);
         void HandleGetUndeleteCharacterCooldownStatus(WorldPackets::Character::GetUndeleteCharacterCooldownStatus& packet);
-        void HandleWowTokenMarketPrice(WorldPacket& recvPacket);
+        void HandleWowTokenMarketPrice(WorldPackets::Token::RequestWowTokenMarketPrice& packet);
+        void HandleUpdateListedAuctionableTokens(WorldPackets::Token::UpdateListedAuctionableTokens& packet);
 
         void LootCorps(ObjectGuid corpsGUID, WorldObject* lootedBy = NULL);
 

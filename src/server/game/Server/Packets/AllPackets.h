@@ -56,6 +56,7 @@
 #include "TalentPackets.h"
 #include "TaxiPackets.h"
 #include "TotemPackets.h"
+#include "TokenPackets.h"
 #include "ToyPackets.h"
 #include "TradePackets.h"
 #include "VehiclePackets.h"
