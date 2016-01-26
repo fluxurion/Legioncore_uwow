@@ -431,7 +431,7 @@ namespace WorldPackets
         class DFTeleport final : public ClientPacket
         {
         public:
-            DFTeleport(WorldPacket&& packet) : ClientPacket(CMSG_DF_TELEPORT, std::move(packet)) { }
+            DFTeleport(WorldPacket&& packet) : ClientPacket(CMSG_LFG_TELEPORT, std::move(packet)) { }
 
             void Read() override;
 
