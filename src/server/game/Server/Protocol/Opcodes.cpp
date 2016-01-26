@@ -180,7 +180,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_BLACK_MARKET_REQUEST_ITEMS,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BlackMarket::BlackMarketRequestItems, &WorldSession::HandleBlackMarketRequestItems);
     DEFINE_HANDLER(CMSG_BUG_REPORT,                                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_BUSY_TRADE,                                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Trade::NullCmsg, &WorldSession::HandleBusyTrade);
-    DEFINE_HANDLER(CMSG_BUY_BACK_ITEM,                                      STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::BuyBackItem, &WorldSession::HandleBuybackItem);
+    DEFINE_HANDLER(CMSG_BUY_BACK_ITEM,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::BuyBackItem, &WorldSession::HandleBuybackItem);
     DEFINE_HANDLER(CMSG_BUY_BANK_SLOT,                                      STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Bank::BuyBankSlot, &WorldSession::HandleBuyBankSlot);
     DEFINE_HANDLER(CMSG_BUY_ITEM,                                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::BuyItem, &WorldSession::HandleBuyItemOpcode);
     DEFINE_HANDLER(CMSG_BUY_REAGENT_BANK,                                   STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -191,10 +191,10 @@ void OpcodeTable::Initialize()
     DEFINE_OPCODE_HANDLER_OLD(CMSG_CALENDAR_COMPLAIN,                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleCalendarComplain          );
     DEFINE_HANDLER(CMSG_CALENDAR_COPY_EVENT,                                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarCopyEvent, &WorldSession::HandleCalendarCopyEvent);
     DEFINE_HANDLER(CMSG_CALENDAR_EVENT_INVITE,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventInvite, &WorldSession::HandleCalendarEventInvite);
-    DEFINE_HANDLER(CMSG_CALENDAR_EVENT_MODERATOR_STATUS,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventModeratorStatus, &WorldSession::HandleCalendarEventModeratorStatus);
+    DEFINE_HANDLER(CMSG_CALENDAR_EVENT_MODERATOR_STATUS,                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventModeratorStatus, &WorldSession::HandleCalendarEventModeratorStatus);
     DEFINE_HANDLER(CMSG_CALENDAR_EVENT_RSVP,                                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventRSVP, &WorldSession::HandleCalendarEventRsvp);
     DEFINE_HANDLER(CMSG_CALENDAR_EVENT_SIGN_UP,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventSignUp, &WorldSession::HandleCalendarEventSignup);
-    DEFINE_HANDLER(CMSG_CALENDAR_EVENT_STATUS,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventStatus, &WorldSession::HandleCalendarEventStatus);
+    DEFINE_HANDLER(CMSG_CALENDAR_EVENT_STATUS,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarEventStatus, &WorldSession::HandleCalendarEventStatus);
     DEFINE_HANDLER(CMSG_CALENDAR_GET,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarGetCalendar, &WorldSession::HandleCalendarGetCalendar);
     DEFINE_HANDLER(CMSG_CALENDAR_GET_EVENT,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarGetEvent, &WorldSession::HandleCalendarGetEvent);
     DEFINE_HANDLER(CMSG_CALENDAR_GET_NUM_PENDING,                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Calendar::CalendarGetNumPending, &WorldSession::HandleCalendarGetNumPending);
@@ -369,7 +369,7 @@ void OpcodeTable::Initialize()
     DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_GET_TICKET,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketGetTicketOpcode   );
     DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_RESPONSE_RESOLVE,              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMResponseResolve         );
     DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_UPDATE_TEXT,                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketUpdateOpcode      );
-    DEFINE_HANDLER(CMSG_GOSSIP_SELECT_OPTION,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::GossipSelectOption, &WorldSession::HandleGossipSelectOption);
+    DEFINE_HANDLER(CMSG_GOSSIP_SELECT_OPTION,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::NPC::GossipSelectOption, &WorldSession::HandleGossipSelectOption);
     DEFINE_HANDLER(CMSG_GRANT_LEVEL,                                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::ReferAFriend::GrantLevel, &WorldSession::HandleGrantLevel);
     DEFINE_HANDLER(CMSG_GUILD_ADD_BATTLENET_FRIEND,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GUILD_ADD_RANK,                                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildAddRank, &WorldSession::HandleGuildAddRank        );
@@ -412,7 +412,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_GUILD_SET_FOCUSED_ACHIEVEMENT,                      STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Achievement::GuildSetFocusedAchievement, &WorldSession::HandleGuildSetFocusedAchievement);
     DEFINE_HANDLER(CMSG_GUILD_SET_GUILD_MASTER,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildSetGuildMaster, &WorldSession::HandleGuildSetGuildMaster);
     DEFINE_HANDLER(CMSG_GUILD_SET_MEMBER_NOTE,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildSetMemberNote, &WorldSession::HandleGuildSetMemberNote        );
-    DEFINE_HANDLER(CMSG_GUILD_SET_RANK_PERMISSIONS,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildSetRankPermissions, &WorldSession::HandleGuildSetRankPermissions);
+    DEFINE_HANDLER(CMSG_GUILD_SET_RANK_PERMISSIONS,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildSetRankPermissions, &WorldSession::HandleGuildSetRankPermissions);
     DEFINE_HANDLER(CMSG_GUILD_SHIFT_RANK,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildShiftRank, &WorldSession::HandleShiftRank);
     DEFINE_HANDLER(CMSG_GUILD_UPDATE_INFO_TEXT,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildUpdateInfoText, &WorldSession::HandleGuildUpdateInfoText);
     DEFINE_HANDLER(CMSG_GUILD_UPDATE_MOTD_TEXT,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildUpdateMotdText, &WorldSession::HandleGuildUpdateMotdText);
