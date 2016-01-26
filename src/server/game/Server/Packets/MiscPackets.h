@@ -116,6 +116,10 @@ namespace WorldPackets
         class SetupCurrency final : public ServerPacket
         {
         public:
+            SetupCurrency() : ServerPacket(SMSG_SETUP_CURRENCY, 22) { }
+
+            WorldPacket const* Write() override;
+
             struct Record
             {
                 int32 Type = 0;
@@ -125,10 +129,6 @@ namespace WorldPackets
                 Optional<int32> TrackedQuantity;
                 uint8 Flags = 0;
             };
-
-            SetupCurrency() : ServerPacket(SMSG_SETUP_CURRENCY, 22) { } // @TODO
-
-            WorldPacket const* Write() override;
 
             std::vector<Record> Data;
         };

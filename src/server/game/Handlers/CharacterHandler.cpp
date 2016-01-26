@@ -1004,17 +1004,11 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         pCurrChar->SetGuildLevel(0);
     }
 
-    // Send PVPSeason
-    {
-        WorldPackets::Battleground::PVPSeason season;
-        season.PreviousSeason = sWorld->getIntConfig(CONFIG_ARENA_SEASON_ID) - sWorld->getBoolConfig(CONFIG_ARENA_SEASON_IN_PROGRESS);
-
-        if (sWorld->getBoolConfig(CONFIG_ARENA_SEASON_IN_PROGRESS))
-            season.CurrentSeason = sWorld->getIntConfig(CONFIG_ARENA_SEASON_ID);
-
-        SendPacket(season.Write());
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Sent PVPSeason");
-    }
+    WorldPackets::Battleground::PVPSeason season;
+    season.PreviousSeason = sWorld->getIntConfig(CONFIG_ARENA_SEASON_ID) - sWorld->getBoolConfig(CONFIG_ARENA_SEASON_IN_PROGRESS);
+    if (sWorld->getBoolConfig(CONFIG_ARENA_SEASON_IN_PROGRESS))
+        season.CurrentSeason = sWorld->getIntConfig(CONFIG_ARENA_SEASON_ID);
+    SendPacket(season.Write());
 
     WorldPackets::Query::HotfixNotifyBlob hotfixInfo;
     hotfixInfo.Hotfixes = sDB2Manager.GetHotfixData();

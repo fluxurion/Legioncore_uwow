@@ -58,11 +58,10 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Social::ContactInfo const
 
 WorldPacket const* WorldPackets::Social::ContactList::Write()
 {
-    _worldPacket << uint32(Flags);
+    _worldPacket << Flags;
     _worldPacket.WriteBits(Contacts.size(), 8);
-
-    for (size_t i = 0; i < Contacts.size(); ++i)
-        _worldPacket << Contacts[i];
+    for (auto const& v : Contacts)
+        _worldPacket << v;
 
     return &_worldPacket;
 }

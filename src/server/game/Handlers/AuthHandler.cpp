@@ -18,6 +18,7 @@
 #include "AuthenticationPackets.h"
 #include "BattlePayPackets.h"
 #include "ClientConfigPackets.h"
+#include "CharacterPackets.h"
 #include "Opcodes.h"
 #include "SharedDefines.h"
 #include "SystemPackets.h"
@@ -95,11 +96,11 @@ void WorldSession::SendFeatureSystemStatusGlueScreen()
 
 void WorldSession::HandleGetUndeleteCharacterCooldownStatus(WorldPackets::Character::GetUndeleteCharacterCooldownStatus& /*packet*/)
 {
-    WorldPacket data(SMSG_UNDELETE_COOLDOWN_STATUS_RESPONSE, 9);
-    data << uint8(0);           //onebit
-    data << uint32(0);          //CD for free restore deleted character. 2592000
-    data << uint32(0);
-    SendPacket(&data);
+    WorldPackets::Character::UndeleteCooldownStatusResponse response;
+    response.OnCooldown = false;
+    response.MaxCooldown = 0;
+    response.CurrentCooldown = 0;
+    SendPacket(response.Write());
 }
 
 void WorldSession::HandleWowTokenMarketPrice(WorldPackets::Token::RequestWowTokenMarketPrice& packet)

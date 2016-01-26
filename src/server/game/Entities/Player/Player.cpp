@@ -8202,38 +8202,21 @@ void Player::_SaveCurrency(SQLTransaction& trans)
 
 void Player::SendCurrencies()
 {
-    //! 6.0.3
-    WorldPacket packet(SMSG_SETUP_CURRENCY, 3 + _currencyStorage.size() * (5 * 5 + 1));
-    packet << uint32(_currencyStorage.size());
-
-    for (PlayerCurrenciesMap::const_iterator itr = _currencyStorage.begin(); itr != _currencyStorage.end(); ++itr)
+    WorldPackets::Misc::SetupCurrency packet;
+    packet.Data.reserve(_currencyStorage.size());
+    for (auto const& v : _currencyStorage)
     {
-        CurrencyTypesEntry const* entry = itr->second.currencyEntry;
-
-        uint32 weekCount = itr->second.weekCount;
-        uint32 weekCap = GetCurrencyWeekCap(entry);
-        uint32 seasonTotal = itr->second.seasonTotal;
-        bool hasSeason = entry->HasSeasonCount();
-
-        packet << uint32(entry->ID);                              // Currency Id
-        packet << uint32(itr->second.totalCount);     // Currency count
-
-        packet.WriteBit(weekCap && weekCount);                          // hasWeekCount
-        packet.WriteBit(weekCap);
-        packet.WriteBit(hasSeason);                                     // season total earned
-        packet.WriteBits(itr->second.flags, 5);                         // some flags
-
-        if (weekCap && weekCount)
-            packet << uint32(weekCount);
-
-        if (weekCap)
-            packet << uint32(weekCap);
-
-        if (hasSeason)
-            packet << uint32(seasonTotal);
+        WorldPackets::Misc::SetupCurrency::Record record;
+        record.Type = v.first;
+        record.Quantity = v.second.totalCount;
+        record.WeeklyQuantity = v.second.weekCount;
+        record.MaxWeeklyQuantity = GetCurrencyWeekCap(v.first);
+        record.TrackedQuantity = v.second.seasonTotal;
+        record.Flags = v.second.flags;
+        packet.Data.push_back(record);
     }
 
-    GetSession()->SendPacket(&packet);
+    GetSession()->SendPacket(packet.Write());
 }
 
 void Player::ModifyCurrencyFlag(uint32 id, uint8 flag)

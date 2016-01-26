@@ -100,6 +100,7 @@ namespace WorldPackets
             bool CommerceSystemEnabled = false; 
             bool Unk14 = false;
             bool WillKickFromWorld = false;
+            bool IsExpansionPreorderInStore = false;
             int32 TokenPollTimeSeconds = 0;
             int32 TokenRedeemIndex = 0;
         };
