@@ -411,7 +411,8 @@ namespace WorldPackets
             CastFailed(OpcodeServer opcode) : ServerPacket(opcode, 4 + 4 + 4 + 4 + 1) { }
 
             WorldPacket const* Write() override;
-            
+
+            ObjectGuid Caster;
             uint32 SpellXSpellVisualID = 0;
             int32 Reason = 0;
             int32 FailedArg1 = -1;
@@ -685,11 +686,11 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            int32 SpellID = 0;
-            Optional<SpellChannelStartInterruptImmunities> InterruptImmunities;
             ObjectGuid CasterGUID;
-            Optional<SpellTargetedHealPrediction> HealPrediction;
+            int32 SpellID = 0;
             uint32 ChannelDuration = 0;
+            Optional<SpellChannelStartInterruptImmunities> InterruptImmunities;
+            Optional<SpellTargetedHealPrediction> HealPrediction;
         };
 
         class SpellChannelUpdate final : public ServerPacket

@@ -371,6 +371,10 @@ void WorldSession::HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet)
 
     for (WorldPackets::Query::DBQueryBulk::DBQueryRecord const& rec : packet.Queries)
     {
+        //@TODO:Legion - temp hack
+        if (store->HasRecord(rec.RecordID))
+            continue;
+
         WorldPackets::Query::DBReply response;
         response.TableHash = packet.TableHash;
 

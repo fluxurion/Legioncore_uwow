@@ -4778,6 +4778,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
+    packet.Caster = caster->GetGUID();
     packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;

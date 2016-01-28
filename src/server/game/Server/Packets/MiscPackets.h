@@ -233,13 +233,13 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            Optional<uint32> IneligibleForLootMask;
             uint32 WeeklyReset = 0;
+            uint32 DifficultyID = 0;
+            Optional<uint32> IneligibleForLootMask;
             Optional<uint32> InstanceGroupSize;
-            uint8 IsTournamentRealm = 0;
             Optional<uint32> RestrictedAccountMaxLevel;
             Optional<uint32> RestrictedAccountMaxMoney;
-            uint32 DifficultyID = 0;
+            uint8 IsTournamentRealm = 0;
         };
 
         class AreaTrigger final : public ClientPacket
@@ -798,7 +798,7 @@ namespace WorldPackets
 
             std::vector<TaskProgress> Progress;
         };
-        
+
         class StreamingMovie final : public ServerPacket
         {
         public:
@@ -819,7 +819,7 @@ namespace WorldPackets
             int32 TimerID = 0;
             bool KeepTimer = false;
         };
-         
+
         class StartElapsedTimer final : public ServerPacket
         {
         public:
@@ -963,7 +963,7 @@ namespace WorldPackets
 
             ObjectGuid RespecMaster;
             RespecType respecType = RESPEC_TYPE_TALENTS;
-        }; 
+        };
 
         class CrossedInebriationThreshold final : public ServerPacket
         {

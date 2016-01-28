@@ -71,6 +71,7 @@ DB2Storage<ItemDamageEntry>* ItemTemplate::GetItemDamageStore() const
         case INVTYPE_AMMO:
             store = &sItemDamageAmmoStore;
             break;
+        case INVTYPE_RANGEDRIGHT:
         case INVTYPE_2HWEAPON:
             if (GetFlags2() & ITEM_FLAGS_EXTRA_CASTER_WEAPON)
                 store = &sItemDamageTwoHandCasterStore;
@@ -79,7 +80,6 @@ DB2Storage<ItemDamageEntry>* ItemTemplate::GetItemDamageStore() const
             break;
         case INVTYPE_RANGED:
         case INVTYPE_THROWN:
-        case INVTYPE_RANGEDRIGHT:
         //@TODO:Legion check how this calc now...
             //switch (GetSubClass())
             //{
