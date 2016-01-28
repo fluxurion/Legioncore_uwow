@@ -1939,6 +1939,7 @@ struct ScenarioEntry
     LocalizedString* Name;                                  // 0
     uint8       Flags;                                      // 1
     uint8       UnkLegion;                                  // 2
+    uint8       UnkLegion2;                                 // 3
 
     bool IsChallenge() const { return Flags & SCENARIO_FLAG_CHALLENGE; }
     bool IsProvingGrounds() const { return Flags & SCENARIO_FLAG_SUPRESS_STAGE_TEXT; }
