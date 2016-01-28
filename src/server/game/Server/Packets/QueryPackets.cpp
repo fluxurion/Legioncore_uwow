@@ -260,6 +260,7 @@ WorldPacket const* WorldPackets::Query::DBReply::Write()
     _worldPacket << TableHash;
     _worldPacket << RecordID;
     _worldPacket << Timestamp;
+    _worldPacket.WriteBit(Allow);
     _worldPacket << static_cast<uint32>(Data.size());
     _worldPacket.append(Data);
 

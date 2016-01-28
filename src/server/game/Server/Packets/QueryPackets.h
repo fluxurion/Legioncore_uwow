@@ -197,7 +197,8 @@ namespace WorldPackets
 
             uint32 TableHash = 0;
             uint32 Timestamp = 0;
-            int32 RecordID = 0;
+            uint32 RecordID = 0;
+            bool Allow = false;
             ByteBuffer Data;
         };
 

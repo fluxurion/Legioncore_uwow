@@ -371,24 +371,18 @@ void WorldSession::HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet)
 
     for (WorldPackets::Query::DBQueryBulk::DBQueryRecord const& rec : packet.Queries)
     {
-        //@TODO:Legion - temp hack
-        if (store->HasRecord(rec.RecordID))
-            continue;
-
         WorldPackets::Query::DBReply response;
         response.TableHash = packet.TableHash;
+        response.RecordID = rec.RecordID;
 
         if (store->HasRecord(rec.RecordID))
         {
-            response.RecordID = rec.RecordID;
+            response.Allow = true;
             response.Timestamp = sDB2Manager.GetHotfixDate(rec.RecordID, packet.TableHash);
-            store->WriteRecord(rec.RecordID, GetSessionDbLocaleIndex(), response.Data);
+            store->WriteRecord(rec.RecordID, GetSessionDbcLocale(), response.Data);
         }
         else
-        {
-            response.RecordID = -int32(rec.RecordID);
-            response.Timestamp = time(NULL);
-        }
+            response.Timestamp = time(nullptr);
 
         SendPacket(response.Write());
     }
@@ -407,19 +401,16 @@ void WorldSession::HandleQueryQuestCompletionNPCs(WorldPackets::Query::QueryQues
 {
     WorldPackets::Query::QuestCompletionNPCResponse response;
 
-    for (int32& questID : packet.QuestCompletionNPCs)
+    for (int32 const& questID : packet.QuestCompletionNPCs)
     {
-        WorldPackets::Query::QuestCompletionNPC questCompletionNPC;
-
         if (!sObjectMgr->GetQuestTemplate(questID))
             continue;
 
+        WorldPackets::Query::QuestCompletionNPC questCompletionNPC;
         questCompletionNPC.QuestID = questID;
-
         auto creatures = sObjectMgr->GetCreatureQuestInvolvedRelationBounds(questID);
         for (auto it = creatures.first; it != creatures.second; ++it)
             questCompletionNPC.NPCs.push_back(it->second);
-
         response.QuestCompletionNPCs.push_back(questCompletionNPC);
     }
 
