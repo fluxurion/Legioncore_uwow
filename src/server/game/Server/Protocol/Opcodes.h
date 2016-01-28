@@ -1578,7 +1578,7 @@ enum OpcodeServer : uint16
     SMSG_TEXT_EMOTE                                   = 0x26A1,
     SMSG_THREAT_CLEAR                                 = 0x270E,
     SMSG_THREAT_REMOVE                                = 0xBADD,
-    SMSG_THREAT_UPDATE                                = 0xBADD,
+    SMSG_THREAT_UPDATE                                = 0x270B,
     SMSG_TIME_ADJUSTMENT                              = 0x2DA1,
     SMSG_TIME_SYNC_REQUEST                            = 0x2DA0,
     SMSG_TITLE_EARNED                                 = 0x2707,

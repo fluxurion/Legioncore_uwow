@@ -2161,8 +2161,8 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_GENERAL, "Loading archaeology digsite positions...");
     sObjectMgr->LoadDigSitePositions();
 
-    sLog->outInfo(LOG_FILTER_GENERAL, "Loading garrisons...");
-    sGarrisonMgr.Initialize();
+    sLog->outInfo(LOG_FILTER_GENERAL, "Loading garrisons... DISABLED");
+    //sGarrisonMgr.Initialize();
 
     // Battle Pets some data
     sObjectMgr->LoadBattlePetBreedsToSpecies();

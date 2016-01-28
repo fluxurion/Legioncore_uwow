@@ -745,12 +745,6 @@ void WorldSession::Handle_NULL(WorldPackets::Null& null)
         GetOpcodeNameForLogging(null.GetOpcode()).c_str(), GetPlayerName(false).c_str());
 }
 
-void WorldSession::Handle_NULL(WorldPacket& recvPacket)
-{
-    sLog->outError(LOG_FILTER_OPCODES, "Received unhandled opcode %s from %s",
-        GetOpcodeNameForLogging(static_cast<OpcodeClient>(recvPacket.GetOpcode())).c_str(), GetPlayerName(false).c_str());
-}
-
 void WorldSession::Handle_EarlyProccess(WorldPacket& recvPacket)
 {
     sLog->outError(LOG_FILTER_OPCODES, "Received opcode %s that must be processed in WorldSocket::OnRead from %s",

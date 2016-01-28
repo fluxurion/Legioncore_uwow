@@ -3617,6 +3617,13 @@ void Player::InitStatsForLevel(bool reapplyMods)
 {
     if (reapplyMods)                                        //reapply stats values only on .reset stats (level) command
         _RemoveAllStatBonuses();
+    
+    //@TODO:Legino - temp    
+    SetUInt32Value(PLAYER_FIELD_PRESTIGE, 1);
+    SetUInt32Value(PLAYER_FIELD_PVP_MEDALS, 1);
+    SetUInt32Value(PLAYER_FIELD_HONOR, 1);
+    SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, 1);
+    SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, 100);
 
     uint32 basehp = 0, basemana = 0;
     sObjectMgr->GetPlayerClassLevelInfo(getClass(), getLevel(), basehp, basemana);
