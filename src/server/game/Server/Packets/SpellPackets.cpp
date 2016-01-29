@@ -98,9 +98,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastLogData 
         data << powerData.PowerType;
         data << powerData.Amount;
     }
-    data.WriteBit(false);
-    // data << float // Unk data if bit is true
-    data.FlushBits();
 
     return data;
 }
@@ -148,7 +145,7 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
 
             if (data.UnkOptStruct)
             {
-                _worldPacket << data.UnkOptStruct->UnkUint16;
+                _worldPacket.WriteBits(data.UnkOptStruct->UnkUint16, 2);
                 _worldPacket << data.UnkOptStruct->UnkUint16_4;
                 _worldPacket << data.UnkOptStruct->UnkUint8_6;
                 _worldPacket << data.UnkOptStruct->UnkUint8_7;
@@ -330,10 +327,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::RuneData const& r
 {
     data << runeData.Start;
     data << runeData.Count;
-
-    data.WriteBits(runeData.Cooldowns.size(), 3);
-    data.FlushBits();
-
+    data << static_cast<uint32>(runeData.Cooldowns.size());
     for (uint8 const& cd : runeData.Cooldowns)
         data << cd;
 

@@ -3726,6 +3726,7 @@ CREATE TABLE `scenario` (
   `Name` text,
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `UnkLegion` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkLegion2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

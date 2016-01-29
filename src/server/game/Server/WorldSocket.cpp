@@ -276,7 +276,7 @@ bool WorldSocket::ReadDataHandler()
                 //}
                 default:
                 {
-                    if (!_worldSession && opcode != CMSG_DB_QUERY_BULK)
+                    if (!_worldSession)
                     {
                         sLog->outError(LOG_FILTER_NETWORKIO, "ProcessIncoming: Client not authed opcode = %u", uint32(opcode));
                         CloseSocket();

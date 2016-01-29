@@ -37,7 +37,7 @@
 #define CORPSE_FIELD_BYTES_1 CORPSE_FIELD_SKIN_ID
 #define CORPSE_FIELD_BYTES_2 CORPSE_FIELD_FACIAL_HAIR_STYLE_ID
 
-// Updatefields auto generated for version 6, 1, 2, 19802
+// Updatefields auto generated for version 7.0.1.20979
 enum EObjectFields
 {
     OBJECT_FIELD_GUID = 0x0, // Size: 4 Flags: Public
@@ -281,26 +281,27 @@ enum EPlayerFields
     PLAYER_FIELD_PVP_INFO = UNIT_END + 0x979, // Size: 36 Flags: Private
     PLAYER_FIELD_MAX_LEVEL = UNIT_END + 0x99D, // Size: 1 Flags: Private
     PLAYER_FIELD_SCALING_PLAYER_LEVEL_DELTA = UNIT_END + 0x99E, // Size: 1 Flags: Private
-    PLAYER_FIELD_NO_REAGENT_COST_MASK = UNIT_END + 0x99F, // Size: 4 Flags: Private
-    PLAYER_FIELD_PET_SPELL_POWER = UNIT_END + 0x9A3, // Size: 1 Flags: Private
-    PLAYER_FIELD_RESEARCHING = UNIT_END + 0x9A4, // Size: 10 Flags: Private
-    PLAYER_FIELD_PROFESSION_SKILL_LINE = UNIT_END + 0x9AE, // Size: 2 Flags: Private
-    PLAYER_FIELD_UI_HIT_MODIFIER = UNIT_END + 0x9B0, // Size: 1 Flags: Private
-    PLAYER_FIELD_UI_SPELL_HIT_MODIFIER = UNIT_END + 0x9B1, // Size: 1 Flags: Private
-    PLAYER_FIELD_HOME_REALM_TIME_OFFSET = UNIT_END + 0x9B2, // Size: 1 Flags: Private
-    PLAYER_FIELD_MOD_PET_HASTE = UNIT_END + 0x9B3, // Size: 1 Flags: Private
-    PLAYER_FIELD_SUMMONED_BATTLE_PET_GUID = UNIT_END + 0x9B4, // Size: 4 Flags: Private
-    PLAYER_FIELD_OVERRIDE_SPELLS_ID = UNIT_END + 0x9B8, // Size: 1 Flags: Private, UrgentSelfOnly
-    PLAYER_FIELD_LFG_BONUS_FACTION_ID = UNIT_END + 0x9B9, // Size: 1 Flags: Private
-    PLAYER_FIELD_LOOT_SPEC_ID = UNIT_END + 0x9BA, // Size: 1 Flags: Private
-    PLAYER_FIELD_OVERRIDE_ZONE_PVPTYPE = UNIT_END + 0x9BB, // Size: 1 Flags: Private, UrgentSelfOnly
-    PLAYER_FIELD_BAG_SLOT_FLAGS = UNIT_END + 0x9BC, // Size: 4 Flags: Private
-    PLAYER_FIELD_BANK_BAG_SLOT_FLAGS = UNIT_END + 0x9C0, // Size: 7 Flags: Private
-    PLAYER_FIELD_INSERT_ITEMS_LEFT_TO_RIGHT = UNIT_END + 0x9C7, // Size: 1 Flags: Private
-    PLAYER_FIELD_QUEST_COMPLETED = UNIT_END + 0x9C8, // Size: 875 Flags: Private
-    PLAYER_FIELD_HONOR = UNIT_END + 0xD33, // Size: 1 Flags: Private
-    PLAYER_FIELD_HONOR_NEXT_LEVEL = UNIT_END + 0xD34, // Size: 1 Flags: Private
-    PLAYER_END = UNIT_END + 0xD35
+    PLAYER_FIELD_MAX_CREATURE_SCALING_LEVEL = UNIT_END + 0x99F, // Size: 1 Flags: Private
+    PLAYER_FIELD_NO_REAGENT_COST_MASK = UNIT_END + 0x9A0, // Size: 4 Flags: Private
+    PLAYER_FIELD_PET_SPELL_POWER = UNIT_END + 0x9A4, // Size: 1 Flags: Private
+    PLAYER_FIELD_RESEARCHING = UNIT_END + 0x9A5, // Size: 10 Flags: Private
+    PLAYER_FIELD_PROFESSION_SKILL_LINE = UNIT_END + 0x9AF, // Size: 2 Flags: Private
+    PLAYER_FIELD_UI_HIT_MODIFIER = UNIT_END + 0x9B1, // Size: 1 Flags: Private
+    PLAYER_FIELD_UI_SPELL_HIT_MODIFIER = UNIT_END + 0x9B2, // Size: 1 Flags: Private
+    PLAYER_FIELD_HOME_REALM_TIME_OFFSET = UNIT_END + 0x9B3, // Size: 1 Flags: Private
+    PLAYER_FIELD_MOD_PET_HASTE = UNIT_END + 0x9B4, // Size: 1 Flags: Private
+    PLAYER_FIELD_SUMMONED_BATTLE_PET_GUID = UNIT_END + 0x9B5, // Size: 4 Flags: Private
+    PLAYER_FIELD_OVERRIDE_SPELLS_ID = UNIT_END + 0x9B9, // Size: 1 Flags: Private, UrgentSelfOnly
+    PLAYER_FIELD_LFG_BONUS_FACTION_ID = UNIT_END + 0x9BA, // Size: 1 Flags: Private
+    PLAYER_FIELD_LOOT_SPEC_ID = UNIT_END + 0x9BB, // Size: 1 Flags: Private
+    PLAYER_FIELD_OVERRIDE_ZONE_PVPTYPE = UNIT_END + 0x9BC, // Size: 1 Flags: Private, UrgentSelfOnly
+    PLAYER_FIELD_BAG_SLOT_FLAGS = UNIT_END + 0x9BD, // Size: 4 Flags: Private
+    PLAYER_FIELD_BANK_BAG_SLOT_FLAGS = UNIT_END + 0x9C1, // Size: 7 Flags: Private
+    PLAYER_FIELD_INSERT_ITEMS_LEFT_TO_RIGHT = UNIT_END + 0x9C8, // Size: 1 Flags: Private
+    PLAYER_FIELD_QUEST_COMPLETED = UNIT_END + 0x9C9, // Size: 875 Flags: Private
+    PLAYER_FIELD_HONOR = UNIT_END + 0xD34, // Size: 1 Flags: Private
+    PLAYER_FIELD_HONOR_NEXT_LEVEL = UNIT_END + 0xD35, // Size: 1 Flags: Private
+    PLAYER_END = UNIT_END + 0xD36
 };
 
 enum EContainerFields

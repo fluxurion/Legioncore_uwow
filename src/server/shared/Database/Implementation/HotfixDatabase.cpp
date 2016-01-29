@@ -690,7 +690,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Scenario.db2
-    PrepareStatement(HOTFIX_SEL_SCENARIO, "SELECT ID, Name, Flags, UnkLegion FROM scenario ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SCENARIO, "SELECT ID, Name, Flags, UnkLegion, UnkLegion2 FROM scenario ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SCENARIO, "SELECT ID, Name_lang FROM scenario_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ScenarioStep.db2
