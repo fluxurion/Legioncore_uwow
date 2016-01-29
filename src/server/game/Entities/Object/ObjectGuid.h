@@ -38,11 +38,12 @@ enum TypeID
     TYPEID_CORPSE        = 7,
     TYPEID_AREATRIGGER   = 8,
     TYPEID_SCENEOBJECT   = 9,
-    TYPEID_CONVERSATION  = 10
+    TYPEID_CONVERSATION  = 10,
+
+    NUM_CLIENT_OBJECT_TYPES
 };
 
 #define TRADE_DISTANCE                      11.11f
-#define NUM_CLIENT_OBJECT_TYPES             11
 
 enum TypeMask
 {
@@ -62,50 +63,53 @@ enum TypeMask
 
 enum class HighGuid
 {
-    Null             = 0,
-    Uniq             = 1,
-    Player           = 2,
-    Item             = 3,
-    StaticDoor       = 4,   //NYI
-    Transport        = 5,
-    Conversation     = 6,
-    Creature         = 7,
-    Vehicle          = 8,
-    Pet              = 9,
-    GameObject       = 10,
-    DynamicObject    = 11,
-    AreaTrigger      = 12,
-    Corpse           = 13,
-    LootObject       = 14,
-    SceneObject      = 15,
-    Scenario         = 16,
-    AIGroup          = 17,
-    DynamicDoor      = 18,
-    ClientActor      = 19,  //NYI
-    Vignette         = 20,
-    CallForHelp      = 21,
-    AIResource       = 22,
-    AILock           = 23,
-    AILockTicket     = 24,
-    ChatChannel      = 25,
-    Party            = 26,
-    Guild            = 27,
-    WowAccount       = 28,
-    BNetAccount      = 29,
-    GMTask           = 30,
-    MobileSession    = 31,  //NYI
-    RaidGroup        = 32,
-    Spell            = 33,
-    Mail             = 34,
-    WebObj           = 35,  //NYI
-    LFGObject        = 36,  //NYI
-    LFGList          = 37,  //NYI
-    UserRouter       = 38,
-    PVPQueueGroup    = 39,
-    UserClient       = 40,
-    PetBattle        = 41,
-    UniqueUserClient = 42,
-    BattlePet        = 43,
+    Null            = 0,
+    Uniq            = 1,
+    Player          = 2,
+    Item            = 3,
+    Transport       = 6,
+    Creature        = 8,
+    Vehicle         = 9,
+    Pet             = 10,
+    AreaTrigger     = 13,
+    ClientActor     = 20,
+    Vignette        = 21,
+    Cast            = 26,
+    WowAccount      = 30,
+    BNetAccount     = 31,
+    Spell           = 35,
+    BattlePet       = 45,
+
+    // wrong id's - just PH
+    GameObject,
+    DynamicObject,
+    Corpse,
+    LootObject,
+    Party,
+    Guild,
+    SceneObject,
+    Conversation,
+    StaticDoor,
+    Scenario,
+    AIGroup,
+    DynamicDoor,
+    CallForHelp,
+    AIResource,
+    AILock,
+    AILockTicket,
+    ChatChannel,
+    GMTask,
+    MobileSession,
+    RaidGroup,
+    Mail,
+    WebObj,
+    LFGObject,
+    LFGList,
+    UserRouter,
+    PVPQueueGroup,
+    UserClient,
+    PetBattle,
+    UniqueUserClient,
 
     Count,
 };
@@ -205,6 +209,8 @@ class ObjectGuid
         bool IsGuild()             const { return GetHigh() == HighGuid::Guild; }
         bool IsSceneObject()       const { return GetHigh() == HighGuid::SceneObject; }
         bool IsConversation()      const { return GetHigh() == HighGuid::Conversation; }
+        bool IsSpell()             const { return GetHigh() == HighGuid::Spell; }
+        bool IsCast()              const { return GetHigh() == HighGuid::Cast; }
 
         static TypeID GetTypeId(HighGuid high)
         {

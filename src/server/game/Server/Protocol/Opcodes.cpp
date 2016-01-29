@@ -53,7 +53,7 @@ void OpcodeTable::ValidateAndSetClientOpcode(OpcodeClient opcode, char const* na
 {
     if (uint16(opcode) == NULL_OPCODE)
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "Opcode %s does not have a value", name);
+        sLog->outTrace(LOG_FILTER_NETWORKIO, "Opcode %s does not have a value", name);
         return;
     }
 
@@ -76,7 +76,7 @@ void OpcodeTable::ValidateAndSetServerOpcode(OpcodeServer opcode, char const* na
 {
     if (uint16(opcode) == NULL_OPCODE)
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "Opcode %s does not have a value", name);
+        sLog->outTrace(LOG_FILTER_NETWORKIO, "Opcode %s does not have a value", name);
         return;
     }
 
@@ -108,7 +108,6 @@ void OpcodeTable::Initialize()
     //DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_REPORT_LAG,                           STATUS_UNHANDLED,  PROCESS_THREADUNSAFE, &WorldSession::HandleReportLag                 );
     //DEFINE_OPCODE_HANDLER_OLD(CMSG_MESSAGECHAT_ADDON_BATTLEGROUND,          STATUS_UNHANDLED,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatAddonMessage, &WorldSession::HandleChatAddonMessageOpcode    );
     //DEFINE_OPCODE_HANDLER_OLD(CMSG_MESSAGECHAT_BATTLEGROUND,               STATUS_UNHANDLED,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessage, &WorldSession::HandleChatMessageOpcode         );
-    //DEFINE_OPCODE_HANDLER_OLD(CMSG_SUMMON_BATTLEPET_COMPANION,              STATUS_UNHANDLED,  PROCESS_THREADUNSAFE, &WorldSession::HandleSummonBattlePet           );
     //DEFINE_OPCODE_HANDLER_OLD(CMSG_UPDATE_PROJECTILE_POSITION,              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleUpdateProjectilePosition  );
 
     DEFINE_HANDLER(CMSG_ACCEPT_GUILD_INVITE,                                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::AcceptGuildInvite, &WorldSession::HandleGuildAcceptInvite);
@@ -754,7 +753,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_TOY_SET_FAVORITE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Toy::ToySetFavorite, &WorldSession::HandleToySetFavorite);
     DEFINE_HANDLER(CMSG_TRAINER_BUY_SPELL,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::TrainerBuySpell, &WorldSession::HandleTrainerBuySpell);
     DEFINE_HANDLER(CMSG_TRAINER_LIST,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::Hello, &WorldSession::HandleTrainerList);
-    DEFINE_HANDLER(CMSG_TRANSMOGRIFY_ITEMS,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::TransmogrigyItem, &WorldSession::HandleTransmogrifyItems);
+    DEFINE_HANDLER(CMSG_TRANSMOGRIFY_ITEMS,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::TransmogrifyItems, &WorldSession::HandleTransmogrifyItems);
     DEFINE_HANDLER(CMSG_TURN_IN_PETITION,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::TurnInPetition, &WorldSession::HandleTurnInPetition);
     DEFINE_HANDLER(CMSG_TUTORIAL_FLAG,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::TutorialSetFlag, &WorldSession::HandleTutorialFlag);
     DEFINE_HANDLER(CMSG_TWITTER_CHECK_STATUS,                               STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -845,7 +844,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUCTION_REPLICATE_RESPONSE,              STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUCTION_WON_NOTIFICATION,                STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AURA_POINTS_DEPLETED,                    STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_AURA_UPDATE,                             STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_AURA_UPDATE,                             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUTH_CHALLENGE,                          STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUTH_RESPONSE,                           STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AVAILABLE_VOICE_CHANNEL,                 STATUS_UNHANDLED);
@@ -1615,7 +1614,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_EXECUTE_LOG,                       STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_FAILED_OTHER,                      STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_FAILURE,                           STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_GO,                                STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_GO,                                STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_HEAL_LOG,                          STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_INSTAKILL_LOG,                     STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_INTERRUPT_LOG,                     STATUS_UNHANDLED);
@@ -1624,7 +1623,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_NON_MELEE_DAMAGE_LOG,              STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_OR_DAMAGE_IMMUNE,                  STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_PERIODIC_AURA_LOG,                 STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_START,                             STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_START,                             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_UPDATE_CHAIN_TARGETS,              STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPIRIT_HEALER_CONFIRM,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_STAND_STATE_UPDATE,                      STATUS_NEVER);

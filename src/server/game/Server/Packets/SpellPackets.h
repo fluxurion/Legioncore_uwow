@@ -164,7 +164,7 @@ namespace WorldPackets
 
         struct AuraDataInfo
         {
-            ObjectGuid UnkLGuid;
+            ObjectGuid CastGuid;
             std::vector<float> Points;
             std::vector<float> EstimatedPoints;
             int32 SpellID = 0;
@@ -229,7 +229,7 @@ namespace WorldPackets
 
         struct SpellCastRequest
         {
-            ObjectGuid UnkGuid;
+            ObjectGuid SpellGuid;
             ObjectGuid Charmer;
             SpellTargetData Target;
             MissileTrajectoryRequest MissileTrajectory;
@@ -323,7 +323,7 @@ namespace WorldPackets
         {
             ObjectGuid CasterGUID;
             ObjectGuid CasterUnit;
-            ObjectGuid UnkLGuid1;
+            ObjectGuid CastGuid;
             ObjectGuid UnkLGuid2;
             int32 SpellID = 0;
             uint32 SpellXSpellVisualID = 0;
@@ -412,7 +412,7 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            ObjectGuid Caster;
+            ObjectGuid CastGuid;
             uint32 SpellXSpellVisualID = 0;
             int32 Reason = 0;
             int32 FailedArg1 = -1;

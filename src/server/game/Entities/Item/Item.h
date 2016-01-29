@@ -387,10 +387,12 @@ class Item : public Object
         bool hasQuest(uint32 quest_id) const { return GetTemplate()->StartQuest == quest_id; }
         bool hasInvolvedQuest(uint32 /*quest_id*/) const { return false; }
         bool HasStats() const;
+        static bool HasStats(WorldPackets::Item::ItemInstance const& itemInstance, BonusData const* bonus);
         bool IsPotion() const { return GetTemplate()->IsPotion(); }
         bool IsVellum() const { return GetTemplate()->IsVellum(); }
         bool IsConjuredConsumable() const { return GetTemplate()->IsConjuredConsumable(); }
         bool IsRangedWeapon() const { return GetTemplate()->IsRangedWeapon(); }
+        BonusData const* GetBonus() const { return &_bonusData; }
         uint32 GetQuality() const { return _bonusData.Quality; }
         uint32 GetItemLevel() const;
         int32 GetRequiredLevel() const { return _bonusData.RequiredLevel; }
@@ -425,9 +427,9 @@ class Item : public Object
 
         uint32 GetScriptId() const { return GetTemplate()->ScriptId; }
 
-        bool CanBeTransmogrified() const;
-        bool CanTransmogrify() const;
-        static bool CanTransmogrifyItemWithItem(Item const* transmogrified, Item const* transmogrifier);
+        bool IsValidTransmogrificationTarget() const;
+        static bool IsValidTransmogrificationSource(WorldPackets::Item::ItemInstance const& transmogrifier, BonusData const* bonus);
+        static bool CanTransmogrifyItemWithItem(Item const* transmogrified, WorldPackets::Item::ItemInstance const& transmogrifier, BonusData const* bonus);
         static uint32 GetSpecialPrice(ItemTemplate const* proto, uint32 minimumPrice = 10000);
         uint32 GetSpecialPrice(uint32 minimumPrice = 10000) const { return GetSpecialPrice(GetTemplate(), minimumPrice); }
 
@@ -439,8 +441,6 @@ class Item : public Object
         uint32 GetModifier(ItemModifier modifier) const { return _modifiers[modifier]; }
         void SetModifier(ItemModifier modifier, uint32 value);
 
-        void SetTransmogrification(uint32 value);
-        uint32 GetTransmogrification() const;
         void SetUpgradeId(uint32 value);
         uint32 GetUpgradeId() const;
 

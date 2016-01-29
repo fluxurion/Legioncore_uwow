@@ -300,6 +300,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
     Spell* spell = new Spell(mover, spellInfo, TRIGGERED_NONE, ObjectGuid::Empty, false, replaced);
     spell->m_misc.Raw.Data[0] = cast.Cast.Misc[0];
     spell->m_misc.Raw.Data[1] = cast.Cast.Misc[1];
+    spell->m_spellGuid = cast.Cast.SpellGuid;
     spell->prepare(&targets);
 }
 

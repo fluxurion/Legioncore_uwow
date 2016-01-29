@@ -87,6 +87,34 @@ ByteBuffer& operator>>(ByteBuffer& data, Optional<WorldPackets::Item::ItemBonusI
     return data;
 }
 
+bool WorldPackets::Item::ItemBonusInstanceData::operator==(ItemBonusInstanceData const& r) const
+{
+    if (Context != r.Context)
+        return false;
+
+    if (BonusListIDs.size() != r.BonusListIDs.size())
+        return false;
+
+    return std::is_permutation(BonusListIDs.begin(), BonusListIDs.end(), r.BonusListIDs.begin());
+}
+
+bool WorldPackets::Item::ItemInstance::operator==(ItemInstance const& r) const
+{
+    if (ItemID != r.ItemID || RandomPropertiesID != r.RandomPropertiesID || RandomPropertiesSeed != r.RandomPropertiesSeed)
+        return false;
+
+    if (ItemBonus.is_initialized() != r.ItemBonus.is_initialized() || Modifications.is_initialized() != r.Modifications.is_initialized())
+        return false;
+
+    if (Modifications.is_initialized() && *Modifications != *r.Modifications)
+        return false;
+
+    if (ItemBonus.is_initialized() && *ItemBonus != *r.ItemBonus)
+        return false;
+
+    return true;
+}
+
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Item::ItemInstance const& itemInstance)
 {
     data << int32(itemInstance.ItemID);
@@ -297,27 +325,32 @@ void WorldPackets::Item::BuyItem::Read()
     ItemType = static_cast<ItemVendorType>(_worldPacket.ReadBits(2));
 }
 
-void WorldPackets::Item::TransmogrigyItem::Read()
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Item::TransmogrifyItem& transmogItem)
 {
-    _worldPacket >> Count >> NpcGUID;
-    Items.resize(Count);
-    SrcItemGUID.resize(Count);
-    SrcVoidItemGUID.resize(Count);
-    Slots.resize(Count);
+    if (data.ReadBit())
+        transmogItem.SrcItemGUID = boost::in_place();
 
-    for (uint32 i = 0; i < Count; ++i)
-    {
-        uint32 HasSrcItem = _worldPacket.ReadBit();
-        uint32 HasSrcVoidItem = _worldPacket.ReadBit();
+    if (data.ReadBit())
+        transmogItem.SrcVoidItemGUID = boost::in_place();
 
-        _worldPacket >> Items[i] >> Slots[i];
+    data >> transmogItem.Item;
+    data >> transmogItem.Slot;
 
-        if (HasSrcItem)
-            _worldPacket >> SrcItemGUID[i];
+    if (transmogItem.SrcItemGUID.is_initialized())
+        data >> *transmogItem.SrcItemGUID;
 
-        if (HasSrcVoidItem)
-            _worldPacket >> SrcVoidItemGUID[i];
-    }
+    if (transmogItem.SrcVoidItemGUID.is_initialized())
+        data >> *transmogItem.SrcVoidItemGUID;
+
+    return data;
+}
+
+void WorldPackets::Item::TransmogrifyItems::Read()
+{
+    Items.resize(_worldPacket.read<uint32>());
+    _worldPacket >> NpcGUID;
+    for (TransmogrifyItem& item : Items)
+        _worldPacket >> item;
 }
 
 WorldPacket const* WorldPackets::Item::ItemPushResult::Write()

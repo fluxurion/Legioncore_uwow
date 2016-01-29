@@ -345,7 +345,6 @@ class Spell
     friend class SpellScript;
     friend class AreaTrigger;
     public:
-
         void EffectNULL(SpellEffIndex effIndex);
         void EffectUnused(SpellEffIndex effIndex);
         void EffectDistract(SpellEffIndex effIndex);
@@ -626,6 +625,8 @@ class Spell
                 uint32 Data[2];
             } Raw;
         } m_misc;
+
+        ObjectGuid m_spellGuid;
         uint32 m_preCastSpell;
         SpellCastTargets m_targets;
         int8 m_comboPointGain;

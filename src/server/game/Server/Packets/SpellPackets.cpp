@@ -113,7 +113,7 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
         if (_worldPacket.WriteBit(aura.AuraData.is_initialized()))
         {
             AuraDataInfo const& data = *aura.AuraData;
-            _worldPacket << data.UnkLGuid;
+            _worldPacket << data.CastGuid;
             _worldPacket << uint32(data.SpellID);
             _worldPacket << uint32(data.SpellXSpellVisualID);
             _worldPacket << uint8(data.Flags);
@@ -220,7 +220,7 @@ ByteBuffer& operator>>(ByteBuffer& buffer, WorldPackets::Spells::MissileTrajecto
 
 ByteBuffer& operator>>(ByteBuffer& buffer, WorldPackets::Spells::SpellCastRequest& request)
 {
-    buffer >> request.UnkGuid;
+    buffer >> request.SpellGuid;
     for (uint8 i = 0; i < 2; ++i)
         buffer >> request.Misc[i];
     buffer >> request.SpellID;
@@ -369,11 +369,9 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellHealPredicti
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData const& spellCastData)
 {
-    //data << spellCastData.CasterGUID;
-    //data << spellCastData.CasterUnit;
     data << spellCastData.CasterUnit;
-    data << ObjectGuid();
-    data << ObjectGuid();
+    data << spellCastData.CasterGUID;
+    data << spellCastData.CastGuid;
     data << ObjectGuid();
 
     data << int32(spellCastData.SpellID);
@@ -472,7 +470,7 @@ WorldPacket const* WorldPackets::Spells::SpellFailedOther::Write()
 
 WorldPacket const* WorldPackets::Spells::CastFailed::Write()
 {
-    _worldPacket << Caster;
+    _worldPacket << CastGuid;
     _worldPacket << SpellXSpellVisualID;
     _worldPacket << SpellID;
     _worldPacket << Reason;

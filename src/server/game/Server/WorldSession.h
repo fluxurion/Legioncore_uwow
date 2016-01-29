@@ -240,7 +240,7 @@ namespace WorldPackets
         class DestroyItem;
         class BuyItem;
         class AutoStoreBagItem;
-        class TransmogrigyItem;
+        class TransmogrifyItems;
         class VoidStorageContents;
         class UseCritterItem;
     }
@@ -1587,7 +1587,7 @@ class WorldSession
         void SendVoidStorageFailed(int8 reason = 0);
 
         // Transmogrification
-        void HandleTransmogrifyItems(WorldPackets::Item::TransmogrigyItem& request);
+        void HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems& request);
 
         // Upgrade item
         void HandleUpgradeItem(WorldPacket& recvData);

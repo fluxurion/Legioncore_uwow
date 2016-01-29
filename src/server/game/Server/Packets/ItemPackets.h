@@ -246,19 +246,28 @@ namespace WorldPackets
             ObjectGuid ContainerGUID;
         };
 
-        class TransmogrigyItem final : public ClientPacket
+        struct TransmogrifyItem
+        {
+            Optional<ObjectGuid> SrcItemGUID;
+            Optional<ObjectGuid> SrcVoidItemGUID;
+            ItemInstance Item;
+            uint32 Slot = 0;
+        };
+
+        class TransmogrifyItems final : public ClientPacket
         {
         public:
-            TransmogrigyItem(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOGRIFY_ITEMS, std::move(packet)) { }
+            enum
+            {
+                MAX_TRANSMOGRIFY_ITEMS = 11
+            };
+
+            TransmogrifyItems(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOGRIFY_ITEMS, std::move(packet)) { }
 
             void Read() override;
 
-            uint32 Count;
             ObjectGuid NpcGUID;
-            std::vector<ItemInstance> Items;
-            GuidVector SrcItemGUID;
-            GuidVector SrcVoidItemGUID;
-            std::vector<uint32> Slots;
+            Array<TransmogrifyItem, MAX_TRANSMOGRIFY_ITEMS> Items;
         };
 
         struct VoidStorageContentStruct

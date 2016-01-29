@@ -635,6 +635,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     memset(m_misc.Raw.Data, 0, sizeof(m_misc.Raw.Data));
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
+    m_spellGuid = ObjectGuid::Empty;
 }
 
 Spell::~Spell()
@@ -4778,7 +4779,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    packet.Caster = caster->GetGUID();
+    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(caster->GetGUIDLow());
     packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
@@ -4934,8 +4935,9 @@ void Spell::SendSpellStart()
 
     WorldPackets::Spells::SpellStart packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
-    castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
 
+    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetGUIDLow());
+    castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
     castData.SpellXSpellVisualID = m_SpellVisual;
@@ -5110,6 +5112,7 @@ void Spell::SendSpellGo()
     else
         castData.CasterGUID = m_caster->GetGUID();
 
+    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetGUIDLow());
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
@@ -5215,15 +5218,14 @@ void Spell::SendSpellGo()
 
 void Spell::SendSpellExecuteLog()
 {
-    WorldPackets::CombatLog::SpellExecuteLog spellExecuteLog;
-
-    spellExecuteLog.Caster = m_caster->GetGUID();
-    spellExecuteLog.SpellID = m_spellInfo->Id;
-
     if (_powerDrainTargets->empty() && _extraAttacksTargets->empty() &&
         _durabilityDamageTargets->empty() && _genericVictimTargets->empty() &&
         _tradeSkillTargets->empty() && _feedPetTargets->empty())
         return;
+
+    WorldPackets::CombatLog::SpellExecuteLog spellExecuteLog;
+    spellExecuteLog.Caster = m_caster->GetGUID();
+    spellExecuteLog.SpellID = m_spellInfo->Id;
 
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {

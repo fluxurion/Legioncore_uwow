@@ -108,7 +108,7 @@ void WorldSession::HandleVoidStorageTransfer(WorldPackets::VoidStorage::VoidStor
     if (!player->IsVoidStorageUnlocked())
         return;
 
-    if (packet.Deposits.size() > player->GetNumOfVoidStorageFreeSlots())
+    if (uint8(packet.Deposits.size()) > player->GetNumOfVoidStorageFreeSlots())
     {
         SendVoidStorageTransferResult(VOID_TRANSFER_ERROR_FULL);
         return;
@@ -170,7 +170,7 @@ void WorldSession::HandleVoidStorageTransfer(WorldPackets::VoidStorage::VoidStor
 
     for (size_t i = 0; i < packet.Withdrawals.size(); ++i)
     {
-        uint32 slot = 0;
+        uint8 slot = 0;
         VoidStorageItem* itemVS = player->GetVoidStorageItem(packet.Withdrawals[i].GetCounter(), slot);
         if (!itemVS)
             continue;
@@ -211,11 +211,11 @@ void WorldSession::HandleVoidSwapItem(WorldPackets::VoidStorage::SwapVoidItem& p
     if (!player->IsVoidStorageUnlocked())
         return;
 
-    uint32 oldSlot;
+    uint8 oldSlot;
     if (!player->GetVoidStorageItem(packet.VoidItemGuid.GetCounter(), oldSlot))
         return;
 
-    bool usedDestSlot = player->GetVoidStorageItem(packet.DstSlot) != NULL;
+    bool usedDestSlot = player->GetVoidStorageItem(packet.DstSlot) != nullptr;
     ObjectGuid itemIdDest;
     if (usedDestSlot)
         itemIdDest = ObjectGuid::Create<HighGuid::Item>(player->GetVoidStorageItem(packet.DstSlot)->ItemId);

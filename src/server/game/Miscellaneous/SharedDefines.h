@@ -2263,6 +2263,9 @@ enum GameobjectTypes // 6.2.2
     GAMEOBJECT_TYPE_GARRISON_MONUMENT_PLAQUE    = 46,
     GAMEOBJECT_TYPE_ARTIFACT_FORGE              = 47,
     GAMEOBJECT_TYPE_UI_LINK                     = 48,
+    GAMEOBJECT_TYPE_UNK_1                       = 49,
+    GAMEOBJECT_TYPE_UNK_2                       = 50,
+    GAMEOBJECT_TYPE_UNK_3                       = 51,
 
     MAX_GAMEOBJECT_TYPE
 };

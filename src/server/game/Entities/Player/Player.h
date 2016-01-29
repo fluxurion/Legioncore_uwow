@@ -3202,13 +3202,13 @@ class Player : public Unit, public GridObject<Player>
         bool IsVoidStorageUnlocked() const { return HasFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_VOID_UNLOCKED); }
         void UnlockVoidStorage() { SetFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_VOID_UNLOCKED); }
         void LockVoidStorage() { RemoveFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_VOID_UNLOCKED); }
-        uint32 GetNextVoidStorageFreeSlot() const;
-        uint32 GetNumOfVoidStorageFreeSlots() const;
-        uint32 AddVoidStorageItem(const VoidStorageItem& item);
-        void DeleteVoidStorageItem(uint32 slot);
-        bool SwapVoidStorageItem(uint32 oldSlot, uint32 newSlot);
-        VoidStorageItem* GetVoidStorageItem(uint32 slot) const;
-        VoidStorageItem* GetVoidStorageItem(uint64 id, uint32& slot) const;
+        uint8 GetNextVoidStorageFreeSlot() const;
+        uint8 GetNumOfVoidStorageFreeSlots() const;
+        uint32 AddVoidStorageItem(VoidStorageItem const& item);
+        void DeleteVoidStorageItem(uint8 slot);
+        bool SwapVoidStorageItem(uint8 oldSlot, uint8 newSlot);
+        VoidStorageItem* GetVoidStorageItem(uint8 slot) const;
+        VoidStorageItem* GetVoidStorageItem(uint64 id, uint8& slot) const;
 
         void SaveCUFProfile(uint8 id, CUFProfile * profile) { delete _CUFProfiles[id]; _CUFProfiles[id] = profile; }
         CUFProfile * GetCUFProfile(uint8 id) { return _CUFProfiles[id]; }

@@ -23969,7 +23969,6 @@ void Unit::SendSpellPlayOrphanVisual(SpellInfo const* spellInfo, bool apply, Pos
     }
 }
 
-//! 6.0.3 ToDo: Check IT
 void Unit::SendFakeAuraUpdate(uint32 auraId, uint32 flags, uint32 duration, uint32 _slot, bool remove)
 {
     WorldPackets::Spells::AuraUpdate update;
@@ -23981,6 +23980,7 @@ void Unit::SendFakeAuraUpdate(uint32 auraId, uint32 flags, uint32 duration, uint
     if (!remove)
     {
         WorldPackets::Spells::AuraDataInfo auraData;
+        auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(GetGUIDLow());
         auraData.SpellID = auraId;
         auraData.Flags = flags;
         auraData.ActiveFlags = 1;

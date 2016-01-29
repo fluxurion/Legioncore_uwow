@@ -1115,107 +1115,127 @@ void WorldSession::HandleItemRefund(WorldPacket &recvData)
     GetPlayer()->RefundItem(item);
 }
 
-void WorldSession::HandleTransmogrifyItems(WorldPackets::Item::TransmogrigyItem& packet)
+void WorldSession::HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems& packet)
 {
     Player* player = GetPlayer();
     if (!player)
         return;
 
-    if (packet.Count < EQUIPMENT_SLOT_START || packet.Count >= EQUIPMENT_SLOT_END)
-        return;
-
     if (!player->GetNPCIfCanInteractWith(packet.NpcGUID, UNIT_NPC_FLAG_TRANSMOGRIFIER))
         return;
 
-    int32 cost = 0;
-    for (uint8 i = 0; i < packet.Count; ++i)
+    int64 cost = 0;
+    std::unordered_map<Item*, Item*> transmogItems;
+    std::unordered_map<Item*, std::pair<VoidStorageItem*, BonusData>> transmogVoidItems;
+    std::vector<Item*> resetAppearanceItems;
+
+    for (auto const& transmogItem : packet.Items)
     {
-        if (packet.Slots[i] < EQUIPMENT_SLOT_START || packet.Slots[i] >= EQUIPMENT_SLOT_END)
+        if (transmogItem.Slot >= EQUIPMENT_SLOT_END)
             return;
 
-        // entry of the transmogrifier item, if it's not 0
-        //if (packet.Items[i].ItemID)
-        //{
-        //    ItemTemplate const* proto = sObjectMgr->GetItemTemplate(packet.Items[i].ItemID);
-        //    if (!proto)
-        //    {
-        //        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleTransmogrifyItems - Player (GUID: %u, name: %s) tried to transmogrify to an invalid item (entry: %u).", player->GetGUIDLow(), player->GetName(), newEntries[i]);
-        //        return;
-        //    }
-
-        //    if (!player->HasItemCount(packet.Items[i].ItemID, 1, false))
-        //    	return;
-        //}
-
-        Item* itemTransmogrifier = nullptr;
-        if (packet.SrcItemGUID[i])
-        {
-            itemTransmogrifier = player->GetItemByGuid(packet.SrcItemGUID[i]);
-            if (!itemTransmogrifier)
-                return;
-
-            if (itemTransmogrifier->GetEntry() != packet.Items[i].ItemID)
-                return;
-        }
-
-        Item* itemTransmogrified = player->GetItemByPos(INVENTORY_SLOT_BAG_0, packet.Slots[i]);
+        Item* itemTransmogrified = player->GetItemByPos(INVENTORY_SLOT_BAG_0, transmogItem.Slot);
         if (!itemTransmogrified)
             return;
 
-        // uint16 tempDest;
-        //// has to be able to equip item transmogrified item
-        //if (!player->CanEquipItem(packet.Slots[i], tempDest, itemTransmogrified, true, true))
-        //{
-        //    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleTransmogrifyItems - Player (GUID: %u, name: %s) can't equip the item to be transmogrified (slot: %u, entry: %u).", player->GetGUIDLow(), player->GetName(), packet.Slots[i], itemTransmogrified->GetEntry());
-        //    return;
-        //}
-        //
-        //// has to be able to equip item transmogrifier item
-        //if (!player->CanEquipItem(packet.Slots[i], tempDest, itemTransmogrifier, true, true))
-        //{
-        //    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleTransmogrifyItems - Player (GUID: %u, name: %s) can't equip the transmogrifier item (slot: %u, entry: %u).", player->GetGUIDLow(), player->GetName(), packet.Slots[i], itemTransmogrifier->GetEntry());
-        //    return;
-        //}
+        if (player->CanUseItem(itemTransmogrified->GetTemplate()) != EQUIP_ERR_OK)
+            return;
 
-        if (!packet.Items[i].ItemID)
+        WorldPackets::Item::ItemInstance itemInstance;
+        BonusData const* bonus = nullptr;
+        if (transmogItem.SrcItemGUID)
         {
-            itemTransmogrified->SetTransmogrification(0);
-            itemTransmogrified->SetState(ITEM_CHANGED, player);
-            player->SetVisibleItemSlot(packet.Slots[i], itemTransmogrified);
+            Item* itemTransmogrifier = player->GetItemByGuid(*transmogItem.SrcItemGUID);
+            if (!itemTransmogrifier)
+                return;
+
+            if (player->CanUseItem(itemTransmogrifier->GetTemplate()) != EQUIP_ERR_OK)
+                return;
+
+            itemInstance.Initialize(itemTransmogrifier);
+            bonus = itemTransmogrifier->GetBonus();
+            transmogItems[itemTransmogrified] = itemTransmogrifier;
+        }
+        else if (transmogItem.SrcVoidItemGUID)
+        {
+            uint8 slot;
+            VoidStorageItem* itemTransmogrifier = player->GetVoidStorageItem(transmogItem.SrcVoidItemGUID->GetCounter(), slot);
+            if (!itemTransmogrifier)
+                return;
+
+            ItemTemplate const * transmogrifierTemplate = sObjectMgr->GetItemTemplate(itemTransmogrifier->ItemEntry);
+            if (player->CanUseItem(transmogrifierTemplate) != EQUIP_ERR_OK)
+                return;
+
+            itemInstance.Initialize(itemTransmogrifier);
+            std::pair<VoidStorageItem*, BonusData>& transmogData = transmogVoidItems[itemTransmogrified];
+            transmogData.first = itemTransmogrifier;
+            transmogData.second.Initialize(itemInstance);
+            bonus = &transmogData.second;
         }
         else
         {
-            if (!itemTransmogrified || !itemTransmogrifier || !Item::CanTransmogrifyItemWithItem(itemTransmogrified, itemTransmogrifier))
-                return;
-
-            itemTransmogrified->SetTransmogrification(packet.Items[i].ItemID);
-            player->SetVisibleItemSlot(packet.Slots[i], itemTransmogrified);
-
-            itemTransmogrified->UpdatePlayedTime(player);
-
-            itemTransmogrified->SetOwnerGUID(player->GetGUID());
-            itemTransmogrified->SetNotRefundable(player);
-            itemTransmogrified->ClearSoulboundTradeable(player);
-
-            if (itemTransmogrifier->GetTemplate()->Bonding == BIND_WHEN_EQUIPED || itemTransmogrifier->GetTemplate()->Bonding == BIND_WHEN_USE)
-                itemTransmogrifier->SetBinding(true);
-
-            itemTransmogrifier->SetOwnerGUID(player->GetGUID());
-            itemTransmogrifier->SetNotRefundable(player);
-            itemTransmogrifier->ClearSoulboundTradeable(player);
-
-            itemTransmogrified->SetState(ITEM_CHANGED, player);
-            itemTransmogrifier->SetState(ITEM_CHANGED, player);
-
-            cost += itemTransmogrified->GetSpecialPrice();
-            cost = int32(cost * player->GetTotalAuraMultiplier(SPELL_AURA_MOD_VOID_STORAGE_AND_TRANSMOGRIFY_COST));
+            resetAppearanceItems.push_back(itemTransmogrified);
+            continue;
         }
+
+        if (itemInstance != transmogItem.Item)
+            return;
+
+        if (!Item::CanTransmogrifyItemWithItem(itemTransmogrified, transmogItem.Item, bonus))
+            return;
+
+        cost += itemTransmogrified->GetSpecialPrice();
+        cost = int64(cost * player->GetTotalAuraMultiplier(SPELL_AURA_MOD_VOID_STORAGE_AND_TRANSMOGRIFY_COST));
     }
 
-    // trusting the client, if it got here it has to have enough money
-    // ... unless client was modified
-    if (cost) // 0 cost if reverting look
+    if (cost)
+    {
+        if (!player->HasEnoughMoney(cost))
+            return;
+
         player->ModifyMoney(-cost);
+    }
+
+    for (auto& transmogPair : transmogItems)
+    {
+        Item* transmogrified = transmogPair.first;
+        Item* transmogrifier = transmogPair.second;
+
+        transmogrified->SetModifier(ITEM_MODIFIER_TRANSMOG_ITEM_ID, transmogrifier->GetEntry());
+        transmogrified->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_MOD, transmogrifier->GetAppearanceModId());
+        player->SetVisibleItemSlot(transmogrified->GetSlot(), transmogrified);
+
+        transmogrified->SetNotRefundable(player);
+        transmogrified->ClearSoulboundTradeable(player);
+
+        transmogrifier->SetNotRefundable(player);
+        transmogrifier->ClearSoulboundTradeable(player);
+
+        if (transmogrifier->GetTemplate()->Bonding == BIND_WHEN_EQUIPED || transmogrifier->GetTemplate()->Bonding == BIND_WHEN_USE)
+            transmogrifier->SetBinding(true);
+    }
+
+    for (auto& transmogVoirPair : transmogVoidItems)
+    {
+        Item* transmogrified = transmogVoirPair.first;
+        VoidStorageItem* transmogrifier = transmogVoirPair.second.first;
+        BonusData& bonus = transmogVoirPair.second.second;
+
+        transmogrified->SetModifier(ITEM_MODIFIER_TRANSMOG_ITEM_ID, transmogrifier->ItemEntry);
+        transmogrified->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_MOD, bonus.AppearanceModID);
+        player->SetVisibleItemSlot(transmogrified->GetSlot(), transmogrified);
+
+        transmogrified->SetNotRefundable(player);
+        transmogrified->ClearSoulboundTradeable(player);
+    }
+
+    for (Item* item : resetAppearanceItems)
+    {
+        item->SetModifier(ITEM_MODIFIER_TRANSMOG_ITEM_ID, 0);
+        item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_MOD, 0);
+        player->SetVisibleItemSlot(item->GetSlot(), item);
+    }
 }
 
 void WorldSession::HandleOpenItem(WorldPackets::Spells::OpenItem& packet)

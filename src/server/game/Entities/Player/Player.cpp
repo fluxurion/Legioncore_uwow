@@ -28426,7 +28426,7 @@ void Player::SendPetTameResult(PetTameResult result)
     GetSession()->SendPacket(WorldPackets::PetPackets::TameFailure(result).Write());
 }
 
-uint32 Player::GetNextVoidStorageFreeSlot() const
+uint8 Player::GetNextVoidStorageFreeSlot() const
 {
     for (uint16 i = 0; i < VOID_STORAGE_MAX_SLOT; ++i)
         if (!_voidStorageItems[i]) // unused item
@@ -28435,10 +28435,9 @@ uint32 Player::GetNextVoidStorageFreeSlot() const
     return VOID_STORAGE_MAX_SLOT;
 }
 
-uint32 Player::GetNumOfVoidStorageFreeSlots() const
+uint8 Player::GetNumOfVoidStorageFreeSlots() const
 {
     uint8 count = 0;
-
     for (uint16 i = 0; i < VOID_STORAGE_MAX_SLOT; ++i)
         if (!_voidStorageItems[i])
             count++;
@@ -28448,8 +28447,7 @@ uint32 Player::GetNumOfVoidStorageFreeSlots() const
 
 uint32 Player::AddVoidStorageItem(VoidStorageItem const& item)
 {
-    int32 slot = GetNextVoidStorageFreeSlot();
-
+    uint8 slot = GetNextVoidStorageFreeSlot();
     if (slot >= VOID_STORAGE_MAX_SLOT)
     {
         GetSession()->SendVoidStorageTransferResult(VOID_TRANSFER_ERROR_FULL);
@@ -28461,7 +28459,7 @@ uint32 Player::AddVoidStorageItem(VoidStorageItem const& item)
     return slot;
 }
 
-void Player::DeleteVoidStorageItem(uint32 slot)
+void Player::DeleteVoidStorageItem(uint8 slot)
 {
     if (slot >= VOID_STORAGE_MAX_SLOT || _voidStorageItems[slot]->deleted)
     {
@@ -28473,20 +28471,22 @@ void Player::DeleteVoidStorageItem(uint32 slot)
     _voidStorageItems[slot]->deleted = true;
 }
 
-bool Player::SwapVoidStorageItem(uint32 oldSlot, uint32 newSlot)
+bool Player::SwapVoidStorageItem(uint8 oldSlot, uint8 newSlot)
 {
     if (oldSlot >= VOID_STORAGE_MAX_SLOT || newSlot >= VOID_STORAGE_MAX_SLOT || oldSlot == newSlot)
         return false;
 
     std::swap(_voidStorageItems[newSlot], _voidStorageItems[oldSlot]);
-    if(_voidStorageItems[newSlot])
+    if (_voidStorageItems[newSlot])
         _voidStorageItems[newSlot]->change = true;
-    if(_voidStorageItems[oldSlot])
+
+    if (_voidStorageItems[oldSlot])
         _voidStorageItems[oldSlot]->change = true;
+
     return true;
 }
 
-VoidStorageItem* Player::GetVoidStorageItem(uint32 slot) const
+VoidStorageItem* Player::GetVoidStorageItem(uint8 slot) const
 {
     if (slot >= VOID_STORAGE_MAX_SLOT || (_voidStorageItems[slot] && _voidStorageItems[slot]->deleted))
     {
@@ -28497,9 +28497,9 @@ VoidStorageItem* Player::GetVoidStorageItem(uint32 slot) const
     return _voidStorageItems[slot];
 }
 
-VoidStorageItem* Player::GetVoidStorageItem(uint64 id, uint32& slot) const
+VoidStorageItem* Player::GetVoidStorageItem(uint64 id, uint8& slot) const
 {
-    for (uint16 i = 0; i < VOID_STORAGE_MAX_SLOT; ++i)
+    for (uint8 i = 0; i < VOID_STORAGE_MAX_SLOT; ++i)
     {
         if (_voidStorageItems[i] && _voidStorageItems[i]->ItemId == id && !_voidStorageItems[i]->deleted)
         {
@@ -28508,7 +28508,7 @@ VoidStorageItem* Player::GetVoidStorageItem(uint64 id, uint32& slot) const
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void Player::ValidateMovementInfo(MovementInfo* mi)
