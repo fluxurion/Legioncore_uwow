@@ -312,7 +312,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.db2"); // DEPRECATED
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
-    //LOAD_DB2(sItemAppearanceStore);
     //LOAD_DB2(sItemBonusStore);
     //LOAD_DB2(sItemBonusTreeNodeStore);
     //LOAD_DB2(sItemCurrencyCostStore);
@@ -340,6 +339,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sMountTypeStore);                  // 20914
     //LOAD_DB2(sBarberShopStyleStore);            // 20914
     
+    LOAD_DB2(sItemAppearanceStore);             // 20994
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914

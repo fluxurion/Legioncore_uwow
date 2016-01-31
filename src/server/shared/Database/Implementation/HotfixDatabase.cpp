@@ -211,7 +211,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM item ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemAppearance.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_APPEARANCE, "SELECT ID, DisplayID, FileDataID FROM item_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_APPEARANCE, "SELECT ID, DisplayID, FileDataID, UnkLegion FROM item_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MailTemplate.db2
     PrepareStatement(HOTFIX_SEL_MAIL_TEMPLATE, "SELECT ID, Content FROM mail_template ORDER BY ID DESC", CONNECTION_SYNCH);

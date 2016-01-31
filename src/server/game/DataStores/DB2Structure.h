@@ -616,9 +616,10 @@ struct ItemEntry
 
 struct ItemAppearanceEntry
 {
-    uint32      ID;                                         // 0 (reference to ItemModifiedAppearance.db2?)
-    uint32      DisplayID;                                  // 1
-    uint32      FileDataID;                                 // 2
+    uint32      ID;
+    uint32      DisplayID;                                  // 0
+    uint32      FileDataID;                                 // 1
+    uint8       UnkLegion;                                  // 2
 };
 
 struct MailTemplateEntry
