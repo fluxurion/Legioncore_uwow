@@ -731,3 +731,20 @@ void WorldSession::SendChatRestrictedNotice(ChatRestrictionType restriction)
     data << uint8(restriction);
     SendPacket(&data);
 }
+
+void WorldSession::HandleChatRegisterAddonPrefixes(WorldPackets::Chat::ChatRegisterAddonPrefixes& packet)
+{
+    _registeredAddonPrefixes.insert(_registeredAddonPrefixes.end(), packet.Prefixes.begin(), packet.Prefixes.end());
+    if (_registeredAddonPrefixes.size() > WorldPackets::Chat::ChatRegisterAddonPrefixes::MAX_PREFIXES)
+    {
+        _filterAddonMessages = false;
+        return;
+    }
+
+    _filterAddonMessages = true;
+}
+
+void WorldSession::HandleChatUnregisterAllAddonPrefixes(WorldPackets::Chat::ChatUnregisterAllAddonPrefixes& packet)
+{
+    _registeredAddonPrefixes.clear();
+}

@@ -151,6 +151,8 @@ namespace WorldPackets
         class ChatMessageDND;
         class ChatMessageEmote;
         class CTextEmote;
+        class ChatRegisterAddonPrefixes;
+        class ChatUnregisterAllAddonPrefixes;
     }
 
     namespace Combat
@@ -719,8 +721,6 @@ enum AccountDataType
 
 #define GLOBAL_CACHE_MASK           0x15
 #define PER_CHARACTER_CACHE_MASK    0xAA
-
-#define REGISTERED_ADDON_PREFIX_SOFTCAP 64
 
 enum TutorialAction
 {
@@ -1398,8 +1398,8 @@ class WorldSession
         void HandleTextEmoteOpcode(WorldPackets::Chat::CTextEmote& packet);
         void HandleChatIgnoredOpcode(WorldPacket& recvPacket);
 
-        void HandleUnregisterAddonPrefixesOpcode(WorldPacket& recvPacket);
-        void HandleAddonRegisteredPrefixesOpcode(WorldPacket& recvPacket);
+        void HandleChatUnregisterAllAddonPrefixes(WorldPackets::Chat::ChatUnregisterAllAddonPrefixes& packet);
+        void HandleChatRegisterAddonPrefixes(WorldPackets::Chat::ChatRegisterAddonPrefixes& packet);
 
         void HandleReclaimCorpse(WorldPackets::Misc::ReclaimCorpse& packet);
         void HandleQueryCorpseLocation(WorldPackets::Query::QueryCorpseLocationFromClient& packet);

@@ -359,24 +359,20 @@ void WorldSession::SendCharacterEnum(bool deleted /*= false*/)
     _charEnumCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }
 
-//! 6.1.2
 void WorldSession::HandleCharUndelete(WorldPacket & recvData)
 {
-    //CMSG_UNDELETE_CHARACTER
-
-    uint32 token = recvData.read<uint32>();
+    int32 token = recvData.read<int32>();
     ObjectGuid guid;
     recvData >> guid;
 
-
-    WorldPacket data(SMSG_UNDELETE_CHARACTER_RESPONSE, 20);
-    data << uint32(token);
+    WorldPackets::Character::UndeleteCharacterResponse response;
+    response.UndeleteInfo->ClientToken = token;
+    response.UndeleteInfo->CharacterGuid = guid;
 
     if (!HasAuthFlag(AT_AUTH_FLAG_RESTORE_DELETED_CHARACTER))
     {
-        data << uint32(CHARACTER_UNDELETE_RESULT_ERROR_DISABLED);
-        data << guid;
-        SendPacket(&data);
+        response.Result = CHARACTER_UNDELETE_RESULT_ERROR_DISABLED;
+        SendPacket(response.Write());
         return;
     }
 
@@ -399,9 +395,9 @@ void WorldSession::HandleCharUndelete(WorldPacket & recvData)
         SendFeatureSystemStatusGlueScreen();
     }
 
-    data << res;
-    data << guid;
-    SendPacket(&data);
+    response.Result = res;
+    response.UndeleteInfo->CharacterGuid = guid;
+    SendPacket(response.Write());
 }
 
 void WorldSession::HandleCharCreateOpcode(WorldPackets::Character::CreateChar& charCreate)

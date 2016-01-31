@@ -236,3 +236,10 @@ WorldPacket const* WorldPackets::Chat::WorldText::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Chat::ChatRegisterAddonPrefixes::Read()
+{
+    Prefixes.resize(_worldPacket.read<uint32>());
+    for (std::string& prefix : Prefixes)
+        prefix.assign(_worldPacket.ReadString(_worldPacket.ReadBits(5)));
+}

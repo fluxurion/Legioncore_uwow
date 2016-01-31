@@ -251,6 +251,29 @@ namespace WorldPackets
             int32 Arg2 = 0;
             std::string Text;
         };
+
+        class ChatRegisterAddonPrefixes final : public ClientPacket
+        {
+        public:
+            enum
+            {
+                MAX_PREFIXES = 64
+            };
+
+            ChatRegisterAddonPrefixes(WorldPacket&& packet) : ClientPacket(CMSG_CHAT_REGISTER_ADDON_PREFIXES, std::move(packet)) { }
+
+            void Read() override;
+
+            Array<std::string, MAX_PREFIXES> Prefixes;
+        };
+
+        class ChatUnregisterAllAddonPrefixes final : public ClientPacket
+        {
+        public:
+            ChatUnregisterAllAddonPrefixes(WorldPacket&& packet) : ClientPacket(CMSG_CHAT_UNREGISTER_ALL_ADDON_PREFIXES, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 

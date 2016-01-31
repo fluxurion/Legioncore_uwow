@@ -977,42 +977,6 @@ bool WorldSession::IsAddonRegistered(const std::string& prefix) const
     return itr != _registeredAddonPrefixes.end();
 }
 
-void WorldSession::HandleUnregisterAddonPrefixesOpcode(WorldPacket& /*recvPacket*/) // empty packet
-{
-    _registeredAddonPrefixes.clear();
-}
-
-void WorldSession::HandleAddonRegisteredPrefixesOpcode(WorldPacket& recvPacket)
-{
-    // This is always sent after CMSG_CHAT_UNREGISTER_ALL_ADDON_PREFIXES
-
-    uint32 count = 0;
-    recvPacket >> count;
-
-    if (count > REGISTERED_ADDON_PREFIX_SOFTCAP)
-    {
-        // if we have hit the softcap (64) nothing should be filtered
-        _filterAddonMessages = false;
-        recvPacket.rfinish();
-        return;
-    }
-
-    std::vector<uint8> lengths(count);
-    for (uint32 i = 0; i < count; ++i)
-    {
-        lengths[i] = recvPacket.ReadBits(5);
-        _registeredAddonPrefixes.push_back(recvPacket.ReadString(lengths[i]));
-    }
-
-    if (_registeredAddonPrefixes.size() > REGISTERED_ADDON_PREFIX_SOFTCAP) // shouldn't happen
-    {
-        _filterAddonMessages = false;
-        return;
-    }
-
-    _filterAddonMessages = true;
-}
-
 void WorldSession::SetPlayer(Player* player)
 {
     _player = player;

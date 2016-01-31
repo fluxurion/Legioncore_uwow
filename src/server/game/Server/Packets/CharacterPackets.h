@@ -332,7 +332,7 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            CharacterUndeleteInfo const* UndeleteInfo = nullptr;
+            CharacterUndeleteInfo* UndeleteInfo = nullptr;
             uint32 Result = 0;
         };
 

@@ -133,7 +133,7 @@ WorldPacket const* WorldPackets::BattlePay::PurchaseListResponse::Write()
 WorldPacket const* WorldPackets::BattlePay::DistributionListResponse::Write()
 {
     _worldPacket << Result;
-    _worldPacket << static_cast<uint32>(object.size());
+    _worldPacket.WriteBits(object.size(), 11);
     for (DistributionObject const& objectData : object)
         _worldPacket << objectData;
 
