@@ -59,6 +59,7 @@ namespace Movement
     int32 MoveSplineInit::Launch()
     {
         MoveSpline& move_spline = *unit.movespline;
+        bool transport = !unit.GetTransGUID().IsEmpty();
 
         Location real_position(unit.GetPositionX(), unit.GetPositionY(), unit.GetPositionZMinusOffset(), unit.GetOrientation());
         // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
@@ -74,8 +75,7 @@ namespace Movement
         // there is a big chance that current position is unknown if current state is not finalized, need compute it
         // this also allows calculate spline position and update map position in much greater intervals
         // Don't compute for transport movement if the unit is in a motion between two transports
-        const bool onTransport = unit.m_movementInfo.transport.guid;
-        if (!move_spline.Finalized() && move_spline.onTransport == onTransport)
+        if (!move_spline.Finalized() && move_spline.onTransport == transport)
             real_position = move_spline.ComputePosition();
 
         // should i do the things that user should do? - no.
@@ -85,7 +85,7 @@ namespace Movement
         // correct first vertex
         args.path[0] = real_position;
         args.initialOrientation = real_position.orientation;
-        move_spline.onTransport = onTransport;
+        move_spline.onTransport = transport;
 
         uint32 moveFlags = unit.m_movementInfo.GetMovementFlags();
         if (args.flags.walkmode)
@@ -106,13 +106,16 @@ namespace Movement
 
         unit.m_movementInfo.SetMovementFlags(moveFlags);
         move_spline.Initialize(args);
-        move_spline.TransportGUID = unit.m_movementInfo.transport.guid;
-        move_spline.VehicleSeat = unit.m_movementInfo.transport.seat;
 
         WorldPackets::Movement::MonsterMove packet;
         packet.MoverGUID = unit.GetGUID();
         packet.Pos = real_position;
         packet.InitializeSplineData(move_spline);
+        if (transport)
+        {
+            packet.SplineData.Move.TransportGUID = unit.GetTransGUID();
+            packet.SplineData.Move.VehicleSeat = unit.GetTransSeat();
+        }
         unit.SendMessageToSet(packet.Write(), true);
 
         //blizz-hack.
@@ -149,13 +152,11 @@ namespace Movement
         packet.MoverGUID = unit.GetGUID();
         packet.Pos = loc;
         packet.SplineData.ID = move_spline.GetId();
-
-        //if (transport)
-        //{
-        //    packet.SplineData.Move.TransportGUID = unit.GetTransGUID();
-        //    packet.SplineData.Move.VehicleSeat = unit.GetTransSeat();
-        //}
-
+        if (!unit.GetTransGUID().IsEmpty())
+        {
+            packet.SplineData.Move.TransportGUID = unit.GetTransGUID();
+            packet.SplineData.Move.VehicleSeat = unit.GetTransSeat();
+        }
         unit.SendMessageToSet(packet.Write(), true);
     }
 
@@ -163,7 +164,7 @@ namespace Movement
     {
         args.splineId = splineIdGen.NewId();
         // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
-        args.TransformForTransport = unit.GetTransGUID();
+        args.TransformForTransport = !unit.GetTransGUID().IsEmpty();
         // mix existing state into new
         args.flags.walkmode = unit.m_movementInfo.HasMovementFlag(MOVEMENTFLAG_WALKING);
         args.flags.flying = unit.m_movementInfo.HasMovementFlag(MovementFlags(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_DISABLE_GRAVITY));

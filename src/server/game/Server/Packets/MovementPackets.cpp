@@ -370,9 +370,6 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
     SplineData.ID = moveSpline.m_Id;
     WorldPackets::Movement::MovementSpline& movementSpline = SplineData.Move;
 
-    movementSpline.TransportGUID = moveSpline.TransportGUID;
-    movementSpline.VehicleSeat = moveSpline.VehicleSeat;
-
     ::Movement::MoveSplineFlag splineFlags = moveSpline.splineflags;
     splineFlags.enter_cycle = moveSpline.isCyclic();
     movementSpline.Flags = uint32(splineFlags & uint32(~::Movement::MoveSplineFlag::Mask_No_Monster_Move));
@@ -417,16 +414,16 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
     {
         if (!splineFlags.cyclic)
         {
-            uint32 count = spline.getPointCount() - 1;
-            for (uint32 i = 1; i < count; ++i)
-                movementSpline.Points.push_back(array[i]);
+            uint32 count = spline.getPointCount() - 3;
+            for (uint32 i = 0; i < count; ++i)
+                movementSpline.Points.push_back(array[i + 2]);
         }
         else
         {
-            uint32 count = spline.getPointCount() - 2;
+            uint32 count = spline.getPointCount() - 3;
             movementSpline.Points.push_back(array[1]);
-            for (uint32 i = 1; i < count; ++i)
-                movementSpline.Points.push_back(array[i]);
+            for (uint32 i = 0; i < count; ++i)
+                movementSpline.Points.push_back(array[i + 1]);
         }
     }
     else
@@ -445,7 +442,6 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
                 movementSpline.PackedDeltas.push_back(middle - realPath[i]);
         }
     }
-    movementSpline.Mode = spline.mode();
 }
 
 WorldPacket const* WorldPackets::Movement::MonsterMove::Write()
