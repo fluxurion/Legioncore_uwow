@@ -542,6 +542,15 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //481 SPELL_AURA_ACTIVETED_DEATH_RUNE
     &AuraEffect::HandleNULL,                                      //482 SPELL_AURA_CAMERA_SELFIE
     &AuraEffect::HandleNULL,                                      //483 SPELL_AURA_TRANSFORM_SUPRESSION_IN_PVP
+    &AuraEffect::HandleNULL,                                      //484 SPELL_AURA_484
+    &AuraEffect::HandleNULL,                                      //485 SPELL_AURA_485
+    &AuraEffect::HandleNULL,                                      //486 SPELL_AURA_486
+    &AuraEffect::HandleNULL,                                      //487 SPELL_AURA_487
+    &AuraEffect::HandleNULL,                                      //488 SPELL_AURA_488
+    &AuraEffect::HandleNULL,                                      //489 SPELL_AURA_489
+    &AuraEffect::HandleNULL,                                      //490 SPELL_AURA_490
+    &AuraEffect::HandleNULL,                                      //491 SPELL_AURA_491
+    &AuraEffect::HandleNULL,                                      //492 SPELL_AURA_492
 };
 
 AuraEffect::AuraEffect(Aura* base, uint8 effIndex, int32 *baseAmount, Unit* caster):

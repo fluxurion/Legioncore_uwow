@@ -258,3 +258,4 @@ template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::Transport>::Generate(
 template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::BattlePet>::Generate();
 template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::PetBattle>::Generate();
 template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::Conversation>::Generate();
+template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::Cast>::Generate();

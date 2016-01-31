@@ -540,7 +540,17 @@ enum AuraType
     SPELL_AURA_ACTIVETED_DEATH_RUNE                         = 481,
     SPELL_AURA_CAMERA_SELFIE                                = 482,
     SPELL_AURA_TRANSFORM_SUPRESSION_IN_PVP                  = 483,
-    TOTAL_AURAS                                             = 484   //6.1.2
+    SPELL_AURA_484                                          = 484,
+    SPELL_AURA_485                                          = 485,
+    SPELL_AURA_486                                          = 486,
+    SPELL_AURA_487                                          = 487,
+    SPELL_AURA_488                                          = 488,
+    SPELL_AURA_489                                          = 489,
+    SPELL_AURA_490                                          = 490,
+    SPELL_AURA_491                                          = 491,
+    SPELL_AURA_492                                          = 492,
+
+    TOTAL_AURAS
 };
 
 enum AuraObjectType

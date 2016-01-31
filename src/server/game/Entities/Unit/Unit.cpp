@@ -23980,7 +23980,7 @@ void Unit::SendFakeAuraUpdate(uint32 auraId, uint32 flags, uint32 duration, uint
     if (!remove)
     {
         WorldPackets::Spells::AuraDataInfo auraData;
-        auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(GetGUIDLow());
+        auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
         auraData.SpellID = auraId;
         auraData.Flags = flags;
         auraData.ActiveFlags = 1;

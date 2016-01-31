@@ -1365,6 +1365,10 @@ enum SpellEffects
     SPELL_EFFECT_FINISH_SHIPMENT                    = 248,
     SPELL_EFFECT_249                                = 249,
     SPELL_EFFECT_TAKE_SCREENSHOT                    = 250,
+    SPELL_EFFECT_251                                = 251,
+    SPELL_EFFECT_252                                = 252,
+    SPELL_EFFECT_253                                = 253,
+    SPELL_EFFECT_254                                = 254,
 
     TOTAL_SPELL_EFFECTS
 };
@@ -1963,6 +1967,9 @@ enum Mechanics
     MECHANIC_SAPPED           = 30,
     MECHANIC_ENRAGED          = 31,
     MECHANIC_WOUNDED          = 32,
+    MECHANIC_UNK_33           = 33,
+    MECHANIC_UNK_34           = 34,
+    MECHANIC_UNK_35           = 35,
 
     MAX_MECHANIC
 };
@@ -2159,6 +2166,8 @@ enum Targets
     TARGET_UNK_145                     = 145,
     TARGET_UNK_146                     = 146,
     TARGET_UNK_147                     = 147,
+    TARGET_UNK_148                     = 148,
+
     TOTAL_SPELL_TARGETS
 };
 

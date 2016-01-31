@@ -4779,7 +4779,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(caster->GetGUIDLow());
+    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
     packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
@@ -4936,7 +4936,7 @@ void Spell::SendSpellStart()
     WorldPackets::Spells::SpellStart packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
-    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetGUIDLow());
+    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
@@ -5112,7 +5112,7 @@ void Spell::SendSpellGo()
     else
         castData.CasterGUID = m_caster->GetGUID();
 
-    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetGUIDLow());
+    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
