@@ -22,6 +22,7 @@ WorldPacket const* WorldPackets::CombatLog::SpellNonMeleeDamageLog::Write()
 {
     *this << Me;
     *this << CasterGUID;
+    *this << CastGuid;
     *this << int32(SpellID);
     *this << int32(Damage);
     *this << int32(Overkill);
@@ -33,6 +34,8 @@ WorldPacket const* WorldPackets::CombatLog::SpellNonMeleeDamageLog::Write()
     WriteBit(Periodic);
     WriteBits(Flags, 9);
     WriteBit(false); // Debug info
+    WriteBit(false); // Unk Legion - related to new log system?
+    WriteBit(false); // Unk Legion - related to new log system?
     WriteLogDataBit();
     FlushBits();
     WriteLogData();
@@ -183,10 +186,10 @@ WorldPacket const* WorldPackets::CombatLog::SpellEnergizeLog::Write()
 {
     *this << CasterGUID;
     *this << TargetGUID;
-
     *this << int32(SpellID);
     *this << int32(Type);
     *this << int32(Amount);
+    WriteBit(false); // Unk Legion - related to new log system?
 
     WriteLogDataBit();
     FlushBits();
@@ -271,6 +274,7 @@ WorldPacket const* WorldPackets::CombatLog::SpellDamageShield::Write()
     *this << int32(OverKill);
     *this << int32(SchoolMask);
     *this << int32(LogAbsorbed);
+    WriteBit(false); // Unk Legion - related to new log system?
     WriteLogDataBit();
     FlushBits();
     WriteLogData();

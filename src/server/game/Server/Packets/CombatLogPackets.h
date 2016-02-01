@@ -79,22 +79,23 @@ namespace WorldPackets
         class SpellNonMeleeDamageLog final : public CombatLogServerPacket
         {
         public:
-            SpellNonMeleeDamageLog() : CombatLogServerPacket(SMSG_SPELL_NON_MELEE_DAMAGE_LOG, 60) { }
+            SpellNonMeleeDamageLog() : CombatLogServerPacket(SMSG_SPELL_NON_MELEE_DAMAGE_LOG, 16 * 3 + 7 * 4 + 2) { }
 
             WorldPacket const* Write() override;
-
-            int32 Absorbed = 0;
-            int32 ShieldBlock = 0;
+            
             ObjectGuid Me;
-            int32 SpellID = 0;
-            int32 Resisted = 0;
-            bool Periodic = 0.0f;
-            uint8 SchoolMask = 0;
             ObjectGuid CasterGUID;
+            ObjectGuid CastGuid;
+            int32 Absorbed = 0;
             int32 Damage = 0;
-            // Optional<SpellNonMeleeDamageLogDebugInfo> Debug Info;
             int32 Flags = 0;
             int32 Overkill = 0;
+            int32 Resisted = 0;
+            int32 ShieldBlock = 0;
+            int32 SpellID = 0;
+            uint8 SchoolMask = 0;
+            bool Periodic = 0.0f;
+            // Optional<SpellNonMeleeDamageLogDebugInfo> Debug Info;
         };
 
         class EnvironmentalDamageLog final : public CombatLogServerPacket
@@ -326,20 +327,20 @@ namespace WorldPackets
             AttackerStateUpdate() : CombatLogServerPacket(SMSG_ATTACKER_STATE_UPDATE, 70) { }
 
             WorldPacket const* Write() override;
-
-            uint32 HitInfo = 0; // Flags
+            
+            UnkAttackerState UnkState;
+            Optional<SubDamage> SubDmg;
             ObjectGuid AttackerGUID;
             ObjectGuid VictimGUID;
+            uint32 HitInfo = 0; // Flags
             int32 Damage = 0;
             int32 OverDamage = -1; // (damage - health) or -1 if unit is still alive
-            Optional<SubDamage> SubDmg;
-            uint8 VictimState = 0;
             int32 AttackerState = -1;
             int32 MeleeSpellID = 0;
             int32 BlockAmount = 0;
             int32 RageGained = 0;
-            UnkAttackerState UnkState;
             float Unk = 0.0f;
+            uint8 VictimState = 0;
         };
 
         class AttackEventFailed final : public CombatLogServerPacket

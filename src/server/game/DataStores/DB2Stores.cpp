@@ -316,7 +316,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemBonusTreeNodeStore);
     //LOAD_DB2(sItemCurrencyCostStore);
     //LOAD_DB2(sItemExtendedCostStore);
-    //LOAD_DB2(sItemModifiedAppearanceStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
@@ -339,7 +338,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sMountTypeStore);                  // 20914
     //LOAD_DB2(sBarberShopStyleStore);            // 20914
     
-    LOAD_DB2(sItemAppearanceStore);             // 20994
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914
@@ -366,6 +364,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sImportPriceQualityStore);         // 20914
     LOAD_DB2(sImportPriceShieldStore);          // 20914
     LOAD_DB2(sImportPriceWeaponStore);          // 20914
+    LOAD_DB2(sItemAppearanceStore);             // 20994
     LOAD_DB2(sItemArmorQualityStore);           // 20914
     LOAD_DB2(sItemArmorShieldStore);            // 20914
     LOAD_DB2(sItemArmorTotalStore);             // 20914
@@ -378,6 +377,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemDisenchantLootStore);         // 20914
     LOAD_DB2(sItemEffectStore);                 // 20914
     LOAD_DB2(sItemLimitCategoryStore);          // 20914
+    LOAD_DB2(sItemModifiedAppearanceStore);     // 20994
     LOAD_DB2(sItemPriceBaseStore);              // 20914
     LOAD_DB2(sItemRandomPropertiesStore);       // 20914
     LOAD_DB2(sItemRandomSuffixStore);           // 20914

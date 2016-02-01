@@ -809,12 +809,11 @@ struct ItemEffectEntry
 
 struct ItemModifiedAppearanceEntry
 {
-    uint32      ID;                                                 // 0
-    uint32      ItemID;                                             // 1
-    uint32      AppearanceModID;                                    // 2
-    uint32      AppearanceID;                                       // 3
-    uint32      IconFileDataID;                                     // 4
-    uint32      Index;                                              // 5
+    uint32      ID;
+    uint32      ItemID;                                             // 0
+    uint16      AppearanceID;                                       // 1
+    uint8       AppearanceModID;                                    // 2
+    uint8       VariationID;                                        // 3
 };
 
 struct ItemSparseEntry

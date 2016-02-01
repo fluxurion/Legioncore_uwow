@@ -5925,6 +5925,7 @@ void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
     WorldPackets::CombatLog::SpellNonMeleeDamageLog packet;
     packet.Me = log->target->GetGUID();
     packet.CasterGUID = log->attacker->GetGUID();
+    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
     packet.SpellID = log->SpellID;
     packet.Damage = newDamage;
     if (newDamage > log->preHitHealth)

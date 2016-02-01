@@ -124,7 +124,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_AREA_SPIRIT_HEALER_QUEUE,                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Battleground::AreaSpiritHealerQueue, &WorldSession::HandleAreaSpiritHealerQueue);
     DEFINE_HANDLER(CMSG_AREA_TRIGGER,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::AreaTrigger, &WorldSession::HandleAreaTrigger);
     DEFINE_HANDLER(CMSG_ATTACK_STOP,                                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Combat::AttackStop, &WorldSession::HandleAttackStop);
-    DEFINE_HANDLER(CMSG_ATTACK_SWING,                                       STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Combat::AttackSwing, &WorldSession::HandleAttackSwing);
+    DEFINE_HANDLER(CMSG_ATTACK_SWING,                                       STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Combat::AttackSwing, &WorldSession::HandleAttackSwing);
     DEFINE_HANDLER(CMSG_AUCTION_HELLO_REQUEST,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::AuctionHouse::AuctionHelloRequest, &WorldSession::HandleAuctionHelloRequest);
     DEFINE_HANDLER(CMSG_AUCTION_LIST_BIDDER_ITEMS,                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::AuctionHouse::AuctionListBidderItems, &WorldSession::HandleAuctionListBidderItems);
     DEFINE_HANDLER(CMSG_AUCTION_LIST_ITEMS,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::AuctionHouse::AuctionListItems, &WorldSession::HandleAuctionListItems);
@@ -831,7 +831,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ATTACK_STOP,                             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ATTACK_SWING_ERROR,                      STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ATTACK_SWING_LANDED_LOG,                 STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_ATTACKER_STATE_UPDATE,                   STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_ATTACKER_STATE_UPDATE,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUCTION_CLOSED_NOTIFICATION,             STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUCTION_COMMAND_RESULT,                  STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_AUCTION_HELLO_RESPONSE,                  STATUS_UNHANDLED);
@@ -986,7 +986,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CLEAR_SPELL_CHARGES,                     STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CLEAR_TARGET,                            STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COIN_REMOVED,                            STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_COMBAT_EVENT_FAILED,                     STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_COMBAT_EVENT_FAILED,                     STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COMMENTATOR_MAP_INFO,                    STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COMMENTATOR_PLAYER_INFO,                 STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COMMENTATOR_STATE_CHANGED,               STATUS_UNHANDLED);

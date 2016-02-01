@@ -471,11 +471,11 @@ WorldPacket const* WorldPackets::Spells::SpellFailedOther::Write()
 WorldPacket const* WorldPackets::Spells::CastFailed::Write()
 {
     _worldPacket << CastGuid;
-    _worldPacket << SpellXSpellVisualID;
     _worldPacket << SpellID;
     _worldPacket << Reason;
     _worldPacket << FailedArg1;
     _worldPacket << FailedArg2;
+    _worldPacket << SpellXSpellVisualID;
 
     return &_worldPacket;
 }
