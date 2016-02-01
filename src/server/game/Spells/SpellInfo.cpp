@@ -2504,12 +2504,14 @@ uint32 SpellInfo::GetExplicitTargetMask() const
 uint32 SpellInfo::GetSpellTypeMask() const
 {
     uint32 mask = 0;
-    uint32 range_type = RangeEntry ? RangeEntry->Flags : 0;
 
-    if(range_type == SPELL_RANGE_MELEE)
-        mask |= SPELL_TYPE_MELEE;
-    if(range_type == SPELL_RANGE_RANGED || IsRangedSpell())
-        mask |= SPELL_TYPE_RANGE;
+    //@TODO:Legion
+    //uint32 range_type = RangeEntry ? RangeEntry->Flags : 0;
+
+    //if(range_type == SPELL_RANGE_MELEE)
+    //    mask |= SPELL_TYPE_MELEE;
+    //if(range_type == SPELL_RANGE_RANGED || IsRangedSpell())
+    //    mask |= SPELL_TYPE_RANGE;
     if(IsAutoRepeatRangedSpell())
         mask |= SPELL_TYPE_AUTOREPEATE;
     if(IsChanneled())
