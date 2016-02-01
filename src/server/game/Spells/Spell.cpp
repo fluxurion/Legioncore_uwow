@@ -7682,8 +7682,7 @@ SpellCastResult Spell::CheckRange(bool strict)
     if (!strict && m_casttime == 0)
         return SPELL_CAST_OK;
 
-    //@TODO:Legion
-    /*uint32 range_type = 0;
+    uint32 range_type = 0;
     if (m_spellInfo->RangeEntry)
     {
         // check needed by 68766 51693 - both spells are cast on enemies and have 0 max range
@@ -7692,7 +7691,7 @@ SpellCastResult Spell::CheckRange(bool strict)
             return SPELL_CAST_OK;
 
         range_type = m_spellInfo->RangeEntry->Flags;
-    }*/
+    }
 
     Unit* target = m_targets.GetUnitTarget() ? m_targets.GetUnitTarget() : m_originalTarget;
     float max_range = m_caster->GetSpellMaxRangeForTarget(target, m_spellInfo);
@@ -7701,7 +7700,7 @@ SpellCastResult Spell::CheckRange(bool strict)
     if (Player* modOwner = m_caster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, max_range, this);
 
-    /*if (target && target != m_caster)
+    if (target && target != m_caster)
     {
         if (range_type == SPELL_RANGE_MELEE)
         {
@@ -7731,7 +7730,7 @@ SpellCastResult Spell::CheckRange(bool strict)
             return SPELL_FAILED_OUT_OF_RANGE;
         if (min_range && m_caster->IsWithinDist3d(m_targets.GetDstPos(), min_range))
             return SPELL_FAILED_TOO_CLOSE;
-    }*/
+    }
     
     return SPELL_CAST_OK;
 }

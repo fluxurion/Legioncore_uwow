@@ -987,7 +987,7 @@ namespace WorldPackets
         class GuildPromoteMember final : public ClientPacket
         {
         public:
-            GuildPromoteMember(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_PROMOTE_MEMBER, std::move(packet)) { }
+            GuildPromoteMember(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_PROMOTE, std::move(packet)) { }
 
             void Read() override;
 

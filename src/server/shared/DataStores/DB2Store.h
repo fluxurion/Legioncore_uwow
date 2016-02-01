@@ -139,7 +139,7 @@ public:
     {
         DB2FileLoader db2;
         // Check if load was successful, only then continue
-        if (!db2.Load((path + _fileName).c_str(), _format))
+        if (!db2.Load((path + _fileName).c_str(), _format, _fileName))
             return false;
 
         _fieldCount = db2.GetCols();
@@ -170,7 +170,7 @@ public:
 
         DB2FileLoader db2;
         // Check if load was successful, only then continue
-        if (!db2.Load((path + _fileName).c_str(), _format))
+        if (!db2.Load((path + _fileName).c_str(), _format, _fileName))
             return false;
 
         // load strings from another locale db2 data

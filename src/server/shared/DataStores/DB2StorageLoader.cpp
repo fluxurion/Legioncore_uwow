@@ -41,7 +41,7 @@ DB2FileLoader::DB2FileLoader()
     header.ReferenceDataSize = 0;
 }
 
-bool DB2FileLoader::Load(char const* filename, char const* fmt)
+bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name)
 {
     if (recordTable)
     {
@@ -52,7 +52,7 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt)
     FILE* f = fopen(filename, "rb");
     if (!f)
     {
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u, File: %s", __FUNCTION__, __LINE__, name);
         return false;
     }
 

@@ -94,7 +94,7 @@ namespace WorldPackets
             int32 ShieldBlock = 0;
             int32 SpellID = 0;
             uint8 SchoolMask = 0;
-            bool Periodic = 0.0f;
+            bool Periodic = false;
             // Optional<SpellNonMeleeDamageLogDebugInfo> Debug Info;
         };
 
