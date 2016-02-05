@@ -312,7 +312,7 @@ void World::AddSession_(WorldSession* s)
 
     s->SendTimeZoneInformation();
 
-    WorldPacket data(SMSG_0x1965);
+    WorldPacket data(SMSG_UNK_AUTH_1);
     data << uint32(0);
     data << uint32(0);
     s->SendPacket(&data);

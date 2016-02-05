@@ -154,7 +154,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_BATTLE_PET_DELETE_PET,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::BattlePetGuidRead, &WorldSession::HandleBattlePetDelete);
     DEFINE_HANDLER(CMSG_BATTLE_PET_DELETE_PET_CHEAT,                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::BattlePetGuidRead, &WorldSession::HandleBattlePetDeletePetCheat);
     DEFINE_HANDLER(CMSG_BATTLE_PET_MODIFY_NAME,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::ModifyName, &WorldSession::HandleModifyName);
-    DEFINE_HANDLER(CMSG_BATTLE_PET_REQUEST_JOURNAL,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleBattlePetRequestJournal);
+    DEFINE_HANDLER(CMSG_BATTLE_PET_REQUEST_JOURNAL,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleBattlePetRequestJournal);
     DEFINE_HANDLER(CMSG_BATTLE_PET_REQUEST_JOURNAL_LOCK,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleBattlePetJournalLock);
     DEFINE_HANDLER(CMSG_BATTLE_PET_SET_BATTLE_SLOT,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::SetBattleSlot, &WorldSession::HandleBattlePetSetSlot);
     DEFINE_HANDLER(CMSG_BATTLE_PET_SET_FLAGS,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::SetFlags, &WorldSession::HandleBattlePetSetFlags);
@@ -671,7 +671,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SEND_SOR_REQUEST_VIA_BNET_ACCOUNT_ID,               STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SEND_TEXT_EMOTE,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::CTextEmote, &WorldSession::HandleTextEmoteOpcode);
     DEFINE_HANDLER(CMSG_SET_ACHIEVEMENTS_HIDDEN,                            STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_SET_ACTION_BAR_TOGGLES,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Character::SetActionBarToggles, &WorldSession::HandleSetActionBarToggles);
+    DEFINE_HANDLER(CMSG_SET_ACTION_BAR_TOGGLES,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Character::SetActionBarToggles, &WorldSession::HandleSetActionBarToggles);
     DEFINE_HANDLER(CMSG_SET_ACTION_BUTTON,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::SetActionButton, &WorldSession::HandleSetActionButtonOpcode);
     DEFINE_HANDLER(CMSG_SET_ACTIVE_MOVER,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Movement::SetActiveMover, &WorldSession::HandleSetActiveMover);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_SET_ACTIVE_VOICE_CHANNEL,                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleSetActiveVoiceChannel     ); // STATUS_AUTHED
@@ -798,7 +798,7 @@ void OpcodeTable::Initialize()
     static_assert(status == STATUS_NEVER || status == STATUS_UNHANDLED || (opcode == NULL_OPCODE && status != STATUS_UNHANDLED) , "Invalid status for server opcode"); \
     ValidateAndSetServerOpcode(opcode, #opcode, status)
 
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_0x1965,                                  STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNK_AUTH_1,                              STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ABORT_NEW_WORLD,                         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ACCOUNT_CRITERIA_UPDATE,                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ACCOUNT_DATA_TIMES,                      STATUS_NEVER);
@@ -1227,7 +1227,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ITEM_TIME_UPDATE,                        STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_KICK_REASON,                             STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_LEARN_TALENT_FAILED,                     STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_LEARNED_SPELLS,                          STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_LEARNED_SPELLS,                          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_LEVEL_UP_INFO,                           STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_LF_GUILD_APPLICANT_LIST_CHANGED,         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_LF_GUILD_APPLICATIONS,                   STATUS_UNHANDLED);
