@@ -18,9 +18,12 @@
 
 #ifndef DBCFILE_H
 #define DBCFILE_H
+
 #include <cassert>
 #include <string>
+
 #include "CascLib.h"
+#include "Define.h"
 
 class DBCFile
 {
@@ -29,7 +32,7 @@ class DBCFile
         ~DBCFile();
 
         // Open database. It must be openened before it can be used.
-        bool open();
+        bool open(FILE* f, char const* fmt);
 
         // Database exceptions
         class Exception
@@ -53,36 +56,18 @@ class DBCFile
         class Record
         {
             public:
-                float getFloat(size_t field) const
-                {
-                    assert(field < file._fieldCount);
-                    return *reinterpret_cast<float*>(offset + field * 4);
-                }
+                float getFloat(size_t field) const;
 
-                unsigned int getUInt(size_t field) const
-                {
-                    assert(field < file._fieldCount);
-                    return *reinterpret_cast<unsigned int*>(offset + field * 4);
-                }
-
-                int getInt(size_t field) const
-                {
-                    assert(field < file._fieldCount);
-                    return *reinterpret_cast<int*>(offset + field * 4);
-                }
-
-                char const* getString(size_t field) const
-                {
-                    assert(field < file._fieldCount);
-                    size_t stringOffset = getUInt(field);
-                    assert(stringOffset < file._stringSize);
-                    return reinterpret_cast<char*>(file._stringTable + stringOffset);
-                }
+                uint32 getUInt(size_t field) const;
+                uint8 getUInt8(size_t field) const;
+                uint16 getUInt16(size_t field) const;
+                uint64 getUInt64(size_t field) const;
+                char const* getString(size_t field) const;
 
             private:
-                Record(DBCFile& file, unsigned char* offset): file(file), offset(offset) {}
+                Record(DBCFile& file, uint8* offset): file(file), offset(offset) {}
                 DBCFile& file;
-                unsigned char* offset;
+                uint8* offset;
 
                 friend class DBCFile;
                 friend class DBCFile::Iterator;
@@ -94,7 +79,7 @@ class DBCFile
         class Iterator
         {
             public:
-                Iterator(DBCFile &file, unsigned char* offset) : record(file, offset) { }
+                Iterator(DBCFile &file, uint8* offset) : record(file, offset) { }
 
                 /// Advance (prefix only)
                 Iterator& operator++()
@@ -134,6 +119,8 @@ class DBCFile
         size_t getRecordCount() const { return _recordCount; }
         size_t getFieldCount() const { return _fieldCount; }
         size_t getMaxId();
+        uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < _fieldCount) ? fieldsOffset[id] : 0; }
+
 
     private:
         HANDLE _file;
@@ -141,8 +128,9 @@ class DBCFile
         size_t _recordCount;
         size_t _fieldCount;
         size_t _stringSize;
-        unsigned char* _data;
-        unsigned char* _stringTable;
+        uint8* _data;
+        uint8* _stringTable;
+        uint32* fieldsOffset;
 };
 
 #endif

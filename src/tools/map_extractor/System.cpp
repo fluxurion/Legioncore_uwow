@@ -320,71 +320,76 @@ uint32 ReadBuild(int locale)
 
 uint32 ReadMapDBC()
 {
-    printf("Read Map.dbc file... ");
+    printf("Read Map.db2 file...\n");
 
     HANDLE dbcFile;
-    if (!CascOpenFile(CascStorage, "DBFilesClient\\Map.dbc", CASC_LOCALE_NONE, 0, &dbcFile))
+    FILE* f = fopen("C:\\legion_data\\dbc\\enUS\\Map.db2", "rb");
+    if (!f)
     {
         printf("Fatal error: Cannot find Map.dbc in archive! %s\n", HumanReadableCASCError(GetLastError()));
         exit(1);
     }
 
-    DBCFile dbc(dbcFile);
-    if (!dbc.open())
+    DBCFile db2(f);
+    if (!db2.open(f, "nsiiiisissififfiiiiiii"))
     {
-        printf("Fatal error: Invalid Map.dbc file format!\n");
+        printf("Fatal error: Invalid Map.db2 file format!\n");
         exit(1);
     }
 
-    size_t map_count = dbc.getRecordCount();
-    map_ids = new map_id[map_count];
-    for(uint32 x = 0; x < map_count; ++x)
-    {
-        map_ids[x].id = dbc.getRecord(x).getUInt(0);
+    size_t mapCount = db2.getRecordCount();
+    printf("Info: Map count: %u\n", mapCount);
 
-        const char* map_name = dbc.getRecord(x).getString(1);
-        size_t max_map_name_length = sizeof(map_ids[x].name);
-        if (strlen(map_name) >= max_map_name_length)
+    map_ids = new map_id[mapCount];
+    for (uint32 x = 0; x < mapCount; ++x)
+    {
+        map_ids[x].id = db2.getRecord(x).getUInt(0);
+        printf("mapID %u \n", map_ids[x].id);
+
+        const char* mapName = db2.getRecord(x).getString(1);
+        size_t maxMapNameLen = sizeof(map_ids[x].name);
+
+        if (strlen(mapName) >= maxMapNameLen)
         {
             printf("Fatal error: Map name too long!\n");
             exit(1);
         }
 
-        strncpy(map_ids[x].name, map_name, max_map_name_length);
-        map_ids[x].name[max_map_name_length - 1] = '\0';
+        strncpy(map_ids[x].name, mapName, maxMapNameLen);
+        map_ids[x].name[maxMapNameLen - 1] = '\0';
     }
 
-    CascCloseFile(dbcFile);
-    printf("Done! (%u maps loaded)\n", uint32(map_count));
-    return map_count;
+    printf("Done! (%u maps loaded)\n", uint32(mapCount));
+    return mapCount;
 }
 
 void ReadAreaTableDBC()
 {
     printf("Read AreaTable.dbc file...");
-    HANDLE dbcFile;
-    if (!CascOpenFile(CascStorage, "DBFilesClient\\AreaTable.dbc", CASC_LOCALE_NONE, 0, &dbcFile))
+
+    FILE* f = fopen("C:\\legion_data\\dbc\\enUS\\AreaTable.dbc", "rb");
+    if (!f)
     {
         printf("Fatal error: Cannot find AreaTable.dbc in archive! %s\n", HumanReadableCASCError(GetLastError()));
         exit(1);
     }
 
-    DBCFile dbc(dbcFile);
-    if(!dbc.open())
-    {
-        printf("Fatal error: Invalid AreaTable.dbc file format!\n");
-        exit(1);
-    }
+    printf("Function: %s, Line: %u", __FUNCTION__, __LINE__);
+
+    DBCFile dbc(f);
+    //if (!dbc.open(f))
+    //{
+    //    printf("Fatal error: Invalid AreaTable.dbc file format!\n");
+    //    exit(1);
+    //}
 
     size_t area_count = dbc.getRecordCount();
     maxAreaId = dbc.getMaxId();
     areas = new uint16[maxAreaId + 1];
     memset(areas, 0xFFFF, sizeof(uint16) * (maxAreaId + 1));
-
     for (uint32 x = 0; x < area_count; ++x)
         areas[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt(3);
 
-    CascCloseFile(dbcFile);
     printf("Done! (%u areas loaded. maxAreaId %u)\n", uint32(area_count), maxAreaId);
 }
 
@@ -392,18 +397,18 @@ void ReadLiquidTypeTableDBC()
 {
     printf("Read LiquidType.dbc file...");
     HANDLE dbcFile;
-    if (!CascOpenFile(CascStorage, "DBFilesClient\\LiquidType.dbc", CASC_LOCALE_NONE, 0, &dbcFile))
+    if (!CascOpenFile(CascStorage, "C:\\legion_data\\dbc\\enUS\\LiquidType.dbc", CASC_LOCALE_NONE, 0, &dbcFile))
     {
         printf("Fatal error: Cannot find LiquidType.dbc in archive! %s\n", HumanReadableCASCError(GetLastError()));
         exit(1);
     }
 
     DBCFile dbc(dbcFile);
-    if(!dbc.open())
-    {
-        printf("Fatal error: Invalid LiquidType.dbc file format!\n");
-        exit(1);
-    }
+    //if(!dbc.open())
+    //{
+    //    printf("Fatal error: Invalid LiquidType.dbc file format!\n");
+    //    exit(1);
+    //}
 
     size_t liqTypeCount = dbc.getRecordCount();
     size_t liqTypeMaxId = dbc.getMaxId();
@@ -1082,8 +1087,8 @@ void ExtractMaps(uint32 build)
 
     uint32 map_count = ReadMapDBC();
 
-    ReadAreaTableDBC();
-    ReadLiquidTypeTableDBC();
+    //ReadAreaTableDBC();
+    //ReadLiquidTypeTableDBC();
 
     std::string path = output_path;
     path += "/maps/";
@@ -1165,47 +1170,6 @@ bool ExtractFile(HANDLE fileInArchive, char const* filename)
     return true;
 }
 
-void ExtractDBFilesClient(int l)
-{
-    printf("Extracting dbc/db2 files...\n");
-
-    std::string outputPath = output_path;
-    outputPath += "/dbc/";
-
-    CreateDir(outputPath);
-    outputPath += CascLocaleNames[l];
-    outputPath += "/";
-    CreateDir(outputPath);
-
-    printf("locale %s output path %s\n", CascLocaleNames[l], outputPath.c_str());
-
-    uint32 index = 0;
-    uint32 count = 0;
-    char const* fileName = DBFilesClientList[index];
-    HANDLE dbcFile;
-    while (fileName)
-    {
-        std::string filename = fileName;
-        if (CascOpenFile(CascStorage, (filename = (filename + ".db2")).c_str(), WowLocaleToCascLocaleFlags[l], 0, &dbcFile) ||
-            CascOpenFile(CascStorage, (filename = (filename.substr(0, filename.length() - 4) + ".dbc")).c_str(), WowLocaleToCascLocaleFlags[l], 0, &dbcFile))
-        {
-            filename = outputPath + filename.substr(filename.rfind('\\') + 1);
-
-            if (!FileExists(filename.c_str()))
-                if (ExtractFile(dbcFile, filename.c_str()))
-                    ++count;
-
-            CascCloseFile(dbcFile);
-        }
-        else
-            printf("Unable to open file %s in the archive for locale %s: %s\n", fileName, CascLocaleNames[l], HumanReadableCASCError(GetLastError()));
-
-        fileName = DBFilesClientList[++index];
-    }
-
-    printf("Extracted %u files\n\n", count);
-}
-
 bool OpenCascStorage(int locale)
 {
     try
@@ -1251,37 +1215,21 @@ int main(int argc, char * arg[])
         if (!OpenCascStorage(i))
             continue;
 
-        if ((CONF_extract & EXTRACT_DBC) == 0)
-        {
-            FirstLocale = i;
-            build = ReadBuild(i);
-            if (!build)
-            {
-                CascCloseStorage(CascStorage);
-                continue;
-            }
-
-            printf("Detected client build: %u\n\n", build);
-            break;
-        }
-
-        //Extract DBC files
-        uint32 tempBuild = ReadBuild(i);
-        if (!tempBuild)
+        FirstLocale = i;
+        build = ReadBuild(i);
+        if (!build)
         {
             CascCloseStorage(CascStorage);
             continue;
         }
 
-        printf("Detected client build %u for locale %s\n\n", tempBuild, CascLocaleNames[i]);
-        ExtractDBFilesClient(i);
+        printf("Detected client build: %u\n\n", build);
+        break;
+
         CascCloseStorage(CascStorage);
 
         if (FirstLocale < 0)
-        {
             FirstLocale = i;
-            build = tempBuild;
-        }
     }
 
     if (FirstLocale < 0)

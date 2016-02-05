@@ -21,67 +21,114 @@
 #include "dbcfile.h"
 
 DBCFile::DBCFile(HANDLE file) :
-    _file(file), _recordSize(0), _recordCount(0), _fieldCount(0),
-    _stringSize(0), _data(NULL), _stringTable(NULL)
+_file(file), _recordSize(0), _recordCount(0), _fieldCount(0),
+_stringSize(0), _data(nullptr), _stringTable(nullptr)
+{ }
+
+bool DBCFile::open(FILE* f, char const* fmt)
 {
-}
-
-bool DBCFile::open()
-{
-    char header[4];
-    unsigned int na, nb, es, ss;
-
-    DWORD readBytes = 0;
-    CascReadFile(_file, header, 4, &readBytes);
-    if (readBytes != 4)                                         // Number of records
+    uint32 signature;
+    if (fread(&signature, sizeof(uint32), 1, f) != 1)
+    {
+        fclose(f);
         return false;
+    }
 
-    if (header[0] != 'W' || header[1] != 'D' || header[2] != 'B' || header[3] != 'C')
+    if (fread(&_recordCount, sizeof(uint32), 1, f) != 1)
+    {
+        fclose(f);
         return false;
+    }
 
-    CascReadFile(_file, &na, 4, &readBytes);
-    if (readBytes != 4)                                         // Number of records
+    if (fread(&_fieldCount, sizeof(uint32), 1, f) != 1)
+    {
+        fclose(f);
         return false;
+    }
 
-    CascReadFile(_file, &nb, 4, &readBytes);
-    if (readBytes != 4)                                         // Number of fields
+    if (fread(&_recordSize, sizeof(uint32), 1, f) != 1)
+    {
+        fclose(f);
         return false;
+    }
 
-    CascReadFile(_file, &es, 4, &readBytes);
-    if (readBytes != 4)                                         // Size of a record
+    if (fread(&_stringSize, sizeof(uint32), 1, f) != 1)
+    {
+        fclose(f);
         return false;
+    }
 
-    CascReadFile(_file, &ss, 4, &readBytes);
-    if (readBytes != 4)                                         // String size
-        return false;
+    fieldsOffset = new uint32[_fieldCount];
+    fieldsOffset[0] = 0;
+    for (size_t i = 1; i < _fieldCount; i++)
+    {
+        fieldsOffset[i] = fieldsOffset[i - 1];
+        switch (fmt[i - 1])
+        {
+            case 'i':
+            case 'n':
+                fieldsOffset[i] += 4;
+                break;
+            case 't':
+                fieldsOffset[i] += 2;
+                break;
+            case 'b':
+                fieldsOffset[i] += 1;
+                break;
+        }
+    }
 
-    _recordSize = es;
-    _recordCount = na;
-    _fieldCount = nb;
-    _stringSize = ss;
-    if (_fieldCount * 4 != _recordSize)
-        return false;
-
-    _data = new unsigned char[_recordSize * _recordCount + _stringSize];
-    _stringTable = _data + _recordSize*_recordCount;
-
-    size_t data_size = _recordSize * _recordCount + _stringSize;
-    CascReadFile(_file, _data, data_size, &readBytes);
-    if (readBytes != data_size)
-        return false;
+    _data = new uint8[_recordSize * _recordCount + _stringSize];
+    _stringTable = _data + _recordSize * _recordCount;
 
     return true;
 }
 
 DBCFile::~DBCFile()
 {
-    delete [] _data;
+    delete[] _data;
 }
 
 DBCFile::Record DBCFile::getRecord(size_t id)
 {
     assert(_data);
-    return Record(*this, _data + id*_recordSize);
+    return Record(*this, _data + id * _recordSize);
+}
+
+float DBCFile::Record::getFloat(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return *reinterpret_cast<float*>(offset + file.GetOffset(field));
+}
+
+uint32 DBCFile::Record::getUInt(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return *reinterpret_cast<uint32*>(offset + file.GetOffset(field));
+}
+
+uint8 DBCFile::Record::getUInt8(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return *reinterpret_cast<uint8*>(offset + file.GetOffset(field));
+}
+
+uint16 DBCFile::Record::getUInt16(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return *reinterpret_cast<uint16*>(offset + file.GetOffset(field));
+}
+
+uint64 DBCFile::Record::getUInt64(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return *reinterpret_cast<uint64*>(offset + file.GetOffset(field));
+}
+
+char const* DBCFile::Record::getString(size_t field) const
+{
+    assert(field < file._fieldCount);
+    return reinterpret_cast<char*>(file._stringTable + getUInt(field));
 }
 
 size_t DBCFile::getMaxId()
@@ -89,7 +136,7 @@ size_t DBCFile::getMaxId()
     assert(_data);
 
     size_t maxId = 0;
-    for(size_t i = 0; i < getRecordCount(); ++i)
+    for (size_t i = 0; i < getRecordCount(); ++i)
         if (maxId < getRecord(i).getUInt(0))
             maxId = getRecord(i).getUInt(0);
 
