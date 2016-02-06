@@ -30,7 +30,7 @@ DB2FileLoader::DB2FileLoader()
     header.RecordSize = 0;
     header.RecordCount = 0;
     header.FieldCount = 0;
-    header.StringBlockSize = 0;
+    header.BlockValue = 0;
     header.Signature = 0;
     header.Hash = 0;
     header.Build = 0;
@@ -39,6 +39,7 @@ DB2FileLoader::DB2FileLoader()
     header.Max = 0;
     header.Locale = 0;
     header.ReferenceDataSize = 0;
+    header.MetaFlags = 0;
 }
 
 bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name)
@@ -99,77 +100,38 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name
 
     EndianConvert(header.RecordSize);
 
-    if (fread(&header.StringBlockSize, sizeof(uint32), 1, f) != 1)
+    if (fread(&header.BlockValue, sizeof(uint32), 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
         return false;
     }
 
-    EndianConvert(header.StringBlockSize);
+    EndianConvert(header.BlockValue);
 
-    if (fread(&header.Hash, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Hash, sizeof(uint32), 1, f);
     EndianConvert(header.Hash);
 
-    if (fread(&header.Build, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Build, sizeof(uint32), 1, f);
     EndianConvert(header.Build);
 
-    if (fread(&header.Unknown, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Unknown, sizeof(uint32), 1, f);
     EndianConvert(header.Unknown);
 
-    if (fread(&header.Min, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Min, sizeof(uint32), 1, f);
     EndianConvert(header.Min);
 
-    if (fread(&header.Max, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Max, sizeof(uint32), 1, f);
     EndianConvert(header.Max);
 
-    if (fread(&header.Locale, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.Locale, sizeof(uint32), 1, f);
     EndianConvert(header.Locale);
 
-    if (fread(&header.ReferenceDataSize, sizeof(uint32), 1, f) != 1)
-    {
-        fclose(f);
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
-        return false;
-    }
-
+    fread(&header.ReferenceDataSize, sizeof(uint32), 1, f);
     EndianConvert(header.ReferenceDataSize);
+
+    //fread(&header.MetaFlags, sizeof(uint32), 1, f);
+    //EndianConvert(header.MetaFlags);
 
     fieldsOffset = new uint32[header.FieldCount];
     fieldsOffset[0] = 0;
@@ -184,10 +146,10 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name
             fieldsOffset[i] += 4;
     }
 
-    recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.StringBlockSize];
+    recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.BlockValue];
     stringTable = recordTable + header.RecordSize * header.RecordCount;
 
-    if (fread(recordTable, header.RecordSize * header.RecordCount + header.StringBlockSize, 1, f) != 1)
+    if (fread(recordTable, header.RecordSize * header.RecordCount + header.BlockValue, 1, f) != 1)
     {
         fclose(f);
         sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u", __FUNCTION__, __LINE__);
@@ -211,6 +173,48 @@ DB2FileLoader::Record DB2FileLoader::getRecord(size_t id)
 {
     assert(recordTable);
     return Record(*this, recordTable + id * header.RecordSize);
+}
+
+float DB2FileLoader::Record::getFloat(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    float val = *reinterpret_cast<float*>(offset + file.GetOffset(field));
+    EndianConvert(val);
+    return val;
+}
+
+uint32 DB2FileLoader::Record::getUInt(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    uint32 val = *reinterpret_cast<uint32*>(offset + file.GetOffset(field));
+    EndianConvert(val);
+    return val;
+}
+
+uint8 DB2FileLoader::Record::getUInt8(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint8*>(offset + file.GetOffset(field));
+}
+
+uint16 DB2FileLoader::Record::getUInt16(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint16*>(offset + file.GetOffset(field));
+}
+
+uint64 DB2FileLoader::Record::getUInt64(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    uint64 val = *reinterpret_cast<uint64*>(offset + file.GetOffset(field));
+    EndianConvert(val);
+    return val;
+}
+
+char const* DB2FileLoader::Record::getString(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return reinterpret_cast<char*>(file.stringTable + getUInt(field));
 }
 
 uint32 DB2FileLoader::GetFormatRecordSize(const char * format, int32* index_pos)
@@ -354,8 +358,6 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
     return dataTable;
 }
 
-static char const* const nullStr = "";
-
 char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* dataTable)
 {
     if (strlen(format) != header.FieldCount)
@@ -377,7 +379,7 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
 
     // DB2 strings expected to have at least empty string
     for (std::size_t i = 0; i < stringHoldersPoolSize / sizeof(char*); ++i)
-        ((char const**)stringHoldersPool)[i] = nullStr;
+        ((char const**)stringHoldersPool)[i] = "";
 
     uint32 offset = 0;
 
@@ -449,8 +451,8 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
         return nullptr;
     }
 
-    char* stringPool = new char[header.StringBlockSize];
-    memcpy(stringPool, stringTable, header.StringBlockSize);
+    char* stringPool = new char[header.BlockValue];
+    memcpy(stringPool, stringTable, header.BlockValue);
 
     uint32 offset = 0;
 
@@ -478,7 +480,7 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
                 {
                     // fill only not filled entries
                     LocalizedString* db2str = *(LocalizedString**)(&dataTable[offset]);
-                    if (db2str->Str[locale] == nullStr)
+                    if (db2str->Str[locale] == "")
                     {
                         char const* st = getRecord(y).getString(x);
                         db2str->Str[locale] = stringPool + (st - (char const*)stringTable);
@@ -532,7 +534,7 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
 
         // DB2 strings expected to have at least empty string
         for (size_t i = 0; i < stringHoldersPoolSize / sizeof(char*); ++i)
-            ((char const**)stringHolders)[i] = nullStr;
+            ((char const**)stringHolders)[i] = "";
     }
     else
         stringHolders = nullptr;
@@ -718,7 +720,7 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
                     {
                         // fill only not filled entries
                         LocalizedString* db2str = *(LocalizedString**)(&dataValue[offset]);
-                        if (db2str->Str[locale] == nullStr)
+                        if (db2str->Str[locale] == "")
                             if (char* str = AddString(&db2str->Str[locale], fields[1 + stringFieldNumInRecord].GetString()))
                                 stringPool.push_back(str);
 

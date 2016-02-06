@@ -997,11 +997,8 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
             if (SpellEffectEntry const* _effect = spellEntry->GetSpellEffect(i, difficulty))
                 EffectsMap[MAKE_PAIR16(i, difficulty)] = SpellEffectInfo(spellEntry, this, i, _effect);
 
-    SpellMiscEntry const* miscStore = nullptr;
-    for (auto const& _miscStore : sSpellMiscStore)
-        if (_miscStore->ID == Id)
-            miscStore = _miscStore;
-
+    //@TODO:Legion - implent difficulty support
+    SpellMiscEntry const* miscStore = sSpellMiscStore.LookupEntry(sDB2Manager.GetSpellMisc(Id, DIFFICULTY_NONE));
     for (uint8 i = 0; i < MaxAttributes; ++i)
         Misc.Attributes[i] = miscStore ? miscStore->Attributes[i] : 0;
     Misc.Speed = miscStore ? miscStore->Speed : 0.0f;

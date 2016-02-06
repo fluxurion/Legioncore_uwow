@@ -219,7 +219,7 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DBC(sBannedAddOnsStore,                "BannedAddOns.dbc");
     LOAD_DBC(sBattlemasterListStore,            "BattlemasterList.dbc");
     LOAD_DBC(sChrClassesStore,                  "ChrClasses.dbc");
-    //LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
+    LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
     LOAD_DBC(sFactionStore,                     "Faction.dbc");
     LOAD_DBC(sFactionTemplateStore,             "FactionTemplate.dbc");
     //LOAD_DBC(sLFGDungeonStore,                  "LfgDungeons.dbc");
@@ -325,21 +325,6 @@ void InitDBCCustomStores()
         }
     }
 
-    for (MapDifficultyEntry const* entry : sMapDifficultyStore)
-    {
-        if (!sMapStore.LookupEntry(entry->MapID))
-        {
-            sLog->outInfo(LOG_FILTER_SERVER_LOADING, "DB table `mapdifficulty_dbc` or MapDifficulty.dbc has non-existant map %u.", entry->MapID);
-            continue;
-        }
-        if (entry->DifficultyID && !sDifficultyStore.LookupEntry(entry->DifficultyID))
-        {
-            sLog->outInfo(LOG_FILTER_SERVER_LOADING, "DB table `mapdifficulty_dbc` or MapDifficulty.dbc has non-existant difficulty %u.", entry->DifficultyID);
-            continue;
-        }
-        sDB2Manager._mapDifficulty[entry->MapID][entry->DifficultyID] = entry;
-    }
-
     for (TalentEntry const* talentInfo : sTalentStore)
         if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 7 && talentInfo->column < 3)
             sTalentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
@@ -407,8 +392,6 @@ uint32 GetExpansionForLevel(uint32 level)
 void Zone2MapCoordinates(float& x, float& y, uint32 zone)
 {
     WorldMapAreaEntry const* maEntry = sWorldMapAreaStore.LookupEntry(zone);
-
-    // if not listed then map coordinates (instance)
     if (!maEntry)
         return;
 
@@ -420,8 +403,6 @@ void Zone2MapCoordinates(float& x, float& y, uint32 zone)
 void Map2ZoneCoordinates(float& x, float& y, uint32 zone)
 {
     WorldMapAreaEntry const* maEntry = sWorldMapAreaStore.LookupEntry(zone);
-
-    // if not listed then map coordinates (instance)
     if (!maEntry)
         return;
 

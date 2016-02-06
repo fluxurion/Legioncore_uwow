@@ -185,6 +185,7 @@ DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionSto
 DB2Storage<SpellLearnSpellEntry>            sSpellLearnSpellStore("SpellLearnSpell.db2", SpellLearnSpellFormat, HOTFIX_SEL_SPELL_LEARN_SPELL);
 DB2Storage<SpellLevelsEntry>                sSpellLevelsStore("SpellLevels.db2", SpellLevelsFormat, HOTFIX_SEL_SPELL_LEVELS);
 DB2Storage<SpellMiscEntry>                  sSpellMiscStore("SpellMisc.db2", SpellMiscFormat, HOTFIX_SEL_SPELL_MISC);
+DB2Storage<SpellMiscDifficultyEntry>        sSpellMiscDifficultyStore("SpellMiscDifficulty.db2", SpellMiscDifficultyFormat, HOTFIX_SEL_SPELL_MISC_DIFFICULTY);
 DB2Storage<SpellPowerEntry>                 sSpellPowerStore("SpellPower.db2", SpellPowerFormat, HOTFIX_SEL_SPELL_POWER);
 DB2Storage<SpellProcsPerMinuteEntry>        sSpellProcsPerMinuteStore("SpellProcsPerMinute.db2", SpellProcsPerMinuteFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE);
 DB2Storage<SpellProcsPerMinuteModEntry>     sSpellProcsPerMinuteModStore("SpellProcsPerMinuteMod.db2", SpellProcsPerMinuteModFormat, HOTFIX_SEL_SPELL_PROCS_PER_MINUTE_MOD);
@@ -239,16 +240,16 @@ inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, D
 
     if (storage->Load(db2Path + localeNames[defaultLocale] + '/', defaultLocale))
     {
-        storage->LoadFromDB();
+        //storage->LoadFromDB();
 
-        for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
-        {
-            if (availableDb2Locales & (1 << i))
-                if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
-                    availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
+        //for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        //{
+        //    if (availableDb2Locales & (1 << i))
+        //        if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
+        //            availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
 
-            storage->LoadStringsFromDB(i);
-        }
+        //    storage->LoadStringsFromDB(i);
+        //}
     }
     else
     {
@@ -301,7 +302,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sCreatureFamilyStore);
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
-    //LOAD_DB2(sDifficultyStore);
     //LOAD_DB2(sDungeonEncounterStore);
     //LOAD_DB2(sEmotesTextStore);
     //LOAD_DB2(sGameObjectsStore);
@@ -357,6 +357,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
+    LOAD_DB2(sDifficultyStore);                 // 20994
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914
@@ -449,6 +450,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellInterruptsStore);            // 20914
     LOAD_DB2(sSpellLevelsStore);                // 20914
     LOAD_DB2(sSpellMiscStore);                  // 20914
+    LOAD_DB2(sSpellMiscDifficultyStore);        // 20914
     LOAD_DB2(sSpellPowerStore);                 // 20914
     LOAD_DB2(sSpellProcsPerMinuteModStore);     // 20914
     LOAD_DB2(sSpellProcsPerMinuteStore);        // 20914
@@ -841,6 +843,12 @@ void DB2Manager::InitDB2CustomStores()
     memset(_minorTalentByIndexStore, 0, sizeof(_minorTalentByIndexStore));
     for (MinorTalentEntry const* minotTal : sMinorTalentStore)
         _minorTalentByIndexStore[minotTal->SpecID][minotTal->OrderIndex] = minotTal;
+
+    for (MapDifficultyEntry const* entry : sMapDifficultyStore)
+        _mapDifficulty[entry->MapID][entry->DifficultyID] = entry;
+
+    for (SpellMiscDifficultyEntry const* entry : sSpellMiscDifficultyStore)
+        _spellMiscDifficulty.insert(SpellMiscDifficultyContainer::value_type((entry->SpellID), entry->ID));
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -1639,4 +1647,9 @@ MapDifficultyEntry const* DB2Manager::GetMapDifficultyData(uint32 mapId, Difficu
         return nullptr;
 
     return diffItr->second;
+}
+
+uint32 DB2Manager::GetSpellMisc(uint32 spellID, Difficulty /*difficultyID = DIFFICULTY_NONE*/)
+{
+    return _spellMiscDifficulty[spellID];
 }

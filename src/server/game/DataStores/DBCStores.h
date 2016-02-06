@@ -86,6 +86,7 @@ extern DBCStorage<FactionTemplateEntry>         sFactionTemplateStore;
 extern DBCStorage<GlyphSlotEntry>               sGlyphSlotStore;
 extern DBCStorage<LFGDungeonEntry>              sLFGDungeonStore;
 extern DBCStorage<LiquidTypeEntry>              sLiquidTypeStore;
+extern DBCStorage<MapDifficultyEntry>           sMapDifficultyStore;
 extern DBCStorage<SpellItemEnchantmentEntry>    sSpellItemEnchantmentStore;
 extern DBCStorage<TalentEntry>                  sTalentStore;
 extern DBCStorage<VehicleEntry>                 sVehicleStore;

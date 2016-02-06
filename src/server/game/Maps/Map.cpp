@@ -2817,20 +2817,23 @@ bool Map::IsHeroic() const
 {
     if (DifficultyEntry const* difficulty = sDifficultyStore.LookupEntry(i_spawnMode))
         return difficulty->Flags & DIFFICULTY_FLAG_HEROIC;
+
     return false;
 }
 
 bool Map::IsNeedRecalc() const
 {
     if (DifficultyEntry const* difficulty = sDifficultyStore.LookupEntry(i_spawnMode))
-        return difficulty->m_minPlayers != difficulty->m_maxPlayers;
+        return difficulty->MinPlayers != difficulty->MaxPlayers;
+
     return false;
 }
 
 uint32 Map::GetMaxPlayer() const
 {
     if (DifficultyEntry const* difficulty = sDifficultyStore.LookupEntry(i_spawnMode))
-        return difficulty->m_maxPlayers;
+        return difficulty->MaxPlayers;
+
     return 10;
 }
 

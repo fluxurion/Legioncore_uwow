@@ -25,7 +25,7 @@
 char const BannedAddOnsfmt[] = "nxxxxxxxxxx";
 char const BattlemasterListEntryfmt[] = "niiiiiiiiiiiiiiiiixsiiiiiiiixxx";
 char const ChrClassesEntryfmt[] = "nixsxxxixiiiiixxxxx";
-char const CreatureModelDatafmt[] = "nxxxxxxxxxxxxxffxxxxxxxxxxxxxxxxxx";
+char const CreatureModelDatafmt[] = "niixxxxxxxxxxxxffxxxxxxxxxxxxxxxxxxx";
 char const FactionEntryfmt[] = "niiiiiiiiiiiiiiiiiiffixsxxix";
 char const FactionTemplateEntryfmt[] = "niiiiiiiiiiiii";
 char const GameTablefmt[] = "xf";

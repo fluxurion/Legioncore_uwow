@@ -214,20 +214,20 @@ struct CreatureFamilyEntry
 
 struct DifficultyEntry
 {
-    uint32      m_ID;                                       // 0
+    uint32      ID;                                         // 0
     uint32      FallbackDifficultyID;                       // 1
     uint32      InstanceType;                               // 2
-    uint32      m_minPlayers;                               // 3
-    uint32      m_maxPlayers;                               // 4
-    //int32     OldEnumValue;                               // 5
+    uint32      MinPlayers;                                 // 3
+    uint32      MaxPlayers;                                 // 4
+    int32       OldEnumValue;                               // 5
     uint32      Flags;                                      // 6
     uint32      ToggleDifficultyID;                         // 7
-    //uint32    GroupSizeHealthCurveID;                     // 8
-    //uint32    GroupSizeDmgCurveID;                        // 9
-    //uint32    GroupSizeSpellPointsCurveID;                // 10
-    //char const* NameLang;                                 // 11
-    uint32      ItemBonusTreeModID;                           // 12
-    //uint32    unkLegion
+    uint32      GroupSizeHealthCurveID;                     // 8
+    uint32      GroupSizeDmgCurveID;                        // 9
+    uint32      GroupSizeSpellPointsCurveID;                // 10
+    LocalizedString* NameLang;                              // 11
+    uint32      ItemBonusTreeModID;                         // 12
+    uint32      UnkLegion;                                  // 13
 };
 
 struct DungeonEncounterEntry
@@ -1611,6 +1611,13 @@ struct SpellMiscEntry
     uint16      SpellIconID;                                // 20
     uint16      ActiveIconID;                               // 21
     uint8       SchoolMask;                                 // 22
+};
+
+struct SpellMiscDifficultyEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpellID;                                    // 1
+    uint8       DifficultyID;                               // 2
 };
 
 struct SpellPowerEntry

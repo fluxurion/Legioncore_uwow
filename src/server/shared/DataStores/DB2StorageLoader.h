@@ -18,15 +18,24 @@
 #ifndef DB2_FILE_LOADER_H
 #define DB2_FILE_LOADER_H
 
+#include <cassert>
+#include <list>
+
 #include "Define.h"
 #include "Utilities/ByteConverter.h"
 #include "Implementation/HotfixDatabase.h"
-#include <cassert>
-#include <list>
 
 static const int32 HeaderSize = 48;
 static const uint32 DB3FmtSig = 0x33424457;
 static const uint32 DB2FmtSig = 0x32424457;
+
+enum DBFilesFlags
+{
+    None       = 0,
+    DataOffset = 1,
+    UnkFlag    = 2, // Some Index data stuff?!
+    Index      = 4
+};
 
 class DB2FileLoader
 {
@@ -39,44 +48,12 @@ class DB2FileLoader
     class Record
     {
     public:
-        float getFloat(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            float val = *reinterpret_cast<float*>(offset + file.GetOffset(field));
-            EndianConvert(val);
-            return val;
-        }
-        uint32 getUInt(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            uint32 val = *reinterpret_cast<uint32*>(offset + file.GetOffset(field));
-            EndianConvert(val);
-            return val;
-        }
-        uint8 getUInt8(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            return *reinterpret_cast<uint8*>(offset + file.GetOffset(field));
-        }
-        uint16 getUInt16(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            return *reinterpret_cast<uint16*>(offset + file.GetOffset(field));
-        }
-        uint64 getUInt64(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            uint64 val = *reinterpret_cast<uint64*>(offset + file.GetOffset(field));
-            EndianConvert(val);
-            return val;
-        }
-        const char *getString(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            size_t stringOffset = getUInt(field);
-            //assert(stringOffset < file.stringSize); //Crash on windows on debug mode
-            return reinterpret_cast<char*>(file.stringTable + stringOffset);
-        }
+        float getFloat(size_t field) const;
+        uint32 getUInt(size_t field) const;
+        uint8 getUInt8(size_t field) const;
+        uint16 getUInt16(size_t field) const;
+        uint64 getUInt64(size_t field) const;
+        char const* getString(size_t field) const;
 
     private:
         Record(DB2FileLoader &file_, unsigned char *offset_): offset(offset_), file(file_) {}
@@ -86,9 +63,7 @@ class DB2FileLoader
         friend class DB2FileLoader;
     };
 
-    // Get record by id
     Record getRecord(size_t id);
-    /// Get begin iterator over records
 
     uint32 GetNumRows() const { return header.RecordCount;}
     uint32 GetCols() const { return header.FieldCount; }
@@ -114,16 +89,16 @@ private:
         uint32 RecordCount;
         uint32 FieldCount;
         uint32 RecordSize;
-        uint32 StringBlockSize;
+        uint32 BlockValue;
 
         uint32 Hash;
         uint32 Build;
-        int32 Unknown;
-        int32 Min;
-        int32 Max;
-        int32 Locale;
-        int32 ReferenceDataSize;
-        int32 MetaFlags;
+        uint32 Unknown;
+        uint32 Min;
+        uint32 Max;
+        uint32 Locale;
+        uint32 ReferenceDataSize;
+        uint32 MetaFlags;
     } header;
 };
 

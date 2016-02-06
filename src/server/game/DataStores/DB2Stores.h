@@ -169,6 +169,7 @@ extern DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentCondi
 extern DB2Storage<SpellLearnSpellEntry>             sSpellLearnSpellStore;
 extern DB2Storage<SpellLevelsEntry>                 sSpellLevelsStore;
 extern DB2Storage<SpellMiscEntry>                   sSpellMiscStore;
+extern DB2Storage<SpellMiscDifficultyEntry>         sSpellMiscDifficultyStore;
 extern DB2Storage<SpellPowerEntry>                  sSpellPowerStore;
 extern DB2Storage<SpellProcsPerMinuteEntry>         sSpellProcsPerMinuteStore;
 extern DB2Storage<SpellProcsPerMinuteModEntry>      sSpellProcsPerMinuteModStore;
@@ -309,6 +310,7 @@ public:
     typedef std::map<uint32, DungeonEncounterEntry const*> DungeonEncounterByDisplayIDContainer;
     typedef MinorTalentEntry const* MinorTalentByIndexContainer[SPEC_MAX_SPEC_INDEX][4];
     typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
+    typedef std::unordered_map<uint32, uint32> SpellMiscDifficultyContainer;
 
     static DB2Manager& Instance()
     {
@@ -385,6 +387,7 @@ public:
     DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
     MinorTalentEntry const* GetMinorTalentBySpecAndPerkID(uint32 specID, uint32 perkID);
     MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty);
+    uint32 GetSpellMisc(uint32 spellID, Difficulty difficultyID = DIFFICULTY_NONE);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -445,6 +448,7 @@ private:
     AreaFlagByMapIDContainer _areaFlagByMapID;
     DungeonEncounterByDisplayIDContainer _dungeonEncounterByDisplayID;
     MinorTalentByIndexContainer _minorTalentByIndexStore;
+    SpellMiscDifficultyContainer _spellMiscDifficulty;
 };
 
 #define sDB2Manager DB2Manager::Instance()

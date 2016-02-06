@@ -674,7 +674,7 @@ void WorldSession::HandleSetRaidDifficulty(WorldPackets::Misc::SetRaidDifficulty
     if (((difficultyEntry->Flags & DIFFICULTY_FLAG_LEGACY) >> 5) != packet.Legacy)
         return;
 
-    Difficulty difficultyID = Difficulty(difficultyEntry->m_ID);
+    Difficulty difficultyID = Difficulty(difficultyEntry->ID);
     if (difficultyID == (packet.Legacy ?  player->GetLegacyRaidDifficultyID() : player->GetRaidDifficultyID()))
         return;
 
