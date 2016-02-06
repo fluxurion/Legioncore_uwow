@@ -803,7 +803,65 @@ void Garrison::UnlearnBlueprint(uint32 garrBuildingId)
     _owner->SendDirectMessage(unlearnBlueprintResult.Write());
 }
 
-void Garrison::PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool quest/* = false*/)
+void Garrison::Swap(uint32 plot1, uint32 plot2)
+{
+    uint32 BuildingId1, BuildingId2 = 0;
+    Plot* p1 = Garrison::GetPlot(plot1);
+    if (p1->BuildingInfo.PacketInfo)
+        BuildingId1 = p1->BuildingInfo.PacketInfo->GarrBuildingID;
+
+    Plot* p2 = Garrison::GetPlot(plot2);
+    if (p2->BuildingInfo.PacketInfo)
+        BuildingId2 = p2->BuildingInfo.PacketInfo->GarrBuildingID;
+
+    if (BuildingId1)
+    {
+        //clear plot1
+        WorldPackets::Garrison::GarrisonBuildingRemoved buildingRemoved;
+        buildingRemoved.Result = GARRISON_SUCCESS;
+        buildingRemoved.GarrPlotInstanceID = plot1;
+        buildingRemoved.GarrBuildingID = BuildingId1;
+        _owner->SendDirectMessage(buildingRemoved.Write());
+
+        p1->ClearBuildingInfo(_owner);
+        if (Map* map = FindMap())
+        {
+            p1->DeleteGameObject(map);
+            if (GameObject* go = p1->CreateGameObject(map, GetFaction(), this))
+                map->AddToMap(go);
+        }
+        // set on plot2
+        PlaceBuilding(plot2, BuildingId1, true, true);
+    }
+
+    if (BuildingId2)
+    {
+        if (!BuildingId1){
+            //clear plot2
+            WorldPackets::Garrison::GarrisonBuildingRemoved buildingRemoved;
+            buildingRemoved.Result = GARRISON_SUCCESS;
+            buildingRemoved.GarrPlotInstanceID = plot2;
+            buildingRemoved.GarrBuildingID = BuildingId2;
+            _owner->SendDirectMessage(buildingRemoved.Write());
+
+            p2->ClearBuildingInfo(_owner);
+            if (Map* map = FindMap())
+            {
+                p2->DeleteGameObject(map);
+                if (GameObject* go = p2->CreateGameObject(map, GetFaction(), this))
+                    map->AddToMap(go);
+            }
+        }
+        // set on plot1
+        PlaceBuilding(plot1, BuildingId2, true, true);
+    }
+
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
+    SaveToDB(trans);
+    CharacterDatabase.CommitTransaction(trans);
+}
+
+void Garrison::PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool quest/* = false*/, bool swap/* = false*/)
 {
     WorldPackets::Garrison::GarrisonPlaceBuildingResult placeBuildingResult;
     placeBuildingResult.Result = CheckBuildingPlacement(garrPlotInstanceId, garrBuildingId, quest);
@@ -838,7 +896,7 @@ void Garrison::PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, b
         // If build by quest - skip building state and spawn building.
         if (quest)
         {
-            placeBuildingResult.PlayActivationCinematic = true;
+            placeBuildingResult.PlayActivationCinematic = !swap;
             placeBuildingResult.BuildingInfo.Active = true;
         }
         else

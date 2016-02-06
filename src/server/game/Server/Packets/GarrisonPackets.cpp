@@ -310,6 +310,11 @@ void WorldPackets::Garrison::GarrisonStartMission::Read()
     }
 }
 
+void WorldPackets::Garrison::GarrisonSwapBuildings::Read()
+{
+    _worldPacket >> NpcGUID >> PlotId1 >> PlotId2;
+}
+
 void WorldPackets::Garrison::GarrisonCompleteMission::Read()
 {
     _worldPacket >> NpcGUID;

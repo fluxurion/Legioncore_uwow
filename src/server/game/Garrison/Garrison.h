@@ -187,7 +187,8 @@ public:
     // Buildings
     bool LearnBlueprint(uint32 garrBuildingId);
     void UnlearnBlueprint(uint32 garrBuildingId);
-    void PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool byQuest = false);
+    void Swap(uint32 plot1, uint32 plot2);
+    void PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool byQuest = false, bool swap = false);
     void CancelBuildingConstruction(uint32 garrPlotInstanceId);
     void ActivateBuilding(uint32 garrPlotInstanceId);
     uint32 GetCountOfBluePrints() const { return _knownBuildings.size();  }

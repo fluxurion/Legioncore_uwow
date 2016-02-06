@@ -663,6 +663,7 @@ namespace WorldPackets
         class GarrisonRequestLandingPageShipmentInfo;
         class GarrisonCheckUpgradeable;
         class GarrisonStartMission;
+        class GarrisonSwapBuildings;
         class GarrisonCompleteMission;
         class CreateShipment;
         class GarrisonRequestShipmentInfo;
@@ -1669,6 +1670,7 @@ class WorldSession
         void HandleGarrisonRequestLandingPageShipmentInfo(WorldPackets::Garrison::GarrisonRequestLandingPageShipmentInfo& packet);
         void HandleGarrisonCheckUpgradeable(WorldPackets::Garrison::GarrisonCheckUpgradeable& packet);
         void HandleGarrisonStartMission(WorldPackets::Garrison::GarrisonStartMission& packet);
+        void HandleGarrisonSwapBuildings(WorldPackets::Garrison::GarrisonSwapBuildings& packet);
         void HandleGarrisonCompleteMission(WorldPackets::Garrison::GarrisonCompleteMission& packet);
         void HandleCreateShipment(WorldPackets::Garrison::CreateShipment& packet);
         void HandleGarrisonRequestShipmentInfo(WorldPackets::Garrison::GarrisonRequestShipmentInfo& packet);

@@ -372,6 +372,18 @@ namespace WorldPackets
             uint32 MissionRecID = 0;
         };
 
+        class GarrisonSwapBuildings final : public ClientPacket
+        {
+        public:
+            GarrisonSwapBuildings(WorldPacket&& packet) : ClientPacket(CMSG_GARRISON_SWAP_BUILDINGS, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid NpcGUID;
+            uint32 PlotId1;
+            uint32 PlotId2;
+        };
+
         class GarrisonCompleteMission final : public ClientPacket
         {
         public:
