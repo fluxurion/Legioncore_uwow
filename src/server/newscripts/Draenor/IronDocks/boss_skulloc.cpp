@@ -475,7 +475,7 @@ public:
                     SPELL_IRON_DOCKS_BANTER_7,
                 };
 
-                switch (at->id)
+                switch (at->ID)
                 {
                     case 10145:
                     {

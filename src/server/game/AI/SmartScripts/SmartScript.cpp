@@ -3143,7 +3143,7 @@ void SmartScript::FillScript(SmartAIEventList e, WorldObject* obj, AreaTriggerEn
         if (obj)
             sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript: EventMap for Entry %u is empty but is using SmartScript.", obj->GetEntry());
         if (at)
-            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript: EventMap for AreaTrigger %u is empty but is using SmartScript.", at->id);
+            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript: EventMap for AreaTrigger %u is empty but is using SmartScript.", at->ID);
         return;
     }
     for (SmartAIEventList::iterator i = e.begin(); i != e.end(); ++i)
@@ -3169,7 +3169,7 @@ void SmartScript::FillScript(SmartAIEventList e, WorldObject* obj, AreaTriggerEn
     if (mEvents.empty() && obj)
         sLog->outError(LOG_FILTER_SQL, "SmartScript: Entry %u has events but no events added to list because of instance flags.", obj->GetEntry());
     if (mEvents.empty() && at)
-        sLog->outError(LOG_FILTER_SQL, "SmartScript: AreaTrigger %u has events but no events added to list because of instance flags. NOTE: triggers can not handle any instance flags.", at->id);
+        sLog->outError(LOG_FILTER_SQL, "SmartScript: AreaTrigger %u has events but no events added to list because of instance flags. NOTE: triggers can not handle any instance flags.", at->ID);
 }
 
 void SmartScript::GetScript()
@@ -3192,7 +3192,7 @@ void SmartScript::GetScript()
     }
     else if (trigger)
     {
-        e = sSmartScriptMgr->GetScript((int32)trigger->id, mScriptType);
+        e = sSmartScriptMgr->GetScript((int32)trigger->ID, mScriptType);
         FillScript(e, NULL, trigger);
     }
 }
@@ -3221,7 +3221,7 @@ void SmartScript::OnInitialize(WorldObject* obj, AreaTriggerEntry const* at)
     {
         mScriptType = SMART_SCRIPT_TYPE_AREATRIGGER;
         trigger = at;
-        sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::OnInitialize: source is AreaTrigger %u", trigger->id);
+        sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::OnInitialize: source is AreaTrigger %u", trigger->ID);
     }
     else
     {

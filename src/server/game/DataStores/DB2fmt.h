@@ -24,7 +24,7 @@
 char const AchievementFormat[] = "nssistttttttbib";
 char const AreaGroupMemberFormat[] = "nii";
 char const AreaTableFormat[] = "iiiniixxxxsxisiiiiixixxxxiix";
-char const AreaTriggerFormat[] = "nifffxxxfffffxxxx";
+char const AreaTriggerFormat[] = "nifffiiifffffiiii";
 char const ArmorLocationFormat[] = "nfffff";
 char const AuctionHouseFormat[] = "nsiii";
 char const BankBagSlotPricesFormat[] = "ni";
@@ -50,7 +50,7 @@ char const ChrRacesFormat[] = "nissssssssiiffffffittttttttttttbbbbbbbbb";
 char const ChrSpecializationFormat[] = "nsiiiiiiiisssii";
 char const CreatureDifficultyFormat[] = "niiiiiitbbb";
 char const CreatureDisplayInfoFormat[] = "niffiiisiiittttttbbbbbb";
-char const CreatureFamilyFormat[] = "nfifiiiiixsx";
+char const CreatureFamilyFormat[] = "nffsstttbbbb";
 char const CreatureTypeFormat[] = "nsb";
 char const CriteriaFormat[]= "niiitttbbbbb";
 char const CriteriaTreeFormat[] = "nisttttb";

@@ -283,7 +283,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
     //LOAD_DB2(sAreaGroupMemberStore);
     //LOAD_DB2(sAreaStore);
-    //LOAD_DB2(sAreaTriggerStore);
     //LOAD_DB2(sBarberShopStyleStore);            // 20914
     //LOAD_DB2(sBattlePetAbilityEffectStore);
     //LOAD_DB2(sBattlePetAbilityStateStore);
@@ -298,8 +297,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetStateStore);
     //LOAD_DB2(sBroadcastTextStore);
     //LOAD_DB2(sCharTitlesStore);
-    //LOAD_DB2(sChrSpecializationStore);        // 20914
-    //LOAD_DB2(sCreatureFamilyStore);
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
     //LOAD_DB2(sDungeonEncounterStore);
@@ -357,8 +354,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
-    LOAD_DB2(sDifficultyStore);                 // 20994
     LOAD_DB2(sAchievementStore);                // 20914
+    LOAD_DB2(sAreaTriggerStore);                // 20994
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914
     LOAD_DB2(sBankBagSlotPricesStore);          // 20914
@@ -367,12 +364,15 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sChatChannelsStore);               // 20914
     LOAD_DB2(sChrClassesXPowerTypesStore);      // 20914
     LOAD_DB2(sChrRacesStore);                   // 20914
+    //LOAD_DB2(sChrSpecializationStore);          // 20994
     LOAD_DB2(sCreatureDifficultyStore);         // 20914
     LOAD_DB2(sCreatureDisplayInfoStore);        // 20914
+    LOAD_DB2(sCreatureFamilyStore);             // 20994
     LOAD_DB2(sCreatureTypeStore);               // 20914
     LOAD_DB2(sCriteriaStore);                   // 20914
     LOAD_DB2(sCriteriaTreeStore);               // 20914
     LOAD_DB2(sDestructibleModelDataStore);      // 20914
+    LOAD_DB2(sDifficultyStore);                 // 20994
     LOAD_DB2(sDurabilityCostsStore);            // 20914
     LOAD_DB2(sDurabilityQualityStore);          // 20914
     LOAD_DB2(sEmotesStore);                     // 20914
@@ -449,8 +449,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellFocusObjectStore);           // 20914
     LOAD_DB2(sSpellInterruptsStore);            // 20914
     LOAD_DB2(sSpellLevelsStore);                // 20914
-    LOAD_DB2(sSpellMiscStore);                  // 20914
     LOAD_DB2(sSpellMiscDifficultyStore);        // 20914
+    LOAD_DB2(sSpellMiscStore);                  // 20914
     LOAD_DB2(sSpellPowerStore);                 // 20914
     LOAD_DB2(sSpellProcsPerMinuteModStore);     // 20914
     LOAD_DB2(sSpellProcsPerMinuteStore);        // 20914
@@ -753,27 +753,6 @@ void DB2Manager::InitDB2CustomStores()
         sScenarioCriteriaTreeStore.insert(entry->Criteriatreeid);
     }
 
-    for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
-    {
-        SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(skillLine->SpellID);
-        if (!spellMisc)
-            continue;
-
-        if (spellMisc->Attributes[0] & SPELL_ATTR0_PASSIVE)
-        {
-            for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
-            {
-                if (skillLine->SkillLine != cFamily->skillLine[0] && skillLine->SkillLine != cFamily->skillLine[1])
-                    continue;
-
-                if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
-                    continue;
-
-                _petFamilySpells[cFamily->ID].insert(skillLine->SpellID);
-            }
-        }
-    }
-
     for (SkillRaceClassInfoEntry const* entry : sSkillRaceClassInfoStore)
         if (sSkillLineStore.LookupEntry(entry->SkillID))
             _skillRaceClassInfoBySkill.emplace(entry->SkillID, entry);
@@ -848,7 +827,28 @@ void DB2Manager::InitDB2CustomStores()
         _mapDifficulty[entry->MapID][entry->DifficultyID] = entry;
 
     for (SpellMiscDifficultyEntry const* entry : sSpellMiscDifficultyStore)
-        _spellMiscDifficulty.insert(SpellMiscDifficultyContainer::value_type((entry->SpellID), entry->ID));
+        _spellMiscDifficulty.insert(SpellMiscDifficultyContainer::value_type(entry->SpellID, entry->ID));
+
+    for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
+    {
+        SpellMiscEntry const* spellMisc = sSpellMiscStore.LookupEntry(GetSpellMisc(skillLine->SpellID, DIFFICULTY_NONE));
+        if (!spellMisc)
+            continue;
+
+        if (spellMisc->Attributes[0] & SPELL_ATTR0_PASSIVE)
+        {
+            for (CreatureFamilyEntry const* cFamily : sCreatureFamilyStore)
+            {
+                if (skillLine->SkillLine != cFamily->SkillLine[0] && skillLine->SkillLine != cFamily->SkillLine[1])
+                    continue;
+
+                if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)
+                    continue;
+
+                _petFamilySpells[cFamily->ID].insert(skillLine->SpellID);
+            }
+        }
+    }
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -1570,7 +1570,7 @@ char const* DB2Manager::GetPetName(uint32 petfamily)
 
     CreatureFamilyEntry const* family = sCreatureFamilyStore.LookupEntry(petfamily);
     if (family)
-        return family->Name ? family->Name : nullptr;
+        return family->Name->Str[sObjectMgr->GetDBCLocaleIndex()] ? family->Name->Str[sObjectMgr->GetDBCLocaleIndex()] : nullptr;
 
     return nullptr;
 }
@@ -1651,5 +1651,9 @@ MapDifficultyEntry const* DB2Manager::GetMapDifficultyData(uint32 mapId, Difficu
 
 uint32 DB2Manager::GetSpellMisc(uint32 spellID, Difficulty /*difficultyID = DIFFICULTY_NONE*/)
 {
-    return _spellMiscDifficulty[spellID];
+    auto data = _spellMiscDifficulty.find(spellID);
+    if (data != _spellMiscDifficulty.end())
+        return data->second;
+
+    return 0;
 }

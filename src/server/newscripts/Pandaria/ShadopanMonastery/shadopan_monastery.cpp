@@ -420,7 +420,7 @@ class areatrigger_at_shadopan_archery : public AreaTriggerScript
             if (!instance)
                 return false;
 
-            switch(trigger->id)
+            switch(trigger->ID)
             {
                 case AREATRIGGER_ARCHERY_FIRST_BEGIN:
                     instance->SetData(DATA_ARCHERY, 1);

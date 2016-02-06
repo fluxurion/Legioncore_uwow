@@ -3294,7 +3294,7 @@ void SpellMgr::LoadPetLevelupSpellMap()
     {
         for (uint8 j = 0; j < 2; ++j)
         {
-            if (!creatureFamily->skillLine[j])
+            if (!creatureFamily->SkillLine[j])
                 continue;
 
             for (SkillLineAbilityEntry const* skillLine : sSkillLineAbilityStore)
@@ -3303,7 +3303,7 @@ void SpellMgr::LoadPetLevelupSpellMap()
                 //    (!creatureFamily->SkillLine[1] || skillLine->skillId != creatureFamily->SkillLine[1]))
                 //    continue;
 
-                if (skillLine->SkillLine != creatureFamily->skillLine[j])
+                if (skillLine->SkillLine != creatureFamily->SkillLine[j])
                     continue;
 
                 if (skillLine->AquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN)

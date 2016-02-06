@@ -1304,7 +1304,7 @@ public:
         instance = player->GetInstanceScript();
         if (enter && instance)
         {
-            switch (at->id)
+            switch (at->ID)
             {
                 case 8696:
                     if (IsNextStageAllowed(instance, STAGE_2))

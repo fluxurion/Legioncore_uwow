@@ -771,7 +771,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     SetDisplayId(creature->GetDisplayId());
 
     if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family))
-        SetName(cFamily->Name);
+        SetName(cFamily->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
     else
         SetName(creature->GetNameForLocaleIdx(sObjectMgr->GetDBCLocaleIndex()));
 
@@ -784,7 +784,7 @@ bool Pet::CreateBaseAtCreatureInfo(CreatureTemplate const* cinfo, Unit* owner)
         return false;
 
     if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family))
-        SetName(cFamily->Name);
+        SetName(cFamily->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
 
     Relocate(owner->GetPositionX(), owner->GetPositionY(), owner->GetPositionZ(), owner->GetOrientation());
 
@@ -966,12 +966,10 @@ bool Pet::HaveInDiet(ItemTemplate const* item) const
         return false;
 
     CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cInfo->family);
-    if (!cFamily)
-        return false;
+    if (cFamily)
+        return (cFamily->PetFoodMask & (1 << (item->FoodType - 1))) != 0;
 
-    uint32 diet = cFamily->petFoodMask;
-    uint32 FoodMask = 1 << (item->FoodType-1);
-    return (diet & FoodMask) != 0;
+    return false;
 }
 
 uint32 Pet::GetCurrentFoodBenefitLevel(uint32 itemlevel)
@@ -1608,9 +1606,7 @@ void TempSummon::LearnPetPassives()
     if (!cInfo)
         return;
 
-    CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cInfo->family);
-    if (!cFamily)
-        return;
+    sCreatureFamilyStore.AssertEntry(cInfo->family);;
 
     DB2Manager::PetFamilySpellsSet const* spells = sDB2Manager.GetPetFamilySpells(cInfo->family);
     if (!spells)

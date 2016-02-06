@@ -85,24 +85,21 @@ struct AreaTableEntry
 
 struct AreaTriggerEntry
 {
-    uint32      id;                                             // 0        m_ID
-    uint32      mapid;                                          // 1        m_ContinentID
-    float       x;                                              // 2        m_x
-    float       y;                                              // 3        m_y
-    float       z;                                              // 4        m_z
-    uint32      m_phaseUseFlags;                               // 5        m_phaseUseFlags
-    uint32      m_phaseID;                                     // 6        m_phaseID
-    uint32      m_phaseGroupID;                                // 7        m_phaseGroupID
-    float       radius;                                         // 8        m_radius
-    float       box_x;                                          // 9        m_box_length
-    float       box_y;                                          // 10       m_box_width
-    float       box_z;                                          // 11       m_box_heigh
-    float       box_orientation;                                // 12       m_box_yaw
-    uint32      m_shapeType;                                    // 13       m_shapeType
-    uint32      m_shapeID;                                      // 14       m_shapeID
-    uint32      m_areaTriggerActionSetID;                       // 15       m_areaTriggerActionSetID
-    uint32      m_flags;                                        // 16       m_flags
-    uint32      unk;                                            //            on 6.0.3 19243
+    uint32      ID;                                         // 0
+    uint32      MapID;                                      // 1
+    DBCPosition3D Pos;                                      // 2-4
+    uint32      PhaseUseFlags;                              // 5
+    uint32      PhaseID;                                    // 6
+    uint32      PhaseGroupID;                               // 7
+    float       Radius;                                     // 8
+    float       BoxLength;                                  // 9
+    float       BoxWidth;                                   // 10
+    float       BoxHeight;                                  // 11
+    float       BoxYaw;                                     // 12
+    uint32      ShapeType;                                  // 13
+    uint32      ShapeID;                                    // 14
+    uint32      AreaTriggerActionSetID;                     // 15
+    uint32      Flags;                                      // 16
 };
 
 struct AchievementEntry
@@ -199,17 +196,17 @@ struct CurvePointEntry
 
 struct CreatureFamilyEntry
 {
-    uint32      ID;                                             // 0        m_ID
-    float       minScale;                                       // 1        m_minScale
-    uint32      minScaleLevel;                                  // 2        m_minScaleLevel
-    float       maxScale;                                       // 3        m_maxScale
-    uint32      maxScaleLevel;                                  // 4        m_maxScaleLevel
-    uint32      skillLine[2];                                   // 5-6      m_skillLine
-    uint32      petFoodMask;                                    // 7        m_petFoodMask
-    int32       petTalentType;                                  // 8        m_petTalentType
-                                                            // 9        m_categoryEnumID
-    char*       Name;                                             // 10       m_name_lang
-                                                            // 11       m_iconFile
+    uint32      ID;                                         // 0
+    float       MinScale;                                   // 1
+    float       MaxScale;                                   // 2
+    LocalizedString* Name;                                  // 3
+    LocalizedString* IconFile;                              // 4
+    uint16      SkillLine[2];                               // 5 - 6
+    uint16      PetFoodMask;                                // 7
+    uint8       MaxScaleLevel;                              // 8
+    uint8       MinScaleLevel;                              // 9
+    uint8       PetTalentType;                              // 10
+    uint8       CategoryEnumID;                             // 11
 };
 
 struct DifficultyEntry
