@@ -66,6 +66,8 @@ uint32 getQuestIdReqForShipment(uint32 siteID, uint32 buildingType)
             return siteID == SITE_ID_GARRISON_ALLIANCE ? 36647 : 37572;
         case GARR_BTYPE_LUMBER_MILL:
             return siteID == SITE_ID_GARRISON_ALLIANCE ? 36189 : 36137;
+        case GARR_BTYPE_TRADING_POST:
+            return siteID == SITE_ID_GARRISON_ALLIANCE ? 37088 : 37062;
         default:
             return 0;
     }

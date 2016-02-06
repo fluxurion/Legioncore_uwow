@@ -34,3 +34,14 @@ REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `languag
 (84003, 0, 0, 'А тебе известно, что вероятность выживания боевых дровосеков в диких землях равна лишь двадцати процентам? ', 12, 0, 100, 0, 0, 0, 'Боевой дровосек to Player'),
 (84003, 0, 1, '$n, разве тебе не надо еще мир спасать, а? Так что грязную работенку оставь мне!', 12, 0, 100, 0, 0, 0, 'Боевой дровосек to Player');
 
+-- Q: A: 37088 H: 37062
+REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
+('174569', 'spell_q37088_q37062');
+
+REPLACE INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `auras`) VALUES
+(87265, 0, 0x0, 0x1, '84186'), -- 87265 - 84186
+(87290, 0, 0x0, 0x1, '84186'); -- 87290 - 84186
+
+REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
+(87290, 0, 0, 'Извини, $n.', 12, 0, 100, 24, 0, 0, 'Динки Деньжатникс to Player'),
+(87265, 0, 0, 'Извини, $n.', 12, 0, 100, 24, 0, 42439, 'Криксель Паросвист to Player');

@@ -669,6 +669,46 @@ public:
     };
 };
 
+// Q: A : 37088 H : 37062
+// spell: 174569
+class spell_q37088_q37062 : public SpellScriptLoader
+{
+public:
+    spell_q37088_q37062() : SpellScriptLoader("spell_q37088_q37062") { }
+
+    class spell_q37088_q37062_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_q37088_q37062_SpellScript);
+
+        void HandleScriptEffect(SpellEffIndex effIndex)
+        {
+            PreventHitDefaultEffect(effIndex);
+            Unit* caster = GetCaster();
+            if (!caster)
+                return;
+
+            Player *player = caster->ToPlayer();
+            if (!player)
+                return;
+
+            player->KilledMonsterCredit(87254, ObjectGuid::Empty);
+
+            if (Unit* target = GetExplTargetUnit())
+                sCreatureTextMgr->SendChat(target->ToCreature(), TEXT_GENERIC_0, player->GetGUID());
+        }
+
+        void Register()
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_q37088_q37062_SpellScript::HandleScriptEffect, 0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_q37088_q37062_SpellScript();
+    }
+};
+
 void AddSC_garrison_general()
 {
     new spell_garrison_hearthstone();
@@ -680,4 +720,5 @@ void AddSC_garrison_general()
     new mob_garr_lumberjack();
     new spell_garr_lumberjack_lvl2();
     new mob_garr_lumberjack2();
+    new spell_q37088_q37062();
 }
