@@ -14781,11 +14781,24 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
 
     if (!item->IsBroken())
     {
+        uint32 level = getLevel();
+        if (level > pEnchant->MaxLevel)
+            level = pEnchant->MaxLevel;
+
         for (int s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
         {
             uint32 enchant_display_type = pEnchant->Effect[s];
             uint32 enchant_amount = pEnchant->EffectPointsMin[s];
             uint32 enchant_spell_id = pEnchant->EffectSpellID[s];
+
+            if (pEnchant->EffectScalingPoints[s] > 0.0f)
+            {
+                if (GtSpellScalingEntry const* gtScaling = sGtSpellScalingStore.EvaluateTable(level - 1, (pEnchant->ScalingClass > 0 ? pEnchant->ScalingClass : ((MAX_CLASSES - 1 /*last class*/) - pEnchant->ScalingClass)) - 1))
+                    enchant_amount = gtScaling->value * pEnchant->EffectScalingPoints[s];
+                // Shouldn't happend but..
+                if (enchant_amount == 0)
+                    enchant_amount = 1;
+            }
 
             switch (enchant_display_type)
             {
