@@ -28,6 +28,8 @@
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
+extern DB2Storage<AreaTableEntry>                   sAreaStore;
+extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
 extern DB2Storage<AuctionHouseEntry>                sAuctionHouseStore;
 extern DB2Storage<BankBagSlotPricesEntry>           sBankBagSlotPricesStore;
@@ -45,16 +47,24 @@ extern DB2Storage<BattlePetSpeciesXAbilityEntry>    sBattlePetSpeciesXAbilitySto
 extern DB2Storage<BattlePetStateEntry>              sBattlePetStateStore;
 extern DB2Storage<BroadcastTextEntry>               sBroadcastTextStore;
 extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
+extern DB2Storage<CharTitlesEntry>                  sCharTitlesStore;
+extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;
 extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
 extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
+extern DB2Storage<ChrSpecializationEntry>           sChrSpecializationStore;
 extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
+extern DB2Storage<CreatureFamilyEntry>              sCreatureFamilyStore;
 extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
 extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
 extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
 extern DB2Storage<CurrencyTypesEntry>               sCurrencyTypesStore;
 extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
+extern DB2Storage<DifficultyEntry>                  sDifficultyStore;
+extern DB2Storage<DungeonEncounterEntry>            sDungeonEncounterStore;
 extern DB2Storage<DurabilityCostsEntry>             sDurabilityCostsStore;
 extern DB2Storage<DurabilityQualityEntry>           sDurabilityQualityStore;
+extern DB2Storage<EmotesEntry>                      sEmotesStore;
+extern DB2Storage<EmotesTextEntry>                  sEmotesTextStore;
 extern DB2Storage<GameObjectDisplayInfoEntry>       sGameObjectDisplayInfoStore;
 extern DB2Storage<GameObjectsEntry>                 sGameObjectsStore;
 extern DB2Storage<GameTablesEntry>                  sGameTablesStore;
@@ -78,6 +88,8 @@ extern DB2Storage<GarrPlotEntry>                    sGarrPlotStore;
 extern DB2Storage<GarrPlotInstanceEntry>            sGarrPlotInstanceStore;
 extern DB2Storage<GarrSiteLevelEntry>               sGarrSiteLevelStore;
 extern DB2Storage<GarrSiteLevelPlotInstEntry>       sGarrSiteLevelPlotInstStore;
+extern DB2Storage<GemPropertiesEntry>               sGemPropertiesStore;
+extern DB2Storage<GlyphPropertiesEntry>             sGlyphPropertiesStore;
 extern DB2Storage<GuildPerkSpellsEntry>             sGuildPerkSpellsStore;
 extern DB2Storage<HeirloomEntry>                    sHeirloomStore;
 extern DB2Storage<HolidaysEntry>                    sHolidaysStore;
@@ -104,20 +116,26 @@ extern DB2Storage<ItemLimitCategoryEntry>           sItemLimitCategoryStore;
 extern DB2Storage<ItemPriceBaseEntry>               sItemPriceBaseStore;
 extern DB2Storage<ItemRandomPropertiesEntry>        sItemRandomPropertiesStore;
 extern DB2Storage<ItemRandomSuffixEntry>            sItemRandomSuffixStore;
+extern DB2Storage<ItemSetEntry>                     sItemSetStore;
 extern DB2Storage<ItemSparseEntry>                  sItemSparseStore;
 extern DB2Storage<ItemSpecEntry>                    sItemSpecStore;
 extern DB2Storage<ItemSpecOverrideEntry>            sItemSpecOverrideStore;
 extern DB2Storage<ItemToBattlePetSpeciesEntry>      sItemToBattlePetSpeciesStore;
 extern DB2Storage<ItemUpgradeEntry>                 sItemUpgradeStore;
 extern DB2Storage<KeyChainEntry>                    sKeyChainStore;
+extern DB2Storage<LockEntry>                        sLockStore;
 extern DB2Storage<MailTemplateEntry>                sMailTemplateStore;
 extern DB2Storage<MapChallengeModeEntry>            sMapChallengeModeStore;
+extern DB2Storage<MapEntry>                         sMapStore;
+extern DB2Storage<MinorTalentEntry>                 sMinorTalentStore;
 extern DB2Storage<ModifierTreeEntry>                sModifierTreeStore;
 extern DB2Storage<MountCapabilityEntry>             sMountCapabilityStore;
 extern DB2Storage<MountTypeEntry>                   sMountTypeStore;
+extern DB2Storage<MovieEntry>                       sMovieStore;
 extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
+extern DB2Storage<PhaseEntry>                       sPhaseStores;
+extern DB2Storage<PowerDisplayEntry>                sPowerDisplayStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
-extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
 extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
 extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
@@ -156,30 +174,22 @@ extern DB2Storage<SpellProcsPerMinuteEntry>         sSpellProcsPerMinuteStore;
 extern DB2Storage<SpellProcsPerMinuteModEntry>      sSpellProcsPerMinuteModStore;
 extern DB2Storage<SpellRadiusEntry>                 sSpellRadiusStore;
 extern DB2Storage<SpellRangeEntry>                  sSpellRangeStore;
-extern DB2Storage<SpellReagentsEntry>               sSpellReagentsStore;
 extern DB2Storage<SpellReagentsCurrencyEntry>       sSpellReagentsCurrencyStore;
+extern DB2Storage<SpellReagentsEntry>               sSpellReagentsStore;
 extern DB2Storage<SpellScalingEntry>                sSpellScalingStore;
 extern DB2Storage<SpellShapeshiftEntry>             sSpellShapeshiftStore;
 extern DB2Storage<SpellShapeshiftFormEntry>         sSpellShapeshiftFormStore;
 extern DB2Storage<SpellTargetRestrictionsEntry>     sSpellTargetRestrictionsStore;
 extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
-extern DB2Storage<SpellXSpellVisualEntry>           sSpellXSpellVisualStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
+extern DB2Storage<SpellXSpellVisualEntry>           sSpellXSpellVisualStore;
+extern DB2Storage<SummonPropertiesEntry>            sSummonPropertiesStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
 extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
+extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
 extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
 extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
-extern DB2Storage<ChrSpecializationEntry>           sChrSpecializationStore;
-extern DB2Storage<EmotesEntry>                      sEmotesStore;
-extern DB2Storage<GemPropertiesEntry>               sGemPropertiesStore;
-extern DB2Storage<GlyphPropertiesEntry>             sGlyphPropertiesStore;
-extern DB2Storage<ItemSetEntry>                     sItemSetStore;
-extern DB2Storage<LockEntry>                        sLockStore;
-extern DB2Storage<MovieEntry>                       sMovieStore;
-extern DB2Storage<PowerDisplayEntry>                sPowerDisplayStore;
-extern DB2Storage<SummonPropertiesEntry>            sSummonPropertiesStore;
-extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
 extern TaxiMask                                     sOldContinentsNodesMask;
@@ -293,6 +303,12 @@ public:
     typedef ChrSpecializationEntry const* ChrSpecializationByIndexContainer[MAX_CLASSES][4];
     typedef std::set<uint32> PetFamilySpellsSet;
     typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsContainer;
+    typedef std::map<uint32, AreaTableEntry const*> AreaEntryContainer;
+    typedef std::map<uint16, uint32> AreaFlagByAreaIDContainer;
+    typedef std::map<uint32, uint32> AreaFlagByMapIDContainer;
+    typedef std::map<uint32, DungeonEncounterEntry const*> DungeonEncounterByDisplayIDContainer;
+    typedef MinorTalentEntry const* MinorTalentByIndexContainer[SPEC_MAX_SPEC_INDEX][4];
+    typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
 
     static DB2Manager& Instance()
     {
@@ -357,7 +373,18 @@ public:
     ChrSpecializationEntry const* GetChrSpecializationByID(uint8 classID, uint32 ID);
     PetFamilySpellsSet const* GetPetFamilySpells(uint32 family);
     uint32 GetPowerIndexByClass(uint32 powerType, uint32 classId) const;
-
+    AreaTableEntry const* FindAreaEntry(uint32 area);
+    uint32 GetParentZoneOrSelf(uint32 zone);
+    int32 GetAreaFlagByAreaID(uint32 areaID);
+    AreaTableEntry const* GetAreaEntryByAreaID(uint32 areaID);
+    AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 areaFlag, uint32 mapID);
+    uint32 GetAreaFlagByMapId(uint32 mapID);
+    char const* GetPetName(uint32 petfamily);
+    MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty &difficulty);
+    MapDifficultyEntry const* GetDefaultMapDifficulty(uint32 mapID);
+    DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);
+    MinorTalentEntry const* GetMinorTalentBySpecAndPerkID(uint32 specID, uint32 perkID);
+    MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -367,6 +394,7 @@ public:
     ResearchSiteDataMap _researchSiteDataMap;
     TransportAnimationsByEntryContainer _transportAnimationsByEntry;
     std::set<uint32> sScenarioCriteriaTreeStore;
+    MapDifficultyContainer _mapDifficulty;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -412,6 +440,11 @@ private:
     ChrSpecializationByIndexContainer _chrSpecializationByIndex;
     PetFamilySpellsContainer _petFamilySpells;
     uint32 _powersByClass[MAX_CLASSES][MAX_POWERS];
+    AreaEntryContainer _areaEntry;
+    AreaFlagByAreaIDContainer _areaFlagByAreaID;
+    AreaFlagByMapIDContainer _areaFlagByMapID;
+    DungeonEncounterByDisplayIDContainer _dungeonEncounterByDisplayID;
+    MinorTalentByIndexContainer _minorTalentByIndexStore;
 };
 
 #define sDB2Manager DB2Manager::Instance()

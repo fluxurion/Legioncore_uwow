@@ -28,6 +28,15 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
 
     return;
+    // AreaTable.db2
+    PrepareStatement(HOTFIX_SEL_AREA_TABLE, "SELECT ID, mapid, ParentAreaID, AreaBit, Flags1, Flags2, SoundProviderPref, SoundProviderPrefUnderwater, "
+        "AmbienceID, ZoneMusic, ZoneName, IntroSound, ExplorationLevel, AreaName, FactionGroupMask, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, "
+        "LiquidTypeID4, AmbientMultiplier, MountFlags, UWIntroMusic, UWZoneMusic, WorldPvPID, PvPCombastWorldStateID, m_wildBattlePetLevelMin, "
+        "m_wildBattlePetLevelMax, WindSettingsID FROM area_table ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // AreaTrigger.db2
+    PrepareStatement(HOTFIX_SEL_AREA_TRIGGER, "SELECT id, mapid, x, y, z, m_phaseUseFlags, m_phaseID, m_phaseGroupID, radius, box_x, box_y, box_z, "
+        "box_orientation, m_shapeType, m_shapeID, m_areaTriggerActionSetID, m_flags, unk FROM area_trigger ORDER BY id DESC", CONNECTION_SYNCH);
 
     // Achievement.db2
     PrepareStatement(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Name, Description, Flags, Reward, MapID, ParentAchievement, CategoryID, OrderInCategory, "
@@ -57,8 +66,36 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "EmoteDelay3, SoundID, UnkEmoteID, Type FROM broadcast_text ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BROADCAST_TEXT, "SELECT ID, MaleText_lang, FemaleText_lang FROM broadcast_text_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // CharTitles.db2
+    PrepareStatement(HOTFIX_SEL_CHAR_TITLES, "SELECT ID, NameMale, NameFemale, MaskID FROM char_titles ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // CurvePoint.db2
     PrepareStatement(HOTFIX_SEL_CURVE_POINT, "SELECT ID, CurveID, `Index`, X, Y FROM curve_point ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // CreatureFamily.db2
+    PrepareStatement(HOTFIX_SEL_CREATURE_FAMILY, "SELECT ID, minScale, minScaleLevel, maxScale, maxScaleLevel, skillLine1, skillLine2, petFoodMask, "
+        "petTalentType, Name FROM creature_family ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // Difficulty.db2
+    PrepareStatement(HOTFIX_SEL_DIFFICULTY, "SELECT m_ID, FallbackDifficultyID, InstanceType, m_minPlayers, m_maxPlayers, Flags, ToggleDifficultyID, "
+        "ItemBonusTreeModID FROM difficulty ORDER BY m_ID DESC", CONNECTION_SYNCH);
+
+    // DungeonEncounter.db2
+    PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, mapId, difficulty, encounterIndex, encounterName, creatureDisplayID, spellIconID"
+        " FROM dungeon_encounter ORDER BY id DESC", CONNECTION_SYNCH);
+
+    // EmotesText.db2
+    PrepareStatement(HOTFIX_SEL_EMOTES_TEXT, "SELECT Id, textid FROM emotes_text ORDER BY Id DESC", CONNECTION_SYNCH);
+
+    // Phase.db2
+    PrepareStatement(HOTFIX_SEL_PHASE, "SELECT ID, Flags FROM phase ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // Map.db2
+    PrepareStatement(HOTFIX_SEL_MAP, "SELECT MapID, InstanceType, flags, name, linked_zone, multimap_id, entrance_map, entrance_x, entrance_y, addon, "
+        "unk_time, maxPlayers, ParentMapID FROM map ORDER BY MapID DESC", CONNECTION_SYNCH);
+
+    // MinorTalent.db2
+    PrepareStatement(HOTFIX_SEL_MINOR_TALENT, "SELECT ID, SpecID, SpellID, OrderIndex FROM minor_talent ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Criteria.db2
     PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, CreatureID, MapID, SkillID, AchievementID, ZoneID, CurrencyID, ManLimit, RaidSize, "
@@ -288,8 +325,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "`Trigger` FROM item_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemModifiedAppearance.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE, "SELECT ID, ItemID, AppearanceModID, AppearanceID, IconFileDataID, `Index`"
-        " FROM item_modified_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE, "SELECT ID, ItemID, AppearanceID, AppearanceModID, VariationID FROM item_modified_appearance"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemSparse.db2
     PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Flags, UnkFloat1, UnkFloat2, BuyPrice, SellPrice, AllowableClass, AllowableRace, "

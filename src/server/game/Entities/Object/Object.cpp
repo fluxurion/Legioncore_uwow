@@ -2063,7 +2063,7 @@ uint32 WorldObject::GetZoneId() const
 
 uint32 WorldObject::GetPZoneId() const
 {
-    return GetParentZoneOrSelf(GetZoneId());
+    return sDB2Manager.GetParentZoneOrSelf(GetZoneId());
 }
 
 uint32 WorldObject::GetAreaId() const

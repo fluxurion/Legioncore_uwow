@@ -455,7 +455,7 @@ void WorldSession::HandleAreaTrigger(WorldPackets::Misc::AreaTrigger& packet)
         {
             if (uint32 dungeonId = sLFGMgr->GetDungeon(player->GetGroup()->GetGUID(), true))
                 if (lfg::LFGDungeonData const* dungeon = sLFGMgr->GetLFGDungeon(dungeonId))
-                    if (dungeon->map == targetMap->MapID)
+                    if (dungeon->map == targetMap->ID)
                         teleported = player->TeleportTo(dungeon->map, dungeon->x, dungeon->y, dungeon->z, dungeon->o, TELE_TO_NOT_LEAVE_TRANSPORT);
         }
     }
@@ -764,7 +764,7 @@ void WorldSession::HandleHearthAndResurrect(WorldPacket& /*recvData*/)
     if (_player->isInFlight())
         return;
 
-    AreaTableEntry const* atEntry = GetAreaEntryByAreaID(_player->GetAreaId());
+    AreaTableEntry const* atEntry = sDB2Manager.GetAreaEntryByAreaID(_player->GetAreaId());
     if (!atEntry || !(atEntry->Flags[0] & AREA_FLAG_WINTERGRASP_2))
         return;
 

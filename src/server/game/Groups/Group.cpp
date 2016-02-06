@@ -2178,7 +2178,7 @@ Difficulty Group::GetDifficultyID(MapEntry const* mapEntry) const
     if (!mapEntry->IsRaid())
         return m_dungeonDifficulty;
 
-    MapDifficultyEntry const* defaultDifficulty = GetDefaultMapDifficulty(mapEntry->MapID);
+    MapDifficultyEntry const* defaultDifficulty = sDB2Manager.GetDefaultMapDifficulty(mapEntry->ID);
     if (!defaultDifficulty)
         return m_legacyRaidDifficulty;
 
@@ -2288,16 +2288,15 @@ InstanceGroupBind* Group::GetBoundInstance(Map* aMap)
 InstanceGroupBind* Group::GetBoundInstance(MapEntry const* mapEntry)
 {
     if (!mapEntry || !mapEntry->IsDungeon())
-        return NULL;
+        return nullptr;
 
-    Difficulty difficulty = GetDifficultyID(mapEntry);
-    return GetBoundInstance(difficulty, mapEntry->MapID);
+    return GetBoundInstance(GetDifficultyID(mapEntry), mapEntry->ID);
 }
 
 InstanceGroupBind* Group::GetBoundInstance(Difficulty difficulty, uint32 mapId)
 {
     // some instances only have one difficulty
-    GetDownscaledMapDifficultyData(mapId, difficulty);
+    sDB2Manager.GetDownscaledMapDifficultyData(mapId, difficulty);
 
     uint8 boundType = sObjectMgr->GetboundTypeFromDifficulty(difficulty);
 

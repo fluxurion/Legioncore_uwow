@@ -28,11 +28,6 @@
 
 #include <map>
 
-typedef std::map<uint16, uint32> AreaFlagByAreaID;
-typedef std::map<uint32, uint32> AreaFlagByMapID;
-typedef std::map<uint32, AreaTableEntry const* > AreaEntryMap;
-typedef std::map<uint32, DungeonEncounterEntry const*> DungeonEncounterByDisplayID;
-
 struct WMOAreaTableTripple
 {
     WMOAreaTableTripple(int32 r, int32 a, int32 g) : groupId(g), rootId(r), adtId(a)
@@ -53,41 +48,22 @@ struct WMOAreaTableTripple
 typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
 
-static AreaEntryMap sAreaEntry;
-static AreaFlagByAreaID sAreaFlagByAreaID;
-static AreaFlagByMapID sAreaFlagByMapID;
 static FactionTeamMap sFactionTeamMap;
 static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
-static DungeonEncounterByDisplayID sDungeonEncounterByDisplayID;
 
-MapDifficultyMap                            sMapDifficultyMap;
 TalentsByPosition                           sTalentByPos;
-MinorTalentByIndexArray                     sMinorTalentByIndexStore;
 
-DBCStorage<AreaPOIEntry>                    sAreaPOIStore(AreaPOIEntryfmt);
-DBCStorage<AreaTableEntry>                  sAreaStore(AreaTableEntryfmt);
-DBCStorage<AreaTriggerEntry>                sAreaTriggerStore(AreaTriggerEntryfmt);
 DBCStorage<BannedAddOnsEntry>               sBannedAddOnsStore(BannedAddOnsfmt);
 DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterListEntryfmt);
-DBCStorage<CharTitlesEntry>                 sCharTitlesStore(CharTitlesEntryfmt);
 DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
-DBCStorage<CreatureFamilyEntry>             sCreatureFamilyStore(CreatureFamilyfmt);
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
-DBCStorage<DifficultyEntry>                 sDifficultyStore(Difficultyfmt);
-DBCStorage<DungeonEncounterEntry>           sDungeonEncounterStore(DungeonEncounterfmt);
-DBCStorage<EmotesTextEntry>                 sEmotesTextStore(EmotesTextEntryfmt);
 DBCStorage<FactionEntry>                    sFactionStore(FactionEntryfmt);
 DBCStorage<FactionTemplateEntry>            sFactionTemplateStore(FactionTemplateEntryfmt);
 DBCStorage<GlyphSlotEntry>                  sGlyphSlotStore(GlyphSlotfmt);
 DBCStorage<LFGDungeonEntry>                 sLFGDungeonStore(LFGDungeonEntryfmt);
 DBCStorage<LiquidTypeEntry>                 sLiquidTypeStore(LiquidTypefmt);
 DBCStorage<MapDifficultyEntry>              sMapDifficultyStore(MapDifficultyEntryfmt); // only for loading
-DBCStorage<MapEntry>                        sMapStore(MapEntryfmt);
-DBCStorage<MinorTalentEntry>                sMinorTalentStore(MinorTalentEntryfmt);
-DBCStorage<PhaseEntry>                      sPhaseStores(PhaseEntryfmt);
-DBCStorage<QuestPOIBlobEntry>               sQuestPOIBlobStore(QuestPOIBlobfmt);
 DBCStorage<SpellItemEnchantmentEntry>       sSpellItemEnchantmentStore(SpellItemEnchantmentfmt);
-DBCStorage<StableSlotPricesEntry>           sStableSlotPricesStore(StableSlotPricesfmt);
 DBCStorage<TalentEntry>                     sTalentStore(TalentEntryfmt);
 DBCStorage<TeamContributionPointsEntry>     sTeamContributionPointsStore(TeamContributionPointsfmt);
 DBCStorage<VehicleEntry>                    sVehicleStore(VehicleEntryfmt);
@@ -240,24 +216,14 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DBC(store, file) LoadDBC(availableDbcLocales, bad_dbc_files, store, dbcPath, file, defaultLocale)
 
-    //LOAD_DBC(sAreaStore,                        "AreaTable.dbc");
-    LOAD_DBC(sAreaTriggerStore,                 "AreaTrigger.dbc");
     LOAD_DBC(sBannedAddOnsStore,                "BannedAddOns.dbc");
     LOAD_DBC(sBattlemasterListStore,            "BattlemasterList.dbc");
-    LOAD_DBC(sCharTitlesStore,                  "CharTitles.dbc");
     LOAD_DBC(sChrClassesStore,                  "ChrClasses.dbc");
-    LOAD_DBC(sCreatureFamilyStore,              "CreatureFamily.dbc");
     //LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
-    LOAD_DBC(sDifficultyStore,                  "Difficulty.dbc");
-    LOAD_DBC(sDungeonEncounterStore,            "DungeonEncounter.dbc");
-    LOAD_DBC(sEmotesTextStore,                  "EmotesText.dbc");
     LOAD_DBC(sFactionStore,                     "Faction.dbc");
     LOAD_DBC(sFactionTemplateStore,             "FactionTemplate.dbc");
     //LOAD_DBC(sLFGDungeonStore,                  "LfgDungeons.dbc");
     LOAD_DBC(sLiquidTypeStore,                  "LiquidType.dbc");
-    LOAD_DBC(sMapStore,                         "Map.dbc");
-    LOAD_DBC(sMinorTalentStore,                 "MinorTalent.dbc");
-    LOAD_DBC(sPhaseStores,                      "Phase.dbc");
     //LOAD_DBC(sSpellItemEnchantmentStore,        "SpellItemEnchantment.dbc");
     LOAD_DBC(sTalentStore,                      "Talent.dbc");
     LOAD_DBC(sVehicleStore,                     "Vehicle.dbc");
@@ -350,15 +316,6 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
 
 void InitDBCCustomStores()
 {
-    for (AreaTableEntry const* area : sAreaStore)
-    {
-        sAreaEntry.insert(AreaEntryMap::value_type(area->ID, area));
-        sAreaFlagByAreaID.insert(AreaFlagByAreaID::value_type(uint16(area->ID), area->AreaBit));
-
-        if (area->ParentAreaID == 0)
-            sAreaFlagByMapID.insert(AreaFlagByMapID::value_type(area->mapid, area->AreaBit));
-    }
-
     for (FactionEntry const* faction : sFactionStore)
     {
         if (faction->team)
@@ -380,7 +337,7 @@ void InitDBCCustomStores()
             sLog->outInfo(LOG_FILTER_SERVER_LOADING, "DB table `mapdifficulty_dbc` or MapDifficulty.dbc has non-existant difficulty %u.", entry->DifficultyID);
             continue;
         }
-        sMapDifficultyMap[entry->MapID][entry->DifficultyID] = entry;
+        sDB2Manager._mapDifficulty[entry->MapID][entry->DifficultyID] = entry;
     }
 
     for (TalentEntry const* talentInfo : sTalentStore)
@@ -389,14 +346,6 @@ void InitDBCCustomStores()
 
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
         sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));
-
-    for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
-        if (store->creatureDisplayID)
-            sDungeonEncounterByDisplayID[store->creatureDisplayID] = store;
-
-    memset(sMinorTalentByIndexStore, 0, sizeof(sMinorTalentByIndexStore));
-    for (MinorTalentEntry const* minotTal : sMinorTalentStore)
-        sMinorTalentByIndexStore[minotTal->SpecID][minotTal->OrderIndex] = minotTal;
 }
 
 SimpleFactionsList const* GetFactionTeamList(uint32 faction)
@@ -408,62 +357,12 @@ SimpleFactionsList const* GetFactionTeamList(uint32 faction)
     return nullptr;
 }
 
-char const* GetPetName(uint32 petfamily)
-{
-    if (!petfamily)
-        return nullptr;
-
-    CreatureFamilyEntry const* pet_family = sCreatureFamilyStore.LookupEntry(petfamily);
-    if (!pet_family)
-        return nullptr;
-
-    return pet_family->Name ? pet_family->Name : nullptr;
-}
-
-int32 GetAreaFlagByAreaID(uint32 area_id)
-{
-    AreaFlagByAreaID::iterator i = sAreaFlagByAreaID.find(area_id);
-    if (i == sAreaFlagByAreaID.end())
-        return -1;
-
-    return i->second;
-}
-
 WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid)
 {
     WMOAreaInfoByTripple::iterator i = sWMOAreaInfoByTripple.find(WMOAreaTableTripple(rootid, adtid, groupid));
     if (i == sWMOAreaInfoByTripple.end())
         return nullptr;
     return i->second;
-}
-
-AreaTableEntry const* GetAreaEntryByAreaID(uint32 area_id)
-{
-    int32 areaflag = GetAreaFlagByAreaID(area_id);
-    if (areaflag < 0)
-        return nullptr;
-
-    return sAreaStore.LookupEntry(areaflag);
-}
-
-AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 area_flag, uint32 map_id)
-{
-    if (area_flag)
-        return sAreaStore.LookupEntry(area_flag);
-
-    if (MapEntry const* mapEntry = sMapStore.LookupEntry(map_id))
-        return GetAreaEntryByAreaID(mapEntry->linked_zone);
-
-    return nullptr;
-}
-
-uint32 GetAreaFlagByMapId(uint32 mapid)
-{
-    AreaFlagByMapID::iterator i = sAreaFlagByMapID.find(mapid);
-    if (i == sAreaFlagByMapID.end())
-        return 0;
-    else
-        return i->second;
 }
 
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId)
@@ -531,65 +430,6 @@ void Map2ZoneCoordinates(float& x, float& y, uint32 zone)
     std::swap(x, y);                                         // client have map coords swapped
 }
 
-MapDifficultyEntry const* GetDefaultMapDifficulty(uint32 mapID)
-{
-    auto itr = sMapDifficultyMap.find(mapID);
-    if (itr == sMapDifficultyMap.end())
-        return nullptr;
-
-    if (itr->second.empty())
-        return nullptr;
-
-    for (auto& p : itr->second)
-    {
-        DifficultyEntry const* difficulty = sDifficultyStore.LookupEntry(p.first);
-        if (!difficulty)
-            continue;
-
-        if (difficulty->Flags & DIFFICULTY_FLAG_DEFAULT)
-            return p.second;
-    }
-
-    return itr->second.begin()->second;
-}
-
-
-MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty)
-{
-    auto itr = sMapDifficultyMap.find(mapId);
-    if (itr == sMapDifficultyMap.end())
-        return nullptr;
-
-    auto diffItr = itr->second.find(difficulty);
-    if (diffItr == itr->second.end())
-        return nullptr;
-
-    return diffItr->second;
-}
-
-MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty &difficulty)
-{
-    DifficultyEntry const* diffEntry = sDifficultyStore.LookupEntry(difficulty);
-    if (!diffEntry)
-        return GetDefaultMapDifficulty(mapId);
-
-    uint32 tmpDiff = difficulty;
-    MapDifficultyEntry const* mapDiff = GetMapDifficultyData(mapId, Difficulty(tmpDiff));
-    while (!mapDiff)
-    {
-        tmpDiff = diffEntry->FallbackDifficultyID;
-        diffEntry = sDifficultyStore.LookupEntry(tmpDiff);
-        if (!diffEntry)
-            return GetDefaultMapDifficulty(mapId);
-
-        // pull new data
-        mapDiff = GetMapDifficultyData(mapId, Difficulty(tmpDiff)); // we are 10 normal or 25 normal
-    }
-
-    difficulty = Difficulty(tmpDiff);
-    return mapDiff;
-}
-
 uint32 GetLiquidFlags(uint32 liquidType)
 {
     if (LiquidTypeEntry const* liq = sLiquidTypeStore.LookupEntry(liquidType))
@@ -627,28 +467,4 @@ bool IsValidDifficulty(uint32 diff, bool isRaid)
     }
 
     return isRaid;
-}
-
-AreaTableEntry const* FindAreaEntry(uint32 area)
-{
-    auto data = sAreaEntry.find(area);
-    if (data == sAreaEntry.end())
-        return nullptr;
-    return data->second;
-}
-
-uint32 GetParentZoneOrSelf(uint32 zone)
-{
-    AreaTableEntry const* a = FindAreaEntry(zone);
-    if (!a)
-        return zone;
-    return a->ParentAreaID ? a->ParentAreaID : zone;
-}
-
-DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID)
-{
-    auto data = sDungeonEncounterByDisplayID.find(displayID);
-    if (data == sDungeonEncounterByDisplayID.end())
-        return nullptr;
-    return data->second;
 }

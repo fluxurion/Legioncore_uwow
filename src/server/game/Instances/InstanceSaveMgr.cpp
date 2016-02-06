@@ -307,7 +307,7 @@ void InstanceSaveManager::LoadResetTimes()
             // for normal instances if no creatures are killed the instance will reset in two hours
             // Set 12H, no more. In any way regular dung plr could restary himself, but collecting regular dunges wuth inf spawn time is bad idea.
             if (entry->InstanceType != MAP_RAID && difficulty <= DIFFICULTY_NORMAL)
-                instResetTime[instanceId] = ResetTimeMapDiffType(MAKE_PAIR32(entry->MapID, difficulty), time(NULL) + 12 * HOUR);
+                instResetTime[instanceId] = ResetTimeMapDiffType(MAKE_PAIR32(entry->ID, difficulty), time(NULL) + 12 * HOUR);
         }
         while (result->NextRow());
 
@@ -499,7 +499,7 @@ uint32 InstanceSaveManager::GetNumBoundGroupsTotal()
 
 time_t InstanceSave::GetResetTime() const
 {
-    if(MapDifficultyEntry const* mapDiff = GetMapDifficultyData(GetMapId(), GetDifficultyID()))
+    if(MapDifficultyEntry const* mapDiff = sDB2Manager.GetMapDifficultyData(GetMapId(), GetDifficultyID()))
         if (mapDiff->RaidDuration)
             return sWorld->getInstanceResetTime(mapDiff->RaidDuration);
 

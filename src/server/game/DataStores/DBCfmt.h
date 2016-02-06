@@ -22,22 +22,10 @@
 // x - skip<uint32>, X - skip<uint8>, s - char*, f - float, i - uint32, b - uint8, d - index (not included)
 // n - index (included), l - bool, p - field present in sql dbc, a - field absent in sql dbc
 
-//const std::string CustomAchievementCriteriafmt= "pppppppppapppppaapppppp";
-//const std::string CustomAchievementCriteriaIndex = "ID";
-
-char const AchievementCriteriafmt[] = "niiiiiiiixxx";
-char const AreaPOIEntryfmt[] = "niiiiiiiiiiiffixixxixxx";
-char const AreaTableEntryfmt[] = "iiiniixxxxsxisiiiiixixxxxiix";
-char const AreaTriggerEntryfmt[] = "nifffxxxfffffxxxx";
 char const BannedAddOnsfmt[] = "nxxxxxxxxxx";
 char const BattlemasterListEntryfmt[] = "niiiiiiiiiiiiiiiiixsiiiiiiiixxx";
-char const CharTitlesEntryfmt[] = "nxssix";
 char const ChrClassesEntryfmt[] = "nixsxxxixiiiiixxxxx";
-char const CreatureFamilyfmt[] = "nfifiiiiixsx";
 char const CreatureModelDatafmt[] = "nxxxxxxxxxxxxxffxxxxxxxxxxxxxxxxxx";
-char const Difficultyfmt[] = "niiiixiixxxxix";
-char const DungeonEncounterfmt[] = "niixisiix";
-char const EmotesTextEntryfmt[] = "nxixxxxxxxxxxxxxxxx";
 char const FactionEntryfmt[] = "niiiiiiiiiiiiiiiiiiffixsxxix";
 char const FactionTemplateEntryfmt[] = "niiiiiiiiiiiii";
 char const GameTablefmt[] = "xf";
@@ -60,17 +48,9 @@ char const GtSpellScalingfmt[] = "df";
 char const LFGDungeonEntryfmt[]= "nsiiiiiiiiiixixixiiiiiiiiiixx";
 char const LiquidTypefmt[] = "nxxixixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 char const MapDifficultyEntryfmt[] = "diisiiii";
-char const MapEntryfmt[] = "nxiixxsixxixiffxiiiixx";
-char const MinorTalentEntryfmt[] = "niii";
-char const PhaseEntryfmt[] = "ni";
-char const QuestPOIBlobfmt[] = "niix";
-char const SpellDifficultyfmt[] = "niiii";
 char const SpellItemEnchantmentfmt[] = "niiiiiiiiiixiiiiiiiiiiifff";
-char const SpellRuneCostfmt[] = "niiiii";
-char const StableSlotPricesfmt[] = "ni";
 char const TalentEntryfmt[] = "niiiixxxiis";
 char const TeamContributionPointsfmt[] = "df";
-char const UnitPowerBarEntryfmt[] = "niiiiffixxxxxxxxxxxxixxxxxx";
 char const VehicleEntryfmt[] = "niiffffiiiiiiiifffffffffffffffxxxxfifiiii";
 char const WMOAreaTableEntryfmt[] = "niiixxxxxiisxxx";
 char const WorldMapAreaEntryfmt[] = "xinxffffixxxii";

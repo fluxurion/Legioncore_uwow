@@ -133,11 +133,11 @@ void LoadDisables()
                         break;
                     case MAP_INSTANCE:
                     case MAP_RAID:
-                        /*if (flags & DUNGEON_STATUSFLAG_HEROIC && !GetMapDifficultyData(entry, DIFFICULTY_HEROIC))
+                        /*if (flags & DUNGEON_STATUSFLAG_HEROIC && !sDB2Manager.GetMapDifficultyData(entry, DIFFICULTY_HEROIC))
                             isFlagInvalid = true;
-                        else if (flags & RAID_STATUSFLAG_10MAN_HEROIC && !GetMapDifficultyData(entry, DIFFICULTY_10_HC))
+                        else if (flags & RAID_STATUSFLAG_10MAN_HEROIC && !sDB2Manager.GetMapDifficultyData(entry, DIFFICULTY_10_HC))
                             isFlagInvalid = true;
-                        else if (flags & RAID_STATUSFLAG_25MAN_HEROIC && !GetMapDifficultyData(entry, DIFFICULTY_25_HC))
+                        else if (flags & RAID_STATUSFLAG_25MAN_HEROIC && !sDB2Manager.GetMapDifficultyData(entry, DIFFICULTY_25_HC))
                             isFlagInvalid = true;*/
                         break;
                     case MAP_BATTLEGROUND:
@@ -334,7 +334,7 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
                 {
                     /*uint8 disabledModes = itr->second.flags;
                     Difficulty targetDifficulty = player->GetDifficultyID(mapEntry);
-                    GetDownscaledMapDifficultyData(entry, targetDifficulty);
+                    sDB2Manager.GetDownscaledMapDifficultyData(entry, targetDifficulty);
                     switch (targetDifficulty)
                     {
                         case DIFFICULTY_NORMAL:

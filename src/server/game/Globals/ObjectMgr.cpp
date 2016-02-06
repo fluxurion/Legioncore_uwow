@@ -1649,7 +1649,7 @@ void ObjectMgr::LoadCreatures()
 
     // Build single time for check spawnmask
     std::map<uint32, uint32> spawnMasks;
-    for (auto& mapDifficultyPair : sMapDifficultyMap)
+    for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
         for (auto& difficultyPair : mapDifficultyPair.second)
             spawnMasks[mapDifficultyPair.first] |= (1 << difficultyPair.first);
 
@@ -2150,7 +2150,7 @@ void ObjectMgr::LoadGameobjects()
 
     // build single time for check spawnmask
     std::map<uint32, uint32> spawnMasks;
-    for (auto& mapDifficultyPair : sMapDifficultyMap)
+    for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
         for (auto& difficultyPair : mapDifficultyPair.second)
             spawnMasks[mapDifficultyPair.first] |= (1 << difficultyPair.first);
 
@@ -3803,7 +3803,7 @@ void ObjectMgr::LoadQuests()
         // client quest log visual (area case)
         if (qinfo->QuestSortID > 0)
         {
-            if (!GetAreaEntryByAreaID(qinfo->QuestSortID))
+            if (!sDB2Manager.GetAreaEntryByAreaID(qinfo->QuestSortID))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `QuestSortID` = %u (zone case) but zone with this id does not exist.",
                     qinfo->GetQuestId(), qinfo->QuestSortID);
@@ -5676,7 +5676,7 @@ void ObjectMgr::LoadGraveyardZones()
             continue;
         }
 
-        AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(zoneId);
+        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
         if (!areaEntry)
         {
             sLog->outError(LOG_FILTER_SQL, "Table `game_graveyard_zone` has a record for not existing zone id (%u), skipped.", zoneId);
@@ -5785,9 +5785,9 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
         {
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
             if (!mapEntry
-                || mapEntry->entrance_map < 0
-                || uint32(mapEntry->entrance_map) != entry->MapID
-                || (mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0))
+                || mapEntry->CorpseMapID < 0
+                || uint32(mapEntry->CorpseMapID) != entry->MapID
+                || (mapEntry->CorpsePos.X == 0.0f && mapEntry->CorpsePos.Y == 0.0f))
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -5795,8 +5795,8 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             }
 
             // at entrance map calculate distance (2D);
-            float dist2 = (entry->Loc.X - mapEntry->entrance_x)*(entry->Loc.X - mapEntry->entrance_x)
-                + (entry->Loc.Y - mapEntry->entrance_y)*(entry->Loc.Y - mapEntry->entrance_y);
+            float dist2 = (entry->Loc.X - mapEntry->CorpsePos.X)*(entry->Loc.X - mapEntry->CorpsePos.X)
+                + (entry->Loc.Y - mapEntry->CorpsePos.Y)*(entry->Loc.Y - mapEntry->CorpsePos.Y);
             if (foundEntr)
             {
                 if (dist2 < distEntr)
@@ -6106,7 +6106,7 @@ AreaTriggerStruct const* ObjectMgr::GetGoBackTrigger(uint32 Map) const
     bool useParentDbValue = false;
     uint32 parentId = 0;
     const MapEntry* mapEntry = sMapStore.LookupEntry(Map);
-    if (!mapEntry || mapEntry->entrance_map < 0)
+    if (!mapEntry || mapEntry->CorpseMapID < 0)
         return NULL;
 
     if (mapEntry->IsDungeon())
@@ -6120,9 +6120,9 @@ AreaTriggerStruct const* ObjectMgr::GetGoBackTrigger(uint32 Map) const
         useParentDbValue = true;
     }
 
-    uint32 entrance_map = uint32(mapEntry->entrance_map);
+    uint32 сorpseMapID = uint32(mapEntry->CorpseMapID);
     for (AreaTriggerContainer::const_iterator itr = _areaTriggerStore.begin(); itr != _areaTriggerStore.end(); ++itr)
-        if ((!useParentDbValue && itr->second.target_mapId == entrance_map) || (useParentDbValue && itr->second.target_mapId == parentId))
+        if ((!useParentDbValue && itr->second.target_mapId == сorpseMapID) || (useParentDbValue && itr->second.target_mapId == parentId))
         {
             AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
             if (atEntry && atEntry->mapid == Map)
@@ -6752,7 +6752,7 @@ std::string ObjectMgr::GeneratePetName(uint32 entry)
     if (list0.empty() || list1.empty())
     {
         CreatureTemplate const* cinfo = GetCreatureTemplate(entry);
-        const char* petname = GetPetName(cinfo->family);
+        const char* petname = sDB2Manager.GetPetName(cinfo->family);
         if (!petname)
             return cinfo->Name;
 
@@ -7505,7 +7505,7 @@ void ObjectMgr::LoadAreaQuestRelations()
 
     for (QuestRelations::iterator itr = _areaQuestRelations.begin(); itr != _areaQuestRelations.end(); ++itr)
     {
-        AreaTableEntry const* fArea = GetAreaEntryByAreaID(itr->first);
+        AreaTableEntry const* fArea = sDB2Manager.GetAreaEntryByAreaID(itr->first);
         if (!fArea)
         {
             sLog->outError(LOG_FILTER_SQL, "Table `area_questrelation` have data for not existed area entry (%u) and existed quest %u", itr->first, itr->second);
@@ -7921,7 +7921,7 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
         uint32 entry  = fields[0].GetUInt32();
         int32 skill   = fields[1].GetInt16();
 
-        AreaTableEntry const* fArea = GetAreaEntryByAreaID(entry);
+        AreaTableEntry const* fArea = sDB2Manager.GetAreaEntryByAreaID(entry);
         if (!fArea)
         {
             sLog->outError(LOG_FILTER_SQL, "AreaId %u defined in `skill_fishing_base_level` does not exist", entry);

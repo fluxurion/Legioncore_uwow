@@ -35,81 +35,6 @@
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 #define MAX_VEHICLE_SEATS 8
 
-struct AreaTableEntry
-{
-    uint32      ID;                                         // 0
-    uint32      mapid;                                      // 1
-    uint32      ParentAreaID;                               // 2 if 0 then it's zone, else it's zone id of this area
-    uint32      AreaBit;                                    // 3, main index
-    uint32      Flags[2];                                   // 4-5,
-    //uint32    SoundProviderPref;                          // 6,
-    //uint32    SoundProviderPrefUnderwater;                // 7,
-    //uint32    AmbienceID;                                 // 8,
-    //uint32    ZoneMusic;                                  // 9,
-    char*       ZoneName;                                   // 10
-    //uint32    IntroSound;                                 // 11
-    uint32      ExplorationLevel;                           // 12
-    char*       AreaName_lang;                               // 13
-    uint32      FactionGroupMask;                           // 14
-    uint32      LiquidTypeID[4];                            // 15-18
-    //float     AmbientMultiplier;                          // 19
-    uint32    MountFlags;                                   // 20
-    //uint32    UWIntroMusic;                               // 21
-    //uint32    UWZoneMusic;                                // 22
-    //uint32    WorldPvPID;                                 // 24 World_PVP_Area.dbc
-    //uint32    PvPCombastWorldStateID;                     // 25
-    uint32    m_wildBattlePetLevelMin;                      // 26
-    uint32    m_wildBattlePetLevelMax;                      // 27
-    //uint32    WindSettingsID;                             // 28
-
-    // helpers
-    bool IsSanctuary() const
-    {
-        if (mapid == 609)
-            return true;
-        return (Flags[0] & AREA_FLAG_SANCTUARY) != 0;
-    }
-};
-
-struct AreaPOIEntry
-{
-    uint32 id;              //0
-    uint32 icon[11];        //1-11
-    float x;                //12
-    float y;                //13
-    uint32 mapId;           //14  m_continentID
-    //uint32 m_flags;       //15  m_flags
-    uint32 zoneId;          //16  m_areaID
-    //char* name;           //17 - name
-    //char* name2;          //18 - name2
-    uint32 worldState;      //19
-    //uint32 m_playerConditionID;//20
-    //uint32 m_worldMapLink //21
-    //uint32 m_portLocID;   //22
-};
-
-struct AreaTriggerEntry
-{
-    uint32  id;                                             // 0        m_ID
-    uint32  mapid;                                          // 1        m_ContinentID
-    float   x;                                              // 2        m_x
-    float   y;                                              // 3        m_y
-    float   z;                                              // 4        m_z
-    //uint32  m_phaseUseFlags                               // 5        m_phaseUseFlags
-    //uint32  m_phaseID                                     // 6        m_phaseID
-    //uint32  m_phaseGroupID                                // 7        m_phaseGroupID
-    float   radius;                                         // 8        m_radius
-    float   box_x;                                          // 9        m_box_length
-    float   box_y;                                          // 10       m_box_width
-    float   box_z;                                          // 11       m_box_heigh
-    float   box_orientation;                                // 12       m_box_yaw
-    //uint32 m_shapeType                                    // 13       m_shapeType
-    //uint32 m_shapeID                                      // 14       m_shapeID
-    //uint32 m_areaTriggerActionSetID                       // 15       m_areaTriggerActionSetID
-    //uint32 m_flags                                        // 16       m_flags
-    //uint32 unk                                                        on 6.0.3 19243
-};
-
 struct BannedAddOnsEntry
 {
     uint32      ID;                                         // 0
@@ -139,16 +64,6 @@ struct BattlemasterListEntry
     //uint32      CritreriaID;
 };
 
-struct CharTitlesEntry
-{
-    uint32      ID;                                         // 0, title ids, for example in Quest::GetRewTitle()
-    //uint32    ConditionID;                                // 1
-    char*       NameMale_lang;                              // 2 m_name_lang
-    char*       NameFemale_lang;                            // 3 m_name1_lang
-    uint32      MaskID;                                     // 4 m_mask_ID used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
-    //uint32    Flags;                                      // 5
-};
-
 struct ChrClassesEntry
 {
     uint32      ID;                                         // 0
@@ -172,21 +87,6 @@ struct ChrClassesEntry
     //uint32    Unk1;                                       // 18
 };
 
-struct CreatureFamilyEntry
-{
-    uint32  ID;                                             // 0        m_ID
-    float   minScale;                                       // 1        m_minScale
-    uint32  minScaleLevel;                                  // 2        m_minScaleLevel
-    float   maxScale;                                       // 3        m_maxScale
-    uint32  maxScaleLevel;                                  // 4        m_maxScaleLevel
-    uint32  skillLine[2];                                   // 5-6      m_skillLine
-    uint32  petFoodMask;                                    // 7        m_petFoodMask
-    int32   petTalentType;                                  // 8        m_petTalentType
-                                                            // 9        m_categoryEnumID
-    char* Name;                                             // 10       m_name_lang
-                                                            // 11       m_iconFile
-};
-
 struct CreatureModelDataEntry
 {
     uint32 Id;
@@ -207,43 +107,6 @@ struct CreatureModelDataEntry
     float CollisionHeight;
     float MountHeight;                                       // Used in calculation of unit collision data when mounted
     //float Unks[13]
-};
-
-struct DifficultyEntry
-{
-    uint32      m_ID;                                       // 0
-    uint32      FallbackDifficultyID;                       // 1
-    uint32      InstanceType;                               // 2
-    uint32      m_minPlayers;                               // 3
-    uint32      m_maxPlayers;                               // 4
-    //int32     OldEnumValue;                               // 5
-    uint32      Flags;                                      // 6
-    uint32      ToggleDifficultyID;                         // 7
-    //uint32    GroupSizeHealthCurveID;                     // 8
-    //uint32    GroupSizeDmgCurveID;                        // 9
-    //uint32    GroupSizeSpellPointsCurveID;                // 10
-    //char const* NameLang;                                 // 11
-    uint32    ItemBonusTreeModID;                           // 12
-    //uint32 unkLegion
-};
-
-struct DungeonEncounterEntry
-{
-    uint32 id;                                              // 0        unique id
-    uint32 mapId;                                           // 1        map id
-    uint32 difficulty;                                      // 2        instance mode
-    //uint32 orderIndex;                                    // 3
-    uint32 encounterIndex;                                  // 4        encounter index for creating completed mask
-    char* encounterName;                                    // 5        encounter name
-    uint32 creatureDisplayID;                               // 6
-    uint32 spellIconID;                                     // 7
-    //uint32 flags;                                         // 8
-};
-
-struct EmotesTextEntry
-{
-    uint32  Id;
-    uint32  textid;
 };
 
 struct FactionEntry
@@ -556,78 +419,6 @@ struct LiquidTypeEntry
     //uint32    Unk3[5];                                    // 46-50
 };
 
-struct PhaseEntry
-{
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
-};
-
-struct MapEntry
-{
-    uint32  MapID;                                          // 0
-    //char*       internalname;                             // 1 unused
-    uint32  InstanceType;                                   // 2
-    uint32 flags;                                           // 3
-    //uint32        MapType;                                // 4
-    //uint32 unk4;                                          // 5 4.0.1
-    char* name;                                             // 6        m_MapName_lang
-    uint32  linked_zone;                                    // 7        m_areaTableID
-    //char*     hordeIntro;                                 // 8        m_MapDescription0_lang
-    //char*     allianceIntro;                              // 9        m_MapDescription1_lang
-    uint32  multimap_id;                                    // 10       m_LoadingScreenID (LoadingScreens.dbc)
-    //float   BattlefieldMapIconScale;                      // 11       m_minimapIconScale
-    int32   entrance_map;                                   // 12       m_corpseMapID map_id of entrance map in ghost mode (continent always and in most cases = normal entrance)
-    float   entrance_x;                                     // 13       m_corpseX entrance x coordinate in ghost mode  (in most cases = normal entrance)
-    float   entrance_y;                                     // 14       m_corpseY entrance y coordinate in ghost mode  (in most cases = normal entrance)
-    //uint32  timeOfDayOverride;                            // 15       m_timeOfDayOverride
-    uint32  addon;                                          // 16       m_expansionID
-    uint32 unk_time;                                        // 17       m_raidOffset
-    uint32 maxPlayers;                                      // 18       m_maxPlayers
-    int32   ParentMapID;                                    // 19
-    //uint32        CosmeticParentMapID                     // 20
-    //uint32        TimeOffset                              // 21
-    // Helpers
-    uint32 Expansion() const { return addon; }
-
-    bool IsDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_RAID || InstanceType == MAP_SCENARIO; }
-    bool IsNonRaidDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_SCENARIO; }
-    bool Instanceable() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_RAID || InstanceType == MAP_BATTLEGROUND || InstanceType == MAP_ARENA || InstanceType == MAP_SCENARIO; }
-    bool IsRaid() const { return InstanceType == MAP_RAID; }
-    bool IsBattleground() const { return InstanceType == MAP_BATTLEGROUND; }
-    bool IsBattleArena() const { return InstanceType == MAP_ARENA; }
-    bool IsBattlegroundOrArena() const { return InstanceType == MAP_BATTLEGROUND || InstanceType == MAP_ARENA; }
-    bool IsWorldMap() const { return InstanceType == MAP_COMMON; }
-    bool IsScenario() const { return InstanceType == MAP_SCENARIO; }
-
-    bool GetEntrancePos(int32 &mapid, float &x, float &y) const
-    {
-        if (entrance_map < 0)
-            return false;
-        mapid = entrance_map;
-        x = entrance_x;
-        y = entrance_y;
-        return true;
-    }
-
-    bool IsContinent() const
-    {
-        return MapID == 0 || MapID == 1 || MapID == 530 || MapID == 571 || MapID == 870 || MapID == 1116;
-    }
-
-    bool IsDynamicDifficultyMap() const { return (flags & MAP_FLAG_CAN_CHANGE_DIFFICULTY) != 0; }
-    bool IsGarrison() const { return (flags & MAP_FLAG_GARRISON) != 0; }
-
-    bool IsDifficultyModeSupported(uint32 difficulty) const;
-};
-
-struct MinorTalentEntry
-{
-    uint32      ID;                                         // 0
-    uint32      SpecID;                                     // 1
-    uint32      SpellID;                                    // 2
-    uint32      OrderIndex;                                 // 3
-};
-
 struct MapDifficultyEntry
 {
     //uint32    ID;                                         // 0
@@ -638,14 +429,6 @@ struct MapDifficultyEntry
     uint32      MaxPlayers;                                 // 5 m_maxPlayers some heroic versions have 0 when expected same amount as in normal version
     uint32      LockID;                                     // 6
     uint32      ItemBonusTreeModID;                         // 7
-};
-
-struct QuestPOIBlobEntry
-{
-    uint32    ID;                                           // 0 ID
-    uint32    Count;                                        // 1 m_NumPoints
-    uint32    MapID;                                        // 2 m_MapID
-    //uint32 unk;                                           // 4 m_WorldMapAreaID
 };
 
 struct SpellItemEnchantmentEntry
@@ -668,12 +451,6 @@ struct SpellItemEnchantmentEntry
     int32       ScalingClass;                                   // 21
     int32       ScalingClassRestricted;                         // 22
     float       EffectScalingPoints[MAX_ITEM_ENCHANTMENT_EFFECTS];//23-25
-};
-
-struct StableSlotPricesEntry
-{
-    uint32 Slot;
-    uint32 Price;
 };
 
 struct TalentEntry

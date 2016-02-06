@@ -1,4 +1,71 @@
 --
+-- Table structure for table `area_table`
+--
+
+DROP TABLE IF EXISTS `area_table`;
+CREATE TABLE `area_table` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `mapid` int(10) unsigned NOT NULL DEFAULT '0',
+  `ParentAreaID` int(10) unsigned NOT NULL DEFAULT '0',
+  `AreaBit` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags1` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags2` int(10) unsigned NOT NULL DEFAULT '0',
+  `SoundProviderPref` int(10) unsigned NOT NULL DEFAULT '0',
+  `SoundProviderPrefUnderwater` int(10) unsigned NOT NULL DEFAULT '0',
+  `AmbienceID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ZoneMusic` int(10) unsigned NOT NULL DEFAULT '0',
+  `ZoneName` text,
+  `IntroSound` int(10) unsigned NOT NULL DEFAULT '0',
+  `ExplorationLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `AreaName` text,
+  `FactionGroupMask` int(10) unsigned NOT NULL DEFAULT '0',
+  `LiquidTypeID1` int(10) unsigned NOT NULL DEFAULT '0',
+  `LiquidTypeID2` int(10) unsigned NOT NULL DEFAULT '0',
+  `LiquidTypeID3` int(10) unsigned NOT NULL DEFAULT '0',
+  `LiquidTypeID4` int(10) unsigned NOT NULL DEFAULT '0',
+  `AmbientMultiplier` float NOT NULL DEFAULT '0',
+  `MountFlags` int(10) unsigned NOT NULL DEFAULT '0',
+  `UWIntroMusic` int(10) unsigned NOT NULL DEFAULT '0',
+  `UWZoneMusic` int(10) unsigned NOT NULL DEFAULT '0',
+  `WorldPvPID` int(10) unsigned NOT NULL DEFAULT '0',
+  `PvPCombastWorldStateID` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_wildBattlePetLevelMin` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_wildBattlePetLevelMax` int(10) unsigned NOT NULL DEFAULT '0',
+  `WindSettingsID` int(10) unsigned NOT NULL DEFAULT '0',
+  `true` ERROR TYPE return,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `area_trigger`
+--
+
+DROP TABLE IF EXISTS `area_trigger`;
+CREATE TABLE `area_trigger` (
+  `id` int(10) unsigned NOT NULL DEFAULT '0',
+  `mapid` int(10) unsigned NOT NULL DEFAULT '0',
+  `x` float NOT NULL DEFAULT '0',
+  `y` float NOT NULL DEFAULT '0',
+  `z` float NOT NULL DEFAULT '0',
+  `m_phaseUseFlags` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_phaseID` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_phaseGroupID` int(10) unsigned NOT NULL DEFAULT '0',
+  `radius` float NOT NULL DEFAULT '0',
+  `box_x` float NOT NULL DEFAULT '0',
+  `box_y` float NOT NULL DEFAULT '0',
+  `box_z` float NOT NULL DEFAULT '0',
+  `box_orientation` float NOT NULL DEFAULT '0',
+  `m_shapeType` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_shapeID` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_areaTriggerActionSetID` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `achievement`
 --
 
@@ -178,6 +245,20 @@ CREATE TABLE `broadcast_text_locale` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `char_titles`
+--
+
+DROP TABLE IF EXISTS `char_titles`;
+CREATE TABLE `char_titles` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `NameMale` text,
+  `NameFemale` text,
+  `MaskID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `curve_point`
 --
 
@@ -188,6 +269,128 @@ CREATE TABLE `curve_point` (
   `Index` int(10) unsigned NOT NULL DEFAULT '0',
   `X` float NOT NULL DEFAULT '0',
   `Y` float NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `creature_family`
+--
+
+DROP TABLE IF EXISTS `creature_family`;
+CREATE TABLE `creature_family` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `minScale` float NOT NULL DEFAULT '0',
+  `minScaleLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `maxScale` float NOT NULL DEFAULT '0',
+  `maxScaleLevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `skillLine1` int(10) unsigned NOT NULL DEFAULT '0',
+  `skillLine2` int(10) unsigned NOT NULL DEFAULT '0',
+  `petFoodMask` int(10) unsigned NOT NULL DEFAULT '0',
+  `petTalentType` int(11) NOT NULL DEFAULT '0',
+  `Name` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `difficulty`
+--
+
+DROP TABLE IF EXISTS `difficulty`;
+CREATE TABLE `difficulty` (
+  `m_ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `FallbackDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
+  `InstanceType` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_minPlayers` int(10) unsigned NOT NULL DEFAULT '0',
+  `m_maxPlayers` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `ToggleDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ItemBonusTreeModID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`m_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `dungeon_encounter`
+--
+
+DROP TABLE IF EXISTS `dungeon_encounter`;
+CREATE TABLE `dungeon_encounter` (
+  `id` int(10) unsigned NOT NULL DEFAULT '0',
+  `mapId` int(10) unsigned NOT NULL DEFAULT '0',
+  `difficulty` int(10) unsigned NOT NULL DEFAULT '0',
+  `encounterIndex` int(10) unsigned NOT NULL DEFAULT '0',
+  `encounterName` text,
+  `creatureDisplayID` int(10) unsigned NOT NULL DEFAULT '0',
+  `spellIconID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `emotes_text`
+--
+
+DROP TABLE IF EXISTS `emotes_text`;
+CREATE TABLE `emotes_text` (
+  `Id` int(10) unsigned NOT NULL DEFAULT '0',
+  `textid` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `phase`
+--
+
+DROP TABLE IF EXISTS `phase`;
+CREATE TABLE `phase` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `map`
+--
+
+DROP TABLE IF EXISTS `map`;
+CREATE TABLE `map` (
+  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
+  `InstanceType` int(10) unsigned NOT NULL DEFAULT '0',
+  `flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `name` text,
+  `linked_zone` int(10) unsigned NOT NULL DEFAULT '0',
+  `multimap_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `entrance_map` int(11) NOT NULL DEFAULT '0',
+  `entrance_x` float NOT NULL DEFAULT '0',
+  `entrance_y` float NOT NULL DEFAULT '0',
+  `addon` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `maxPlayers` int(10) unsigned NOT NULL DEFAULT '0',
+  `ParentMapID` int(11) NOT NULL DEFAULT '0',
+  `false` ERROR TYPE return,
+  `=` ERROR TYPE mapid,
+  `=` ERROR TYPE x,
+  `=` ERROR TYPE y,
+  `true` ERROR TYPE return,
+  `MapID` ERROR TYPE return,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`MapID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `minor_talent`
+--
+
+DROP TABLE IF EXISTS `minor_talent`;
+CREATE TABLE `minor_talent` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpecID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `OrderIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1470,10 +1673,9 @@ DROP TABLE IF EXISTS `item_modified_appearance`;
 CREATE TABLE `item_modified_appearance` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AppearanceModID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AppearanceID` int(10) unsigned NOT NULL DEFAULT '0',
-  `IconFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Index` int(10) unsigned NOT NULL DEFAULT '0',
+  `AppearanceID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AppearanceModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VariationID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

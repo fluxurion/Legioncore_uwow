@@ -217,8 +217,7 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save,
         ASSERT(false);
     }
 
-    // some instances only have one difficulty
-    GetDownscaledMapDifficultyData(GetId(), difficulty);
+    sDB2Manager.GetDownscaledMapDifficultyData(GetId(), difficulty);
 
     sLog->outDebug(LOG_FILTER_MAPS, "MapInstanced::CreateInstance: %s map instance %d for %d created with difficulty %u", save?"":"new ", InstanceId, GetId(), difficulty);
 

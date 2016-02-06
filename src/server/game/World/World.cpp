@@ -1540,9 +1540,9 @@ void World::SetInitialWorldSettings()
     std::unordered_map<uint32, std::vector<uint32>> mapData;
     for (MapEntry const* mapEntry : sMapStore)
     {
-        mapData.insert(std::unordered_map<uint32, std::vector<uint32>>::value_type(mapEntry->MapID, std::vector<uint32>()));
+        mapData.insert(std::unordered_map<uint32, std::vector<uint32>>::value_type(mapEntry->ID, std::vector<uint32>()));
         if (mapEntry->ParentMapID != -1)
-            mapData[mapEntry->ParentMapID].push_back(mapEntry->MapID);
+            mapData[mapEntry->ParentMapID].push_back(mapEntry->ID);
     }
 
     if (VMAP::VMapManager2* vmmgr2 = dynamic_cast<VMAP::VMapManager2*>(VMAP::VMapFactory::createOrGetVMapManager()))
@@ -3357,7 +3357,7 @@ void World::ResetCurrencyWeekCap()
 
 void World::InstanceDailyResetTime()
 {
-    for (auto& mapDifficultyPair : sMapDifficultyMap)
+    for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
         for (auto& difficultyPair : mapDifficultyPair.second)
         {
             uint32 mapid = mapDifficultyPair.first;
@@ -3373,7 +3373,7 @@ void World::InstanceDailyResetTime()
 
 void World::InstanceHalfWeekResetTime()
 {
-   for (auto& mapDifficultyPair : sMapDifficultyMap)
+   for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
        for (auto& difficultyPair : mapDifficultyPair.second)
        {
            uint32 mapid = mapDifficultyPair.first;
@@ -3389,7 +3389,7 @@ void World::InstanceHalfWeekResetTime()
 
 void World::InstanceWeeklyResetTime()
 {
-    for (auto& mapDifficultyPair : sMapDifficultyMap)
+    for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
         for (auto& difficultyPair : mapDifficultyPair.second)
         {
             uint32 mapid = mapDifficultyPair.first;

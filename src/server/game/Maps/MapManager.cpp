@@ -166,7 +166,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
 
     Difficulty targetDifficulty = player->GetDifficultyID(entry);
     //The player has a heroic mode and tries to enter into instance which has no a heroic mode
-    MapDifficultyEntry const* mapDiff = GetMapDifficultyData(entry->MapID, targetDifficulty);
+    MapDifficultyEntry const* mapDiff = sDB2Manager.GetMapDifficultyData(entry->ID, targetDifficulty);
     if (!mapDiff)
     {
         // Send aborted message for dungeons
@@ -176,14 +176,12 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
             return false;
         }
         else    // attempt to downscale
-            mapDiff = GetDownscaledMapDifficultyData(entry->MapID, targetDifficulty);
+            mapDiff = sDB2Manager.GetDownscaledMapDifficultyData(entry->ID, targetDifficulty);
     }
 
     //Bypass checks for GMs
     if (player->isGameMaster())
         return true;
-
-    char const* mapName = entry->name;
 
     if (!player->isAlive())
     {
@@ -204,10 +202,10 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
             {
                 WorldPackets::Misc::AreaTriggerNoCorpse packet;
                 player->GetSession()->SendPacket(packet.Write());
-                sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' does not have a corpse in instance '%s' and cannot enter.", player->GetName(), mapName);
+                sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' does not have a corpse in instance '%s' and cannot enter.", player->GetName(), entry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()]);
                 return false;
             }
-            sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' has corpse in instance '%s' and can enter.", player->GetName(), mapName);
+            sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' has corpse in instance '%s' and can enter.", player->GetName(), entry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()]);
             player->ResurrectPlayer(0.5f, false);
             player->SpawnCorpseBones();
         }
@@ -216,7 +214,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
     }
     
     Group* group = player->GetGroup();
-    if (entry->IsRaid() && entry->Expansion() > 3)
+    if (entry->IsRaid() && entry->ExpansionID > 3)
     {
         // can only enter in a raid group
         if ((!group || !group->isRaidGroup()) && !sWorld->getBoolConfig(CONFIG_INSTANCE_IGNORE_RAID))
@@ -224,7 +222,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
             WorldPacket data(SMSG_CHAT_NOT_IN_PARTY);
             data << uint32(group ? 3 : 2);      // req: 3 - raid, 2 - group
             player->GetSession()->SendPacket(&data);
-            sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' must be in a raid group to enter instance '%s'", player->GetName(), mapName);
+            sLog->outDebug(LOG_FILTER_MAPS, "MAP: Player '%s' must be in a raid group to enter instance '%s'", player->GetName(), entry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()]);
             return false;
         }
     }

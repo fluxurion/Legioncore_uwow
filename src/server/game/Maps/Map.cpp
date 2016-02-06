@@ -1565,12 +1565,12 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
             uint32 liqTypeIdx = liquidEntry->Type;
             if (entry < 21)
             {
-                if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(getArea(x, y), MAPID_INVALID))
+                if (AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaFlagAndMap(getArea(x, y), MAPID_INVALID))
                 {
                     uint32 overrideLiquid = area->LiquidTypeID[liquidEntry->Type];
                     if (!overrideLiquid && area->ParentAreaID)
                     {
-                        area = GetAreaEntryByAreaID(area->ParentAreaID);
+                        area = sDB2Manager.GetAreaEntryByAreaID(area->ParentAreaID);
                         if (area)
                             overrideLiquid = area->LiquidTypeID[liquidEntry->Type];
                     }
@@ -1753,7 +1753,7 @@ bool Map::IsOutdoors(float x, float y, float z) const
         #ifdef TRINITY_DEBUG
         sLog->outDebug(LOG_FILTER_MAPS, "Got WMOAreaTableEntry! flag %u, AreaTableID %u", wmoEntry->Flags, wmoEntry->AreaTableID);
         #endif
-        atEntry = GetAreaEntryByAreaID(wmoEntry->AreaTableID);
+        atEntry = sDB2Manager.GetAreaEntryByAreaID(wmoEntry->AreaTableID);
     }
     return IsOutdoorWMO(mogpFlags, adtId, rootId, groupId, wmoEntry, atEntry);
 }
@@ -1813,7 +1813,7 @@ uint16 Map::GetAreaFlag(float x, float y, float z, bool *isOutdoors) const
         haveAreaInfo = true;
         wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
         if (wmoEntry)
-            atEntry = GetAreaEntryByAreaID(wmoEntry->AreaTableID);
+            atEntry = sDB2Manager.GetAreaEntryByAreaID(wmoEntry->AreaTableID);
     }
 
     uint16 areaflag;
@@ -1826,7 +1826,7 @@ uint16 Map::GetAreaFlag(float x, float y, float z, bool *isOutdoors) const
             areaflag = gmap->getArea(x, y);
         // this used while not all *.map files generated (instances)
         else
-            areaflag = GetAreaFlagByMapId(i_mapEntry->MapID);
+            areaflag = sDB2Manager.GetAreaFlagByMapId(i_mapEntry->ID);
     }
 
     if (isOutdoors)
@@ -1875,12 +1875,12 @@ ZLiquidStatus Map::getLiquidStatus(float x, float y, float z, uint8 ReqLiquidTyp
 
                 if (liquid_type && liquid_type < 21)
                 {
-                    if (AreaTableEntry const* area = GetAreaEntryByAreaFlagAndMap(GetAreaFlag(x, y, z), GetId()))
+                    if (AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaFlagAndMap(GetAreaFlag(x, y, z), GetId()))
                     {
                         uint32 overrideLiquid = area->LiquidTypeID[liquidFlagType];
                         if (!overrideLiquid && area->ParentAreaID)
                         {
-                            area = GetAreaEntryByAreaID(area->ParentAreaID);
+                            area = sDB2Manager.GetAreaEntryByAreaID(area->ParentAreaID);
                             if (area)
                                 overrideLiquid = area->LiquidTypeID[liquidFlagType];
                         }
@@ -1944,7 +1944,7 @@ float Map::GetWaterLevel(float x, float y) const
 
 uint32 Map::GetAreaIdByAreaFlag(uint16 areaflag, uint32 map_id)
 {
-    AreaTableEntry const* entry = GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
+    AreaTableEntry const* entry = sDB2Manager.GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
 
     if (entry)
         return entry->ID;
@@ -1954,7 +1954,7 @@ uint32 Map::GetAreaIdByAreaFlag(uint16 areaflag, uint32 map_id)
 
 uint32 Map::GetZoneIdByAreaFlag(uint16 areaflag, uint32 map_id)
 {
-    AreaTableEntry const* entry = GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
+    AreaTableEntry const* entry = sDB2Manager.GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
 
     if (entry)
         return (entry->ParentAreaID != 0) ? entry->ParentAreaID : entry->ID;
@@ -1964,7 +1964,7 @@ uint32 Map::GetZoneIdByAreaFlag(uint16 areaflag, uint32 map_id)
 
 void Map::GetZoneAndAreaIdByAreaFlag(uint32& zoneid, uint32& areaid, uint16 areaflag, uint32 map_id)
 {
-    AreaTableEntry const* entry = GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
+    AreaTableEntry const* entry = sDB2Manager.GetAreaEntryByAreaFlagAndMap(areaflag, map_id);
 
     areaid = entry ? entry->ID : 0;
     zoneid = entry ? ((entry->ParentAreaID != 0) ? entry->ParentAreaID : entry->ID) : 0;
@@ -2040,7 +2040,7 @@ bool Map::CheckGridIntegrity(Creature* c, bool moved) const
 
 char const* Map::GetMapName() const
 {
-    return i_mapEntry ? i_mapEntry->name : "UNNAMEDMAP\x0";
+    return i_mapEntry ? i_mapEntry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()] : "UNNAMEDMAP\x0";
 }
 
 void Map::UpdateObjectVisibility(WorldObject* obj, Cell cell, CellCoord cellpair)
@@ -2798,7 +2798,7 @@ void InstanceMap::SetResetSchedule(bool on)
 
 MapDifficultyEntry const* Map::GetMapDifficulty() const
 {
-    return GetMapDifficultyData(GetId(), GetDifficultyID());
+    return sDB2Manager.GetMapDifficultyData(GetId(), GetDifficultyID());
 }
 
 uint32 Map::GetDifficultyLootBonusTreeMod() const
@@ -2842,7 +2842,7 @@ uint32 InstanceMap::GetMaxPlayers() const
             return mapDiff->MaxPlayers;
         else                                                // DBC have 0 maxplayers for heroic instances with expansion < 2
         {                                                   // The heroic entry exists, so we don't have to check anything, simply return normal max players
-            MapDifficultyEntry const* normalDiff = GetMapDifficultyData(GetId(), DIFFICULTY_NORMAL);
+            MapDifficultyEntry const* normalDiff = sDB2Manager.GetMapDifficultyData(GetId(), DIFFICULTY_NORMAL);
             return normalDiff ? normalDiff->MaxPlayers : 0;
         }
     }

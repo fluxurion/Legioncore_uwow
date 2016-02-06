@@ -2097,7 +2097,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         return false;
 
     // client without expansion support
-    if (GetSession()->Expansion() < mEntry->Expansion())
+    if (GetSession()->Expansion() < mEntry->ExpansionID)
     {
         sLog->outDebug(LOG_FILTER_MAPS, "Player %s using client without required expansion tried teleport to non accessible map %u", GetName(), mapid);
 
@@ -2109,7 +2109,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
             RepopAtGraveyard();                             // teleport to near graveyard if on transport, looks blizz like :)
         }
 
-        SendTransferAborted(mapid, TRANSFER_ABORT_INSUF_EXPAN_LVL, mEntry->Expansion());
+        SendTransferAborted(mapid, TRANSFER_ABORT_INSUF_EXPAN_LVL, mEntry->ExpansionID);
 
         return false;                                       // normal client can't teleport to this map...
     }
@@ -3576,9 +3576,9 @@ void Player::LearnSpecializationSpells()
     {
         for (uint8 i = 0; i < currentIndex; i++)
         {
-            if (MinorTalentEntry const* minor = sMinorTalentByIndexStore[specializationId][i])
+            if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specializationId, i))
             {
-                if(!HasSpell(minor->SpellID))
+                if (!HasSpell(minor->SpellID))
                     learnSpell(minor->SpellID, false);
             }
         }
@@ -3607,7 +3607,7 @@ void Player::RemoveSpecializationSpells()
                     RemoveAurasDueToSpell(mastery);
 
             for (uint32 j = 0; j < MAX_PERKS_COUNT; ++j)
-                if (MinorTalentEntry const* minor = sMinorTalentByIndexStore[specialization->ID][j])
+                if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specialization->ID, j))
                     removeSpell(minor->SpellID, true, true, false);
         }
     }
@@ -6312,7 +6312,7 @@ void Player::RepopAtGraveyard()
     // note: this can be called also when the player is alive
     // for example from WorldSession::HandleMovementOpcodes
 
-    AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
+    AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(GetAreaId());
     if (!zone)
     {
         sLog->outInfo(LOG_FILTER_PLAYER, "Unknown area ID = %u for player %u", GetAreaId(), GetGUIDLow());
@@ -6430,7 +6430,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
     if (GetSession()->PlayerLoading() && !IsBeingTeleportedFar())
         return;                                              // The client handles it automatically after loading, but not after teleporting
 
-    AreaTableEntry const* current_zone = GetAreaEntryByAreaID(newZone);
+    AreaTableEntry const* current_zone = sDB2Manager.GetAreaEntryByAreaID(newZone);
     if (!current_zone)
         return;
 
@@ -7562,7 +7562,7 @@ void Player::SendMovieStart(uint32 MovieId)
 
 bool Player::HasAreaExplored(uint32 AreaID)
 {
-    AreaTableEntry const* areaEntry = FindAreaEntry(AreaID);
+    AreaTableEntry const* areaEntry = sDB2Manager.FindAreaEntry(AreaID);
     if (!areaEntry)
         return false;
 
@@ -7609,7 +7609,7 @@ void Player::CheckAreaExploreAndOutdoor()
 
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA);
 
-        AreaTableEntry const* areaEntry = GetAreaEntryByAreaFlagAndMap(areaFlag, GetMapId());
+        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaFlagAndMap(areaFlag, GetMapId());
         if (!areaEntry)
         {
             sLog->outError(LOG_FILTER_PLAYER, "Player %u discovered unknown area (x: %f y: %f z: %f map: %u", GetGUIDLow(), GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId());
@@ -8615,8 +8615,8 @@ uint32 Player::GetLevelFromDB(ObjectGuid guid)
 
 void Player::UpdateArea(uint32 newArea)
 {
-    AreaTableEntry const* oldArea = GetAreaEntryByAreaID(m_areaUpdateId);
-    AreaTableEntry const* area = GetAreaEntryByAreaID(newArea);
+    AreaTableEntry const* oldArea = sDB2Manager.GetAreaEntryByAreaID(m_areaUpdateId);
+    AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaID(newArea);
     
     //! new area on garrison not has flag2 - 0x20
     if (area && (area->Flags[1] & 0x20) == 0 && GetMap()->IsGarrison())
@@ -8683,7 +8683,7 @@ void Player::UpdateArea(uint32 newArea)
                 if (newMap && newMap->CanEnter(this))
                 {
                     uint32 _are = newMap->GetAreaId(GetPositionX(), GetPositionY(), GetPositionZ());
-                    if (AreaTableEntry const* _area = GetAreaEntryByAreaID(_are))
+                    if (AreaTableEntry const* _area = sDB2Manager.GetAreaEntryByAreaID(_are))
                     {
                         if (_area->Flags[1] & 0x20)
                             TeleportTo(garr->GetGarrisonMapID(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_SEAMLESS);
@@ -8719,7 +8719,7 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     // zone changed, so area changed as well, update it
     UpdateArea(newArea);
 
-    AreaTableEntry const* zone = GetAreaEntryByAreaID(newZone);
+    AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(newZone);
     if (!zone)
         return;
 
@@ -18233,7 +18233,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // client without expansion support
     if (mapEntry)
     {
-        if (GetSession()->Expansion() < mapEntry->Expansion())
+        if (GetSession()->Expansion() < mapEntry->ExpansionID)
         {
             sLog->outDebug(LOG_FILTER_PLAYER_LOADING, "Player %s using client without required expansion tried login at non accessible map %u", GetName(), mapId);
             RelocateToHomebind();
@@ -19920,7 +19920,7 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
             }
             else
             {
-                MapDifficultyEntry const* mapDiff = GetMapDifficultyData(mapId, Difficulty(difficulty));
+                MapDifficultyEntry const* mapDiff = sDB2Manager.GetMapDifficultyData(mapId, Difficulty(difficulty));
                 if (!mapDiff)
                 {
                     sLog->outError(LOG_FILTER_PLAYER, "_LoadBoundInstances: player %s(%d) has bind to not existed difficulty %d instance for map %u", GetName(), GetGUIDLow(), difficulty, mapId);
@@ -19958,13 +19958,11 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
 
 InstancePlayerBind* Player::GetBoundInstance(uint32 mapid, Difficulty difficulty)
 {
-    // some instances only have one difficulty
-    MapDifficultyEntry const* mapDiff = GetDownscaledMapDifficultyData(mapid, difficulty);
+    MapDifficultyEntry const* mapDiff = sDB2Manager.GetDownscaledMapDifficultyData(mapid, difficulty);
     if (!mapDiff)
         return NULL;
 
     uint8 boundType = sObjectMgr->GetboundTypeFromDifficulty(difficulty);
-
     BoundInstancesMap::iterator itr = m_boundInstances[boundType].find(mapid);
     if (itr != m_boundInstances[boundType].end())
         return &itr->second;
@@ -20239,7 +20237,7 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
 
         Difficulty target_difficulty = GetDifficultyID(mapEntry);
 
-        MapDifficultyEntry const* mapDiff = GetDownscaledMapDifficultyData(target_map, target_difficulty);
+        MapDifficultyEntry const* mapDiff = sDB2Manager.GetDownscaledMapDifficultyData(target_map, target_difficulty);
         if (!mapDiff)
             return false;
 
@@ -20308,7 +20306,7 @@ bool Player::_LoadHomeBind(PreparedQueryResult result)
 
         // accept saved data only for valid position (and non instanceable), and accessable
         if (MapManager::IsValidMapCoord(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ) &&
-            !bindMapEntry->Instanceable() && GetSession()->Expansion() >= bindMapEntry->Expansion())
+            !bindMapEntry->Instanceable() && GetSession()->Expansion() >= bindMapEntry->ExpansionID)
             ok = true;
         else
         {
@@ -29284,7 +29282,7 @@ Difficulty Player::GetDifficultyID(MapEntry const* mapEntry) const
     if (!mapEntry->IsRaid())
         return m_dungeonDifficulty;
 
-    MapDifficultyEntry const* defaultDifficulty = GetDefaultMapDifficulty(mapEntry->MapID);
+    MapDifficultyEntry const* defaultDifficulty = sDB2Manager.GetDefaultMapDifficulty(mapEntry->ID);
     if (!defaultDifficulty)
         return m_legacyRaidDifficulty;
 

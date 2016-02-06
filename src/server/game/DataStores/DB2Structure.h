@@ -47,6 +47,64 @@
 
 #pragma pack(push, 1)
 
+struct AreaTableEntry
+{
+    uint32      ID;                                         // 0
+    uint32      mapid;                                      // 1
+    uint32      ParentAreaID;                               // 2 if 0 then it's zone, else it's zone id of this area
+    uint32      AreaBit;                                    // 3, main index
+    uint32      Flags[2];                                   // 4-5,
+    uint32      SoundProviderPref;                          // 6,
+    uint32      SoundProviderPrefUnderwater;                // 7,
+    uint32      AmbienceID;                                 // 8,
+    uint32      ZoneMusic;                                  // 9,
+    char*       ZoneName;                                   // 10
+    uint32      IntroSound;                                 // 11
+    uint32      ExplorationLevel;                           // 12
+    char*       AreaName_lang;                               // 13
+    uint32      FactionGroupMask;                           // 14
+    uint32      LiquidTypeID[4];                            // 15-18
+    float       AmbientMultiplier;                          // 19
+    uint32      MountFlags;                                   // 20
+    uint32      UWIntroMusic;                               // 21
+    uint32      UWZoneMusic;                                // 22
+    uint32      WorldPvPID;                                 // 24 World_PVP_Area.dbc
+    uint32      PvPCombastWorldStateID;                     // 25
+    uint32      m_wildBattlePetLevelMin;                      // 26
+    uint32      m_wildBattlePetLevelMax;                      // 27
+    uint32      WindSettingsID;                             // 28
+
+    // helpers
+    bool IsSanctuary() const
+    {
+        if (mapid == 609)
+            return true;
+        return (Flags[0] & AREA_FLAG_SANCTUARY) != 0;
+    }
+};
+
+struct AreaTriggerEntry
+{
+    uint32      id;                                             // 0        m_ID
+    uint32      mapid;                                          // 1        m_ContinentID
+    float       x;                                              // 2        m_x
+    float       y;                                              // 3        m_y
+    float       z;                                              // 4        m_z
+    uint32      m_phaseUseFlags;                               // 5        m_phaseUseFlags
+    uint32      m_phaseID;                                     // 6        m_phaseID
+    uint32      m_phaseGroupID;                                // 7        m_phaseGroupID
+    float       radius;                                         // 8        m_radius
+    float       box_x;                                          // 9        m_box_length
+    float       box_y;                                          // 10       m_box_width
+    float       box_z;                                          // 11       m_box_heigh
+    float       box_orientation;                                // 12       m_box_yaw
+    uint32      m_shapeType;                                    // 13       m_shapeType
+    uint32      m_shapeID;                                      // 14       m_shapeID
+    uint32      m_areaTriggerActionSetID;                       // 15       m_areaTriggerActionSetID
+    uint32      m_flags;                                        // 16       m_flags
+    uint32      unk;                                            //            on 6.0.3 19243
+};
+
 struct AchievementEntry
 {
     uint32      ID;                                         // 0
@@ -109,24 +167,155 @@ struct BarberShopStyleEntry
 
 struct BroadcastTextEntry
 {
-    uint32 ID;
-    int32 Language;
+    uint32      ID;
+    int32       Language;
     LocalizedString* MaleText;
     LocalizedString* FemaleText;
-    uint32 EmoteID[MAX_BROADCAST_TEXT_EMOTES];
-    uint32 EmoteDelay[MAX_BROADCAST_TEXT_EMOTES];
-    uint32 SoundID;
-    uint32 UnkEmoteID;
-    uint32 Type;
+    uint32      EmoteID[MAX_BROADCAST_TEXT_EMOTES];
+    uint32      EmoteDelay[MAX_BROADCAST_TEXT_EMOTES];
+    uint32      SoundID;
+    uint32      UnkEmoteID;
+    uint32      Type;
+};
+
+struct CharTitlesEntry
+{
+    uint32      ID;                                         // 0, title ids, for example in Quest::GetRewTitle()
+    //uint32    ConditionID;                                // 1
+    char*       NameMale_lang;                              // 2 m_name_lang
+    char*       NameFemale_lang;                            // 3 m_name1_lang
+    uint32      MaskID;                                     // 4 m_mask_ID used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
+    //uint32    Flags;                                      // 5
 };
 
 struct CurvePointEntry
 {
-    uint32 ID;                                                      // 0
-    uint32 CurveID;                                                 // 1
-    uint32 Index;                                                   // 2
-    float X;                                                        // 3
-    float Y;                                                        // 4
+    uint32      ID;                                                      // 0
+    uint32      CurveID;                                                 // 1
+    uint32      Index;                                                   // 2
+    float       X;                                                        // 3
+    float       Y;                                                        // 4
+};
+
+struct CreatureFamilyEntry
+{
+    uint32      ID;                                             // 0        m_ID
+    float       minScale;                                       // 1        m_minScale
+    uint32      minScaleLevel;                                  // 2        m_minScaleLevel
+    float       maxScale;                                       // 3        m_maxScale
+    uint32      maxScaleLevel;                                  // 4        m_maxScaleLevel
+    uint32      skillLine[2];                                   // 5-6      m_skillLine
+    uint32      petFoodMask;                                    // 7        m_petFoodMask
+    int32       petTalentType;                                  // 8        m_petTalentType
+                                                            // 9        m_categoryEnumID
+    char*       Name;                                             // 10       m_name_lang
+                                                            // 11       m_iconFile
+};
+
+struct DifficultyEntry
+{
+    uint32      m_ID;                                       // 0
+    uint32      FallbackDifficultyID;                       // 1
+    uint32      InstanceType;                               // 2
+    uint32      m_minPlayers;                               // 3
+    uint32      m_maxPlayers;                               // 4
+    //int32     OldEnumValue;                               // 5
+    uint32      Flags;                                      // 6
+    uint32      ToggleDifficultyID;                         // 7
+    //uint32    GroupSizeHealthCurveID;                     // 8
+    //uint32    GroupSizeDmgCurveID;                        // 9
+    //uint32    GroupSizeSpellPointsCurveID;                // 10
+    //char const* NameLang;                                 // 11
+    uint32      ItemBonusTreeModID;                           // 12
+    //uint32    unkLegion
+};
+
+struct DungeonEncounterEntry
+{
+    uint32      id;                                              // 0        unique id
+    uint32      mapId;                                           // 1        map id
+    uint32      difficulty;                                      // 2        instance mode
+    //uint32    orderIndex;                                    // 3
+    uint32      encounterIndex;                                  // 4        encounter index for creating completed mask
+    char*       encounterName;                                    // 5        encounter name
+    uint32      creatureDisplayID;                               // 6
+    uint32      spellIconID;                                     // 7
+    //uint32    flags;                                         // 8
+};
+
+struct EmotesTextEntry
+{
+    uint32      Id;
+    uint32      textid;
+};
+
+struct PhaseEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Flags;                                      // 1
+};
+
+struct MapEntry
+{
+    uint32      ID;                                     // 0
+    LocalizedString* Directory;                         // 1
+    uint32      InstanceType;                           // 2
+    uint32      Flags[2];                               // 3 - 4
+    uint32      unk5;                                   // 5
+    LocalizedString* MapName;                           // 6
+    uint32      AreaTableID;                            // 7
+    LocalizedString* MapDescription0;                   // 8
+    LocalizedString* MapDescription1;                   // 9
+    uint32      LoadingScreenID;                        // 10
+    float       MinimapIconScale;                       // 11
+    int32       CorpseMapID;                            // 12
+    DBCPosition2D CorpsePos;                            // 13 - 14
+    uint32      TimeOfDayOverride;                      // 15
+    uint32      ExpansionID;                            // 16
+    uint32      RaidOffset;                             // 17
+    uint32      MaxPlayers;                             // 18
+    int32       ParentMapID;                            // 19
+    int32       CosmeticParentMapID;                    // 20
+    uint32      TimeOffset;                             // 21
+
+    bool IsDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_RAID || InstanceType == MAP_SCENARIO; }
+    bool IsNonRaidDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_SCENARIO; }
+    bool Instanceable() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_RAID || InstanceType == MAP_BATTLEGROUND || InstanceType == MAP_ARENA || InstanceType == MAP_SCENARIO; }
+    bool IsRaid() const { return InstanceType == MAP_RAID; }
+    bool IsBattleground() const { return InstanceType == MAP_BATTLEGROUND; }
+    bool IsBattleArena() const { return InstanceType == MAP_ARENA; }
+    bool IsBattlegroundOrArena() const { return InstanceType == MAP_BATTLEGROUND || InstanceType == MAP_ARENA; }
+    bool IsWorldMap() const { return InstanceType == MAP_COMMON; }
+    bool IsScenario() const { return InstanceType == MAP_SCENARIO; }
+
+    bool GetEntrancePos(int32 &mapid, float &x, float &y) const
+    {
+        if (CorpseMapID < 0)
+            return false;
+
+        mapid = CorpseMapID;
+        x = CorpsePos.X;
+        y = CorpsePos.Y;
+        return true;
+    }
+
+    bool IsContinent() const
+    {
+        return ID == 0 || ID == 1 || ID == 530 || ID == 571 || ID == 870 || ID == 1116;
+    }
+
+    bool IsDynamicDifficultyMap() const { return (Flags[0] & MAP_FLAG_CAN_CHANGE_DIFFICULTY) != 0; }
+    bool IsGarrison() const { return (Flags[0] & MAP_FLAG_GARRISON) != 0; }
+
+    bool IsDifficultyModeSupported(uint32 difficulty) const;
+};
+
+struct MinorTalentEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpecID;                                     // 1
+    uint32      SpellID;                                    // 2
+    uint32      OrderIndex;                                 // 3
 };
 
 struct CriteriaEntry

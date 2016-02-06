@@ -552,7 +552,7 @@ void BossAI::_JustDied()
         if (!map->IsDungeon() || map->IsNonRaidDungeon())
             return;
 
-        if (DungeonEncounterEntry const* entry = GetDungeonEncounterByDisplayID(me->GetNativeDisplayId()))
+        if (DungeonEncounterEntry const* entry = sDB2Manager.GetDungeonEncounterByDisplayID(me->GetNativeDisplayId()))
             map->SendToPlayers(WorldPackets::Instance::BossKillCredit(entry->id).Write());
 
         Map::PlayerList const& PlayerList = map->GetPlayers();

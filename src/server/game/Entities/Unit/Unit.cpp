@@ -13788,9 +13788,9 @@ void Unit::UpdateMount() //@TODO:Legion - is this really needed?
         }
         else
         {
-            AreaTableEntry const* entry = GetAreaEntryByAreaID(areaId);
+            AreaTableEntry const* entry = sDB2Manager.GetAreaEntryByAreaID(areaId);
             if (!entry)
-                entry = GetAreaEntryByAreaID(zoneId);
+                entry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
             if (entry)
                 currentMountFlags = entry->MountFlags;
         }

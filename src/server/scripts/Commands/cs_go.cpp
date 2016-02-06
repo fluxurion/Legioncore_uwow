@@ -429,7 +429,7 @@ public:
 
         uint32 areaId = id ? (uint32)atoi(id) : player->GetZoneId();
 
-        AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(areaId);
+        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(areaId);
 
         if (x < 0 || x > 100 || y < 0 || y > 100 || !areaEntry)
         {
@@ -439,7 +439,7 @@ public:
         }
 
         // update to parent zone if exist (client map show only zones without parents)
-        AreaTableEntry const* zoneEntry = areaEntry->ParentAreaID ? GetAreaEntryByAreaID(areaEntry->ParentAreaID) : areaEntry;
+        AreaTableEntry const* zoneEntry = areaEntry->ParentAreaID ? sDB2Manager.GetAreaEntryByAreaID(areaEntry->ParentAreaID) : areaEntry;
 
         Map const* map = sMapMgr->CreateBaseMap(zoneEntry->mapid);
 
@@ -525,9 +525,9 @@ public:
         MapEntry const* mapEntry = sMapStore.LookupEntry(mapId);
         if (mapEntry->IsScenario())
         {
-            if (GetMapDifficultyData(mapId, DIFFICULTY_N_SCENARIO))
+            if (sDB2Manager.GetMapDifficultyData(mapId, DIFFICULTY_N_SCENARIO))
                 player->SetDungeonDifficultyID(DIFFICULTY_N_SCENARIO);
-            else if (GetMapDifficultyData(mapId, DIFFICULTY_HC_SCENARIO))
+            else if (sDB2Manager.GetMapDifficultyData(mapId, DIFFICULTY_HC_SCENARIO))
                 player->SetDungeonDifficultyID(DIFFICULTY_HC_SCENARIO);
         }
 

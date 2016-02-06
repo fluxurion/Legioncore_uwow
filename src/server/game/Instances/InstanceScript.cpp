@@ -514,7 +514,7 @@ void InstanceScript::SendEncounterUnit(uint32 type, Unit* unit /*= NULL*/, uint8
             if (!unit)
                 return;
 
-            if (DungeonEncounterEntry const* dungeon = GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
+            if (DungeonEncounterEntry const* dungeon = sDB2Manager.GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
             {
                 WorldPackets::Instance::EncounterStart start;
                 start.EncounterID = dungeon->id;
@@ -536,7 +536,7 @@ void InstanceScript::SendEncounterUnit(uint32 type, Unit* unit /*= NULL*/, uint8
             if (!unit)
                 return;
 
-            if (DungeonEncounterEntry const* dungeon = GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
+            if (DungeonEncounterEntry const* dungeon = sDB2Manager.GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
             {
                 WorldPackets::Instance::EncounterEnd end;
                 end.EncounterID = dungeon->id;

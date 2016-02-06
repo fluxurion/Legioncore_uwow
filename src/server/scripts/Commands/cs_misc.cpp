@@ -324,12 +324,12 @@ public:
 
         uint32 zoneId, areaId;
         object->GetZoneAndAreaId(zoneId, areaId);
-        uint32 pzoneId = GetParentZoneOrSelf(zoneId);
+        uint32 pzoneId = sDB2Manager.GetParentZoneOrSelf(zoneId);
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(object->GetMapId());
-        AreaTableEntry const* zoneEntry = GetAreaEntryByAreaID(zoneId);
-        AreaTableEntry const* pzoneEntry = GetAreaEntryByAreaID(pzoneId);
-        AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(areaId);
+        AreaTableEntry const* zoneEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
+        AreaTableEntry const* pzoneEntry = sDB2Manager.GetAreaEntryByAreaID(pzoneId);
+        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(areaId);
 
         float zoneX = object->GetPositionX();
         float zoneY = object->GetPositionY();
@@ -371,9 +371,9 @@ public:
         else
             handler->PSendSysMessage("no VMAP available for area info");
 
-        uint32 pZone = GetParentZoneOrSelf(zoneId);
+        uint32 pZone = sDB2Manager.GetParentZoneOrSelf(zoneId);
         handler->PSendSysMessage(LANG_MAP_POSITION,
-            object->GetMapId(), (mapEntry ? mapEntry->name : "<unknown>"),
+            object->GetMapId(), (mapEntry ? mapEntry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
             zoneId, (zoneEntry ? zoneEntry->AreaName_lang : "<unknown>"),
             pzoneId, (pzoneEntry ? pzoneEntry->AreaName_lang : "<unknown>"),
             areaId, AreaName,
@@ -1254,7 +1254,7 @@ public:
 
         uint32 zoneId = player->GetZoneId();
 
-        AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(zoneId);
+        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
         if (!areaEntry || areaEntry->ParentAreaID !=0)
         {
             handler->PSendSysMessage(LANG_COMMAND_GRAVEYARDWRONGZONE, graveyardId, zoneId);
@@ -1349,7 +1349,7 @@ public:
             return false;
         }
 
-        int32 area = GetAreaFlagByAreaID(atoi((char*)args));
+        int32 area = sDB2Manager.GetAreaFlagByAreaID(atoi((char*)args));
         int32 offset = area / 32;
         uint32 val = uint32((1 << (area % 32)));
 
@@ -1380,7 +1380,7 @@ public:
             return false;
         }
 
-        int32 area = GetAreaFlagByAreaID(atoi((char*)args));
+        int32 area = sDB2Manager.GetAreaFlagByAreaID(atoi((char*)args));
         int32 offset = area / 32;
         uint32 val = uint32((1 << (area % 32)));
 
@@ -1956,12 +1956,12 @@ public:
 
         MapEntry const* map = sMapStore.LookupEntry(mapId);
 
-        AreaTableEntry const* area = GetAreaEntryByAreaID(areaId);
+        AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaID(areaId);
         if (area)
         {
             areaName = area->ZoneName;
 
-            AreaTableEntry const* zone = GetAreaEntryByAreaID(area->ParentAreaID);
+            AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(area->ParentAreaID);
             if (zone)
                 zoneName = zone->ZoneName;
         }
@@ -1969,12 +1969,12 @@ public:
         if (target)
         {
             if (!zoneName.empty())
-                handler->PSendSysMessage(LANG_PINFO_MAP_ONLINE, map->name, zoneName.c_str(), areaName.c_str(), phase);
+                handler->PSendSysMessage(LANG_PINFO_MAP_ONLINE, map->MapName->Str[sObjectMgr->GetDBCLocaleIndex()], zoneName.c_str(), areaName.c_str(), phase);
             else
-                handler->PSendSysMessage(LANG_PINFO_MAP_ONLINE, map->name, areaName.c_str(), "<unknown>", phase);
+                handler->PSendSysMessage(LANG_PINFO_MAP_ONLINE, map->MapName->Str[sObjectMgr->GetDBCLocaleIndex()], areaName.c_str(), "<unknown>", phase);
         }
         else
-           handler->PSendSysMessage(LANG_PINFO_MAP_OFFLINE, map->name, areaName.c_str());
+           handler->PSendSysMessage(LANG_PINFO_MAP_OFFLINE, map->MapName->Str[sObjectMgr->GetDBCLocaleIndex()], areaName.c_str());
 
         return true;
     }

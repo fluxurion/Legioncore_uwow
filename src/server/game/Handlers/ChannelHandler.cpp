@@ -33,7 +33,7 @@ void WorldSession::HandleJoinChannel(WorldPackets::Channel::JoinChannel& packet)
         if (!channel)
             return;
 
-        AreaTableEntry const* current_zone = GetAreaEntryByAreaID(_player->GetZoneId());
+        AreaTableEntry const* current_zone = sDB2Manager.GetAreaEntryByAreaID(_player->GetZoneId());
         if (!current_zone)
             return;
 
