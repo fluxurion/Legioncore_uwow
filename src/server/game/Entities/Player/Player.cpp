@@ -27067,6 +27067,12 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
         return;
     }
 
+    if (loot->shipmentBuildingType)
+    {
+        if (Garrison *garr = GetGarrison())
+            garr->FreeShipmentChest(loot->shipmentBuildingType);
+    }
+
     if (currency)
     {
         if (CurrencyTypesEntry const * currencyEntry = sCurrencyTypesStore.LookupEntry(item->item.ItemID))
@@ -27108,12 +27114,6 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
                 //freeforall case, notify only one player of the removal
                 ffaitem->is_looted = true;
                 SendNotifyLootItemRemoved(lootSlot, loot);
-            }
-            else if (loot->shipmentBuildingType)
-            {
-                SendNotifyLootItemRemoved(lootSlot, loot);
-                if (Garrison *garr = GetGarrison())
-                    garr->FreeShipmentChest(loot->shipmentBuildingType);
             }else
             {
                 //not freeforall, notify everyone
