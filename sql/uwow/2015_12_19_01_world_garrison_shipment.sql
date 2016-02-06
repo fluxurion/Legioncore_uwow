@@ -39,7 +39,7 @@ CREATE TABLE `garrison_shipment` (
 -- Дамп данных таблицы `garrison_shipment`
 --
 
-INSERT INTO `garrison_shipment` (`SiteID`, `ContainerID`, `NpcEntry`, `ShipmentID`, `comment`) VALUES
+REPLACE INTO `garrison_shipment` (`SiteID`, `ContainerID`, `NpcEntry`, `ShipmentID`, `comment`) VALUES
 (71, 74, 0, 169, 'Horde. Overcharged Demolisher'),
 (2, 56, 77730, 110, 'Alliance. Mine Shipment'),
 (2, 51, 77775, 105, 'Alliance. Taladite Crystal + 236652 for lvl2'),
@@ -50,6 +50,7 @@ INSERT INTO `garrison_shipment` (`SiteID`, `ContainerID`, `NpcEntry`, `ShipmentI
 (2, 49, 77792, 103, 'Alliance.Truesteel Ingot'),
 (2, 53, 77831, 107, 'Alliance. Gearspring Parts + 236647'),
 (2, 50, 78207, 104, 'Alliance. Burnished Leather'),
+(2, 66, 87211, 138, 'Alliance. Garrison Resources.Trading Post'),
 (71, 57, 79814, 121, 'Horde.Alchemical Catalyst'),
 (71, 58, 79817, 123, 'Horde.Truesteel Ingot'),
 (71, 59, 79820, 125, 'Horde.Temporal Crystal'),

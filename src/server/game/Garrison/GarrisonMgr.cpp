@@ -806,3 +806,30 @@ std::list<CreatureData> const* GarrisonMgr::GetNpcSpawnBuilding(uint32 plotID, u
     }
     return NULL;
 }
+
+uint32 GarrisonMgr::GetShipmentID(GarrShipment const* shipment)
+{
+    if (shipment->cEntry->BuildingType != GARR_BTYPE_TRADING_POST)
+        return shipment->ShipmentID;
+
+    if (time(nullptr) > randShipment[shipment->ContainerID].Timer)
+    {
+        uint32 count = sDB2Manager._charShipmentConteiner.count(shipment->data->ShipmentConteinerID);
+        uint32 idx = urand(1, count);
+        uint32 i = 1;
+        DB2Manager::ShipmentConteinerMapBounds bounds = sDB2Manager.GetShipmentConteinerBounds(shipment->data->ShipmentConteinerID);
+        for (DB2Manager::ShipmentConteinerMap::const_iterator sh_idx = bounds.first; sh_idx != bounds.second; ++sh_idx)
+        {
+            if (i == idx)
+            {
+                randShipment[shipment->ContainerID].ShipmentID = sh_idx->second->ID;
+                break;
+            }
+            i++;
+        }
+
+        randShipment[shipment->ContainerID].Timer = time(nullptr) + DAY;
+    }
+
+    return randShipment[shipment->ContainerID].ShipmentID;
+}

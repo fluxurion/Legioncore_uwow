@@ -2014,6 +2014,7 @@ void Garrison::SendShipmentInfo(ObjectGuid const& guid)
     const Garrison::Plot* plot = GetPlotWithBuildingType(shipment->cEntry->BuildingType);
 
     uint32 questID = getQuestIdReqForShipment(_siteLevel->SiteID, shipment->cEntry->BuildingType);
+    uint32 shipmentID = sGarrisonMgr.GetShipmentID(shipment);
 
     //SMSG_GET_SHIPMENT_INFO_RESPONSE
     WorldPackets::Garrison::GetShipmentInfoResponse shipmentResponse;
@@ -2023,7 +2024,7 @@ void Garrison::SendShipmentInfo(ObjectGuid const& guid)
         GarrBuildingEntry const* existingBuilding = sGarrBuildingStore.AssertEntry(plot->BuildingInfo.PacketInfo->GarrBuildingID);
 
         // check if has finish quest for activate. if rewardet - use usual state. if in progress - send 
-        shipmentResponse.ShipmentID = (!questID || _owner->GetQuestStatus(questID) == QUEST_STATUS_REWARDED) ? shipment->ShipmentID : getProgressShipment(questID);
+        shipmentResponse.ShipmentID = (!questID || _owner->GetQuestStatus(questID) == QUEST_STATUS_REWARDED) ? shipmentID : getProgressShipment(questID);
         shipmentResponse.MaxShipments = existingBuilding->MaxShipments;
         shipmentResponse.PlotInstanceID = plot->BuildingInfo.PacketInfo->GarrPlotInstanceID;
 
@@ -2044,6 +2045,8 @@ void Garrison::CreateShipment(ObjectGuid const& guid, uint32 count)
         return;
 
     uint32 sh = shipment->ShipmentID;
+    sh = sGarrisonMgr.GetShipmentID(shipment);
+
     if (uint32 questID = getQuestIdReqForShipment(_siteLevel->SiteID, shipment->cEntry->BuildingType))
         if (_owner->GetQuestStatus(questID) != QUEST_STATUS_REWARDED)
             sh = getProgressShipment(questID);

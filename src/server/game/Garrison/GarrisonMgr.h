@@ -22,6 +22,12 @@
 
 #include "DB2Stores.h"
 
+struct randShipment
+{
+    uint32 Timer = 0;
+    uint32 ShipmentID = 0;
+};
+
 struct FinalizeGarrisonPlotGOInfo
 {
     struct
@@ -124,6 +130,7 @@ public:
     GarrMissionEntry const* GetMissionAtFollowerTaking(uint32 followerID);
 
     GarrShipment const* GetGarrShipment(uint32 entry, ShipmentGetType type) const;
+    uint32 GetShipmentID(GarrShipment const* shipment);
     
 private:
     void InitializeDbIdSequences();
@@ -154,7 +161,8 @@ private:
     std::map<uint8 /*ShipmentGetType*/, shipmentStoreMap> shipment;
 
     std::set<GarrAbilityEntry const*> _garrisonFollowerRandomTraits;
-
+    std::unordered_map<uint32 /*ShipmentConteinerID*/, randShipment> randShipment;
+    
     uint64 _followerDbIdGenerator = UI64LIT(1);
     uint64 _missionDbIdGenerator = UI64LIT(1);
     uint64 _shipmentDbIdGenerator = UI64LIT(1);
