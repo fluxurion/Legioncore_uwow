@@ -1284,6 +1284,39 @@ GarrisonError Garrison::CheckBuildingRemoval(uint32 garrPlotInstanceId) const
     return GARRISON_SUCCESS;
 }
 
+//! Only for GARR_BTYPE_TRADING_POST
+void getRandTrader(uint32 &entry, GuidUnorderedSet & const Spawns)
+{
+    const uint32 __horde[5] = {86779, 86778, 86776, 86777, 86683};
+    const uint32 __alliance[5] = {87200, 87201, 87203, 87202, 87204};
+    bool isHorde = false;
+
+    switch (entry)
+    {
+        //Horde
+        case 86779:
+        case 86778:
+        case 86776:
+        case 86777:
+        case 86683:
+            isHorde = true;
+            break;
+        //Alliance
+        case 87200:
+        case 87201:
+        case 87203:
+        case 87202:
+        case 87204:
+            break;
+        default:
+            return;
+    }
+    entry = isHorde ? __horde[rand() % 5] : __alliance[rand() % 5];
+    for (ObjectGuid const& guid : Spawns)
+        if (guid.GetEntry() == entry)
+            getRandTrader(entry, Spawns);
+}
+
 GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex faction, Garrison* garrison)
 {
     uint32 entry = EmptyGameObjectId;
@@ -1352,7 +1385,15 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
                 (BuildingInfo.PacketInfo && BuildingInfo.PacketInfo->Active == data->building))
                 continue;
             Creature* linkNPC = new Creature();
-            if (!linkNPC->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), map, 1, data->id, 0, 0, data->posX, data->posY, data->posZ, data->orientation) ||
+            uint32 entry = data->id;
+
+            //rand npc check.
+            if (buildingEtry && buildingEtry->Type == GARR_BTYPE_TRADING_POST)
+            {
+                getRandTrader(entry, BuildingInfo.Spawns);
+            }
+
+            if (!linkNPC->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), map, 1, entry, 0, 0, data->posX, data->posY, data->posZ, data->orientation) ||
                 !linkNPC->IsPositionValid() || !map->AddToMap(linkNPC))
             {
                 delete linkNPC;
