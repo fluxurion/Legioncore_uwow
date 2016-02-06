@@ -823,10 +823,10 @@ void Garrison::Swap(uint32 plot1, uint32 plot2)
         buildingRemoved.GarrBuildingID = BuildingId1;
         _owner->SendDirectMessage(buildingRemoved.Write());
 
-        p1->ClearBuildingInfo(_owner);
         if (Map* map = FindMap())
         {
             p1->DeleteGameObject(map);
+            p1->ClearBuildingInfo(_owner);
             if (GameObject* go = p1->CreateGameObject(map, GetFaction(), this))
                 map->AddToMap(go);
         }
@@ -844,10 +844,10 @@ void Garrison::Swap(uint32 plot1, uint32 plot2)
             buildingRemoved.GarrBuildingID = BuildingId2;
             _owner->SendDirectMessage(buildingRemoved.Write());
 
-            p2->ClearBuildingInfo(_owner);
             if (Map* map = FindMap())
             {
                 p2->DeleteGameObject(map);
+                p2->ClearBuildingInfo(_owner);
                 if (GameObject* go = p2->CreateGameObject(map, GetFaction(), this))
                     map->AddToMap(go);
             }
