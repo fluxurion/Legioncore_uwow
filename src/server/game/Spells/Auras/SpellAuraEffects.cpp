@@ -1431,7 +1431,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
         {
             uint32 mountType = uint32(GetMiscValueB());
             if (MountEntry const* mountEntry = sDB2Manager.GetMount(GetId()))
-                mountType = mountEntry->MountTypeId;
+                mountType = mountEntry->MountTypeID;
 
             if (MountCapabilityEntry const* mountCapability = GetBase()->GetUnitOwner()->GetMountCapability(mountType))
             {
@@ -3811,7 +3811,7 @@ void AuraEffect::HandleAuraMounted(AuraApplication const* aurApp, uint8 mode, bo
 
         if (MountEntry const* mountEntry = sDB2Manager.GetMount(GetId()))
         {
-            displayId = mountEntry->DisplayId;
+            displayId = mountEntry->DisplayID;
             // TODO: CREATE TABLE mount_vehicle (mountId, vehicleCreatureId) for future mounts that are vehicles (new mounts no longer have proper data in MiscValue)
             //if (MountVehicle const* mountVehicle = sObjectMgr->GetMountVehicle(mountEntry->Id))
             //    creatureEntry = mountVehicle->VehicleCreatureId;

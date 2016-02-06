@@ -1497,16 +1497,16 @@ struct QuestPackageItemEntry
 
 struct MountEntry
 {
-    uint32 Id;
-    uint32 MountTypeId;
-    uint32 DisplayId;
-    uint32 Flags;
+    uint32      ID;
+    uint32      SpellID;
+    uint32      DisplayID;
     LocalizedString* Name;
     LocalizedString* Description;
     LocalizedString* SourceDescription;
-    uint32 Source;
-    uint32 SpellId;
-    uint32 PlayerConditionId;
+    uint16      MountTypeID;
+    uint16      Flags;
+    uint16      PlayerConditionId;
+    uint8       Source;
 };
 
 struct LanguageWordsEntry
@@ -1526,8 +1526,8 @@ struct OverrideSpellDataEntry
 {
     uint32 ID;                                                      // 0
     uint32 SpellID[MAX_OVERRIDE_SPELL];                             // 1-10
-    uint32 Flags;                                                   // 11
-    uint32 PlayerActionbarFileDataID;                               // 12
+    uint32 PlayerActionbarFileDataID;                               // 11
+    uint8  Flags;                                                   // 12
 };
 
 struct SoundEntriesEntry

@@ -13758,7 +13758,7 @@ void Unit::UpdateMount() //@TODO:Legion - is this really needed?
     {
         AuraEffect* aura = *itr;
         if (MountEntry const* mountEntry = sDB2Manager.GetMount(aura->GetId()))
-            mountType = sMountTypeStore.LookupEntry(mountEntry->MountTypeId);
+            mountType = sMountTypeStore.LookupEntry(mountEntry->MountTypeID);
         if (mountType)
         {
             effect = aura;

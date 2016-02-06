@@ -7360,7 +7360,7 @@ bool Player::IsActionButtonDataValid(uint8 button, uint32 action, uint8 type)
             if (!mount)
                 return false;
 
-            if (!HasSpell(mount->SpellId))
+            if (!HasSpell(mount->SpellID))
                 return false;
 
             break;

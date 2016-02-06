@@ -335,18 +335,14 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
     //LOAD_DB2(sMapChallengeModeStore);
-    //LOAD_DB2(sMinorTalentStore);
     //LOAD_DB2(sMountCapabilityStore);            // 20914
-    //LOAD_DB2(sMountStore);
     //LOAD_DB2(sMountTypeStore);                  // 20914
-    //LOAD_DB2(sOverrideSpellDataStore);
     //LOAD_DB2(sPhaseStores);
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
     //LOAD_DB2(sSoundEntriesStore);
     //LOAD_DB2(sSpellItemEnchantmentConditionStore); // 20810 DB2FileLoader::Load 193 - not compatible and empty
-    //LOAD_DB2(sSpellLearnSpellStore);
     //LOAD_DB2(sSpellVisualStore);
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
@@ -354,6 +350,10 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
+    LOAD_DB2(sMountStore);                      // 20994
+    LOAD_DB2(sOverrideSpellDataStore);          // 20994
+    LOAD_DB2(sMinorTalentStore);                // 20994
+    LOAD_DB2(sSpellLearnSpellStore);            // 20994
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sAreaTriggerStore);                // 20994
     LOAD_DB2(sArmorLocationStore);              // 20914
@@ -569,7 +569,7 @@ void DB2Manager::InitDB2CustomStores()
     }
 
     for (MountEntry const* mount : sMountStore)
-        _mountsBySpellId[mount->SpellId] = mount;
+        _mountsBySpellId[mount->SpellID] = mount;
 
     for (MountTypeXCapabilityEntry const* mount : sMountTypeXCapabilityStore)
         _mountCapabilitiesByType[mount->MountTypeID].insert(mount);

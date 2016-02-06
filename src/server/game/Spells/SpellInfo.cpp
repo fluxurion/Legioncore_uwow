@@ -2179,7 +2179,7 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
                 {
                     uint32 mountType = Effects[i].MiscValueB;
                     if (MountEntry const* mountEntry = sDB2Manager.GetMount(Id))
-                        mountType = mountEntry->MountTypeId;
+                        mountType = mountEntry->MountTypeID;
                     if (mountType && !player->GetMountCapability(mountType))
                         return SPELL_FAILED_NOT_HERE;
                     break;
