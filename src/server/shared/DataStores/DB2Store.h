@@ -75,7 +75,7 @@ public:
         {
             switch (_format[i])
             {
-                case FT_IND:
+                //case FT_IND:
                 case FT_INT:
                     buffer << *(uint32*)entry;
                     entry += 4;
