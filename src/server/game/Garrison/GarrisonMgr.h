@@ -161,7 +161,7 @@ private:
     std::map<uint8 /*ShipmentGetType*/, shipmentStoreMap> shipment;
 
     std::set<GarrAbilityEntry const*> _garrisonFollowerRandomTraits;
-    std::unordered_map<uint32 /*ShipmentConteinerID*/, randShipment> randShipment;
+    std::unordered_map<uint32 /*ShipmentConteinerID*/, randShipment> _randShipment;
     
     uint64 _followerDbIdGenerator = UI64LIT(1);
     uint64 _missionDbIdGenerator = UI64LIT(1);
