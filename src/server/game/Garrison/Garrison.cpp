@@ -1285,7 +1285,7 @@ GarrisonError Garrison::CheckBuildingRemoval(uint32 garrPlotInstanceId) const
 }
 
 //! Only for GARR_BTYPE_TRADING_POST
-uint32 getRandTrader(uint32 entry, GuidUnorderedSet & const Spawns)
+void Garrison::Plot::getRandTrader(uint32 & entry)
 {
     const uint32 __data[2][5] = 
     {
@@ -1313,16 +1313,14 @@ uint32 getRandTrader(uint32 entry, GuidUnorderedSet & const Spawns)
         case 87204:
             break;
         default:
-            return entry;
+            return;
     }
     uint32 idx = urand(0, 4);
     entry = __data[isHorde][idx];
 
-    for (ObjectGuid const& guid : Spawns)
+    for (ObjectGuid const& guid : BuildingInfo.Spawns)
         if (guid.GetEntry() == entry)
-            return getRandTrader(entry, Spawns);
-
-    return entry;    
+            getRandTrader(entry); 
 }
 
 GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex faction, Garrison* garrison)
@@ -1398,7 +1396,7 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
             //rand npc check.
             if (buildingEtry && buildingEtry->Type == GARR_BTYPE_TRADING_POST)
             {
-                entry = getRandTrader(entry, BuildingInfo.Spawns);
+                getRandTrader(entry);
             }
 
             if (!linkNPC->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), map, 1, entry, 0, 0, data->posX, data->posY, data->posZ, data->orientation) ||

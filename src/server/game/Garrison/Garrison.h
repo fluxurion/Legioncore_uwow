@@ -114,6 +114,7 @@ public:
 
     struct Plot
     {
+        void getRandTrader(uint32& entry);
         GameObject* CreateGameObject(Map* map, GarrisonFactionIndex faction, Garrison* g);
         void DeleteGameObject(Map* map);
         void ClearBuildingInfo(Player* owner);
