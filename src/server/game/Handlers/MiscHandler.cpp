@@ -764,7 +764,7 @@ void WorldSession::HandleHearthAndResurrect(WorldPacket& /*recvData*/)
     if (_player->isInFlight())
         return;
 
-    AreaTableEntry const* atEntry = sDB2Manager.GetAreaEntryByAreaID(_player->GetAreaId());
+    AreaTableEntry const* atEntry = sAreaTableStore.LookupEntry(_player->GetAreaId());
     if (!atEntry || !(atEntry->Flags[0] & AREA_FLAG_WINTERGRASP_2))
         return;
 

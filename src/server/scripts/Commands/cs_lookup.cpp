@@ -89,36 +89,32 @@ public:
         wstrToLower(wNamePart);
 
         // Search in AreaTable.dbc
-        for (uint32 areaflag = 0; areaflag < sAreaStore.GetNumRows(); ++areaflag)
+        for (AreaTableEntry const* areaEntry : sAreaTableStore)
         {
-            AreaTableEntry const* areaEntry = sAreaStore.LookupEntry(areaflag);
-            if (areaEntry)
+            std::string name = areaEntry->ZoneName->Str[sObjectMgr->GetDBCLocaleIndex()];
+            if (name.empty())
+                continue;
+
+            if (!Utf8FitTo(name, wNamePart))
+                continue;
+
+            if (maxResults && count++ == maxResults)
             {
-                std::string name = areaEntry->ZoneName;
-                if (name.empty())
-                    continue;
-
-                if (!Utf8FitTo(name, wNamePart))
-                    continue;
-
-                if (maxResults && count++ == maxResults)
-                {
-                    handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
-                    return true;
-                }
-
-                // send area in "id - [name]" format
-                std::ostringstream ss;
-                if (handler->GetSession())
-                    ss << areaEntry->ID << " - |cffffffff|Harea:" << areaEntry->ID << "|h[" << name<< "]|h|r";
-                else
-                    ss << areaEntry->ID << " - " << name;
-
-                handler->SendSysMessage(ss.str().c_str());
-
-                if (!found)
-                    found = true;
+                handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
+                return true;
             }
+
+            // send area in "id - [name]" format
+            std::ostringstream ss;
+            if (handler->GetSession())
+                ss << areaEntry->ID << " - |cffffffff|Harea:" << areaEntry->ID << "|h[" << name << "]|h|r";
+            else
+                ss << areaEntry->ID << " - " << name;
+
+            handler->SendSysMessage(ss.str().c_str());
+
+            if (!found)
+                found = true;
         }
 
         if (!found)

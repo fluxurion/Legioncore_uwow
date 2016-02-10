@@ -2175,7 +2175,7 @@ void LoadLootTemplates_Fishing()
     uint32 count = LootTemplates_Fishing.LoadAndCollectLootIds(lootIdSet);
 
     // remove real entries and check existence loot
-    for (AreaTableEntry const* areaEntry : sAreaStore)
+    for (AreaTableEntry const* areaEntry : sAreaTableStore)
         if (lootIdSet.find(areaEntry->ID) != lootIdSet.end())
             lootIdSet.erase(areaEntry->ID);
 

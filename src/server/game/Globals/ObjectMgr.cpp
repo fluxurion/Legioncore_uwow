@@ -3803,7 +3803,7 @@ void ObjectMgr::LoadQuests()
         // client quest log visual (area case)
         if (qinfo->QuestSortID > 0)
         {
-            if (!sDB2Manager.GetAreaEntryByAreaID(qinfo->QuestSortID))
+            if (!sAreaTableStore.LookupEntry(qinfo->QuestSortID))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `QuestSortID` = %u (zone case) but zone with this id does not exist.",
                     qinfo->GetQuestId(), qinfo->QuestSortID);
@@ -5676,7 +5676,7 @@ void ObjectMgr::LoadGraveyardZones()
             continue;
         }
 
-        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(zoneId);
         if (!areaEntry)
         {
             sLog->outError(LOG_FILTER_SQL, "Table `game_graveyard_zone` has a record for not existing zone id (%u), skipped.", zoneId);
@@ -7505,7 +7505,7 @@ void ObjectMgr::LoadAreaQuestRelations()
 
     for (QuestRelations::iterator itr = _areaQuestRelations.begin(); itr != _areaQuestRelations.end(); ++itr)
     {
-        AreaTableEntry const* fArea = sDB2Manager.GetAreaEntryByAreaID(itr->first);
+        AreaTableEntry const* fArea = sAreaTableStore.LookupEntry(itr->first);
         if (!fArea)
         {
             sLog->outError(LOG_FILTER_SQL, "Table `area_questrelation` have data for not existed area entry (%u) and existed quest %u", itr->first, itr->second);
@@ -7921,7 +7921,7 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
         uint32 entry  = fields[0].GetUInt32();
         int32 skill   = fields[1].GetInt16();
 
-        AreaTableEntry const* fArea = sDB2Manager.GetAreaEntryByAreaID(entry);
+        AreaTableEntry const* fArea = sAreaTableStore.LookupEntry(entry);
         if (!fArea)
         {
             sLog->outError(LOG_FILTER_SQL, "AreaId %u defined in `skill_fishing_base_level` does not exist", entry);
@@ -9340,7 +9340,7 @@ void ObjectMgr::LoadResearchSiteToZoneData()
         data.zone = zone_id;
         data.branch_id = branch_id;
 
-        for (AreaTableEntry const* area : sAreaStore)
+        for (AreaTableEntry const* area : sAreaTableStore)
         {
             if (area->ParentAreaID == zone_id)
             {

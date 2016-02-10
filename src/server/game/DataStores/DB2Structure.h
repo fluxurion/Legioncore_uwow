@@ -52,16 +52,16 @@ struct AreaTableEntry
     uint32      ID;                                         // 0
     uint32      mapid;                                      // 1
     uint32      ParentAreaID;                               // 2 if 0 then it's zone, else it's zone id of this area
-    uint32      AreaBit;                                    // 3, main index
+    int32       AreaBit;                                    // 3, main index
     uint32      Flags[2];                                   // 4-5,
     uint32      SoundProviderPref;                          // 6,
     uint32      SoundProviderPrefUnderwater;                // 7,
     uint32      AmbienceID;                                 // 8,
     uint32      ZoneMusic;                                  // 9,
-    char*       ZoneName;                                   // 10
+    LocalizedString* ZoneName;                              // 10
     uint32      IntroSound;                                 // 11
     uint32      ExplorationLevel;                           // 12
-    char*       AreaName_lang;                               // 13
+    LocalizedString* AreaName_lang;                         // 13
     uint32      FactionGroupMask;                           // 14
     uint32      LiquidTypeID[4];                            // 15-18
     float       AmbientMultiplier;                          // 19

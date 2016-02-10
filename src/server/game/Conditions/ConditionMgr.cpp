@@ -1716,7 +1716,7 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
         }
         case CONDITION_ZONEID:
         {
-            AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(cond->ConditionValue1);
+            AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(cond->ConditionValue1);
             if (!areaEntry)
             {
                 sLog->outError(LOG_FILTER_SQL, "ZoneID condition has non existing area (%u), skipped", cond->ConditionValue1);

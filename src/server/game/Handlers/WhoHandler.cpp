@@ -124,8 +124,8 @@ void WorldSession::HandleWhoOpcode(WorldPackets::Who::WhoRequestPkt& whoRequest)
         if (!wWords.empty())
         {
             std::string aName;
-            if (AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(target->GetZoneId()))
-                aName = areaEntry->ZoneName;
+            if (AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(target->GetZoneId()))
+                aName = areaEntry->ZoneName->Str[sObjectMgr->GetDBCLocaleIndex()];
 
             bool show = false;
             for (size_t i = 0; i < wWords.size(); ++i)

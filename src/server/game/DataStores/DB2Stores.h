@@ -28,7 +28,7 @@
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
-extern DB2Storage<AreaTableEntry>                   sAreaStore;
+extern DB2Storage<AreaTableEntry>                   sAreaTableStore;
 extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
 extern DB2Storage<AuctionHouseEntry>                sAuctionHouseStore;
@@ -305,8 +305,6 @@ public:
     typedef std::set<uint32> PetFamilySpellsSet;
     typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsContainer;
     typedef std::map<uint32, AreaTableEntry const*> AreaEntryContainer;
-    typedef std::map<uint16, uint32> AreaFlagByAreaIDContainer;
-    typedef std::map<uint32, uint32> AreaFlagByMapIDContainer;
     typedef std::map<uint32, DungeonEncounterEntry const*> DungeonEncounterByDisplayIDContainer;
     typedef MinorTalentEntry const* MinorTalentByIndexContainer[SPEC_MAX_SPEC_INDEX][4];
     typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
@@ -377,10 +375,6 @@ public:
     uint32 GetPowerIndexByClass(uint32 powerType, uint32 classId) const;
     AreaTableEntry const* FindAreaEntry(uint32 area);
     uint32 GetParentZoneOrSelf(uint32 zone);
-    int32 GetAreaFlagByAreaID(uint32 areaID);
-    AreaTableEntry const* GetAreaEntryByAreaID(uint32 areaID);
-    AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 areaFlag, uint32 mapID);
-    uint32 GetAreaFlagByMapId(uint32 mapID);
     char const* GetPetName(uint32 petfamily);
     MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty &difficulty);
     MapDifficultyEntry const* GetDefaultMapDifficulty(uint32 mapID);
@@ -444,8 +438,6 @@ private:
     PetFamilySpellsContainer _petFamilySpells;
     uint32 _powersByClass[MAX_CLASSES][MAX_POWERS];
     AreaEntryContainer _areaEntry;
-    AreaFlagByAreaIDContainer _areaFlagByAreaID;
-    AreaFlagByMapIDContainer _areaFlagByMapID;
     DungeonEncounterByDisplayIDContainer _dungeonEncounterByDisplayID;
     MinorTalentByIndexContainer _minorTalentByIndexStore;
     SpellMiscDifficultyContainer _spellMiscDifficulty;

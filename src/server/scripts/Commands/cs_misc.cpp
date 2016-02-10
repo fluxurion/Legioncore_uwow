@@ -293,11 +293,11 @@ public:
 
     static bool HandleGPSCommand(ChatHandler* handler, char const* args)
     {
-        WorldObject* object = NULL;
+        WorldObject* object = nullptr;
         if (*args)
         {
             ObjectGuid guid = handler->extractGuidFromLink((char*)args);
-            if (guid)
+            if (!guid.IsEmpty())
                 object = (WorldObject*)ObjectAccessor::GetObjectByTypeMask(*handler->GetSession()->GetPlayer(), guid, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT);
 
             if (!object)
@@ -325,11 +325,12 @@ public:
         uint32 zoneId, areaId;
         object->GetZoneAndAreaId(zoneId, areaId);
         uint32 pzoneId = sDB2Manager.GetParentZoneOrSelf(zoneId);
+        uint32 mapId = object->GetMapId();
 
-        MapEntry const* mapEntry = sMapStore.LookupEntry(object->GetMapId());
-        AreaTableEntry const* zoneEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
-        AreaTableEntry const* pzoneEntry = sDB2Manager.GetAreaEntryByAreaID(pzoneId);
-        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(areaId);
+        MapEntry const* mapEntry = sMapStore.LookupEntry(mapId);
+        AreaTableEntry const* zoneEntry = sAreaTableStore.LookupEntry(zoneId);
+        AreaTableEntry const* pzoneEntry = sAreaTableStore.LookupEntry(pzoneId);
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(areaId);
 
         float zoneX = object->GetPositionX();
         float zoneY = object->GetPositionY();
@@ -342,13 +343,12 @@ public:
 
         GridCoord gridCoord = Trinity::ComputeGridCoord(object->GetPositionX(), object->GetPositionY());
 
-        // 63? WHY?
-        int gridX = 63 - gridCoord.x_coord;
-        int gridY = 63 - gridCoord.y_coord;
+        int gridX = (MAX_NUMBER_OF_GRIDS - 1) - gridCoord.x_coord;
+        int gridY = (MAX_NUMBER_OF_GRIDS - 1) - gridCoord.y_coord;
 
-        uint32 haveMap = Map::ExistMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
-        uint32 haveVMap = Map::ExistVMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
-        const char* AreaName = areaEntry ? areaEntry->AreaName_lang : "<unknown>";
+        uint32 haveMap = Map::ExistMap(mapId, gridX, gridY) ? 1 : 0;
+        uint32 haveVMap = Map::ExistVMap(mapId, gridX, gridY) ? 1 : 0;
+        const char* AreaName = areaEntry ? areaEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>";
 
         if (haveVMap)
         {
@@ -374,8 +374,8 @@ public:
         uint32 pZone = sDB2Manager.GetParentZoneOrSelf(zoneId);
         handler->PSendSysMessage(LANG_MAP_POSITION,
             object->GetMapId(), (mapEntry ? mapEntry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
-            zoneId, (zoneEntry ? zoneEntry->AreaName_lang : "<unknown>"),
-            pzoneId, (pzoneEntry ? pzoneEntry->AreaName_lang : "<unknown>"),
+            zoneId, (zoneEntry ? zoneEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
+            pzoneEntry, (pzoneEntry ? pzoneEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
             areaId, AreaName,
             object->GetPhaseMask(),
             object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), object->GetOrientation(),
@@ -393,6 +393,21 @@ public:
 
         if (status)
             handler->PSendSysMessage(LANG_LIQUID_STATUS, liquidStatus.level, liquidStatus.depth_level, liquidStatus.entry, liquidStatus.type_flags, status);
+
+        if (!object->GetTerrainSwaps().empty())
+        {
+            std::stringstream ss;
+            for (uint32 swap : object->GetTerrainSwaps())
+                ss << swap << " ";
+            handler->PSendSysMessage("Target's active terrain swaps: %s", ss.str().c_str());
+        }
+        if (!object->GetWorldMapAreaSwaps().empty())
+        {
+            std::stringstream ss;
+            for (uint32 swap : object->GetWorldMapAreaSwaps())
+                ss << swap << " ";
+            handler->PSendSysMessage("Target's active world map area swaps: %s", ss.str().c_str());
+        }
 
         return true;
     }
@@ -1254,7 +1269,7 @@ public:
 
         uint32 zoneId = player->GetZoneId();
 
-        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaID(zoneId);
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(zoneId);
         if (!areaEntry || areaEntry->ParentAreaID !=0)
         {
             handler->PSendSysMessage(LANG_COMMAND_GRAVEYARDWRONGZONE, graveyardId, zoneId);
@@ -1956,14 +1971,14 @@ public:
 
         MapEntry const* map = sMapStore.LookupEntry(mapId);
 
-        AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaID(areaId);
+        AreaTableEntry const* area = sAreaTableStore.LookupEntry(areaId);
         if (area)
         {
-            areaName = area->ZoneName;
+            areaName = area->ZoneName->Str[sObjectMgr->GetDBCLocaleIndex()];
 
-            AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(area->ParentAreaID);
+            AreaTableEntry const* zone = sAreaTableStore.LookupEntry(area->ParentAreaID);
             if (zone)
-                zoneName = zone->ZoneName;
+                zoneName = zone->ZoneName->Str[sObjectMgr->GetDBCLocaleIndex()];
         }
 
         if (target)

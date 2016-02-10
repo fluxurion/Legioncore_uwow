@@ -6312,11 +6312,13 @@ void Player::RepopAtGraveyard()
     // note: this can be called also when the player is alive
     // for example from WorldSession::HandleMovementOpcodes
 
-    AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(GetAreaId());
-    if (!zone)
+    AreaTableEntry const* zone = sAreaTableStore.LookupEntry(GetAreaId());
+
+    // Such zones are considered unreachable as a ghost and the player must be automatically revived
+    if ((!isAlive() && zone && zone->Flags[0] & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < GetMap()->GetMinHeight(GetPositionX(), GetPositionY()))
     {
-        sLog->outInfo(LOG_FILTER_PLAYER, "Unknown area ID = %u for player %u", GetAreaId(), GetGUIDLow());
-        return;
+        ResurrectPlayer(0.5f);
+        SpawnCorpseBones();
     }
 
     WorldSafeLocsEntry const* ClosestGrave = NULL;
@@ -6357,9 +6359,7 @@ void Player::RepopAtGraveyard()
     // if grave found and no transport
     if (ClosestGrave && !GetTransport())
     {
-        TeleportTo(ClosestGrave->MapID, ClosestGrave->Loc.X, ClosestGrave->Loc.Y, ClosestGrave->Loc.Z, GetOrientation());
-        UpdateObjectVisibility();
-
+        TeleportTo(ClosestGrave->MapID, ClosestGrave->Loc.X, ClosestGrave->Loc.Y, ClosestGrave->Loc.Z, (ClosestGrave->Loc.O * M_PI) / 180); // Orientation is initially in degrees
         if (isDead())                                        // not send if alive, because it used in TeleportTo()
         {
             WorldPackets::Misc::DeathReleaseLoc packet;
@@ -6368,20 +6368,8 @@ void Player::RepopAtGraveyard()
             GetSession()->SendPacket(packet.Write());
         }
     }
-    // if no grave found or have transport, teleport to home in ghost state
-    // don't need old resurrect, maybe in transport/vehicle only and some zones too, but no falling!
-    else
-    {
-        if ((!isAlive() && zone && zone->Flags[0] & AREA_FLAG_NEED_FLY) || GetTransport())
-        {
-            ResurrectPlayer(0.5f);
-            SpawnCorpseBones();
-            return;
-        }
-
+    else if (GetPositionZ() < GetMap()->GetMinHeight(GetPositionX(), GetPositionY()))
         TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation());
-        UpdateObjectVisibility();
-    }
 }
 
 bool Player::CanJoinConstantChannelInZone(ChatChannelsEntry const* channel, AreaTableEntry const* zone)
@@ -6430,7 +6418,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
     if (GetSession()->PlayerLoading() && !IsBeingTeleportedFar())
         return;                                              // The client handles it automatically after loading, but not after teleporting
 
-    AreaTableEntry const* current_zone = sDB2Manager.GetAreaEntryByAreaID(newZone);
+    AreaTableEntry const* current_zone = sAreaTableStore.LookupEntry(newZone);
     if (!current_zone)
         return;
 
@@ -6438,7 +6426,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
     if (!cMgr)
         return;
 
-    std::string current_zone_name = current_zone->ZoneName;
+    std::string current_zone_name = current_zone->ZoneName->Str[sObjectMgr->GetDBCLocaleIndex()];
 
     for (ChatChannelsEntry const* channel : sChatChannelsStore)
     {
@@ -7584,23 +7572,25 @@ void Player::CheckAreaExploreAndOutdoor()
     if (isInFlight())
         return;
 
-    bool isOutdoor;
-    uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
+    bool isOutdoor = false;
+    uint32 areaId = GetBaseMap()->GetAreaId(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
+    AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(areaId);
 
     if (sWorld->getBoolConfig(CONFIG_VMAP_INDOOR_CHECK) && !isOutdoor)
         RemoveAurasWithAttribute(SPELL_ATTR0_OUTDOORS_ONLY);
 
-    if (areaFlag == 0xffff)
+    if (!areaId)
         return;
-    int offset = areaFlag / 32;
+
+    if (!areaEntry)
+        return;
+
+    uint32 offset = areaEntry->AreaBit / 32;
 
     if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
-    {
-        sLog->outError(LOG_FILTER_PLAYER, "Wrong area flag %u in map data for (X: %f Y: %f) point to field PLAYER_FIELD_EXPLORED_ZONES + %u ( %u must be < %u ).", areaFlag, GetPositionX(), GetPositionY(), offset, offset, PLAYER_EXPLORED_ZONES_SIZE);
         return;
-    }
 
-    uint32 val = (uint32)(1 << (areaFlag % 32));
+    uint32 val = (uint32)(1 << (areaEntry->AreaBit % 32));
     uint32 currFields = GetUInt32Value(PLAYER_FIELD_EXPLORED_ZONES + offset);
 
     if (!(currFields & val))
@@ -7609,20 +7599,10 @@ void Player::CheckAreaExploreAndOutdoor()
 
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA);
 
-        AreaTableEntry const* areaEntry = sDB2Manager.GetAreaEntryByAreaFlagAndMap(areaFlag, GetMapId());
-        if (!areaEntry)
-        {
-            sLog->outError(LOG_FILTER_PLAYER, "Player %u discovered unknown area (x: %f y: %f z: %f map: %u", GetGUIDLow(), GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId());
-            return;
-        }
-
         if (areaEntry->ExplorationLevel > 0)
         {
-            uint32 area = areaEntry->ID;
             if (getLevel() >= sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
-            {
-                SendExplorationExperience(area, 0);
-            }
+                SendExplorationExperience(areaId, 0);
             else
             {
                 int32 diff = int32(getLevel()) - areaEntry->ExplorationLevel;
@@ -7654,9 +7634,9 @@ void Player::CheckAreaExploreAndOutdoor()
                 }
 
                 GiveXP(XP, NULL);
-                SendExplorationExperience(area, XP);
+                SendExplorationExperience(areaId, XP);
             }
-            sLog->outInfo(LOG_FILTER_PLAYER, "Player %u discovered a new area: %u", GetGUIDLow(), area);
+            sLog->outInfo(LOG_FILTER_PLAYER, "Player %u discovered a new area: %u", GetGUIDLow(), areaId);
             phaseMgr.RemoveUpdateFlag(PHASE_UPDATE_FLAG_ZONE_UPDATE);
         }
     }
@@ -8615,8 +8595,8 @@ uint32 Player::GetLevelFromDB(ObjectGuid guid)
 
 void Player::UpdateArea(uint32 newArea)
 {
-    AreaTableEntry const* oldArea = sDB2Manager.GetAreaEntryByAreaID(m_areaUpdateId);
-    AreaTableEntry const* area = sDB2Manager.GetAreaEntryByAreaID(newArea);
+    AreaTableEntry const* oldArea = sAreaTableStore.LookupEntry(m_areaUpdateId);
+    AreaTableEntry const* area = sAreaTableStore.LookupEntry(newArea);
     
     //! new area on garrison not has flag2 - 0x20
     if (area && (area->Flags[1] & 0x20) == 0 && GetMap()->IsGarrison())
@@ -8683,7 +8663,7 @@ void Player::UpdateArea(uint32 newArea)
                 if (newMap && newMap->CanEnter(this))
                 {
                     uint32 _are = newMap->GetAreaId(GetPositionX(), GetPositionY(), GetPositionZ());
-                    if (AreaTableEntry const* _area = sDB2Manager.GetAreaEntryByAreaID(_are))
+                    if (AreaTableEntry const* _area = sAreaTableStore.LookupEntry(_are))
                     {
                         if (_area->Flags[1] & 0x20)
                             TeleportTo(garr->GetGarrisonMapID(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_SEAMLESS);
@@ -8719,7 +8699,7 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     // zone changed, so area changed as well, update it
     UpdateArea(newArea);
 
-    AreaTableEntry const* zone = sDB2Manager.GetAreaEntryByAreaID(newZone);
+    AreaTableEntry const* zone = sAreaTableStore.LookupEntry(newZone);
     if (!zone)
         return;
 

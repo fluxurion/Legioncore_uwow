@@ -25,7 +25,7 @@
 
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
-DB2Storage<AreaTableEntry>                  sAreaStore("AreaTable.db2", AreaTableFormat, HOTFIX_SEL_AREA_TABLE);
+DB2Storage<AreaTableEntry>                  sAreaTableStore("AreaTable.db2", AreaTableFormat, HOTFIX_SEL_AREA_TABLE);
 DB2Storage<AreaTriggerEntry>                sAreaTriggerStore("AreaTrigger.db2", AreaTriggerFormat, HOTFIX_SEL_AREA_TRIGGER);
 DB2Storage<ArmorLocationEntry>              sArmorLocationStore("ArmorLocation.db2", ArmorLocationFormat, HOTFIX_SEL_ARMOR_LOCATION);
 DB2Storage<AuctionHouseEntry>               sAuctionHouseStore("AuctionHouse.db2", AuctionHouseFormat, HOTFIX_SEL_AUCTION_HOUSE);
@@ -282,7 +282,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     //LOAD_DB2(sAreaGroupMemberStore);
-    //LOAD_DB2(sAreaStore);
+    //LOAD_DB2(sAreaTableStore);
     //LOAD_DB2(sBarberShopStyleStore);            // 20914
     //LOAD_DB2(sBattlePetAbilityEffectStore);
     //LOAD_DB2(sBattlePetAbilityStateStore);
@@ -497,14 +497,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 void DB2Manager::InitDB2CustomStores()
 {
-    for (AreaTableEntry const* area : sAreaStore)
-    {
+    for (AreaTableEntry const* area : sAreaTableStore)
         _areaEntry.insert(AreaEntryContainer::value_type(area->ID, area));
-        _areaFlagByAreaID.insert(AreaFlagByAreaIDContainer::value_type(uint16(area->ID), area->AreaBit));
-
-        if (area->ParentAreaID == 0)
-            _areaFlagByMapID.insert(AreaFlagByMapIDContainer::value_type(area->mapid, area->AreaBit));
-    }
 
     for (BattlePetSpeciesEntry const* entry : sBattlePetSpeciesStore)
         _battlePetSpeciesBySpellId[entry->CreatureEntry] = entry;
@@ -1523,44 +1517,6 @@ uint32 DB2Manager::GetParentZoneOrSelf(uint32 zone)
         return zone;
 
     return area->ParentAreaID ? area->ParentAreaID : zone;
-}
-
-int32 DB2Manager::GetAreaFlagByAreaID(uint32 areaID)
-{
-    AreaFlagByAreaIDContainer::iterator i = _areaFlagByAreaID.find(areaID);
-    if (i != _areaFlagByAreaID.end())
-        return i->second;
-
-    return -1;
-}
-
-AreaTableEntry const* DB2Manager::GetAreaEntryByAreaID(uint32 areaID)
-{
-    int32 areaflag = GetAreaFlagByAreaID(areaID);
-    if (areaflag < 0)
-        return nullptr;
-
-    return sAreaStore.LookupEntry(areaflag);
-}
-
-AreaTableEntry const* DB2Manager::GetAreaEntryByAreaFlagAndMap(uint32 areaFlag, uint32 mapID)
-{
-    if (areaFlag)
-        return sAreaStore.LookupEntry(areaFlag);
-
-    if (MapEntry const* mapEntry = sMapStore.LookupEntry(mapID))
-        return GetAreaEntryByAreaID(mapEntry->AreaTableID);
-
-    return nullptr;
-}
-
-uint32 DB2Manager::GetAreaFlagByMapId(uint32 mapID)
-{
-    AreaFlagByMapIDContainer::iterator i = _areaFlagByMapID.find(mapID);
-    if (i != _areaFlagByMapID.end())
-        return i->second;
-
-    return 0;
 }
 
 char const* DB2Manager::GetPetName(uint32 petfamily)
