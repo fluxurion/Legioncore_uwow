@@ -49,36 +49,36 @@
 
 struct AreaTableEntry
 {
-    uint32      ID;                                         // 0
-    uint32      mapid;                                      // 1
-    uint32      ParentAreaID;                               // 2 if 0 then it's zone, else it's zone id of this area
-    int32       AreaBit;                                    // 3, main index
-    uint32      Flags[2];                                   // 4-5,
-    uint32      SoundProviderPref;                          // 6,
-    uint32      SoundProviderPrefUnderwater;                // 7,
-    uint32      AmbienceID;                                 // 8,
-    uint32      ZoneMusic;                                  // 9,
-    LocalizedString* ZoneName;                              // 10
-    uint32      IntroSound;                                 // 11
-    uint32      ExplorationLevel;                           // 12
-    LocalizedString* AreaName_lang;                         // 13
-    uint32      FactionGroupMask;                           // 14
-    uint32      LiquidTypeID[4];                            // 15-18
-    float       AmbientMultiplier;                          // 19
-    uint32      MountFlags;                                   // 20
-    uint32      UWIntroMusic;                               // 21
-    uint32      UWZoneMusic;                                // 22
-    uint32      WorldPvPID;                                 // 24 World_PVP_Area.dbc
-    uint32      PvPCombastWorldStateID;                     // 25
-    uint32      m_wildBattlePetLevelMin;                      // 26
-    uint32      m_wildBattlePetLevelMax;                      // 27
-    uint32      WindSettingsID;                             // 28
+    uint32      ID;
+    uint32      Flags[2];                                   // 0 - 1
+    LocalizedString* ZoneName;                              // 2
+    float       AmbientMultiplier;                          // 3
+    LocalizedString* AreaName;                              // 4
+    uint16      MapID;                                      // 5
+    uint16      ParentAreaID;                               // 6
+    int16       AreaBit;                                    // 7
+    uint16      AmbienceID;                                 // 8
+    uint16      ZoneMusic;                                  // 9
+    uint16      IntroSound;                                 // 10
+    uint16      LiquidTypeID[4];                            // 11 - 14
+    uint16      UWZoneMusic;                                // 15
+    uint16      WorldPvPID;                                 // 16
+    uint16      PvPCombastWorldStateID;                     // 17
+    uint8       SoundProviderPref;                          // 18
+    uint8       SoundProviderPrefUnderwater;                // 19
+    int8        ExplorationLevel;                           // 20
+    uint8       FactionGroupMask;                           // 21
+    uint8       MountFlags;                                 // 22
+    uint8       UWIntroMusic;                               // 23
+    uint8       WildBattlePetLevelMin;                      // 24
+    uint8       WildBattlePetLevelMax;                      // 25
+    uint8       WindSettingsID;                             // 26
 
-    // helpers
     bool IsSanctuary() const
     {
-        if (mapid == 609)
+        if (MapID == 609)
             return true;
+
         return (Flags[0] & AREA_FLAG_SANCTUARY) != 0;
     }
 };

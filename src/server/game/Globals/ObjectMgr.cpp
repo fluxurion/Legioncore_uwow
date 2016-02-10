@@ -5669,25 +5669,17 @@ void ObjectMgr::LoadGraveyardZones()
         uint32 zoneId = fields[1].GetUInt32();
         uint32 team   = fields[2].GetUInt16();
 
-        WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(safeLocId);
-        if (!entry)
+        if (!sWorldSafeLocsStore.LookupEntry(safeLocId))
         {
             sLog->outError(LOG_FILTER_SQL, "Table `game_graveyard_zone` has a record for not existing graveyard (WorldSafeLocs.dbc id) %u, skipped.", safeLocId);
             continue;
         }
 
-        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(zoneId);
-        if (!areaEntry)
+        if (!sAreaTableStore.LookupEntry(zoneId))
         {
             sLog->outError(LOG_FILTER_SQL, "Table `game_graveyard_zone` has a record for not existing zone id (%u), skipped.", zoneId);
             continue;
         }
-
-        /*if (areaEntry->ParentAreaID != 0)
-        {
-            sLog->outError(LOG_FILTER_SQL, "Table `game_graveyard_zone` has a record for subzone id (%u) instead of zone, skipped.", zoneId);
-            continue;
-        }*/
 
         if (team != 0 && team != HORDE && team != ALLIANCE)
         {
@@ -7504,14 +7496,11 @@ void ObjectMgr::LoadAreaQuestRelations()
     LoadQuestRelationsHelper(_areaQuestRelations, _areaQuestStarter, "area_queststart", false, false);
 
     for (QuestRelations::iterator itr = _areaQuestRelations.begin(); itr != _areaQuestRelations.end(); ++itr)
-    {
-        AreaTableEntry const* fArea = sAreaTableStore.LookupEntry(itr->first);
-        if (!fArea)
+        if (!sAreaTableStore.LookupEntry(itr->first))
         {
             sLog->outError(LOG_FILTER_SQL, "Table `area_questrelation` have data for not existed area entry (%u) and existed quest %u", itr->first, itr->second);
             continue;
         }
-    }
 }
 
 void ObjectMgr::LoadCreatureInvolvedRelations()
@@ -7921,8 +7910,7 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
         uint32 entry  = fields[0].GetUInt32();
         int32 skill   = fields[1].GetInt16();
 
-        AreaTableEntry const* fArea = sAreaTableStore.LookupEntry(entry);
-        if (!fArea)
+        if (!sAreaTableStore.LookupEntry(entry))
         {
             sLog->outError(LOG_FILTER_SQL, "AreaId %u defined in `skill_fishing_base_level` does not exist", entry);
             continue;
@@ -9341,13 +9329,11 @@ void ObjectMgr::LoadResearchSiteToZoneData()
         data.branch_id = branch_id;
 
         for (AreaTableEntry const* area : sAreaTableStore)
-        {
             if (area->ParentAreaID == zone_id)
             {
                 data.level = area->ExplorationLevel;
                 break;
             }
-        }
 
         ++counter;
     }

@@ -282,7 +282,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     //LOAD_DB2(sAreaGroupMemberStore);
-    //LOAD_DB2(sAreaTableStore);
     //LOAD_DB2(sBarberShopStyleStore);            // 20914
     //LOAD_DB2(sBattlePetAbilityEffectStore);
     //LOAD_DB2(sBattlePetAbilityStateStore);
@@ -350,6 +349,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
+    LOAD_DB2(sAreaTableStore);                  // 20994
     LOAD_DB2(sMountStore);                      // 20994
     LOAD_DB2(sOverrideSpellDataStore);          // 20994
     LOAD_DB2(sMinorTalentStore);                // 20994

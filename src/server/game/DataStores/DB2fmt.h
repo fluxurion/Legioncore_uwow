@@ -23,7 +23,7 @@
 
 char const AchievementFormat[] = "nssistttttttbib";
 char const AreaGroupMemberFormat[] = "nii";
-char const AreaTableFormat[] = "iiiniixxxxsxisiiiiixixxxxiix";
+char const AreaTableFormat[] = "niisfstttttttttttttbbbbbbbbb";
 char const AreaTriggerFormat[] = "nifffiiifffffiiii";
 char const ArmorLocationFormat[] = "nfffff";
 char const AuctionHouseFormat[] = "nsiii";

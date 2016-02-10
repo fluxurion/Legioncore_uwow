@@ -348,7 +348,7 @@ public:
 
         uint32 haveMap = Map::ExistMap(mapId, gridX, gridY) ? 1 : 0;
         uint32 haveVMap = Map::ExistVMap(mapId, gridX, gridY) ? 1 : 0;
-        const char* AreaName = areaEntry ? areaEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>";
+        const char* AreaName = areaEntry ? areaEntry->AreaName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>";
 
         if (haveVMap)
         {
@@ -374,8 +374,8 @@ public:
         uint32 pZone = sDB2Manager.GetParentZoneOrSelf(zoneId);
         handler->PSendSysMessage(LANG_MAP_POSITION,
             object->GetMapId(), (mapEntry ? mapEntry->MapName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
-            zoneId, (zoneEntry ? zoneEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
-            pzoneEntry, (pzoneEntry ? pzoneEntry->AreaName_lang->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
+            zoneId, (zoneEntry ? zoneEntry->AreaName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
+            pzoneEntry, (pzoneEntry ? pzoneEntry->AreaName->Str[sObjectMgr->GetDBCLocaleIndex()] : "<unknown>"),
             areaId, AreaName,
             object->GetPhaseMask(),
             object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), object->GetOrientation(),
@@ -1356,6 +1356,10 @@ public:
         if (!*args)
             return false;
 
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(atoi((char*)args));
+        if (!areaEntry)
+            return false;
+
         Player* playerTarget = handler->getSelectedPlayer();
         if (!playerTarget)
         {
@@ -1364,7 +1368,7 @@ public:
             return false;
         }
 
-        int32 area = sDB2Manager.GetAreaFlagByAreaID(atoi((char*)args));
+        int32 area = areaEntry->ID;
         int32 offset = area / 32;
         uint32 val = uint32((1 << (area % 32)));
 
@@ -1387,6 +1391,10 @@ public:
         if (!*args)
             return false;
 
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(atoi((char*)args));
+        if (!areaEntry)
+            return false;
+
         Player* playerTarget = handler->getSelectedPlayer();
         if (!playerTarget)
         {
@@ -1395,7 +1403,7 @@ public:
             return false;
         }
 
-        int32 area = sDB2Manager.GetAreaFlagByAreaID(atoi((char*)args));
+        uint32 area = areaEntry->ID;
         int32 offset = area / 32;
         uint32 val = uint32((1 << (area % 32)));
 

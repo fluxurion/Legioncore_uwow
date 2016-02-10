@@ -8616,7 +8616,7 @@ void Player::UpdateArea(uint32 newArea)
     UpdatePvPState(true);
 
     //Pandaria area update for monk level < 85
-    if(area && getLevel() < 85 && getClass() == CLASS_MONK && GetMapId() == 870 && area->mapid == 870 &&
+    if(area && getLevel() < 85 && getClass() == CLASS_MONK && GetMapId() == 870 && area->MapID == 870 &&
         newArea != 6081 && newArea != 6526 && newArea != 6527 
         && m_zoneUpdateId == 5841 && !isGameMaster())
         TeleportTo(870, 3818.55f, 1793.18f, 950.35f, GetOrientation());
@@ -8707,14 +8707,8 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     {
         if (Weather* weather = WeatherMgr::FindWeather(zone->ID))
             weather->SendWeatherUpdateToPlayer(this);
-        else
-        {
-            if (!WeatherMgr::AddWeather(zone->ID))
-            {
-                // send fine weather packet to remove old zone's weather
+        else if (!WeatherMgr::AddWeather(zone->ID))
                 WeatherMgr::SendFineWeatherUpdateToPlayer(this);
-            }
-        }
     }
 
     sScriptMgr->OnPlayerUpdateZone(this, newZone, newArea);
