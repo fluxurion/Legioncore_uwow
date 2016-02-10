@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -217,6 +217,22 @@ struct adt_MH2O
             return 0xFFFFFFFFFFFFFFFFuLL;
     }
 
+};
+
+struct adt_MFBO
+{
+    union
+    {
+        uint32 fcc;
+        char   fcc_txt[4];
+    };
+    uint32 size;
+    struct plane
+    {
+        int16 coords[9];
+    };
+    plane max;
+    plane min;
 };
 
 #pragma pack(pop)
