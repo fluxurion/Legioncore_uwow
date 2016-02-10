@@ -27,7 +27,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     if (!m_reconnecting)
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
 
-    return;
     // AreaTable.db2
     PrepareStatement(HOTFIX_SEL_AREA_TABLE, "SELECT ID, Flags1, Flags2, ZoneName, AmbientMultiplier, AreaName, MapID, ParentAreaID, AreaBit, "
         "AmbienceID, ZoneMusic, IntroSound, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, LiquidTypeID4, UWZoneMusic, WorldPvPID, "
@@ -68,7 +67,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BROADCAST_TEXT, "SELECT ID, MaleText_lang, FemaleText_lang FROM broadcast_text_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CharTitles.db2
-    PrepareStatement(HOTFIX_SEL_CHAR_TITLES, "SELECT ID, NameMale, NameFemale, MaskID FROM char_titles ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHAR_TITLES, "SELECT ID, ConditionID, NameMale, NameFemale, MaskID, Flags FROM char_titles ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_CHAR_TITLES, "SELECT ID, NameMale_lang, NameFemale_lang FROM char_titles_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CurvePoint.db2
     PrepareStatement(HOTFIX_SEL_CURVE_POINT, "SELECT ID, CurveID, `Index`, X, Y FROM curve_point ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -85,8 +85,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_DIFFICULTY, "SELECT ID, NameLang_lang FROM difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // DungeonEncounter.db2
-    PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, mapId, difficulty, encounterIndex, encounterName, creatureDisplayID, spellIconID"
-        " FROM dungeon_encounter ORDER BY id DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, mapId, difficulty, orderIndex, encounterIndex, encounterName, creatureDisplayID, "
+        "spellIconID, flags FROM dungeon_encounter ORDER BY id DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, encounterName_lang FROM dungeon_encounter_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // EmotesText.db2
     PrepareStatement(HOTFIX_SEL_EMOTES_TEXT, "SELECT Id, textid FROM emotes_text ORDER BY Id DESC", CONNECTION_SYNCH);
@@ -309,12 +310,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT ID, Name_lang, Texture_lang FROM research_branch_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ResearchProject.db2
-    PrepareStatement(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT Name, Description, rare, branchId, SpellID, Complexity, RequiredCurrencyAmount, ID"
-        " FROM research_project ORDER BY Name DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT Name, Name_lang, Description_lang FROM research_project_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT ID, Name, Description, rare, branchId, SpellID, Complexity, RequiredCurrencyAmount"
+        " FROM research_project ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT ID, Name_lang, Description_lang FROM research_project_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ResearchSite.db2
-    PrepareStatement(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, MapID, POIid, areaName FROM research_site ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, MapID, POIid, areaName, flags FROM research_site ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, areaName_lang FROM research_site_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ItemBonus.db2
@@ -443,14 +444,14 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GarrEncounter.db2
-    PrepareStatement(HOTFIX_SEL_GARR_ENCOUNTER, "SELECT ID, CreatureEntry, Name, Mod, Mod1, SomeFileDataID FROM garr_encounter ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_GARR_ENCOUNTER, "SELECT ID, CreatureEntry, Name, `Mod`, Mod1, SomeFileDataID FROM garr_encounter ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_GARR_ENCOUNTER, "SELECT ID, Name_lang FROM garr_encounter_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // GarrEncounterXMechanic.db2
     PrepareStatement(HOTFIX_SEL_GARR_ENCOUNTER_X_MECHANIC, "SELECT ID, GarrEncounterID, GarrMechanicID FROM garr_encounter_x_mechanic ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GarrMechanic.db2
-    PrepareStatement(HOTFIX_SEL_GARR_MECHANIC, "SELECT ID, Type, Mod FROM garr_mechanic ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_GARR_MECHANIC, "SELECT ID, Type, `Mod` FROM garr_mechanic ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GarrMechanicType.db2
     PrepareStatement(HOTFIX_SEL_GARR_MECHANIC_TYPE, "SELECT ID, Category, Name, Description, SomeFileDataID FROM garr_mechanic_type ORDER BY ID DESC", CONNECTION_SYNCH);

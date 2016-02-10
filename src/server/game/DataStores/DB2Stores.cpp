@@ -233,34 +233,31 @@ static bool LoadDB2_assert_print(uint32 fsize, uint32 rsize, std::string const& 
 template<class T>
 inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, DB2Manager::StorageMap& stores, DB2Storage<T>* storage, std::string const& db2Path, uint32 defaultLocale)
 {
-    // compatibility format and C++ structure sizes
     ASSERT(DB2FileLoader::GetFormatRecordSize(storage->GetFormat()) == sizeof(T) || LoadDB2_assert_print(DB2FileLoader::GetFormatRecordSize(storage->GetFormat()), sizeof(T), storage->GetFileName().c_str()));
 
     ++DB2FilesCount;
 
     if (storage->Load(db2Path + localeNames[defaultLocale] + '/', defaultLocale))
     {
-        //storage->LoadFromDB();
+        storage->LoadFromDB();
 
-        //for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
-        //{
-        //    if (availableDb2Locales & (1 << i))
-        //        if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
-        //            availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
+        for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        {
+            if (availableDb2Locales & (1 << i))
+                if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
+                    availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
 
-        //    storage->LoadStringsFromDB(i);
-        //}
+            storage->LoadStringsFromDB(i);
+        }
     }
     else
     {
-        // sort problematic db2 to (1) non compatible and (2) nonexistent
         if (FILE* f = fopen((db2Path + storage->GetFileName()).c_str(), "rb"))
         {
             std::ostringstream stream;
             stream << storage->GetFileName() << " exists, and has " << storage->GetFieldCount() << " field(s) (expected " << strlen(storage->GetFormat())
                 << "). Extracted file might be from wrong client version.";
-            std::string buf = stream.str();
-            errlist.push_back(buf);
+            errlist.push_back(std::string(stream.str()));
             fclose(f);
         }
         else

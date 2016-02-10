@@ -178,11 +178,11 @@ struct BroadcastTextEntry
 struct CharTitlesEntry
 {
     uint32      ID;                                         // 0, title ids, for example in Quest::GetRewTitle()
-    //uint32    ConditionID;                                // 1
-    char*       NameMale_lang;                              // 2 m_name_lang
-    char*       NameFemale_lang;                            // 3 m_name1_lang
+    uint32      ConditionID;                                // 1
+    LocalizedString* NameMale_lang;                              // 2 m_name_lang
+    LocalizedString* NameFemale_lang;                            // 3 m_name1_lang
     uint32      MaskID;                                     // 4 m_mask_ID used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
-    //uint32    Flags;                                      // 5
+    uint32      Flags;                                      // 5
 };
 
 struct CurvePointEntry
@@ -232,12 +232,12 @@ struct DungeonEncounterEntry
     uint32      id;                                              // 0        unique id
     uint32      mapId;                                           // 1        map id
     uint32      difficulty;                                      // 2        instance mode
-    //uint32    orderIndex;                                    // 3
+    uint32      orderIndex;                                    // 3
     uint32      encounterIndex;                                  // 4        encounter index for creating completed mask
-    char*       encounterName;                                    // 5        encounter name
+    LocalizedString* encounterName;                                    // 5        encounter name
     uint32      creatureDisplayID;                               // 6
     uint32      spellIconID;                                     // 7
-    //uint32    flags;                                         // 8
+    uint32      flags;                                         // 8
 };
 
 struct EmotesTextEntry
@@ -549,15 +549,6 @@ struct CreatureDisplayInfoEntry
     uint8       Unknown7;                                   // 20
     int8        Gender;                                     // 21
     int8        Unknown8;                                   // 22
-
-    //@TODO:Legino - find their places =/
-    //uint32      BloodID;
-    //uint32      ParticleColorID;
-    //uint32      CreatureGeosetData;
-    //uint32      ObjectEffectPackageID;
-    //uint32      AnimReplacementSetID;
-    //uint32      Flags;
-    //uint32      StateSpellVisualKitID;
 };
 
 struct CreatureTypeEntry
@@ -913,6 +904,7 @@ struct ResearchBranchEntry
 
 struct ResearchProjectEntry
 {
+    uint32      ID;
     LocalizedString* Name;                                  // 1
     LocalizedString* Description;                           // 2
     uint32      rare;                                       // 3
@@ -921,22 +913,19 @@ struct ResearchProjectEntry
     uint32      Complexity;                                 // 6
     uint32      RequiredCurrencyAmount;                     // 8
 
-    uint32 ID; // temp - for compile
-
     bool IsVaid() const
     {
-        return branchId != ARCHAEOLOGY_BRANCH_UNUSED &&
-            branchId != ARCHAEOLOGY_BRANCH_NONE;
+        return branchId != ARCHAEOLOGY_BRANCH_UNUSED && branchId != ARCHAEOLOGY_BRANCH_NONE;
     }
 };
 
 struct ResearchSiteEntry
 {
-    uint32    ID;                                           // 0 ID
-    uint32    MapID;                                        // 1 MapID
-    uint32    POIid;                                        // 2
+    uint32      ID;                                           // 0 ID
+    uint32      MapID;                                        // 1 MapID
+    uint32      POIid;                                        // 2
     LocalizedString* areaName;                              // 3 Research site name
-    //uint32  flags;                                        // 4 Always 177.
+    uint32      flags;                                        // 4 Always 177.
 
     bool IsValid() const
     {

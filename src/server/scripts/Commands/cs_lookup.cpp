@@ -974,43 +974,39 @@ public:
         uint32 counter = 0;                                     // Counter for figure out that we found smth.
         uint32 maxResults = sWorld->getIntConfig(CONFIG_MAX_RESULTS_LOOKUP_COMMANDS);
 
-        // Search in CharTitles.dbc
-        for (uint32 id = 0; id < sCharTitlesStore.GetNumRows(); id++)
+        for (CharTitlesEntry const* titleInfo : sCharTitlesStore)
         {
-            CharTitlesEntry const* titleInfo = sCharTitlesStore.LookupEntry(id);
-            if (titleInfo)
+            std::string name = titleInfo->NameMale_lang->Str[sObjectMgr->GetDBCLocaleIndex()];
+            if (name.empty())
+                continue;
+
+            if (!Utf8FitTo(name, wNamePart))
+                continue;
+
+            if (maxResults && counter == maxResults)
             {
-                std::string name = titleInfo->NameMale_lang;
-                if (name.empty())
-                    continue;
-
-                if (!Utf8FitTo(name, wNamePart))
-                    continue;
-
-                if (maxResults && counter == maxResults)
-                {
-                    handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
-                    return true;
-                }
-
-                char const* knownStr = target && target->HasTitle(titleInfo) ? handler->GetTrinityString(LANG_KNOWN) : "";
-
-                char const* activeStr = target && target->GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE) == titleInfo->MaskID
-                    ? handler->GetTrinityString(LANG_ACTIVE)
-                    : "";
-
-                char titleNameStr[80];
-                snprintf(titleNameStr, 80, name.c_str(), targetName);
-
-                // send title in "id (idx:idx) - [namedlink locale]" format
-                if (handler->GetSession())
-                    handler->PSendSysMessage(LANG_TITLE_LIST_CHAT, id, titleInfo->MaskID, id, titleNameStr, "", knownStr, activeStr);
-                else
-                    handler->PSendSysMessage(LANG_TITLE_LIST_CONSOLE, id, titleInfo->MaskID, titleNameStr, "", knownStr, activeStr);
-
-                ++counter;
+                handler->PSendSysMessage(LANG_COMMAND_LOOKUP_MAX_RESULTS, maxResults);
+                return true;
             }
+
+            char const* knownStr = target && target->HasTitle(titleInfo) ? handler->GetTrinityString(LANG_KNOWN) : "";
+
+            char const* activeStr = target && target->GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE) == titleInfo->MaskID
+                ? handler->GetTrinityString(LANG_ACTIVE)
+                : "";
+
+            char titleNameStr[80];
+            snprintf(titleNameStr, 80, name.c_str(), targetName);
+
+            // send title in "id (idx:idx) - [namedlink locale]" format
+            if (handler->GetSession())
+                handler->PSendSysMessage(LANG_TITLE_LIST_CHAT, titleInfo->ID, titleInfo->MaskID, titleInfo->ID, titleNameStr, "", knownStr, activeStr);
+            else
+                handler->PSendSysMessage(LANG_TITLE_LIST_CONSOLE, titleInfo->ID, titleInfo->MaskID, titleNameStr, "", knownStr, activeStr);
+
+            ++counter;
         }
+
         if (counter == 0)  // if counter == 0 then we found nth
             handler->SendSysMessage(LANG_COMMAND_NOTITLEFOUND);
 

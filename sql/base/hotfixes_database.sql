@@ -34,7 +34,6 @@ CREATE TABLE `area_table` (
   `WildBattlePetLevelMin` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `WildBattlePetLevelMax` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `WindSettingsID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `true` ERROR TYPE return,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -434,9 +433,11 @@ DROP TABLE IF EXISTS `char_titles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `char_titles` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ConditionID` int(10) unsigned NOT NULL DEFAULT '0',
   `NameMale` text,
   `NameFemale` text,
   `MaskID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -449,6 +450,32 @@ CREATE TABLE `char_titles` (
 LOCK TABLES `char_titles` WRITE;
 /*!40000 ALTER TABLE `char_titles` DISABLE KEYS */;
 /*!40000 ALTER TABLE `char_titles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `char_titles_locale`
+--
+
+DROP TABLE IF EXISTS `char_titles_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `char_titles_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `NameMale_lang` text,
+  `NameFemale_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `char_titles_locale`
+--
+
+LOCK TABLES `char_titles_locale` WRITE;
+/*!40000 ALTER TABLE `char_titles_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `char_titles_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -610,10 +637,12 @@ CREATE TABLE `dungeon_encounter` (
   `id` int(10) unsigned NOT NULL DEFAULT '0',
   `mapId` int(10) unsigned NOT NULL DEFAULT '0',
   `difficulty` int(10) unsigned NOT NULL DEFAULT '0',
+  `orderIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `encounterIndex` int(10) unsigned NOT NULL DEFAULT '0',
   `encounterName` text,
   `creatureDisplayID` int(10) unsigned NOT NULL DEFAULT '0',
   `spellIconID` int(10) unsigned NOT NULL DEFAULT '0',
+  `flags` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -626,6 +655,31 @@ CREATE TABLE `dungeon_encounter` (
 LOCK TABLES `dungeon_encounter` WRITE;
 /*!40000 ALTER TABLE `dungeon_encounter` DISABLE KEYS */;
 /*!40000 ALTER TABLE `dungeon_encounter` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dungeon_encounter_locale`
+--
+
+DROP TABLE IF EXISTS `dungeon_encounter_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dungeon_encounter_locale` (
+  `id` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `encounterName_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dungeon_encounter_locale`
+--
+
+LOCK TABLES `dungeon_encounter_locale` WRITE;
+/*!40000 ALTER TABLE `dungeon_encounter_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dungeon_encounter_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -706,12 +760,6 @@ CREATE TABLE `map` (
   `ParentMapID` int(11) NOT NULL DEFAULT '0',
   `CosmeticParentMapID` int(11) NOT NULL DEFAULT '0',
   `TimeOffset` int(10) unsigned NOT NULL DEFAULT '0',
-  `false` ERROR TYPE return,
-  `=` ERROR TYPE mapid,
-  `=` ERROR TYPE x,
-  `=` ERROR TYPE y,
-  `true` ERROR TYPE return,
-  `ID` ERROR TYPE return,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -821,7 +869,6 @@ CREATE TABLE `criteria` (
   `GarrisonLevel` int(10) unsigned NOT NULL DEFAULT '0',
   `GarrMissionID` int(10) unsigned NOT NULL DEFAULT '0',
   `CharShipmentContainerID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Asset` ERROR TYPE },
   `StartAsset` int(10) unsigned NOT NULL DEFAULT '0',
   `FailAsset` int(10) unsigned NOT NULL DEFAULT '0',
   `StartTimer` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -2654,6 +2701,7 @@ DROP TABLE IF EXISTS `research_project`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `research_project` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Description` text,
   `rare` int(10) unsigned NOT NULL DEFAULT '0',
@@ -2661,11 +2709,8 @@ CREATE TABLE `research_project` (
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `Complexity` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredCurrencyAmount` int(10) unsigned NOT NULL DEFAULT '0',
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `branchId` ERROR TYPE return,
-  `!=` ERROR TYPE branchId,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2686,12 +2731,12 @@ DROP TABLE IF EXISTS `research_project_locale`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `research_project_locale` (
-  `Name` text,
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `Description_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Name`,`locale`)
+  PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2716,18 +2761,7 @@ CREATE TABLE `research_site` (
   `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `POIid` int(10) unsigned NOT NULL DEFAULT '0',
   `areaName` text,
-  `ID` ERROR TYPE return,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
-  `!=` ERROR TYPE ID,
+  `flags` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3056,7 +3090,6 @@ CREATE TABLE `item_extended_cost` (
   `RequirementFlags` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredAchievement` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredMoney` int(10) unsigned NOT NULL DEFAULT '0',
-  `0` ERROR TYPE return,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -7574,7 +7607,6 @@ CREATE TABLE `vehicle_seat` (
   `CameraModeID` int(10) unsigned NOT NULL DEFAULT '0',
   `FlagsC` int(10) unsigned NOT NULL DEFAULT '0',
   `UISkinFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
-  `|` ERROR TYPE VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

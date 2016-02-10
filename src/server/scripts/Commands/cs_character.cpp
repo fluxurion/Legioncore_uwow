@@ -268,30 +268,27 @@ public:
         char const* targetName = target->GetName();
         char const* knownStr = handler->GetTrinityString(LANG_KNOWN);
 
-        // Search in CharTitles.dbc
-        for (uint32 id = 0; id < sCharTitlesStore.GetNumRows(); id++)
+        for (CharTitlesEntry const* titleInfo : sCharTitlesStore)
         {
-            CharTitlesEntry const* titleInfo = sCharTitlesStore.LookupEntry(id);
+            if (!target->HasTitle(titleInfo))
+                continue;
 
-            if (titleInfo && target->HasTitle(titleInfo))
-            {
-                std::string name = titleInfo->NameMale_lang;
-                if (name.empty())
-                    continue;
+            std::string name = titleInfo->NameMale_lang->Str[sObjectMgr->GetDBCLocaleIndex()];
+            if (name.empty())
+                continue;
 
-                char const* activeStr = target && target->GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE) == titleInfo->MaskID
+            char const* activeStr = target && target->GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE) == titleInfo->MaskID
                 ? handler->GetTrinityString(LANG_ACTIVE)
                 : "";
 
-                char titleNameStr[80];
-                snprintf(titleNameStr, 80, name.c_str(), targetName);
+            char titleNameStr[80];
+            snprintf(titleNameStr, 80, name.c_str(), targetName);
 
-                // send title in "id (idx:idx) - [namedlink locale]" format
-                if (handler->GetSession())
-                    handler->PSendSysMessage(LANG_TITLE_LIST_CHAT, id, titleInfo->MaskID, id, titleNameStr, localeNames[loc], knownStr, activeStr);
-                else
-                    handler->PSendSysMessage(LANG_TITLE_LIST_CONSOLE, id, titleInfo->MaskID, name.c_str(), localeNames[loc], knownStr, activeStr);
-            }
+            // send title in "id (idx:idx) - [namedlink locale]" format
+            if (handler->GetSession())
+                handler->PSendSysMessage(LANG_TITLE_LIST_CHAT, titleInfo->ID, titleInfo->MaskID, titleInfo->ID, titleNameStr, localeNames[loc], knownStr, activeStr);
+            else
+                handler->PSendSysMessage(LANG_TITLE_LIST_CONSOLE, titleInfo->ID, titleInfo->MaskID, name.c_str(), localeNames[loc], knownStr, activeStr);
         }
 
         return true;
