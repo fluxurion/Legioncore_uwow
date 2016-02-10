@@ -165,14 +165,14 @@ struct BarberShopStyleEntry
 struct BroadcastTextEntry
 {
     uint32      ID;
-    int32       Language;
     LocalizedString* MaleText;
     LocalizedString* FemaleText;
-    uint32      EmoteID[MAX_BROADCAST_TEXT_EMOTES];
-    uint32      EmoteDelay[MAX_BROADCAST_TEXT_EMOTES];
-    uint32      SoundID;
-    uint32      UnkEmoteID;
-    uint32      Type;
+    uint16      EmoteID[MAX_BROADCAST_TEXT_EMOTES];
+    uint16      EmoteDelay[MAX_BROADCAST_TEXT_EMOTES];
+    uint16      SoundID;
+    uint16      UnkEmoteID;
+    uint8       Language;
+    uint8       Type;
 };
 
 struct CharTitlesEntry

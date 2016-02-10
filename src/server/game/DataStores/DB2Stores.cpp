@@ -65,8 +65,8 @@ DB2Storage<DurabilityCostsEntry>            sDurabilityCostsStore("DurabilityCos
 DB2Storage<DurabilityQualityEntry>          sDurabilityQualityStore("DurabilityQuality.db2", DurabilityQualityFormat, HOTFIX_SEL_DURABILITY_QUALITY);
 DB2Storage<EmotesEntry>                     sEmotesStore("Emotes.db2", EmotesEntryFormat, HOTFIX_SEL_EMOTES);
 DB2Storage<EmotesTextEntry>                 sEmotesTextStore("EmotesText.db2", EmotesTextFormat, HOTFIX_SEL_EMOTES_TEXT);
-DB2Storage<GameObjectDisplayInfoEntry>      sGameObjectDisplayInfoStore("GameObjectDisplayInfo.db2", GameObjectDisplayInfoFormat, HOTFIX_SEL_GAME_OBJECT_DISPLAY_INFO);
-DB2Storage<GameObjectsEntry>                sGameObjectsStore("GameObjects.db2", GameObjectsFormat, HOTFIX_SEL_GAME_OBJECTS);
+DB2Storage<GameObjectDisplayInfoEntry>      sGameObjectDisplayInfoStore("GameObjectDisplayInfo.db2", GameObjectDisplayInfoFormat, HOTFIX_SEL_GAMEOBJECT_DISPLAY_INFO);
+DB2Storage<GameObjectsEntry>                sGameObjectsStore("GameObjects.db2", GameObjectsFormat, HOTFIX_SEL_GAMEOBJECTS);
 DB2Storage<GameTablesEntry>                 sGameTablesStore("GameTables.db2", GameTablesFormat, HOTFIX_SEL_GAME_TABLES);
 DB2Storage<GarrAbilityEffectEntry>          sGarrAbilityEffectStore("GarrAbilityEffect.db2", GarrAbilityEffectFormat, HOTFIX_SEL_GARR_ABILITY_EFFECT);
 DB2Storage<GarrAbilityEntry>                sGarrAbilityStore("GarrAbility.db2", GarrAbilityFormat, HOTFIX_SEL_GARR_ABILITY);
@@ -145,14 +145,14 @@ DB2Storage<NameGenEntry>                    sNameGenStore("NameGen.db2", NameGen
 DB2Storage<OverrideSpellDataEntry>          sOverrideSpellDataStore("OverrideSpellData.db2", OverrideSpellDataFormat, HOTFIX_SEL_OVERRIDE_SPELL_DATA);
 DB2Storage<PhaseEntry>                      sPhaseStores("Phase.db2", PhaseFormat, HOTFIX_SEL_PHASE);
 DB2Storage<PowerDisplayEntry>               sPowerDisplayStore("PowerDisplay.db2", PowerDisplayFormat, HOTFIX_SEL_POWER_DISPLAY);
-DB2Storage<PvPDifficultyEntry>              sPvPDifficultyStore("PvpDifficulty.db2", PvPDifficultyFormat, HOTFIX_SEL_PV_P_DIFFICULTY);
+DB2Storage<PvPDifficultyEntry>              sPvPDifficultyStore("PvpDifficulty.db2", PvPDifficultyFormat, HOTFIX_SEL_PVP_DIFFICULTY);
 DB2Storage<PvpItemEntry>                    sPvpItemStore("PvpItem.db2", PvpItemFormat, HOTFIX_SEL_PVP_ITEM);
 DB2Storage<QuestFactionRewEntry>            sQuestFactionRewardStore("QuestFactionReward.db2", QuestFactionRewardFormat, HOTFIX_SEL_QUEST_FACTION_REW);
 DB2Storage<QuestPackageItemEntry>           sQuestPackageItemStore("QuestPackageItem.db2", QuestPackageItemFormat, HOTFIX_SEL_QUEST_PACKAGE_ITEM);
 DB2Storage<QuestPOIPointEntry>              sQuestPOIPointStore("QuestPOIPoint.db2", QuestPOIPointFormat, HOTFIX_SEL_QUEST_P_O_I_POINT);
 DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.db2", QuestSortFormat, HOTFIX_SEL_QUEST_SORT);
 DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.db2", QuestV2Format, HOTFIX_SEL_QUEST_V2);
-DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, HOTFIX_SEL_QUEST_X_P);
+DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, HOTFIX_SEL_QUEST_XP);
 DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, HOTFIX_SEL_RAND_PROP_POINTS);
 DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.db2", ResearchBranchFormat, HOTFIX_SEL_RESEARCH_BRANCH);
 DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.db2", ResearchProjectFormat, HOTFIX_SEL_RESEARCH_PROJECT);
@@ -294,7 +294,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetSpeciesStore);
     //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     //LOAD_DB2(sBattlePetStateStore);
-    //LOAD_DB2(sBroadcastTextStore);
     //LOAD_DB2(sCharTitlesStore);
     //LOAD_DB2(sCurrencyTypesStore);
     //LOAD_DB2(sCurvePointStore);
@@ -349,6 +348,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
+    LOAD_DB2(sBroadcastTextStore);              // 20994
     LOAD_DB2(sAreaTableStore);                  // 20994
     LOAD_DB2(sMountStore);                      // 20994
     LOAD_DB2(sOverrideSpellDataStore);          // 20994
