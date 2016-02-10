@@ -81,6 +81,8 @@ WorldPacket const* WorldPackets::Quest::QueryQuestInfoResponse::Write()
         _worldPacket << Info.RewardSpell;
         _worldPacket << Info.RewardHonor;
         _worldPacket << Info.RewardKillHonor;
+        _worldPacket << Info.UnkFloat;
+        _worldPacket << Info.UnkInt;
         _worldPacket << Info.StartItem;
         _worldPacket << Info.Flags;
         _worldPacket << Info.FlagsEx;

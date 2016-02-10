@@ -163,6 +163,8 @@ namespace WorldPackets
             int32 RewardCurrencyQty[QUEST_REWARD_CURRENCY_COUNT] = { };
             float RewardMoneyMultiplier = 1.0f;
             int32 AllowableRaces = -1;
+            float UnkFloat = 0.0f;
+            int32 UnkInt = 0;
         };
 
         class QueryQuestInfoResponse final : public ServerPacket

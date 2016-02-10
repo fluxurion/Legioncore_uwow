@@ -31,12 +31,16 @@ WorldPacket const* WorldPackets::EquipmentSet::LoadEquipmentSet::Write()
 
     for (EquipmentSetInfo::EquipmentSetData const* equipSet : SetData)
     {
+        _worldPacket << uint32(equipSet->UnkInt);
         _worldPacket << uint64(equipSet->Guid);
         _worldPacket << uint32(equipSet->SetID);
         _worldPacket << uint32(equipSet->IgnoreMask);
 
         for (ObjectGuid const& guid : equipSet->Pieces)
             _worldPacket << guid;
+
+        for (uint32 i : {0, 1,})
+            _worldPacket << equipSet->UnkInt2[i];
 
         _worldPacket.WriteBits(equipSet->SetName.length(), 8);
         _worldPacket.WriteBits(equipSet->SetIcon.length(), 9);

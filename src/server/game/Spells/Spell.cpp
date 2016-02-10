@@ -635,7 +635,8 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     memset(m_misc.Raw.Data, 0, sizeof(m_misc.Raw.Data));
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
-    m_spellGuid = ObjectGuid::Empty;
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
+    m_castGuid[1] = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
 }
 
 Spell::~Spell()
@@ -4936,7 +4937,8 @@ void Spell::SendSpellStart()
     WorldPackets::Spells::SpellStart packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
-    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
+    castData.CastGuid = m_castGuid[0];
+    castData.CastGuid2 = m_castGuid[1];
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
@@ -4975,7 +4977,7 @@ void Spell::SendSpellStart()
     if(m_caster->GetTypeId() == TYPEID_UNIT && m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON && m_spellInfo->EquippedItemSubClassMask & 0x0004000C)//BOW, GUN, CROSSBOW
     {
         castFlags |= CAST_FLAG_PROJECTILE;
-        WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
+        //WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
     }
 
     m_targets.Write(castData.Target);
@@ -5107,13 +5109,10 @@ void Spell::SendSpellGo()
     WorldPackets::Spells::SpellGo packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
-    if (m_CastItem)
-        castData.CasterGUID = m_CastItem->GetGUID();
-    else
-        castData.CasterGUID = m_caster->GetGUID();
-
-    castData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate());
+    castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
+    castData.CastGuid = m_castGuid[0];
+    castData.CastGuid2 = m_castGuid[1];
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
@@ -5159,7 +5158,7 @@ void Spell::SendSpellGo()
     if(m_caster->GetTypeId() == TYPEID_UNIT && m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON && m_spellInfo->EquippedItemSubClassMask & 0x0004000C/*BOW, GUN, CROSSBOW*/)
     {
         castFlags |= CAST_FLAG_PROJECTILE;
-        WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
+        //WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
     }
 
     m_targets.Write(castData.Target);

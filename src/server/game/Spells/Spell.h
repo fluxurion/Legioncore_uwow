@@ -626,7 +626,7 @@ class Spell
             } Raw;
         } m_misc;
 
-        ObjectGuid m_spellGuid;
+        ObjectGuid m_castGuid[2];
         uint32 m_preCastSpell;
         SpellCastTargets m_targets;
         int8 m_comboPointGain;

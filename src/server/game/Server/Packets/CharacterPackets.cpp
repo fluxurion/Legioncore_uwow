@@ -112,19 +112,16 @@ WorldPackets::Character::EnumCharactersResult::CharacterInfo::CharacterInfo(Fiel
 
 WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
 {
-    _worldPacket.reserve(9 + Characters.size() * sizeof(CharacterInfo) + FactionChangeRestrictions.size() * sizeof(RestrictedFactionChangeRuleInfo));
-
     _worldPacket.WriteBit(Success);
     _worldPacket.WriteBit(IsDeletedCharacters);
-    _worldPacket.WriteBit(true);
-    _worldPacket.WriteBit(false);
-    _worldPacket.WriteBit(true);
-    auto byte3C = false;
-    _worldPacket.WriteBit(byte3C);
+    _worldPacket.WriteBit(UnkBit1);
+    _worldPacket.WriteBit(UnkBit2);
+    _worldPacket.WriteBit(UnkBit3);
+    _worldPacket.WriteBit(UnkBit4);
     _worldPacket << static_cast<uint32>(Characters.size());
     _worldPacket << static_cast<uint32>(FactionChangeRestrictions.size());
-    if (byte3C)
-        _worldPacket << uint32(0);
+    //if (_worldPacket.WriteBit(UnkInt.is_initialized())) 21021
+    //    _worldPacket << *UnkInt;
 
     for (CharacterInfo const& charInfo : Characters)
     {
@@ -154,7 +151,6 @@ WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
         _worldPacket << uint32(charInfo.Pet.CreatureDisplayId);
         _worldPacket << uint32(charInfo.Pet.Level);
         _worldPacket << uint32(charInfo.Pet.CreatureFamily);
-
         _worldPacket << uint32(charInfo.ProfessionIds[0]);
         _worldPacket << uint32(charInfo.ProfessionIds[1]);
 

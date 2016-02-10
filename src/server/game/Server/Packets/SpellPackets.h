@@ -90,9 +90,9 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            uint32 unkInt = 0;
             bool InitialLogin = false;
             std::vector<uint32> KnownSpells;
+            std::vector<uint32> UnkVect;
         };
 
         class UpdateActionButtons final : public ServerPacket
@@ -324,7 +324,7 @@ namespace WorldPackets
             ObjectGuid CasterGUID;
             ObjectGuid CasterUnit;
             ObjectGuid CastGuid;
-            ObjectGuid UnkLGuid2;
+            ObjectGuid CastGuid2;
             int32 SpellID = 0;
             uint32 SpellXSpellVisualID = 0;
             uint32 CastFlags = 0;
@@ -337,7 +337,6 @@ namespace WorldPackets
             std::vector<SpellPowerData> RemainingPower;
             Optional<RuneData> RemainingRunes;
             MissileTrajectoryResult MissileTrajectory;
-            SpellAmmo Ammo;
             uint8 DestLocSpellCastIndex = 0;
             std::vector<TargetLocation> TargetPoints;
             CreatureImmunities Immunities;
@@ -373,6 +372,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             std::vector<int32> SpellID;
+            std::vector<int32> UnkVec;
             bool SuppressMessaging = false;
         };
 
@@ -877,12 +877,6 @@ namespace WorldPackets
             bool SpeedAsTime = false;
         };
 
-        struct WeeklySpellUsageData
-        {
-            int32 Category = 0;
-            uint8 Uses = 0;
-        };
-
         class WeeklySpellUsage final : public ServerPacket
         {
         public:
@@ -890,7 +884,7 @@ namespace WorldPackets
             
             WorldPacket const* Write() override;
 
-            std::vector<WeeklySpellUsageData> SpellUsage;
+            std::vector<int32> Category;
         };
 
         class UpdateChainTargets final : public ServerPacket

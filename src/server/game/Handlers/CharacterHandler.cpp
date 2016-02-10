@@ -950,18 +950,15 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     /// Send FeatureSystemStatus
     {
         WorldPackets::System::FeatureSystemStatus features;
-
-        /// START OF DUMMY VALUES
         features.ComplaintStatus = 2;
         features.ScrollOfResurrectionRequestsRemaining = 1;
         features.ScrollOfResurrectionMaxRequestsPerDay = 1;
         features.CfgRealmID = 2;
-        features.CfgRealmRecID = 0;
+        features.CfgRealmRecID = 3300;
         features.VoiceEnabled = false;
-        /// END OF DUMMY VALUES
-
+        features.UnkInt27 = 60;
         features.CharUndeleteEnabled = false/*sWorld->getBoolConfig(CONFIG_FEATURE_SYSTEM_CHARACTER_UNDELETE_ENABLED)*/;
-        features.BpayStoreEnabled    = true/*sWorld->getBoolConfig(CONFIG_PURCHASE_SHOP_ENABLED)*/;
+        features.BpayStoreEnabled = true/*sWorld->getBoolConfig(CONFIG_PURCHASE_SHOP_ENABLED)*/;
         features.BpayStoreAvailable = true;
         features.CommerceSystemEnabled = true;
         features.TutorialsEnabled = true;

@@ -46,9 +46,11 @@ WorldPacket const* WorldPackets::Spells::SendKnownSpells::Write()
 
     _worldPacket.WriteBit(InitialLogin);
     _worldPacket << static_cast<uint32>(KnownSpells.size());
-    _worldPacket << unkInt;
+    _worldPacket << static_cast<uint32>(UnkVect.size());
     for (uint32 const& spellId : KnownSpells)
-        _worldPacket << uint32(spellId);
+        _worldPacket << spellId;
+    for (uint32 const& spellId : UnkVect)
+        _worldPacket << spellId;
 
     return &_worldPacket;
 }
@@ -310,7 +312,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellTargetData c
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellMissStatus const& spellMissStatus)
 {
     data.WriteBits(spellMissStatus.Reason, 4);
-    data.WriteBits(spellMissStatus.ReflectStatus, 4);
+    if (spellMissStatus.Reason == SPELL_MISS_REFLECT)
+        data.WriteBits(spellMissStatus.ReflectStatus, 4);
 
     return data;
 }
@@ -372,7 +375,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     data << spellCastData.CasterUnit;
     data << spellCastData.CasterGUID;
     data << spellCastData.CastGuid;
-    data << ObjectGuid();
+    data << spellCastData.CastGuid2;
 
     data << int32(spellCastData.SpellID);
     data << uint32(spellCastData.SpellXSpellVisualID);
@@ -384,7 +387,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     data << spellCastData.Target;
     data << static_cast<uint32>(spellCastData.RemainingPower.size());
     data << spellCastData.MissileTrajectory;
-    data << spellCastData.Ammo;
+    data << uint32(0);
     data << uint8(spellCastData.DestLocSpellCastIndex);
     data << static_cast<uint32>(spellCastData.TargetPoints.size());
     data << spellCastData.Immunities;
@@ -405,7 +408,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     for (WorldPackets::Spells::TargetLocation const& targetLoc : spellCastData.TargetPoints)
         data << targetLoc;
 
-    data.WriteBits(spellCastData.CastFlagsEx, 18);
+    data.WriteBits(spellCastData.CastFlagsEx, 16);
     data.WriteBit(spellCastData.RemainingRunes.is_initialized());
     data.FlushBits();
 
@@ -438,7 +441,10 @@ WorldPacket const* WorldPackets::Spells::SpellGo::Write()
 WorldPacket const* WorldPackets::Spells::LearnedSpells::Write()
 {
     _worldPacket << static_cast<uint32>(SpellID.size());
+    _worldPacket << static_cast<uint32>(UnkVec.size());
     for (int32 const& spell : SpellID)
+        _worldPacket << spell;
+    for (int32 const& spell : UnkVec)
         _worldPacket << spell;
 
     _worldPacket.WriteBit(SuppressMessaging);
@@ -883,12 +889,9 @@ WorldPacket const* WorldPackets::Spells::PlayOrphanSpellVisual::Write()
 
 WorldPacket const* WorldPackets::Spells::WeeklySpellUsage::Write()
 {
-    _worldPacket << static_cast<uint32>(SpellUsage.size());
-    for (auto const& x : SpellUsage)
-    {
-        _worldPacket << x.Category;
-        _worldPacket << x.Uses;
-    }
+    _worldPacket << static_cast<uint32>(Category.size());
+    for (uint32 const& x : Category)
+        _worldPacket << x;
 
     return &_worldPacket;
 }

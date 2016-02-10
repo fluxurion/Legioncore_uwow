@@ -160,12 +160,17 @@ namespace WorldPackets
                 uint8 Race = 0;
             };
 
-            EnumCharactersResult() : ServerPacket(SMSG_ENUM_CHARACTERS_RESULT, 10) { }
+            EnumCharactersResult() : ServerPacket(SMSG_ENUM_CHARACTERS_RESULT, 15) { }
 
             WorldPacket const* Write() override;
 
             bool Success = false;
             bool IsDeletedCharacters = false;
+            bool UnkBit1 = true;
+            bool UnkBit2 = true;
+            bool UnkBit3 = true;
+            bool UnkBit4 = true;
+            Optional<int32> UnkInt;
 
             std::list<CharacterInfo> Characters;
             std::list<RestrictedFactionChangeRuleInfo> FactionChangeRestrictions;

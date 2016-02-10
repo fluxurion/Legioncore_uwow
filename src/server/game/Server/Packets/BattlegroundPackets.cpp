@@ -90,6 +90,8 @@ WorldPacket const* WorldPackets::Battleground::RatedInfo::Write()
         _worldPacket << Info[i].WeeklyWon;
         _worldPacket << Info[i].BestWeeklyRating;
         _worldPacket << Info[i].BestSeasonRating;
+        _worldPacket << Info[i].UnkInt;
+        _worldPacket << Info[i].UnkInt1;
     }
 
     return &_worldPacket;

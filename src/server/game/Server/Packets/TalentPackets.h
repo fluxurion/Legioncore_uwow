@@ -35,7 +35,7 @@ namespace WorldPackets
         struct TalentInfoUpdate
         {
             std::vector<TalentGroupInfo> TalentGroups;
-            uint32 LegionUnkInt = 0;
+            uint32 ActiveSpecID = 0;
             uint8 ActiveGroup = 0;
         };
 

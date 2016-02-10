@@ -56,15 +56,9 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            bool VoiceEnabled = false;
-            bool BrowserEnabled = false;
-            bool BpayStoreAvailable = false;
-            bool RecruitAFriendSendingEnabled = false;
-            bool BpayStoreEnabled = false;
             Optional<SessionAlertConfig> SessionAlert;
-            uint32 ScrollOfResurrectionMaxRequestsPerDay = 0;
-            bool ScrollOfResurrectionEnabled = false;
             Optional<EuropaTicketConfig> EuropaTicketSystemStatus;
+            uint32 ScrollOfResurrectionMaxRequestsPerDay = 0;
             uint32 ScrollOfResurrectionRequestsRemaining = 0;
             uint32 CfgRealmID = 0;
             uint8 ComplaintStatus = 0;
@@ -73,12 +67,18 @@ namespace WorldPackets
             int32 TwitterMsTillCanPost = 0;
             int32 TokenPollTimeSeconds = 0;
             int32 TokenRedeemIndex = 0;
+            bool VoiceEnabled = false;
+            bool BrowserEnabled = false;
+            bool BpayStoreAvailable = false;
+            bool RecruitAFriendSendingEnabled = false;
+            bool BpayStoreEnabled = false;
+            bool ScrollOfResurrectionEnabled = false;
             bool ItemRestorationButtonEnabled = false;
             bool CharUndeleteEnabled = false;
             bool BpayStoreDisabledByParentalControls = false;
             bool TwitterEnabled = false;
             bool CommerceSystemEnabled = false;
-            bool Unk67 = false;
+            bool Unk67 = true;
             bool WillKickFromWorld = false;
             bool RestrictedAccount = false;
             bool TutorialsEnabled = false;
@@ -97,8 +97,9 @@ namespace WorldPackets
             bool BpayStoreDisabledByParentalControls = false;
             bool CharUndeleteEnabled = false;
             bool BpayStoreEnabled = false;
-            bool CommerceSystemEnabled = false; 
+            bool CommerceSystemEnabled = false;
             bool Unk14 = false;
+            bool Unk = false;
             bool WillKickFromWorld = false;
             bool IsExpansionPreorderInStore = false;
             int32 TokenPollTimeSeconds = 0;

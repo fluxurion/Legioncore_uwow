@@ -53,9 +53,11 @@ namespace WorldPackets
             std::vector<int32> QuestItems;
             uint32 CreatureMovementInfoID = 0;
             uint32 RequiredExpansion = 0;
-            uint32 Flags[2];
+            uint32 Flags[2] = { };
             uint32 ProxyCreatureID[MAX_KILL_CREDIT] = { };
             uint32 CreatureDisplayID[MAX_CREATURE_MODELS] = { };
+            uint32 UnkInt = 0;
+            uint32 FlagQuest = 0;
             std::string Name[MAX_CREATURE_NAMES] = { };
             std::string NameAlt[MAX_CREATURE_NAMES] = { };
         };
@@ -63,7 +65,7 @@ namespace WorldPackets
         class QueryCreatureResponse final : public ServerPacket
         {
         public:
-            QueryCreatureResponse() : ServerPacket(SMSG_QUERY_CREATURE_RESPONSE, 76) { }
+            QueryCreatureResponse() : ServerPacket(SMSG_QUERY_CREATURE_RESPONSE, 80) { }
 
             WorldPacket const* Write() override;
 

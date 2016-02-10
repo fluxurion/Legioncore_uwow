@@ -20,7 +20,7 @@
 WorldPacket const* WorldPackets::Talent::UpdateTalentData::Write()
 {
     _worldPacket << Info.ActiveGroup;
-    _worldPacket << Info.LegionUnkInt;
+    _worldPacket << Info.ActiveSpecID;
     _worldPacket << static_cast<uint32>(Info.TalentGroups.size());
 
     for (auto& talentGroupInfo : Info.TalentGroups)
@@ -28,10 +28,11 @@ WorldPacket const* WorldPackets::Talent::UpdateTalentData::Write()
         _worldPacket << talentGroupInfo.SpecID;
 
         _worldPacket << static_cast<uint32>(talentGroupInfo.TalentIDs.size());
+        _worldPacket << static_cast<uint32>(talentGroupInfo.PvPTalentIDs.size());
+
         for (uint16 talentID : talentGroupInfo.TalentIDs)
             _worldPacket << talentID;
             
-        _worldPacket << static_cast<uint32>(talentGroupInfo.PvPTalentIDs.size());
         for (uint16 talentID : talentGroupInfo.PvPTalentIDs)
             _worldPacket << talentID;
     }

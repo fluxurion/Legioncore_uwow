@@ -769,18 +769,18 @@ enum EquipmentSetUpdateState
 
 struct EquipmentSetInfo
 {
-    /// Data sent in EquipmentSet related packets
     struct EquipmentSetData
     {
-        uint64 Guid       = 0; ///< Set Identifier
-        uint32 SetID      = 0; ///< Index
-        uint32 IgnoreMask = 0; ///< Mask of EquipmentSlot
+        ObjectGuid Pieces[EQUIPMENT_SLOT_END];
+        uint64 Guid = 0;
+        uint32 UnkInt2[2] = { };
+        uint32 SetID = 0;
+        uint32 IgnoreMask = 0;
+        uint32 UnkInt = 0;
         std::string SetName;
         std::string SetIcon;
-        ObjectGuid Pieces[EQUIPMENT_SLOT_END];
     } Data;
 
-    /// Server-side data
     EquipmentSetUpdateState State = EQUIPMENT_SET_NEW;
 };
 

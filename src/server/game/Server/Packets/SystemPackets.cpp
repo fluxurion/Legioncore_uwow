@@ -94,10 +94,10 @@ WorldPacket const* WorldPackets::System::FeatureSystemStatusGlueScreen::Write()
     _worldPacket.WriteBit(Unk14);
     _worldPacket.WriteBit(WillKickFromWorld);
     _worldPacket.WriteBit(IsExpansionPreorderInStore);
+    _worldPacket.WriteBit(Unk);
     _worldPacket.FlushBits();
-
-    _worldPacket << int32(TokenPollTimeSeconds);
-    _worldPacket << int32(TokenRedeemIndex);
+    _worldPacket << TokenPollTimeSeconds;
+    _worldPacket << TokenRedeemIndex;
 
     return &_worldPacket;
 }

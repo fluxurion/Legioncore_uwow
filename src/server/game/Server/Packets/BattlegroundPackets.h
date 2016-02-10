@@ -66,6 +66,8 @@ namespace WorldPackets
             uint32 WeeklyWon = 0;
             uint32 BestWeeklyRating = 0;
             uint32 BestSeasonRating = 0;
+            uint32 UnkInt = 0;
+            uint32 UnkInt1 = 0;
         };
 
         class RatedInfo final : public ServerPacket

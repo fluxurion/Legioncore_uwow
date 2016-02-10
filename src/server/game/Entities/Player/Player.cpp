@@ -27569,7 +27569,7 @@ void Player::SendTalentsInfoData(bool pet)
 
     WorldPackets::Talent::UpdateTalentData packet;
     packet.Info.ActiveGroup = GetActiveSpec();
-    packet.Info.LegionUnkInt = 1;
+    packet.Info.ActiveSpecID = GetSpecializationId(GetActiveSpec());
     for (uint8 i = 0; i < GetSpecsCount(); ++i)
     {
         WorldPackets::Talent::TalentGroupInfo groupInfoPkt;
