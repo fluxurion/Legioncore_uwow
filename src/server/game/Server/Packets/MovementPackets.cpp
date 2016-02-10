@@ -536,6 +536,7 @@ WorldPacket const* WorldPackets::Movement::NewWorld::Write()
     _worldPacket << MapID;
     _worldPacket << Pos.PositionXYZOStream();
     _worldPacket << Reason;
+    _worldPacket << Pos2.PositionXYZStream();
 
     return &_worldPacket;
 }

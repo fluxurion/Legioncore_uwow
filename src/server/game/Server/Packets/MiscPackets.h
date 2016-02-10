@@ -127,6 +127,8 @@ namespace WorldPackets
                 Optional<int32> WeeklyQuantity;
                 Optional<int32> MaxWeeklyQuantity;
                 Optional<int32> TrackedQuantity;
+                Optional<int32> Unk;
+                Optional<int32> Unk2;
                 uint8 Flags = 0;
             };
 

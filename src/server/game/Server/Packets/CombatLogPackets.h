@@ -150,7 +150,6 @@ namespace WorldPackets
             int32 OverHeal = 0;
             int32 Absorbed = 0;
             bool Crit = false;
-            bool Multistrike = false;
             Optional<float> CritRollMade;
             Optional<float> CritRollNeeded;
         };
@@ -164,6 +163,19 @@ namespace WorldPackets
                 float CritRollNeeded = 0.0f;
             };
 
+            struct UnkDataStruct
+            {
+                uint16 UnkShort1 = 0;
+                uint16 UnkShort2 = 0;
+                uint8 UnkByte1 = 0;
+                uint8 UnkByte2 = 0;
+                uint8 UnkByte3 = 0;
+                uint8 UnkByte4 = 0;
+                uint8 UnkByte5 = 0;
+                int8 UnkSByte = 0;
+                int8 UnkSByte2 = 0;
+            };
+
             struct SpellLogEffect
             {
                 int32 Effect = 0;
@@ -173,8 +185,9 @@ namespace WorldPackets
                 int32 AbsorbedOrAmplitude = 0;
                 int32 Resisted = 0;
                 bool Crit = false;
-                bool Multistrike = false;
+                bool Unkbit = false;
                 Optional<PeriodicalAuraLogEffectDebugInfo> DebugInfo;
+                Optional<UnkDataStruct> UnkData;
             };
 
             SpellPeriodicAuraLog() : CombatLogServerPacket(SMSG_SPELL_PERIODIC_AURA_LOG, 16 + 16 + 4 + 4 + 1) { }

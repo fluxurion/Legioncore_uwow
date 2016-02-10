@@ -244,13 +244,14 @@ namespace WorldPackets
         class NewWorld final : public ServerPacket
         {
         public:
-            NewWorld() : ServerPacket(SMSG_NEW_WORLD, 24) { }
+            NewWorld() : ServerPacket(SMSG_NEW_WORLD, 32) { }
 
             WorldPacket const* Write() override;
 
             int32 MapID = 0;
             uint32 Reason = 0;
             Position Pos;
+            Position Pos2;
         };
 
         class WorldPortAck final : public ClientPacket

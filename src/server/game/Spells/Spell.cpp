@@ -5339,6 +5339,7 @@ void Spell::SendInterrupted(uint8 result)
 {
     WorldPackets::Spells::SpellFailure failurePacket;
     failurePacket.CasterUnit = m_caster->GetGUID();
+    failurePacket.CastGUID = m_castGuid[0];
     failurePacket.SpellID = m_spellInfo->Id;
     failurePacket.SpellXSpellVisualID = m_SpellVisual;
     failurePacket.Reason = result;
@@ -5346,7 +5347,7 @@ void Spell::SendInterrupted(uint8 result)
 
     WorldPackets::Spells::SpellFailedOther failedPacket;
     failedPacket.CasterUnit = m_caster->GetGUID();
-    failedPacket.SpellXSpellVisualID = m_SpellVisual;
+    failedPacket.CastGUID = m_castGuid[0];
     failedPacket.SpellID = m_spellInfo->Id;
     failedPacket.Reason = result;
     m_caster->SendMessageToSet(failedPacket.Write(), true);

@@ -456,7 +456,7 @@ WorldPacket const* WorldPackets::Spells::LearnedSpells::Write()
 WorldPacket const* WorldPackets::Spells::SpellFailure::Write()
 {
     _worldPacket << CasterUnit;
-    _worldPacket << UnkLegionGuid;
+    _worldPacket << CastGUID;
     _worldPacket << SpellXSpellVisualID;
     _worldPacket << SpellID;
     _worldPacket << Reason;
@@ -467,9 +467,10 @@ WorldPacket const* WorldPackets::Spells::SpellFailure::Write()
 WorldPacket const* WorldPackets::Spells::SpellFailedOther::Write()
 {
     _worldPacket << CasterUnit;
-    _worldPacket << SpellXSpellVisualID;
+    _worldPacket << CastGUID;
     _worldPacket << SpellID;
     _worldPacket << Reason;
+    _worldPacket << UnkByte;
 
     return &_worldPacket;
 }

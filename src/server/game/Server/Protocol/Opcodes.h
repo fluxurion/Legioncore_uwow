@@ -540,7 +540,7 @@ enum OpcodeClient : uint16
     CMSG_QUEST_CONFIRM_ACCEPT                         = 0xBADD,
     CMSG_QUEST_GIVER_ACCEPT_QUEST                     = 0xBADD,
     CMSG_QUEST_GIVER_CHOOSE_REWARD                    = 0xBADD,
-    CMSG_QUEST_GIVER_COMPLETE_QUEST                   = 0xBADD,
+    CMSG_QUEST_GIVER_COMPLETE_QUEST                   = 0x3493,
     CMSG_QUEST_GIVER_HELLO                            = 0x348D,
     CMSG_QUEST_GIVER_QUERY_QUEST                      = 0x348E,
     CMSG_QUEST_GIVER_REQUEST_REWARD                   = 0xBADD,

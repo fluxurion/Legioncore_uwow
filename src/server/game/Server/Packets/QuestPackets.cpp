@@ -217,6 +217,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Quest::QuestRewards const
     data << questRewards.Title;
     data << questRewards.Talents;
     data << questRewards.FactionFlags;
+    data << questRewards.Unk;
+    data << questRewards.Unk2;
 
     for (uint32 i = 0; i < QUEST_REWARD_REPUTATIONS_COUNT; ++i)
     {

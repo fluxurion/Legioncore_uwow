@@ -32,11 +32,10 @@ WorldPacket const* WorldPackets::CombatLog::SpellNonMeleeDamageLog::Write()
     *this << int32(Absorbed);
     FlushBits();
     WriteBit(Periodic);
-    WriteBits(Flags, 9);
-    WriteBit(false); // Debug info
-    WriteBit(false); // Unk Legion - related to new log system?
-    WriteBit(false); // Unk Legion - related to new log system?
+    WriteBits(Flags, 7);
+    WriteBit(false); // HasDebugInfo
     WriteLogDataBit();
+    WriteBit(false); // UnkLegionData
     FlushBits();
     WriteLogData();
 
@@ -121,10 +120,10 @@ WorldPacket const* WorldPackets::CombatLog::SpellHealLog::Write()
     *this << int32(OverHeal);
     *this << int32(Absorbed);
     WriteBit(Crit);
-    WriteBit(Multistrike);
     WriteBit(CritRollMade.is_initialized());
     WriteBit(CritRollNeeded.is_initialized());
     WriteLogDataBit();
+    WriteBit(false); // HasUnkData
     FlushBits();
 
     if (CritRollMade)
@@ -154,12 +153,26 @@ WorldPacket const* WorldPackets::CombatLog::SpellPeriodicAuraLog::Write()
         *this << int32(effect.AbsorbedOrAmplitude);
         *this << int32(effect.Resisted);
         WriteBit(effect.Crit);
-        WriteBit(effect.Multistrike);
+        WriteBit(effect.DebugInfo.is_initialized());
+        WriteBit(effect.UnkData.is_initialized());
 
-        if (WriteBit(effect.DebugInfo.is_initialized()))
+        if (effect.DebugInfo)
         {
             *this << float(effect.DebugInfo->CritRollMade);
             *this << float(effect.DebugInfo->CritRollNeeded);
+        }
+
+        if (effect.UnkData)
+        {
+            WriteBits(effect.UnkData->UnkShort1, 2);
+            *this << effect.UnkData->UnkShort2;
+            *this << effect.UnkData->UnkByte1;
+            *this << effect.UnkData->UnkByte2;
+            *this << effect.UnkData->UnkByte3;
+            *this << effect.UnkData->UnkByte4;
+            *this << effect.UnkData->UnkByte5;
+            *this << effect.UnkData->UnkSByte;
+            *this << effect.UnkData->UnkSByte2;
         }
 
         FlushBits();

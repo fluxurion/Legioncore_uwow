@@ -5984,7 +5984,6 @@ void Unit::SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* info)
     spellLogEffect.AbsorbedOrAmplitude = info->absorb;
     spellLogEffect.Resisted = info->resist;
     spellLogEffect.Crit = info->critical;
-    spellLogEffect.Multistrike = false;
     data.Effects.push_back(spellLogEffect);
     SendCombatLogMessage(&data);
 }

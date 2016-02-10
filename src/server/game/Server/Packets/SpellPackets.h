@@ -384,7 +384,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             ObjectGuid CasterUnit;
-            ObjectGuid UnkLegionGuid;
+            ObjectGuid CastGUID;
             uint32 SpellXSpellVisualID = 0;
             uint32 SpellID = 0;
             uint16 Reason = 0;
@@ -393,14 +393,15 @@ namespace WorldPackets
         class SpellFailedOther final : public ServerPacket
         {
         public:
-            SpellFailedOther() : ServerPacket(SMSG_SPELL_FAILED_OTHER, 16 + 4 + 1 + 1) { }
+            SpellFailedOther() : ServerPacket(SMSG_SPELL_FAILED_OTHER, 32 + 8 + 1) { }
 
             WorldPacket const* Write() override;
 
             ObjectGuid CasterUnit;
-            uint32 SpellXSpellVisualID = 0;
+            ObjectGuid CastGUID;
+            int32 Reason = 0;
             uint32 SpellID = 0;
-            uint8 Reason = 0;
+            uint8 UnkByte = 0;
         };
 
         //< SMSG_CAST_FAILED

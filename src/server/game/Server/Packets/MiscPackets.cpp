@@ -81,6 +81,8 @@ WorldPacket const* WorldPackets::Misc::SetupCurrency::Write()
         _worldPacket.WriteBit(data.WeeklyQuantity.is_initialized());
         _worldPacket.WriteBit(data.MaxWeeklyQuantity.is_initialized());
         _worldPacket.WriteBit(data.TrackedQuantity.is_initialized());
+        _worldPacket.WriteBit(data.Unk.is_initialized());
+        _worldPacket.WriteBit(data.Unk2.is_initialized());
         _worldPacket.WriteBits(data.Flags, 5);
         _worldPacket.FlushBits();
 
@@ -92,6 +94,12 @@ WorldPacket const* WorldPackets::Misc::SetupCurrency::Write()
 
         if (data.TrackedQuantity)
             _worldPacket << *data.TrackedQuantity;
+
+        if (data.Unk)
+            _worldPacket << *data.Unk;
+
+        if (data.Unk2)
+            _worldPacket << *data.Unk2;
     }
 
     return &_worldPacket;

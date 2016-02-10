@@ -213,6 +213,8 @@ namespace WorldPackets
             int32 SpellCompletionID = 0;
             int32 SkillLineID = 0;
             int32 NumSkillUps = 0;
+            int32 Unk = 0;
+            int32 Unk2 = 0;
             QuestChoiceItem ChoiceItems[QUEST_REWARD_CHOICES_COUNT] = { };
             int32 ItemID[QUEST_ITEM_DROP_COUNT] = { };
             int32 ItemQty[QUEST_ITEM_DROP_COUNT] = { };
@@ -245,7 +247,7 @@ namespace WorldPackets
         class QuestGiverOfferRewardMessage final : public ServerPacket
         {
         public:
-            QuestGiverOfferRewardMessage() : ServerPacket(SMSG_QUEST_GIVER_OFFER_REWARD_MESSAGE, 600) { }
+            QuestGiverOfferRewardMessage() : ServerPacket(SMSG_QUEST_GIVER_OFFER_REWARD_MESSAGE, 350) { }
 
             WorldPacket const* Write() override;
 
