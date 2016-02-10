@@ -27,51 +27,6 @@ extern "C" {
 #endif
 
 //-----------------------------------------------------------------------------
-// Use the apropriate library
-//
-// The library type is encoded in the library name as the following
-// CascLibXYZ.lib
-// 
-//  X - D for Debug version, R for Release version
-//  Y - A for ANSI version, U for Unicode version
-//  Z - S for static-linked CRT library, D for multithreaded DLL CRT library
-//
-
-/*#if defined(_MSC_VER) && !defined(__CASCLIB_SELF__)
-  
-  #ifdef _DEBUG                                 // DEBUG VERSIONS
-    #ifndef _UNICODE                            
-      #ifdef _DLL                               
-        #pragma comment(lib, "CascLibDAD.lib") // Debug Ansi CRT-DLL version
-      #else        
-        #pragma comment(lib, "CascLibDAS.lib") // Debug Ansi CRT-LIB version
-      #endif
-    #else
-      #ifdef _DLL                               
-        #pragma comment(lib, "CascLibDUD.lib") // Debug Unicode CRT-DLL version
-      #else        
-        #pragma comment(lib, "CascLibDUS.lib") // Debug Unicode CRT-LIB version
-      #endif
-    #endif
-  #else                                         // RELEASE VERSIONS
-    #ifndef _UNICODE                            
-      #ifdef _DLL
-        #pragma comment(lib, "CascLibRAD.lib") // Release Ansi CRT-DLL version
-      #else        
-        #pragma comment(lib, "CascLibRAS.lib") // Release Ansi CRT-LIB version
-      #endif
-    #else
-      #ifdef _DLL
-        #pragma comment(lib, "CascLibRUD.lib") // Release Unicode CRT-DLL version
-      #else        
-        #pragma comment(lib, "CascLibRUS.lib") // Release Unicode CRT-LIB version
-      #endif
-    #endif
-  #endif
-
-#endif*/
-
-//-----------------------------------------------------------------------------
 // Defines
 
 #define CASCLIB_VERSION                 0x0100  // Current version of CascLib (1.0)
@@ -84,7 +39,7 @@ extern "C" {
 #define CASC_STOR_XXXXX             0x00000001  // Not used
 
 // Values for CascOpenFile
-#define CASC_FILE_XXXXX             0x00000001  // Not used
+#define CASC_OPEN_BY_ENCODING_KEY   0x00000001  // The name is just the encoding key; skip ROOT file processing
 
 // Flags for file stream
 #define BASE_PROVIDER_FILE          0x00000000  // Base data source is a file
@@ -148,7 +103,7 @@ extern "C" {
 
 #ifndef MD5_HASH_SIZE
 #define MD5_HASH_SIZE                     0x10
-#define MD5_STRING_SIZE                   0x21
+#define MD5_STRING_SIZE                   0x20
 #endif
 
 #ifndef SHA1_DIGEST_SIZE
@@ -191,9 +146,7 @@ typedef struct _CASC_FIND_DATA
 {
     char   szFileName[MAX_PATH];                // Full name of the found file
     char * szPlainName;                         // Plain name of the found file
-    ULONGLONG FileNameHash;                     // File name hash
     BYTE   EncodingKey[MD5_HASH_SIZE];          // Encoding key
-    DWORD  dwPackageIndex;                      // File package index (HOTS only)
     DWORD  dwLocaleFlags;                       // Locale flags (WoW only)
     DWORD  dwFileSize;                          // Size of the file
 
@@ -228,6 +181,16 @@ bool  WINAPI CascCloseFile(HANDLE hFile);
 HANDLE WINAPI CascFindFirstFile(HANDLE hStorage, const char * szMask, PCASC_FIND_DATA pFindData, const TCHAR * szListFile);
 bool  WINAPI CascFindNextFile(HANDLE hFind, PCASC_FIND_DATA pFindData);
 bool  WINAPI CascFindClose(HANDLE hFind);
+
+//-----------------------------------------------------------------------------
+// GetLastError/SetLastError support for non-Windows platform
+
+#ifndef PLATFORM_WINDOWS
+
+int GetLastError();
+void SetLastError(int nError);
+
+#endif  // PLATFORM_WINDOWS
 
 #ifdef __cplusplus
 }   // extern "C"

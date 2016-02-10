@@ -16,15 +16,15 @@
 // Conversion to uppercase/lowercase
 
 // Converts ASCII characters to lowercase
-// Converts slash (0x2F) to backslash (0x5C)
-unsigned char AsciiToLowerTable[256] = 
+// Converts backslash (0x5C) to normal slash (0x2F)
+unsigned char AsciiToLowerTable_Slash[256] = 
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 
-    0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x5C, 
+    0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 
     0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 
     0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 
-    0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F, 
+    0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x5B, 0x2F, 0x5D, 0x5E, 0x5F, 
     0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 
     0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F, 
     0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 
@@ -39,7 +39,7 @@ unsigned char AsciiToLowerTable[256] =
 
 // Converts ASCII characters to uppercase
 // Converts slash (0x2F) to backslash (0x5C)
-unsigned char AsciiToUpperTable[256] = 
+unsigned char AsciiToUpperTable_BkSlash[256] = 
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 
@@ -99,7 +99,7 @@ void CopyString(char * szTarget, const wchar_t * szSource, size_t cchLength)
     szTarget[cchLength] = 0;
 }
 
-char * NewStr(const char * szString, size_t nCharsToReserve)
+char * CascNewStr(const char * szString, size_t nCharsToReserve)
 {
     char * szNewString = NULL;
     size_t nLength;
@@ -118,7 +118,7 @@ char * NewStr(const char * szString, size_t nCharsToReserve)
     return szNewString;
 }
 
-wchar_t * NewStr(const wchar_t * szString, size_t nCharsToReserve)
+wchar_t * CascNewStr(const wchar_t * szString, size_t nCharsToReserve)
 {
     wchar_t * szNewString = NULL;
     size_t nLength;
@@ -137,22 +137,20 @@ wchar_t * NewStr(const wchar_t * szString, size_t nCharsToReserve)
     return szNewString;
 }
 
-TCHAR * NewStrFromAnsi(LPBYTE pbStringBegin, LPBYTE pbStringEnd)
+TCHAR * CascNewStrFromAnsi(const char * szBegin, const char * szEnd)
 {
     TCHAR * szNewString = NULL;
-    TCHAR * szStringPtr = NULL;
-    size_t nLength = (size_t)(pbStringEnd - pbStringBegin);
 
-    if(pbStringEnd > pbStringBegin)
+    // Only if the entry is valid
+    if(szBegin != NULL && szEnd > szBegin)
     {
-        szNewString = szStringPtr = CASC_ALLOC(TCHAR, nLength + 1);
+        // Allocate and copy the string
+        szNewString = CASC_ALLOC(TCHAR, (szEnd - szBegin + 1));
         if(szNewString != NULL)
-        {
-            CopyString(szStringPtr, (const char *)pbStringBegin, nLength);
-            szStringPtr[nLength] = 0;
-        }
+            CopyString(szNewString, szBegin, (szEnd - szBegin));
     }
 
+    // Return the string
     return szNewString;
 }
 
@@ -218,36 +216,88 @@ TCHAR * CombinePath(const TCHAR * szDirectory, const TCHAR * szSubDir)
     return szFullPath;
 }
 
-void NormalizeFileName_UpperBkSlash(const char * szSrcFileName, char * szTrgFileName)
+TCHAR * CombinePathAndString(const TCHAR * szPath, const char * szString, size_t nLength)
 {
+    TCHAR * szFullPath = NULL;
+    TCHAR * szSubDir;
+
+    // Create the subdir string
+    szSubDir = CASC_ALLOC(TCHAR, nLength + 1);
+    if(szSubDir != NULL)
+    {
+        CopyString(szSubDir, szString, nLength);
+        szFullPath = CombinePath(szPath, szSubDir);
+        CASC_FREE(szSubDir);
+    }
+
+    return szFullPath;
+}
+
+size_t NormalizeFileName(const unsigned char * NormTable, char * szNormName, const char * szFileName, size_t cchMaxChars)
+{
+    char * szNormNameEnd = szNormName + cchMaxChars;
     size_t i;
 
     // Normalize the file name: ToLower + BackSlashToSlash
-    for(i = 0; szSrcFileName[i] != 0; i++)
-        szTrgFileName[i] = AsciiToUpperTable[szSrcFileName[i]];
-    szTrgFileName[i] = 0;
+    for(i = 0; szFileName[0] != 0 && szNormName < szNormNameEnd; i++)
+        *szNormName++ = NormTable[*szFileName++];
+
+    // Terminate the string
+    szNormName[0] = 0;
+    return i;
 }
 
-void NormalizeFileName_LowerSlash(char * szFileName)
+size_t NormalizeFileName_UpperBkSlash(char * szNormName, const char * szFileName, size_t cchMaxChars)
 {
-    // Normalize the file name: ToLower + BackSlashToSlash
-    for(size_t i = 0; szFileName[i] != 0; i++)
-    {
-        szFileName[i] = AsciiToLowerTable[szFileName[i]];
-        szFileName[i] = (szFileName[i] != '\\') ? szFileName[i] : '/';
-    }
+    return NormalizeFileName(AsciiToUpperTable_BkSlash, szNormName, szFileName, cchMaxChars);
+}
+
+size_t NormalizeFileName_LowerSlash(char * szNormName, const char * szFileName, size_t cchMaxChars)
+{
+    return NormalizeFileName(AsciiToLowerTable_Slash, szNormName, szFileName, cchMaxChars);
+}
+
+ULONGLONG CalcFileNameHash(const char * szFileName)
+{
+    char szNormName[MAX_PATH+1];
+    uint32_t dwHashHigh = 0;
+    uint32_t dwHashLow = 0;
+    size_t nLength;
+
+    // Normalize the file name - convert to uppercase, slashes to backslashes
+    nLength = NormalizeFileName_UpperBkSlash(szNormName, szFileName, MAX_PATH);
+
+    // Calculate the HASH value of the normalized file name
+    hashlittle2(szNormName, nLength, &dwHashHigh, &dwHashLow);
+    return ((ULONGLONG)dwHashHigh << 0x20) | dwHashLow;
 }
 
 int ConvertDigitToInt32(const TCHAR * szString, PDWORD PtrValue)
 {
     BYTE Digit;
 
-    Digit = (BYTE)(AsciiToUpperTable[szString[0]] - _T('0'));
+    Digit = (BYTE)(AsciiToUpperTable_BkSlash[szString[0]] - _T('0'));
     if(Digit > 9)
         Digit -= 'A' - '9' - 1;
 
     PtrValue[0] = Digit;
     return (Digit > 0x0F) ? ERROR_BAD_FORMAT : ERROR_SUCCESS;
+}
+
+int ConvertStringToInt08(const char * szString, PDWORD PtrValue)
+{
+    BYTE DigitOne = AsciiToUpperTable_BkSlash[szString[0]] - '0';
+    BYTE DigitTwo = AsciiToUpperTable_BkSlash[szString[1]] - '0';
+
+    // Fix the digits
+    if(DigitOne > 9)
+        DigitOne -= 'A' - '9' - 1;
+    if(DigitTwo > 9)
+        DigitTwo -= 'A' - '9' - 1;
+
+    // Combine them into a value
+    PtrValue[0] = (DigitOne << 0x04) | DigitTwo;
+    return (DigitOne <= 0x0F && DigitTwo <= 0x0F) ? ERROR_SUCCESS : ERROR_BAD_FORMAT;
 }
 
 int ConvertStringToInt32(const TCHAR * szString, size_t nMaxDigits, PDWORD PtrValue)
@@ -266,11 +316,11 @@ int ConvertStringToInt32(const TCHAR * szString, size_t nMaxDigits, PDWORD PtrVa
         BYTE DigitOne;
         BYTE DigitTwo;
 
-        DigitOne = (BYTE)(AsciiToUpperTable[szString[0]] - _T('0'));
+        DigitOne = (BYTE)(AsciiToUpperTable_BkSlash[szString[0]] - _T('0'));
         if(DigitOne > 9)
             DigitOne -= 'A' - '9' - 1;
 
-        DigitTwo = (BYTE)(AsciiToUpperTable[szString[1]] - _T('0'));
+        DigitTwo = (BYTE)(AsciiToUpperTable_BkSlash[szString[1]] - _T('0'));
         if(DigitTwo > 9)
             DigitTwo -= 'A' - '9' - 1;
 
@@ -279,6 +329,41 @@ int ConvertStringToInt32(const TCHAR * szString, size_t nMaxDigits, PDWORD PtrVa
 
         PtrValue[0] = (PtrValue[0] << 0x08) | (DigitOne << 0x04) | DigitTwo;
         szString += 2;
+    }
+
+    return ERROR_SUCCESS;
+}
+
+// Converts string blob to binary blob.
+int ConvertStringToBinary(
+    const char * szString,
+    size_t nMaxDigits,
+    LPBYTE pbBinary)
+{
+    const char * szStringEnd = szString + nMaxDigits;
+    DWORD dwCounter = 0;
+    BYTE DigitValue;
+    BYTE ByteValue = 0;
+
+    // Convert the string
+    while(szString < szStringEnd)
+    {
+        // Retrieve the digit converted to hexa
+        DigitValue = (BYTE)(AsciiToUpperTable_BkSlash[szString[0]] - '0');
+        if(DigitValue > 9)
+            DigitValue -= 'A' - '9' - 1;
+        if(DigitValue > 0x0F)
+            return ERROR_BAD_FORMAT;
+
+        // Insert the digit to the binary buffer
+        ByteValue = (ByteValue << 0x04) | DigitValue;
+        dwCounter++;
+
+        // If we reached the second digit, it means that we need
+        // to flush the byte value and move on
+        if((dwCounter & 0x01) == 0)
+            *pbBinary++ = ByteValue;
+        szString++;
     }
 
     return ERROR_SUCCESS;
@@ -300,6 +385,11 @@ char * StringFromBinary(LPBYTE pbBinary, size_t cbBinary, char * szBuffer)
     // Terminate the string
     *szBuffer = 0;
     return szSaveBuffer;
+}
+
+char * StringFromMD5(LPBYTE md5, char * szBuffer)
+{
+    return StringFromBinary(md5, MD5_HASH_SIZE, szBuffer);
 }
 
 //-----------------------------------------------------------------------------
@@ -335,87 +425,55 @@ const char * GetPlainFileName(const char * szFileName)
 
 bool CheckWildCard(const char * szString, const char * szWildCard)
 {
-    const char * szSubString;
-    int nSubStringLength;
-    int nMatchCount = 0;
+    const char * szWildCardPtr;
 
-    // When the mask is empty, it never matches
-    if(szWildCard == NULL || *szWildCard == 0)
-        return false;
-
-    // If the wildcard contains just "*", then it always matches
-    if(szWildCard[0] == '*' && szWildCard[1] == 0)
-        return true;
-
-    // Do normal test
     for(;;)
     {
         // If there is '?' in the wildcard, we skip one char
-        while(*szWildCard == '?')
+        while(szWildCard[0] == '?')
         {
+            if(szString[0] == 0)
+                return false;
+
             szWildCard++;
             szString++;
         }
 
-        // If there is '*', means zero or more chars. We have to 
-        // find the sequence after '*'
-        if(*szWildCard == '*')
+        // Handle '*'
+        szWildCardPtr = szWildCard;
+        if(szWildCardPtr[0] != 0)
         {
-            // More stars is equal to one star
-            while(*szWildCard == '*' || *szWildCard == '?')
-                szWildCard++;
-
-            // If we found end of the wildcard, it's a match
-            if(*szWildCard == 0)
-                return true;
-
-            // Determine the length of the substring in szWildCard
-            szSubString = szWildCard;
-            while(*szSubString != 0 && *szSubString != '?' && *szSubString != '*')
-                szSubString++;
-            nSubStringLength = (int)(szSubString - szWildCard);
-            nMatchCount = 0;
-
-            // Now we have to find a substring in szString,
-            // that matches the substring in szWildCard
-            while(*szString != 0)
+            if(szWildCardPtr[0] == '*')
             {
-                // Calculate match count
-                while(nMatchCount < nSubStringLength)
-                {
-                    if(AsciiToUpperTable[(BYTE)szString[nMatchCount]] != AsciiToUpperTable[(BYTE)szWildCard[nMatchCount]])
-                        break;
-                    if(szString[nMatchCount] == 0)
-                        break;
-                    nMatchCount++;
-                }
+                szWildCardPtr++;
 
-                // If the match count has reached substring length, we found a match
-                if(nMatchCount == nSubStringLength)
-                {
-                    szWildCard += nMatchCount;
-                    szString += nMatchCount;
-                    break;
-                }
+                if(szWildCardPtr[0] == '*')
+                    continue;
 
-                // No match, move to the next char in szString
-                nMatchCount = 0;
-                szString++;
+                if(szWildCardPtr[0] == 0)
+                    return true;
+
+                if(AsciiToUpperTable_BkSlash[szWildCardPtr[0]] == AsciiToUpperTable_BkSlash[szString[0]])
+                {
+                    if(CheckWildCard(szString, szWildCardPtr))
+                        return true;
+                }
             }
+            else
+            {
+                if(AsciiToUpperTable_BkSlash[szWildCardPtr[0]] != AsciiToUpperTable_BkSlash[szString[0]])
+                    return false;
+
+                szWildCard = szWildCardPtr + 1;
+            }
+
+            if(szString[0] == 0)
+                return false;
+            szString++;
         }
         else
         {
-            // If we came to the end of the string, compare it to the wildcard
-            if(AsciiToUpperTable[(BYTE)*szString] != AsciiToUpperTable[(BYTE)*szWildCard])
-                return false;
-
-            // If we arrived to the end of the string, it's a match
-            if(*szString == 0)
-                return true;
-
-            // Otherwise, continue in comparing
-            szWildCard++;
-            szString++;
+            return (szString[0] == 0) ? true : false;
         }
     }
 }
