@@ -1060,7 +1060,7 @@ enum OpcodeServer : uint16
     SMSG_GM_TICKET_UPDATE                             = 0xBADD,
     SMSG_GOD_MODE                                     = 0xBADD,
     SMSG_GOSSIP_COMPLETE                              = 0x2A95,
-    SMSG_GOSSIP_MESSAGE                               = 0xBADD,
+    SMSG_GOSSIP_MESSAGE                               = 0x2A96,
     SMSG_GOSSIP_POI                                   = 0x27D3,
     SMSG_GROUP_ACTION_THROTTLED                       = 0xBADD,
     SMSG_GROUP_DECLINE                                = 0xBADD,
