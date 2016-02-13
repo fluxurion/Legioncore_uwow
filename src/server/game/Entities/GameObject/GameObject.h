@@ -1043,6 +1043,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void SaveRespawnTime();
 
         Loot        loot;
+        uint16      garrBuildingType = 0;
 
         Player* GetLootRecipient() const;
         Group* GetLootRecipientGroup() const;

@@ -1433,16 +1433,16 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
                 delete linkGO;
                 continue;
             }
-
+            
             if (buildingEtry)
-                linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
+                linkGO->garrBuildingType = buildingEtry->Type;
+
+            linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
 
             if (specSpawn && buildingEtry)
             {
                 if (uint32 specTime = garrison->GetSpecialSpawnBuildingTime(buildingEtry->Type))
                     linkGO->SetRespawnTime(specTime);
-                else
-                    garrison->SetBuildingData(buildingEtry->Type, BUILDING_DATA_SPECIAL_SPAWN, time(nullptr) + DAY);
             }
 
             if (buildingEtry && linkGO->GetGOInfo()->type == GAMEOBJECT_TYPE_GARRISON_SHIPMENT)
@@ -2355,6 +2355,9 @@ void Garrison::CompleteShipments(GameObject *go)
 
 void Garrison::FreeShipmentChest(uint32 shipmentConteinerBuildingType)
 {
+    if (!GetSpecialSpawnBuildingTime(shipmentConteinerBuildingType))
+        SetBuildingData(shipmentConteinerBuildingType, BUILDING_DATA_SPECIAL_SPAWN, time(nullptr) + DAY);
+
     ShipmentSet &set = _shipments[shipmentConteinerBuildingType];
     for (ShipmentSet::iterator itr = set.begin(); itr != set.end();)
     {
@@ -2366,8 +2369,6 @@ void Garrison::FreeShipmentChest(uint32 shipmentConteinerBuildingType)
             ++itr;
     }
 }
-
-
 
 uint32 Garrison::GetSpecialSpawnBuildingTime(uint32 buildingType)
 {

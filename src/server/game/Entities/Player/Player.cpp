@@ -10069,6 +10069,7 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type, bool AoeLoot, uint8 p
                     if (groupRules)
                         group->UpdateLooterGuid(go);
                 }
+                loot->shipmentBuildingType = go->garrBuildingType;
 
                 sLog->outDebug(LOG_FILTER_LOOT, "Player::SendLoot guid %u, personal %u pguid %u lguid %u", guid, personal, personalLoot.GetGUID(), loot->GetGUID());
             }
