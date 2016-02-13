@@ -111,12 +111,42 @@ uint32 getProgressShipment(uint32 questID)
     return 0;
 }
 
+bool isSpecialSpawnEntry(uint32 entry)
+{
+    switch (entry)
+    {
+        //GARR_BTYPE_WORKSHOP lvl1
+        case 233900:
+        case 234146:
+        case 235078:
+        case 234095:
+        //GARR_BTYPE_WORKSHOP lvl2
+        case 233901:
+        case 234017:
+        case 233899:
+        case 235126:
+        case 234018:
+        case 234019:
+            return true;
+    }
+
+    return false;
+}
+
+void getRandSpecialEntry(uint32 buildingTypeID, uint32 lvl, uint32 &entry)
+{
+    uint32  const workshop[10] = {233900, 234146, 235078, 234095, 233901, 234017, 233899, 235126, 234018, 234019};
+    switch (buildingTypeID)
+    {
+        case GARR_BTYPE_WORKSHOP:
+            entry =  workshop[urand(0, lvl > 1 ? 10 : 4)];
+    }
+}
+
 Garrison::Garrison(Player* owner) : _owner(owner), _siteLevel(nullptr), _followerActivationsRemainingToday(1), _lastResTaken(0)
 { 
     updateTimer.SetInterval(5 * IN_MILLISECONDS);
     updateTimer.Reset();
-    for (uint32 i = 0; i < GARR_BTYPE_MAX; ++i)
-        _buildingData[i].reserve(MAX_BUILDING_SAVE_DATA);
 }
 
 bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blueprints, PreparedQueryResult buildings,
@@ -186,7 +216,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
             uint8 index = 0;
             
             for (Tokenizer::const_iterator iter = tokens.begin(); index < MAX_BUILDING_SAVE_DATA && iter != tokens.end(); ++iter, ++index)
-                _buildingData[building->Type].at(index) = uint32(atol(*iter));
+                _buildingData[building->Type][index] = uint32(atol(*iter));
 
             if (!plot->BuildingInfo.PacketInfo->Active)
                 plot->buildingActivationWaiting = true;
@@ -369,7 +399,7 @@ void Garrison::SaveToDB(SQLTransaction trans)
             if (data != _buildingData.end() && !data->second.empty())
             {
                 for (uint8 i = 0; i < MAX_BUILDING_SAVE_DATA; ++i)
-                    ss << uint32(data->second.at(i)) << " ";
+                    ss << uint32(data->second[i]) << " ";
             }
             stmt->setString(5, ss.str());
             trans->Append(stmt);
@@ -1346,6 +1376,7 @@ void Garrison::Plot::getRandTrader(uint32 & entry)
             getRandTrader(entry); 
 }
 
+//GARR_BTYPE_WORKSHOP
 GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex faction, Garrison* garrison)
 {
     uint32 entry = EmptyGameObjectId;
@@ -1390,14 +1421,29 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
                 continue;
 
             GameObject* linkGO = new GameObject();
-            if (!linkGO->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), data->id, map, 1, data->posX, data->posY, data->posZ, data->orientation,
+            uint32 entry = data->id;
+            bool const specSpawn = isSpecialSpawnEntry(entry);
+            if (specSpawn)
+                getRandSpecialEntry(buildingEtry->Type, buildingEtry->Level, entry);
+
+            if (!linkGO->Create(sObjectMgr->GetGenerator<HighGuid::GameObject>()->Generate(), entry, map, 1, data->posX, data->posY, data->posZ, data->orientation,
                 data->rotation0, data->rotation1, data->rotation2, data->rotation3, 255, GO_STATE_READY) ||
                 !linkGO->IsPositionValid() || !map->AddToMap(linkGO))
             {
                 delete linkGO;
                 continue;
             }
-            linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
+
+            if (buildingEtry)
+                linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
+
+            if (specSpawn && buildingEtry)
+            {
+                if (uint32 specTime = garrison->GetSpecialSpawnBuildingTime(buildingEtry->Type))
+                    linkGO->SetRespawnTime(specTime);
+                else
+                    garrison->SetBuildingData(buildingEtry->Type, BUILDING_DATA_SPECIAL_SPAWN, time(nullptr) + DAY);
+            }
 
             if (buildingEtry && linkGO->GetGOInfo()->type == GAMEOBJECT_TYPE_GARRISON_SHIPMENT)
                 garrison->ShipmentConteiners[buildingEtry->Type] = linkGO->GetGUID();
@@ -2319,4 +2365,17 @@ void Garrison::FreeShipmentChest(uint32 shipmentConteinerBuildingType)
         else
             ++itr;
     }
+}
+
+
+
+uint32 Garrison::GetSpecialSpawnBuildingTime(uint32 buildingType)
+{
+    if (uint32 _time = GetBuildingData(buildingType, BUILDING_DATA_SPECIAL_SPAWN))
+    {
+        int diff = _time - time(nullptr);
+        if (diff > 0)
+            return diff;
+    }
+    return 0;
 }

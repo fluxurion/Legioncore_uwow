@@ -23,6 +23,10 @@
 
 #define MAX_BUILDING_SAVE_DATA 5
 
+enum BuildingDataStore
+{
+    BUILDING_DATA_SPECIAL_SPAWN = 0,
+};
 enum GarrisonSiteiD
 {
     SITE_ID_GARRISON_ALLIANCE = 2,
@@ -101,7 +105,7 @@ class Map;
 
 typedef std::list<WorldPackets::Garrison::Shipment> ShipmentSet;
 typedef std::unordered_map<uint32/*buildingType*/, ObjectGuid /*guid*/> ShipmentConteinerSpawn;
-typedef std::unordered_map<uint16/*buildingType*/, std::vector<uint32>> buildingData;
+typedef std::unordered_map<uint16/*buildingType*/, std::unordered_map<uint16, uint32>> buildingData;
 
 class Garrison
 {
@@ -197,7 +201,17 @@ public:
     void ActivateBuilding(uint32 garrPlotInstanceId);
     uint32 GetCountOfBluePrints() const { return _knownBuildings.size();  }
     uint32 GetCountOFollowers() const { return _followers.size(); }
-    
+    uint32 GetBuildingData(uint32 buildingType, uint32 idx)
+    {
+        return _buildingData[buildingType][idx];
+    }
+    void SetBuildingData(uint32 buildingType, uint32 idx, uint32 value)
+    {
+        _buildingData[buildingType][idx] = value;
+    }
+
+    uint32 GetSpecialSpawnBuildingTime(uint32 buildingType);
+
     // Followers
     void AddFollower(uint32 garrFollowerId);
     Follower const* GetFollower(uint64 dbId) const;

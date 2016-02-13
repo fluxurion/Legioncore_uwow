@@ -45,3 +45,15 @@ REPLACE INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `a
 REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
 (87290, 0, 0, 'Извини, $n.', 12, 0, 100, 24, 0, 0, 'Динки Деньжатникс to Player'),
 (87265, 0, 0, 'Извини, $n.', 12, 0, 100, 24, 0, 42439, 'Криксель Паросвист to Player');
+
+-- Q: H: 37044 A: 37091
+INSERT IGNORE INTO `gameobject_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES
+(234146, 114983, 100, 1, 0, 1, 1, 0),
+(233901, 114244, 100, 1, 0, 1, 1, 0),
+(233900, 114246, 100, 1, 0, 1, 1, 0),
+(234017, 114744, 100, 1, 0, 1, 1, 0),
+(235078, 119158, 100, 1, 0, 1, 1, 0),
+(233899, 114633, 100, 1, 0, 1, 1, 0),
+(235126, 115530, 100, 1, 0, 1, 1, 0),
+(234018, 114925, 100, 1, 0, 1, 1, 0),
+(234019, 114924, 100, 1, 0, 1, 1, 0);
