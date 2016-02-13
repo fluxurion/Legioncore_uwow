@@ -115,6 +115,8 @@ Garrison::Garrison(Player* owner) : _owner(owner), _siteLevel(nullptr), _followe
 { 
     updateTimer.SetInterval(5 * IN_MILLISECONDS);
     updateTimer.Reset();
+    for (uint32 i = 0; i < GARR_BTYPE_MAX; ++i)
+        _buildingData[i].reserve(MAX_BUILDING_SAVE_DATA);
 }
 
 bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blueprints, PreparedQueryResult buildings,
@@ -163,6 +165,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
             uint32 buildingId = fields[1].GetUInt32();
             time_t timeBuilt = time_t(fields[2].GetUInt64());
             bool active = fields[3].GetBool();
+            std::string data = fields[4].GetString();
 
             Plot* plot = GetPlot(plotInstanceId);
             if (!plot)
@@ -177,6 +180,13 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
             plot->BuildingInfo.PacketInfo->GarrBuildingID = buildingId;
             plot->BuildingInfo.PacketInfo->TimeBuilt = timeBuilt;
             plot->BuildingInfo.PacketInfo->Active = active;
+
+            Tokenizer tokens(data, ' ');
+
+            uint8 index = 0;
+            
+            for (Tokenizer::const_iterator iter = tokens.begin(); index < MAX_BUILDING_SAVE_DATA && iter != tokens.end(); ++iter, ++index)
+                _buildingData[building->Type].at(index) = uint32(atol(*iter));
 
             if (!plot->BuildingInfo.PacketInfo->Active)
                 plot->buildingActivationWaiting = true;
@@ -199,9 +209,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
                         }
                         break;
                 }
-                
             }
-
         }
         while (buildings->NextRow());
     }
@@ -338,17 +346,32 @@ void Garrison::SaveToDB(SQLTransaction trans)
         trans->Append(stmt);
     }
 
+    std::ostringstream ss;
+
     for (auto const& p : _plots)
     {
         Plot const& plot = p.second;
         if (plot.BuildingInfo.PacketInfo)
         {
+            const GarrBuildingEntry *building = sGarrBuildingStore.LookupEntry(plot.BuildingInfo.PacketInfo->GarrBuildingID);
+            if (!building)
+                continue;
+
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_GARRISON_BUILDINGS);
             stmt->setUInt64(0, _owner->GetGUIDLow());
             stmt->setUInt32(1, plot.BuildingInfo.PacketInfo->GarrPlotInstanceID);
             stmt->setUInt32(2, plot.BuildingInfo.PacketInfo->GarrBuildingID);
             stmt->setUInt64(3, plot.BuildingInfo.PacketInfo->TimeBuilt);
             stmt->setBool(4, plot.BuildingInfo.PacketInfo->Active);
+
+            ss.str("");
+            auto data = _buildingData.find(building->Type);
+            if (data != _buildingData.end() && !data->second.empty())
+            {
+                for (uint8 i = 0; i < MAX_BUILDING_SAVE_DATA; ++i)
+                    ss << uint32(data->second.at(i)) << " ";
+            }
+            stmt->setString(5, ss.str());
             trans->Append(stmt);
         }
     }

@@ -21,6 +21,8 @@
 #include "Player.h"
 #include "Packets/GarrisonPackets.h"
 
+#define MAX_BUILDING_SAVE_DATA 5
+
 enum GarrisonSiteiD
 {
     SITE_ID_GARRISON_ALLIANCE = 2,
@@ -99,6 +101,7 @@ class Map;
 
 typedef std::list<WorldPackets::Garrison::Shipment> ShipmentSet;
 typedef std::unordered_map<uint32/*buildingType*/, ObjectGuid /*guid*/> ShipmentConteinerSpawn;
+typedef std::unordered_map<uint16/*buildingType*/, std::vector<uint32>> buildingData;
 
 class Garrison
 {
@@ -256,6 +259,7 @@ protected:
     std::unordered_set<uint32> _followerIds;
     std::unordered_map<uint64 /*dbId*/, Mission> _missions;
     std::unordered_set<uint32> _missionIds;
+    buildingData _buildingData;
 
     std::map<uint32/*shipmentID*/, ShipmentSet> _shipments;
     ShipmentConteinerSpawn ShipmentConteiners;
