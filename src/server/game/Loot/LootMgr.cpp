@@ -29,6 +29,8 @@
 #include "LootPackets.h"
 #include "ObjectMgr.h"
 #include "ItemPackets.h"
+#include "Garrison.h"
+#include "GarrisonMgr.h"
 
 static Rates const qualityToRate[MAX_ITEM_QUALITY] =
 {
@@ -451,6 +453,15 @@ bool LootItem::AllowedForPlayer(Player const* player) const
         // check quest requirements
         if (!(pProto->FlagsCu & ITEM_FLAGS_CU_IGNORE_QUEST_STATUS) && ((needs_quest || (pProto->StartQuest && player->GetQuestStatus(pProto->StartQuest) != QUEST_STATUS_NONE)) && !player->HasQuestForItem(item.ItemID)))
             return false;
+
+        //! GARR_BTYPE_WARMILL support.
+        if (item.ItemID == 113681)
+        {
+            if (Garrison * gar = const_cast<Player*>(player)->GetGarrison())
+                if (gar->GetPlotWithBuildingType(GARR_BTYPE_WARMILL))
+                    return true;
+            return false;
+        }
     }
     else if (type == LOOT_ITEM_TYPE_CURRENCY)
     {

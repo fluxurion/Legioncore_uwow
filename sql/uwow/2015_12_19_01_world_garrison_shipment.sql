@@ -81,6 +81,7 @@ REPLACE INTO `garrison_shipment` (`SiteID`, `ContainerID`, `NpcEntry`, `Shipment
 (71, 32, 88899, 89, 'Horde.Barn Shipment.Barn Crafter - Meat L2'),
 (71, 77, 89066, 175, 'Horde.War Mill'),
 (71, 100, 91577, 203, 'Horde. noname.Spirit Lodge'),
+('2', '78', '89065', '176', 'Alliance. WarMil'),
 (2, 109, 95002, 222, 'Alliance. Ships.');
 
 --

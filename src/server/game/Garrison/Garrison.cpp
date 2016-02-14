@@ -2334,6 +2334,10 @@ void Garrison::CompleteShipments(GameObject *go)
             case 118111:
                 loot->AddOrReplaceItem(CURRENCY_TYPE_GARRISON_RESOURCES, data.second * 30, true);
                 break;
+            //WarMill
+            case 120204:
+                loot->AddOrReplaceItem(113681, data.second, false);
+                break;
             default:
                 loot->AddOrReplaceItem(data.first, data.second, false);
                 break;

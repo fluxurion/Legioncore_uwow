@@ -57,3 +57,6 @@ INSERT IGNORE INTO `gameobject_loot_template` (`entry`, `item`, `ChanceOrQuestCh
 (235126, 115530, 100, 1, 0, 1, 1, 0),
 (234018, 114925, 100, 1, 0, 1, 1, 0),
 (234019, 114924, 100, 1, 0, 1, 1, 0);
+
+--
+UPDATE `gameobject_loot_template` SET ChanceOrQuestChance = 0.1 WHERE `entry` in (239066, 239067);
