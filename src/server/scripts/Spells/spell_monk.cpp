@@ -1566,7 +1566,7 @@ class spell_monk_zen_pilgrimage : public SpellScriptLoader
                         }
                         else if (GetSpellInfo()->Id == SPELL_MONK_ZEN_PILGRIMAGE_RETURN)
                         {
-                            _player->TeleportTo(_player->m_recallMap, _player->m_recallX, _player->m_recallY, _player->m_recallZ, _player->m_recallO);
+                            _player->TeleportTo(_player->m_recallLoc);
                             _player->RemoveAura(126896);
                         }
                     }

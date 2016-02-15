@@ -4064,7 +4064,7 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                         check = false;
                     else
                     {
-                        if (rp->rare != reqValue)
+                        if (rp->Rare != reqValue)
                             check = false;
 
                         if (referencePlayer->IsCompletedProject(rp->ID, false))
@@ -4083,7 +4083,7 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                     ResearchProjectEntry const* rp = sResearchProjectStore.LookupEntry(miscValue1);
                     if (!rp)
                         check = false;
-                    else if (rp->branchId != reqValue)
+                    else if (rp->BranchID != reqValue)
                         check = false;
                     break;
                 }

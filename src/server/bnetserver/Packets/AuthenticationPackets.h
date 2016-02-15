@@ -29,7 +29,7 @@ namespace Battlenet
         enum Opcode
         {
             CMSG_LOGON_REQUEST                              = 0x0,  // Deprecated
-            CMSG_RESUME_REQUEST                             = 0x1,
+            CMSG_RESUME_REQUEST                             = 0x1,  // 0x16 for new battleNet
             CMSG_PROOF_RESPONSE                             = 0x2,
             CMSG_GENERATE_SINGLE_SIGN_ON_TOKEN_REQUEST_2    = 0x8,  // Not implemented
             CMSG_LOGON_REQUEST_3                            = 0x9,

@@ -87,12 +87,11 @@ namespace WorldPackets
         class ThreatUpdate final : public ServerPacket
         {
         public:
-            ThreatUpdate() : ServerPacket(SMSG_THREAT_UPDATE, 16 * 2 + 4) { }
+            ThreatUpdate() : ServerPacket(SMSG_THREAT_UPDATE, 16 + 4) { }
 
             WorldPacket const* Write() override;
 
             ObjectGuid UnitGUID;
-            ObjectGuid PlayerGUID;
             std::vector<ThreatInfo> ThreatList;
         };
 

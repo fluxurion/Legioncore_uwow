@@ -22781,7 +22781,6 @@ void Unit::SendThreatUpdate()
     {
         WorldPackets::Combat::ThreatUpdate packet;
         packet.UnitGUID = GetGUID();
-        packet.PlayerGUID; // @TODO:Legion
         std::list<HostileReference*> const &tlist = getThreatManager().getThreatList();
         packet.ThreatList.reserve(tlist.size());
         for (std::list<HostileReference*>::const_iterator itr = tlist.begin(); itr != tlist.end(); ++itr)

@@ -325,7 +325,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sItemBonusStore);
     //LOAD_DB2(sItemBonusTreeNodeStore);
     //LOAD_DB2(sItemCurrencyCostStore);
-    //LOAD_DB2(sItemExtendedCostStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
     //LOAD_DB2(sItemXBonusTreeStore);
@@ -345,6 +344,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
+    LOAD_DB2(sItemExtendedCostStore);           // 20994
     LOAD_DB2(sBroadcastTextStore);              // 20994
     LOAD_DB2(sAreaTableStore);                  // 20994
     LOAD_DB2(sMountStore);                      // 20994
@@ -528,7 +528,7 @@ void DB2Manager::InitDB2CustomStores()
         _garrMissionRewardByMissionID[entry->MissionID] = entry;
 
     for (LanguageWordsEntry const* entry : sLanguageWordsStore)
-        _languageWordsMap[entry->Lang][strlen(entry->Word->Str[DEFAULT_LOCALE])].push_back(entry->Word->Str[DEFAULT_LOCALE]);
+        _languageWordsMap[entry->Lang][strlen(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()])].push_back(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()]);
 
     for (ToyEntry const* toy : sToyStore)
         _toys.push_back(toy->ItemID);
@@ -705,7 +705,7 @@ void DB2Manager::InitDB2CustomStores()
             _modifierTree[mt->Parent].push_back(mt);
 
     for (NameGenEntry const* entry : sNameGenStore)
-        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(std::string(entry->Name->Str[DEFAULT_LOCALE]));
+        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(entry->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {

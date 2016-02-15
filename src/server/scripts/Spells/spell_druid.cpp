@@ -1431,7 +1431,7 @@ class spell_dru_teleport_moonglade : public SpellScriptLoader
                         _player->TeleportTo(1, 7964.063f, -2491.099f, 487.83f, _player->GetOrientation());
                     }
                     else
-                        _player->TeleportTo(_player->m_recallMap, _player->m_recallX, _player->m_recallY, _player->m_recallZ, _player->m_recallO);
+                        _player->TeleportTo(_player->m_recallLoc);
                 }
             }
 

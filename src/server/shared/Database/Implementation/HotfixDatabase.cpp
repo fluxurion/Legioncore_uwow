@@ -349,11 +349,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " WHERE locale = ?", CONNECTION_SYNCH);
 
     // ItemExtendedCost.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_EXTENDED_COST, "SELECT ID, RequiredArenaSlot, RequiredItem1, RequiredItem2, RequiredItem3, RequiredItem4, "
-        "RequiredItem5, RequiredItemCount1, RequiredItemCount2, RequiredItemCount3, RequiredItemCount4, RequiredItemCount5, "
-        "RequiredPersonalArenaRating, ItemPurchaseGroup, RequiredCurrency1, RequiredCurrency2, RequiredCurrency3, RequiredCurrency4, "
-        "RequiredCurrency5, RequiredCurrencyCount1, RequiredCurrencyCount2, RequiredCurrencyCount3, RequiredCurrencyCount4, RequiredCurrencyCount5, "
-        "RequiredFactionId, RequiredFactionStanding, RequirementFlags, RequiredAchievement, RequiredMoney FROM item_extended_cost ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ITEM_EXTENDED_COST, "SELECT ID, RequiredItem1, RequiredItem2, RequiredItem3, RequiredItem4, RequiredItem5, "
+        "RequiredCurrencyCount1, RequiredCurrencyCount2, RequiredCurrencyCount3, RequiredCurrencyCount4, RequiredCurrencyCount5, RequiredMoney, "
+        "RequiredItemCount1, RequiredItemCount2, RequiredItemCount3, RequiredItemCount4, RequiredItemCount5, RequiredPersonalArenaRating, "
+        "RequiredCurrency1, RequiredCurrency2, RequiredCurrency3, RequiredCurrency4, RequiredCurrency5, RequiredArenaSlot, ItemPurchaseGroup, "
+        "RequiredFactionId, RequirementFlags, RequiredFactionStanding FROM item_extended_cost ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetAbility.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY, "SELECT ID, Type, fileDataEntry, turnCooldown, auraAbilityID, auraDuration, name, description"

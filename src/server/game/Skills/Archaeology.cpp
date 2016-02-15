@@ -466,15 +466,15 @@ void Player::GenerateResearchProjects()
     {
         ResearchProjectEntry const* entry = itr;
 
-        if (entry->rare)
+        if (entry->Rare)
         {
             if (IsCompletedProject(entry->ID, true))
                 continue;
 
-            tempRareProjects[entry->branchId].insert(entry->ID);
+            tempRareProjects[entry->BranchID].insert(entry->ID);
         }
         else
-            tempProjects[entry->branchId].insert(entry->ID);
+            tempProjects[entry->BranchID].insert(entry->ID);
     }
 
     for (ProjectsByBranch::const_iterator itr = tempProjects.begin(); itr != tempProjects.end(); ++itr)
@@ -510,7 +510,7 @@ bool Player::HasResearchProjectOfBranch(uint32 id) const
             if (!rp)
                 continue;
 
-            if (rp->branchId == id)
+            if (rp->BranchID == id)
                 return true;
         }
 
@@ -551,7 +551,7 @@ bool Player::SolveResearchProject(uint32 spellId, SpellCastTargets& targets)
     ResearchBranchEntry const* branch = NULL;
     for (ResearchBranchEntry const* _branch : sResearchBranchStore)
     {
-        if (_branch->ID != entry->branchId)
+        if (_branch->ID != entry->BranchID)
             continue;
 
         branch = _branch;
@@ -625,10 +625,10 @@ bool Player::SolveResearchProject(uint32 spellId, SpellCastTargets& targets)
     for (auto const& itr : sDB2Manager._researchProjectContainer)
     {
         ResearchProjectEntry const* project = itr;
-        if (project->branchId != entry->branchId)
+        if (project->BranchID != entry->BranchID)
             continue;
 
-        if (project->rare)
+        if (project->Rare)
         {
             if (IsCompletedProject(project->ID, true))
                 continue;
@@ -665,7 +665,7 @@ uint32 Player::AddCompletedProject(ResearchProjectEntry const* entry)
 bool Player::IsCompletedProject(uint32 id, bool onlyRare)
 {
     for (CompletedProjectList::const_iterator itr = _completedProjects.begin(); itr != _completedProjects.end(); ++itr)
-        if (id == itr->entry->ID && (!onlyRare || itr->entry->rare))
+        if (id == itr->entry->ID && (!onlyRare || itr->entry->Rare))
             return true;
 
     return false;

@@ -140,9 +140,9 @@ void WorldSession::HandleChatMessageOpcode(WorldPackets::Chat::ChatMessage& pack
         //case CMSG_CHAT_MESSAGE_RAID_WARNING:
         //    type = CHAT_MSG_RAID_WARNING;
         //    break;
-        //case CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
-        //    type = CHAT_MSG_INSTANCE_CHAT;
-        //    break;
+        case CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
+            type = CHAT_MSG_INSTANCE_CHAT;
+            break;
         default:
             sLog->outError(LOG_FILTER_NETWORKIO, "HandleMessagechatOpcode : Unknown chat opcode (%u)", packet.GetOpcode());
             return;
@@ -455,10 +455,8 @@ void WorldSession::HandleChatMessage(ChatMsg type, uint32 lang, std::string msg,
         }
         case CHAT_MSG_INSTANCE_CHAT:
         {
-            // battleground raid is always in Player->GetGroup(), never in GetOriginalGroup()
             Group* group = GetPlayer()->GetGroup();
-            // checks are not known yet
-            if (!group/* || !group->isBGGroup()*/)
+            if (!group)
                 return;
 
             if (group->IsLeader(GetPlayer()->GetGUID()))

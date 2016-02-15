@@ -1138,7 +1138,7 @@ public:
             target->CleanupAfterTaxiFlight();
         }
 
-        target->TeleportTo(target->m_recallMap, target->m_recallX, target->m_recallY, target->m_recallZ, target->m_recallO);
+        target->TeleportTo(target->m_recallLoc);
         return true;
     }
 

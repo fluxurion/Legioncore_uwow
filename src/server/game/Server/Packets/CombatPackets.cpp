@@ -52,7 +52,6 @@ WorldPacket const* WorldPackets::Combat::SAttackStop::Write()
 WorldPacket const* WorldPackets::Combat::ThreatUpdate::Write()
 {
     _worldPacket << UnitGUID;
-    _worldPacket << PlayerGUID;
     _worldPacket << static_cast<int32>(ThreatList.size());
     for (WorldPackets::Combat::ThreatInfo const& threatInfo : ThreatList)
     {

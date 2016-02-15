@@ -907,15 +907,16 @@ struct ResearchProjectEntry
     uint32      ID;
     LocalizedString* Name;                                  // 1
     LocalizedString* Description;                           // 2
-    uint32      rare;                                       // 3
-    uint32      branchId;                                   // 4
+    uint32      Rare;                                       // 3
+    uint32      BranchID;                                   // 4
     uint32      SpellID;                                    // 5
+    LocalizedString* IconName;                              // 7
     uint32      Complexity;                                 // 6
     uint32      RequiredCurrencyAmount;                     // 8
 
     bool IsVaid() const
     {
-        return branchId != ARCHAEOLOGY_BRANCH_UNUSED && branchId != ARCHAEOLOGY_BRANCH_NONE;
+        return BranchID != ARCHAEOLOGY_BRANCH_UNUSED && BranchID != ARCHAEOLOGY_BRANCH_NONE;
     }
 };
 
@@ -1060,26 +1061,24 @@ struct ItemSparseEntry
 
 struct ItemExtendedCostEntry
 {
-    uint32      ID;                                                 // 0 extended-cost entry id
-    uint32      RequiredArenaSlot;                                  // 3 arena slot restrictions (min slot value)
-    uint32      RequiredItem[MAX_ITEM_EXT_COST_ITEMS];              // 3-6 required item id
-    uint32      RequiredItemCount[MAX_ITEM_EXT_COST_ITEMS];         // 7-11 required count of 1st item
-    uint32      RequiredPersonalArenaRating;                        // 12 required personal arena rating
-    uint32      ItemPurchaseGroup;                                  // 13
-    uint32      RequiredCurrency[MAX_ITEM_EXT_COST_CURRENCIES];     // 14-18 required curency id
-    uint32      RequiredCurrencyCount[MAX_ITEM_EXT_COST_CURRENCIES];// 19-23 required curency count
-    uint32      RequiredFactionId;                                  // 24
-    uint32      RequiredFactionStanding;                            // 25
-    uint32      RequirementFlags;                                   // 26
-    uint32      RequiredAchievement;                                // 27
-    uint32      RequiredMoney;                                      // 28
+    uint32      ID;
+    uint32      RequiredItem[MAX_ITEM_EXT_COST_ITEMS];              // 0 - 4
+    uint32      RequiredCurrencyCount[MAX_ITEM_EXT_COST_CURRENCIES];// 5 - 9
+    uint32      RequiredMoney;                                      // 10
+    uint16      RequiredItemCount[MAX_ITEM_EXT_COST_ITEMS];         // 11 - 15
+    uint16      RequiredPersonalArenaRating;                        // 12
+    uint16      RequiredCurrency[MAX_ITEM_EXT_COST_CURRENCIES];     // 17 - 21
+    uint8       RequiredArenaSlot;                                  // 22
+    uint8       ItemPurchaseGroup;                                  // 23
+    uint8       RequiredFactionId;                                  // 24
+    uint8       RequirementFlags;                                   // 25
+    uint8       RequiredFactionStanding;                            // 26
 
     bool IsSeasonCurrencyRequirement(uint32 i) const
     {
         if (i > MAX_ITEM_EXT_COST_CURRENCIES)
             return 0;
 
-        // start from ITEM_EXTENDED_COST_FLAG_SEASON_IN_INDEX_0
         return RequirementFlags & (1 << (i + 1));
     }
 };

@@ -3620,10 +3620,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     
     //@TODO:Legino - temp    
     SetUInt32Value(PLAYER_FIELD_PRESTIGE, 1);
-    SetUInt32Value(PLAYER_FIELD_PVP_MEDALS, 1);
-    SetUInt32Value(PLAYER_FIELD_HONOR, 1);
     SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, 1);
-    SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, 100);
 
     uint32 basehp = 0, basemana = 0;
     sObjectMgr->GetPlayerClassLevelInfo(getClass(), getLevel(), basehp, basemana);
@@ -3666,6 +3663,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     InitStatBuffMods();
 
     SetUInt32Value(UNIT_FIELD_SCALE_DURATION, 500);
+    SetInt32Value(UNIT_FIELD_LOOK_AT_CONTROLLER_ID, -1);
     SetUInt32Value(PLAYER_FIELD_LOCAL_FLAGS, GetSession()->GetSessionDbLocaleIndex());
     
     //reset rating fields values
@@ -7456,11 +7454,11 @@ bool Player::UpdatePosition(float x, float y, float z, float orientation, bool t
 
 void Player::SaveRecallPosition()
 {
-    m_recallMap = GetMapId();
-    m_recallX = GetPositionX();
-    m_recallY = GetPositionY();
-    m_recallZ = GetPositionZ();
-    m_recallO = GetOrientation();
+    m_recallLoc.m_mapId = GetMapId();
+    m_recallLoc.m_positionX = GetPositionX();
+    m_recallLoc.m_positionY = GetPositionY();
+    m_recallLoc.m_positionZ = GetPositionZ();
+    m_recallLoc.m_orientation = GetOrientation();
 }
 
 //! WARN! We shouldn't send at login range based packet.
@@ -22741,8 +22739,8 @@ void Player::SetRestBonus (float rest_bonus_new)
     else if (m_rest_bonus <= 1)
         SetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_REST_STATE, REST_STATE_NOT_RAF_LINKED);              // Set Reststate = Normal
 
-    //RestTickUpdate
-    SetUInt32Value(PLAYER_FIELD_REST_INFO+1, uint32(m_rest_bonus)); // can be wrong
+    SetUInt32Value(PLAYER_FIELD_REST_INFO, uint32(m_rest_bonus));
+    SetUInt32Value(PLAYER_FIELD_REST_INFO + 2, uint32(m_rest_bonus));
 }
 
 bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc /*= NULL*/, uint32 spellid /*= 0*/)
