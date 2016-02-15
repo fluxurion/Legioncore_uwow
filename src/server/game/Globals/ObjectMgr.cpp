@@ -3524,14 +3524,13 @@ void ObjectMgr::BuildPlayerLevelInfo(uint8 race, uint8 _class, uint8 level, Play
 
 void ObjectMgr::LoadQuests()
 {
-    uint32 oldMSTime = getMSTime();
+    for (QuestMap::const_iterator::value_type itr : _questTemplates)
+        delete itr.second;
 
-    // For reload case
-    for (QuestMap::const_iterator itr=_questTemplates.begin(); itr != _questTemplates.end(); ++itr)
-        delete itr->second;
     _questTemplates.clear();
-
     mExclusiveQuestGroups.clear();
+
+    uint32 oldMSTime = getMSTime();
 
     QueryResult result = WorldDatabase.Query("SELECT "
         //0  1          2           3               4         5            6            7                  8                9                   10                  11           12
@@ -4301,21 +4300,38 @@ void ObjectMgr::LoadQuests()
         // fill additional data stores
         if (qinfo->PrevQuestID)
         {
-            if (_questTemplates.find(abs(qinfo->GetPrevQuestId())) == _questTemplates.end())
-                sLog->outError(LOG_FILTER_SQL, "Quest %d has PrevQuestID %i, but no such quest", qinfo->GetQuestId(), qinfo->GetPrevQuestId());
+            if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
+            {
+                if (!qinfo->Line.Pos || !qinfo->Line.LineID)
+                    sLog->outError(LOG_FILTER_SQL, "QuestID: %d has wrong questLine pos or questLine", qinfo->Id);
+                else
+                    qinfo->prevQuests.push_back(sDB2Manager.GetQuestIDbyLineAndPos(qinfo->Line.LineID, qinfo->Line.Pos - 1));
+            }
             else
-                qinfo->prevQuests.push_back(qinfo->PrevQuestID);
+            {
+                if (_questTemplates.find(abs(qinfo->PrevQuestID)) == _questTemplates.end())
+                    sLog->outError(LOG_FILTER_SQL, "Quest %d has PrevQuestID %i, but no such quest", qinfo->GetQuestId(), qinfo->PrevQuestID);
+                else
+                    qinfo->prevQuests.push_back(qinfo->PrevQuestID);
+            }
         }
 
         if (qinfo->NextQuestID)
         {
-            QuestMap::iterator qNextItr = _questTemplates.find(abs(qinfo->GetNextQuestId()));
-            if (qNextItr == _questTemplates.end())
-                sLog->outError(LOG_FILTER_SQL, "Quest %d has NextQuestID %i, but no such quest", qinfo->GetQuestId(), qinfo->GetNextQuestId());
+            if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
+            {
+                if (!qinfo->Line.Pos || !qinfo->Line.LineID)
+                    sLog->outError(LOG_FILTER_SQL, "QuestID: %d has wrong questLine pos or questLine", qinfo->Id);
+                else
+                    qinfo->prevQuests.push_back(sDB2Manager.GetQuestIDbyLineAndPos(qinfo->Line.LineID, qinfo->Line.Pos + 1));
+            }
             else
             {
-                int32 signedQuestId = qinfo->NextQuestID < 0 ? -int32(qinfo->GetQuestId()) : int32(qinfo->GetQuestId());
-                qNextItr->second->prevQuests.push_back(signedQuestId);
+                QuestMap::iterator qNextItr = _questTemplates.find(abs(qinfo->NextQuestID));
+                if (qNextItr == _questTemplates.end())
+                    sLog->outError(LOG_FILTER_SQL, "Quest %d has NextQuestID %i, but no such quest", qinfo->GetQuestId(), qinfo->NextQuestID);
+                else
+                    qNextItr->second->prevQuests.push_back(qinfo->NextQuestID < 0 ? -int32(qinfo->GetQuestId()) : int32(qinfo->GetQuestId()));
             }
         }
 

@@ -153,6 +153,8 @@ DB2Storage<QuestPOIPointEntry>              sQuestPOIPointStore("QuestPOIPoint.d
 DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.db2", QuestSortFormat, HOTFIX_SEL_QUEST_SORT);
 DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.db2", QuestV2Format, HOTFIX_SEL_QUEST_V2);
 DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, HOTFIX_SEL_QUEST_XP);
+DB2Storage<QuestLineEntry>                  sQuestLineStore("QuestLine.db2", QuestLineFormat, HOTFIX_SEL_QUEST_LINE);
+DB2Storage<QuestLineXQuestEntry>            sQuestLineXQuestStore("QuestLineXQuest.db2", QuestLineXQuestFormat, HOTFIX_SEL_QUEST_LINE_X_QUEST);
 DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, HOTFIX_SEL_RAND_PROP_POINTS);
 DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.db2", ResearchBranchFormat, HOTFIX_SEL_RESEARCH_BRANCH);
 DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.db2", ResearchProjectFormat, HOTFIX_SEL_RESEARCH_PROJECT);
@@ -422,6 +424,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sQuestSortStore);                  // 20914
     LOAD_DB2(sQuestV2Store);                    // 20914
     LOAD_DB2(sQuestXPStore);                    // 20914
+    LOAD_DB2(sQuestLineStore);                  // 20994
+    LOAD_DB2(sQuestLineXQuestStore);            // 20994
     LOAD_DB2(sRandPropPointsStore);             // 20914
     LOAD_DB2(sResearchBranchStore);             // 20914
     LOAD_DB2(sScalingStatDistributionStore);    // 20914
@@ -840,6 +844,9 @@ void DB2Manager::InitDB2CustomStores()
             }
         }
     }
+
+    for (QuestLineXQuestEntry const* entry : sQuestLineXQuestStore)
+        _questLineXQuest.insert(QuestLineXQuestContainer::value_type(MAKE_PAIR16(entry->LineID, entry->Pos), entry->QuestID));
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -1609,4 +1616,21 @@ uint32 DB2Manager::GetSpellMisc(uint32 spellID, Difficulty /*difficultyID = DIFF
         return data->second;
 
     return 0;
+}
+
+
+uint16 DB2Manager::GetQuestIDbyLineAndPos(uint8 lineID, uint8 pos)
+{
+    auto data = _questLineXQuest.find(MAKE_PAIR16(lineID, pos));
+    if (data != _questLineXQuest.end())
+        return data->second;
+
+    return 0;
+}
+
+QuestLineXQuestEntry const* GetQuestLineXQuestData(uint16 questID)
+{
+    for (QuestLineXQuestEntry const* entry : sQuestLineXQuestStore)
+        if (entry->QuestID == questID)
+            return entry;
 }

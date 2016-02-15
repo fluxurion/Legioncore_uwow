@@ -2602,6 +2602,81 @@ LOCK TABLES `quest_xp` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `quest_line`
+--
+
+DROP TABLE IF EXISTS `quest_line`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest_line` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `LineName` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `quest_line`
+--
+
+LOCK TABLES `quest_line` WRITE;
+/*!40000 ALTER TABLE `quest_line` DISABLE KEYS */;
+/*!40000 ALTER TABLE `quest_line` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `quest_line_locale`
+--
+
+DROP TABLE IF EXISTS `quest_line_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest_line_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `LineName_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `quest_line_locale`
+--
+
+LOCK TABLES `quest_line_locale` WRITE;
+/*!40000 ALTER TABLE `quest_line_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `quest_line_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `quest_line_x_quest`
+--
+
+DROP TABLE IF EXISTS `quest_line_x_quest`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest_line_x_quest` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `QuestID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LineID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Pos` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `quest_line_x_quest`
+--
+
+LOCK TABLES `quest_line_x_quest` WRITE;
+/*!40000 ALTER TABLE `quest_line_x_quest` DISABLE KEYS */;
+/*!40000 ALTER TABLE `quest_line_x_quest` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `rand_prop_points`
 --
 
@@ -2704,9 +2779,10 @@ CREATE TABLE `research_project` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Description` text,
-  `rare` int(10) unsigned NOT NULL DEFAULT '0',
-  `branchId` int(10) unsigned NOT NULL DEFAULT '0',
+  `Rare` int(10) unsigned NOT NULL DEFAULT '0',
+  `BranchID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `IconName` text,
   `Complexity` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredCurrencyAmount` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
@@ -2735,6 +2811,7 @@ CREATE TABLE `research_project_locale` (
   `locale` varchar(4) NOT NULL,
   `Name_lang` text,
   `Description_lang` text,
+  `IconName_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

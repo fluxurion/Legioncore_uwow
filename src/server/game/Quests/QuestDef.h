@@ -54,6 +54,69 @@ namespace WorldPackets
 #define QUEST_REWARD_CURRENCY_COUNT 4
 #define QUEST_REQUIRED_CURRENCY_COUNT 4
 
+enum QuestInfo // QuestInfo.db2 7.0.1.20994
+{
+    QUEST_INFO_GROUP                        = 1,
+    QUEST_INFO_CLASS                        = 21,
+    QUEST_INFO_PVP                          = 41,
+    QUEST_INFO_RAID                         = 62,
+    QUEST_INFO_DUNGEON                      = 81,
+    QUEST_INFO_WORLD_EVENT                  = 82,
+    QUEST_INFO_LEGENDARY                    = 83,
+    QUEST_INFO_ESCORT                       = 84,
+    QUEST_INFO_HEROIC                       = 85,
+    QUEST_INFO_RAID_10                      = 88,
+    QUEST_INFO_RAID_25                      = 89,
+    QUEST_INFO_SCENARIO                     = 98,
+    QUEST_INFO_ACCOUNT                      = 102,
+    QUEST_INFO_SIDE_QUEST                   = 104,
+    QUEST_INFO_ARTIFACT                     = 107,
+    QUEST_INFO_WORLD_QUEST                  = 109,
+    QUEST_INFO_RARE_WORLD_QUEST             = 110,
+    QUEST_INFO_ELITE_WORLD_QUEST            = 111,
+    QUEST_INFO_RARE_ELITE_WORLD_QUEST       = 112,
+    QUEST_INFO_PVP_WORLD_QUEST              = 113,
+    QUEST_INFO_FIRST_AID_WORLD_QUEST        = 114,
+    QUEST_INFO_BATTLE_PET_WORLD_QUEST       = 115,
+    QUEST_INFO_BLACKSMITHING_WORLD_QUEST    = 116,
+    QUEST_INFO_LEATHERWORKING_WORLD_QUEST   = 117,
+    QUEST_INFO_ALCHEMY_WORLD_QUEST          = 118,
+    QUEST_INFO_HERBALISM_WORLD_QUEST        = 119,
+    QUEST_INFO_MINING_WORLD_QUEST           = 120,
+    QUEST_INFO_TAILORING_WORLD_QUEST        = 121,
+    QUEST_INFO_ENGINEERING_WORLD_QUEST      = 122,
+    QUEST_INFO_ENCHANTING_WORLD_QUEST       = 123,
+    QUEST_INFO_SKINNING_WORLD_QUEST         = 124,
+    QUEST_INFO_JEWELCRAFTING_WORLD_QUEST    = 125,
+    QUEST_INFO_INSCRIPTION_WORLD_QUEST      = 126,
+    QUEST_INFO_EMISSARY_QUEST               = 128,
+    QUEST_INFO_ARCHAEOLOGY_WORLD_QUEST      = 129,
+    QUEST_INFO_FISHING_WORLD_QUEST          = 130,
+    QUEST_INFO_COOKING_WORLD_QUEST          = 131,
+};
+
+enum QuestObjectiveType // QuestObjective.db2 7.0.1.20994
+{
+    QUEST_OBJECTIVE_MONSTER                                 = 0,
+    QUEST_OBJECTIVE_ITEM                                    = 1,
+    QUEST_OBJECTIVE_GAMEOBJECT                              = 2,
+    QUEST_OBJECTIVE_TALKTO                                  = 3,
+    QUEST_OBJECTIVE_CURRENCY                                = 4,
+    QUEST_OBJECTIVE_LEARNSPELL                              = 5,
+    QUEST_OBJECTIVE_MIN_REPUTATION                          = 6,
+    QUEST_OBJECTIVE_MAX_REPUTATION                          = 7,
+    QUEST_OBJECTIVE_MONEY                                   = 8,
+    QUEST_OBJECTIVE_PLAYERKILLS                             = 9,
+    QUEST_OBJECTIVE_AREATRIGGER                             = 10,
+    QUEST_OBJECTIVE_PET_TRAINER_DEFEAT                      = 11,
+    QUEST_OBJECTIVE_DEFEATBATTLEPET                         = 12,
+    QUEST_OBJECTIVE_PET_BATTLE_VICTORIES                    = 13,
+    QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE                  = 14, // CriteriaTree.dbc
+    QUEST_OBJECTIVE_EXCELLENCE_IN_ZONE                      = 15, // kill some npc, use some gobjects etc... and make dynamic quest UI completed
+    QUEST_OBJECTIVE_OBTAIN_CURRENCY_AND_UPGRADE_GARRISON    = 16,
+    QUEST_OBJECTIVE_OBTAIN_CURRENCY                         = 17,
+};
+
 enum QuestFailedReasons
 {
     INVALIDREASON_DONT_HAVE_REQ                 = 0,
@@ -263,6 +326,12 @@ struct QuestObjective
 
 typedef std::vector<QuestObjective> QuestObjectives;
 
+struct QuestLineStruct
+{
+    uint8 LineID = 0;
+    uint8 Pos = 0;
+};
+
 // This Quest class provides a convenient way to access a few pretotaled (cached) quest details,
 // all base quest information, and any utility functions such as generating the amount of
 // xp to give
@@ -305,8 +374,6 @@ class Quest
         int32  GetRequiredMaxRepValue() const { return RequiredMaxRepValue; }
         uint32 GetSuggestedPlayers() const { return SuggestedPlayers; }
         uint32 GetLimitTime() const { return LimitTime; }
-        int32  GetPrevQuestId() const { return PrevQuestID; }
-        int32  GetNextQuestId() const { return NextQuestID; }
         int32  GetExclusiveGroup() const { return ExclusiveGroup; }
         uint32 GetNextQuestInChain() const { return NextQuestIdChain; }
         uint32 GetRewTitle() const { return RewardTitleId; }
@@ -368,10 +435,8 @@ class Quest
         bool   IsDFQuest() const { return (SpecialFlags & QUEST_SPECIAL_FLAGS_DF_QUEST) != 0; }
         uint32 CalculateHonorGain(uint8 level) const;
 
-        // multiple values
         uint32 ItemDrop[QUEST_ITEM_DROP_COUNT] = {};
         uint32 ItemDropQuantity[QUEST_ITEM_DROP_COUNT] = {};
-
         uint32 RewardChoiceItemId[QUEST_REWARD_CHOICES_COUNT] = {};
         uint32 RewardChoiceItemCount[QUEST_REWARD_CHOICES_COUNT] = {};
         uint32 RewardChoiceItemDisplayId[QUEST_REWARD_CHOICES_COUNT] = {};
@@ -384,7 +449,6 @@ class Quest
         uint32 DetailsEmoteDelay[QUEST_EMOTE_COUNT] = {};
         uint32 OfferRewardEmote[QUEST_EMOTE_COUNT] = {};
         uint32 OfferRewardEmoteDelay[QUEST_EMOTE_COUNT] = {};
-        // 4.x
         uint32 RewardCurrencyId[QUEST_REWARD_CURRENCY_COUNT] = {};
         uint32 RewardCurrencyCount[QUEST_REWARD_CURRENCY_COUNT] = {};
 
@@ -401,7 +465,7 @@ class Quest
         PrevChainQuests prevChainQuests;
 
         QuestObjectives Objectives;
-        // cached data
+
     private:
         uint32 m_rewChoiceItemsCount;
         uint32 m_rewItemsCount;
@@ -450,7 +514,6 @@ class Quest
         uint32 POIPriority;
         uint32 StartScript;
         uint32 CompleteScript;
-        // new in 4.x
         uint32 RewardSkillId;
         uint32 RewardSkillPoints;
         uint32 RewardFactionFlags;
@@ -469,6 +532,8 @@ class Quest
         uint32 EmoteOnIncomplete        = 0;
         uint32 EmoteOnCompleteDelay     = 0;
         uint32 EmoteOnIncompleteDelay   = 0;
+
+        QuestLineStruct Line;
 
         // quest_template_addon table (custom data)
         uint32 MaxLevel             = 0;
@@ -493,35 +558,12 @@ typedef std::map<int32/*idx*/, int32/*data*/> QuestStatusDatas;
 
 struct QuestStatusData
 {
-    QuestStatusData(): Status(QUEST_STATUS_NONE), Timer(0)
-    {
-    }
+    QuestStatusData(): Status(QUEST_STATUS_NONE), Timer(0) { }
 
     QuestStatus Status;
     uint32 Timer;
     QuestStatusDatas ObjectiveData;
 };
 
-enum QuestObjectiveType
-{
-    QUEST_OBJECTIVE_MONSTER                 = 0,
-    QUEST_OBJECTIVE_ITEM                    = 1,
-    QUEST_OBJECTIVE_GAMEOBJECT              = 2,
-    QUEST_OBJECTIVE_TALKTO                  = 3,
-    QUEST_OBJECTIVE_CURRENCY                = 4,
-    QUEST_OBJECTIVE_LEARNSPELL              = 5,
-    QUEST_OBJECTIVE_MIN_REPUTATION          = 6,
-    QUEST_OBJECTIVE_MAX_REPUTATION          = 7,
-    QUEST_OBJECTIVE_MONEY                   = 8,
-    QUEST_OBJECTIVE_PLAYERKILLS             = 9,
-    QUEST_OBJECTIVE_AREATRIGGER             = 10,
-    QUEST_OBJECTIVE_PET_TRAINER_DEFEAT      = 11,
-    QUEST_OBJECTIVE_DEFEATBATTLEPET         = 12,
-    QUEST_OBJECTIVE_PET_BATTLE_VICTORIES    = 13,
-    QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE  = 14, // CriteriaTree.dbc
-    QUEST_OBJECTIVE_EXCELLENCE_IN_ZONE                      = 15, // kill some npc, use some gobjects etc... and make dynamic quest UI completed
-    QUEST_OBJECTIVE_OBTAIN_CURRENCY_AND_UPGRADE_GARRISON    = 16,
-    QUEST_OBJECTIVE_OBTAIN_CURRENCY                         = 17,
-};
 
 #endif

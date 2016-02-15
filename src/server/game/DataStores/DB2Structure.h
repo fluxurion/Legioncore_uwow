@@ -884,6 +884,20 @@ struct QuestXPEntry
     uint16      Difficulty[10];
 };
 
+struct QuestLineEntry
+{
+    uint32      ID;
+    LocalizedString* LineName;                              // 0
+};
+
+struct QuestLineXQuestEntry
+{
+    uint32      ID;
+    uint16      QuestID;                                    // 0
+    uint8       LineID;                                     // 1
+    uint8       Pos;                                        // 2
+};
+
 struct RandPropPointsEntry
 {
     uint32      ID;

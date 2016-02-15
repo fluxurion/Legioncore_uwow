@@ -139,6 +139,8 @@ extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
 extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
 extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
+extern DB2Storage<QuestLineEntry>                   sQuestLineStore;
+extern DB2Storage<QuestLineXQuestEntry>             sQuestLineXQuestStore;
 extern DB2Storage<RandPropPointsEntry>              sRandPropPointsStore;
 extern DB2Storage<ResearchBranchEntry>              sResearchBranchStore;
 extern DB2Storage<ResearchProjectEntry>             sResearchProjectStore;
@@ -309,6 +311,7 @@ public:
     typedef MinorTalentEntry const* MinorTalentByIndexContainer[SPEC_MAX_SPEC_INDEX][4];
     typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
     typedef std::unordered_map<uint32, uint32> SpellMiscDifficultyContainer;
+    typedef std::unordered_map<uint16, uint16> QuestLineXQuestContainer;
 
     static DB2Manager& Instance()
     {
@@ -382,6 +385,8 @@ public:
     MinorTalentEntry const* GetMinorTalentBySpecAndPerkID(uint32 specID, uint32 perkID);
     MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty);
     uint32 GetSpellMisc(uint32 spellID, Difficulty difficultyID = DIFFICULTY_NONE);
+    uint16 GetQuestIDbyLineAndPos(uint8 questID, uint8 pos);
+    QuestLineXQuestEntry const* GetQuestLineXQuestData(uint16 questID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -441,6 +446,7 @@ private:
     DungeonEncounterByDisplayIDContainer _dungeonEncounterByDisplayID;
     MinorTalentByIndexContainer _minorTalentByIndexStore;
     SpellMiscDifficultyContainer _spellMiscDifficulty;
+    QuestLineXQuestContainer _questLineXQuest;
 };
 
 #define sDB2Manager DB2Manager::Instance()

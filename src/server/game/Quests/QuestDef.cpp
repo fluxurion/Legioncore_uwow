@@ -113,8 +113,6 @@ Quest::Quest(Field* questRecord)
     StartScript             = questRecord[index++].GetUInt32();
     CompleteScript          = questRecord[index++].GetUInt32();
 
-    // int32 WDBVerified = questRecord[index++].GetInt32();
-
     if (SpecialFlags & QUEST_SPECIAL_FLAGS_AUTO_ACCEPT)
         Flags |= QUEST_FLAGS_AUTO_ACCEPT;
 
@@ -134,6 +132,15 @@ Quest::Quest(Field* questRecord)
     for (int i = 0; i < QUEST_REWARD_CURRENCY_COUNT; ++i)
         if (RewardCurrencyId[i])
             ++m_rewCurrencyCount;
+
+    if (QuestLineXQuestEntry const* entry = sDB2Manager.GetQuestLineXQuestData(Id))
+    {
+        if (sQuestLineStore.LookupEntry(entry->LineID))
+        {
+            Line.LineID = entry->LineID;
+            Line.Pos = entry->Pos;
+        }
+    }
 }
 
 void Quest::LoadQuestDetails(Field* fields)
@@ -153,7 +160,6 @@ void Quest::LoadQuestRequestItems(Field* fields)
     EmoteOnIncompleteDelay = fields[4].GetUInt32();
     RequestItemsText = fields[5].GetString();
 }
-
 
 void Quest::LoadQuestOfferReward(Field* fields)
 {
@@ -200,7 +206,6 @@ void Quest::LoadQuestObjective(Field* fields)
     obj.Flags = fields[6].GetUInt32();
     obj.UnkFloat = fields[7].GetFloat();
     obj.Description = fields[8].GetString();
-
     Objectives.push_back(obj);
 }
 

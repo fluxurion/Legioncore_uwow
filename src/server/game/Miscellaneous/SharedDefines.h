@@ -3918,25 +3918,6 @@ enum HolidayIds //< 6.2.2
     HOLIDAY_WEEKEND_PET_BATTLES      = 565
 };
 
-// QuestInfo.dbc (6.0.2.18988)
-enum QuestInfo
-{
-    QUEST_INFO_GROUP               = 1,
-    QUEST_INFO_CLASS               = 21,
-    QUEST_INFO_PVP                 = 41,
-    QUEST_INFO_RAID                = 62,
-    QUEST_INFO_DUNGEON             = 81,
-    QUEST_INFO_WORLD_EVENT         = 82,
-    QUEST_INFO_LEGENDARY           = 83,
-    QUEST_INFO_ESCORT              = 84,
-    QUEST_INFO_HEROIC              = 85,
-    QUEST_INFO_RAID_10             = 88,
-    QUEST_INFO_RAID_25             = 89,
-    QUEST_INFO_SCENARIO            = 98,
-    QUEST_INFO_ACCOUNT             = 102,
-    QUEST_INFO_SIDE_QUEST          = 104
-};
-
 // QuestSort.dbc (6.0)
 enum QuestSort
 {
