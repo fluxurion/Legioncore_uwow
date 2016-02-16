@@ -44,7 +44,6 @@
 #include "ScriptMgr.h"
 #include "SpellScript.h"
 #include "PoolMgr.h"
-#include "DB2Structure.h"
 #include "DB2Stores.h"
 #include "Configuration/Config.h"
 #include "LFGMgr.h"
@@ -4302,9 +4301,9 @@ void ObjectMgr::LoadQuests()
         {
             if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
             {
-                if (!qinfo->Line.Pos || !qinfo->Line.LineID)
+                if (!qinfo->Line.LineID)
                     sLog->outError(LOG_FILTER_SQL, "QuestID: %d has wrong questLine pos or questLine", qinfo->Id);
-                else
+                else if (qinfo->Line.Pos >= 1)
                     qinfo->prevQuests.push_back(sDB2Manager.GetQuestIDbyLineAndPos(qinfo->Line.LineID, qinfo->Line.Pos - 1));
             }
             else

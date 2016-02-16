@@ -1628,9 +1628,11 @@ uint16 DB2Manager::GetQuestIDbyLineAndPos(uint8 lineID, uint8 pos)
     return 0;
 }
 
-QuestLineXQuestEntry const* GetQuestLineXQuestData(uint16 questID)
+QuestLineXQuestEntry const* DB2Manager::GetQuestLineXQuestData(uint16 questID)
 {
     for (QuestLineXQuestEntry const* entry : sQuestLineXQuestStore)
         if (entry->QuestID == questID)
             return entry;
+
+    return nullptr;
 }

@@ -385,7 +385,7 @@ public:
     MinorTalentEntry const* GetMinorTalentBySpecAndPerkID(uint32 specID, uint32 perkID);
     MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty);
     uint32 GetSpellMisc(uint32 spellID, Difficulty difficultyID = DIFFICULTY_NONE);
-    uint16 GetQuestIDbyLineAndPos(uint8 questID, uint8 pos);
+    uint16 GetQuestIDbyLineAndPos(uint8 lineID, uint8 pos);
     QuestLineXQuestEntry const* GetQuestLineXQuestData(uint16 questID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
