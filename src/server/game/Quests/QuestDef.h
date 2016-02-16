@@ -395,7 +395,7 @@ class Quest
         std::string GetPortraitTurnInText() const { return PortraitTurnInText; }
         std::string GetPortraitTurnInName() const { return PortraitTurnInName; }
         QuestObjectives const& GetObjectives() const { return Objectives; };
-        uint32  GetRewMoney() const;
+        uint32 MoneyValue(uint8 playerLVL) const;
         uint32 GetRewMoneyMaxLevel() const; // use in XP calculation at client
         uint32 GetRewMoneyDifficulty() const { return RewardMoneyDifficulty; }
         uint32 GetRewHonor() const { return RewardHonor; }

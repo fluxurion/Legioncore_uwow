@@ -207,6 +207,24 @@ void Quest::LoadQuestObjective(Field* fields)
     obj.UnkFloat = fields[7].GetFloat();
     obj.Description = fields[8].GetString();
     Objectives.push_back(obj);
+
+    // dont enable this before test in game - this data seems mostly related to location quest ( kill / destruct etc smthng in zone to get 100 % bar )
+    /*for (QuestObjectiveEntry const* entry : sQuestObjectiveStore)
+    {
+        if (entry->QuestID != Id)
+            continue;
+
+        QuestObjective obj;
+        obj.ID = entry->ID;
+        obj.Type = entry->Type;
+        obj.StorageIndex = entry->StorageIndex;
+        obj.ObjectID = entry->ObjectID;
+        obj.Amount = entry->Amount;
+        obj.Flags = entry->Flags;
+        obj.UnkFloat = 0.0f; // weird, but just unk BYTE field exist in db2
+        obj.Description = entry->Description->Str[sObjectMgr->GetDBCLocaleIndex()];
+        Objectives.push_back(obj);
+    }*/
 }
 
 void Quest::LoadQuestObjectiveVisualEffect(Field* fields)
@@ -258,10 +276,12 @@ uint32 Quest::XPValue(Player* player) const
     return 0;
 }
 
-uint32 Quest::GetRewMoney() const
+uint32 Quest::MoneyValue(uint8 playerLVL) const
 {
-    if (RewardMoney > 0)
-        return RewardMoney * sWorld->getRate(RATE_DROP_MONEY);
+    uint8 level = Level == -1 ? playerLVL : Level;
+
+    if (QuestMoneyRewardEntry const* money = sQuestMoneyRewardStore.LookupEntry(level))
+        return money->Money[GetRewMoneyDifficulty()] * RewardMoneyMultiplier;
     else
         return 0;
 }
@@ -270,7 +290,7 @@ void Quest::BuildQuestRewards(WorldPackets::Quest::QuestRewards& rewards, Player
 {
     rewards.ChoiceItemCount         = GetRewChoiceItemsCount();
     rewards.ItemCount               = GetRewItemsCount();
-    rewards.Money                   = GetRewMoney();
+    rewards.Money                   = player->GetQuestMoneyReward(this);
     float QuestXpRate = 1;
     if (player->GetPersonnalXpRate())
         QuestXpRate = player->GetPersonnalXpRate();

@@ -155,6 +155,8 @@ DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.db2", QuestV2
 DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, HOTFIX_SEL_QUEST_XP);
 DB2Storage<QuestLineEntry>                  sQuestLineStore("QuestLine.db2", QuestLineFormat, HOTFIX_SEL_QUEST_LINE);
 DB2Storage<QuestLineXQuestEntry>            sQuestLineXQuestStore("QuestLineXQuest.db2", QuestLineXQuestFormat, HOTFIX_SEL_QUEST_LINE_X_QUEST);
+DB2Storage<QuestMoneyRewardEntry>           sQuestMoneyRewardStore("QuestMoneyReward.db2", QuestMoneyRewardFormat, HOTFIX_SEL_QUEST_MONEY_REWARD);
+DB2Storage<QuestObjectiveEntry>             sQuestObjectiveStore("QuestObjective.db2", QuestObjectiveFormat, HOTFIX_SEL_QUEST_OBJECTIVE);
 DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, HOTFIX_SEL_RAND_PROP_POINTS);
 DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.db2", ResearchBranchFormat, HOTFIX_SEL_RESEARCH_BRANCH);
 DB2Storage<ResearchProjectEntry>            sResearchProjectStore("ResearchProject.db2", ResearchProjectFormat, HOTFIX_SEL_RESEARCH_PROJECT);
@@ -426,6 +428,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sQuestXPStore);                    // 20914
     LOAD_DB2(sQuestLineStore);                  // 20994
     LOAD_DB2(sQuestLineXQuestStore);            // 20994
+    LOAD_DB2(sQuestMoneyRewardStore);           // 20994
+    LOAD_DB2(sQuestObjectiveStore);             // 20994
     LOAD_DB2(sRandPropPointsStore);             // 20914
     LOAD_DB2(sResearchBranchStore);             // 20914
     LOAD_DB2(sScalingStatDistributionStore);    // 20914

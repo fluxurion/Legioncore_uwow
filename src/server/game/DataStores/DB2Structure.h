@@ -898,6 +898,25 @@ struct QuestLineXQuestEntry
     uint8       Pos;                                        // 2
 };
 
+struct QuestMoneyRewardEntry
+{
+    uint32      ID;
+    uint32      Money[10];                                  // 0
+};
+
+struct QuestObjectiveEntry
+{
+    uint32      ID;
+    int32       Amount;                                     // 0
+    int32       ObjectID;                                   // 1
+    LocalizedString* Description;                           // 2
+    uint16      QuestID;                                    // 3
+    uint8       Type;                                       // 4
+    uint8       StorageIndex;                               // 5
+    uint8       UNK;                                        // 6
+    uint8       Flags;                                      // 7
+};
+
 struct RandPropPointsEntry
 {
     uint32      ID;

@@ -142,9 +142,11 @@ void WorldPackets::LFG::ShortageReward::Initialize(::Quest const* quest /*= null
         return;
 
     Mask = 0;
-    RewardMoney = quest->GetRewMoney();
     if (player)
+    {
         RewardXP = quest->XPValue(player);
+        RewardMoney = player->GetQuestMoneyReward(quest);
+    }
 
     RewardSpellID = quest->GetRewSpell();
 

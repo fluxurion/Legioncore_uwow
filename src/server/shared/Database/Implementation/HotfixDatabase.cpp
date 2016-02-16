@@ -306,6 +306,15 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // QuestLineXQuest.db2
     PrepareStatement(HOTFIX_SEL_QUEST_LINE_X_QUEST, "SELECT ID, QuestID, LineID, Pos FROM quest_line_x_quest ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // QuestMoneyReward.db2
+    PrepareStatement(HOTFIX_SEL_QUEST_MONEY_REWARD, "SELECT ID, Money1, Money2, Money3, Money4, Money5, Money6, Money7, Money8, Money9, Money10"
+        " FROM quest_money_reward ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // QuestObjective.db2
+    PrepareStatement(HOTFIX_SEL_QUEST_OBJECTIVE, "SELECT ID, Amount, ObjectID, Description, QuestID, Type, StorageIndex, UNK, Flags"
+        " FROM quest_objective ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_OBJECTIVE, "SELECT ID, Description_lang FROM quest_objective_locale WHERE locale = ?", CONNECTION_SYNCH);
+
     // RandPropPoints.db2
     PrepareStatement(HOTFIX_SEL_RAND_PROP_POINTS, "SELECT ID, EpicPropertiesPoints1, EpicPropertiesPoints2, EpicPropertiesPoints3, "
         "EpicPropertiesPoints4, EpicPropertiesPoints5, RarePropertiesPoints1, RarePropertiesPoints2, RarePropertiesPoints3, RarePropertiesPoints4, "

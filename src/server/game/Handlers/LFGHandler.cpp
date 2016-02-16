@@ -290,7 +290,7 @@ void WorldSession::SendLfgPlayerReward(lfg::LfgPlayerRewardData const& rewardDat
     WorldPackets::LFG::PlayerReward playerData;
     playerData.ActualSlot = rewardData.rdungeonEntry;
     playerData.QueuedSlot = rewardData.sdungeonEntry;
-    playerData.RewardMoney = quest->GetRewMoney();
+    playerData.RewardMoney = GetPlayer()->GetQuestMoneyReward(quest);
     playerData.AddedXP = quest->XPValue(GetPlayer());
 
     for (auto const& i : {0, 1, 2, 3})
