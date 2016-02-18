@@ -58,8 +58,8 @@ bool UpdateData::BuildPacket(WorldPacket* packet)
         *packet << uint16(0);
         *packet << uint32(m_outOfRangeGUIDs.size());
 
-        for (GuidSet::const_iterator i = m_outOfRangeGUIDs.begin(); i != m_outOfRangeGUIDs.end(); ++i)
-            *packet << i->WriteAsPacked();
+        for (GuidSet::const_iterator::value_type const& guid : m_outOfRangeGUIDs)
+            *packet << guid;
     }
 
     *packet << uint32(m_data.size());

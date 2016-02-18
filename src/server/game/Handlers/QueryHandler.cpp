@@ -56,7 +56,7 @@ void WorldSession::SendNameQueryOpcode(ObjectGuid guid)
 
 void WorldSession::HandleQueryPlayerName(WorldPackets::Query::QueryPlayerName& packet)
 {
-    SendPacket(WorldPackets::Misc::InvalidatePlayer(packet.Player).Write());
+    //SendPacket(WorldPackets::Misc::InvalidatePlayer(packet.Player).Write()); fuck fuck fuck, there's the rule for sending this?
     SendNameQueryOpcode(packet.Player);
 }
 

@@ -520,7 +520,7 @@ WorldPacket const* WorldPackets::Garrison::GarrisonOpenArchitect::Write()
 
 WorldPacket const* WorldPackets::Garrison::GarrisonOpenMissionNpcResponse::Write()
 {
-    _worldPacket << NpcGUID.WriteAsPacked();
+    _worldPacket << NpcGUID;
 
     return &_worldPacket;
 }
