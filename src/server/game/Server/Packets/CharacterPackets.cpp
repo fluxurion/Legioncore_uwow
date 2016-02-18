@@ -120,8 +120,8 @@ WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
     _worldPacket.WriteBit(UnkBit4);
     _worldPacket << static_cast<uint32>(Characters.size());
     _worldPacket << static_cast<uint32>(FactionChangeRestrictions.size());
-    if (_worldPacket.WriteBit(true/*UnkInt.is_initialized()*/))
-        _worldPacket << uint32(2147479552)/**UnkInt*/;
+    //if (_worldPacket.WriteBit(true/*UnkInt.is_initialized()*/))
+    //    _worldPacket << uint32(2147479552)/**UnkInt*/;
 
     for (CharacterInfo const& charInfo : Characters)
     {
