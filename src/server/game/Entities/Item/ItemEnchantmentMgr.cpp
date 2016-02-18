@@ -22,8 +22,6 @@
 #include "DatabaseEnv.h"
 #include "Log.h"
 #include "ObjectMgr.h"
-#include <list>
-#include <vector>
 #include "Util.h"
 
 struct EnchStoreItem

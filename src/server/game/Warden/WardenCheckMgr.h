@@ -19,7 +19,6 @@
 #ifndef _WARDENCHECKMGR_H
 #define _WARDENCHECKMGR_H
 
-#include <map>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include "Cryptography/BigNumber.h"

@@ -19,8 +19,6 @@
 #ifndef TRINITY_DISABLEMGR_H
 #define TRINITY_DISABLEMGR_H
 
-#include "Define.h"
-
 class Unit;
 
 enum DisableType

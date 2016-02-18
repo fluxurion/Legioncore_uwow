@@ -19,8 +19,6 @@
 #ifndef _ITEMPROTOTYPE_H
 #define _ITEMPROTOTYPE_H
 
-#include <unordered_set>
-
 #include "Common.h"
 #include "SharedDefines.h"
 #include "DBCEnums.h"

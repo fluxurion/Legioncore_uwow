@@ -22,10 +22,6 @@
 #include "GameObject.h"
 #include "VehicleDefines.h"
 
-#include <map>
-#include <set>
-#include <string>
-
 class Transport : public GameObject, public TransportBase
 {
     public:

@@ -27,8 +27,6 @@
 #include "DatabaseEnv.h"
 #include "Cell.h"
 
-#include <list>
-
 class SpellInfo;
 
 class CreatureAI;

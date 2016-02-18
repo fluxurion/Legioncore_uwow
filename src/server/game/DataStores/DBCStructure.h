@@ -21,13 +21,8 @@
 
 #include "Common.h"
 #include "DBCEnums.h"
-#include "Define.h"
 #include "Path.h"
 #include "Util.h"
-
-#include <map>
-#include <set>
-#include <vector>
 
 #pragma pack(push, 1)
 

@@ -38,8 +38,6 @@
 #include "ObjectAccessor.h"
 #include "ObjectDefines.h"
 #include "VehicleDefines.h"
-#include <string>
-#include <map>
 #include <limits>
 #include "ConditionMgr.h"
 #include <functional>

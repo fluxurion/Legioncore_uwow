@@ -20,7 +20,6 @@
 #define _WARDEN_MAC_H
 
 #include "Cryptography/ARC4.h"
-#include <map>
 #include "Cryptography/BigNumber.h"
 #include "ByteBuffer.h"
 #include "Warden.h"

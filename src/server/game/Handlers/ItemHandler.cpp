@@ -27,7 +27,6 @@
 #include "UpdateData.h"
 #include "ObjectAccessor.h"
 #include "SpellInfo.h"
-#include <vector>
 #include "ItemPackets.h"
 #include "BankPackets.h"
 #include "SpellPackets.h"

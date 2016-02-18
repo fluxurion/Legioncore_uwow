@@ -2,9 +2,7 @@
 #define __PLAYERTAXI_H__
 
 #include "DB2Stores.h"
-#include "Define.h"
 #include "WorldSession.h"
-#include <map>
 
 class PlayerTaxi
 {

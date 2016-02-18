@@ -24,8 +24,6 @@
 #include "LinkedReference/Reference.h"
 #include "UnitEvents.h"
 
-#include <list>
-
 //==============================================================
 
 class Unit;

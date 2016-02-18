@@ -19,13 +19,9 @@
 #ifndef QUEST_H
 #define QUEST_H
 
-#include "Define.h"
 #include "DatabaseEnv.h"
 #include "SharedDefines.h"
 #include "WorldPacket.h"
-
-#include <string>
-#include <vector>
 
 class Player;
 

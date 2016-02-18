@@ -20,7 +20,6 @@
 
 #include "Common.h"
 #include "DBCEnums.h"
-#include "Define.h"
 #include "Path.h"
 
 #define MAX_BROADCAST_TEXT_EMOTES 3

@@ -21,8 +21,6 @@
 
 #include <Common.h>
 
-#include <map>
-
 enum UsedPosType { USED_POS_PLUS, USED_POS_MINUS };
 
 inline UsedPosType operator ~(UsedPosType uptype)

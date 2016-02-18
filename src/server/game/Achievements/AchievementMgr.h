@@ -18,9 +18,6 @@
 #ifndef __TRINITY_ACHIEVEMENTMGR_H
 #define __TRINITY_ACHIEVEMENTMGR_H
 
-#include <map>
-#include <string>
-
 #include "Common.h"
 #include "DatabaseEnv.h"
 #include "DBCEnums.h"

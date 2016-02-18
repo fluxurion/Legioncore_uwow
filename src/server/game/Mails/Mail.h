@@ -21,7 +21,6 @@
 
 #include "Common.h"
 #include "ObjectGuid.h"
-#include <map>
 
 struct AuctionEntry;
 class BlackMarketEntry;

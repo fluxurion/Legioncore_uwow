@@ -21,9 +21,6 @@
 #include "Common.h"
 #include "Channel.h"
 
-#include <map>
-#include <string>
-
 #include "World.h"
 
 class ChannelMgr

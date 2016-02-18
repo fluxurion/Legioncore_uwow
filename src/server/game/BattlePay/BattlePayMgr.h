@@ -19,8 +19,6 @@
 #ifndef __TRINITY_BATTLEPAYMGR_H
 #define __TRINITY_BATTLEPAYMGR_H
 
-#include <map>
-#include <string>
 #include "Packets/BattlePayPackets.h"
 
 class WorldSession;

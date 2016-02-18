@@ -19,7 +19,6 @@
 #ifndef TRINITY_OBJECTDEFINES_H
 #define TRINITY_OBJECTDEFINES_H
 
-#include "Define.h"
 #include "ObjectGuid.h"
 
 // used for creating values for respawn for example

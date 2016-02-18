@@ -19,8 +19,6 @@
 #ifndef TRINITY_MAP_H
 #define TRINITY_MAP_H
 
-#include "Define.h"
-
 #include "DBCStructure.h"
 #include "DB2Structure.h"
 #include "GridDefines.h"
@@ -33,7 +31,6 @@
 #include "GameObjectModel.h"
 
 #include <bitset>
-#include <list>
 
 class Unit;
 class WorldPacket;

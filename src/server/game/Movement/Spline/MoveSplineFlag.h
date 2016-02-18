@@ -21,8 +21,6 @@
 
 #include "MovementTypedefs.h"
 
-#include <string>
-
 namespace Movement
 {
 #pragma pack(push, 1)

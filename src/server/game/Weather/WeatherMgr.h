@@ -23,8 +23,6 @@
 #ifndef __WEATHERMGR_H
 #define __WEATHERMGR_H
 
-#include "Define.h"
-
 class Weather;
 class Player;
 

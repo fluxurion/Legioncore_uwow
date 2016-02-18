@@ -17,7 +17,6 @@
  */
 
 #include "Spline.h"
-#include <sstream>
 #include <G3D/Matrix4.h>
 
 namespace Movement{

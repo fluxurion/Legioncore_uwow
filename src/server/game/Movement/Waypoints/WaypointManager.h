@@ -19,8 +19,6 @@
 #ifndef TRINITY_WAYPOINTMANAGER_H
 #define TRINITY_WAYPOINTMANAGER_H
 
-#include <vector>
-
 struct WaypointData
 {
     uint32 id;

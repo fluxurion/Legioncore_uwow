@@ -34,9 +34,6 @@
 #include "Realm/Realm.h"
 
 #include <atomic>
-#include <map>
-#include <set>
-#include <list>
 
 class Object;
 class WorldPacket;

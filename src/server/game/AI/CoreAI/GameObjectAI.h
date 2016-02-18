@@ -19,8 +19,6 @@
 #ifndef TRINITY_GAMEOBJECTAI_H
 #define TRINITY_GAMEOBJECTAI_H
 
-#include "Define.h"
-#include <list>
 #include "Object.h"
 #include "GameObject.h"
 #include "CreatureAI.h"

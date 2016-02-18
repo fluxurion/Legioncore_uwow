@@ -19,9 +19,6 @@
 #ifndef __TRINITY_BATTLEPETMGR_H
 #define __TRINITY_BATTLEPETMGR_H
 
-#include <map>
-#include <string>
-
 #include "Common.h"
 #include "DatabaseEnv.h"
 #include "DBCEnums.h"

@@ -18,9 +18,6 @@
 #ifndef TRINITYCORE_WORDFILTERMGR_H
 #define TRINITYCORE_WORDFILTERMGR_H
 
-#include <string>
-#include <map>
-
 class WordFilterMgr
 {
     private:

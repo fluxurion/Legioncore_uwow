@@ -22,9 +22,7 @@
 #include "DB2Structure.h"
 #include "SharedDefines.h"
 
-#include <array>
 #include <boost/regex.hpp>
-#include <list>
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
 extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;

@@ -24,7 +24,6 @@
 #include "SpellMgr.h"
 #include "Player.h"
 #include "SpellInfo.h"
-#include <map>
 
 struct SkillDiscoveryEntry
 {

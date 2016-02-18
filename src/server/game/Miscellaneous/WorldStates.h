@@ -19,8 +19,6 @@
 #ifndef WORLD_STATES_H
 #define WORLD_STATES_H
 
-#include "Define.h"
-
 enum class WorldStates : uint32
 {
     WS_NONE                         = 0,

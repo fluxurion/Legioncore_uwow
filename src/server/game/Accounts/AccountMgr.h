@@ -19,9 +19,6 @@
 #ifndef _ACCMGR_H
 #define _ACCMGR_H
 
-#include "Define.h"
-#include <string>
-
 enum class AccountOpResult : uint8
 {
     AOR_OK,

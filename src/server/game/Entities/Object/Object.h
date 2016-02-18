@@ -28,9 +28,6 @@
 #include "GridDefines.h"
 #include "Map.h"
 
-#include <set>
-#include <string>
-#include <sstream>
 #include <boost/unordered_set.hpp>
 #include "G3D/Vector3.h"
 #include "G3D/LineSegment.h"

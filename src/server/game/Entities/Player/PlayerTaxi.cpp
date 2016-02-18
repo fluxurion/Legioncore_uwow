@@ -2,7 +2,6 @@
 #include "TaxiPackets.h"
 #include "ObjectMgr.h"
 #include <limits>
-#include <math.h>
 
 void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 chrClass, uint8 level)
 {

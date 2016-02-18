@@ -19,7 +19,6 @@
 #ifndef _MAP_UPDATER_H_INCLUDED
 #define _MAP_UPDATER_H_INCLUDED
 
-#include "Define.h"
 #include <mutex>
 #include <thread>
 #include <condition_variable>

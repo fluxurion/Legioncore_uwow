@@ -20,7 +20,6 @@
 #define TRINITY_SHAREDDEFINES_H
 
 #include "DetourNavMesh.h"
-#include "Define.h"
 #include <cassert>
 
 #include "WorldStates.h" // include it just in specific files and remove from here

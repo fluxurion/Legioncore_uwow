@@ -59,7 +59,6 @@
 #include "UpdateFieldFlags.h"
 #include "Battlefield.h"
 #include "BattlefieldMgr.h"
-#include <math.h>
 #include <cwctype>
 
 #include "BattlegroundScore.h"

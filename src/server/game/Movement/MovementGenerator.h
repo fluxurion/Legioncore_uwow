@@ -19,7 +19,6 @@
 #ifndef TRINITY_MOVEMENTGENERATOR_H
 #define TRINITY_MOVEMENTGENERATOR_H
 
-#include "Define.h"
 #include "ObjectRegistry.h"
 #include "FactoryHolder.h"
 #include "Common.h"

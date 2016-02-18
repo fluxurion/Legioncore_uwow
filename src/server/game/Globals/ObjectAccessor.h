@@ -20,12 +20,9 @@
 #define TRINITY_OBJECTACCESSOR_H
 
 #include <mutex>
-#include <set>
-#include <unordered_map>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
-#include "Define.h"
 #include "GridDefines.h"
 #include "UpdateData.h"
 #include "Object.h"

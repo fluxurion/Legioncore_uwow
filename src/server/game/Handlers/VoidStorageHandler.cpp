@@ -24,8 +24,6 @@
 #include "Log.h"
 #include "Opcodes.h"
 #include "Player.h"
-#include <list>
-#include <vector>
 #include <utility>
 #include "ItemPackets.h"
 #include "VoidStoragePackets.h"

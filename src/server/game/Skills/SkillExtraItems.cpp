@@ -20,7 +20,6 @@
 #include "DatabaseEnv.h"
 #include "Log.h"
 #include "Player.h"
-#include <map>
 
 // some type definitions
 // no use putting them in the header file, they're only used in this .cpp

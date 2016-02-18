@@ -21,7 +21,6 @@
 #include "ByteBuffer.h"
 #include <G3D/Vector2.h>
 #include <G3D/Vector3.h>
-#include <sstream>
 
 inline ByteBuffer& operator<<(ByteBuffer& data, G3D::Vector2 const& v)
 {

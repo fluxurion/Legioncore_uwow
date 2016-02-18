@@ -29,7 +29,6 @@
 #include "CharacterPackets.h"
 #include "Duration.h"
 #include <zlib.h>
-#include <memory>
 
 using boost::asio::ip::tcp;
 

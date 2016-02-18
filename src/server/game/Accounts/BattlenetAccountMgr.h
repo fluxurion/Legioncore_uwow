@@ -18,9 +18,6 @@
 #ifndef BattlenetAccountMgr_h__
 #define BattlenetAccountMgr_h__
 
-#include "Define.h"
-#include <string>
-
 enum class AccountOpResult : uint8;
 
 #define MAX_BNET_EMAIL_STR 320

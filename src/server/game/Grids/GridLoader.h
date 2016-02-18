@@ -32,7 +32,6 @@
 
 //I cannot see why this cannot be replaced by a Grid::Visit
 /*
-#include "Define.h"
 #include "Grid.h"
 #include "TypeContainerVisitor.h"
 

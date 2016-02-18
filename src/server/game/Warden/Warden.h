@@ -19,7 +19,6 @@
 #ifndef _WARDEN_BASE_H
 #define _WARDEN_BASE_H
 
-#include <map>
 #include "Cryptography/ARC4.h"
 #include "Cryptography/BigNumber.h"
 #include "ByteBuffer.h"

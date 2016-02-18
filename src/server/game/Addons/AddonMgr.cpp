@@ -21,8 +21,6 @@
 #include "Log.h"
 #include "Timer.h"
 
-#include <list>
-
 BannedAddonDataMap  sBannedAddonDataMap;
 
 namespace AddonMgr

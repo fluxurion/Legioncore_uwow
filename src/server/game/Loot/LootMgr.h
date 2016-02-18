@@ -26,9 +26,6 @@
 #include "ConditionMgr.h"
 #include "Object.h"
 
-#include <map>
-#include <vector>
-
 namespace WorldPackets
 {
     namespace Loot

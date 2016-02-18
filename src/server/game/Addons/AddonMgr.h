@@ -18,9 +18,6 @@
 
 #ifndef _ADDONMGR_H
 #define _ADDONMGR_H
-
-#include "Define.h"
-#include <string>
 #include <openssl/md5.h>
 
 struct AddonInfo

@@ -19,12 +19,8 @@
 #ifndef _INSTANCESAVEMGR_H
 #define _INSTANCESAVEMGR_H
 
-#include <list>
-#include <map>
 #include <mutex>
-#include <unordered_map>
 
-#include "Define.h"
 #include "DatabaseEnv.h"
 #include "DBCEnums.h"
 #include "ObjectDefines.h"

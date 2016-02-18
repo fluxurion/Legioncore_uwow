@@ -19,7 +19,6 @@
 #ifndef TRINITY_MAPMANAGER_H
 #define TRINITY_MAPMANAGER_H
 
-#include "Define.h"
 #include "Common.h"
 #include "Map.h"
 #include "GridStates.h"

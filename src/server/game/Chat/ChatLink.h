@@ -19,8 +19,6 @@
 #define CHATLINK_H
 
 #include "SharedDefines.h"
-#include <sstream>
-#include <list>
 
 struct ItemLocale;
 struct ItemTemplate;

@@ -20,10 +20,7 @@
 #define TRINITY_CONDITIONMGR_H
 
 #include "LootMgr.h"
-#include "Define.h"
 #include "Errors.h"
-#include <list>
-#include <map>
 
 class Player;
 class Unit;
