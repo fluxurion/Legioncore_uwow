@@ -98,7 +98,7 @@ void WorldSession::HandleGetUndeleteCharacterCooldownStatus(WorldPackets::Charac
 {
     WorldPackets::Character::UndeleteCooldownStatusResponse response;
     response.OnCooldown = false;
-    response.MaxCooldown = 0;
+    response.MaxCooldown = MONTH;
     response.CurrentCooldown = 0;
     SendPacket(response.Write());
 }

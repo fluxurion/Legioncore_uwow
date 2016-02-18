@@ -1211,36 +1211,55 @@ enum CUFOptions
     CUF_UNK_145,
     CUF_UNK_156,
     CUF_UNK_157,
+
+    CUF_BOOL_OPTIONS_COUNT
 };
 
 struct CUFProfile
 {
-    CUFProfile(): profileName("Default"), frameWidth(0), frameHeight(0), TopOffset(0), BottomOffset(0), LeftOffset(0), LeftPoint(0),
-        TopPoint(0), BottomPoint(0), showHealthText(0), sortBy(0), options(0) {}
-
-    CUFProfile(const std::string& name, uint16 frameHeight, uint16 frameWidth, uint8 sortBy, uint8 healthText, uint32 options,
-        uint8 _TopPoint, uint8 _BottomPoint, uint8 _LeftPoint, uint16 _TopOffset, uint16 _BottomOffset, uint16 _LeftOffset) :
-        profileName(name), frameWidth(frameWidth), frameHeight(frameHeight), TopOffset(_TopOffset), BottomOffset(_BottomOffset),
-        LeftOffset(_LeftOffset), TopPoint(_TopPoint), BottomPoint(_BottomPoint), LeftPoint(_LeftPoint), showHealthText(healthText),
-        sortBy(sortBy), options(options) {}
-
-    std::string profileName;
-    uint16 frameWidth, frameHeight, TopOffset, BottomOffset, LeftOffset;
-    uint8 TopPoint, BottomPoint, LeftPoint, showHealthText, sortBy;
-    uint32 options;
-
-    void setOptionBit(uint8 index, bool value)
+    CUFProfile() : ProfileName(), BoolOptions()
     {
-        if (!value)
-            options &= ~(1 << index);
-        else
-            options |= (1 << index);
+        FrameHeight = 0;
+        FrameWidth = 0;
+        SortBy = 0;
+        HealthText = 0;
+        TopPoint = 0;
+        BottomPoint = 0;
+        LeftPoint = 0;
+        TopOffset = 0;
+        BottomOffset = 0;
+        LeftOffset = 0;
     }
 
-    uint32 getOptionBit(uint8 index)
+    CUFProfile(std::string const& name, uint16 frameHeight, uint16 frameWidth, uint8 sortBy, uint8 healthText, uint32 boolOptions,
+               uint8 topPoint, uint8 bottomPoint, uint8 leftPoint, uint16 topOffset, uint16 bottomOffset, uint16 leftOffset)
+               : ProfileName(name), BoolOptions(int(boolOptions))
     {
-        return (options & (1 << index));
+        FrameHeight = frameHeight;
+        FrameWidth = frameWidth;
+        SortBy = sortBy;
+        HealthText = healthText;
+        TopPoint = topPoint;
+        BottomPoint = bottomPoint;
+        LeftPoint = leftPoint;
+        TopOffset = topOffset;
+        BottomOffset = bottomOffset;
+        LeftOffset = leftOffset;
     }
+
+    std::string ProfileName;
+    uint16 FrameHeight;
+    uint16 FrameWidth;
+    uint16 TopOffset;
+    uint16 BottomOffset;
+    uint16 LeftOffset;
+    uint8 SortBy;
+    uint8 HealthText;
+    uint8 TopPoint;
+    uint8 BottomPoint;
+    uint8 LeftPoint;
+
+    std::bitset<CUF_BOOL_OPTIONS_COUNT> BoolOptions;
 };
 
 class TradeData
@@ -3207,16 +3226,15 @@ class Player : public Unit, public GridObject<Player>
         VoidStorageItem* GetVoidStorageItem(uint8 slot) const;
         VoidStorageItem* GetVoidStorageItem(uint64 id, uint8& slot) const;
 
-        void SaveCUFProfile(uint8 id, CUFProfile * profile) { delete _CUFProfiles[id]; _CUFProfiles[id] = profile; }
-        CUFProfile * GetCUFProfile(uint8 id) { return _CUFProfiles[id]; }
-        uint8 GetCUFProfilesCount()
+        void SaveCUFProfile(uint8 id, std::nullptr_t) { _CUFProfiles[id] = nullptr; }
+        void SaveCUFProfile(uint8 id, std::unique_ptr<CUFProfile> profile) { _CUFProfiles[id] = std::move(profile); }
+        CUFProfile* GetCUFProfile(uint8 id) const { return _CUFProfiles[id].get(); }
+        uint8 GetCUFProfilesCount() const
         {
             uint8 count = 0;
             for (uint8 i = 0; i < MAX_CUF_PROFILES; ++i)
-            {
                 if (_CUFProfiles[i])
-                    count++;
-            }
+                    ++count;
 
             return count;
         }
@@ -3460,7 +3478,7 @@ class Player : public Unit, public GridObject<Player>
         bool _vignetteChanged = false;
 
         VoidStorageItem* _voidStorageItems[VOID_STORAGE_MAX_SLOT];
-        CUFProfile* _CUFProfiles[MAX_CUF_PROFILES];
+        std::array<std::unique_ptr<CUFProfile>, MAX_CUF_PROFILES> _CUFProfiles;
 
         std::vector<Item*> m_itemUpdateQueue;
         bool m_itemUpdateQueueBlocked;

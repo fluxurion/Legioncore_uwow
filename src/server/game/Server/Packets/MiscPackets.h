@@ -67,7 +67,7 @@ namespace WorldPackets
         class InvalidatePlayer final : public ServerPacket
         {
         public:
-            InvalidatePlayer() : ServerPacket(SMSG_INVALIDATE_PLAYER, 18) { }
+            InvalidatePlayer(ObjectGuid guid) : ServerPacket(SMSG_INVALIDATE_PLAYER, 18), Guid(guid) { }
 
             WorldPacket const* Write() override;
 
@@ -977,6 +977,26 @@ namespace WorldPackets
             ObjectGuid Guid;
             int32 Threshold = 0;
             uint32 ItemID = 0;
+        };
+
+        class SaveCUFProfiles final : public ClientPacket
+        {
+        public:
+            SaveCUFProfiles(WorldPacket&& packet) : ClientPacket(CMSG_SAVE_CUF_PROFILES, std::move(packet)) { }
+
+            void Read() override;
+
+            std::vector<std::unique_ptr<CUFProfile>> CUFProfiles;
+        };
+
+        class LoadCUFProfiles final : public ServerPacket
+        {
+        public:
+            LoadCUFProfiles() : ServerPacket(SMSG_LOAD_CUF_PROFILES, 4) { }
+
+            WorldPacket const* Write() override;
+
+            std::vector<CUFProfile const*> CUFProfiles;
         };
     }
 }

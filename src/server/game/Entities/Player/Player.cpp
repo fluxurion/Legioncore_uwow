@@ -763,7 +763,6 @@ Player::Player(WorldSession* session): Unit(true),
     m_clientKickDelay = 0;
 
     memset(_voidStorageItems, 0, VOID_STORAGE_MAX_SLOT * sizeof(VoidStorageItem*));
-    memset(_CUFProfiles, 0, MAX_CUF_PROFILES * sizeof(CUFProfile*));
 
     m_PetSlots.resize(PET_SLOT_LAST, 0);
     realmTransferid = 0;
@@ -797,8 +796,8 @@ Player::~Player()
 
     delete PlayerTalkClass;
 
-    for (size_t x = 0; x < ItemSetEff.size(); x++)
-        delete ItemSetEff[x];
+    for (std::vector<ItemSetEffect*>::value_type effect : ItemSetEff)
+        delete effect;
 
     delete m_declinedname;
 
@@ -806,7 +805,7 @@ Player::~Player()
         delete _voidStorageItems[i];
 
     for (uint8 i = 0; i < MAX_CUF_PROFILES; ++i)
-        delete _CUFProfiles[i];
+        _CUFProfiles[i] = nullptr;
 
     ClearResurrectRequestData();
 
@@ -19732,19 +19731,19 @@ void Player::_LoadCUFProfiles(PreparedQueryResult result)
         // SELECT profileId, profileName, frameHeight, frameWidth, sortBy, healthText, options, unk146, unk147, unk148, unk150, unk152, unk154 FROM character_cuf_profiles WHERE guid = ?
         Field* fields = result->Fetch();
 
-        uint8 id           = fields[0].GetUInt8();
-        std::string name   = fields[1].GetString();
-        uint16 frameHeight = fields[2].GetUInt16();
-        uint16 frameWidth  = fields[3].GetUInt16();
-        uint8 sortBy       = fields[4].GetUInt8();
-        uint8 healthText   = fields[5].GetUInt8();
-        uint32 options = fields[6].GetUInt32();
-        uint8 TopPoint     = fields[7].GetUInt8();
-        uint8 BottomPoint  = fields[8].GetUInt8();
-        uint8 LeftPoint    = fields[9].GetUInt8();
-        uint16 TopOffset  = fields[10].GetUInt16();
-        uint16 BottomOffset = fields[11].GetUInt16();
-        uint16 LeftOffset   = fields[12].GetUInt16();
+        uint8 id            = fields[0].GetUInt8();
+        std::string name    = fields[1].GetString();
+        uint16 frameHeight  = fields[2].GetUInt16();
+        uint16 frameWidth   = fields[3].GetUInt16();
+        uint8 sortBy        = fields[4].GetUInt8();
+        uint8 healthText    = fields[5].GetUInt8();
+        uint32 boolOptions  = fields[6].GetUInt32();
+        uint8 topPoint      = fields[7].GetUInt8();
+        uint8 bottomPoint   = fields[8].GetUInt8();
+        uint8 leftPoint     = fields[9].GetUInt8();
+        uint16 topOffset    = fields[10].GetUInt16();
+        uint16 bottomOffset = fields[11].GetUInt16();
+        uint16 leftOffset   = fields[12].GetUInt16();
 
         if (id > MAX_CUF_PROFILES)
         {
@@ -19752,7 +19751,7 @@ void Player::_LoadCUFProfiles(PreparedQueryResult result)
             continue;
         }
 
-        _CUFProfiles[id] = new CUFProfile(name, frameHeight, frameWidth, sortBy, healthText, options, TopPoint, BottomPoint, LeftPoint, TopOffset, BottomOffset, LeftOffset);
+        _CUFProfiles[id] = Trinity::make_unique<CUFProfile>(name, frameHeight, frameWidth, sortBy, healthText, boolOptions, topPoint, bottomPoint, leftPoint, topOffset, bottomOffset, leftOffset);
     }
     while (result->NextRow());
 }
@@ -21587,12 +21586,12 @@ void Player::_SaveCUFProfiles(SQLTransaction& trans)
             PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_CUF_PROFILES);
             stmt->setUInt64(0, playerGuid);
             stmt->setUInt8(1, i);
-            stmt->setString(2, _CUFProfiles[i]->profileName);
-            stmt->setUInt16(3, _CUFProfiles[i]->frameHeight);
-            stmt->setUInt16(4, _CUFProfiles[i]->frameWidth);
-            stmt->setUInt8(5, _CUFProfiles[i]->sortBy);
-            stmt->setUInt8(6, _CUFProfiles[i]->showHealthText);
-            stmt->setUInt32(7, _CUFProfiles[i]->options);
+            stmt->setString(2, _CUFProfiles[i]->ProfileName);
+            stmt->setUInt16(3, _CUFProfiles[i]->FrameHeight);
+            stmt->setUInt16(4, _CUFProfiles[i]->FrameWidth);
+            stmt->setUInt8(5, _CUFProfiles[i]->SortBy);
+            stmt->setUInt8(6, _CUFProfiles[i]->HealthText);
+            stmt->setUInt32(7, _CUFProfiles[i]->BoolOptions.to_ulong());
             stmt->setUInt8(8, _CUFProfiles[i]->TopPoint);
             stmt->setUInt8(9, _CUFProfiles[i]->BottomPoint);
             stmt->setUInt8(10, _CUFProfiles[i]->LeftPoint);

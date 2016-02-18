@@ -121,7 +121,7 @@ namespace WorldPackets
         class SetFactionInactive;
         class SetWatchedFaction;
         class EmoteClient;
-
+        class SetPlayerDeclinedNames;
 
         enum class LoginFailureReason : uint8;
     }
@@ -300,6 +300,7 @@ namespace WorldPackets
         class ConfirmRespecWipe;
         class ShowTradeSkill;
         class CompleteMovie;
+        class SaveCUFProfiles;
     }
 
     namespace Movement
@@ -815,6 +816,12 @@ enum ChatRestrictionType
 enum CharterTypes
 {
     GUILD_CHARTER_TYPE                            = 4,
+};
+
+enum DeclinedNameResult
+{
+    DECLINED_NAMES_RESULT_SUCCESS   = 0,
+    DECLINED_NAMES_RESULT_ERROR     = 1
 };
 
 class LoginQueryHolder : public SQLQueryHolder
@@ -1439,7 +1446,8 @@ class WorldSession
 
         void HandleCharacterRenameRequest(WorldPackets::Character::CharacterRenameRequest& packet);
         void HandleChangePlayerNameOpcodeCallBack(PreparedQueryResult result, std::string newName);
-        void HandleSetPlayerDeclinedNames(WorldPacket& recvData);
+        void HandleSetPlayerDeclinedNames(WorldPackets::Character::SetPlayerDeclinedNames& packet);
+        void SendSetPlayerDeclinedNamesResult(DeclinedNameResult result, ObjectGuid guid);
 
         void HandleTotemDestroyed(WorldPackets::Totem::TotemDestroyed& packet);
         void HandleDismissCritter(WorldPackets::PetPackets::DismissCritter& packet);
@@ -1648,7 +1656,7 @@ class WorldSession
         void HandleClearRaidMarker(WorldPackets::Party::ClearRaidMarker& packet);
         void HandleShowTradeSkill(WorldPackets::Misc::ShowTradeSkill& packet);
         void HandleForcedReactions(WorldPackets::Reputation::RequestForcedReactions& packet);
-        void HandleSaveCUFProfiles(WorldPacket& recvPacket);
+        void HandleSaveCUFProfiles(WorldPackets::Misc::SaveCUFProfiles& packet);
         void SendLoadCUFProfiles();
         void HandleBattlePayDistributionAssign(WorldPackets::BattlePay::DistributionAssignToTarget& packet);
         void HandleBattlePayStartPurchase(WorldPackets::BattlePay::StartPurchase& packet);

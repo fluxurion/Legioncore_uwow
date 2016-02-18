@@ -36,6 +36,7 @@
 #include "BattlenetAccountMgr.h"
 #include "CharacterPackets.h"
 #include "QueryPackets.h"
+#include "MiscPackets.h"
 
 void WorldSession::SendNameQueryOpcode(ObjectGuid guid)
 {
@@ -55,6 +56,7 @@ void WorldSession::SendNameQueryOpcode(ObjectGuid guid)
 
 void WorldSession::HandleQueryPlayerName(WorldPackets::Query::QueryPlayerName& packet)
 {
+    SendPacket(WorldPackets::Misc::InvalidatePlayer(packet.Player).Write());
     SendNameQueryOpcode(packet.Player);
 }
 

@@ -673,6 +673,28 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class SetPlayerDeclinedNames final : public ClientPacket
+        {
+        public:
+            SetPlayerDeclinedNames(WorldPacket&& packet) : ClientPacket(CMSG_SET_PLAYER_DECLINED_NAMES, std::move(packet)) { }
+        
+            void Read() override;
+
+            ObjectGuid Player;
+            DeclinedName DeclinedNames;
+        };
+
+        class SetPlayerDeclinedNamesResult final : public ServerPacket
+        {
+        public:
+            SetPlayerDeclinedNamesResult() : ServerPacket(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 16 + 4) { }
+
+            WorldPacket const* Write() override;
+
+            ObjectGuid Player;
+            int32 ResultCode = 0;
+        };
     }
 }
 

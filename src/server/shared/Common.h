@@ -29,7 +29,6 @@
 #include <errno.h>
 #include <signal.h>
 #include <assert.h>
-#include <unordered_map>
 
 #if PLATFORM == PLATFORM_WINDOWS
 #define STRCASECMP stricmp
@@ -38,16 +37,21 @@
 #endif
 
 #include <set>
+#include <unordered_set>
 #include <list>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <sstream>
 #include <algorithm>
 #include <memory>
+#include <vector>
+#include <array>
 
 #include <boost/optional.hpp>
 #include <boost/utility/in_place_factory.hpp>
+#include <boost/functional/hash.hpp>
 
 #include "Debugging/Errors.h"
 
@@ -225,6 +229,21 @@ namespace Trinity
     {
         return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
+}
+
+//! Hash implementation for std::pair to allow using pairs in unordered_set or as key for unordered_map
+//! Individual types used in pair must be hashable by boost::hash
+namespace std
+{
+    template<class K, class V>
+    struct hash<std::pair<K, V>>
+    {
+    public:
+        size_t operator()(std::pair<K, V> const& key) const
+        {
+            return boost::hash_value(key);
+        }
+    };
 }
 
 #endif

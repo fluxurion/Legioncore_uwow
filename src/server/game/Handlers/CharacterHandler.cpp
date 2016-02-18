@@ -1309,122 +1309,64 @@ void WorldSession::HandleChangePlayerNameOpcodeCallBack(PreparedQueryResult resu
     sWorld->UpdateCharacterNameData(guidLow, newName);
 }
 
-void WorldSession::HandleSetPlayerDeclinedNames(WorldPacket& recvData)
+void WorldSession::HandleSetPlayerDeclinedNames(WorldPackets::Character::SetPlayerDeclinedNames& packet)
 {
     if (!sWorld->getBoolConfig(CONFIG_DECLINED_NAMES_USED))
     {
-        recvData.rfinish();
-        //! 5.4.1
-        WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-        data << uint32(0);                                      // OK
-        data.WriteBits(0, 9);   //epmpty guid + unk bit
-        data.FlushBits();
-        SendPacket(&data);
+        SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_SUCCESS, packet.Player);
         return;
     }
 
-    ObjectGuid guid;
-    DeclinedName declinedname;
-
-    //recvData.ReadGuidMask<5, 1, 3, 0, 6, 4>(guid);
-
-    uint32 declinedNamesLength[MAX_DECLINED_NAME_CASES];
-    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-        declinedNamesLength[i] = recvData.ReadBits(7);
-
-    //recvData.ReadGuidMask<2, 7>(guid);
-    //recvData.ReadGuidBytes<6, 1, 2>(guid);
-
-    bool decl_checl = true;
-    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-    {
-        declinedname.name[i] = recvData.ReadString(declinedNamesLength[i]);
-        if (!normalizePlayerName(declinedname.name[i]))
-            decl_checl = false;
-    }
-
-    //recvData.ReadGuidBytes<3, 4, 0, 5, 7>(guid);
-
-    if (!decl_checl)
-    {
-        //! 5.4.1
-        WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-        data << uint32(1);
-        data.WriteBit(bool(guid));
-        //data.WriteGuidMask<0, 1, 3, 7, 5, 4, 2, 6>(guid);
-        data.FlushBits();
-        //data.WriteGuidBytes<6, 4, 5, 0, 2, 7, 1, 3>(guid);
-        SendPacket(&data);
-        return;
-    }
-
-    // not accept declined names for unsupported languages
     std::string name;
-    if (!ObjectMgr::GetPlayerNameByGUID(guid, name))
+    if (!ObjectMgr::GetPlayerNameByGUID(packet.Player, name))
     {
-        //! 5.4.1
-        WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-        data << uint32(1);
-        data.WriteBit(bool(guid));
-        //data.WriteGuidMask<0, 1, 3, 7, 5, 4, 2, 6>(guid);
-        data.FlushBits();
-        //data.WriteGuidBytes<6, 4, 5, 0, 2, 7, 1, 3>(guid);
-        SendPacket(&data);
+        SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
         return;
     }
 
     std::wstring wname;
     if (!Utf8toWStr(name, wname) || !isCyrillicCharacter(wname[0]))
     {
-        //! 5.4.1
-        WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-        data << uint32(1);
-        data.WriteBit(bool(guid));
-        //data.WriteGuidMask<0, 1, 3, 7, 5, 4, 2, 6>(guid);
-        data.FlushBits();
-        //data.WriteGuidBytes<6, 4, 5, 0, 2, 7, 1, 3>(guid);
-        SendPacket(&data);
+        SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
         return;
     }
 
-    if (!ObjectMgr::CheckDeclinedNames(wname, declinedname))
+    if (!ObjectMgr::CheckDeclinedNames(wname, packet.DeclinedNames))
     {
-        //5.4.1
-        WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-        data << uint32(1);
-        data.WriteBit(bool(guid));
-        //data.WriteGuidMask<0, 1, 3, 7, 5, 4, 2, 6>(guid);
-        data.FlushBits();
-        //data.WriteGuidBytes<6, 4, 5, 0, 2, 7, 1, 3>(guid);
-        SendPacket(&data);
+        SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
         return;
     }
 
-    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-        CharacterDatabase.EscapeString(declinedname.name[i]);
+    for (int8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+        if (!normalizePlayerName(packet.DeclinedNames.name[i]))
+        {
+            SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
+            return;
+        }
+
+    for (int8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+        CharacterDatabase.EscapeString(packet.DeclinedNames.name[i]);
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
-
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_DECLINED_NAME);
-    stmt->setUInt64(0, guid.GetCounter());
+    stmt->setUInt64(0, packet.Player.GetCounter());
     trans->Append(stmt);
-
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHAR_DECLINED_NAME);
-    stmt->setUInt64(0, guid.GetCounter());
-
-    for (uint8 i = 0; i < 5; ++i)
-        stmt->setString(i+1, declinedname.name[i]);
-
+    stmt->setUInt64(0, packet.Player.GetCounter());
+    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+        stmt->setString(i + 1, packet.DeclinedNames.name[i]);
     trans->Append(stmt);
-
     CharacterDatabase.CommitTransaction(trans);
 
-    //! 5.4.1
-    WorldPacket data(SMSG_SET_PLAYER_DECLINED_NAMES_RESULT, 4+8);
-    data << uint32(0);                                      // OK
-    data.WriteBits(0, 9);   //epmpty guid + unk bit
-    data.FlushBits();
-    SendPacket(&data);
+    SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_SUCCESS, packet.Player);
+}
+
+void WorldSession::SendSetPlayerDeclinedNamesResult(DeclinedNameResult result, ObjectGuid guid)
+{
+    WorldPackets::Character::SetPlayerDeclinedNamesResult packet;
+    packet.ResultCode = result;
+    packet.Player = guid;
+    SendPacket(packet.Write());
 }
 
 void WorldSession::HandleAlterAppearance(WorldPackets::Character::AlterApperance& packet)
@@ -2315,129 +2257,30 @@ void WorldSession::HandleReorderCharacters(WorldPacket& recvData)
     CharacterDatabase.CommitTransaction(trans);
 }
 
-void WorldSession::HandleSaveCUFProfiles(WorldPacket& recvData)
+void WorldSession::HandleSaveCUFProfiles(WorldPackets::Misc::SaveCUFProfiles& packet)
 {
-    uint32 profilesCount;
-    recvData >> profilesCount;
-
-    if (profilesCount > MAX_CUF_PROFILES)
-    {
-        recvData.rfinish();
+    Player* player = GetPlayer();
+    if (packet.CUFProfiles.size() > MAX_CUF_PROFILES || !player)
         return;
-    }
 
-    CUFProfile* profiles[MAX_CUF_PROFILES];
+    for (uint8 i = 0; i < packet.CUFProfiles.size(); ++i)
+        player->SaveCUFProfile(i, std::move(packet.CUFProfiles[i]));
 
-    for (uint8 i = 0; i < profilesCount; ++i)
-    {
-        profiles[i] = new CUFProfile;
-        profiles[i]->setOptionBit(CUF_KEEP_GROUPS_TOGETHER, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_PETS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_MAIN_TANK_AND_ASSIST, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_HEAL_PREDICTION, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_AGGRO_HIGHLIGHT, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_ONLY_DISPELLABLE_DEBUFFS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_POWER_BAR, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_BORDER, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_USE_CLASS_COLORS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_HORIZONTAL_GROUPS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DISPLAY_NON_BOSS_DEBUFFS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_DYNAMIC_POSITION, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_LOCKED, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_SHOWN, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_2_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_3_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_5_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_10_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_15_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_25_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_40_PLAYERS, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_SPEC_1, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_SPEC_2, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_PVP, recvData.ReadBit());
-        profiles[i]->setOptionBit(CUF_AUTO_ACTIVATE_PVE, recvData.ReadBit());
-
-        recvData >> profiles[i]->frameHeight;
-        recvData >> profiles[i]->frameWidth;
-        recvData >> profiles[i]->sortBy;
-        recvData >> profiles[i]->showHealthText;
-        recvData >> profiles[i]->TopPoint;
-        recvData >> profiles[i]->BottomPoint;
-        recvData >> profiles[i]->LeftPoint;
-        recvData >> profiles[i]->TopOffset;
-        recvData >> profiles[i]->BottomOffset;
-        recvData >> profiles[i]->LeftOffset;
-
-        recvData >> profiles[i]->profileName;
-
-        // save current profile
-        _player->SaveCUFProfile(i, profiles[i]);
-    }
-
-    // clear other profiles
-    for (uint8 i = profilesCount; i < MAX_CUF_PROFILES; ++i)
-        _player->SaveCUFProfile(i, NULL);
+    for (uint8 i = packet.CUFProfiles.size(); i < MAX_CUF_PROFILES; ++i)
+        player->SaveCUFProfile(i, nullptr);
 }
 
 void WorldSession::SendLoadCUFProfiles()
 {
-    uint8 profilesCount = _player->GetCUFProfilesCount();
+    Player* player = GetPlayer();
+    if (!player)
+        return;
 
-    WorldPacket data(SMSG_LOAD_CUF_PROFILES);
-
-    data << uint32(profilesCount);
-    for (uint8 i = 0; i < profilesCount; ++i)
-    {
-        CUFProfile * profile = _player->GetCUFProfile(i);
-
-        if (!profile)
-            continue;
-
-        data.WriteBit(profile->getOptionBit(CUF_KEEP_GROUPS_TOGETHER));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_PETS));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_MAIN_TANK_AND_ASSIST));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_HEAL_PREDICTION));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_AGGRO_HIGHLIGHT));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_ONLY_DISPELLABLE_DEBUFFS));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_POWER_BAR));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_BORDER));
-        data.WriteBit(profile->getOptionBit(CUF_USE_CLASS_COLORS));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_HORIZONTAL_GROUPS));
-        data.WriteBit(profile->getOptionBit(CUF_DISPLAY_NON_BOSS_DEBUFFS));
-        data.WriteBit(profile->getOptionBit(CUF_DYNAMIC_POSITION));
-        data.WriteBit(profile->getOptionBit(CUF_LOCKED));
-        data.WriteBit(profile->getOptionBit(CUF_SHOWN));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_2_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_3_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_5_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_10_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_15_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_25_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_40_PLAYERS));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_SPEC_1));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_SPEC_2));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_PVP));
-        data.WriteBit(profile->getOptionBit(CUF_AUTO_ACTIVATE_PVE));
-
-        data.FlushBits();
-
-        data << uint16(profile->frameHeight);
-        data << uint16(profile->frameWidth);
-
-        data << uint8(profile->sortBy);
-        data << uint8(profile->showHealthText);
-        data << uint8(profile->TopPoint);
-        data << uint8(profile->BottomPoint);
-        data << uint8(profile->LeftPoint);
-
-        data << uint16(profile->TopOffset);
-        data << uint16(profile->BottomOffset);
-        data << uint16(profile->LeftOffset);
-
-        data.WriteString(profile->profileName);
-    }
-
-    SendPacket(&data);
+    WorldPackets::Misc::LoadCUFProfiles loadCUFProfiles;
+    for (uint8 i = 0; i < MAX_CUF_PROFILES; i++)
+        if (CUFProfile const* cufProfile = player->GetCUFProfile(i))
+            loadCUFProfiles.CUFProfiles.push_back(cufProfile);
+    SendPacket(loadCUFProfiles.Write());
 }
 
 void WorldSession::SendCharCreate(ResponseCodes result)

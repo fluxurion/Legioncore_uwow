@@ -120,8 +120,8 @@ WorldPacket const* WorldPackets::Character::EnumCharactersResult::Write()
     _worldPacket.WriteBit(UnkBit4);
     _worldPacket << static_cast<uint32>(Characters.size());
     _worldPacket << static_cast<uint32>(FactionChangeRestrictions.size());
-    //if (_worldPacket.WriteBit(UnkInt.is_initialized())) 21021
-    //    _worldPacket << *UnkInt;
+    if (_worldPacket.WriteBit(true/*UnkInt.is_initialized()*/))
+        _worldPacket << uint32(2147479552)/**UnkInt*/;
 
     for (CharacterInfo const& charInfo : Characters)
     {
@@ -535,6 +535,26 @@ WorldPacket const* WorldPackets::Character::NeutralPlayerFactionSelectResult::Wr
     _worldPacket << NewRaceID;
     _worldPacket.WriteBit(Success);
     _worldPacket.FlushBits();
+
+    return &_worldPacket;
+}
+
+void WorldPackets::Character::SetPlayerDeclinedNames::Read()
+{
+    _worldPacket >> Player;
+
+    uint8 stringLengths[MAX_DECLINED_NAME_CASES] = { };
+    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+        stringLengths[i] = _worldPacket.ReadBits(7);
+
+    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+        DeclinedNames.name[i] = _worldPacket.ReadString(stringLengths[i]);
+}
+
+WorldPacket const * WorldPackets::Character::SetPlayerDeclinedNamesResult::Write()
+{
+    _worldPacket << ResultCode;
+    _worldPacket << Player;
 
     return &_worldPacket;
 }
