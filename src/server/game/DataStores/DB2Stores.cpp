@@ -713,7 +713,7 @@ void DB2Manager::InitDB2CustomStores()
             _modifierTree[mt->Parent].push_back(mt);
 
     for (NameGenEntry const* entry : sNameGenStore)
-        _genNameVectoArraysMap[entry->RaceID][entry->Gender].push_back(entry->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
+        _nameGenData[entry->RaceID][entry->Gender].push_back(entry);
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {
@@ -1252,9 +1252,21 @@ std::vector<ModifierTreeEntry const*> const* DB2Manager::GetModifierTreeList(uin
     return nullptr;
 }
 
-std::string DB2Manager::GetRandomCharacterName(uint8 race, uint8 gender)
+std::string DB2Manager::GetRandomCharacterName(uint8 race, uint8 gender, LocaleConstant locale) const
 {
-    return _genNameVectoArraysMap[race][gender][urand(0, _genNameVectoArraysMap[race][gender].size() - 1)];
+    ASSERT(gender < GENDER_NONE);
+    auto ritr = _nameGenData.find(race);
+    if (ritr == _nameGenData.end())
+        return "";
+
+    if (ritr->second[gender].empty())
+        return "";
+
+    LocalizedString* data = Trinity::Containers::SelectRandomContainerElement(ritr->second[gender])->Name;
+    if (*data->Str[locale] != '\0')
+        return data->Str[locale];
+
+    return data->Str[sWorld->GetDefaultDbcLocale()];
 }
 
 uint32 DB2Manager::GetQuestUniqueBitFlag(uint32 questID)

@@ -4885,7 +4885,8 @@ void Spell::SendSpellStart()
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
     castData.CastGuid = m_castGuid[0];
-    castData.CastGuid2 = m_castGuid[1];
+    if (IsTriggered())
+        castData.CastGuid2 = m_castGuid[1];
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
@@ -5059,7 +5060,8 @@ void Spell::SendSpellGo()
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.CastGuid = m_castGuid[0];
-    castData.CastGuid2 = m_castGuid[1];
+    if (IsTriggered())
+        castData.CastGuid2 = m_castGuid[1];
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
