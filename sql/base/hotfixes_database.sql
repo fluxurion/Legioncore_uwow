@@ -2437,6 +2437,80 @@ LOCK TABLES `name_gen_locale` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `names_profanity`
+--
+
+DROP TABLE IF EXISTS `names_profanity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `names_profanity` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Language` tinyint(4) NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `names_profanity`
+--
+
+LOCK TABLES `names_profanity` WRITE;
+/*!40000 ALTER TABLE `names_profanity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `names_profanity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `names_reserved`
+--
+
+DROP TABLE IF EXISTS `names_reserved`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `names_reserved` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `names_reserved`
+--
+
+LOCK TABLES `names_reserved` WRITE;
+/*!40000 ALTER TABLE `names_reserved` DISABLE KEYS */;
+/*!40000 ALTER TABLE `names_reserved` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `names_reserved_locale`
+--
+
+DROP TABLE IF EXISTS `names_reserved_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `names_reserved_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `LocaleMask` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `names_reserved_locale`
+--
+
+LOCK TABLES `names_reserved_locale` WRITE;
+/*!40000 ALTER TABLE `names_reserved_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `names_reserved_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `quest_faction_rew`
 --
 

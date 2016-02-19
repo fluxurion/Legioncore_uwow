@@ -851,6 +851,26 @@ struct NameGenEntry
     uint8       Gender;
 };
 
+struct NamesProfanityEntry
+{
+    uint32      ID;                                                 // 0
+    char const* Name;                                               // 1
+    int8        Language;                                           // 2
+};
+
+struct NamesReservedEntry
+{
+    uint32      ID;                                                 // 0
+    char const* Name;                                               // 1
+};
+
+struct NamesReservedLocaleEntry
+{
+    uint32      ID;                                                 // 0
+    char const* Name;                                               // 1
+    uint8       LocaleMask;                                         // 2
+};
+
 struct QuestFactionRewEntry
 {
     uint32      ID;

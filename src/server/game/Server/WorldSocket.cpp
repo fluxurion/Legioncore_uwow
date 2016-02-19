@@ -504,7 +504,7 @@ void WorldSocket::HandleAuthSession(WorldPackets::Auth::AuthSession& authSession
     }
 
     locale = LocaleConstant(fields[8].GetUInt8());
-    if (locale >= TOTAL_LOCALES)
+    if (locale >= MAX_LOCALES)
         locale = LOCALE_enUS;
 
     uint32 recruiter = fields[9].GetUInt32();

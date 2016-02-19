@@ -465,7 +465,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPackets::Character::CreateChar& c
     }
 
     // check name limitations
-    ResponseCodes res = ObjectMgr::CheckPlayerName(charCreate.CreateInfo->Name, true);
+    ResponseCodes res = ObjectMgr::CheckPlayerName(charCreate.CreateInfo->Name, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         SendCharCreate(res);
@@ -1224,7 +1224,7 @@ void WorldSession::HandleCharacterRenameRequest(WorldPackets::Character::Charact
         return;
     }
 
-    uint8 res = ObjectMgr::CheckPlayerName(packet.RenameInfo->NewName, true);
+    uint8 res = ObjectMgr::CheckPlayerName(packet.RenameInfo->NewName, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         WorldPackets::Character::CharacterRenameResult result;
@@ -1578,7 +1578,7 @@ void WorldSession::HandleCharCustomize(WorldPacket& recvData)
         return;
     }
 
-    uint8 res = ObjectMgr::CheckPlayerName(newName, true);
+    uint8 res = ObjectMgr::CheckPlayerName(newName, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         WorldPacket data(SMSG_CHAR_CUSTOMIZE_FAILED, 1);
@@ -1783,7 +1783,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
         return;
     }
 
-    uint8 res = ObjectMgr::CheckPlayerName(newname, true);
+    uint8 res = ObjectMgr::CheckPlayerName(newname, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         WorldPacket data(SMSG_CHAR_FACTION_CHANGE_RESULT, 5);

@@ -281,6 +281,15 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_NAME_GEN, "SELECT ID, Name, RaceID, Gender FROM name_gen ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_NAME_GEN, "SELECT ID, Name_lang FROM name_gen_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // NamesProfanity.db2
+    PrepareStatement(HOTFIX_SEL_NAMES_PROFANITY, "SELECT ID, Name, Language FROM names_profanity ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // NamesReserved.db2
+    PrepareStatement(HOTFIX_SEL_NAMES_RESERVED, "SELECT ID, Name FROM names_reserved ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // NamesReservedLocale.db2
+    PrepareStatement(HOTFIX_SEL_NAMES_RESERVED, "SELECT ID, Name, LocaleMask FROM names_reserved_locale ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // QuestFactionRew.db2
     PrepareStatement(HOTFIX_SEL_QUEST_FACTION_REW, "SELECT ID, Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, "
         "Difficulty7, Difficulty8, Difficulty9, Difficulty10 FROM quest_faction_rew ORDER BY ID DESC", CONNECTION_SYNCH);

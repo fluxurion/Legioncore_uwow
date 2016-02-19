@@ -7655,7 +7655,7 @@ bool isValidString(std::wstring wstr, uint32 strictMask, bool numericOrSpace, bo
     return false;
 }
 
-ResponseCodes ObjectMgr::CheckPlayerName(const std::string& name, bool create)
+ResponseCodes ObjectMgr::CheckPlayerName(std::string const& name, LocaleConstant locale, bool create /*= false*/)
 {
     std::wstring wname;
     if (!Utf8toWStr(name, wname))
@@ -7672,15 +7672,15 @@ ResponseCodes ObjectMgr::CheckPlayerName(const std::string& name, bool create)
     if (!isValidString(wname, strictMask, false, create))
         return CHAR_NAME_MIXED_LANGUAGES;
 
-	wstrToLower(wname);
-	for (size_t i = 2; i < wname.size(); ++i)
-		if (wname[i] == wname[i-1] && wname[i] == wname[i-2])
-			return CHAR_NAME_THREE_CONSECUTIVE;
+    wstrToLower(wname);
+    for (size_t i = 2; i < wname.size(); ++i)
+        if (wname[i] == wname[i-1] && wname[i] == wname[i-2])
+            return CHAR_NAME_THREE_CONSECUTIVE;
 
-    if(sWorld->getBoolConfig(CONFIG_WORD_FILTER_ENABLE) && !sWordFilterMgr->FindBadWord(name).empty())
+    if (sWorld->getBoolConfig(CONFIG_WORD_FILTER_ENABLE) && !sWordFilterMgr->FindBadWord(name).empty())
         return CHAR_NAME_PROFANE;
 
-    return CHAR_NAME_SUCCESS;
+    return sDB2Manager.ValidateName(name, locale);
 }
 
 bool ObjectMgr::IsValidCharterName(const std::string& name)

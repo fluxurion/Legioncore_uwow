@@ -404,7 +404,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
     if (!normalizePlayerName(name))
         name = "";
 
-    if (ObjectMgr::CheckPlayerName(name, true) == CHAR_NAME_SUCCESS)
+    if (ObjectMgr::CheckPlayerName(name, sWorld->GetDefaultDbcLocale(), true) == CHAR_NAME_SUCCESS)
     {
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
         stmt->setString(0, name);
@@ -703,7 +703,7 @@ DumpReturn PlayerDumpReader::LoadDump(uint32 account, std::string& dump, std::st
     if (!normalizePlayerName(name))
         name = "";
 
-    if (ObjectMgr::CheckPlayerName(name, true) == CHAR_NAME_SUCCESS)
+    if (ObjectMgr::CheckPlayerName(name, sWorld->GetDefaultDbcLocale(), true) == CHAR_NAME_SUCCESS)
     {
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_NAME);
         stmt->setString(0, name);

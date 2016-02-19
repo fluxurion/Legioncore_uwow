@@ -142,6 +142,9 @@ DB2Storage<MountTypeEntry>                  sMountTypeStore("MountType.db2", Mou
 DB2Storage<MountTypeXCapabilityEntry>       sMountTypeXCapabilityStore("MountTypeXCapability.db2", MountTypeXCapabilityFormat, HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY);
 DB2Storage<MovieEntry>                      sMovieStore("Movie.db2", MovieFormat, HOTFIX_SEL_MOVIE);
 DB2Storage<NameGenEntry>                    sNameGenStore("NameGen.db2", NameGenFormat, HOTFIX_SEL_NAME_GEN);
+DB2Storage<NamesProfanityEntry>             sNamesProfanityStore("NamesProfanity.db2", NamesProfanityFormat, HOTFIX_SEL_NAMES_PROFANITY);
+DB2Storage<NamesReservedEntry>              sNamesReservedStore("NamesReserved.db2", NamesReservedFormat, HOTFIX_SEL_NAMES_RESERVED);
+DB2Storage<NamesReservedLocaleEntry>        sNamesReservedLocaleStore("NamesReservedLocale.db2", NamesReservedLocaleFormat, HOTFIX_SEL_NAMES_RESERVED_LOCALE);
 DB2Storage<OverrideSpellDataEntry>          sOverrideSpellDataStore("OverrideSpellData.db2", OverrideSpellDataFormat, HOTFIX_SEL_OVERRIDE_SPELL_DATA);
 DB2Storage<PhaseEntry>                      sPhaseStores("Phase.db2", PhaseFormat, HOTFIX_SEL_PHASE);
 DB2Storage<PowerDisplayEntry>               sPowerDisplayStore("PowerDisplay.db2", PowerDisplayFormat, HOTFIX_SEL_POWER_DISPLAY);
@@ -245,8 +248,11 @@ inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, D
     {
         storage->LoadFromDB();
 
-        for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        for (uint32 i = 0; i < MAX_LOCALES; ++i)
         {
+            if (defaultLocale == i || i == LOCALE_none)
+                continue;
+
             if (availableDb2Locales & (1 << i))
                 if (!storage->LoadStringsFrom((db2Path + localeNames[i] + '/'), i))
                     availableDb2Locales &= ~(1 << i);             // mark as not available for speedup next checks
@@ -417,6 +423,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sMountTypeXCapabilityStore);       // 20914
     LOAD_DB2(sMovieStore);                      // 20914
     LOAD_DB2(sNameGenStore);                    // 20914
+    LOAD_DB2(sNamesProfanityStore);             // 20994
+    LOAD_DB2(sNamesReservedStore);              // 20994
+    LOAD_DB2(sNamesReservedLocaleStore);        // 20994
     LOAD_DB2(sPowerDisplayStore);               // 20914
     LOAD_DB2(sPvPDifficultyStore);              // 20914
     LOAD_DB2(sPvpItemStore);                    // 20914
@@ -714,6 +723,39 @@ void DB2Manager::InitDB2CustomStores()
 
     for (NameGenEntry const* entry : sNameGenStore)
         _nameGenData[entry->RaceID][entry->Gender].push_back(entry);
+
+    for (NamesProfanityEntry const* namesProfanity : sNamesProfanityStore)
+    {
+        ASSERT(namesProfanity->Language < MAX_LOCALES || namesProfanity->Language == -1);
+        if (namesProfanity->Language != -1)
+            _nameValidators[namesProfanity->Language].emplace_back(namesProfanity->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+        else
+        {
+            for (uint32 i = 0; i < MAX_LOCALES; ++i)
+            {
+                if (i == LOCALE_none)
+                    continue;
+
+                _nameValidators[i].emplace_back(namesProfanity->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+            }
+        }
+    }
+
+    for (NamesReservedEntry const* namesReserved : sNamesReservedStore)
+        _nameValidators[MAX_LOCALES].emplace_back(namesReserved->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+
+    for (NamesReservedLocaleEntry const* namesReserved : sNamesReservedLocaleStore)
+    {
+        ASSERT(!(namesReserved->LocaleMask & ~((1 << MAX_LOCALES) - 1)));
+        for (uint32 i = 0; i < MAX_LOCALES; ++i)
+        {
+            if (i == LOCALE_none)
+                continue;
+
+            if (namesReserved->LocaleMask & (1 << i))
+                _nameValidators[i].emplace_back(namesReserved->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+        }
+    }
 
     for (ResearchSiteEntry const* rs : sResearchSiteStore)
     {
@@ -1267,6 +1309,19 @@ std::string DB2Manager::GetRandomCharacterName(uint8 race, uint8 gender, LocaleC
         return data->Str[locale];
 
     return data->Str[sWorld->GetDefaultDbcLocale()];
+}
+
+ResponseCodes DB2Manager::ValidateName(std::string const& name, LocaleConstant locale) const
+{
+    for (boost::regex const& regex : _nameValidators[locale])
+        if (boost::regex_search(name, regex))
+            return CHAR_NAME_PROFANE;
+
+    for (boost::regex const& regex : _nameValidators[MAX_LOCALES])
+        if (boost::regex_search(name, regex))
+            return CHAR_NAME_RESERVED;
+
+    return CHAR_NAME_SUCCESS;
 }
 
 uint32 DB2Manager::GetQuestUniqueBitFlag(uint32 questID)

@@ -287,6 +287,7 @@ public:
     typedef std::unordered_map<uint32, std::list<uint32>> ItemSpecsContainer;
     typedef std::unordered_map<uint32, std::vector<ModifierTreeEntry const*>> ModifierTreeContainer;
     typedef std::unordered_map<uint32, std::array<std::vector<NameGenEntry const*>, 2>> NameGenContainer;
+    typedef std::array<std::vector<boost::regex>, MAX_LOCALES + 1> NameValidationRegexContainer;
     typedef std::set<ResearchProjectEntry const*> ResearchProjectContainer;
     typedef std::map<uint32 /*site_id*/, ResearchSiteData> ResearchSiteDataMap;
     typedef std::unordered_map<uint32 /*frame*/, TransportAnimationEntry const*> TransportAnimationEntryMap;
@@ -359,6 +360,7 @@ public:
     std::list<uint32> GetItemSpecsList(uint32 itemID);
     std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
     std::string GetRandomCharacterName(uint8 race, uint8 gender, LocaleConstant locale) const;
+    ResponseCodes ValidateName(std::string const& name, LocaleConstant locale) const;
     uint32 GetQuestUniqueBitFlag(uint32 questID);
     ResearchSiteEntry const* GetResearchSiteEntryById(uint32 id);
     void DeterminaAlternateMapPosition(uint32 mapId, float x, float y, float z, uint32* newMapId = nullptr, DBCPosition2D* newPos = nullptr);
@@ -432,6 +434,7 @@ private:
     ItemSpecsContainer _itemSpec;
     ModifierTreeContainer _modifierTree;
     NameGenContainer _nameGenData;
+    NameValidationRegexContainer _nameValidators;
     SkillRaceClassInfoContainer _skillRaceClassInfoBySkill;
     SpecializationSpellsBySpecContainer _specializationSpellsBySpec;
     SpellProcsPerMinuteModEntryListContainer _spellProcsPerMinuteModEntryList;
