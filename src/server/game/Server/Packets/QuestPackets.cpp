@@ -320,7 +320,7 @@ void WorldPackets::Quest::QuestGiverCompleteQuest::Read()
 {
     _worldPacket >> QuestGiverGUID;
     _worldPacket >> QuestID;
-    FromScript = _worldPacket.ReadBit();
+    _worldPacket >> UnkINT;
 }
 
 WorldPacket const* WorldPackets::Quest::QuestGiverQuestDetails::Write()

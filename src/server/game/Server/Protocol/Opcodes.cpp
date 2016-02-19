@@ -122,7 +122,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_ALTER_APPEARANCE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Character::AlterApperance, &WorldSession::HandleAlterAppearance);
     DEFINE_HANDLER(CMSG_AREA_SPIRIT_HEALER_QUERY,                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Battleground::AreaSpiritHealerQuery, &WorldSession::HandleAreaSpiritHealerQuery);
     DEFINE_HANDLER(CMSG_AREA_SPIRIT_HEALER_QUEUE,                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Battleground::AreaSpiritHealerQueue, &WorldSession::HandleAreaSpiritHealerQueue);
-    DEFINE_HANDLER(CMSG_AREA_TRIGGER,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::AreaTrigger, &WorldSession::HandleAreaTrigger);
+    DEFINE_HANDLER(CMSG_AREA_TRIGGER,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::AreaTrigger, &WorldSession::HandleAreaTrigger);
     DEFINE_HANDLER(CMSG_ATTACK_STOP,                                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Combat::AttackStop, &WorldSession::HandleAttackStop);
     DEFINE_HANDLER(CMSG_ATTACK_SWING,                                       STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Combat::AttackSwing, &WorldSession::HandleAttackSwing);
     DEFINE_HANDLER(CMSG_AUCTION_HELLO_REQUEST,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::AuctionHouse::AuctionHelloRequest, &WorldSession::HandleAuctionHelloRequest);
@@ -460,9 +460,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_LOGOUT_CANCEL,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Character::LogoutCancel, &WorldSession::HandleLogoutCancel);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_LOGOUT_INSTANT,                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandlePlayerLogoutOpcode        );
     DEFINE_OPCODE_HANDLER_OLD(CMSG_LOGOUT_REQUEST,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleLogoutRequestOpcode       );
-    DEFINE_HANDLER(CMSG_LOOT_ITEM,                                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Loot::AutoStoreLootItem, &WorldSession::HandleAutostoreLootItemOpcode);
+    DEFINE_HANDLER(CMSG_LOOT_ITEM,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::AutoStoreLootItem, &WorldSession::HandleAutostoreLootItemOpcode);
     DEFINE_HANDLER(CMSG_LOOT_MONEY,                                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Loot::LootMoney, &WorldSession::HandleLootMoney);
-    DEFINE_HANDLER(CMSG_LOOT_RELEASE,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Loot::LootRelease, &WorldSession::HandleLootRelease);
+    DEFINE_HANDLER(CMSG_LOOT_RELEASE,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::LootRelease, &WorldSession::HandleLootRelease);
     DEFINE_HANDLER(CMSG_LOOT_ROLL,                                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Loot::LootRoll, &WorldSession::HandleLootRoll);
     DEFINE_HANDLER(CMSG_LOOT_UNIT,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::LootUnit, &WorldSession::HandleLootUnit);
     DEFINE_HANDLER(CMSG_LOW_LEVEL_RAID1,                                    STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -659,8 +659,8 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SAVE_EQUIPMENT_SET,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::EquipmentSet::SaveEquipmentSet, &WorldSession::HandleSaveEquipmentSet);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_SAVE_GUILD_EMBLEM,                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleSaveGuildEmblemOpcode     );
     DEFINE_HANDLER(CMSG_SCENE_PLAYBACK_CANCELED,                            STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Scene::SceneInstance, &WorldSession::HandleScenePlaybackCanceled);
-    DEFINE_HANDLER(CMSG_SCENE_PLAYBACK_COMPLETE,                            STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Scene::SceneInstance, &WorldSession::HandleScenePlaybackComplete);
-    DEFINE_HANDLER(CMSG_SCENE_TRIGGER_EVENT,                                STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Scene::SceneTriggerEvent, &WorldSession::HandleSceneTriggerEvent);
+    DEFINE_HANDLER(CMSG_SCENE_PLAYBACK_COMPLETE,                            STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Scene::SceneInstance, &WorldSession::HandleScenePlaybackComplete);
+    DEFINE_HANDLER(CMSG_SCENE_TRIGGER_EVENT,                                STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Scene::SceneTriggerEvent, &WorldSession::HandleSceneTriggerEvent);
     DEFINE_HANDLER(CMSG_SELF_RES,                                           STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::SelfRes, &WorldSession::HandleSelfRes);
     DEFINE_HANDLER(CMSG_SELL_ITEM,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::SellItem, &WorldSession::HandleSellItemOpcode);
     DEFINE_HANDLER(CMSG_SELL_WOW_TOKEN_CONFIRM,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -721,7 +721,7 @@ void OpcodeTable::Initialize()
     DEFINE_OPCODE_HANDLER_OLD(CMSG_SORT_BAGS,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleSortBagsOpcode);
     DEFINE_HANDLER(CMSG_SORT_BANK_BAGS,                                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SORT_REAGENT_BANK_BAGS,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_SPELL_CLICK,                                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::SpellClick, &WorldSession::HandleSpellClick);
+    DEFINE_HANDLER(CMSG_SPELL_CLICK,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::SpellClick, &WorldSession::HandleSpellClick);
     DEFINE_HANDLER(CMSG_SPIRIT_HEALER_ACTIVATE,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::SpiritHealerActivate, &WorldSession::HandleSpiritHealerActivate);
     DEFINE_HANDLER(CMSG_SPLIT_ITEM,                                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::SplitItem, &WorldSession::HandleSplitItemOpcode);
     DEFINE_HANDLER(CMSG_STAND_STATE_CHANGE,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::StandStateChange, &WorldSession::HandleStandStateChangeOpcode);

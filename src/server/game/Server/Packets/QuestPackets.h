@@ -304,7 +304,7 @@ namespace WorldPackets
 
             ObjectGuid QuestGiverGUID;
             int32 QuestID = 0;
-            bool FromScript = false;
+            int32 UnkINT = 0;
         };
 
         struct QuestObjectiveSimple

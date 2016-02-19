@@ -477,7 +477,8 @@ void WorldSession::HandleQuestConfirmAccept(WorldPackets::Quest::QuestConfirmAcc
 
 void WorldSession::HandleQuestgiverCompleteQuest(WorldPackets::Quest::QuestGiverCompleteQuest& packet)
 {
-    if (!packet.FromScript)
+    //@TODO:Legion
+    if (!packet.UnkINT)
     {
         Object* object = ObjectAccessor::GetObjectByTypeMask(*_player, packet.QuestGiverGUID, TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT);
         if (!object || !object->hasInvolvedQuest(packet.QuestID))
@@ -490,7 +491,7 @@ void WorldSession::HandleQuestgiverCompleteQuest(WorldPackets::Quest::QuestGiver
 
     if (Quest const* quest = sObjectMgr->GetQuestTemplate(packet.QuestID))
     {
-        if (packet.FromScript && !quest->HasFlag(QUEST_FLAGS_AUTO_SUBMIT))
+        if (packet.UnkINT && !quest->HasFlag(QUEST_FLAGS_AUTO_SUBMIT))
         {
             sLog->outError(LOG_FILTER_NETWORKIO, "Possible hacking attempt: Player %s [playerGuid: %s] tried to complete questId [entry: %u] by auto-submit flag for quest witch not suport it.",
                 _player->GetName(), _player->GetGUID().ToString().c_str(), packet.QuestID);
@@ -520,7 +521,7 @@ void WorldSession::HandleQuestgiverCompleteQuest(WorldPackets::Quest::QuestGiver
             if (quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER))                  // some items required
                 _player->PlayerTalkClass->SendQuestGiverRequestItems(quest, packet.QuestGiverGUID, _player->CanRewardQuest(quest, false), false);
             else                                                                    // no items required
-                _player->PlayerTalkClass->SendQuestGiverOfferReward(quest, packet.QuestGiverGUID, !packet.FromScript);
+                _player->PlayerTalkClass->SendQuestGiverOfferReward(quest, packet.QuestGiverGUID, !packet.UnkINT);
         }
     }
 }
