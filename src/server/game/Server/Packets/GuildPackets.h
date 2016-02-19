@@ -52,7 +52,7 @@ namespace WorldPackets
         class QueryGuildInfoResponse final : public ServerPacket
         {
         public:
-            QueryGuildInfoResponse() : ServerPacket(SMSG_QUERY_GUILD_INFO_RESPONSE) {}
+            QueryGuildInfoResponse() : ServerPacket(SMSG_QUERY_GUILD_INFO_RESPONSE, 16 + 1) { }
 
             struct GuildInfo
             {

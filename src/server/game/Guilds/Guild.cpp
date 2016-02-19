@@ -2294,15 +2294,6 @@ void Guild::SendLoginInfo(WorldSession* session)
 
     if (!member)
         return;
-    /*
-        Login sequence:
-          SMSG_GUILD_EVENT - GE_MOTD
-          SMSG_GUILD_RANKS
-          SMSG_GUILD_EVENT - GE_SIGNED_ON
-          -- learn perks
-          SMSG_GUILD_REPUTATION_WEEKLY_CAP
-          SMSG_GUILD_MEMBER_DAILY_RESET // bank withdrawal reset
-    */
 
     SendGuildEventMOTD(session);      // verified
     SendGuildRankInfo(session);       // verified!
