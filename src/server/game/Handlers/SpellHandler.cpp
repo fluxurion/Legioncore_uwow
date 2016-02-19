@@ -37,6 +37,7 @@
 #include "TotemPackets.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#include "GameObjectPackets.h"
 
 //! 6.0.3
 void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
@@ -140,16 +141,12 @@ void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
     }
 }
 
-void WorldSession::HandleGameObjectUseOpcode(WorldPacket & recvData)
+void WorldSession::HandleGameObjectUse(WorldPackets::GameObject::GameObjectUse& packet)
 {
-    ObjectGuid guid;
-    recvData >> guid;
-
-    // ignore for remote control state
     if (_player->m_mover != _player)
         return;
 
-    if (GameObject* obj = GetPlayer()->GetMap()->GetGameObject(guid))
+    if (GameObject* obj = GetPlayer()->GetMap()->GetGameObject(packet.Guid))
         obj->Use(_player);
 }
 

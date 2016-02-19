@@ -1167,7 +1167,7 @@ class WorldSession
         void HandleContinuePlayerLogin();
         void AbortLogin(WorldPackets::Character::LoginFailureReason reason);
 
-        void HandleGameObjectUseOpcode(WorldPacket& recPacket);
+        void HandleGameObjectUse(WorldPackets::GameObject::GameObjectUse& packet);
         void HandleMeetingStoneInfo(WorldPacket& recPacket);
         void HandleGameobjectReportUse(WorldPacket& recvPacket);
 
