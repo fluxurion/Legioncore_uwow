@@ -47,7 +47,7 @@
 void WorldSession::HandleTabardVendorActivateOpcode(WorldPacket & recvData)
 {
     ObjectGuid guid;
-    recvData >> guid.ReadAsPacked();
+    recvData >> guid;
 
     Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TABARDDESIGNER);
     if (!unit)
