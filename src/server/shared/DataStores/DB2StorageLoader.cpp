@@ -53,7 +53,7 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name
     FILE* f = fopen(filename, "rb");
     if (!f)
     {
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u, File: %s", __FUNCTION__, __LINE__, name);
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u, File: %s", __FUNCTION__, __LINE__, name.c_str());
         return false;
     }
 
