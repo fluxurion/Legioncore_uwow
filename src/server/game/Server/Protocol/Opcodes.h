@@ -933,7 +933,7 @@ enum OpcodeServer : uint16
     SMSG_CONVERT_RUNE                                 = 0xBADD,
     SMSG_COOLDOWN_CHEAT                               = 0xBADD,
     SMSG_COOLDOWN_EVENT                               = 0x26E3,
-    SMSG_CORPSE_LOCATION                              = 0x258A,
+    SMSG_CORPSE_LOCATION                              = 0xBADD,
     SMSG_CORPSE_RECLAIM_DELAY                         = 0xBADD,
     SMSG_CORPSE_TRANSPORT_QUERY                       = 0xBADD,
     SMSG_CREATE_CHAR                                  = 0x273D,

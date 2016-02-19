@@ -327,7 +327,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_ENUM_CHARACTERS_DELETED_BY_CLIENT,                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Character::EnumCharacters, &WorldSession::HandleCharEnumOpcode);
     DEFINE_HANDLER(CMSG_FAR_SIGHT,                                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::FarSight, &WorldSession::HandleFarSight);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_GAME_OBJ_REPORT_USE,                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGameobjectReportUse       );
-    DEFINE_HANDLER(CMSG_GAME_OBJ_USE,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::GameObject::GameObjUse, &WorldSession::HandleGameObjectUse);
+    DEFINE_HANDLER(CMSG_GAME_OBJ_USE,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::GameObject::GameObjectUse, &WorldSession::HandleGameObjectUse);
     DEFINE_HANDLER(CMSG_GARRISON_ASSIGN_FOLLOWER_TO_BUILDING,               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::GarrisonAssignFollowerToBuilding, &WorldSession::HandleGarrisonAssignFollowerToBuilding);
     DEFINE_HANDLER(CMSG_GARRISON_CANCEL_CONSTRUCTION,                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::GarrisonCancelConstruction, &WorldSession::HandleGarrisonCancelConstruction);
     DEFINE_HANDLER(CMSG_GARRISON_CHECK_UPGRADEABLE,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::GarrisonCheckUpgradeable, &WorldSession::HandleGarrisonCheckUpgradeable);
@@ -1001,7 +1001,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CONVERT_RUNE,                            STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COOLDOWN_CHEAT,                          STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_COOLDOWN_EVENT,                          STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_CORPSE_LOCATION,                         STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_CORPSE_LOCATION,                         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CORPSE_RECLAIM_DELAY,                    STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CORPSE_TRANSPORT_QUERY,                  STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_CREATE_CHAR,                             STATUS_NEVER);
