@@ -1386,6 +1386,7 @@ enum class ItemTransmogrificationWeaponCategory : uint8
     AXE_MACE_SWORD_1H,
     DAGGER,
     FIST,
+    WARGLAIVES,
 
     INVALID
 };
@@ -1414,6 +1415,8 @@ static ItemTransmogrificationWeaponCategory GetTransmogrificationWeaponCategory(
                 return ItemTransmogrificationWeaponCategory::DAGGER;
             case ITEM_SUBCLASS_WEAPON_FIST_WEAPON:
                 return ItemTransmogrificationWeaponCategory::FIST;
+            case ITEM_SUBCLASS_WEAPON_WARGLAIVES:
+                return ItemTransmogrificationWeaponCategory::WARGLAIVES;
             default:
                 break;
         }
@@ -1472,8 +1475,7 @@ bool Item::CanTransmogrifyItemWithItem(Item const* transmogrified, WorldPackets:
     if (source->GetClass() != target->GetClass())
         return false;
 
-    if (source->GetInventoryType() == INVTYPE_TABARD ||
-        source->GetInventoryType() == INVTYPE_BAG ||
+    if (source->GetInventoryType() == INVTYPE_BAG ||
         source->GetInventoryType() == INVTYPE_RELIC ||
         source->GetInventoryType() == INVTYPE_BODY ||
         source->GetInventoryType() == INVTYPE_FINGER ||
