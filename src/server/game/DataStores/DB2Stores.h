@@ -302,7 +302,8 @@ public:
     struct SpellEffectDiff { SpellEffectsMap effects; };
     typedef std::unordered_map<uint32, SpellEffectDiff> SpellEffectDiffContainer;
     typedef std::unordered_map<uint32, SpellEffect> SpellEffectContainer;
-    typedef std::unordered_map<uint32, std::set<uint32>/*category*/> SpellCategoryContainer;
+    typedef std::set<uint32> SpellCategorySet;
+    typedef std::unordered_map<uint32, SpellCategorySet> SpellCategoryContainer;
     typedef ChrSpecializationEntry const* ChrSpecializationByIndexContainer[MAX_CLASSES][4];
     typedef std::set<uint32> PetFamilySpellsSet;
     typedef std::unordered_map<uint32, PetFamilySpellsSet > PetFamilySpellsContainer;
@@ -397,6 +398,7 @@ public:
     TransportAnimationsByEntryContainer _transportAnimationsByEntry;
     std::set<uint32> sScenarioCriteriaTreeStore;
     MapDifficultyContainer _mapDifficulty;
+    SpellCategoryContainer _spellCategory;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -438,7 +440,6 @@ private:
     ReversTriggerSpellContainer _reversTriggerSpellList;
     SpellEffectDiffContainer _spellEffectDiff;
     SpellEffectContainer _spellEffectMap;
-    SpellCategoryContainer _spellCategory;
     ChrSpecializationByIndexContainer _chrSpecializationByIndex;
     PetFamilySpellsContainer _petFamilySpells;
     uint32 _powersByClass[MAX_CLASSES][MAX_POWERS];

@@ -4795,11 +4795,12 @@ void Player::RemoveSpellCooldown(uint32 spell_id, bool update /* = false */)
 }
 
 // I am not sure which one is more efficient
-void Player::RemoveCategoryCooldown(uint32 cat)
+void Player::RemoveCategoryCooldown(uint32 category)
 {
-    auto const& ctSet = sDB2Manager.GetSpellCategory(cat);
-    for (auto& _scset = ctSet->begin(); _scset != ctSet->end(); ++_scset)
-        RemoveSpellCooldown(*_scset, true);
+    DB2Manager::SpellCategoryContainer::const_iterator cat = sDB2Manager._spellCategory.find(category);
+    if (cat != sDB2Manager._spellCategory.end())
+        for (DB2Manager::SpellCategorySet::const_iterator spellID = cat->second.begin(); spellID != cat->second.end(); ++spellID)
+            RemoveSpellCooldown(*spellID, true);
 }
 
 void Player::RemoveSpellCategoryCooldown(uint32 cat, bool update /* = false */)
