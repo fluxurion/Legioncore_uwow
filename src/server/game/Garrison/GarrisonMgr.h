@@ -62,6 +62,16 @@ struct GarrShipment
     CharShipmentConteiner const* cEntry = NULL;
 };
 
+struct GarrTradeSkill
+{
+    uint32 spellID;
+    uint32 conditionID;
+};
+
+typedef std::list<GarrTradeSkill /*tradeskill*/> TradeskillList;
+typedef std::unordered_map<uint32 /*npcEntry*/, TradeskillList> NpcTradeskillList;
+
+
 enum ShipmentGetType : uint8
 {
     SHIPMENT_GET_BY_NPC           = 0,
@@ -140,6 +150,7 @@ private:
     void LoadBuildingSpawnGo();
     void LoadMissionLine();
     void LoadShipment();
+    void LoadTradeSkill();
 
     std::unordered_map<uint32 /*garrSiteId*/, std::vector<GarrSiteLevelPlotInstEntry const*>> _garrisonPlotInstBySiteLevel;
     std::unordered_map<uint32 /*mapId*/, std::unordered_map<uint32 /*garrPlotId*/, GameObjectsEntry const*>> _garrisonPlots;
@@ -156,6 +167,8 @@ private:
     std::unordered_map<uint32 /*MissionID*/, GarrMissionLine /*nextMission*/> _MissionLineStore;
     std::unordered_map<uint32 /*MissionID*/, GarrMissionEntry const* /*nextMission*/> _nextMission;
     std::unordered_map<uint32 /*FollowerID*/, GarrMissionEntry const* /*nextMission*/> _nextMissionByFollower;
+    
+    NpcTradeskillList _garrNpcTradeSkill;
     
     typedef std::unordered_map<uint32/*entry*/, GarrShipment> shipmentStoreMap;
     std::map<uint8 /*ShipmentGetType*/, shipmentStoreMap> shipment;

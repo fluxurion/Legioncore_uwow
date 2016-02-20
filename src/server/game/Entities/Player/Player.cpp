@@ -15291,6 +15291,9 @@ void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool 
                     if (Garrison *garr = GetGarrison())
                         canTalk = garr->canAddShipmentOrder(creature);
                     break;
+                case GOSSIP_OPTION_GARRISON_TRADESKILL:
+                    canTalk = creature->HasFlag(UNIT_FIELD_NPC_FLAGS2, UNIT_NPC_FLAG2_TRADESKILL_NPC);
+                    break;
                 default:
                     sLog->outError(LOG_FILTER_SQL, "Creature entry %u have unknown gossip option %u for menu %u", creature->GetEntry(), itr->second.OptionType, itr->second.MenuId);
                     canTalk = false;
@@ -15501,6 +15504,9 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
         case GOSSIP_OPTION_GARRISON_SHIPMENT:
             if (Garrison *garr = GetGarrison())
                 garr->OnGossipSelect(source);
+            break;
+        case GOSSIP_OPTION_GARRISON_TRADESKILL:
+            //ToDo
             break;
         case GOSSIP_OPTION_SCENARIO:
         {

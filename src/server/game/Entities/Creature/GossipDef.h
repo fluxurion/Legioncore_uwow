@@ -52,6 +52,7 @@ enum Gossip_Option
     GOSSIP_OPTION_UNLEARNSPECIALIZATION = 20,                   //UNIT_NPC_FLAG_TRAINER             (16) (bonus option for GOSSIP_OPTION_TRAINER)
     GOSSIP_OPTION_SCENARIO              = 21,                   //UNIT_NPC_FLAG_GOSSIP
     GOSSIP_OPTION_GARRISON_SHIPMENT     = 22,                   //UNIT_NPC_FLAG2_SHIPMENT_ORDER 
+    GOSSIP_OPTION_GARRISON_TRADESKILL   = 23,                   //UNIT_NPC_FLAG2_TRADESKILL_NPC
     GOSSIP_OPTION_MAX
 };
 

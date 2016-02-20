@@ -15,5 +15,8 @@ INSERT IGNORE INTO `gossip_menu_option` (`menu_id`, `id`, `option_icon`, `option
 
 REPLACE INTO `gossip_menu_option` (`menu_id`, `id`, `option_icon`, `option_text`, `option_id`, `npc_option_npcflag`, `action_menu_id`, `action_poi_id`, `box_coded`, `box_money`, `box_text`) VALUES
 (0, 18, 28, 'Я хочу сделать заказ.', 22, 1, 0, 0, 0, 0, '');
-
 UPDATE `gossip_menu_option` SET `option_icon` = 28, option_id = 22 WHERE `option_text` LIKE '%Я хочу сделать заказ%';
+
+--
+REPLACE INTO `gossip_menu_option` (`menu_id`, `id`, `option_icon`, `option_text`, `option_id`, `npc_option_npcflag`, `action_menu_id`, `action_poi_id`, `box_coded`, `box_money`, `box_text`) VALUES
+(0, 19, 29, 'Сделай для меня кое-что.', 23, 1, 0, 0, 0, 0, '');

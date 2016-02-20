@@ -82,6 +82,7 @@ void GarrisonMgr::Initialize()
     LoadBuildingSpawnGo();
     LoadMissionLine();
     LoadShipment();
+    LoadTradeSkill();
 }
 
 GarrSiteLevelEntry const* GarrisonMgr::GetGarrSiteLevelEntry(uint32 garrSiteId, uint32 level) const
@@ -748,6 +749,48 @@ void GarrisonMgr::LoadShipment()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison_shipment in %u.", count, GetMSTimeDiffToNow(msTime));
+}
+
+void GarrisonMgr::LoadTradeSkill()
+{
+    //                                                  0            1         2
+    QueryResult result = WorldDatabase.Query("SELECT npcEntry, spellID, conditionID FROM garrison_tradeskill");
+
+    if (!result)
+    {
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 garrison tradeskills. DB table `garrison_tradeskill` is empty.");
+        return;
+    }
+
+    do
+    {
+        uint8 index = 0;
+        Field* fields = result->Fetch();
+        GarrTradeSkill gts_data;
+
+        uint32 npc = fields[index++].GetUInt32();
+
+        CreatureTemplate const* cInfo = sObjectMgr->GetCreatureTemplate(npc);
+        if (!cInfo)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `garrison_tradeskill` has creature with non existing creature entry %u, skipped.", npc);
+            continue;
+        }
+
+        const_cast<CreatureTemplate*>(cInfo)->npcflag2 |= UNIT_NPC_FLAG2_TRADESKILL_NPC;
+        const_cast<CreatureTemplate*>(cInfo)->npcflag |= UNIT_NPC_FLAG_GOSSIP;
+        const_cast<CreatureTemplate*>(cInfo)->IconName = "trainer";
+
+        gts_data.spellID = fields[index++].GetUInt32();
+        gts_data.conditionID = fields[index++].GetUInt32();
+        _garrNpcTradeSkill[npc].push_back(gts_data);
+
+    } while (result->NextRow());
+
+    uint32 msTime = getMSTime();
+    uint32 count = 0;
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison_tradeskill in %u.", count, GetMSTimeDiffToNow(msTime));
 }
 
 GarrShipment const* GarrisonMgr::GetGarrShipment(uint32 entry, ShipmentGetType type) const
