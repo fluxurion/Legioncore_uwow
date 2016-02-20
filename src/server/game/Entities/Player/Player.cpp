@@ -15506,7 +15506,8 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
                 garr->OnGossipSelect(source);
             break;
         case GOSSIP_OPTION_GARRISON_TRADESKILL:
-            //ToDo
+            if (Garrison *garr = GetGarrison())
+                garr->OnGossipTradeSkill(source);
             break;
         case GOSSIP_OPTION_SCENARIO:
         {

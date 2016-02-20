@@ -618,3 +618,38 @@ WorldPacket const* WorldPackets::Garrison::QueryGarrisonCreatureNameResponse::Wr
 
     return &_worldPacket;
 }
+
+ByteBuffer& operator<<(ByteBuffer& _worldPacket, WorldPackets::Garrison::GarrTradeSkill const& tradeSkill)
+{
+    _worldPacket << tradeSkill.unk;
+    _worldPacket << static_cast<uint32>(tradeSkill.skillStorel.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.unkStore1.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.unkStore2.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.spellStore.size());
+
+    for (auto const& data : tradeSkill.skillStorel)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.unkStore1)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.unkStore2)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.spellStore)
+        _worldPacket << data;
+
+    return _worldPacket;
+}
+
+WorldPacket const* WorldPackets::Garrison::GarrisonTradeSkillResponse::Write()
+{
+    _worldPacket << GUID;
+    _worldPacket << tradeSkill;
+
+    _worldPacket << static_cast<uint32>(conditionPlayerStore.size());
+    for (auto const& data : conditionPlayerStore)
+        _worldPacket << data;
+
+    return &_worldPacket;
+}

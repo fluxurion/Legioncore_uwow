@@ -753,8 +753,12 @@ void GarrisonMgr::LoadShipment()
 
 void GarrisonMgr::LoadTradeSkill()
 {
+    uint32 msTime = getMSTime();
+    uint32 count = 0;
+
+    //! WARNING! ORDER IS PART OF LOGIC!
     //                                                  0            1         2
-    QueryResult result = WorldDatabase.Query("SELECT npcEntry, spellID, conditionID FROM garrison_tradeskill");
+    QueryResult result = WorldDatabase.Query("SELECT npcEntry, spellID, conditionID FROM garrison_tradeskill ORDER BY `npcEntry` DESC, `conditionID` ASC");
 
     if (!result)
     {
@@ -783,14 +787,44 @@ void GarrisonMgr::LoadTradeSkill()
 
         gts_data.spellID = fields[index++].GetUInt32();
         gts_data.conditionID = fields[index++].GetUInt32();
+
+
+        SkillLineAbilityMapBounds bounds = sSpellMgr->GetSkillLineAbilityMapBounds(gts_data.spellID);
+        for (SkillLineAbilityMap::const_iterator _spell_idx = bounds.first; _spell_idx != bounds.second; ++_spell_idx)
+        {
+            SkillLineEntry const* pSkill = sSkillLineStore.LookupEntry(_spell_idx->second->SkillLine);
+            if (!pSkill)
+                continue;
+
+            gts_data.skillID = _spell_idx->second->SkillLine;
+        }
+
+        if (gts_data.conditionID)
+        {
+            bool find_higher = false;
+            for (auto data : _garrNpcTradeSkill[npc])
+                if (data.conditionID && data.conditionID < gts_data.conditionID)
+                    find_higher = true;
+            gts_data.reqBuildingLvl = find_higher ? 2 : 1;
+        }
+        else
+            gts_data.reqBuildingLvl = 0;
+
         _garrNpcTradeSkill[npc].push_back(gts_data);
+
+        ++count;
 
     } while (result->NextRow());
 
-    uint32 msTime = getMSTime();
-    uint32 count = 0;
-
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison_tradeskill in %u.", count, GetMSTimeDiffToNow(msTime));
+}
+
+TradeskillList const * GarrisonMgr::GetTradeSkill(uint32 npcID)
+{
+    auto data = _garrNpcTradeSkill.find(npcID);
+    if (data == _garrNpcTradeSkill.end())
+        return nullptr;
+    return &data->second;
 }
 
 GarrShipment const* GarrisonMgr::GetGarrShipment(uint32 entry, ShipmentGetType type) const

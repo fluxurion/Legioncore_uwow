@@ -780,7 +780,30 @@ namespace WorldPackets
             std::vector<uint32> updatedMissionRecIDs;
             bool openMissionNpc;
         };
+
+        struct GarrTradeSkill
+        {
+            uint32 unk = 0;
+            std::vector<uint32> skillStorel;
+            std::vector<uint32> unkStore1;
+            std::vector<uint32> unkStore2;
+            std::vector<uint32> spellStore;
+        };
+
+        class GarrisonTradeSkillResponse final : public ServerPacket
+        {
+        public:
+            GarrisonTradeSkillResponse() : ServerPacket(SMSG_GARRISON_OPEN_TRADESKILL_NPC_RESPONSE, 4 + 4 + 1) { }
+
+            WorldPacket const* Write() override;
+
+            ObjectGuid GUID;
+            GarrTradeSkill tradeSkill;
+            std::vector<uint32> conditionPlayerStore;
+        };
     }
 }
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::GarrTradeSkill const& gar);
 
 #endif // GarrisonPackets_h__

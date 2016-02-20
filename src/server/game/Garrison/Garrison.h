@@ -191,6 +191,7 @@ public:
     Plot* GetPlot(uint32 garrPlotInstanceId);
     Plot const* GetPlot(uint32 garrPlotInstanceId) const;
     Garrison::Plot* GetPlotWithBuildingType(uint32 BuildingTypeID);
+    Garrison::Plot* GetPlotWithNpc(uint32 entry);
 
     // Buildings
     bool LearnBlueprint(uint32 garrBuildingId);
@@ -252,6 +253,7 @@ public:
     void CreateGarrisonShipment(uint32 shipmentID);
     bool canAddShipmentOrder(Creature* source);
     void OnGossipSelect(WorldObject* source);
+    void OnGossipTradeSkill(WorldObject* source);
     void SendShipmentInfo(ObjectGuid const& guid);
     uint64 PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID = 0);
     void SendGarrisonShipmentLandingPage();

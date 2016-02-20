@@ -821,6 +821,20 @@ Garrison::Plot* Garrison::GetPlotWithBuildingType(uint32 BuildingTypeID)
     }
     return NULL;
 }
+
+Garrison::Plot* Garrison::GetPlotWithNpc(uint32 entry)
+{
+    for (auto &p : _plots)
+    {
+        for (auto& guid : p.second.BuildingInfo.Spawns)
+        {
+            if (guid.GetEntry() == entry)
+                return &p.second;
+        }
+    }
+    return NULL;
+}
+
 bool Garrison::LearnBlueprint(uint32 garrBuildingId)
 {
     WorldPackets::Garrison::GarrisonLearnBlueprintResult learnBlueprintResult;
@@ -2122,6 +2136,44 @@ void Garrison::OnGossipSelect(WorldObject* source)
     openShipment.NpcGUID = source->GetGUID();
     openShipment.CharShipmentContainerID = data->data->ShipmentConteinerID;
     _owner->SendDirectMessage(openShipment.Write());
+}
+
+
+void Garrison::OnGossipTradeSkill(WorldObject* source)
+{
+    if (!source->HasFlag(UNIT_FIELD_NPC_FLAGS2, UNIT_NPC_FLAG2_TRADESKILL_NPC))
+        return;
+
+    TradeskillList const* trade = sGarrisonMgr.GetTradeSkill(source->GetEntry());
+    if (!trade)
+        return;
+
+    //! ToDo: link npc with plot or something else about it.
+    const Garrison::Plot* plot = GetPlotWithNpc(source->GetEntry());
+    if (!plot)
+        return;
+
+    //! SMSG_GARRISON_OPEN_TRADESKILL_NPC_RESPONSE
+    WorldPackets::Garrison::GarrisonTradeSkillResponse tradeSkillPacket;
+    tradeSkillPacket.GUID = source->GetGUID();
+    for (auto const& tr : *trade)
+    {
+        bool find = false;
+        for (uint32 &d : tradeSkillPacket.tradeSkill.skillStorel)
+        {
+            if (d == tr.skillID)
+            {
+                find = true;
+                break;
+            }
+        }
+        if (!find)
+            tradeSkillPacket.tradeSkill.skillStorel.push_back(tr.skillID);
+        tradeSkillPacket.tradeSkill.spellStore.push_back(tr.spellID);
+        tradeSkillPacket.conditionPlayerStore.push_back(tr.conditionID);
+    }
+
+    _owner->SendDirectMessage(tradeSkillPacket.Write());
 }
 
 void Garrison::SendShipmentInfo(ObjectGuid const& guid)

@@ -66,6 +66,8 @@ struct GarrTradeSkill
 {
     uint32 spellID;
     uint32 conditionID;
+    uint16 skillID;
+    uint8  reqBuildingLvl;
 };
 
 typedef std::list<GarrTradeSkill /*tradeskill*/> TradeskillList;
@@ -135,6 +137,7 @@ public:
     uint64 GenerateShipmentDbId();
     std::list<GameObjectData> const* GetGoSpawnBuilding(uint32 plotID, uint32 build) const;
     std::list<CreatureData> const* GetNpcSpawnBuilding(uint32 plotID, uint32 build) const;
+    TradeskillList const * GetTradeSkill(uint32 npcID);
 
     GarrMissionEntry const* GetNextMissionInQuestLine(uint32 missionID);
     GarrMissionEntry const* GetMissionAtFollowerTaking(uint32 followerID);
