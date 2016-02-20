@@ -6127,9 +6127,9 @@ AreaTriggerStruct const* ObjectMgr::GetGoBackTrigger(uint32 Map) const
         useParentDbValue = true;
     }
 
-    uint32 сorpseMapID = uint32(mapEntry->CorpseMapID);
+    uint32 corpseMapID = uint32(mapEntry->CorpseMapID);
     for (AreaTriggerContainer::const_iterator itr = _areaTriggerStore.begin(); itr != _areaTriggerStore.end(); ++itr)
-        if ((!useParentDbValue && itr->second.target_mapId == сorpseMapID) || (useParentDbValue && itr->second.target_mapId == parentId))
+        if ((!useParentDbValue && itr->second.target_mapId == corpseMapID) || (useParentDbValue && itr->second.target_mapId == parentId))
         {
             AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
             if (atEntry && atEntry->MapID == Map)
