@@ -1520,10 +1520,6 @@ struct CurrencyTypesEntry
     uint32      Flags;                                              // 9
     uint32      Quality;                                            // 10
     LocalizedString*       Description_lang;                                   // 11
-
-    bool HasPrecision() const   { return Flags & CURRENCY_FLAG_HAS_PRECISION; }
-    bool HasSeasonCount() const { return Flags & CURRENCY_FLAG_HAS_SEASON_COUNT; }
-    float GetPrecision() const  { return HasPrecision() ? CURRENCY_PRECISION : 1.0f; }
 };
 
 struct QuestPackageItemEntry

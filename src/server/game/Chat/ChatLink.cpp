@@ -268,17 +268,19 @@ bool QuestChatLink::ValidateName(char* buffer, const char* context)
 {
     ChatLink::ValidateName(buffer, context);
 
-    bool res = (_quest->GetLogTitle() == buffer);
+    bool res = (_quest->LogTitle == buffer);
     if (!res)
         if (QuestTemplateLocale const* ql = sObjectMgr->GetQuestLocale(_quest->GetQuestId()))
-            for (size_t i = 0; i < ql->LogTitle.size(); i++)
-                if (ql->LogTitle[i] == buffer)
+            for (StringVector::const_iterator::value_type v : ql->LogTitle)
+                if (v == buffer)
                 {
                     res = true;
                     break;
                 }
+
     if (!res)
         sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked quest (id: %u) title wasn't found in any localization", context, _quest->GetQuestId());
+
     return res;
 }
 

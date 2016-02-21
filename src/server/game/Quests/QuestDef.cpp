@@ -281,15 +281,15 @@ uint32 Quest::MoneyValue(uint8 playerLVL) const
     uint8 level = Level == -1 ? playerLVL : Level;
 
     if (QuestMoneyRewardEntry const* money = sQuestMoneyRewardStore.LookupEntry(level))
-        return money->Money[GetRewMoneyDifficulty()] * RewardMoneyMultiplier;
+        return money->Money[RewardMoneyDifficulty] * RewardMoneyMultiplier;
     else
         return 0;
 }
 
 void Quest::BuildQuestRewards(WorldPackets::Quest::QuestRewards& rewards, Player* player) const
 {
-    rewards.ChoiceItemCount         = GetRewChoiceItemsCount();
-    rewards.ItemCount               = GetRewItemsCount();
+    rewards.ChoiceItemCount = m_rewChoiceItemsCount;
+    rewards.ItemCount = m_rewItemsCount;
     rewards.Money                   = player->GetQuestMoneyReward(this);
     float QuestXpRate = 1;
     if (player->GetPersonnalXpRate())
@@ -298,13 +298,13 @@ void Quest::BuildQuestRewards(WorldPackets::Quest::QuestRewards& rewards, Player
         QuestXpRate = sWorld->getRate(RATE_XP_QUEST);
 
     rewards.XP                      = uint32(XPValue(player) * QuestXpRate);
-    rewards.Title                   = GetRewTitle();
-    rewards.Talents                 = GetBonusTalents();
-    rewards.FactionFlags            = GetRewardFactionFlags();
-    rewards.SpellCompletionDisplayID = GetRewDisplaySpell();
-    rewards.SpellCompletionID       = GetRewSpell();
-    rewards.SkillLineID             = GetRewardSkillId();
-    rewards.NumSkillUps             = GetRewardSkillPoints();
+    rewards.Title = RewardTitleId;
+    rewards.Talents = RewardTalents;
+    rewards.FactionFlags = RewardFactionFlags;
+    rewards.SpellCompletionDisplayID = RewardDisplaySpell;
+    rewards.SpellCompletionID = RewardSpell;
+    rewards.SkillLineID = RewardSkillId;
+    rewards.NumSkillUps = RewardSkillPoints;
 
     for (uint32 i = 0; i < QUEST_REWARD_CHOICES_COUNT; ++i)
     {
@@ -349,7 +349,7 @@ bool Quest::IsAutoAccept() const
 
 bool Quest::IsAutoComplete() const
 {
-    return !sWorld->getBoolConfig(CONFIG_QUEST_IGNORE_AUTO_COMPLETE) && (Type == 0/* || HasFlag(QUEST_FLAGS_AUTOCOMPLETE)*/);
+    return !sWorld->getBoolConfig(CONFIG_QUEST_IGNORE_AUTO_COMPLETE) && (Type == QUEST_TYPE_AUTOCOMPLETE);
 }
 
 bool Quest::IsRaidQuest(Difficulty difficulty) const
@@ -375,21 +375,4 @@ bool Quest::IsAllowedInRaid(Difficulty difficulty) const
         return true;
 
     return sWorld->getBoolConfig(CONFIG_QUEST_IGNORE_RAID);
-}
-
-uint32 Quest::CalculateHonorGain(uint8 level) const
-{
-    uint32 honor = 0;
-
-    /*if (GetRewHonor() > 0 || GetRewKillHonor() > 0.0f)
-    {
-        // values stored from 0.. for 1...
-        TeamContributionPointsEntry const* tc = sTeamContributionPointsStore.LookupEntry(level);
-        if (!tc)
-            return 0;
-        honor = uint32(tc->value * GetRewKillHonor() * 0.1f);
-        honor += GetRewHonor();
-    }*/
-
-    return honor;
 }

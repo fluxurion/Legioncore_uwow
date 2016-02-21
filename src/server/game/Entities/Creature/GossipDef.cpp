@@ -199,14 +199,14 @@ void PlayerMenu::SendGossipMenu(uint32 titleTextId, ObjectGuid objectGUID) const
             WorldPackets::NPC::ClientGossipText& text = packet.GossipText[count];
             text.QuestID = questID;
             text.QuestType = item.QuestIcon;
-            text.QuestLevel = quest->GetQuestLevel();
+            text.QuestLevel = quest->Level;
             text.QuestFlags[0] = quest->GetFlags();
-            text.QuestFlags[1] = quest->GetFlagsEx();
+            text.QuestFlags[1] = quest->FlagsEx;
             text.Repeatable = quest->IsRepeatable();
 
-            std::string title = quest->GetLogTitle();
+            std::string title = quest->LogTitle;
             LocaleConstant locale = _session->GetSessionDbLocaleIndex();
-            if (locale >= 0)
+            if (locale >= LOCALE_enUS)
                 if (QuestTemplateLocale const* localeData = sObjectMgr->GetQuestLocale(questID))
                     ObjectMgr::GetLocaleString(localeData->LogTitle, locale, title);
 
@@ -308,16 +308,14 @@ void PlayerMenu::SendQuestGiverQuestList(QEmote eEmote, std::string const& Title
 
         if (Quest const* quest = sObjectMgr->GetQuestTemplate(questID))
         {
-            std::string title = quest->GetLogTitle();
+            std::string title = quest->LogTitle;
 
             LocaleConstant loc_idx = _session->GetSessionDbLocaleIndex();
-            if (loc_idx >= 0)
+            if (loc_idx >= LOCALE_enUS)
                 if (QuestTemplateLocale const* ql = sObjectMgr->GetQuestLocale(questID))
                     ObjectMgr::GetLocaleString(ql->LogTitle, loc_idx, title);
 
-            bool repeatable = false; // NYI
-
-            questList.GossipTexts.push_back(WorldPackets::Quest::GossipTextData(questID, questMenuItem.QuestIcon, quest->GetQuestLevel(), quest->GetFlags(), quest->GetFlagsEx(), repeatable, title));
+            questList.GossipTexts.push_back(WorldPackets::Quest::GossipTextData(questID, questMenuItem.QuestIcon, quest->Level, quest->Flags, quest->FlagsEx, quest->IsRepeatable(), title));
         }
     }
 
@@ -334,14 +332,14 @@ void PlayerMenu::SendQuestGiverStatus(uint32 questStatus, ObjectGuid npcGUID) co
 
 void PlayerMenu::SendQuestGiverQuestDetails(Quest const* quest, ObjectGuid npcGUID, bool activateAccept, bool isAreaTrigger /*=false*/) const
 {
-    std::string questLogTitle = quest->GetLogTitle();
-    std::string questDescription = quest->GetQuestDescription();
-    std::string questLogDescription = quest->GetLogDescription();
-    std::string questEndText         = quest->GetAreaDescription();
-    std::string portraitGiverText = quest->GetPortraitGiverText();
-    std::string portraitGiverName = quest->GetPortraitGiverName();
-    std::string portraitTurnInText = quest->GetPortraitTurnInText();
-    std::string portraitTurnInName = quest->GetPortraitTurnInName();
+    std::string questLogTitle = quest->LogTitle;
+    std::string questDescription = quest->QuestDescription;
+    std::string questLogDescription = quest->LogDescription;
+    std::string questEndText = quest->AreaDescription;
+    std::string portraitGiverText = quest->PortraitGiverText;
+    std::string portraitGiverName = quest->PortraitGiverName;
+    std::string portraitTurnInText = quest->PortraitTurnInText;
+    std::string portraitTurnInName = quest->PortraitTurnInName;
 
     LocaleConstant locale = _session->GetSessionDbLocaleIndex();
     if (locale >= 0)
@@ -369,8 +367,8 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* quest, ObjectGuid npcGU
     packet.PortraitGiverName = portraitGiverName;
     packet.PortraitTurnInText = portraitTurnInText;
     packet.PortraitTurnInName = portraitTurnInName;
-    packet.PortraitGiver = quest->GetQuestGiverPortrait();
-    packet.PortraitTurnIn = quest->GetQuestTurnInPortrait();
+    packet.PortraitGiver = quest->QuestGiverPortrait;
+    packet.PortraitTurnIn = quest->QuestTurnInPortrait;
     packet.DisplayPopup = activateAccept;
 
     //ToDo: CHECK IT ON WOD
@@ -386,11 +384,11 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* quest, ObjectGuid npcGU
     //offer.AutoLaunched = isAreaTrigger;
 
     packet.QuestFlags[0] = quest->GetFlags();
-    packet.QuestFlags[1] = quest->GetFlagsEx();
-    packet.SuggestedPartyMembers = quest->GetSuggestedPlayers();
+    packet.QuestFlags[1] = quest->FlagsEx;
+    packet.SuggestedPartyMembers = quest->SuggestedPlayers;
 
-    if (quest->GetSrcSpell())
-        packet.LearnSpells.push_back(quest->GetSrcSpell());
+    if (quest->SourceSpellID)
+        packet.LearnSpells.push_back(quest->SourceSpellID);
 
     quest->BuildQuestRewards(packet.Rewards, _session->GetPlayer());
 
@@ -420,18 +418,17 @@ void PlayerMenu::SendQuestQueryResponse(uint32 questId) const
     if (!quest)
         return;
 
+    std::string questLogTitle = quest->LogTitle;
+    std::string questLogDescription = quest->LogDescription;
+    std::string questDescription = quest->QuestDescription;
+    std::string areaDescription = quest->AreaDescription;
+    std::string questCompletionLog = quest->QuestCompletionLog;
+    std::string portraitGiverText = quest->PortraitGiverText;
+    std::string portraitGiverName = quest->PortraitGiverName;
+    std::string portraitTurnInText = quest->PortraitTurnInText;
+    std::string portraitTurnInName = quest->PortraitTurnInName;
+
     LocaleConstant localeConstant = _session->GetSessionDbLocaleIndex();
-
-    std::string questLogTitle = quest->GetLogTitle();
-    std::string questLogDescription = quest->GetLogDescription();
-    std::string questDescription = quest->GetQuestDescription();
-    std::string areaDescription = quest->GetAreaDescription();
-    std::string questCompletionLog = quest->GetQuestCompletionLog();
-    std::string portraitGiverText = quest->GetPortraitGiverText();
-    std::string portraitGiverName = quest->GetPortraitGiverName();
-    std::string portraitTurnInText = quest->GetPortraitTurnInText();
-    std::string portraitTurnInName = quest->GetPortraitTurnInName();
-
     if (localeConstant >= LOCALE_enUS)
     {
         if (QuestTemplateLocale const* questTemplateLocale = sObjectMgr->GetQuestLocale(quest->GetQuestId()))
@@ -454,40 +451,40 @@ void PlayerMenu::SendQuestQueryResponse(uint32 questId) const
     packet.QuestID = quest->GetQuestId();
 
     packet.Info.QuestID = quest->GetQuestId();
-    packet.Info.QuestType = quest->GetQuestType();
-    packet.Info.QuestLevel = quest->GetQuestLevel();
-    packet.Info.QuestPackageID = quest->GetQuestPackageID();
-    packet.Info.QuestMinLevel = quest->GetMinLevel();
-    packet.Info.QuestSortID = quest->GetZoneOrSort();
-    packet.Info.QuestInfoID = quest->GetQuestInfoID();
-    packet.Info.SuggestedGroupNum = quest->GetSuggestedPlayers();
-    packet.Info.RewardNextQuest = quest->GetNextQuestInChain();
-    packet.Info.RewardXPDifficulty = quest->GetXPDifficulty();
+    packet.Info.QuestType = quest->Type;
+    packet.Info.QuestLevel = quest->Level;
+    packet.Info.QuestPackageID = quest->PackageID;
+    packet.Info.QuestMinLevel = quest->MinLevel;
+    packet.Info.QuestSortID = quest->QuestSortID;
+    packet.Info.QuestInfoID = quest->QuestInfoID;
+    packet.Info.SuggestedGroupNum = quest->SuggestedPlayers;
+    packet.Info.RewardNextQuest = quest->NextQuestIdChain;
+    packet.Info.RewardXPDifficulty = quest->RewardXPDifficulty;
     packet.Info.RewardXPMultiplier = quest->RewardXPMultiplier;
     packet.Info.RewardMoneyMultiplier = quest->RewardMoneyMultiplier;
 
     if (quest->HasFlag(QUEST_FLAGS_HIDDEN_REWARDS))
         packet.Info.RewardMoney = quest->RewardMoney;
 
-    packet.Info.RewardMoneyDifficulty = quest->GetRewMoneyDifficulty();
+    packet.Info.RewardMoneyDifficulty = quest->RewardMoneyDifficulty;
     packet.Info.RewardBonusMoney = quest->GetRewMoneyMaxLevel();
-    packet.Info.RewardDisplaySpell = quest->GetRewDisplaySpell();
-    packet.Info.RewardSpell = quest->GetRewDisplaySpell();
+    packet.Info.RewardDisplaySpell = quest->RewardDisplaySpell;
+    packet.Info.RewardSpell = quest->RewardDisplaySpell;
 
-    packet.Info.RewardHonor = quest->GetRewHonor();
-    packet.Info.RewardKillHonor = quest->GetRewKillHonor();
+    packet.Info.RewardHonor = quest->RewardHonor;
+    packet.Info.RewardKillHonor = quest->RewardKillHonor;
 
-    packet.Info.StartItem = quest->GetSrcItemId();
+    packet.Info.StartItem = quest->SourceItemId;
     packet.Info.Flags = quest->GetFlags();
-    packet.Info.FlagsEx = quest->GetFlagsEx();
-    packet.Info.RewardTitle = quest->GetRewTitle();
-    packet.Info.RewardTalents = quest->GetBonusTalents();
-    packet.Info.RewardArenaPoints = quest->GetRewArenaPoints();
-    packet.Info.RewardSkillLineID = quest->GetRewardSkillId();
-    packet.Info.RewardNumSkillUps = quest->GetRewardSkillPoints();
-    packet.Info.RewardFactionFlags = quest->GetRewardFactionFlags();
-    packet.Info.PortraitGiver = quest->GetQuestGiverPortrait();
-    packet.Info.PortraitTurnIn = quest->GetQuestTurnInPortrait();
+    packet.Info.FlagsEx = quest->FlagsEx;
+    packet.Info.RewardTitle = quest->RewardTitleId;
+    packet.Info.RewardTalents = quest->RewardTalents;
+    packet.Info.RewardArenaPoints = quest->RewardArenaPoints;
+    packet.Info.RewardSkillLineID = quest->RewardSkillId;
+    packet.Info.RewardNumSkillUps = quest->RewardSkillPoints;
+    packet.Info.RewardFactionFlags = quest->RewardFactionFlags;
+    packet.Info.PortraitGiver = quest->QuestGiverPortrait;
+    packet.Info.PortraitTurnIn = quest->QuestTurnInPortrait;
 
     if (!quest->HasFlag(QUEST_FLAGS_HIDDEN_REWARDS))
     {
@@ -510,26 +507,24 @@ void PlayerMenu::SendQuestQueryResponse(uint32 questId) const
         packet.Info.RewardFactionOverride[i] = quest->RewardFactionOverride[i];
     }
 
-    packet.Info.POIContinent = quest->GetPOIContinent();
-    packet.Info.POIx = quest->GetPOIx();
-    packet.Info.POIy = quest->GetPOIy();
-    packet.Info.POIPriority = quest->GetPOIPriority();
+    packet.Info.POIContinent = quest->POIContinent;
+    packet.Info.POIx = quest->POIx;
+    packet.Info.POIy = quest->POIy;
+    packet.Info.POIPriority = quest->POIPriority;
     packet.Info.LogTitle = questLogTitle;
     packet.Info.LogDescription = questLogDescription;
     packet.Info.QuestDescription = questDescription;
     packet.Info.AreaDescription = areaDescription;
     packet.Info.QuestCompletionLog = questCompletionLog;
-    packet.Info.AllowableRaces = quest->GetAllowableRaces();
+    packet.Info.AllowableRaces = quest->AllowableRaces;
 
     for (QuestObjective const& questObjective : quest->GetObjectives())
     {
         packet.Info.Objectives.push_back(questObjective);
 
         if (localeConstant >= LOCALE_enUS)
-        {
             if (QuestObjectivesLocale const* questObjectivesLocale = sObjectMgr->GetQuestObjectivesLocale(questObjective.ID))
                 ObjectMgr::GetLocaleString(questObjectivesLocale->Description, localeConstant, packet.Info.Objectives.back().Description);
-        }
     }
 
     for (uint32 i = 0; i < QUEST_REWARD_CURRENCY_COUNT; ++i)
@@ -543,10 +538,10 @@ void PlayerMenu::SendQuestQueryResponse(uint32 questId) const
     packet.Info.PortraitTurnInText = portraitTurnInText;
     packet.Info.PortraitTurnInName = portraitTurnInName;
 
-    packet.Info.AcceptedSoundKitID = quest->GetSoundAccept();
-    packet.Info.CompleteSoundKitID = quest->GetSoundTurnIn();
-    packet.Info.AreaGroupID = quest->GetAreaGroupID();
-    packet.Info.TimeAllowed = quest->GetLimitTime();
+    packet.Info.AcceptedSoundKitID = quest->SoundAccept;
+    packet.Info.CompleteSoundKitID = quest->SoundTurnIn;
+    packet.Info.AreaGroupID = quest->AreaGroupID;
+    packet.Info.TimeAllowed = quest->LimitTime;
 
     _session->SendPacket(packet.Write());
 }
@@ -555,12 +550,12 @@ void PlayerMenu::SendQuestGiverOfferReward(Quest const* quest, ObjectGuid npcGUI
 {
     Player* player = _session->GetPlayer();
 
-    std::string questTitle = quest->GetLogTitle();
-    std::string questOfferRewardText = quest->GetOfferRewardText();
-    std::string portraitGiverText = quest->GetPortraitGiverText();
-    std::string portraitGiverName = quest->GetPortraitGiverName();
-    std::string portraitTurnInText = quest->GetPortraitTurnInText();
-    std::string portraitTurnInName = quest->GetPortraitTurnInName();
+    std::string questTitle = quest->LogTitle;
+    std::string questOfferRewardText = quest->OfferRewardText;
+    std::string portraitGiverText = quest->PortraitGiverText;
+    std::string portraitGiverName = quest->PortraitGiverName;
+    std::string portraitTurnInText = quest->PortraitTurnInText;
+    std::string portraitTurnInName = quest->PortraitTurnInName;
 
     LocaleConstant locale = _session->GetSessionDbLocaleIndex();
     if (locale >= LOCALE_enUS)
@@ -588,23 +583,23 @@ void PlayerMenu::SendQuestGiverOfferReward(Quest const* quest, ObjectGuid npcGUI
 
     offer.QuestID = quest->GetQuestId();
     offer.AutoLaunched = enableNext;
-    offer.SuggestedPartyMembers = quest->GetSuggestedPlayers();
+    offer.SuggestedPartyMembers = quest->SuggestedPlayers;
 
     for (uint32 i = 0; i < QUEST_EMOTE_COUNT && quest->OfferRewardEmote[i]; ++i)
         offer.Emotes.push_back(WorldPackets::Quest::QuestDescEmote(quest->OfferRewardEmote[i], quest->OfferRewardEmoteDelay[i]));
 
     offer.QuestFlags[0] = quest->GetFlags();
-    offer.QuestFlags[1] = quest->GetFlagsEx();
+    offer.QuestFlags[1] = quest->FlagsEx;
 
     packet.QuestTitle = questTitle;
     packet.RewardText = questOfferRewardText;
-    packet.PortraitTurnIn = quest->GetQuestTurnInPortrait();
-    packet.PortraitGiver = quest->GetQuestGiverPortrait();
+    packet.PortraitTurnIn = quest->QuestTurnInPortrait;
+    packet.PortraitGiver = quest->QuestGiverPortrait;
     packet.PortraitGiverText = portraitGiverText;
     packet.PortraitGiverName = portraitGiverName;
     packet.PortraitTurnInText = portraitTurnInText;
     packet.PortraitTurnInName = portraitTurnInName;
-    packet.QuestPackageID = quest->GetQuestPackageID();
+    packet.QuestPackageID = quest->PackageID;
 
     _session->SendPacket(packet.Write());
 }
@@ -614,8 +609,8 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const* quest, ObjectGuid npcGU
     // We can always call to RequestItems, but this packet only goes out if there are actually
     // items.  Otherwise, we'll skip straight to the OfferReward
 
-    std::string questTitle = quest->GetLogTitle();
-    std::string requestItemsText = quest->GetRequestItemsText();
+    std::string questTitle = quest->LogTitle;
+    std::string requestItemsText = quest->RequestItemsText;
 
     LocaleConstant locale = _session->GetSessionDbLocaleIndex();
     if (locale >= LOCALE_enUS)
@@ -654,8 +649,8 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const* quest, ObjectGuid npcGU
     }
 
     packet.QuestFlags[0] = quest->GetFlags();
-    packet.QuestFlags[1] = quest->GetFlagsEx();
-    packet.SuggestPartyMembers = quest->GetSuggestedPlayers();
+    packet.QuestFlags[1] = quest->FlagsEx;
+    packet.SuggestPartyMembers = quest->SuggestedPlayers;
     packet.StatusFlags = 0xDF; // Unk, send common value
 
     packet.MoneyToGet = 0;

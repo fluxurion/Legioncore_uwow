@@ -3731,197 +3731,123 @@ void ObjectMgr::LoadQuests()
         } while (result->NextRow());
     }
 
-    std::map<uint32, uint32> usedMailTemplates;
-
-    // Post processing
-    for (QuestMap::iterator iter = _questTemplates.begin(); iter != _questTemplates.end(); ++iter)
+    for (QuestMap::iterator::value_type iter : _questTemplates)
     {
-        // skip post-loading checks for disabled quests
-        if (DisableMgr::IsDisabledFor(DISABLE_TYPE_QUEST, iter->first, NULL))
+        if (DisableMgr::IsDisabledFor(DISABLE_TYPE_QUEST, iter.first, nullptr))
             continue;
 
-        Quest * qinfo = iter->second;
+        Quest* qinfo = iter.second;
 
-        // additional quest integrity checks (GO, creature_template and item_template must be loaded already)
-
-        if (qinfo->GetQuestType() >= 3)
-            sLog->outError(LOG_FILTER_SQL, "Quest %u has `Method` = %u, expected values are 0, 1 or 2.", qinfo->GetQuestId(), qinfo->GetQuestType());
+        if (qinfo->Type >= MAX_QUEST_TYPES)
+            sLog->outError(LOG_FILTER_SQL, "Quest %u has `Method` = %u, expected values are 0, 1 or 2.", qinfo->GetQuestId(), qinfo->Type);
 
         if (qinfo->SpecialFlags & ~QUEST_SPECIAL_FLAGS_DB_ALLOWED)
         {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `SpecialFlags` = %u > max allowed value. Correct `SpecialFlags` to value <= %u",
-                qinfo->GetQuestId(), qinfo->SpecialFlags, QUEST_SPECIAL_FLAGS_DB_ALLOWED);
+                           qinfo->GetQuestId(), qinfo->SpecialFlags, QUEST_SPECIAL_FLAGS_DB_ALLOWED);
             qinfo->SpecialFlags &= QUEST_SPECIAL_FLAGS_DB_ALLOWED;
         }
 
-        if (qinfo->Flags & QUEST_FLAGS_DAILY && qinfo->Flags & QUEST_FLAGS_WEEKLY)
+        if (qinfo->IsDaily() && qinfo->IsWeekly())
         {
             sLog->outError(LOG_FILTER_SQL, "Weekly Quest %u is marked as daily quest in `Flags`, removed daily flag.", qinfo->GetQuestId());
             qinfo->Flags &= ~QUEST_FLAGS_DAILY;
         }
 
-        if (qinfo->Flags & QUEST_FLAGS_DAILY)
+        if (qinfo->IsDaily() && !qinfo->IsRepeatable())
         {
-            if (!(qinfo->SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Daily Quest %u not marked as repeatable in `SpecialFlags`, added.", qinfo->GetQuestId());
-                qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
-            }
+            sLog->outError(LOG_FILTER_SQL, "Daily Quest %u not marked as repeatable in `SpecialFlags`, added.", qinfo->GetQuestId());
+            qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
         }
 
-        if (qinfo->Flags & QUEST_FLAGS_WEEKLY)
+        if ((qinfo->Flags & QUEST_FLAGS_WEEKLY) && !qinfo->IsRepeatable())
         {
-            if (!(qinfo->SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Weekly Quest %u not marked as repeatable in `SpecialFlags`, added.", qinfo->GetQuestId());
-                qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
-            }
+            sLog->outError(LOG_FILTER_SQL, "Weekly Quest %u not marked as repeatable in `SpecialFlags`, added.", qinfo->GetQuestId());
+            qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
         }
 
         if (qinfo->Flags & QUEST_FLAGS_AUTO_REWARDED)
-        {
-            // at auto-reward can be rewarded only RewardChoiceItemId[0]
-            for (int j = 1; j < QUEST_REWARD_CHOICES_COUNT; ++j )
-            {
+            for (uint8 j = 1; j < QUEST_REWARD_CHOICES_COUNT; ++j)
                 if (uint32 id = qinfo->RewardChoiceItemId[j])
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardChoiceItemId%d` = %u but item from `RewardChoiceItemId%d` can't be rewarded with quest flag QUEST_FLAGS_AUTO_REWARDED.",
-                        qinfo->GetQuestId(), j+1, id, j+1);
-                    // no changes, quest ignore this data
-                }
-            }
-        }
+                    qinfo->GetQuestId(), j + 1, id, j + 1);
 
         if (qinfo->MinLevel == uint32(-1) || qinfo->MinLevel > DEFAULT_MAX_LEVEL)
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u should be disabled because `MinLevel` = %i", qinfo->GetQuestId(), int32(qinfo->MinLevel));
-            // no changes needed, sending -1 in SMSG_QUERY_QUEST_INFO_RESPONSE is valid
-        }
 
-        // client quest log visual (area case)
         if (qinfo->QuestSortID > 0)
-        {
             if (!sAreaTableStore.LookupEntry(qinfo->QuestSortID))
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `QuestSortID` = %u (zone case) but zone with this id does not exist.",
-                    qinfo->GetQuestId(), qinfo->QuestSortID);
-                // no changes, quest not dependent from this value but can have problems at client
-            }
-        }
-        // client quest log visual (sort case)
+                qinfo->GetQuestId(), qinfo->QuestSortID);
+
         if (qinfo->QuestSortID < 0)
         {
-            QuestSortEntry const* qSort = sQuestSortStore.LookupEntry(-int32(qinfo->QuestSortID));
-            if (!qSort)
-            {
+            if (!sQuestSortStore.LookupEntry(-int32(qinfo->QuestSortID)))
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `QuestSortID` = %i (sort case) but quest sort with this id does not exist.",
-                    qinfo->GetQuestId(), qinfo->QuestSortID);
-                // no changes, quest not dependent from this value but can have problems at client (note some may be 0, we must allow this so no check)
-            }
-            //check for proper RequiredSkillId value (skill case)
+                qinfo->GetQuestId(), qinfo->QuestSortID);
+
             if (uint32 skill_id = SkillByQuestSort(-int32(qinfo->QuestSortID)))
-            {
                 if (qinfo->RequiredSkillId != skill_id)
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `QuestSortID` = %i but `RequiredSkillId` does not have a corresponding value (%d).",
-                        qinfo->GetQuestId(), qinfo->QuestSortID, skill_id);
-                    //override, and force proper value here?
-                }
-            }
+                    qinfo->GetQuestId(), qinfo->QuestSortID, skill_id);
         }
 
-        // AllowableClasses, can be 0/CLASSMASK_ALL_PLAYABLE to allow any class
         if (qinfo->AllowableClasses)
         {
-            uint32 RequiredClassCheck = qinfo->AllowableClasses > 0 ? qinfo->AllowableClasses: -(qinfo->AllowableClasses);
-
             if (!(qinfo->AllowableClasses & CLASSMASK_ALL_PLAYABLE))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u does not contain any playable classes in `AllowableClasses` (%u), value set to 0 (all classes).", qinfo->GetQuestId(), qinfo->AllowableClasses);
                 qinfo->AllowableClasses = 0;
             }
         }
-        // AllowableRaces, can be 0/RACEMASK_ALL_PLAYABLE to allow any race
+
         if (qinfo->AllowableRaces != -1)
         {
-            uint32 RequiredRacesCheck = qinfo->AllowableRaces > 0 ? qinfo->AllowableRaces: -(qinfo->AllowableRaces);
-
             if (!(qinfo->AllowableRaces & RACEMASK_ALL_PLAYABLE))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u does not contain any playable races in `AllowableRaces` (%u), value set to 0 (all races).", qinfo->GetQuestId(), qinfo->AllowableRaces);
                 qinfo->AllowableRaces = -1;
             }
         }
-        // RequiredSkillId, can be 0
+
         if (qinfo->RequiredSkillId)
-        {
             if (!sSkillLineStore.LookupEntry(qinfo->RequiredSkillId))
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredSkillId` = %u but this skill does not exist",
-                    qinfo->GetQuestId(), qinfo->RequiredSkillId);
-            }
-        }
+                qinfo->GetQuestId(), qinfo->RequiredSkillId);
 
-        if (qinfo->RequiredSkillPoints)
-        {
-            if (qinfo->RequiredSkillPoints > sWorld->GetConfigMaxSkillValue())
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredSkillPoints` = %u but max possible skill is %u, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->RequiredSkillPoints, sWorld->GetConfigMaxSkillValue());
-                // no changes, quest can't be done for this requirement
-            }
-        }
-        // else Skill quests can have 0 skill level, this is ok
-
+        if (qinfo->RequiredSkillPoints && (qinfo->RequiredSkillPoints > sWorld->GetConfigMaxSkillValue()))
+            sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredSkillPoints` = %u but max possible skill is %u, quest can't be done.",
+            qinfo->GetQuestId(), qinfo->RequiredSkillPoints, sWorld->GetConfigMaxSkillValue());
 
         if (qinfo->RequiredMinRepFaction && !sFactionStore.LookupEntry(qinfo->RequiredMinRepFaction))
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMinRepFaction` = %u but faction template %u does not exist, quest can't be done.",
-                qinfo->GetQuestId(), qinfo->RequiredMinRepFaction, qinfo->RequiredMinRepFaction);
-            // no changes, quest can't be done for this requirement
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMinRepFaction, qinfo->RequiredMinRepFaction);
 
         if (qinfo->RequiredMaxRepFaction && !sFactionStore.LookupEntry(qinfo->RequiredMaxRepFaction))
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMaxRepFaction` = %u but faction template %u does not exist, quest can't be done.",
-                qinfo->GetQuestId(), qinfo->RequiredMaxRepFaction, qinfo->RequiredMaxRepFaction);
-            // no changes, quest can't be done for this requirement
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMaxRepFaction, qinfo->RequiredMaxRepFaction);
 
         if (qinfo->RequiredMinRepValue && qinfo->RequiredMinRepValue > ReputationMgr::Reputation_Cap)
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMinRepValue` = %d but max reputation is %u, quest can't be done.",
-                qinfo->GetQuestId(), qinfo->RequiredMinRepValue, ReputationMgr::Reputation_Cap);
-            // no changes, quest can't be done for this requirement
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMinRepValue, ReputationMgr::Reputation_Cap);
 
         if (qinfo->RequiredMinRepValue && qinfo->RequiredMaxRepValue && qinfo->RequiredMaxRepValue <= qinfo->RequiredMinRepValue)
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMaxRepValue` = %d and `RequiredMinRepValue` = %d, quest can't be done.",
-                qinfo->GetQuestId(), qinfo->RequiredMaxRepValue, qinfo->RequiredMinRepValue);
-            // no changes, quest can't be done for this requirement
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMaxRepValue, qinfo->RequiredMinRepValue);
 
         if (!qinfo->RequiredMinRepFaction && qinfo->RequiredMinRepValue != 0)
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMinRepValue` = %d but `RequiredMinRepFaction` is 0, value has no effect",
-                qinfo->GetQuestId(), qinfo->RequiredMinRepValue);
-            // warning
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMinRepValue);
 
         if (!qinfo->RequiredMaxRepFaction && qinfo->RequiredMaxRepValue != 0)
-        {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredMaxRepValue` = %d but `RequiredMaxRepFaction` is 0, value has no effect",
-                qinfo->GetQuestId(), qinfo->RequiredMaxRepValue);
-            // warning
-        }
+            qinfo->GetQuestId(), qinfo->RequiredMaxRepValue);
 
         if (qinfo->RewardTitleId && !sCharTitlesStore.LookupEntry(qinfo->RewardTitleId))
         {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardTitleId` = %u but CharTitle Id %u does not exist, quest can't be rewarded with title.",
-                qinfo->GetQuestId(), qinfo->GetRewTitle(), qinfo->GetRewTitle());
+                           qinfo->GetQuestId(), qinfo->RewardTitleId, qinfo->RewardTitleId);
             qinfo->RewardTitleId = 0;
-            // quest can't reward this title
         }
 
         if (qinfo->SourceItemId)
@@ -3929,21 +3855,21 @@ void ObjectMgr::LoadQuests()
             if (!sObjectMgr->GetItemTemplate(qinfo->SourceItemId))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `SourceItemId` = %u but item with entry %u does not exist, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->SourceItemId, qinfo->SourceItemId);
-                qinfo->SourceItemId = 0;                       // quest can't be done for this requirement
+                               qinfo->GetQuestId(), qinfo->SourceItemId, qinfo->SourceItemId);
+                qinfo->SourceItemId = 0;
             }
             else if (qinfo->SourceItemIdCount == 0)
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `SourceItemId` = %u but `SourceItemIdCount` = 0, set to 1 but need fix in DB.",
-                    qinfo->GetQuestId(), qinfo->SourceItemId);
-                qinfo->SourceItemIdCount = 1;                    // update to 1 for allow quest work for backward compatibility with DB
+                               qinfo->GetQuestId(), qinfo->SourceItemId);
+                qinfo->SourceItemIdCount = 1; // update to 1 for allow quest work for backward compatibility with DB
             }
         }
-        else if (qinfo->SourceItemIdCount>0)
+        else if (qinfo->SourceItemIdCount > 0)
         {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `SourceItemId` = 0 but `SourceItemIdCount` = %u, useless value.",
-                qinfo->GetQuestId(), qinfo->SourceItemIdCount);
-            qinfo->SourceItemIdCount=0;                          // no quest work changes in fact
+                           qinfo->GetQuestId(), qinfo->SourceItemIdCount);
+            qinfo->SourceItemIdCount = 0;
         }
 
         if (qinfo->SourceSpellID)
@@ -3952,43 +3878,32 @@ void ObjectMgr::LoadQuests()
             if (!spellInfo)
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `SourceSpellID` = %u but spell %u doesn't exist, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->SourceSpellID, qinfo->SourceSpellID);
-                qinfo->SourceSpellID = 0;                        // quest can't be done for this requirement
+                               qinfo->GetQuestId(), qinfo->SourceSpellID, qinfo->SourceSpellID);
+                qinfo->SourceSpellID = 0;
             }
             else if (!SpellMgr::IsSpellValid(spellInfo))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `SourceSpellID` = %u but spell %u is broken, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->SourceSpellID, qinfo->SourceSpellID);
-                qinfo->SourceSpellID = 0;                        // quest can't be done for this requirement
+                               qinfo->GetQuestId(), qinfo->SourceSpellID, qinfo->SourceSpellID);
+                qinfo->SourceSpellID = 0;
             }
         }
 
         for (uint8 j = 0; j < QUEST_ITEM_DROP_COUNT; ++j)
         {
-            uint32 id = qinfo->ItemDrop[j];
-            if (id)
+            if (uint32 id = qinfo->ItemDrop[j])
             {
                 if (!sObjectMgr->GetItemTemplate(id))
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `ItemDrop%d` = %u but item with entry %u does not exist, quest can't be done.",
-                        qinfo->GetQuestId(), j+1, id, id);
-                    // no changes, quest can't be done for this requirement
-                }
+                    qinfo->GetQuestId(), j + 1, id, id);
             }
-            else
-            {
-                if (qinfo->ItemDropQuantity[j]>0)
-                {
-                    sLog->outError(LOG_FILTER_SQL, "Quest %u has `ItemDrop%d` = 0 but `ItemDropQuantity%d` = %u.",
-                        qinfo->GetQuestId(), j+1, j+1, qinfo->ItemDropQuantity[j]);
-                    // no changes, quest ignore this data
-                }
-            }
+            else if (qinfo->ItemDropQuantity[j] > 0)
+                sLog->outError(LOG_FILTER_SQL, "Quest %u has `ItemDrop%d` = 0 but `ItemDropQuantity%d` = %u.",
+                qinfo->GetQuestId(), j + 1, j + 1, qinfo->ItemDropQuantity[j]);
         }
 
         for (QuestObjective const& obj : qinfo->GetObjectives())
         {
-            // Check storage index for objectives which store data
             if (obj.StorageIndex < 0)
             {
                 switch (obj.Type)
@@ -4012,22 +3927,21 @@ void ObjectMgr::LoadQuests()
                     qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_DELIVER);
                     if (!sObjectMgr->GetItemTemplate(obj.ObjectID))
                         sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has non existing item entry %u, quest can't be done.",
-                            qinfo->GetQuestId(), obj.ID, obj.ObjectID);
+                        qinfo->GetQuestId(), obj.ID, obj.ObjectID);
                     break;
                 case QUEST_OBJECTIVE_MONSTER:
                     qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_KILL | QUEST_SPECIAL_FLAGS_CAST);
                     if (!sObjectMgr->GetCreatureTemplate(obj.ObjectID))
                         sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has non existing creature entry %u, quest can't be done.",
-                            qinfo->GetQuestId(), obj.ID, uint32(obj.ObjectID));
+                        qinfo->GetQuestId(), obj.ID, uint32(obj.ObjectID));
                     break;
                 case QUEST_OBJECTIVE_GAMEOBJECT:
                     qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_KILL | QUEST_SPECIAL_FLAGS_CAST);
                     if (!sObjectMgr->GetGameObjectTemplate(obj.ObjectID))
                         sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has non existing gameobject entry %u, quest can't be done.",
-                            qinfo->GetQuestId(), obj.ID, uint32(obj.ObjectID));
+                        qinfo->GetQuestId(), obj.ID, uint32(obj.ObjectID));
                     break;
                 case QUEST_OBJECTIVE_TALKTO:
-                    // Need checks (is it creature only?)
                     qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_CAST | QUEST_SPECIAL_FLAGS_SPEAKTO);
                     break;
                 case QUEST_OBJECTIVE_MIN_REPUTATION:
@@ -4074,56 +3988,42 @@ void ObjectMgr::LoadQuests()
 
         for (uint8 j = 0; j < QUEST_REWARD_CHOICES_COUNT; ++j)
         {
-            uint32 id = qinfo->RewardChoiceItemId[j];
-            if (id)
+            if (uint32 id = qinfo->RewardChoiceItemId[j])
             {
                 if (!sObjectMgr->GetItemTemplate(id))
                 {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardChoiceItemId%d` = %u but item with entry %u does not exist, quest will not reward this item.",
-                        qinfo->GetQuestId(), j+1, id, id);
-                    qinfo->RewardChoiceItemId[j] = 0;          // no changes, quest will not reward this
+                                   qinfo->GetQuestId(), j + 1, id, id);
+                    qinfo->RewardChoiceItemId[j] = 0;
                 }
 
                 if (!qinfo->RewardChoiceItemCount[j])
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardChoiceItemId%d` = %u but `RewardChoiceItemCount%d` = 0, quest can't be done.",
-                        qinfo->GetQuestId(), j+1, id, j+1);
-                    // no changes, quest can't be done
-                }
+                    qinfo->GetQuestId(), j + 1, id, j + 1);
             }
             else if (qinfo->RewardChoiceItemCount[j]>0)
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardChoiceItemId%d` = 0 but `RewardChoiceItemCount%d` = %u.",
-                    qinfo->GetQuestId(), j+1, j+1, qinfo->RewardChoiceItemCount[j]);
-                // no changes, quest ignore this data
-            }
+                qinfo->GetQuestId(), j + 1, j + 1, qinfo->RewardChoiceItemCount[j]);
         }
 
         for (uint8 j = 0; j < QUEST_REWARD_ITEM_COUNT; ++j)
         {
-            uint32 id = qinfo->RewardItemId[j];
-            if (id)
+            if (uint32 id = qinfo->RewardItemId[j])
             {
                 if (!sObjectMgr->GetItemTemplate(id))
                 {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardItemId%d` = %u but item with entry %u does not exist, quest will not reward this item.",
-                        qinfo->GetQuestId(), j+1, id, id);
-                    qinfo->RewardItemId[j] = 0;                // no changes, quest will not reward this item
+                                   qinfo->GetQuestId(), j + 1, id, id);
+                    qinfo->RewardItemId[j] = 0;
                 }
 
                 if (!qinfo->RewardItemCount[j])
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardItemId%d` = %u but `RewardItemCount%d` = 0, quest will not reward this item.",
-                        qinfo->GetQuestId(), j+1, id, j+1);
-                    // no changes
-                }
+                    qinfo->GetQuestId(), j + 1, id, j + 1);
             }
             else if (qinfo->RewardItemCount[j]>0)
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardItemId%d` = 0 but `RewardItemCount%d` = %u.",
-                    qinfo->GetQuestId(), j+1, j+1, qinfo->RewardItemCount[j]);
-                // no changes, quest ignore this data
-            }
+                qinfo->GetQuestId(), j + 1, j + 1, qinfo->RewardItemCount[j]);
         }
 
         for (uint8 j = 0; j < QUEST_REWARD_REPUTATIONS_COUNT; ++j)
@@ -4131,22 +4031,18 @@ void ObjectMgr::LoadQuests()
             if (qinfo->RewardFactionId[j])
             {
                 if (abs(qinfo->RewardFactionValue[j]) > 10)
-                {
-               sLog->outError(LOG_FILTER_SQL, "Quest %u has RewardFactionValue%d = %i. That is outside the range of valid values (-9 to 9).", qinfo->GetQuestId(), j+1, qinfo->RewardFactionValue[j]);
-                }
+                    sLog->outError(LOG_FILTER_SQL, "Quest %u has RewardFactionValue%d = %i. That is outside the range of valid values (-9 to 9).", qinfo->GetQuestId(), j + 1, qinfo->RewardFactionValue[j]);
+
                 if (!sFactionStore.LookupEntry(qinfo->RewardFactionId[j]))
                 {
-                    sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardFactionId%d` = %u but raw faction (faction.dbc) %u does not exist, quest will not reward reputation for this faction.", qinfo->GetQuestId(), j+1, qinfo->RewardFactionId[j], qinfo->RewardFactionId[j]);
-                    qinfo->RewardFactionId[j] = 0;            // quest will not reward this
+                    sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardFactionId%d` = %u but raw faction (faction.dbc) %u does not exist, quest will not reward reputation for this faction.", qinfo->GetQuestId(), j + 1, qinfo->RewardFactionId[j], qinfo->RewardFactionId[j]);
+                    qinfo->RewardFactionId[j] = 0;
                 }
             }
 
             else if (qinfo->RewardFactionOverride[j] != 0)
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardFactionId%d` = 0 but `RewardFactionOverride%d` = %i.",
-                    qinfo->GetQuestId(), j+1, j+1, qinfo->RewardFactionOverride[j]);
-                // no changes, quest ignore this data
-            }
+                qinfo->GetQuestId(), j + 1, j + 1, qinfo->RewardFactionOverride[j]);
         }
 
         if (qinfo->RewardDisplaySpell)
@@ -4156,53 +4052,53 @@ void ObjectMgr::LoadQuests()
             if (!spellInfo)
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardDisplaySpell` = %u but spell %u does not exist, spell removed as display reward.",
-                    qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
-                qinfo->RewardDisplaySpell = 0;                        // no spell reward will display for this quest
+                               qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
+                qinfo->RewardDisplaySpell = 0;
             }
 
             else if (!SpellMgr::IsSpellValid(spellInfo))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardDisplaySpell` = %u but spell %u is broken, quest will not have a spell reward.",
-                    qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
-                qinfo->RewardDisplaySpell = 0;                        // no spell reward will display for this quest
+                               qinfo->GetQuestId(), qinfo->RewardDisplaySpell, qinfo->RewardDisplaySpell);
+                qinfo->RewardDisplaySpell = 0;
             }
         }
 
         if (qinfo->RewardSpell > 0)
         {
             SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(qinfo->RewardSpell);
-
             if (!spellInfo)
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSpell` = %u but spell %u does not exist, quest will not have a spell reward.",
-                    qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
-                qinfo->RewardSpell = 0;                    // no spell will be casted on player
+                               qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
+                qinfo->RewardSpell = 0;
             }
 
             else if (!SpellMgr::IsSpellValid(spellInfo))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSpell` = %u but spell %u is broken, quest will not have a spell reward.",
-                    qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
-                qinfo->RewardSpell = 0;                    // no spell will be casted on player
+                               qinfo->GetQuestId(), qinfo->RewardSpell, qinfo->RewardSpell);
+                qinfo->RewardSpell = 0;
             }
         }
-
+    
+        std::map<uint32, uint32> usedMailTemplates;
         if (qinfo->RewardMailTemplateId)
         {
             if (!sMailTemplateStore.LookupEntry(qinfo->RewardMailTemplateId))
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardMailTemplateId` = %u but mail template  %u does not exist, quest will not have a mail reward.",
-                    qinfo->GetQuestId(), qinfo->RewardMailTemplateId, qinfo->RewardMailTemplateId);
-                qinfo->RewardMailTemplateId = 0;               // no mail will send to player
-                qinfo->RewardMailDelay = 0;                // no mail will send to player
+                               qinfo->GetQuestId(), qinfo->RewardMailTemplateId, qinfo->RewardMailTemplateId);
+                qinfo->RewardMailTemplateId = 0;
+                qinfo->RewardMailDelay = 0;
             }
             else if (usedMailTemplates.find(qinfo->RewardMailTemplateId) != usedMailTemplates.end())
             {
                 std::map<uint32, uint32>::const_iterator used_mt_itr = usedMailTemplates.find(qinfo->RewardMailTemplateId);
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardMailTemplateId` = %u but mail template  %u already used for quest %u, quest will not have a mail reward.",
-                    qinfo->GetQuestId(), qinfo->RewardMailTemplateId, qinfo->RewardMailTemplateId, used_mt_itr->second);
-                qinfo->RewardMailTemplateId = 0;               // no mail will send to player
-                qinfo->RewardMailDelay = 0;                // no mail will send to player
+                               qinfo->GetQuestId(), qinfo->RewardMailTemplateId, qinfo->RewardMailTemplateId, used_mt_itr->second);
+                qinfo->RewardMailTemplateId = 0;
+                qinfo->RewardMailDelay = 0;
             }
             else
                 usedMailTemplates[qinfo->RewardMailTemplateId] = qinfo->GetQuestId();
@@ -4214,7 +4110,7 @@ void ObjectMgr::LoadQuests()
             if (qNextItr == _questTemplates.end())
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `NextQuestIdChain` = %u but quest %u does not exist, quest chain will not work.",
-                    qinfo->GetQuestId(), qinfo->NextQuestIdChain, qinfo->NextQuestIdChain);
+                               qinfo->GetQuestId(), qinfo->NextQuestIdChain, qinfo->NextQuestIdChain);
                 qinfo->NextQuestIdChain = 0;
             }
             else
@@ -4226,77 +4122,60 @@ void ObjectMgr::LoadQuests()
             if (qinfo->RewardCurrencyId[j])
             {
                 if (qinfo->RewardCurrencyCount[j] == 0)
-                {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardCurrencyId%d` = %u but `RewardCurrencyCount%d` = 0, quest can't be done.",
-                        qinfo->GetQuestId(), j+1, qinfo->RewardCurrencyId[j], j+1);
-                    // no changes, quest can't be done for this requirement
-                }
+                    qinfo->GetQuestId(), j + 1, qinfo->RewardCurrencyId[j], j + 1);
 
                 if (!sCurrencyTypesStore.LookupEntry(qinfo->RewardCurrencyId[j]))
                 {
                     sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardCurrencyId%d` = %u but currency with entry %u does not exist, quest can't be done.",
-                        qinfo->GetQuestId(), j+1, qinfo->RewardCurrencyId[j], qinfo->RewardCurrencyId[j]);
-                    qinfo->RewardCurrencyCount[j] = 0;             // prevent incorrect work of quest
+                                   qinfo->GetQuestId(), j + 1, qinfo->RewardCurrencyId[j], qinfo->RewardCurrencyId[j]);
+                    qinfo->RewardCurrencyCount[j] = 0;
                 }
             }
             else if (qinfo->RewardCurrencyCount[j] > 0)
             {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardCurrencyId%d` = 0 but `RewardCurrencyCount%d` = %u, quest can't be done.",
-                    qinfo->GetQuestId(), j+1, j+1, qinfo->RewardCurrencyCount[j]);
-                qinfo->RewardCurrencyCount[j] = 0;                 // prevent incorrect work of quest
+                               qinfo->GetQuestId(), j + 1, j + 1, qinfo->RewardCurrencyCount[j]);
+                qinfo->RewardCurrencyCount[j] = 0;
             }
         }
 
-        if (qinfo->SoundAccept)
+        if (qinfo->SoundAccept && !sSoundEntriesStore.LookupEntry(qinfo->SoundAccept))
         {
-            if (!sSoundEntriesStore.LookupEntry(qinfo->SoundAccept))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundAccept` = %u but sound %u does not exist, set to 0.",
-                    qinfo->GetQuestId(), qinfo->SoundAccept, qinfo->SoundAccept);
-                qinfo->SoundAccept = 0;                        // no sound will be played
-            }
+            sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundAccept` = %u but sound %u does not exist, set to 0.",
+                               qinfo->GetQuestId(), qinfo->SoundAccept, qinfo->SoundAccept);
+            qinfo->SoundAccept = 0;
         }
 
-        if (qinfo->SoundTurnIn)
+        if (qinfo->SoundTurnIn && !sSoundEntriesStore.LookupEntry(qinfo->SoundTurnIn))
         {
-            if (!sSoundEntriesStore.LookupEntry(qinfo->SoundTurnIn))
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundTurnIn` = %u but sound %u does not exist, set to 0.",
-                    qinfo->GetQuestId(), qinfo->SoundTurnIn, qinfo->SoundTurnIn);
-                qinfo->SoundTurnIn = 0;                        // no sound will be played
-            }
+            sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundTurnIn` = %u but sound %u does not exist, set to 0.",
+                               qinfo->GetQuestId(), qinfo->SoundTurnIn, qinfo->SoundTurnIn);
+            qinfo->SoundTurnIn = 0;
         }
 
         if (qinfo->RewardSkillId)
         {
             if (!sSkillLineStore.LookupEntry(qinfo->RewardSkillId))
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSkillId` = %u but this skill does not exist",
-                    qinfo->GetQuestId(), qinfo->RewardSkillId);
-            }
+                qinfo->GetQuestId(), qinfo->RewardSkillId);
+
             if (!qinfo->RewardSkillPoints)
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSkillId` = %u but `RewardSkillPoints` is 0",
-                    qinfo->GetQuestId(), qinfo->RewardSkillId);
-            }
+                qinfo->GetQuestId(), qinfo->RewardSkillId);
         }
 
         if (qinfo->RewardSkillPoints)
         {
             if (qinfo->RewardSkillPoints > sWorld->GetConfigMaxSkillValue())
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSkillPoints` = %u but max possible skill is %u, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->RewardSkillPoints, sWorld->GetConfigMaxSkillValue());
-                // no changes, quest can't be done for this requirement
-            }
+                qinfo->GetQuestId(), qinfo->RewardSkillPoints, sWorld->GetConfigMaxSkillValue());
+
             if (!qinfo->RewardSkillId)
-            {
                 sLog->outError(LOG_FILTER_SQL, "Quest %u has `RewardSkillPoints` = %u but `RewardSkillId` is 0",
-                    qinfo->GetQuestId(), qinfo->RewardSkillPoints);
-            }
+                qinfo->GetQuestId(), qinfo->RewardSkillPoints);
         }
 
-        // fill additional data stores
         if (qinfo->PrevQuestID)
         {
             if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
@@ -4336,11 +4215,11 @@ void ObjectMgr::LoadQuests()
 
         if (qinfo->ExclusiveGroup)
             mExclusiveQuestGroups.insert(std::pair<int32, uint32>(qinfo->ExclusiveGroup, qinfo->GetQuestId()));
+
         if (qinfo->LimitTime)
             qinfo->SetSpecialFlag(QUEST_SPECIAL_FLAGS_TIMED);
     }
 
-    // check QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT for spell with SPELL_EFFECT_QUEST_COMPLETE
     for (uint32 i = 0; i < sSpellMgr->GetSpellInfoStoreSize(); ++i)
     {
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(i);
@@ -4352,19 +4231,14 @@ void ObjectMgr::LoadQuests()
             if (spellInfo->Effects[j].Effect != SPELL_EFFECT_QUEST_COMPLETE)
                 continue;
 
-            uint32 quest_id = spellInfo->Effects[j].MiscValue;
-
-            Quest const* quest = GetQuestTemplate(quest_id);
-
-            // some quest referenced in spells not exist (outdated spells)
+            uint32 questID = spellInfo->Effects[j].MiscValue;
+            Quest const* quest = GetQuestTemplate(questID);
             if (!quest)
                 continue;
 
             if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
             {
-                sLog->outError(LOG_FILTER_SQL, "Spell (id: %u) have SPELL_EFFECT_QUEST_COMPLETE for quest %u, but quest not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, quest_id);
-
-                // this will prevent quest completing without objective
+                sLog->outError(LOG_FILTER_SQL, "Spell (id: %u) have SPELL_EFFECT_QUEST_COMPLETE for quest %u, but quest not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT. Quest flags must be fixed, quest modified to enable objective.", spellInfo->Id, questID);
                 const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
             }
         }

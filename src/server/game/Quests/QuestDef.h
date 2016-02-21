@@ -50,6 +50,16 @@ namespace WorldPackets
 #define QUEST_REWARD_CURRENCY_COUNT 4
 #define QUEST_REQUIRED_CURRENCY_COUNT 4
 
+enum QuestType
+{
+    QUEST_TYPE_AUTOCOMPLETE         = 0,
+    QUEST_TYPE_DISABLED             = 1,
+    QUEST_TYPE_NORMAL               = 2,
+    QUEST_TYPE_UNK                  = 3,
+
+    MAX_QUEST_TYPES
+};
+
 enum QuestInfo // QuestInfo.db2 7.0.1.20994
 {
     QUEST_INFO_GROUP                        = 1,
@@ -328,6 +338,9 @@ struct QuestLineStruct
     uint8 Pos = 0;
 };
 
+typedef std::vector<int32> PrevQuests;
+typedef std::vector<uint32> PrevChainQuests;
+
 // This Quest class provides a convenient way to access a few pretotaled (cached) quest details,
 // all base quest information, and any utility functions such as generating the amount of
 // xp to give
@@ -353,75 +366,13 @@ class Quest
 
         // table data accessors:
         uint32 GetQuestId() const { return Id; }
-        uint32 GetQuestType() const { return Type; }
-        uint32 GetQuestPackageID() const { return PackageID; }
-        int32  GetZoneOrSort() const { return QuestSortID; }
-        uint32 GetMinLevel() const { return MinLevel; }
-        uint32 GetMaxLevel() const { return MaxLevel; }
-        int32 GetQuestLevel() const { return Level; }
-        uint32 GetQuestInfoID() const { return QuestInfoID; }
-        int32  GetAllowableClasses() const { return AllowableClasses; }
-        int32  GetAllowableRaces() const { return AllowableRaces; }
-        uint32 GetRequiredSkill() const { return RequiredSkillId; }
-        uint32 GetRequiredSkillValue() const { return RequiredSkillPoints; }
-        uint32 GetRequiredMinRepFaction() const { return RequiredMinRepFaction; }
-        int32  GetRequiredMinRepValue() const { return RequiredMinRepValue; }
-        uint32 GetRequiredMaxRepFaction() const { return RequiredMaxRepFaction; }
-        int32  GetRequiredMaxRepValue() const { return RequiredMaxRepValue; }
-        uint32 GetSuggestedPlayers() const { return SuggestedPlayers; }
-        uint32 GetLimitTime() const { return LimitTime; }
-        int32  GetExclusiveGroup() const { return ExclusiveGroup; }
-        uint32 GetNextQuestInChain() const { return NextQuestIdChain; }
-        uint32 GetRewTitle() const { return RewardTitleId; }
-        uint32 GetBonusTalents() const { return RewardTalents; }
-        int32  GetRewArenaPoints() const {return RewardArenaPoints; }
-        uint32 GetXPDifficulty() const { return RewardXPDifficulty; }
-        uint32 GetSrcItemId() const { return SourceItemId; }
-        uint32 GetSrcItemCount() const { return SourceItemIdCount; }
-        uint32 GetSrcSpell() const { return SourceSpellID; }
-        std::string GetLogTitle() const { return LogTitle; }
-        std::string GetLogDescription() const { return LogDescription; }
-        std::string GetQuestDescription() const { return QuestDescription; }
-        std::string GetOfferRewardText() const { return OfferRewardText; }
-        std::string GetRequestItemsText() const { return RequestItemsText; }
-        std::string GetAreaDescription() const { return AreaDescription; }
-        std::string GetQuestCompletionLog() const { return QuestCompletionLog; }
-        std::string GetPortraitGiverText() const { return PortraitGiverText; }
-        std::string GetPortraitGiverName() const { return PortraitGiverName; }
-        std::string GetPortraitTurnInText() const { return PortraitTurnInText; }
-        std::string GetPortraitTurnInName() const { return PortraitTurnInName; }
         QuestObjectives const& GetObjectives() const { return Objectives; };
         uint32 MoneyValue(uint8 playerLVL) const;
         uint32 GetRewMoneyMaxLevel() const; // use in XP calculation at client
-        uint32 GetRewMoneyDifficulty() const { return RewardMoneyDifficulty; }
-        uint32 GetRewHonor() const { return RewardHonor; }
-        float GetRewKillHonor() const { return RewardKillHonor; }
-        uint32 GetRewDisplaySpell() const { return RewardDisplaySpell; }
-        int32  GetRewSpell() const { return RewardSpell; }
-        uint32 GetRewMailTemplateId() const { return RewardMailTemplateId; }
-        uint32 GetRewMailDelaySecs() const { return RewardMailDelay; }
-        uint32 GetPOIContinent() const { return POIContinent; }
-        float  GetPOIx() const { return POIx; }
-        float  GetPOIy() const { return POIy; }
-        uint32 GetPOIPriority() const { return POIPriority; }
-        uint32 GetSoundAccept() const { return SoundAccept; }
-        uint32 GetSoundTurnIn() const { return SoundTurnIn; }
-        uint32 GetIncompleteEmote() const { return EmoteOnIncomplete; }
-        uint32 GetCompleteEmote() const { return EmoteOnComplete; }
-        uint32 GetQuestStartScript() const { return StartScript; }
-        uint32 GetQuestCompleteScript() const { return CompleteScript; }
         bool   IsRepeatable() const { return (SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE) != 0; }
         bool   IsAutoAccept() const;
         bool   IsAutoComplete() const;
         uint32 GetFlags() const { return Flags; }
-        uint32 GetFlagsEx() const { return FlagsEx; }
-        uint32 GetSpecialFlags() const { return SpecialFlags; }
-        uint32 GetAreaGroupID() const { return AreaGroupID; }
-        uint32 GetRewardSkillId() const { return RewardSkillId; }
-        uint32 GetRewardSkillPoints() const { return RewardSkillPoints; }
-        uint32 GetRewardFactionFlags() const { return RewardFactionFlags; }
-        uint32 GetQuestGiverPortrait() const { return QuestGiverPortrait; }
-        uint32 GetQuestTurnInPortrait() const { return QuestTurnInPortrait; }
         bool   IsDaily() const { return (Flags & QUEST_FLAGS_DAILY) != 0; }
         bool   IsWeekly() const { return (Flags & QUEST_FLAGS_WEEKLY) != 0; }
         bool   IsSeasonal() const { return (QuestSortID == -QUEST_SORT_SEASONAL || QuestSortID == -QUEST_SORT_SPECIAL || QuestSortID == -QUEST_SORT_LUNAR_FESTIVAL || QuestSortID == -QUEST_SORT_MIDSUMMER || QuestSortID == -QUEST_SORT_BREWFEST || QuestSortID == -QUEST_SORT_LOVE_IS_IN_THE_AIR || QuestSortID == -QUEST_SORT_NOBLEGARDEN) && !IsRepeatable(); }
@@ -429,47 +380,31 @@ class Quest
         bool   IsRaidQuest(Difficulty difficulty) const;
         bool   IsAllowedInRaid(Difficulty difficulty) const;
         bool   IsDFQuest() const { return (SpecialFlags & QUEST_SPECIAL_FLAGS_DF_QUEST) != 0; }
-        uint32 CalculateHonorGain(uint8 level) const;
 
-        uint32 ItemDrop[QUEST_ITEM_DROP_COUNT] = {};
-        uint32 ItemDropQuantity[QUEST_ITEM_DROP_COUNT] = {};
-        uint32 RewardChoiceItemId[QUEST_REWARD_CHOICES_COUNT] = {};
-        uint32 RewardChoiceItemCount[QUEST_REWARD_CHOICES_COUNT] = {};
-        uint32 RewardChoiceItemDisplayId[QUEST_REWARD_CHOICES_COUNT] = {};
-        uint32 RewardItemId[QUEST_REWARD_ITEM_COUNT] = {};
-        uint32 RewardItemCount[QUEST_REWARD_ITEM_COUNT] = {};
-        uint32 RewardFactionId[QUEST_REWARD_REPUTATIONS_COUNT] = {};
-        int32  RewardFactionValue[QUEST_REWARD_REPUTATIONS_COUNT] = {};
-        int32  RewardFactionOverride[QUEST_REWARD_REPUTATIONS_COUNT] = {};
-        uint32 DetailsEmote[QUEST_EMOTE_COUNT] = {};
-        uint32 DetailsEmoteDelay[QUEST_EMOTE_COUNT] = {};
-        uint32 OfferRewardEmote[QUEST_EMOTE_COUNT] = {};
-        uint32 OfferRewardEmoteDelay[QUEST_EMOTE_COUNT] = {};
-        uint32 RewardCurrencyId[QUEST_REWARD_CURRENCY_COUNT] = {};
-        uint32 RewardCurrencyCount[QUEST_REWARD_CURRENCY_COUNT] = {};
-
-        uint32 GetRewChoiceItemsCount() const { return m_rewChoiceItemsCount; }
-        uint32 GetRewItemsCount() const { return m_rewItemsCount; }
-        uint32 GetRewCurrencyCount() const { return m_rewCurrencyCount; }
-        uint32 GetReqCurrencyCount() const { return m_reqCurrencyCount; }
+        uint32 ItemDrop[QUEST_ITEM_DROP_COUNT] = { };
+        uint32 ItemDropQuantity[QUEST_ITEM_DROP_COUNT] = { };
+        uint32 RewardChoiceItemId[QUEST_REWARD_CHOICES_COUNT] = { };
+        uint32 RewardChoiceItemCount[QUEST_REWARD_CHOICES_COUNT] = { };
+        uint32 RewardChoiceItemDisplayId[QUEST_REWARD_CHOICES_COUNT] = { };
+        uint32 RewardItemId[QUEST_REWARD_ITEM_COUNT] = { };
+        uint32 RewardItemCount[QUEST_REWARD_ITEM_COUNT] = { };
+        uint32 RewardFactionId[QUEST_REWARD_REPUTATIONS_COUNT] = { };
+        int32 RewardFactionValue[QUEST_REWARD_REPUTATIONS_COUNT] = { };
+        int32 RewardFactionOverride[QUEST_REWARD_REPUTATIONS_COUNT] = { };
+        uint32 DetailsEmote[QUEST_EMOTE_COUNT] = { };
+        uint32 DetailsEmoteDelay[QUEST_EMOTE_COUNT] = { };
+        uint32 OfferRewardEmote[QUEST_EMOTE_COUNT] = { };
+        uint32 OfferRewardEmoteDelay[QUEST_EMOTE_COUNT] = { };
+        uint32 RewardCurrencyId[QUEST_REWARD_CURRENCY_COUNT] = { };
+        uint32 RewardCurrencyCount[QUEST_REWARD_CURRENCY_COUNT] = { };
 
         void BuildQuestRewards(WorldPackets::Quest::QuestRewards& rewards, Player* player) const;
 
-        typedef std::vector<int32> PrevQuests;
         PrevQuests prevQuests;
-        typedef std::vector<uint32> PrevChainQuests;
         PrevChainQuests prevChainQuests;
-
         QuestObjectives Objectives;
 
-    private:
-        uint32 m_rewChoiceItemsCount;
-        uint32 m_rewItemsCount;
-        uint32 m_rewCurrencyCount;
-        uint32 m_reqCurrencyCount;
-
-        // table data
-    public:
+        //< Table data
         uint32 Id;
         uint32 Type;
         uint32 PackageID;
@@ -522,6 +457,10 @@ class Quest
         uint32 SoundAccept;
         uint32 SoundTurnIn;
         uint32 AreaGroupID;
+        uint32 m_rewChoiceItemsCount;
+        uint32 m_rewItemsCount;
+        uint32 m_rewCurrencyCount;
+        uint32 m_reqCurrencyCount;
 
         // quest_request_items table
         uint32 EmoteOnComplete          = 0;

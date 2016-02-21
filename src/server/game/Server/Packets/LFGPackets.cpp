@@ -148,7 +148,7 @@ void WorldPackets::LFG::ShortageReward::Initialize(::Quest const* quest /*= null
         RewardMoney = player->GetQuestMoneyReward(quest);
     }
 
-    RewardSpellID = quest->GetRewSpell();
+    RewardSpellID = quest->RewardSpell;
 
     for (auto const& i : {0, 1, 2, 3})
     {

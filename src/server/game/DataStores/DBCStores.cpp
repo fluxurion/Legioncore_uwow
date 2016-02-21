@@ -420,8 +420,11 @@ uint32 GetLiquidFlags(uint32 liquidType)
 
 float GetCurrencyPrecision(uint32 currencyId)
 {
-    CurrencyTypesEntry const * entry = sCurrencyTypesStore.LookupEntry(currencyId);
-    return entry ? entry->GetPrecision() : 1.0f;
+    CurrencyTypesEntry const* entry = sCurrencyTypesStore.LookupEntry(currencyId);
+    if (!entry)
+        return 1.0f;
+
+    return entry->Flags & CURRENCY_FLAG_HAS_PRECISION ? CURRENCY_PRECISION : 1.0f;
 }
 
 bool MapEntry::IsDifficultyModeSupported(uint32 difficulty) const

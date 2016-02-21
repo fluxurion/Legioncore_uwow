@@ -1980,7 +1980,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
                     Field* fields = result->Fetch();
                     if (Quest const* qinfo = sObjectMgr->GetQuestTemplate(fields[0].GetUInt32()))
                     {
-                        uint32 requiredRaces = qinfo->GetAllowableRaces();
+                        uint32 requiredRaces = qinfo->AllowableRaces;
                         if (!requiredRaces)
                             continue;
 
