@@ -325,7 +325,7 @@ void InitDBCCustomStores()
     }
 
     for (TalentEntry const* talentInfo : sTalentStore)
-        if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 7 && talentInfo->column < 3)
+        if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 8 && talentInfo->column < 3)
             sTalentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
 
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)

@@ -6592,8 +6592,9 @@ void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
          0.016750f, // Shaman
          0.034575f, // Mage
          0.020350f, // Warlock
-         0.0f,      // ??
-         0.049510f  // Druid
+         0.0f,      // Monk
+         0.049510f, // Druid
+        -0.005900f, // DemonHunter
     };
     // Crit/agility to dodge/agility coefficient multipliers; 3.2.0 increased required agility by 15%
     const float crit_to_dodge[MAX_CLASSES] =
@@ -6608,7 +6609,8 @@ void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
          1.00f/1.15f,    // Mage
          0.97f/1.15f,    // Warlock (?)
          2.00f/1.15f,    // Monk
-         2.00f/1.15f     // Druid
+         2.00f/1.15f,    // Druid
+         2.00f/1.15f,    // DemonHunter
     };
 
     uint8 level = getLevel();
@@ -6617,10 +6619,9 @@ void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
     if (level >= sGtChanceToMeleeCritStore.GetTableRowCount())
         level = sGtChanceToMeleeCritStore.GetTableRowCount() - 1;
 
-    // Dodge per agility is proportional to crit per agility, which is available from DBC files
     GtChanceToMeleeCritEntry  const* dodgeRatio = sGtChanceToMeleeCritStore.EvaluateTable(level - 1, pclass - 1);
     GtChanceToMeleeCritEntry  const* critBase = sGtChanceToMeleeCritStore.EvaluateTable(level - 1, 0);
-    if (dodgeRatio == NULL || pclass > MAX_CLASSES)
+    if (dodgeRatio == nullptr || pclass > MAX_CLASSES)
         return;
 
     // TODO: research if talents/effects that increase total agility by x% should increase non-diminishing part

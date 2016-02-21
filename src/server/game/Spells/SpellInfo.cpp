@@ -495,20 +495,11 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
                     if (GtSpellScalingEntry const* gtScaling = sGtSpellScalingStore.EvaluateTable(level - 1, (_spellInfo->Scaling.Class > 0 ? _spellInfo->Scaling.Class : ((MAX_CLASSES - 1 /*last class*/) - _spellInfo->Scaling.Class)) - 1))
                         value = gtScaling->value;
                 }
-                else
-                {
-                    if (m_castItem)
+                else if (m_castItem)
                         value = GetRandomPropertyPoints(m_castItem->GetItemLevel(), ITEM_QUALITY_RARE, INVTYPE_CHEST, 0);
-                }
             }
             else
                 value = GetRandomPropertyPoints(_spellInfo->Scaling.ScalesFromItemLevel, ITEM_QUALITY_RARE, INVTYPE_CHEST, 0);
-
-            //if (level < _spellInfo->Scaling.CastTimeMaxLevel && _spellInfo->Scaling.CastTimeMax)
-            //    value *= float(_spellInfo->Scaling.CastTimeMin + (level - 1) * (_spellInfo->Scaling.CastTimeMax - _spellInfo->Scaling.CastTimeMin) / (_spellInfo->Scaling.CastTimeMaxLevel - 1)) / float(_spellInfo->Scaling.CastTimeMax);
-
-            //if (level < _spellInfo->Scaling.NerfMaxLevel)
-            //    value *= ((((1.0 - _spellInfo->Scaling.NerfFactor) * (level - 1)) / (_spellInfo->Scaling.NerfMaxLevel - 1)) + _spellInfo->Scaling.NerfFactor);
         }
 
         value *= Scaling.Coefficient;
@@ -551,11 +542,7 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
             case 1: basePoints += 1; break;                     // range 1..1
             default:
             {
-                // range can have positive (1..rand) and negative (rand..1) values, so order its for irand
-                int32 randvalue = (randomPoints >= 1)
-                    ? irand(1, randomPoints)
-                    : irand(randomPoints, 1);
-
+                int32 randvalue = (randomPoints >= 1) ? irand(1, randomPoints) : irand(randomPoints, 1);
                 basePoints += randvalue;
                 break;
             }
@@ -567,7 +554,6 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
     // random damage
     if (caster)
     {
-        // bonus amount from combo points
         if (caster->m_movedPlayer && comboDamage)
             if (uint8 comboPoints = caster->m_movedPlayer->GetComboPoints(_spellInfo->Id))
                 value += comboDamage * comboPoints;

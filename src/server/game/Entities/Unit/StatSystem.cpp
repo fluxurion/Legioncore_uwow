@@ -624,7 +624,8 @@ const float m_diminishing_k[MAX_CLASSES] =
     0.9830f,  // Mage
     0.9830f,  // Warlock
     1.4220f,  // Monk  @todo: find me !
-    1.2220f   // Druid
+    1.2220f,  // Druid
+    0.9880f,  // DemonHunter
 };
 
 void Player::UpdateParryPercentage()
@@ -641,7 +642,8 @@ void Player::UpdateParryPercentage()
         0.0f,           // Mage
         0.0f,           // Warlock
         91.631440f,     // Monk  @todo: find me !
-        0.0f            // Druid
+        0.0f,           // Druid
+        145.560408f,    // DemonHunter
     };
 
     const bool mainStr[MAX_CLASSES] =
@@ -656,7 +658,8 @@ void Player::UpdateParryPercentage()
         false, // Mage
         false, // Warlock
         false, // Monk  @todo: find me !
-        false  // Druid
+        false, // Druid
+        false, // DemonHunter
     };
 
     int32 ParryValue = 0;
@@ -706,7 +709,8 @@ void Player::UpdateDodgePercentage()
         150.375940f,    // Mage
         150.375940f,    // Warlock
         501.25f,        // Monk  @todo: find me !
-        150.375940f     // Druid
+        150.375940f,    // Druid
+        145.560408f,    // DemonHunter
     };
 
     const bool mainAgi[MAX_CLASSES] =
@@ -721,7 +725,8 @@ void Player::UpdateDodgePercentage()
         false, // Mage
         false, // Warlock
         true,  // Monk  @todo: find me !
-        true   // Druid
+        true,  // Druid
+        true,  // DemonHunter
     };
 
     uint32 pclass = getClass() - 1;
