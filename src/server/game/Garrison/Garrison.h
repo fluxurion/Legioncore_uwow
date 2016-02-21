@@ -253,12 +253,15 @@ public:
     void CreateGarrisonShipment(uint32 shipmentID);
     bool canAddShipmentOrder(Creature* source);
     void OnGossipSelect(WorldObject* source);
-    void OnGossipTradeSkill(WorldObject* source);
     void SendShipmentInfo(ObjectGuid const& guid);
     uint64 PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID = 0);
     void SendGarrisonShipmentLandingPage();
     void CompleteShipments(GameObject *go);
     void FreeShipmentChest(uint32 shipment);
+
+    //TradeSkill
+    bool CanCastTradeSkill(ObjectGuid const& guid, uint32 spellID);
+    void OnGossipTradeSkill(WorldObject* source);
 protected:
     Map* FindMap() const;
     void InitializePlots();

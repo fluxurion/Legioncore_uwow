@@ -80,6 +80,7 @@ enum GossipOptionIcon
     GOSSIP_ICON_CHAT_19             = 19,                   // white chat bubble
     GOSSIP_ICON_CHAT_20             = 20,                   // white chat bubble
     GOSSIP_ICON_SHIPMENT            = 28,                   // auto-click?
+    GOSSIP_ICON_TRADESKILL          = 29,                   
     GOSSIP_ICON_MAX
 };
 

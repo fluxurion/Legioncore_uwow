@@ -2138,44 +2138,6 @@ void Garrison::OnGossipSelect(WorldObject* source)
     _owner->SendDirectMessage(openShipment.Write());
 }
 
-
-void Garrison::OnGossipTradeSkill(WorldObject* source)
-{
-    if (!source->HasFlag(UNIT_FIELD_NPC_FLAGS2, UNIT_NPC_FLAG2_TRADESKILL_NPC))
-        return;
-
-    TradeskillList const* trade = sGarrisonMgr.GetTradeSkill(source->GetEntry());
-    if (!trade)
-        return;
-
-    //! ToDo: link npc with plot or something else about it.
-    const Garrison::Plot* plot = GetPlotWithNpc(source->GetEntry());
-    if (!plot)
-        return;
-
-    //! SMSG_GARRISON_OPEN_TRADESKILL_NPC_RESPONSE
-    WorldPackets::Garrison::GarrisonTradeSkillResponse tradeSkillPacket;
-    tradeSkillPacket.GUID = source->GetGUID();
-    for (auto const& tr : *trade)
-    {
-        bool find = false;
-        for (uint32 &d : tradeSkillPacket.tradeSkill.skillStorel)
-        {
-            if (d == tr.skillID)
-            {
-                find = true;
-                break;
-            }
-        }
-        if (!find)
-            tradeSkillPacket.tradeSkill.skillStorel.push_back(tr.skillID);
-        tradeSkillPacket.tradeSkill.spellStore.push_back(tr.spellID);
-        tradeSkillPacket.conditionPlayerStore.push_back(tr.conditionID);
-    }
-
-    _owner->SendDirectMessage(tradeSkillPacket.Write());
-}
-
 void Garrison::SendShipmentInfo(ObjectGuid const& guid)
 {
     GarrShipment const* shipment = sGarrisonMgr.GetGarrShipment(guid.GetEntry(), SHIPMENT_GET_BY_NPC);
@@ -2435,4 +2397,73 @@ uint32 Garrison::GetSpecialSpawnBuildingTime(uint32 buildingType)
             return diff;
     }
     return 0;
+}
+
+void Garrison::OnGossipTradeSkill(WorldObject* source)
+{
+    if (!source->HasFlag(UNIT_FIELD_NPC_FLAGS2, UNIT_NPC_FLAG2_TRADESKILL_NPC))
+        return;
+
+    TradeskillList const* trade = sGarrisonMgr.GetTradeSkill(source->GetEntry());
+    if (!trade)
+        return;
+
+    //! ToDo: link npc with plot or something else about it.
+    const Garrison::Plot* plot = GetPlotWithNpc(source->GetEntry());
+    if (!plot || !plot->BuildingInfo.PacketInfo)
+        return;
+
+    GarrBuildingEntry const* existingBuilding = sGarrBuildingStore.AssertEntry(plot->BuildingInfo.PacketInfo->GarrBuildingID);
+
+    //! SMSG_GARRISON_OPEN_TRADESKILL_NPC_RESPONSE
+    WorldPackets::Garrison::GarrisonTradeSkillResponse tradeSkillPacket;
+    tradeSkillPacket.GUID = source->GetGUID();
+    for (auto const& tr : *trade)
+    {
+        bool find = false;
+        for (uint32 &d : tradeSkillPacket.tradeSkill.skillStorel)
+        {
+            if (d == tr.skillID)
+            {
+                find = true;
+                break;
+            }
+        }
+        if (!find)
+            tradeSkillPacket.tradeSkill.skillStorel.push_back(tr.skillID);
+        tradeSkillPacket.tradeSkill.spellStore.push_back(tr.spellID);
+        tradeSkillPacket.conditionPlayerStore.push_back(existingBuilding->Level < tr.reqBuildingLvl ? tr.conditionID : 0);
+    }
+
+    _owner->SendDirectMessage(tradeSkillPacket.Write());
+}
+
+bool Garrison::CanCastTradeSkill(ObjectGuid const& guid, uint32 spellID)
+{
+    Creature* source = ObjectAccessor::GetCreatureOrPetOrVehicle(*_owner, guid);
+    if (!source)
+        return false;
+
+    TradeskillList const* trade = sGarrisonMgr.GetTradeSkill(source->GetEntry());
+    if (!trade)
+        return false;
+
+    //! ToDo: link npc with plot or something else about it.
+    const Garrison::Plot* plot = GetPlotWithNpc(source->GetEntry());
+    if (!plot || !plot->BuildingInfo.PacketInfo)
+        return false;
+
+    GarrBuildingEntry const* existingBuilding = sGarrBuildingStore.AssertEntry(plot->BuildingInfo.PacketInfo->GarrBuildingID);
+
+    for (auto const& tr : *trade)
+    {
+        if (tr.spellID == spellID)
+        {
+            if (existingBuilding->Level >= tr.reqBuildingLvl)
+                return true;
+            return false;
+        }
+    }
+    return false;
+
 }
