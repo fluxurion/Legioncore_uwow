@@ -27,43 +27,87 @@
 
 void WorldSession::HandleJoinChannel(WorldPackets::Channel::JoinChannel& packet)
 {
+    Player* player = GetPlayer();
+    if (!player)
+        return;
+
     if (packet.ChatChannelId)
     {
         ChatChannelsEntry const* channel = sChatChannelsStore.LookupEntry(packet.ChatChannelId);
         if (!channel)
             return;
 
-        AreaTableEntry const* current_zone = sAreaTableStore.LookupEntry(_player->GetZoneId());
-        if (!current_zone)
-            return;
-
-        if (!_player->CanJoinConstantChannelInZone(channel, current_zone))
+        AreaTableEntry const* zone = sAreaTableStore.LookupEntry(player->GetZoneId());
+        if (!zone || !player->CanJoinConstantChannelInZone(channel, zone))
             return;
     }
 
     if (packet.ChannelName.empty())
         return;
 
-    if (ChannelMgr* cMgr = channelMgr(_player->GetTeam()))
+    if (isdigit(packet.ChannelName[0]))
+        return;
+
+    if (ChannelMgr* cMgr = channelMgr(player->GetTeam()))
     {
-        cMgr->team = _player->GetTeam();
-        if (Channel* chn = cMgr->GetJoinChannel(packet.ChannelName, packet.ChatChannelId))
-            chn->JoinChannel(_player, packet.Password.c_str(), true);
+        cMgr->team = player->GetTeam();
+        if (Channel* channel = cMgr->GetJoinChannel(packet.ChannelName, packet.ChatChannelId))
+            channel->JoinChannel(player, packet.Password, true);
     }
 }
 
 void WorldSession::HandleLeaveChannel(WorldPackets::Channel::LeaveChannel& packet)
 {
-    if (packet.ChannelName.empty())
+    Player* player = GetPlayer();
+    if (packet.ChannelName.empty() || !player)
         return;
 
-    if (ChannelMgr* cMgr = channelMgr(_player->GetTeam()))
+    if (ChannelMgr* cMgr = channelMgr(player->GetTeam()))
     {
-        if (Channel* chn = cMgr->GetChannel(packet.ChannelName, _player))
-            chn->LeaveChannel(_player, true, true);
+        if (Channel* channel = cMgr->GetChannel(packet.ChannelName, player))
+            channel->LeaveChannel(player, true, true);
 
         cMgr->LeftChannel(packet.ChannelName);
     }
+}
+
+template<void(Channel::*CommandFunction)(Player const*)>
+void WorldSession::HandleChannelCommand(WorldPackets::Channel::ChannelPlayerCommand& packet)
+{
+    Player* player = GetPlayer();
+    if (!player)
+        return;
+
+    if (ChannelMgr* cMgr = channelMgr(player->GetTeam()))
+        if (Channel* channel = cMgr->GetChannel(packet.ChannelName, player))
+            (channel->*CommandFunction)(player);
+}
+
+template<void(Channel::*CommandFunction)(Player const*, std::string const&)>
+void WorldSession::HandleChannelPlayerCommand(WorldPackets::Channel::ChannelPlayerCommand& packet)
+{
+    Player* player = GetPlayer();
+    if (packet.Name.length() >= MAX_CHANNEL_NAME_STR || !player)
+        return;
+
+    if (!normalizePlayerName(packet.Name))
+        return;
+
+    if (ChannelMgr* cMgr = channelMgr(player->GetTeam()))
+        if (Channel* channel = cMgr->GetChannel(packet.ChannelName, player))
+            (channel->*CommandFunction)(player, packet.Name);
+}
+
+template<>
+void WorldSession::HandleChannelPlayerCommand<&Channel::Password>(WorldPackets::Channel::ChannelPlayerCommand& packet)
+{
+    Player* player = GetPlayer();
+    if (packet.Name.length() > MAX_CHANNEL_PASS_STR || !player)
+        return;
+
+    if (ChannelMgr* cMgr = channelMgr(player->GetTeam()))
+        if (Channel* channel = cMgr->GetChannel(packet.ChannelName, player))
+            channel->Password(player, packet.Name);
 }
 
 template void WorldSession::HandleChannelCommand<&Channel::Announce>(WorldPackets::Channel::ChannelPlayerCommand&);

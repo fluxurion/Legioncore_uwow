@@ -23,6 +23,9 @@
 
 #include "World.h"
 
+#define MAX_CHANNEL_NAME_STR 31
+#define MAX_CHANNEL_PASS_STR 31
+
 class ChannelMgr
 {
     public:
