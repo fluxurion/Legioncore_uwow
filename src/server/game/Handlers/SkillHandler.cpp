@@ -45,16 +45,15 @@ void WorldSession::HandleSetSpecialization(WorldPackets::Talent::SetSpecializati
 void WorldSession::HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet)
 {
     Player* player = GetPlayer();
-    if (packet.Talents.size() > 7 || !player)
+    if (!player)
         return;
 
-    bool anythingLearned = false;
-    for (uint32 const& talentId : packet.Talents)
-        if (_player->LearnTalent(talentId))
-            anythingLearned = true;
+    if (packet.Talents.size() > player->CalculateTalentsPoints())
+        return;
 
-    if (anythingLearned)
-        _player->SendTalentsInfoData(false);
+    for (uint32 const& talentId : packet.Talents)
+        if (player->LearnTalent(talentId))
+            player->SendTalentsInfoData(false);
 }
 
 void WorldSession::HandleConfirmRespecWipe(WorldPackets::Misc::ConfirmRespecWipe& packet)

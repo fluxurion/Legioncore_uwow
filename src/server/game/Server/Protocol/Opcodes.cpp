@@ -253,9 +253,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_CHAT_CHANNEL_VOICE_OFF,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Channel::ChannelPlayerCommand, &WorldSession::HandleChannelCommand<&Channel::DeVoice>);
     DEFINE_HANDLER(CMSG_CHAT_CHANNEL_VOICE_ON,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Channel::ChannelPlayerCommand, &WorldSession::HandleChannelCommand<&Channel::Voice>);
     DEFINE_HANDLER(CMSG_CHAT_JOIN_CHANNEL,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Channel::JoinChannel, &WorldSession::HandleJoinChannel);
-    DEFINE_HANDLER(CMSG_CHAT_LEAVE_CHANNEL,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Channel::LeaveChannel, &WorldSession::HandleLeaveChannel);
+    DEFINE_HANDLER(CMSG_CHAT_LEAVE_CHANNEL,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Channel::LeaveChannel, &WorldSession::HandleLeaveChannel);
     DEFINE_HANDLER(CMSG_CHAT_MESSAGE_AFK,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessageAFK, &WorldSession::HandleChatMessageAFK);
-    DEFINE_HANDLER(CMSG_CHAT_MESSAGE_CHANNEL,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessageChannel, &WorldSession::HandleChatMessageChannelOpcode);
+    DEFINE_HANDLER(CMSG_CHAT_MESSAGE_CHANNEL,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessageChannel, &WorldSession::HandleChatMessageChannelOpcode);
     DEFINE_HANDLER(CMSG_CHAT_MESSAGE_DND,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessage, &WorldSession::HandleChatMessageOpcode         );
     DEFINE_HANDLER(CMSG_CHAT_MESSAGE_EMOTE,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessageEmote, &WorldSession::HandleChatMessageEmoteOpcode);
     DEFINE_HANDLER(CMSG_CHAT_MESSAGE_GUILD,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatMessage, &WorldSession::HandleChatMessageOpcode         );
@@ -651,7 +651,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_SWITCH_SEAT,                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehicleSwitchSeat, &WorldSession::HandleRequestVehicleSwitchSeat);
     DEFINE_HANDLER(CMSG_REQUEST_WOW_TOKEN_MARKET_PRICE,                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Token::RequestWowTokenMarketPrice, &WorldSession::HandleWowTokenMarketPrice);
     DEFINE_HANDLER(CMSG_RESET_CHALLENGE_MODE,                               STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_RESET_INSTANCES,                                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Instance::ResetInstances, &WorldSession::HandleResetInstances);
+    DEFINE_HANDLER(CMSG_RESET_INSTANCES,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Instance::ResetInstances, &WorldSession::HandleResetInstances);
     DEFINE_HANDLER(CMSG_RESURRECT_RESPONSE,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::ResurrectResponse, &WorldSession::HandleResurrectResponse);
     DEFINE_HANDLER(CMSG_REVERT_MONUMENT_APPEARANCE,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::RevertTrophy, &WorldSession::HandleRevertTrophy);
     DEFINE_HANDLER(CMSG_RIDE_VEHICLE_INTERACT,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RideVehicleInteract, &WorldSession::HandleRideVehicleInteract);
@@ -691,7 +691,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SET_INSERT_ITEMS_LEFT_TO_RIGHT,                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_LFG_BONUS_FACTION_ID,                           STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::LFG::BonusFactionID, &WorldSession::HandleBonusFactionID);
     DEFINE_HANDLER(CMSG_SET_LOOT_METHOD,                                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Party::SetLootMethod, &WorldSession::HandleSetLootMethod);
-    DEFINE_HANDLER(CMSG_SET_LOOT_SPECIALIZATION,                            STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Loot::SetLootSpecialization, &WorldSession::HandleSetLootSpecialization);
+    DEFINE_HANDLER(CMSG_SET_LOOT_SPECIALIZATION,                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::SetLootSpecialization, &WorldSession::HandleSetLootSpecialization);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_SET_PARTY_ASSIGNMENT,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandlePartyAssignmentOpcode     );
     DEFINE_HANDLER(CMSG_SET_PARTY_LEADER,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Party::SetPartyLeader, &WorldSession::HandleSetPartyLeader);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_SET_PET_SLOT,                            STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleStableChangeSlot          );

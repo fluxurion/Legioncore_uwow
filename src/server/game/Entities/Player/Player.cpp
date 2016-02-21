@@ -938,11 +938,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     }
 
     if (!AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
-    {
-        uint32 gmLevel = sWorld->getIntConfig(CONFIG_START_GM_LEVEL);
-        if (gmLevel > startLevel)
-            startLevel = gmLevel;
-    }
+        startLevel = std::max(startLevel, sWorld->getIntConfig(CONFIG_START_GM_LEVEL));
 
     SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
@@ -1045,6 +1041,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             break;
         case CLASS_MONK:
             AddAura(103985, this);  //Stance of the Fierce Tiger
+            break;
+        default:
             break;
     }
 
@@ -18363,6 +18361,16 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SetSpecializationId(0, fields[56].GetUInt32());
     SetSpecializationId(1, fields[57].GetUInt32());
 
+    switch(fields[4].GetUInt8())
+    {
+        case CLASS_DEMON_HUNTER:
+            if (!GetSpecializationId(GetActiveSpec()))
+                LearnTalentSpecialization(577);
+            break;
+        default:
+            break;
+    }
+            
     // sanity check
     if (GetSpecsCount() > MAX_TALENT_SPECS || GetActiveSpec() > MAX_TALENT_SPEC || GetSpecsCount() < MIN_TALENT_SPECS)
     {
