@@ -23902,14 +23902,15 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     // category spells
     if (cat && G3D::fuzzyGt(catrec, 0.0))
     {
-        auto const& ctSet = sDB2Manager.GetSpellCategory(cat);
-        for (std::set<uint32>::const_iterator _scset = ctSet->begin(); _scset != ctSet->end(); ++_scset)
-        {
-            if (*_scset == spellInfo->Id)                    // skip main spell, already handled above
-                continue;
+        DB2Manager::SpellCategoryContainer::const_iterator _cat = sDB2Manager._spellCategory.find(cat);
+        if (_cat != sDB2Manager._spellCategory.end())
+            for (DB2Manager::SpellCategorySet::const_iterator _scset = _cat->second.begin(); _scset != _cat->second.end(); ++_scset)
+            {
+                if (*_scset == spellInfo->Id)                    // skip main spell, already handled above
+                    continue;
 
-            AddSpellCooldown(*_scset, itemId, catrecTime);
-        }
+                AddSpellCooldown(*_scset, itemId, catrecTime);
+            }
     }
 }
 
