@@ -564,16 +564,21 @@ void WorldSession::DoLootRelease(ObjectGuid lguid)
 
 void WorldSession::HandleSetLootSpecialization(WorldPackets::Loot::SetLootSpecialization& packet)
 {
+    Player* player = GetPlayer();
+    if (!player)
+        return;
+
     if (packet.SpecID == 0)
     {
-        _player->SetLootSpecID(0);
+        if (player->GetLootSpecID() != player->GetDefaultLootSpecID())
+            player->SetLootSpecID(player->GetDefaultLootSpecID());
+
         return;
     }
 
-    uint8 classId = _player->getClass();
     ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(packet.SpecID);
-    if (specialization && specialization->ClassID == classId)
-        _player->SetLootSpecID(packet.SpecID);   
+    if (specialization && specialization->ClassID == player->getClass())
+        player->SetLootSpecID(packet.SpecID);
 }
 
 void WorldSession::HandleLootRoll(WorldPackets::Loot::LootRoll& packet)

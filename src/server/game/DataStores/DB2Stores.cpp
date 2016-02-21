@@ -301,11 +301,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetSpeciesStore);
     //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     //LOAD_DB2(sBattlePetStateStore);
-    //LOAD_DB2(sCharTitlesStore);
-    //LOAD_DB2(sCurrencyTypesStore);
-    //LOAD_DB2(sCurvePointStore);
     //LOAD_DB2(sDungeonEncounterStore);
-    //LOAD_DB2(sEmotesTextStore);
     //LOAD_DB2(sGameObjectsStore);
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
@@ -332,16 +328,11 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGlyphSlotStore,                   "GlyphSlot.db2"); // DEPRECATED
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
-    //LOAD_DB2(sItemBonusStore);
-    //LOAD_DB2(sItemBonusTreeNodeStore);
-    //LOAD_DB2(sItemCurrencyCostStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
-    //LOAD_DB2(sItemXBonusTreeStore);
     //LOAD_DB2(sMapChallengeModeStore);
     //LOAD_DB2(sMountCapabilityStore);            // 20914
     //LOAD_DB2(sMountTypeStore);                  // 20914
-    //LOAD_DB2(sPhaseStores);
     //LOAD_DB2(sResearchProjectStore);          // 20796
     //LOAD_DB2(sResearchSiteStore);             // 20796
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
@@ -354,35 +345,34 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
     
-    LOAD_DB2(sItemExtendedCostStore);           // 20994
-    LOAD_DB2(sBroadcastTextStore);              // 20994
-    LOAD_DB2(sAreaTableStore);                  // 20994
-    LOAD_DB2(sMountStore);                      // 20994
-    LOAD_DB2(sOverrideSpellDataStore);          // 20994
-    LOAD_DB2(sMinorTalentStore);                // 20994
-    LOAD_DB2(sSpellLearnSpellStore);            // 20994
     LOAD_DB2(sAchievementStore);                // 20914
+    LOAD_DB2(sAreaTableStore);                  // 20994
     LOAD_DB2(sAreaTriggerStore);                // 20994
     LOAD_DB2(sArmorLocationStore);              // 20914
     LOAD_DB2(sAuctionHouseStore);               // 20914
     LOAD_DB2(sBankBagSlotPricesStore);          // 20914
+    LOAD_DB2(sBroadcastTextStore);              // 20994
     LOAD_DB2(sCharacterLoadoutItemStore);       // 20914
     LOAD_DB2(sCharStartOutfitStore);            // 20914
+    LOAD_DB2(sCharTitlesStore);                 // 20994
     LOAD_DB2(sChatChannelsStore);               // 20914
     LOAD_DB2(sChrClassesXPowerTypesStore);      // 20914
     LOAD_DB2(sChrRacesStore);                   // 20914
-    //LOAD_DB2(sChrSpecializationStore);          // 20994
+    LOAD_DB2(sChrSpecializationStore);          // 20994
     LOAD_DB2(sCreatureDifficultyStore);         // 20914
     LOAD_DB2(sCreatureDisplayInfoStore);        // 20914
     LOAD_DB2(sCreatureFamilyStore);             // 20994
     LOAD_DB2(sCreatureTypeStore);               // 20914
     LOAD_DB2(sCriteriaStore);                   // 20914
     LOAD_DB2(sCriteriaTreeStore);               // 20914
+    LOAD_DB2(sCurrencyTypesStore);              // 20994
+    LOAD_DB2(sCurvePointStore);                 // 20994
     LOAD_DB2(sDestructibleModelDataStore);      // 20914
     LOAD_DB2(sDifficultyStore);                 // 20994
     LOAD_DB2(sDurabilityCostsStore);            // 20914
     LOAD_DB2(sDurabilityQualityStore);          // 20914
     LOAD_DB2(sEmotesStore);                     // 20914
+    LOAD_DB2(sEmotesTextStore);                 // 20994
     LOAD_DB2(sGameObjectDisplayInfoStore);      // 20914
     LOAD_DB2(sGameTablesStore);                 // 20914
     LOAD_DB2(sGemPropertiesStore);              // 20914
@@ -395,7 +385,10 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemArmorQualityStore);           // 20914
     LOAD_DB2(sItemArmorShieldStore);            // 20914
     LOAD_DB2(sItemArmorTotalStore);             // 20914
+    LOAD_DB2(sItemBonusStore);                  // 20994
+    LOAD_DB2(sItemBonusTreeNodeStore);          // 20994
     LOAD_DB2(sItemClassStore);                  // 20914
+    LOAD_DB2(sItemCurrencyCostStore);           // 20994
     LOAD_DB2(sItemDamageAmmoStore);             // 20914
     LOAD_DB2(sItemDamageOneHandCasterStore);    // 20914
     LOAD_DB2(sItemDamageOneHandStore);          // 20914
@@ -403,6 +396,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemDamageTwoHandStore);          // 20914
     LOAD_DB2(sItemDisenchantLootStore);         // 20914
     LOAD_DB2(sItemEffectStore);                 // 20914
+    LOAD_DB2(sItemExtendedCostStore);           // 20994
     LOAD_DB2(sItemLimitCategoryStore);          // 20914
     LOAD_DB2(sItemModifiedAppearanceStore);     // 20994
     LOAD_DB2(sItemPriceBaseStore);              // 20914
@@ -414,31 +408,36 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemSpecOverrideStore);           // 20914
     LOAD_DB2(sItemSpecStore);                   // 20914
     LOAD_DB2(sItemStore);                       // 20914
+    LOAD_DB2(sItemXBonusTreeStore);             // 20994
     LOAD_DB2(sKeyChainStore);                   // 20914
     LOAD_DB2(sLanguageWordsStore);              // 20914
     LOAD_DB2(sLockStore);                       // 20914
     LOAD_DB2(sMailTemplateStore);               // 20914
     LOAD_DB2(sMapStore);                        // 20914
+    LOAD_DB2(sMinorTalentStore);                // 20994
     LOAD_DB2(sModifierTreeStore);               // 20914
+    LOAD_DB2(sMountStore);                      // 20994
     LOAD_DB2(sMountTypeXCapabilityStore);       // 20914
     LOAD_DB2(sMovieStore);                      // 20914
     LOAD_DB2(sNameGenStore);                    // 20914
     LOAD_DB2(sNamesProfanityStore);             // 20994
-    LOAD_DB2(sNamesReservedStore);              // 20994
     LOAD_DB2(sNamesReservedLocaleStore);        // 20994
+    LOAD_DB2(sNamesReservedStore);              // 20994
+    LOAD_DB2(sOverrideSpellDataStore);          // 20994
+    LOAD_DB2(sPhaseStores);                     // 20994
     LOAD_DB2(sPowerDisplayStore);               // 20914
     LOAD_DB2(sPvPDifficultyStore);              // 20914
     LOAD_DB2(sPvpItemStore);                    // 20914
     LOAD_DB2(sQuestFactionRewardStore);         // 20914
+    LOAD_DB2(sQuestLineStore);                  // 20994
+    LOAD_DB2(sQuestLineXQuestStore);            // 20994
+    LOAD_DB2(sQuestMoneyRewardStore);           // 20994
+    LOAD_DB2(sQuestObjectiveStore);             // 20994
     LOAD_DB2(sQuestPackageItemStore);           // 20914
     LOAD_DB2(sQuestPOIPointStore);              // 20914
     LOAD_DB2(sQuestSortStore);                  // 20914
     LOAD_DB2(sQuestV2Store);                    // 20914
     LOAD_DB2(sQuestXPStore);                    // 20914
-    LOAD_DB2(sQuestLineStore);                  // 20994
-    LOAD_DB2(sQuestLineXQuestStore);            // 20994
-    LOAD_DB2(sQuestMoneyRewardStore);           // 20994
-    LOAD_DB2(sQuestObjectiveStore);             // 20994
     LOAD_DB2(sRandPropPointsStore);             // 20914
     LOAD_DB2(sResearchBranchStore);             // 20914
     LOAD_DB2(sScalingStatDistributionStore);    // 20914
@@ -462,6 +461,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellEquippedItemsStore);         // 20914
     LOAD_DB2(sSpellFocusObjectStore);           // 20914
     LOAD_DB2(sSpellInterruptsStore);            // 20914
+    LOAD_DB2(sSpellLearnSpellStore);            // 20994
     LOAD_DB2(sSpellLevelsStore);                // 20914
     LOAD_DB2(sSpellMiscDifficultyStore);        // 20914
     LOAD_DB2(sSpellMiscStore);                  // 20914
@@ -982,15 +982,15 @@ uint32 DB2Manager::GetHeirloomItemLevel(uint32 curveId, uint32 level) const
         return 0;
 
     auto it2 = itr->second.begin(); // Highest scaling point
-    if (level >= it2->second->X)
-        return it2->second->Y;
+    if (level >= it2->second->Pos.X)
+        return it2->second->Pos.Y;
 
     auto previousItr = it2++;
     for (; it2 != itr->second.end(); ++it2, ++previousItr)
-        if (level >= it2->second->X)
-            return uint32((previousItr->second->Y - it2->second->Y) / (previousItr->second->X - it2->second->X) * (float(level) - it2->second->X) + it2->second->Y);
+        if (level >= it2->second->Pos.X)
+            return uint32((previousItr->second->Pos.Y - it2->second->Pos.Y) / (previousItr->second->Pos.X - it2->second->Pos.X) * (float(level) - it2->second->Pos.X) + it2->second->Pos.Y);
 
-    return uint32(previousItr->second->Y);  // Lowest scaling point
+    return uint32(previousItr->second->Pos.Y);  // Lowest scaling point
 }
 
 uint32 DB2Manager::GetItemDisplayId(uint32 itemId, uint32 appearanceModId) const

@@ -2536,17 +2536,17 @@ class Player : public Unit, public GridObject<Player>
         {
             if (GetFieldLootSpecID() > 0)
                 return GetFieldLootSpecID();
-            if(GetSpecializationId(GetActiveSpec()) > 0)
+            if (GetSpecializationId(GetActiveSpec()) > 0)
                 return GetSpecializationId(GetActiveSpec());
+
             return GetDefaultLootSpecID();
         }
         uint32 GetDefaultLootSpecID() const
         {
             for (ChrSpecializationEntry const* specialization : sChrSpecializationStore)
-            {
                 if (specialization->ClassID == getClass() && specialization->OrderIndex == 0)
-                        return specialization->ID;
-            }
+                    return specialization->ID;
+
             return 0;
         }
 

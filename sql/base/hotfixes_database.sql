@@ -433,11 +433,11 @@ DROP TABLE IF EXISTS `char_titles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `char_titles` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ConditionID` int(10) unsigned NOT NULL DEFAULT '0',
   `NameMale` text,
   `NameFemale` text,
-  `MaskID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `ConditionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `MaskID` smallint(6) NOT NULL DEFAULT '0',
+  `Flags` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -487,10 +487,10 @@ DROP TABLE IF EXISTS `curve_point`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `curve_point` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `CurveID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Index` int(10) unsigned NOT NULL DEFAULT '0',
-  `X` float NOT NULL DEFAULT '0',
-  `Y` float NOT NULL DEFAULT '0',
+  `PosX` float NOT NULL DEFAULT '0',
+  `PosY` float NOT NULL DEFAULT '0',
+  `CurveID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Index` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -690,10 +690,11 @@ DROP TABLE IF EXISTS `emotes_text`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `emotes_text` (
-  `Id` int(10) unsigned NOT NULL DEFAULT '0',
-  `textid` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `TextID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -707,6 +708,31 @@ LOCK TABLES `emotes_text` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `emotes_text_locale`
+--
+
+DROP TABLE IF EXISTS `emotes_text_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `emotes_text_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `emotes_text_locale`
+--
+
+LOCK TABLES `emotes_text_locale` WRITE;
+/*!40000 ALTER TABLE `emotes_text_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `emotes_text_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `phase`
 --
 
@@ -715,7 +741,7 @@ DROP TABLE IF EXISTS `phase`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `phase` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3050,11 +3076,11 @@ DROP TABLE IF EXISTS `item_bonus`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_bonus` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusListID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
   `Value1` int(11) NOT NULL DEFAULT '0',
   `Value2` int(11) NOT NULL DEFAULT '0',
-  `Index` int(10) unsigned NOT NULL DEFAULT '0',
+  `BonusListID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Index` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3078,10 +3104,10 @@ DROP TABLE IF EXISTS `item_bonus_tree_node`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_bonus_tree_node` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusTreeID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusTreeModID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SubTreeID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusListID` int(10) unsigned NOT NULL DEFAULT '0',
+  `BonusTreeID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SubTreeID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `BonusListID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `BonusTreeModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4672,17 +4698,17 @@ DROP TABLE IF EXISTS `currency_types`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `currency_types` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `CategoryID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `InventoryIcon1` text,
   `InventoryIcon2` text,
-  `SpellWeight` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellCategory` int(10) unsigned NOT NULL DEFAULT '0',
   `MaxQty` int(10) unsigned NOT NULL DEFAULT '0',
   `MaxEarnablePerWeek` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `Quality` int(10) unsigned NOT NULL DEFAULT '0',
   `Description` text,
+  `CategoryID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpellWeight` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpellCategory` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -5867,7 +5893,7 @@ DROP TABLE IF EXISTS `item_x_bonus_tree`;
 CREATE TABLE `item_x_bonus_tree` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BonusTreeID` int(10) unsigned NOT NULL DEFAULT '0',
+  `BonusTreeID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -7348,20 +7374,20 @@ DROP TABLE IF EXISTS `chr_specialization`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `chr_specialization` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BackgroundFile` text,
-  `ClassID` int(10) unsigned NOT NULL DEFAULT '0',
   `MasterySpellID1` int(10) unsigned NOT NULL DEFAULT '0',
   `MasterySpellID2` int(10) unsigned NOT NULL DEFAULT '0',
-  `OrderIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `PetTalentType` int(10) unsigned NOT NULL DEFAULT '0',
-  `Role` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellIconID` int(10) unsigned NOT NULL DEFAULT '0',
-  `RaidBuffs` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unknown2` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unknown3` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Name2` text,
   `Description` text,
-  `PrimaryStatOrder1` int(10) unsigned NOT NULL DEFAULT '0',
-  `PrimaryStatOrder2` int(10) unsigned NOT NULL DEFAULT '0',
+  `BackgroundFile` text,
+  `SpellIconID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ClassID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `OrderIndex` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `PetTalentType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Role` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `PrimaryStatOrder2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -7386,10 +7412,10 @@ DROP TABLE IF EXISTS `chr_specialization_locale`;
 CREATE TABLE `chr_specialization_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `BackgroundFile_lang` text,
   `Name_lang` text,
   `Name2_lang` text,
   `Description_lang` text,
+  `BackgroundFile_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

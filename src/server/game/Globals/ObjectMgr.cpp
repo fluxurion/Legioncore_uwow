@@ -1701,11 +1701,9 @@ void ObjectMgr::LoadCreatures()
         data.isActive       = fields[index++].GetBool();
 
         Tokenizer phasesToken(fields[index++].GetString(), ' ', 100);
-        for (Tokenizer::const_iterator itr = phasesToken.begin(); itr != phasesToken.end(); ++itr)
-        {
-            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(*itr, nullptr, 10))))
+        for (Tokenizer::const_iterator::value_type itr : phasesToken)
+            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(itr, nullptr, 10))))
                 data.PhaseID.insert(phase->ID);
-        }
 
         // check near npc with same entry.
         auto lastCreature = lastEntryCreature.find(entry);
@@ -2271,11 +2269,9 @@ void ObjectMgr::LoadGameobjects()
         }
 
         Tokenizer phasesToken(fields[21].GetString(), ' ', 100);
-        for (Tokenizer::const_iterator itr = phasesToken.begin(); itr != phasesToken.end(); ++itr)
-        {
-            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(*itr, nullptr, 10))))
+        for (Tokenizer::const_iterator::value_type itr : phasesToken)
+            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(itr, nullptr, 10))))
                 data.PhaseID.insert(phase->ID);
-        }
 
         if (data.phaseMask == 0)
         {
@@ -3731,6 +3727,7 @@ void ObjectMgr::LoadQuests()
         } while (result->NextRow());
     }
 
+    std::map<uint32, uint32> usedMailTemplates;
     for (QuestMap::iterator::value_type iter : _questTemplates)
     {
         if (DisableMgr::IsDisabledFor(DISABLE_TYPE_QUEST, iter.first, nullptr))
@@ -4082,7 +4079,6 @@ void ObjectMgr::LoadQuests()
             }
         }
     
-        std::map<uint32, uint32> usedMailTemplates;
         if (qinfo->RewardMailTemplateId)
         {
             if (!sMailTemplateStore.LookupEntry(qinfo->RewardMailTemplateId))
@@ -8937,11 +8933,9 @@ void ObjectMgr::LoadPhaseDefinitions()
         pd.flags                 = fields[6].GetUInt8();
 
         Tokenizer phasesToken(fields[3].GetString(), ' ', 100);
-        for (Tokenizer::const_iterator itr = phasesToken.begin(); itr != phasesToken.end(); ++itr)
-        {
-            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(*itr, nullptr, 10))))
+        for (Tokenizer::const_iterator::value_type itr : phasesToken)
+            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(itr, nullptr, 10))))
                 pd.phaseId.push_back(phase->ID);
-        }
 
         // Checks
         if ((pd.flags & PHASE_FLAG_OVERWRITE_EXISTING) && (pd.flags & PHASE_FLAG_NEGATE_PHASE))

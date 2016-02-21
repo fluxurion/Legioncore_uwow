@@ -3908,7 +3908,7 @@ void Player::AddNewMailDeliverTime(time_t deliver_time)
     }
 }
 
-bool Player::AddTalent(TalentEntry const* talent, uint8 spec, bool learning, bool sendMessage)
+bool Player::AddTalent(TalentEntry const* talent, uint8 spec, bool learning, bool sendMessage /*= true*/)
 {
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(talent->spellId);
     if (!spellInfo)

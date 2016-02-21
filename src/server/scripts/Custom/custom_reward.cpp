@@ -71,7 +71,7 @@ public:
                         {
                             char const* targetName = player->GetName();
                             char titleNameStr[80];
-                            snprintf(titleNameStr, 80, titleInfo->NameMale_lang->Str[sObjectMgr->GetDBCLocaleIndex()], targetName);
+                            snprintf(titleNameStr, 80, titleInfo->NameMale->Str[sObjectMgr->GetDBCLocaleIndex()], targetName);
                             player->SetTitle(titleInfo);
                             chH.PSendSysMessage(LANG_TITLE_ADD_RES, id, titleNameStr, targetName);
                             rewarded = true;
@@ -152,7 +152,7 @@ public:
                         {
                             char const* targetName = player->GetName();
                             char titleNameStr[80];
-                            snprintf(titleNameStr, 80, titleInfo->NameFemale_lang->Str[sObjectMgr->GetDBCLocaleIndex()], targetName);
+                            snprintf(titleNameStr, 80, titleInfo->NameFemale->Str[sObjectMgr->GetDBCLocaleIndex()], targetName);
                             player->SetTitle(titleInfo, true);
                             chH.PSendSysMessage(LANG_TITLE_REMOVE_RES, id, titleNameStr, targetName);
                             rewarded = true;

@@ -273,7 +273,7 @@ public:
             if (!target->HasTitle(titleInfo))
                 continue;
 
-            std::string name = titleInfo->NameMale_lang->Str[sObjectMgr->GetDBCLocaleIndex()];
+            std::string name = titleInfo->NameMale->Str[sObjectMgr->GetDBCLocaleIndex()];
             if (name.empty())
                 continue;
 

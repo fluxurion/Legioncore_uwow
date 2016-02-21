@@ -176,21 +176,20 @@ struct BroadcastTextEntry
 
 struct CharTitlesEntry
 {
-    uint32      ID;                                         // 0, title ids, for example in Quest::GetRewTitle()
-    uint32      ConditionID;                                // 1
-    LocalizedString* NameMale_lang;                              // 2 m_name_lang
-    LocalizedString* NameFemale_lang;                            // 3 m_name1_lang
-    uint32      MaskID;                                     // 4 m_mask_ID used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
-    uint32      Flags;                                      // 5
+    uint32      ID;                                         // 0
+    LocalizedString* NameMale;                              // 1
+    LocalizedString* NameFemale;                            // 2
+    uint16      ConditionID;                                // 3
+    int16       MaskID;                                     // 4
+    int8        Flags;                                      // 5
 };
 
 struct CurvePointEntry
 {
-    uint32      ID;                                                      // 0
-    uint32      CurveID;                                                 // 1
-    uint32      Index;                                                   // 2
-    float       X;                                                        // 3
-    float       Y;                                                        // 4
+    uint32      ID;                                         // 0
+    DBCPosition2D Pos;                                      // 1 - 2
+    uint16      CurveID;                                    // 3
+    uint8       Index;                                      // 4
 };
 
 struct CreatureFamilyEntry
@@ -241,14 +240,15 @@ struct DungeonEncounterEntry
 
 struct EmotesTextEntry
 {
-    uint32      Id;
-    uint32      textid;
+    uint32      ID;
+    LocalizedString* Name;
+    uint16      TextID;
 };
 
 struct PhaseEntry
 {
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
+    uint32      ID;                                     // 0
+    uint16      Flags;                                  // 1
 };
 
 struct MapEntry
@@ -1000,19 +1000,19 @@ struct ResearchSiteEntry
 struct ItemBonusEntry
 {
     uint32      ID;                                                 // 0
-    uint32      BonusListID;                                        // 1
-    uint32      Type;                                               // 2
-    int32       Value[2];                                           // 3-4
-    uint32      Index;                                              // 5
+    int32       Value[2];                                           // 1 - 2
+    uint16      BonusListID;                                        // 3
+    uint8       Type;                                               // 4
+    uint8       Index;                                              // 5
 };
 
 struct ItemBonusTreeNodeEntry
 {
-    uint32 ID;                                                      // 0
-    uint32 BonusTreeID;                                             // 1
-    uint32 BonusTreeModID;                                          // 2
-    uint32 SubTreeID;                                               // 3
-    uint32 BonusListID;                                             // 4
+    uint32      ID;                                                      // 0
+    uint16      BonusTreeID;                                             // 1
+    uint16      SubTreeID;                                               // 2
+    uint16      BonusListID;                                             // 3
+    uint8       BonusTreeModID;                                          // 4
 };
 
 struct ItemCurrencyCostEntry
@@ -1510,16 +1510,16 @@ struct CreatureDifficultyEntry
 struct CurrencyTypesEntry
 {
     uint32      ID;                                                 // 0
-    uint32      CategoryID;                                         // 1
-    LocalizedString*       Name_lang;                                          // 2
-    LocalizedString*       InventoryIcon[2];                                   // 3-4
-    uint32      SpellWeight;                                        // 5
-    uint32      SpellCategory;                                      // 6
-    uint32      MaxQty;                                             // 7
-    uint32      MaxEarnablePerWeek;                                 // 8
-    uint32      Flags;                                              // 9
-    uint32      Quality;                                            // 10
-    LocalizedString*       Description_lang;                                   // 11
+    LocalizedString* Name;                                          // 1
+    LocalizedString* InventoryIcon[2];                              // 2 - 3
+    uint32      MaxQty;                                             // 4
+    uint32      MaxEarnablePerWeek;                                 // 5
+    uint32      Flags;                                              // 6
+    LocalizedString* Description;                                   // 7
+    uint8       CategoryID;                                         // 8
+    uint8       SpellWeight;                                        // 9
+    uint8       SpellCategory;                                      // 10
+    uint8       Quality;                                            // 11
 };
 
 struct QuestPackageItemEntry
@@ -1863,7 +1863,7 @@ struct ItemXBonusTreeEntry
 {
     uint32      ID;                                         // 0
     uint32      ItemID;                                     // 1
-    uint32      BonusTreeID;                                // 2
+    uint16      BonusTreeID;                                // 2
 };
 
 struct SpellEffectEntry
@@ -2285,18 +2285,19 @@ struct ChatChannelsEntry
 struct ChrSpecializationEntry
 {
     uint32      ID;                                         // 0
-    LocalizedString* BackgroundFile;                        // 1
-    uint32      ClassID;                                    // 2
-    uint32      MasterySpellID[MAX_MASTERY_SPELLS];         // 3
-    uint32      OrderIndex;                                 // 4
-    uint32      PetTalentType;                              // 5
-    uint32      Role;                                       // 6
-    uint32      SpellIconID;                                // 7
-    uint32      RaidBuffs;                                  // 8
-    LocalizedString* Name;                                  // 9
-    LocalizedString* Name2;                                 // 10
-    LocalizedString* Description;                           // 11
-    uint32      PrimaryStatOrder[2];                        // 12 - 13
+    uint32      MasterySpellID[MAX_MASTERY_SPELLS];         // 1 - 2
+    uint32      Unknown2;                                   // 3
+    uint32      Unknown3;                                   // 4
+    LocalizedString* Name;                                  // 5
+    LocalizedString* Name2;                                 // 6
+    LocalizedString* Description;                           // 7
+    LocalizedString* BackgroundFile;                        // 8
+    uint16      SpellIconID;                                // 9
+    uint8       ClassID;                                    // 10
+    uint8       OrderIndex;                                 // 11
+    uint8       PetTalentType;                              // 12
+    uint8       Role;                                       // 13
+    uint8       PrimaryStatOrder2;                          // 14
 };
 
 struct EmotesEntry

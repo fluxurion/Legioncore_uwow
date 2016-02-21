@@ -31,34 +31,21 @@
 void WorldSession::HandleSetSpecialization(WorldPackets::Talent::SetSpecialization& packet)
 {
     Player* player = GetPlayer();
-
-    if (packet.SpecGroupIndex >= 4)
+    if (packet.SpecGroupIndex >= 4 || player->getLevel() < 10 || !player)
         return;
 
     ChrSpecializationEntry const* chrSpec = sDB2Manager.GetChrSpecializationByID(player->getClass(), packet.SpecGroupIndex);
     if (!chrSpec)
         return;
 
-    if (chrSpec->ClassID != player->getClass())
-        return;
-
-    if (player->getLevel() < 10)
-        return;
-
-    player->LearnTalentSpecialization(chrSpec->ID);
+    if (chrSpec->ClassID == player->getClass())
+        player->LearnTalentSpecialization(chrSpec->ID);
 }
 
 void WorldSession::HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet)
 {
     Player* player = GetPlayer();
-    if (!player)
-        return;
-
-    if (packet.Talents.size() > 7)
-        return;
-
-    Battleground* bg = player->GetBattleground();
-    if (bg && bg->GetStatus() != STATUS_WAIT_JOIN)
+    if (packet.Talents.size() > 7 || !player)
         return;
 
     bool anythingLearned = false;

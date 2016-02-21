@@ -636,25 +636,26 @@ void WorldSession::HandleEmote(WorldPackets::Character::EmoteClient& packet)
 
 void WorldSession::HandleTextEmoteOpcode(WorldPackets::Chat::CTextEmote& packet)
 {
-    if (!GetPlayer()->isAlive())
+    Player* player = GetPlayer();
+    if (!player)
         return;
 
-    if (!GetPlayer()->CanSpeak())
+    if (!player->isAlive())
+        return;
+
+    if (!player->CanSpeak())
     {
-        std::string timeStr = secsToTimeString(m_muteTime - time(NULL));
-        SendNotification(GetTrinityString(LANG_WAIT_BEFORE_SPEAKING), timeStr.c_str());
+        SendNotification(GetTrinityString(LANG_WAIT_BEFORE_SPEAKING), secsToTimeString(m_muteTime - time(nullptr)).c_str());
         return;
     }
 
-    sScriptMgr->OnPlayerTextEmote(GetPlayer(), packet.SoundIndex, packet.EmoteID, packet.Target);
+    sScriptMgr->OnPlayerTextEmote(player, packet.SoundIndex, packet.EmoteID, packet.Target);
 
     EmotesTextEntry const* em = sEmotesTextStore.LookupEntry(packet.EmoteID);
     if (!em)
         return;
 
-    uint32 emote_anim = em->textid;
-
-    switch (emote_anim)
+    switch (em->TextID)
     {
         case EMOTE_STATE_SLEEP:
         case EMOTE_STATE_SIT:
@@ -663,31 +664,32 @@ void WorldSession::HandleTextEmoteOpcode(WorldPackets::Chat::CTextEmote& packet)
             break;
         case EMOTE_STATE_DANCE:
         case EMOTE_STATE_READ:
-            _player->SetUInt32Value(UNIT_NPC_EMOTESTATE, emote_anim);
+            player->SetUInt32Value(UNIT_NPC_EMOTESTATE, em->TextID);
             break;
         default:
             // Only allow text-emotes for "dead" entities (feign death included)
-            if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
+            if (player->HasUnitState(UNIT_STATE_DIED))
                 break;
-             GetPlayer()->HandleEmoteCommand(emote_anim);
-             break;
+
+            player->HandleEmoteCommand(em->TextID);
+            break;
     }
 
     WorldPackets::Chat::STextEmote textEmote;
-    textEmote.SourceGUID = _player->GetGUID();
+    textEmote.SourceGUID = player->GetGUID();
     textEmote.SourceAccountGUID = GetAccountGUID();
     textEmote.TargetGUID = packet.Target;
     textEmote.EmoteID = packet.EmoteID;
     textEmote.SoundIndex = packet.SoundIndex;
-    _player->SendMessageToSetInRange(textEmote.Write(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE), true);
+    player->SendMessageToSetInRange(textEmote.Write(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE), true);
 
-    Unit* unit = ObjectAccessor::GetUnit(*_player, packet.Target);
+    Unit* unit = ObjectAccessor::GetUnit(*player, packet.Target);
 
-    GetPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE, packet.SoundIndex, 0, 0, unit);
+    player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE, packet.SoundIndex, 0, 0, unit);
 
     //Send scripted event call
     if (unit && unit->GetTypeId() == TYPEID_UNIT && ((Creature*)unit)->AI())
-        ((Creature*)unit)->AI()->ReceiveEmote(GetPlayer(), packet.SoundIndex);
+        ((Creature*)unit)->AI()->ReceiveEmote(player, packet.SoundIndex);
 }
 
 void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recvData)
