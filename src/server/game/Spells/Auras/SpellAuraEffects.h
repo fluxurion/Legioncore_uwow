@@ -377,12 +377,10 @@ namespace Trinity
                 SpellInfo const* spellProtoB = aurEffB->GetSpellInfo();
 
                 // Wards
-                if ((spellProtoA->SpellFamilyName == SPELLFAMILY_MAGE) ||
-                    (spellProtoA->SpellFamilyName == SPELLFAMILY_WARLOCK))
+                if ((spellProtoA->ClassOptions.SpellClassSet == SPELLFAMILY_MAGE) || (spellProtoA->ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK))
                     if (spellProtoA->Categories.Category == 56)
                         return true;
-                if ((spellProtoB->SpellFamilyName == SPELLFAMILY_MAGE) ||
-                    (spellProtoB->SpellFamilyName == SPELLFAMILY_WARLOCK))
+                if ((spellProtoB->ClassOptions.SpellClassSet == SPELLFAMILY_MAGE) || (spellProtoB->ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK))
                     if (spellProtoB->Categories.Category == 56)
                         return false;
 
@@ -411,10 +409,10 @@ namespace Trinity
                     return false;
 
                 // Sacrifice
-                if ((spellProtoA->SpellFamilyName == SPELLFAMILY_WARLOCK) && (spellProtoA->Misc.SpellIconID == 693))
+                if ((spellProtoA->ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK) && (spellProtoA->Misc.SpellIconID == 693))
                     return true;
 
-                if ((spellProtoB->SpellFamilyName == SPELLFAMILY_WARLOCK) && (spellProtoB->Misc.SpellIconID == 693))
+                if ((spellProtoB->ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK) && (spellProtoB->Misc.SpellIconID == 693))
                     return false;
 
                 return false;

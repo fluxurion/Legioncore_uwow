@@ -41,13 +41,13 @@ enum SpellCategories
     SPELLCATEGORY_DRINK            = 59,
 };
 
-//SpellFamilyFlags
+//ClassOptions.SpellClassMask
 enum SpellFamilyFlag
 {
-    // SPELLFAMILYFLAG  = SpellFamilyFlags[0]
-    // SPELLFAMILYFLAG1 = SpellFamilyFlags[1]
-    // SPELLFAMILYFLAG2 = SpellFamilyFlags[2]
-    // SPELLFAMILYFLAG3 = SpellFamilyFlags[3]
+    // SPELLFAMILYFLAG  = ClassOptions.SpellClassMask[0]
+    // SPELLFAMILYFLAG1 = ClassOptions.SpellClassMask[1]
+    // SPELLFAMILYFLAG2 = ClassOptions.SpellClassMask[2]
+    // SPELLFAMILYFLAG3 = ClassOptions.SpellClassMask[3]
 
     // Rogue
     SPELLFAMILYFLAG_ROGUE_VANISH            = 0x00000800,

@@ -351,9 +351,6 @@ public:
     uint32 StancesNot;
     uint32 GeneralTargets;      //old Targets.
     uint32 GeneralTargetCreatureType;  //old TargetCreatureType
-    uint32 RecoveryTime;
-    uint32 CategoryRecoveryTime;
-    uint32 StartRecoveryTime;
     uint32 InterruptFlags;
     uint32 AuraInterruptFlags;
     uint32 ChannelInterruptFlags;
@@ -368,11 +365,23 @@ public:
     char const* SpellName;
     uint32 MaxTargetLevel;
     uint32 CustomMaxAffectedTargets;      //only if not exist on dbc use it.
-    uint32 SpellFamilyName;
-    flag128 SpellFamilyFlags;
     uint32 SpellScalingId;
     uint32 SpellPowerId;
     uint32 ResearchProject;
+
+    struct SpellCooldowns
+    {
+        uint32 CategoryRecoveryTime;
+        uint32 RecoveryTime;
+        uint32 StartRecoveryTime;
+    } Cooldowns;
+
+    struct SpellClassOptions
+    {
+        flag128 SpellClassMask;
+        uint16 ModalNextSpell;
+        uint8 SpellClassSet;
+    } ClassOptions;
 
     struct ScalingInfo
     {

@@ -193,8 +193,8 @@ void UnitAI::FillAISpellInfo()
         else
             AIInfo->condition = AICOND_COMBAT;
 
-        if (AIInfo->cooldown < spellInfo->RecoveryTime)
-            AIInfo->cooldown = spellInfo->RecoveryTime;
+        if (AIInfo->cooldown < spellInfo->Cooldowns.RecoveryTime)
+            AIInfo->cooldown = spellInfo->Cooldowns.RecoveryTime;
 
         if (!spellInfo->GetMaxRange(false))
             UPDATE_TARGET(AITARGET_SELF)
@@ -223,7 +223,7 @@ void UnitAI::FillAISpellInfo()
                 }
             }
         }
-        AIInfo->realCooldown = spellInfo->RecoveryTime + spellInfo->StartRecoveryTime;
+        AIInfo->realCooldown = spellInfo->Cooldowns.RecoveryTime + spellInfo->Cooldowns.StartRecoveryTime;
         AIInfo->maxRange = spellInfo->GetMaxRange(false) * 3 / 4;
     }
 }

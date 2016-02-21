@@ -841,11 +841,11 @@ class spell_rog_deadly_poison : public SpellScriptLoader
                             }
 
                             // Proc only rogue poisons
-                            if (spellInfo->SpellFamilyName != SPELLFAMILY_ROGUE || spellInfo->Categories.DispelType != DISPEL_POISON)
+                            if (spellInfo->ClassOptions.SpellClassSet != SPELLFAMILY_ROGUE || spellInfo->Categories.DispelType != DISPEL_POISON)
                                 continue;
 
                             // Do not reproc deadly
-                            if (spellInfo->SpellFamilyFlags.IsEqual(0x10000, 0x80000, 0))
+                            if (spellInfo->ClassOptions.SpellClassMask.IsEqual(0x10000, 0x80000, 0))
                                 continue;
 
                             if (spellInfo->IsPositive())

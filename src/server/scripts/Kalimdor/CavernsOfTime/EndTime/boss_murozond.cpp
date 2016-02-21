@@ -385,8 +385,8 @@ class npc_murozond_mirror_image : public CreatureScript
                             {
                                 SpellInfo const* entry = sSpellMgr->GetSpellInfo(itr->first);
                                 if (entry &&
-                                    entry->RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
-                                    entry->CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
+                                    entry->Cooldowns.RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
+                                    entry->Cooldowns.CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
                                     (entry->Category.Flags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
                                 {
                                     spell_list.push_back(itr->first);

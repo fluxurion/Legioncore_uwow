@@ -1049,13 +1049,14 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     Category.MaxCharges = categoryStore ? categoryStore->MaxCharges : 0;
 
     SpellClassOptionsEntry const* _class = sSpellClassOptionsStore.LookupEntry(Id);
-    SpellFamilyName = _class ? _class->SpellClassSet : 0;
-    SpellFamilyFlags = _class ? _class->SpellClassMask : flag128(0);
+    ClassOptions.SpellClassMask = _class ? _class->SpellClassMask : flag128();
+    ClassOptions.ModalNextSpell = _class ? _class->ModalNextSpell : 0;
+    ClassOptions.SpellClassSet = _class ? _class->SpellClassSet : 0;
 
     SpellCooldownsEntry const* _cooldowns = sSpellCooldownsStore.LookupEntry(Id);
-    RecoveryTime = _cooldowns ? _cooldowns->RecoveryTime : 0;
-    CategoryRecoveryTime = _cooldowns ? _cooldowns->CategoryRecoveryTime : 0;
-    StartRecoveryTime = _cooldowns ? _cooldowns->StartRecoveryTime : 0;
+    Cooldowns.RecoveryTime = _cooldowns ? _cooldowns->RecoveryTime : 0;
+    Cooldowns.CategoryRecoveryTime = _cooldowns ? _cooldowns->CategoryRecoveryTime : 0;
+    Cooldowns.StartRecoveryTime = _cooldowns ? _cooldowns->StartRecoveryTime : 0;
 
     SpellEquippedItemsEntry const* _equipped = sSpellEquippedItemsStore.LookupEntry(Id);
     EquippedItemClass = _equipped ? _equipped->EquippedItemClass : -1;
@@ -1601,7 +1602,7 @@ bool SpellInfo::IsStackableWithRanks() const
     // All stance spells. if any better way, change it.
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
-        switch (SpellFamilyName)
+        switch (ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_PALADIN:
                 // Paladin aura Spell
@@ -1692,7 +1693,7 @@ bool SpellInfo::IsBreakingStealth() const
 
 bool SpellInfo::IsRangedWeaponSpell() const
 {
-    return SpellFamilyName == SPELLFAMILY_HUNTER || (EquippedItemSubClassMask != -1 && (EquippedItemSubClassMask & ITEM_SUBCLASS_MASK_WEAPON_RANGED));
+    return ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER || (EquippedItemSubClassMask != -1 && (EquippedItemSubClassMask & ITEM_SUBCLASS_MASK_WEAPON_RANGED));
 }
 
 bool SpellInfo::IsRangedSpell() const
@@ -1722,11 +1723,11 @@ bool SpellInfo::IsAffectedBySpellMod(SpellModifier* mod) const
 
     SpellInfo const* affectSpell = sSpellMgr->GetSpellInfo(mod->spellId);
     // False if affect_spell == NULL or spellFamily not equal
-    if (!affectSpell || affectSpell->SpellFamilyName != SpellFamilyName)
+    if (!affectSpell || affectSpell->ClassOptions.SpellClassMask != ClassOptions.SpellClassMask)
         return false;
 
     // true
-    if (mod->mask & SpellFamilyFlags)
+    if (mod->mask & ClassOptions.SpellClassMask)
         return true;
 
     return false;
@@ -2346,7 +2347,7 @@ SpellCastResult SpellInfo::CheckExplicitTarget(Unit const* caster, WorldObject c
 bool SpellInfo::CheckTargetCreatureType(Unit const* target) const
 {
     // Curse of Doom & Exorcism: not find another way to fix spell target check :/
-    if (SpellFamilyName == SPELLFAMILY_WARLOCK && Categories.Category == 1179)
+    if (ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK && Categories.Category == 1179)
     {
         // not allow cast at player
         if (target->GetTypeId() == TYPEID_PLAYER)
@@ -2509,11 +2510,11 @@ AuraStateType SpellInfo::GetAuraState() const
         return AURA_STATE_JUDGEMENT;
 
     // Conflagrate aura state on Immolate and Shadowflame
-    if (SpellFamilyName == SPELLFAMILY_WARLOCK &&
+    if (ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK &&
         // Immolate
-        ((SpellFamilyFlags[0] & 4) ||
+        ((ClassOptions.SpellClassMask[0] & 4) ||
         // Shadowflame
-        (SpellFamilyFlags[2] & 2)))
+        (ClassOptions.SpellClassMask[2] & 2)))
         return AURA_STATE_CONFLAGRATE;
 
     // Faerie Fire (druid versions)
@@ -2525,11 +2526,11 @@ AuraStateType SpellInfo::GetAuraState() const
         return AURA_STATE_FAERIE_FIRE;
 
     // Victorious
-    if ((SpellFamilyName == SPELLFAMILY_WARRIOR && SpellFamilyFlags[1] & 0x00040000) || Id == 138279)
+    if ((ClassOptions.SpellClassSet == SPELLFAMILY_WARRIOR && ClassOptions.SpellClassMask[1] & 0x00040000) || Id == 138279)
         return AURA_STATE_WARRIOR_VICTORY_RUSH;
 
     // Swiftmend state on Regrowth & Rejuvenation
-    if (SpellFamilyName == SPELLFAMILY_DRUID && SpellFamilyFlags[0] & 0x50)
+    if (ClassOptions.SpellClassSet == SPELLFAMILY_DRUID && ClassOptions.SpellClassMask[0] & 0x50)
         return AURA_STATE_SWIFTMEND;
 
     // Enrage aura state (excluding Vengeance buff)
@@ -2562,7 +2563,7 @@ AuraStateType SpellInfo::GetAuraState() const
 
 SpellSpecificType SpellInfo::GetSpellSpecific() const
 {
-    switch (SpellFamilyName)
+    switch (ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -2622,14 +2623,14 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
         case SPELLFAMILY_MAGE:
         {
             // family flags 18(Molten), 25(Frost/Ice), 28(Mage)
-            if (SpellFamilyFlags[0] & 0x12040000)
+            if (ClassOptions.SpellClassMask[0] & 0x12040000)
                 return SPELL_SPECIFIC_MAGE_ARMOR;
 
             // Arcane brillance and Arcane intelect (normal check fails because of flags difference)
-            if (SpellFamilyFlags[0] & 0x400)
+            if (ClassOptions.SpellClassMask[0] & 0x400)
                 return SPELL_SPECIFIC_MAGE_ARCANE_BRILLANCE;
 
-            if ((SpellFamilyFlags[0] & 0x1000000) && Effects[0].ApplyAuraName == SPELL_AURA_MOD_CONFUSE)
+            if ((ClassOptions.SpellClassMask[0] & 0x1000000) && Effects[0].ApplyAuraName == SPELL_AURA_MOD_CONFUSE)
                 return SPELL_SPECIFIC_MAGE_POLYMORPH;
 
             break;
@@ -2655,7 +2656,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
         case SPELLFAMILY_PRIEST:
         {
             // Divine Spirit and Prayer of Spirit
-            if (SpellFamilyFlags[0] & 0x20)
+            if (ClassOptions.SpellClassMask[0] & 0x20)
                 return SPELL_SPECIFIC_PRIEST_DIVINE_SPIRIT;
 
             // Chakra : Serenity, Chakra : Chastise and Chakra : Sanctuary
@@ -2675,7 +2676,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                 return SPELL_SPECIFIC_STING;
 
             // only hunter aspects have this (but not all aspects in hunter family)
-            if (SpellFamilyFlags.HasFlag(0x00380000, 0x00440000, 0x00001010) && Id != 67801) // ignore Deterrence
+            if (ClassOptions.SpellClassMask.HasFlag(0x00380000, 0x00440000, 0x00001010) && Id != 67801) // ignore Deterrence
                 return SPELL_SPECIFIC_ASPECT;
 
             break;
@@ -2691,7 +2692,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                 || Id == 105361)    // Seal of Command
                 return SPELL_SPECIFIC_SEAL;
 
-            if (SpellFamilyFlags[0] & 0x00002190)
+            if (ClassOptions.SpellClassMask[0] & 0x00002190)
                 return SPELL_SPECIFIC_HAND;
 
             // Judgement of Wisdom, Judgement of Light, Judgement of Justice
@@ -2699,7 +2700,7 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                 return SPELL_SPECIFIC_JUDGEMENT;
 
             // only paladin auras have this (for palaldin class family)
-            if (SpellFamilyFlags[2] & 0x00000020)
+            if (ClassOptions.SpellClassMask[2] & 0x00000020)
                 return SPELL_SPECIFIC_AURA;
 
             break;
@@ -2707,8 +2708,8 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
         case SPELLFAMILY_SHAMAN:
         {
             // family flags 10 (Lightning), 42 (Earth), 37 (Water), proc shield from T2 8 pieces bonus
-            if (SpellFamilyFlags[1] & 0x420
-                || SpellFamilyFlags[0] & 0x00000400
+            if (ClassOptions.SpellClassMask[1] & 0x420
+                || ClassOptions.SpellClassMask[0] & 0x00000400
                 || Id == 23552)
                 return SPELL_SPECIFIC_ELEMENTAL_SHIELD;
 
@@ -2824,7 +2825,7 @@ uint32 SpellInfo::GetMaxTicks() const
 
 uint32 SpellInfo::GetRecoveryTime() const
 {
-    return RecoveryTime > CategoryRecoveryTime ? RecoveryTime : CategoryRecoveryTime;
+    return Cooldowns.RecoveryTime > Cooldowns.CategoryRecoveryTime ? Cooldowns.RecoveryTime : Cooldowns.CategoryRecoveryTime;
 }
 
 uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) const
@@ -3031,7 +3032,7 @@ uint32 SpellInfo::_GetExplicitTargetMask() const
 
 bool SpellInfo::_IsPositiveEffect(uint8 effIndex, bool deep) const
 {
-    switch (SpellFamilyName)
+    switch (ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
             switch (Id)
@@ -3059,7 +3060,7 @@ bool SpellInfo::_IsPositiveEffect(uint8 effIndex, bool deep) const
             break;
         case SPELLFAMILY_MAGE:
             // Amplify Magic, Dampen Magic
-            if (SpellFamilyFlags[0] == 0x00002000)
+            if (ClassOptions.SpellClassMask[0] == 0x00002000)
                 return true;
             // Ignite
             if (Misc.SpellIconID == 45)
@@ -3407,8 +3408,7 @@ void SpellInfo::_UnloadImplicitTargetConditionLists()
 bool SpellInfo::IsBreakingCamouflageAfterHit() const
 {
     // Traps
-    if (SpellFamilyFlags[1] & 0x8002000 ||
-        SpellFamilyFlags[2] & 0x20000)
+    if (ClassOptions.SpellClassMask[1] & 0x8002000 || ClassOptions.SpellClassMask[2] & 0x20000)
         return true;
 
     // Damage casts

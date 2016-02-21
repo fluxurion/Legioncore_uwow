@@ -78,7 +78,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
     }
 
     // Explicit Diminishing Groups
-    switch (spellproto->SpellFamilyName)
+    switch (spellproto->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -104,7 +104,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_MAGE:
         {
             // Frostbite
-            if (spellproto->SpellFamilyFlags[1] & 0x80000000)
+            if (spellproto->ClassOptions.SpellClassMask[1] & 0x80000000)
                 return DIMINISHING_ROOT;
             // Shattered Barrier
             else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 12297)
@@ -116,7 +116,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             else if (spellproto->Misc.SpellIconID == 193)
                 return DIMINISHING_CONTROLLED_ROOT;
             // Dragon's Breath
-            else if (spellproto->SpellFamilyFlags[0] & 0x800000)
+            else if (spellproto->ClassOptions.SpellClassMask[0] & 0x800000)
                 return DIMINISHING_DRAGONS_BREATH;
             // Ring of Frost
             else if (spellproto->Id == 82691)
@@ -135,17 +135,17 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_WARRIOR:
         {
             // Hamstring and Piercing Howl - limit duration to 10s in PvP
-            if (spellproto->SpellFamilyFlags[0] & 0x2 || spellproto->Id == 12323 || spellproto->Id == 137637)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x2 || spellproto->Id == 12323 || spellproto->Id == 137637)
                 return DIMINISHING_LIMITONLY;
             // Charge Stun (own diminishing)
-            else if (spellproto->SpellFamilyFlags[0] & 0x01000000)
+            else if (spellproto->ClassOptions.SpellClassMask[0] & 0x01000000)
                 return DIMINISHING_CHARGE;
             break;
         }
         case SPELLFAMILY_WARLOCK:
         {
             // Curses/etc
-            if ((spellproto->SpellFamilyFlags[0] & 0x80000000) || (spellproto->SpellFamilyFlags[1] & 0x200))
+            if ((spellproto->ClassOptions.SpellClassMask[0] & 0x80000000) || (spellproto->ClassOptions.SpellClassMask[1] & 0x200))
                 return DIMINISHING_LIMITONLY;
             // Seduction
             else if (spellproto->Id == 6358 || spellproto->Id == 132412)
@@ -161,7 +161,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         {
             // Entangling Roots
             // Nature's Grasp
-            if (spellproto->SpellFamilyFlags[0] & 0x00000200)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x00000200)
                 return DIMINISHING_CONTROLLED_ROOT;
 
             switch (spellproto->Id)
@@ -181,15 +181,15 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_ROGUE:
         {
             // Gouge
-            if (spellproto->SpellFamilyFlags[0] & 0x8)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x8)
                 return DIMINISHING_DISORIENT;
             // Blind
-            else if (spellproto->SpellFamilyFlags[0] & 0x1000000)
+            else if (spellproto->ClassOptions.SpellClassMask[0] & 0x1000000)
                 return DIMINISHING_FEAR;
             // Paralytic Poison
-             else if (spellproto->SpellFamilyFlags[2] & 0x00000001)
+             else if (spellproto->ClassOptions.SpellClassMask[2] & 0x00000001)
                  return DIMINISHING_OPENING_STUN;
-            // Crippling poison - Limit to 10 seconds in PvP (No SpellFamilyFlags)
+            // Crippling poison - Limit to 10 seconds in PvP (No ClassOptions.SpellClassMask)
             else if (spellproto->Misc.SpellIconID == 163)
                 return DIMINISHING_LIMITONLY;
             break;
@@ -197,26 +197,26 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_HUNTER:
         {
             // Hunter's Mark
-            if ((spellproto->SpellFamilyFlags[0] & 0x400) && spellproto->Misc.SpellIconID == 538)
+            if ((spellproto->ClassOptions.SpellClassMask[0] & 0x400) && spellproto->Misc.SpellIconID == 538)
                 return DIMINISHING_LIMITONLY;
             // Scatter Shot (own diminishing)
-            else if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->Misc.SpellIconID == 132)
+            else if ((spellproto->ClassOptions.SpellClassMask[0] & 0x40000) && spellproto->Misc.SpellIconID == 132)
                 return DIMINISHING_SCATTER_SHOT;
             // Entrapment (own diminishing)
             else if (spellproto->GetSpellVisual(DIFFICULTY_NONE) == 7484 && spellproto->Misc.SpellIconID == 20)
                 return DIMINISHING_ENTRAPMENT;
             // Wyvern Sting mechanic is MECHANIC_SLEEP but the diminishing is DIMINISHING_DISORIENT
-            else if ((spellproto->SpellFamilyFlags[1] & 0x1000) && spellproto->Misc.SpellIconID == 1721)
+            else if ((spellproto->ClassOptions.SpellClassMask[1] & 0x1000) && spellproto->Misc.SpellIconID == 1721)
                 return DIMINISHING_DISORIENT;
             // Freezing Arrow
-            else if (spellproto->SpellFamilyFlags[0] & 0x8)
+            else if (spellproto->ClassOptions.SpellClassMask[0] & 0x8)
                 return DIMINISHING_DISORIENT;
             break;
         }
         case SPELLFAMILY_PALADIN:
         {
             // Judgement of Justice - limit duration to 10s in PvP
-            if (spellproto->SpellFamilyFlags[0] & 0x100000)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x100000)
                 return DIMINISHING_LIMITONLY;
             // Turn Evil
             else if (spellproto->Id == 10326 || spellproto->Id == 145067)
@@ -229,7 +229,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             if (spellproto->Misc.SpellIconID == 2797)
                 return DIMINISHING_DISORIENT;
             // Mark of Blood
-            else if ((spellproto->SpellFamilyFlags[0] & 0x10000000) && spellproto->Misc.SpellIconID == 2285)
+            else if ((spellproto->ClassOptions.SpellClassMask[0] & 0x10000000) && spellproto->Misc.SpellIconID == 2285)
                 return DIMINISHING_LIMITONLY;
             break;
         }
@@ -314,12 +314,12 @@ int32 GetDiminishingReturnsLimitDuration(DiminishingGroup group, SpellInfo const
         return 0;
 
     // Explicit diminishing duration
-    switch (spellproto->SpellFamilyName)
+    switch (spellproto->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_DRUID:
         {
             // Faerie Fire and Faerie Swarm - limit to 20 seconds in PvP (5.4)
-            if (spellproto->SpellFamilyFlags[0] & 0x400 || spellproto->Id == 102355)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x400 || spellproto->Id == 102355)
                 return 20 * IN_MILLISECONDS;
             if (spellproto->Id == 33786)
                 return 6 * IN_MILLISECONDS;
@@ -328,33 +328,33 @@ int32 GetDiminishingReturnsLimitDuration(DiminishingGroup group, SpellInfo const
         case SPELLFAMILY_HUNTER:
         {
             // Wyvern Sting
-            if (spellproto->SpellFamilyFlags[1] & 0x1000)
+            if (spellproto->ClassOptions.SpellClassMask[1] & 0x1000)
                 return 6 * IN_MILLISECONDS;
             // Wyvern Sting
             if (spellproto->Id == 117526)
                 return 3 * IN_MILLISECONDS;
             // Hunter's Mark
-            if (spellproto->SpellFamilyFlags[0] & 0x400)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x400)
                 return 20 * IN_MILLISECONDS;
             break;
         }
         case SPELLFAMILY_PALADIN:
         {
             // Repentance - limit to 6 seconds in PvP
-            if (spellproto->SpellFamilyFlags[0] & 0x4)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x4)
                 return 6 * IN_MILLISECONDS;
             break;
         }
         case SPELLFAMILY_WARLOCK:
         {
             // Banish - limit to 6 seconds in PvP
-            if (spellproto->SpellFamilyFlags[1] & 0x8000000)
+            if (spellproto->ClassOptions.SpellClassMask[1] & 0x8000000)
                 return 6 * IN_MILLISECONDS;
             // Curse of Tongues - limit to 12 seconds in PvP
-            else if (spellproto->SpellFamilyFlags[2] & 0x800)
+            else if (spellproto->ClassOptions.SpellClassMask[2] & 0x800)
                 return 12 * IN_MILLISECONDS;
             // Curse of Elements - limit to 120 seconds in PvP
-            else if (spellproto->SpellFamilyFlags[1] & 0x200)
+            else if (spellproto->ClassOptions.SpellClassMask[1] & 0x200)
                 return 120 * IN_MILLISECONDS;
             break;
         }
@@ -890,13 +890,13 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellPr
                 return false;
 
             // Check (if set) for spellFamilyName
-            if (spellProcEvent->spellFamilyName && (spellProcEvent->spellFamilyName != procSpell->SpellFamilyName))
+            if (spellProcEvent->spellFamilyName && (spellProcEvent->spellFamilyName != procSpell->ClassOptions.SpellClassSet))
                 return false;
 
             // spellFamilyName is Ok need check for spellFamilyMask if present
             if (spellProcEvent->spellFamilyMask)
             {
-                if (!(spellProcEvent->spellFamilyMask & procSpell->SpellFamilyFlags))
+                if (!(spellProcEvent->spellFamilyMask & procSpell->ClassOptions.SpellClassMask))
                     return false;
                 hasFamilyMask = true;
                 // Some spells are not considered as active even with have spellfamilyflags
@@ -968,10 +968,10 @@ bool SpellMgr::CanSpellTriggerProcOnEvent(SpellProcEntry const& procEntry, ProcE
     // check spell family name/flags (if set) for spells
     if (eventInfo.GetTypeMask() & (PERIODIC_PROC_FLAG_MASK | SPELL_PROC_FLAG_MASK | PROC_FLAG_DONE_TRAP_ACTIVATION))
     {
-        if (procEntry.spellFamilyName && (procEntry.spellFamilyName != eventInfo.GetSpellInfo()->SpellFamilyName))
+        if (procEntry.spellFamilyName && (procEntry.spellFamilyName != eventInfo.GetSpellInfo()->ClassOptions.SpellClassSet))
             return false;
 
-        if (procEntry.spellFamilyMask && !(procEntry.spellFamilyMask & eventInfo.GetSpellInfo()->SpellFamilyFlags))
+        if (procEntry.spellFamilyMask && !(procEntry.spellFamilyMask & eventInfo.GetSpellInfo()->ClassOptions.SpellClassMask))
             return false;
     }
 
@@ -4028,7 +4028,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 132464: // Chi Wave (Pos)
                 case 121093: // Monk - Gift of the Naaru
-                    spellInfo->SpellFamilyName = SPELLFAMILY_MONK;
+                    spellInfo->ClassOptions.SpellClassSet = SPELLFAMILY_MONK;
                     break;
                 case 145640: // Chi Brew
                     spellInfo->Effects[EFFECT_1].TargetA = TARGET_UNIT_CASTER;
@@ -4273,7 +4273,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 114942:// Healing Tide
                     spellInfo->Misc.Attributes[1] &= ~SPELL_ATTR1_CANT_TARGET_SELF;
-                    spellInfo->SpellFamilyFlags[0] = 0x00002000;
+                    spellInfo->ClassOptions.SpellClassMask[0] = 0x00002000;
                     break;
                 case 116943:// Earthgrab
                     spellInfo->Misc.Attributes[5] |= SPELL_ATTR5_START_PERIODIC_AT_APPLY;
@@ -4426,7 +4426,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 6358:  // Seduce (succubus)
                 case 115268: // Mesmerize (succubus)
-                    spellInfo->SpellFamilyName = SPELLFAMILY_WARLOCK;
+                    spellInfo->ClassOptions.SpellClassSet = SPELLFAMILY_WARLOCK;
                     break;
                 case 131740: // Corruption (Malefic Grasp)
                 case 131736: // Unstable Affliction (Malefic Grasp)
@@ -5171,12 +5171,12 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->Misc.Attributes[4] |= SPELL_ATTR4_TRIGGERED;
                     break;
                 case 8177: //totem
-                    spellInfo->RecoveryTime = 25000;
-                    spellInfo->CategoryRecoveryTime = 0;
+                    spellInfo->Cooldowns.RecoveryTime = 25000;
+                    spellInfo->Cooldowns.CategoryRecoveryTime = 0;
                     break;
                 case 45284: //Lightning Bolt
-                    spellInfo->SpellFamilyFlags[0] = 0x00000001;
-                    spellInfo->SpellFamilyFlags[2] = 0;
+                    spellInfo->ClassOptions.SpellClassMask[0] = 0x00000001;
+                    spellInfo->ClassOptions.SpellClassMask[2] = 0;
                     break;
                 case 117679:    // Incarnation (Passive)
                     spellInfo->Misc.Attributes[0] &= ~SPELL_ATTR0_CANT_CANCEL;
@@ -5592,16 +5592,16 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
             }
 
-            switch (spellInfo->SpellFamilyName)
+            switch (spellInfo->ClassOptions.SpellClassSet)
             {
             case SPELLFAMILY_WARRIOR:
                 // Shout
-                if (spellInfo->SpellFamilyFlags[0] & 0x20000 || spellInfo->SpellFamilyFlags[1] & 0x20)
+                if (spellInfo->ClassOptions.SpellClassMask[0] & 0x20000 || spellInfo->ClassOptions.SpellClassMask[1] & 0x20)
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_AURA_CC;
                 break;
             case SPELLFAMILY_DRUID:
                 // Roar
-                if (spellInfo->SpellFamilyFlags[0] & 0x8)
+                if (spellInfo->ClassOptions.SpellClassMask[0] & 0x8)
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_AURA_CC;
                 break;
             default:

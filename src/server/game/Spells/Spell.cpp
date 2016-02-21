@@ -1375,7 +1375,7 @@ void Spell::SelectImplicitAreaTargets(SpellEffIndex effIndex, SpellImplicitTarge
         int32 power = -1;
         bool checkOnFullHealth = false;
 
-        switch (m_spellInfo->SpellFamilyName)
+        switch (m_spellInfo->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:
                 switch (m_spellInfo->Id)
@@ -1413,7 +1413,7 @@ void Spell::SelectImplicitAreaTargets(SpellEffIndex effIndex, SpellImplicitTarge
                 }
                 break;
             case SPELLFAMILY_PRIEST:
-                if (m_spellInfo->SpellFamilyFlags[0] == 0x10000000) // Circle of Healing
+                if (m_spellInfo->ClassOptions.SpellClassMask[0] == 0x10000000) // Circle of Healing
                 {
                     maxSize = m_caster->HasAura(55675) ? 6 : 5; // Glyph of Circle of Healing
                     power = POWER_HEALTH;
@@ -2396,7 +2396,7 @@ void Spell::prepareDataForTriggerSystem(AuraEffect const* /*triggeredByAura**/)
         to prevent chain proc of these spells */
 
     // Hellfire Effect - trigger as DOT
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->SpellFamilyFlags[0] & 0x00000040)
+    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_WARLOCK && m_spellInfo->ClassOptions.SpellClassMask[0] & 0x00000040)
     {
         m_procAttacker = PROC_FLAG_DONE_PERIODIC;
         m_procVictim   = PROC_FLAG_TAKEN_PERIODIC;
@@ -2836,10 +2836,10 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     if (canEffectTrigger && !procAttacker && !procVictim)
     {
         // Hunter trap spells - activation proc for Lock and Load, Entrapment and Misdirection
-        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER &&
-            (m_spellInfo->SpellFamilyFlags[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
+        if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER &&
+            (m_spellInfo->ClassOptions.SpellClassMask[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
             m_spellInfo->Id == 57879 || m_spellInfo->Id == 13810 ||                     // Snake Trap - done this way to avoid double proc
-            m_spellInfo->SpellFamilyFlags[2] & 0x00024000)) // Explosive and Immolation Trap
+            m_spellInfo->ClassOptions.SpellClassMask[2] & 0x00024000)) // Explosive and Immolation Trap
             procAttacker |= PROC_FLAG_DONE_TRAP_ACTIVATION;
 
         bool dmgSpell = m_damage || m_healing;
@@ -3015,7 +3015,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         m_blocked = damageInfo.blocked;
 
         // Hunter's pet special attacks
-        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && m_spellInfo->SpellFamilyFlags[0] & 0x00080000)
+        if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER && m_spellInfo->ClassOptions.SpellClassMask[0] & 0x00080000)
             if (Unit * owner = caster->GetOwner())
             {
                 // Cobra Strikes
@@ -3694,7 +3694,7 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
             TriggerGlobalCooldown();
 
         //item: first cast may destroy item and second cast causes crash
-        if (!m_casttime && !m_spellInfo->StartRecoveryTime && !m_castItemGUID && GetCurrentContainer() == CURRENT_GENERIC_SPELL)
+        if (!m_casttime && !m_spellInfo->Cooldowns.StartRecoveryTime && !m_castItemGUID && GetCurrentContainer() == CURRENT_GENERIC_SPELL)
             cast(true);
     }
 }
@@ -4022,10 +4022,10 @@ void Spell::cast(bool skipCheck)
             }
 
             // Hunter trap spells - activation proc for Lock and Load, Entrapment and Misdirection
-            if (m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER &&
-                (m_spellInfo->SpellFamilyFlags[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
+            if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER &&
+                (m_spellInfo->ClassOptions.SpellClassMask[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
                 m_spellInfo->Id == 57879 || m_spellInfo->Id == 13810 ||                     // Snake Trap - done this way to avoid double proc
-                m_spellInfo->SpellFamilyFlags[2] & 0x00024000)) // Explosive and Immolation Trap
+                m_spellInfo->ClassOptions.SpellClassMask[2] & 0x00024000)) // Explosive and Immolation Trap
                 procAttacker |= PROC_FLAG_DONE_TRAP_ACTIVATION;
 
             switch (m_spellInfo->Categories.DefenseType)
@@ -4100,7 +4100,7 @@ void Spell::cast(bool skipCheck)
 
     CallScriptAfterCastHandlers();
 
-    if (m_spellInfo->RecoveryTime)
+    if (m_spellInfo->Cooldowns.RecoveryTime)
         if (Player* plr = m_caster->ToPlayer())
             if (plr->HasInstantCastModForSpell(m_spellInfo))
                 plr->RemoveSpellCooldown(spellid, true);
@@ -4297,10 +4297,10 @@ void Spell::_handle_immediate_phase()
     if (!procAttacker)
     {
         // Hunter trap spells - activation proc for Lock and Load, Entrapment and Misdirection
-        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER &&
-            (m_spellInfo->SpellFamilyFlags[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
+        if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER &&
+            (m_spellInfo->ClassOptions.SpellClassMask[0] & 0x18 ||     // Freezing and Frost Trap, Freezing Arrow
             m_spellInfo->Id == 57879 || m_spellInfo->Id == 13810 ||                     // Snake Trap - done this way to avoid double proc
-            m_spellInfo->SpellFamilyFlags[2] & 0x00024000)) // Explosive and Immolation Trap
+            m_spellInfo->ClassOptions.SpellClassMask[2] & 0x00024000)) // Explosive and Immolation Trap
             procAttacker |= PROC_FLAG_DONE_TRAP_ACTIVATION;
 
         //procAttacker |= PROC_FLAG_DONE_SPELL_MAGIC_DMG_CLASS_POS;
@@ -4318,7 +4318,7 @@ void Spell::_handle_immediate_phase()
     }
     else
     {
-        if (m_spellInfo->StartRecoveryTime && m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC)
+        if (m_spellInfo->Cooldowns.StartRecoveryTime && m_spellInfo->Categories.DefenseType == SPELL_DAMAGE_CLASS_MAGIC)
         {
             std::vector<uint32> spellId;
             std::list<AuraType> auralist;
@@ -5047,7 +5047,7 @@ void Spell::SendSpellGo()
     if (m_targets.HasTraj())
         castFlags |= CAST_FLAG_ADJUST_MISSILE;
 
-    if (!m_spellInfo->StartRecoveryTime)
+    if (!m_spellInfo->Cooldowns.StartRecoveryTime)
         castFlags |= CAST_FLAG_NO_GCD;
 
     // Reset m_needAliveTargetMask for non channeled spell
@@ -5727,7 +5727,7 @@ void Spell::TakeRunePower(bool didHit)
     for (uint8 i = 0; i < MAX_RUNES; ++i)
         if (player->IsLastRuneUsed(i))
         {
-            uint32 cooldown = ((m_spellInfo->SpellFamilyFlags[0] & SPELLFAMILYFLAG_DK_DEATH_STRIKE) > 0 || didHit) ? RUNE_BASE_COOLDOWN : uint32(RUNE_MISS_COOLDOWN);
+            uint32 cooldown = ((m_spellInfo->ClassOptions.SpellClassMask[0] & SPELLFAMILYFLAG_DK_DEATH_STRIKE) > 0 || didHit) ? RUNE_BASE_COOLDOWN : uint32(RUNE_MISS_COOLDOWN);
             player->SetRuneCooldown(i, cooldown);
             if (!player->IsBlockedRuneConvert(i))
                 player->SetConvertIn(i, player->GetBaseRune(i));
@@ -6256,7 +6256,7 @@ SpellCastResult Spell::CheckCast(bool strict)
 
     Unit::AuraEffectList const& blockSpells = m_caster->GetAuraEffectsByType(SPELL_AURA_BLOCK_SPELL_FAMILY);
     for (Unit::AuraEffectList::const_iterator blockItr = blockSpells.begin(); blockItr != blockSpells.end(); ++blockItr)
-        if (uint32((*blockItr)->GetMiscValue()) == m_spellInfo->SpellFamilyName && (*blockItr)->GetSpellInfo()->Effects[(*blockItr)->GetEffIndex()].TriggerSpell != m_spellInfo->Id)
+        if (uint32((*blockItr)->GetMiscValue()) == m_spellInfo->ClassOptions.SpellClassSet && (*blockItr)->GetSpellInfo()->Effects[(*blockItr)->GetEffIndex()].TriggerSpell != m_spellInfo->Id)
             return SPELL_FAILED_SPELL_UNAVAILABLE;
 
     bool reqCombat = true;
@@ -6616,7 +6616,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             case SPELL_EFFECT_DUMMY:
             {
                 // Death Coil
-                if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->SpellFamilyFlags[0] == 0x2000)
+                if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->ClassOptions.SpellClassMask[0] == 0x2000)
                 {
                     Unit* target = m_targets.GetUnitTarget();
                     if (!target || (target == m_caster && !m_caster->HasAura(49039)) || (target->IsFriendlyTo(m_caster) && target->GetCreatureType() != CREATURE_TYPE_UNDEAD && !m_caster->HasAura(63333)))
@@ -6800,7 +6800,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
             case SPELL_EFFECT_CHARGE:
             {
-                if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARRIOR)
+                if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_WARRIOR)
                 {
                     // Warbringer - can't be handled in proc system - should be done before checkcast root check and charge effect process
                     if (strict && m_caster->IsScriptOverriden(m_spellInfo, 6953))
@@ -7963,7 +7963,7 @@ SpellCastResult Spell::CheckItems()
                         }
                         else
                         {
-                            if (!(m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && (m_spellInfo->SpellFamilyFlags[0] & 0x40000000)))
+                            if (!(m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_MAGE && (m_spellInfo->ClassOptions.SpellClassMask[0] & 0x40000000)))
                                 return SPELL_FAILED_TOO_MANY_OF_ITEM;
                             else if (!(p_caster->HasItemCount(m_spellInfo->GetEffect(i, m_diffMode)->ItemType)))
                                 return SPELL_FAILED_TOO_MANY_OF_ITEM;
@@ -8643,7 +8643,7 @@ void Spell::HandleLaunchPhase()
             continue;
 
         // do not consume ammo anymore for Hunter's volley spell
-        if (IsTriggered() && m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && m_spellInfo->IsTargetingArea())
+        if (IsTriggered() && m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER && m_spellInfo->IsTargetingArea())
             usesAmmo = false;
 
         if (usesAmmo)
@@ -9405,7 +9405,7 @@ bool Spell::CanExecuteTriggersOnHit(uint32 effMask, SpellInfo const* triggeredBy
 void Spell::PrepareTriggersExecutedOnHit()
 {
     // todo: move this to scripts
-    if (m_spellInfo->SpellFamilyName)
+    if (m_spellInfo->ClassOptions.SpellClassSet)
     {
         SpellInfo const* excludeTargetSpellInfo = sSpellMgr->GetSpellInfo(m_spellInfo->AuraRestrictions.ExcludeTargetAuraSpell);
         if (excludeTargetSpellInfo && !excludeTargetSpellInfo->IsPositive())
@@ -9459,7 +9459,7 @@ bool Spell::HasGlobalCooldown()
 
 int32 Spell::GetGlobalCooldown()
 {
-    int32 gcd = m_spellInfo->StartRecoveryTime;
+    int32 gcd = m_spellInfo->Cooldowns.StartRecoveryTime;
     if (!gcd)
         return 0;
 
@@ -9470,7 +9470,7 @@ int32 Spell::GetGlobalCooldown()
     // Global cooldown can't leave range 1..1.5 secs
     // There are some spells (mostly not casted directly by player) that have < 1 sec and > 1.5 sec global cooldowns
     // but as tests show are not affected by any spell mods.
-    if (m_spellInfo->StartRecoveryTime >= MIN_GCD && m_spellInfo->StartRecoveryTime <= MAX_GCD)
+    if (m_spellInfo->Cooldowns.StartRecoveryTime >= MIN_GCD && m_spellInfo->Cooldowns.StartRecoveryTime <= MAX_GCD)
     {
         // gcd modifier auras are applied only to own spells and only players have such mods
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -9483,7 +9483,7 @@ int32 Spell::GetGlobalCooldown()
 
 void Spell::TriggerGlobalCooldown()
 {
-    int32 gcd = m_spellInfo->StartRecoveryTime;
+    int32 gcd = m_spellInfo->Cooldowns.StartRecoveryTime;
     if (!gcd)
         return;
 
@@ -9494,7 +9494,7 @@ void Spell::TriggerGlobalCooldown()
     // Global cooldown can't leave range 1..1.5 secs
     // There are some spells (mostly not casted directly by player) that have < 1 sec and > 1.5 sec global cooldowns
     // but as tests show are not affected by any spell mods.
-    if (m_spellInfo->StartRecoveryTime >= MIN_GCD && m_spellInfo->StartRecoveryTime <= MAX_GCD)
+    if (m_spellInfo->Cooldowns.StartRecoveryTime >= MIN_GCD && m_spellInfo->Cooldowns.StartRecoveryTime <= MAX_GCD)
     {
         // Apply haste rating
         gcd = int32(float(gcd) * m_caster->GetFloatValue(UNIT_FIELD_MOD_CASTING_SPEED));
@@ -9520,7 +9520,7 @@ void Spell::TriggerGlobalCooldown()
 
 void Spell::CancelGlobalCooldown()
 {
-    if (!m_spellInfo->StartRecoveryTime)
+    if (!m_spellInfo->Cooldowns.StartRecoveryTime)
         return;
 
     // Cancel global cooldown when interrupting current cast

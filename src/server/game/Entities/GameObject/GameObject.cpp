@@ -1811,7 +1811,7 @@ void GameObject::CastSpell(Unit* target, uint32 spellId)
             }
         }
 
-        if (spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && spellInfo->Misc.SpellIconID != 27)
+        if (spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_HUNTER && spellInfo->Misc.SpellIconID != 27)
             target->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
     }
 

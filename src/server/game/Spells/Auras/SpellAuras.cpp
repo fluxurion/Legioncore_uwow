@@ -1938,7 +1938,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
     // mods at aura apply
     if (apply)
     {
-        switch (GetSpellInfo()->SpellFamilyName)
+        switch (GetSpellInfo()->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:
                 switch (GetId())
@@ -1965,7 +1965,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 if (!caster)
                     break;
                 // Todo: This should be moved to similar function in spell::hit
-                if (GetSpellInfo()->SpellFamilyFlags[0] & 0x01000000)
+                if (GetSpellInfo()->ClassOptions.SpellClassMask[0] & 0x01000000)
                 {
                     // Polymorph Sound - Sheep && Penguin
                     if (GetSpellInfo()->Misc.SpellIconID == 82 && GetSpellInfo()->GetSpellVisual(DIFFICULTY_NONE) == 12978)
@@ -2005,7 +2005,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 if (!caster)
                     break;
                 // Devouring Plague
-                if (GetSpellInfo()->SpellFamilyFlags[0] & 0x02000000 && GetEffect(0))
+                if (GetSpellInfo()->ClassOptions.SpellClassMask[0] & 0x02000000 && GetEffect(0))
                 {
                     // Improved Devouring Plague
                     if (AuraEffect const* aurEff = caster->GetDummyAuraEffect(SPELLFAMILY_PRIEST, 3790, 0))
@@ -2067,7 +2067,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             case SPELLFAMILY_ROGUE:
             {
                 // Sprint (skip non player casted spells by category)
-                if (GetSpellInfo()->SpellFamilyFlags[0] & 0x40 && GetSpellInfo()->Categories.Category == 44)
+                if (GetSpellInfo()->ClassOptions.SpellClassMask[0] & 0x40 && GetSpellInfo()->Categories.Category == 44)
                 {
                     // in official maybe there is only one icon?
                     if (target->HasAura(58039)) // Glyph of Blurred Speed
@@ -2123,7 +2123,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
     // mods at aura remove
     else
     {
-        switch (GetSpellInfo()->SpellFamilyName)
+        switch (GetSpellInfo()->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:
                 switch (GetId())
@@ -2165,7 +2165,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 if (!caster)
                     break;
                 // Improved Fear
-                if (GetSpellInfo()->SpellFamilyFlags[1] & 0x00000400)
+                if (GetSpellInfo()->ClassOptions.SpellClassMask[1] & 0x00000400)
                 {
                     if (AuraEffect* aurEff = caster->GetAuraEffect(SPELL_AURA_DUMMY, SPELLFAMILY_WARLOCK, 98, 0))
                     {
@@ -2245,7 +2245,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             }
             case SPELLFAMILY_HUNTER:
                 // Glyph of Freezing Trap
-                if (GetSpellInfo()->SpellFamilyFlags[0] & 0x00000008)
+                if (GetSpellInfo()->ClassOptions.SpellClassMask[0] & 0x00000008)
                     if (caster && caster->HasAura(56845))
                         target->CastSpell(target, 61394, true);
                 
@@ -2260,7 +2260,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
     }
 
     // mods at aura apply or remove
-    switch (GetSpellInfo()->SpellFamilyName)
+    switch (GetSpellInfo()->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
             switch (GetId())
@@ -2275,7 +2275,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             break;
         case SPELLFAMILY_DRUID:
             // Enrage
-            if ((GetSpellInfo()->SpellFamilyFlags[0] & 0x80000) && GetSpellInfo()->Misc.SpellIconID == 961)
+            if ((GetSpellInfo()->ClassOptions.SpellClassMask[0] & 0x80000) && GetSpellInfo()->Misc.SpellIconID == 961)
             {
                 if (target->HasAura(70726)) // Item - Druid T10 Feral 4P Bonus
                     if (apply)
@@ -2468,7 +2468,7 @@ bool Aura::CanStackWith(Aura const* existingAura) const
             return false;
     }
 
-    if (m_spellInfo->SpellFamilyName != existingSpellInfo->SpellFamilyName)
+    if (m_spellInfo->ClassOptions.SpellClassSet != existingSpellInfo->ClassOptions.SpellClassSet)
         return true;
 
     if (!sameCaster)

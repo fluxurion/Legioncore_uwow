@@ -436,7 +436,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
 
     if (unitTarget && unitTarget->isAlive())
     {
-        switch (m_spellInfo->SpellFamilyName)
+        switch (m_spellInfo->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:
             {
@@ -511,7 +511,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
             case SPELLFAMILY_WARLOCK:
             {
                 // Incinerate Rank 1 & 2
-                if ((m_spellInfo->SpellFamilyFlags[1] & 0x000040) && m_spellInfo->Misc.SpellIconID == 2128)
+                if ((m_spellInfo->ClassOptions.SpellClassMask[1] & 0x000040) && m_spellInfo->Misc.SpellIconID == 2128)
                 {
                     // Incinerate does more dmg (dmg/6) if the target have Immolate debuff.
                     // Check aura state for speed but aura state set not only for Immolate spell
@@ -1059,7 +1059,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
     }
 
     // selection by spell family
-    switch (m_spellInfo->SpellFamilyName)
+    switch (m_spellInfo->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -1349,7 +1349,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         }
         case SPELLFAMILY_DEATHKNIGHT:
             // Death Coil
-            if (m_spellInfo->SpellFamilyFlags[0] & SPELLFAMILYFLAG_DK_DEATH_COIL)
+            if (m_spellInfo->ClassOptions.SpellClassMask[0] & SPELLFAMILYFLAG_DK_DEATH_COIL)
             {
                 if (m_caster->IsFriendlyTo(unitTarget))
                 {
@@ -1582,8 +1582,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     }
 
     // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
-    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
+    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->Cooldowns.CategoryRecoveryTime && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
     // Hack. Lana'thel Vampiric Bite
@@ -1681,8 +1680,7 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
     }
 
     // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
-    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
+    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->Cooldowns.CategoryRecoveryTime && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
     // original caster guid only for GO cast
@@ -2051,7 +2049,7 @@ void Spell::EffectTeleportUnits(SpellEffIndex /*effIndex*/)
         }
     }
     // Glyph of Rapid Teleportation 
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags[0] & 0x80000000 && m_caster->HasAura(89749))
+    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_MAGE && m_spellInfo->ClassOptions.SpellClassMask[0] & 0x80000000 && m_caster->HasAura(89749))
         m_caster->CastSpell(m_caster, 46989, true);
 }
 
@@ -2307,7 +2305,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
                 break;
         }
         // Death Pact - return pct of max health to caster
-        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->SpellFamilyFlags[0] & 0x00080000)
+        if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->ClassOptions.SpellClassMask[0] & 0x00080000)
             addhealth = caster->SpellHealingBonusDone(unitTarget, m_spellInfo, int32(caster->CountPctFromMaxHealth(damage)), HEAL, effIndex);
         else
         {
@@ -3713,7 +3711,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     if (LastDispelEff && hasPredictedDispel == 1)
         if (Player* player = m_caster->ToPlayer())
-            if (m_spellInfo->RecoveryTime <= 8000 && m_spellInfo->IsPositive())
+            if (m_spellInfo->Cooldowns.RecoveryTime <= 8000 && m_spellInfo->IsPositive())
                 player->RemoveSpellCooldown(m_spellInfo->Id, true);
 
     if (dispel_list.empty())
@@ -3780,7 +3778,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     // On success dispel
     // Devour Magic
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
+    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
     {
         m_caster->CastSpell(m_caster, 19658, true);
         // Glyph of Felhunter
@@ -4428,7 +4426,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
     int32 spell_bonus = 0;                                  // bonus specific for spell
     bool calcAllEffects = true;
 
-    switch (m_spellInfo->SpellFamilyName)
+    switch (m_spellInfo->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -4505,7 +4503,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
         case SPELLFAMILY_DRUID:
         {
             // Mangle (Cat): CP
-            if (m_spellInfo->SpellFamilyFlags[1] & 0x400)
+            if (m_spellInfo->ClassOptions.SpellClassMask[1] & 0x400)
             {
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
@@ -4529,7 +4527,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
         case SPELLFAMILY_DEATHKNIGHT:
         {
             // Obliterate (12.5% more damage per disease)
-            if (m_spellInfo->SpellFamilyFlags[1] & 0x20000)
+            if (m_spellInfo->ClassOptions.SpellClassMask[1] & 0x20000)
             {
                 float bonusPct = m_spellInfo->GetEffect(EFFECT_2, m_diffMode)->CalcValue(m_caster) * unitTarget->GetDiseasesByCaster(m_caster->GetGUID(), false) / 2.0f;
                 // Death Knight T8 Melee 4P Bonus
@@ -4539,7 +4537,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                 break;
             }
             // Heart Strike
-            if (m_spellInfo->SpellFamilyFlags[0] & 0x1000000)
+            if (m_spellInfo->ClassOptions.SpellClassMask[0] & 0x1000000)
             {
                 float bonusPct = m_spellInfo->GetEffect(EFFECT_2, m_diffMode)->CalcValue(m_caster) * unitTarget->GetDiseasesByCaster(m_caster->GetGUID());
                 // Death Knight T8 Melee 4P Bonus
@@ -4883,7 +4881,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
 
     // TODO: we must implement hunter pet summon at login there (spell 6962)
 
-    switch (m_spellInfo->SpellFamilyName)
+    switch (m_spellInfo->ClassOptions.SpellClassSet)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -4996,7 +4994,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         AuraEffect const* aurEff = *i;
                         SpellInfo const* spellInfo = aurEff->GetSpellInfo();
                         // search our Blood Plague and Frost Fever on target
-                        if (spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && spellInfo->SpellFamilyFlags[2] & 0x2 &&
+                        if (spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_DEATHKNIGHT && spellInfo->ClassOptions.SpellClassMask[2] & 0x2 &&
                             aurEff->GetCasterGUID() == m_caster->GetGUID())
                         {
                             uint32 countMin = aurEff->GetBase()->GetMaxDuration();
@@ -5547,7 +5545,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         case SPELLFAMILY_WARRIOR:
         {
             // Shattering Throw
-            if (m_spellInfo->SpellFamilyFlags[1] & 0x00400000)
+            if (m_spellInfo->ClassOptions.SpellClassMask[1] & 0x00400000)
             {
                 if (!unitTarget)
                     return;
@@ -6497,7 +6495,7 @@ void Spell::EffectKnockBack(SpellEffIndex effIndex)
         return;
 
     // Thunderstorm
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_SHAMAN && m_spellInfo->SpellFamilyFlags[1] & 0x00002000)
+    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_SHAMAN && m_spellInfo->ClassOptions.SpellClassMask[1] & 0x00002000)
     {
         // Glyph of Thunderstorm
         if (m_caster->HasAura(62132))
@@ -7154,7 +7152,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffIndex effIndex)
 
     // On success dispel
     // Devour Magic
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
+    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_PET_ABILITY && m_spellInfo->Categories.Category == SPELLCATEGORY_DEVOUR_MAGIC)
     {
         m_caster->CastSpell(m_caster, 19658, true);
         // Glyph of Felhunter

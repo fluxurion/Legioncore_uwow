@@ -4827,8 +4827,8 @@ void Player::RemoveArenaSpellCooldowns(bool removeActivePetCooldowns)
         SpellInfo const* entry = sSpellMgr->GetSpellInfo(itr->first);
         // check if spellentry is present and if the cooldown is less or equal to 10 min
         if (entry &&
-            entry->RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
-            entry->CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
+            entry->Cooldowns.RecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
+            entry->Cooldowns.CategoryRecoveryTime <= 10 * MINUTE * IN_MILLISECONDS &&
             (entry->Category.Flags & SPELL_CATEGORY_FLAGS_IS_DAILY_COOLDOWN) == 0)
         {
             // remove & notify
@@ -13024,7 +13024,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
                     sLog->outError(LOG_FILTER_PLAYER, "Weapon switch cooldown spell %u couldn't be found in Spell.dbc", cooldownSpell);
                 else
                 {
-                    m_weaponChangeTimer = spellProto->StartRecoveryTime;
+                    m_weaponChangeTimer = spellProto->Cooldowns.StartRecoveryTime;
 
                     GetGlobalCooldownMgr().AddGlobalCooldown(spellProto, m_weaponChangeTimer);
 
@@ -22499,7 +22499,7 @@ void Player::RestoreSpellMods(Spell* spell, uint32 ownerAuraId, Aura* aura)
             if (iterMod == spell->m_appliedMods.end())
                 continue;
             // secondly, check if the current mod is one of the spellmods applied by the mod aura
-            if (!(mod->mask & spell->m_spellInfo->SpellFamilyFlags))
+            if (!(mod->mask & spell->m_spellInfo->ClassOptions.SpellClassMask))
                 continue;
 
             // remove from list
@@ -23783,8 +23783,8 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
     if (rec < 0.0 && catrec < 0.0)
     {
         cat = spellInfo->Categories.Category;
-        rec = spellInfo->RecoveryTime;
-        catrec = spellInfo->CategoryRecoveryTime;
+        rec = spellInfo->Cooldowns.RecoveryTime;
+        catrec = spellInfo->Cooldowns.CategoryRecoveryTime;
     }
 
     double curTime = getPreciseTime();
@@ -24932,7 +24932,7 @@ void Player::resetSpells(bool myClassOnly)
                 continue;
 
             // skip other spell families
-            if (spellInfo->SpellFamilyName != family)
+            if (spellInfo->ClassOptions.SpellClassSet != family)
                 continue;
 
             // skip broken spells
@@ -25673,11 +25673,9 @@ bool Player::CanNoReagentCast(SpellInfo const* spellInfo) const
 
     // Check no reagent use mask
     flag128 noReagentMask;
-    noReagentMask[0] = GetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK);
-    noReagentMask[1] = GetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK+1);
-    noReagentMask[2] = GetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK+2);
-    noReagentMask[3] = GetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK+3);
-    if (spellInfo->SpellFamilyFlags & noReagentMask)
+    for (uint8 i = 0; i < 4; ++i)
+        noReagentMask[i] = GetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK + i);
+    if (spellInfo->ClassOptions.SpellClassMask & noReagentMask)
         return true;
 
     return false;
@@ -29403,9 +29401,9 @@ void Player::UpdateSpellHastDurationRecovery()
     //         uint32 SpellId = itr->first;
 
     if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(/*SpellId*/116847))
-        //             if (!spellInfo->IsChanneled() && (spellInfo->HasAttribute(SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY)) && spellInfo->RecoveryTime == spellInfo->GetMaxDuration())
+        //             if (!spellInfo->IsChanneled() && (spellInfo->HasAttribute(SPELL_ATTR8_HASTE_AFFECT_DURATION_RECOVERY)) && spellInfo->Cooldowns.RecoveryTime == spellInfo->GetMaxDuration())
         //             {
-        _mask |= spellInfo->SpellFamilyFlags;
+        _mask |= spellInfo->ClassOptions.SpellClassMask;
     //             }
     //     }
 
