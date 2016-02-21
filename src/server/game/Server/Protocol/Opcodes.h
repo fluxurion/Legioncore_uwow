@@ -1592,7 +1592,7 @@ enum OpcodeServer : uint16
     SMSG_TRADE_UPDATED                                = 0x2581,
     SMSG_TRAINER_BUY_FAILED                           = 0x2714,
     SMSG_TRAINER_LIST                                 = 0x2713,
-    SMSG_TRANSFER_ABORTED                             = 0xBADD,
+    SMSG_TRANSFER_ABORTED                             = 0x273F,
     SMSG_TRANSFER_PENDING                             = 0x25E4,
     SMSG_TRIGGER_CINEMATIC                            = 0x27FF,
     SMSG_TRIGGER_MOVIE                                = 0x26F4,
