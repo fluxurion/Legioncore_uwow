@@ -1451,13 +1451,17 @@ GameObject* Garrison::Plot::CreateGameObject(Map* map, GarrisonFactionIndex fact
             if (buildingEtry)
                 linkGO->garrBuildingType = buildingEtry->Type;
 
-            linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
-
             if (specSpawn && buildingEtry)
             {
                 if (uint32 specTime = garrison->GetSpecialSpawnBuildingTime(buildingEtry->Type))
-                    linkGO->SetRespawnTime(specTime);
+                {
+                    int32 d = specTime - time(nullptr);
+                    if (d > 0)
+                        linkGO->SetRespawnTime(d);
+                }
             }
+
+            linkGO->SetRespawnDelayTime(RESP_GO_LOOT);
 
             if (buildingEtry && linkGO->GetGOInfo()->type == GAMEOBJECT_TYPE_GARRISON_SHIPMENT)
                 garrison->ShipmentConteiners[buildingEtry->Type] = linkGO->GetGUID();
