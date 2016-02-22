@@ -414,7 +414,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sLockStore);                       // 20914
     LOAD_DB2(sMailTemplateStore);               // 20914
     LOAD_DB2(sMapStore);                        // 20914
-    LOAD_DB2(sMinorTalentStore);                // 20994
+    //LOAD_DB2(sMinorTalentStore);                // 20994
     LOAD_DB2(sModifierTreeStore);               // 20914
     LOAD_DB2(sMountStore);                      // 20994
     LOAD_DB2(sMountTypeXCapabilityStore);       // 20914
