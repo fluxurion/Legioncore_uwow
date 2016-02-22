@@ -929,6 +929,19 @@ namespace WorldPackets
             Optional<SpellChannelStartInterruptImmunities> Immunities;
         };
 
+        class MissileTrajectoryCollision final : public ClientPacket
+        {
+        public:
+            MissileTrajectoryCollision(WorldPacket&& packet) : ClientPacket(CMSG_MISSILE_TRAJECTORY_COLLISION, std::move(packet)) { }
+        
+            void Read() override;
+
+            ObjectGuid Target;
+            int32 SpellID = 0;
+            uint8 CastID = 0;
+            Position CollisionPos;
+        };
+
         class NotifyMissileTrajectoryCollision final : public ServerPacket
         {
         public:

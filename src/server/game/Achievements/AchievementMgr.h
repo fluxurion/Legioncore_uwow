@@ -394,9 +394,8 @@ class AchievementGlobalMgr
 
         AchievementCriteriaDataSet const* GetCriteriaDataSet(CriteriaEntry const* achievementCriteria) const
         {
-            //@TODO:Legion
-            //AchievementCriteriaDataMap::const_iterator iter = m_criteriaDataMap.find(achievementCriteria->ID);
-            return /*iter != m_criteriaDataMap.end() ? &iter->second : */NULL;
+            AchievementCriteriaDataMap::const_iterator iter = m_criteriaDataMap.find(achievementCriteria->ID);
+            return iter != m_criteriaDataMap.end() ? &iter->second : nullptr;
         }
 
         bool IsRealmCompleted(AchievementEntry const* achievement) const

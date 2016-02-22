@@ -395,6 +395,7 @@ namespace WorldPackets
         class RequestCategoryCooldowns;
         class CancelMountAura;
         class CancelGrowthAura;
+        class MissileTrajectoryCollision;
     }
 
     namespace Talent
@@ -1125,7 +1126,6 @@ class WorldSession
         void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
         void HandleGMTicketSystemStatusOpcode(WorldPacket& recvPacket);
         void HandleGMSurveySubmit(WorldPacket& recvPacket);
-        void HandleReportLag(WorldPacket& recvPacket);
         void HandleGMResponseResolve(WorldPacket& recvPacket);
 
         void HandleTogglePvP(WorldPackets::Misc::TogglePvP& packet);
@@ -1640,7 +1640,7 @@ class WorldSession
         void HandleEjectPassenger(WorldPackets::Vehicle::EjectPassenger& packet);
         void HandleRideVehicleInteract(WorldPackets::Vehicle::RideVehicleInteract& packet);
         void HandleSetVehicleRecId(WorldPackets::Vehicle::MoveSetVehicleRecIdAck& packet);
-        void HandleUpdateProjectilePosition(WorldPacket& recvPacket);
+        void HandleMissileTrajectoryCollision(WorldPackets::Spells::MissileTrajectoryCollision& packet);
         void HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet);
         void HandleUpdateMissileTrajectory(WorldPacket& recvPacket);
         void HandleViolenceLevel(WorldPackets::Misc::ViolenceLevel& packet);

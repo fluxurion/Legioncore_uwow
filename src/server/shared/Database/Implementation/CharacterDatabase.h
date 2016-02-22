@@ -358,7 +358,6 @@ enum CharacterDatabaseStatements
 
     CHAR_INS_GM_SURVEY,
     CHAR_INS_GM_SUBSURVEY,
-    CHAR_INS_LAG_REPORT,
 
     CHAR_SEL_EXPIRED_AUCTIONS,
 

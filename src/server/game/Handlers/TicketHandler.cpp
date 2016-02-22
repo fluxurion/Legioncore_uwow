@@ -161,30 +161,6 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recvData)
     CharacterDatabase.Execute(stmt);
 }
 
-void WorldSession::HandleReportLag(WorldPacket& recvData)
-{
-    // just put the lag report into the database...
-    // can't think of anything else to do with it
-    uint32 lagType, mapId;
-    recvData >> lagType;
-    recvData >> mapId;
-    float x, y, z;
-    recvData >> x;
-    recvData >> y;
-    recvData >> z;
-
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_LAG_REPORT);
-    stmt->setUInt64(0, GetPlayer()->GetGUIDLow());
-    stmt->setUInt8 (1, lagType);
-    stmt->setUInt16(2, mapId);
-    stmt->setFloat (3, x);
-    stmt->setFloat (4, y);
-    stmt->setFloat (5, z);
-    stmt->setUInt32(6, GetLatency());
-    stmt->setUInt32(7, time(NULL));
-    CharacterDatabase.Execute(stmt);
-}
-
 void WorldSession::HandleGMResponseResolve(WorldPacket& /*recvPacket*/)
 {
     // empty packet
