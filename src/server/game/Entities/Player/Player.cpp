@@ -18361,15 +18361,15 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SetSpecializationId(0, fields[56].GetUInt32());
     SetSpecializationId(1, fields[57].GetUInt32());
 
-    switch(fields[4].GetUInt8())
-    {
-        case CLASS_DEMON_HUNTER:
-            if (!GetSpecializationId(GetActiveSpec()))
-                LearnTalentSpecialization(577);
-            break;
-        default:
-            break;
-    }
+    //switch(fields[4].GetUInt8())
+    //{
+    //    case CLASS_DEMON_HUNTER:
+    //        if (!GetSpecializationId(GetActiveSpec()))
+    //            LearnTalentSpecialization(577);
+    //        break;
+    //    default:
+    //        break;
+    //}
             
     // sanity check
     if (GetSpecsCount() > MAX_TALENT_SPECS || GetActiveSpec() > MAX_TALENT_SPEC || GetSpecsCount() < MIN_TALENT_SPECS)
