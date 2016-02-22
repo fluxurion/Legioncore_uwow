@@ -288,7 +288,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_CONVERT_RAID,                                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Party::ConvertRaid, &WorldSession::HandleConvertRaid);
     DEFINE_HANDLER(CMSG_CREATE_CHARACTER,                                   STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Character::CreateChar, &WorldSession::HandleCharCreateOpcode);
     DEFINE_HANDLER(CMSG_CREATE_SHIPMENT,                                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::CreateShipment, &WorldSession::HandleCreateShipment);
-    DEFINE_HANDLER(CMSG_DB_QUERY_BULK,                                      STATUS_NEVER,     PROCESS_THREADUNSAFE, WorldPackets::Query::DBQueryBulk, &WorldSession::HandleDBQueryBulk);
+    DEFINE_HANDLER(CMSG_DB_QUERY_BULK,                                      STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Query::DBQueryBulk, &WorldSession::HandleDBQueryBulk);
     DEFINE_HANDLER(CMSG_DECLINE_GUILD_INVITES,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Guild::AutoDeclineGuildInvites, &WorldSession::HandleAutoDeclineGuildInvites);
     DEFINE_HANDLER(CMSG_DECLINE_PETITION,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Petition::DeclinePetition, &WorldSession::HandleDeclinePetition);
     DEFINE_HANDLER(CMSG_DEL_FRIEND,                                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Social::DelFriend, &WorldSession::HandleDelFriendOpcode);
