@@ -390,9 +390,14 @@ void WorldSession::HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packe
 {
     WorldPackets::Query::QueryItemTextResponse response;
     response.Id = packet.Id;
-    response.Valid = false;
-    response.Item.Text = "";
-    // any ideas about: how to get text and send it?
+
+    if (Item* item = _player->GetItemByGuid(packet.Id))
+    {
+        response.Valid = true;
+        response.Item.Text = item->GetText();
+    }
+
+    SendPacket(response.Write());
 }
 
 void WorldSession::HandleQueryQuestCompletionNPCs(WorldPackets::Query::QueryQuestCompletionNPCs& packet)
