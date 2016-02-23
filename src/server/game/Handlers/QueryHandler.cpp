@@ -229,15 +229,13 @@ void WorldSession::HandleQueryNPCText(WorldPackets::Query::QueryNPCText& packet)
     response.TextID = packet.TextID;
 
     if (NpcText const* npcText = sObjectMgr->GetNpcText(packet.TextID))
-    {
         for (uint8 i = 0; i < MAX_NPC_TEXT_OPTIONS; ++i)
         {
             response.Probabilities[i] = npcText->Data[i].Probability;
             response.BroadcastTextID[i] = npcText->Data[i].BroadcastTextID;
-            if (!response.Allow && (npcText->Data[i].Probability != 0.0f || npcText->Data[i].BroadcastTextID != 0))
+            if (!response.Allow && npcText->Data[i].BroadcastTextID)
                 response.Allow = true;
         }
-    }
 
     SendPacket(response.Write());
 }
