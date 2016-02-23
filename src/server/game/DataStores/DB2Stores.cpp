@@ -248,7 +248,7 @@ inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, D
     {
         storage->LoadFromDB();
 
-        for (uint32 i = 0; i < MAX_LOCALES; ++i)
+        for (uint8 i = LOCALE_enUS; i < MAX_LOCALES; ++i)
         {
             if (defaultLocale == i || i == LOCALE_none)
                 continue;
