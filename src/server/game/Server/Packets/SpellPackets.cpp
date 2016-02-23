@@ -944,7 +944,7 @@ void WorldPackets::Spells::MissileTrajectoryCollision::Read()
 WorldPacket const* WorldPackets::Spells::NotifyMissileTrajectoryCollision::Write()
 {
     _worldPacket << Caster;
-    _worldPacket << CastID;
+    _worldPacket << CastGUID;
     _worldPacket << CollisionPos.PositionXYZStream();
 
     return &_worldPacket;
