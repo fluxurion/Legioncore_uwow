@@ -394,16 +394,13 @@ WorldPacket const* WorldPackets::LFG::PlayerReward::Write()
 void WorldPackets::LFG::DFJoin::Read()
 {
     QueueAsGroup = _worldPacket.ReadBit();
-    uint32 commentLength = _worldPacket.ReadBits(8);
+    UnkBit = _worldPacket.ReadBit();
+    _worldPacket.ResetBitReader();
 
     _worldPacket >> PartyIndex;
     _worldPacket >> Roles;
+
     uint32 numDungeons = _worldPacket.read<uint32>();
-    for (auto const& i : {0, 1, 2})
-        _worldPacket >> Need[i];
-
-    Comment = _worldPacket.ReadString(commentLength);
-
     for (uint8 i = 0; i < numDungeons; i++)
         Slot.insert(_worldPacket.read<uint32>() & 0xFFFFF);
 }

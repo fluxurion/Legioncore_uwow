@@ -281,11 +281,10 @@ namespace WorldPackets
             void Read() override;
 
             bool QueueAsGroup = 0;
-            std::string Comment;
+            bool UnkBit = 0;
             uint8 PartyIndex = 0;
             uint32 Roles = 0;
             lfg::LfgDungeonSet Slot;
-            uint32 Need[3] = { };
         };
 
         class RoleCheckUpdate final : public ServerPacket

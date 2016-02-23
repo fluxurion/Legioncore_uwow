@@ -34,7 +34,7 @@ void WorldSession::HandleDFJoin(WorldPackets::LFG::DFJoin& packet)
     if (!sLFGMgr->isOptionEnabled(lfg::LFG_OPTION_ENABLE_DUNGEON_FINDER | lfg::LFG_OPTION_ENABLE_RAID_BROWSER))
         return;
 
-    sLFGMgr->JoinLfg(GetPlayer(), packet.Roles, packet.Slot, packet.Comment);
+    sLFGMgr->JoinLfg(GetPlayer(), packet.Roles, packet.Slot, "");
 }
 
 void WorldSession::HandleDFLeave(WorldPackets::LFG::DFLeave& packet)
