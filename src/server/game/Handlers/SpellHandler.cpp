@@ -545,7 +545,7 @@ void WorldSession::HandleMissileTrajectoryCollision(WorldPackets::Spells::Missil
 
     WorldPackets::Spells::NotifyMissileTrajectoryCollision notify;
     notify.Caster = packet.Target;
-    notify.CastID = packet.CastID;
+    notify.CastGUID = packet.CastGUID;
     notify.CollisionPos = packet.CollisionPos;
     caster->SendMessageToSet(notify.Write(), true);
 }

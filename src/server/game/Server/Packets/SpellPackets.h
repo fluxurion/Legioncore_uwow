@@ -937,8 +937,8 @@ namespace WorldPackets
             void Read() override;
 
             ObjectGuid Target;
+            ObjectGuid CastGUID;
             int32 SpellID = 0;
-            uint8 CastID = 0;
             Position CollisionPos;
         };
 
@@ -950,7 +950,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             ObjectGuid Caster;
-            uint8 CastID = 0;
+            ObjectGuid CastGUID;
             Position CollisionPos;
         };
 
