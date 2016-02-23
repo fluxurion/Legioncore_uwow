@@ -225,12 +225,10 @@ void WorldSession::HandleQueryCorpseLocation(WorldPackets::Query::QueryCorpseLoc
 
 void WorldSession::HandleQueryNPCText(WorldPackets::Query::QueryNPCText& packet)
 {
-    NpcText const* npcText = sObjectMgr->GetNpcText(packet.TextID);
-
     WorldPackets::Query::QueryNPCTextResponse response;
     response.TextID = packet.TextID;
 
-    if (npcText)
+    if (NpcText const* npcText = sObjectMgr->GetNpcText(packet.TextID))
     {
         for (uint8 i = 0; i < MAX_NPC_TEXT_OPTIONS; ++i)
         {
