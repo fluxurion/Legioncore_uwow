@@ -2050,7 +2050,7 @@ uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 t
                     for (BattlePetEffectPropertiesEntry const* entry : sBattlePetEffectPropertiesStore)
                         if (eEntry->propertiesID == entry->ID)
                             for (uint8 l = 0; l < MAX_EFFECT_PROPERTIES; ++l)
-                                if (!strcmp(entry->propertyDescs[LOCALE_enUS][l].Str[LOCALE_enUS], desc.Str[LOCALE_enUS]))
+                                if (!strcmp(entry->propertyDescs[l]->Str[LOCALE_enUS], desc.Str[LOCALE_enUS]))
                                     return eEntry->propertyValues[l];
 
     return 0;

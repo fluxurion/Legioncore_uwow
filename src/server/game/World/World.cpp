@@ -452,6 +452,13 @@ void World::LoadConfigSettings(bool reload)
         sLog->LoadFromConfig();
     }
 
+    m_defaultDbcLocale = LocaleConstant(sConfigMgr->GetIntDefault("DBC.Locale", 0));
+    if (m_defaultDbcLocale >= MAX_LOCALES || m_defaultDbcLocale < LOCALE_enUS || m_defaultDbcLocale == LOCALE_none)
+    {
+        sLog->outError(LOG_FILTER_SERVER_LOADING, "Incorrect DBC.Locale! Must be >= 0 and < %d and not %d (set to 0)", MAX_LOCALES, LOCALE_none);
+        m_defaultDbcLocale = LOCALE_enUS;
+    }
+
     ///- Read the player limit and the Message of the day from the config file
     SetPlayerAmountLimit(sConfigMgr->GetIntDefault("PlayerLimit", 100));
     SetMotd(sConfigMgr->GetStringDefault("Motd", "Welcome to a Trinity Core Server."));
@@ -1492,8 +1499,6 @@ void World::SetInitialWorldSettings()
         exit(1);
     }
 
-    DetectDBCLang();
-
     ///- Initialize pool manager
     sPoolMgr->Initialize();
 
@@ -1523,6 +1528,7 @@ void World::SetInitialWorldSettings()
     ///- Load the DBC files
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading dbc info...");
     LoadDBCStores(m_dataPath, m_defaultDbcLocale);
+    InitDBCCustomStores();
     
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading db2 info...");
     sDB2Manager.LoadStores(m_dataPath, m_defaultDbcLocale);
@@ -1550,8 +1556,6 @@ void World::SetInitialWorldSettings()
 
     MMAP::MMapManager* mmmgr = MMAP::MMapFactory::createOrGetMMapManager();
     mmmgr->InitializeThreadUnsafe(mapData);
-
-    InitDBCCustomStores();  //init DBC custom conteiners after load DBC & DB
 
     sSpellMgr->LoadSpellInfoStore();
 
@@ -2183,49 +2187,6 @@ void World::SetInitialWorldSettings()
 
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "World initialized in %u minutes %u seconds", (startupDuration / 60000), ((startupDuration % 60000) / 1000));
     sLog->EnableDBAppenders();
-}
-
-void World::DetectDBCLang()
-{
-    uint8 m_lang_confid = sConfigMgr->GetIntDefault("DBC.Locale", 0);
-
-    if (m_lang_confid >= MAX_LOCALES)
-    {
-        sLog->outError(LOG_FILTER_SERVER_LOADING, "Incorrect DBC.Locale! Must be >= 0 and < %d (set to 0)", MAX_LOCALES);
-        m_lang_confid = LOCALE_enUS;
-    }
-
-    /*ChrRacesEntry const* race = sChrRacesStore.LookupEntry(1);
-
-    std::string availableLocalsStr;
-
-    uint8 default_locale = MAX_LOCALES;
-    for (uint8 i = default_locale-1; i < MAX_LOCALES; --i)  // -1 will be 255 due to uint8
-    {
-        if (race->name[i][0] != '\0')                     // check by race names
-        {
-            default_locale = i;
-            m_availableDbcLocaleMask |= (1 << i);
-            availableLocalsStr += localeNames[i];
-            availableLocalsStr += " ";
-        }
-    }
-
-    if (default_locale != m_lang_confid && m_lang_confid < MAX_LOCALES &&
-        (m_availableDbcLocaleMask & (1 << m_lang_confid)))
-    {
-        default_locale = m_lang_confid;
-    }
-
-    if (default_locale >= MAX_LOCALES)
-    {
-        sLog->outError(LOG_FILTER_SERVER_LOADING, "Unable to determine your DBC Locale! (corrupt DBC?)");
-        exit(1);
-    }*/
-
-    m_defaultDbcLocale = LocaleConstant(m_lang_confid);
-
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Using %s DBC Locale", localeNames[m_defaultDbcLocale]);
 }
 
 void World::RecordTimeDiff(const char *text, ...)

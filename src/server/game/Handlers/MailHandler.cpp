@@ -613,7 +613,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPackets::Mail::MailCreateTextIt
             return;
         }
 
-        bodyItem->SetText(mailTemplateEntry->Content[DEFAULT_LOCALE].Str[DEFAULT_LOCALE]);
+        bodyItem->SetText(mailTemplateEntry->Content->Str[DEFAULT_LOCALE]);
     }
     else
         bodyItem->SetText(m->body);

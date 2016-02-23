@@ -2622,7 +2622,7 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.Class = db2Data->Class;
         itemTemplate.SubClass = db2Data->SubClass;
         itemTemplate.SoundOverrideSubclass = db2Data->SoundOverrideSubclass;
-        itemTemplate.Name1 = sparse->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
+        itemTemplate.Name1 = sparse->Name->Str[DEFAULT_LOCALE];
         itemTemplate.FileDataID = db2Data->FileDataID;
         itemTemplate.GroupSoundsID = db2Data->GroupSoundsID;
         itemTemplate.Quality = sparse->Quality;
@@ -2663,7 +2663,7 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.RangedModRange = sparse->RangedModRange;
         itemTemplate.SpellPPMRate = 0.0f;
         itemTemplate.Bonding = sparse->Bonding;
-        itemTemplate.Description = sparse->Description[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
+        itemTemplate.Description = sparse->Description->Str[DEFAULT_LOCALE];
         itemTemplate.PageText = sparse->PageText;
         itemTemplate.LanguageID = sparse->LanguageID;
         itemTemplate.PageMaterial = sparse->PageMaterial;
@@ -6245,7 +6245,7 @@ void ObjectMgr::LoadGameObjectTemplate()
             got.entry          = goe->ID;
             got.type           = goe->Type;
             got.displayId      = goe->DisplayID;
-            got.name           = goe->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
+            got.name           = goe->Name->Str[DEFAULT_LOCALE];
             got.IconName       = "";
             got.castBarCaption = "";
             got.unk1           = "";

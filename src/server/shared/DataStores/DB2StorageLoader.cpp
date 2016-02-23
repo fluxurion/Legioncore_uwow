@@ -358,6 +358,8 @@ char* DB2FileLoader::AutoProduceData(const char* format, uint32& records, char**
     return dataTable;
 }
 
+static char const* const nullStr = "";
+
 char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* dataTable)
 {
     if (strlen(format) != header.FieldCount)
@@ -371,7 +373,7 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
     std::size_t localizedStringFields = GetFormatLocalizedStringFieldCount(format);
 
     // each string field at load have array of string for each locale
-    std::size_t stringHolderSize = sizeof(char*) * TOTAL_LOCALES;
+    std::size_t stringHolderSize = sizeof(char*) * MAX_LOCALES;
     std::size_t stringHoldersRecordPoolSize = localizedStringFields * stringHolderSize + (stringFields - localizedStringFields) * sizeof(char*);
     std::size_t stringHoldersPoolSize = stringHoldersRecordPoolSize * header.RecordCount;
 
@@ -379,7 +381,7 @@ char* DB2FileLoader::AutoProduceStringsArrayHolders(const char* format, char* da
 
     // DB2 strings expected to have at least empty string
     for (std::size_t i = 0; i < stringHoldersPoolSize / sizeof(char*); ++i)
-        ((char const**)stringHoldersPool)[i] = "";
+        ((char const**)stringHoldersPool)[i] = nullStr;
 
     uint32 offset = 0;
 
@@ -439,7 +441,7 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
     {
         char const* sep = "";
         std::ostringstream str;
-        for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        for (uint32 i = 0; i < MAX_LOCALES; ++i)
         {
             if (header.Locale & (1 << i))
             {
@@ -480,7 +482,7 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
                 {
                     // fill only not filled entries
                     LocalizedString* db2str = *(LocalizedString**)(&dataTable[offset]);
-                    if (db2str->Str[locale] == "")
+                    if (db2str->Str[locale] == nullStr)
                     {
                         char const* st = getRecord(y).getString(x);
                         db2str->Str[locale] = stringPool + (st - (char const*)stringTable);
@@ -523,7 +525,7 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
     size_t stringFields = DB2FileLoader::GetFormatStringFieldCount(format);
 
     // each string field at load have array of string for each locale
-    size_t stringHolderSize = sizeof(char*) * TOTAL_LOCALES;
+    size_t stringHolderSize = sizeof(char*) * MAX_LOCALES;
     size_t stringHoldersRecordPoolSize = stringFields * stringHolderSize;
 
     if (stringFields)
@@ -533,7 +535,7 @@ char* DB2DatabaseLoader::Load(const char* format, HotfixDatabaseStatements prepa
 
         // DB2 strings expected to have at least empty string
         for (size_t i = 0; i < stringHoldersPoolSize / sizeof(char*); ++i)
-            ((char const**)stringHolders)[i] = "";
+            ((char const**)stringHolders)[i] = nullStr;
     }
     else
         stringHolders = nullptr;
@@ -717,7 +719,7 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
                     {
                         // fill only not filled entries
                         LocalizedString* db2str = *(LocalizedString**)(&dataValue[offset]);
-                        if (db2str->Str[locale] == "")
+                        if (db2str->Str[locale] == nullStr)
                             if (char* str = AddString(&db2str->Str[locale], fields[1 + stringFieldNumInRecord].GetString()))
                                 stringPool.push_back(str);
 

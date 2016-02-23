@@ -173,18 +173,28 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
     if (storage.Load(dbcFilename.c_str()))
     {
         bool found = false;
-        // Find table definition in GameTables.dbc
-        for (GameTablesEntry const* gt : sGameTablesStore)
+        // Find table definition in GameTables.db2
+        for (uint32 i = 0; i < sGameTablesStore.GetNumRows(); ++i)
         {
-            if (tableName == gt->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE])
+            GameTablesEntry const* gt = sGameTablesStore.LookupEntry(i);
+            if (!gt)
+                continue;
+
+            for (uint32 l = 0; l < TOTAL_LOCALES; ++l)
             {
-                found = true;
-                storage.SetGameTableEntry(gt);
-                break;
+                if (i != LOCALE_none && tableName == gt->Name->Str[l])
+                {
+                    found = true;
+                    storage.SetGameTableEntry(gt);
+                    break;
+                }
             }
+
+            if (found)
+                break;
         }
 
-        ASSERT(found, "Game table %s definition not found in GameTables.dbc", tableName.c_str());
+        ASSERT(found, "Game table %s definition not found in GameTables.db2", tableName.c_str());
     }
     else
     {

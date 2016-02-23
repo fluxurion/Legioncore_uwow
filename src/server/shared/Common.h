@@ -132,18 +132,18 @@ enum AccountTypes
 
 enum LocaleConstant
 {
-    LOCALE_enUS =  0,
-    LOCALE_koKR =  1,
-    LOCALE_frFR =  2,
-    LOCALE_deDE =  3,
-    LOCALE_zhCN =  4,
-    LOCALE_zhTW =  5,
-    LOCALE_esES =  6,
-    LOCALE_esMX =  7,
-    LOCALE_ruRU =  8,
-    LOCALE_ptPT =  9,
-    LOCALE_itIT = 10,
-    LOCALE_none = 11,
+    LOCALE_enUS = 0,
+    LOCALE_koKR = 1,
+    LOCALE_frFR = 2,
+    LOCALE_deDE = 3,
+    LOCALE_zhCN = 4,
+    LOCALE_zhTW = 5,
+    LOCALE_esES = 6,
+    LOCALE_esMX = 7,
+    LOCALE_ruRU = 8,
+    LOCALE_none = 9,
+    LOCALE_ptBR = 10,
+    LOCALE_itIT = 11,
 
     MAX_LOCALES
 };
@@ -153,7 +153,7 @@ const LocaleConstant DEFAULT_LOCALE = LOCALE_enUS;
 
 #define MAX_ACCOUNT_TUTORIAL_VALUES 8
 
-extern char const* localeNames[TOTAL_LOCALES];
+extern char const* localeNames[MAX_LOCALES];
 
 LocaleConstant GetLocaleByName(const std::string& name);
 
@@ -161,7 +161,7 @@ typedef std::vector<std::string> StringVector;
 
 struct LocalizedString
 {
-    char const* Str[TOTAL_LOCALES];
+    char const* Str[MAX_LOCALES];
 };
 
 enum GM_COMMAND_TAB

@@ -576,7 +576,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
 
                 if (itemRandProp)
                 {
-                    auto temp = itemRandProp->Name[DEFAULT_LOCALE].Str[DEFAULT_LOCALE];
+                    auto temp = itemRandProp->Name->Str[DEFAULT_LOCALE];
                     //char* temp = itemRandProp->nameSuffix;
 
                     // dbc local name
