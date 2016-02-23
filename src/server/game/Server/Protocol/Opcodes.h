@@ -546,7 +546,7 @@ enum OpcodeClient : uint16
     CMSG_QUEST_GIVER_REQUEST_REWARD                   = 0x3494,
     CMSG_QUEST_GIVER_STATUS_MULTIPLE_QUERY            = 0x3496,
     CMSG_QUEST_GIVER_STATUS_QUERY                     = 0x3495,
-    CMSG_QUEST_LOG_REMOVE_QUEST                       = 0xBADD,
+    CMSG_QUEST_LOG_REMOVE_QUEST                       = 0x3517,
     CMSG_QUEST_POI_QUERY                              = 0x36B7,
     CMSG_QUEST_PUSH_RESULT                            = 0x3499,
     CMSG_QUEUED_MESSAGES_END                          = 0x376B,

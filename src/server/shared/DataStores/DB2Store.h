@@ -71,11 +71,11 @@ public:
         ASSERT(entry);
 
         std::size_t fields = strlen(_format);
-        for (uint32 i = 0; i < fields; ++i)
+        for (uint32 i = 1; i < fields; ++i)
         {
             switch (_format[i])
             {
-                //case FT_IND: //@TODO:Legion - this is fucking huck which'll not work for all db2 files, cos we can used extra indextaion... fix this shit
+                case FT_IND:
                 case FT_INT:
                     buffer << *(uint32*)entry;
                     entry += 4;

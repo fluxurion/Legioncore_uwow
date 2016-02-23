@@ -338,13 +338,12 @@ void WorldSocket::SendPacket(WorldPacket const& packet)
     if (!IsOpen())
         return;
 
-    if (packet.GetOpcode() != SMSG_ON_MONSTER_MOVE)
-    {
-        if (sPacketLog->CanLogPacket())
-            sPacketLog->LogPacket(packet, SERVER_TO_CLIENT, GetRemoteIpAddress(), GetRemotePort());
+    
+    if (sPacketLog->CanLogPacket())
+        sPacketLog->LogPacket(packet, SERVER_TO_CLIENT, GetRemoteIpAddress(), GetRemotePort());
 
+    if (packet.GetOpcode() != SMSG_ON_MONSTER_MOVE && packet.GetOpcode() != SMSG_EMOTE)
         sLog->outError(LOG_FILTER_GENERAL, "S->C: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
-    }
 
     //if (_worldSession && packet.size() > 0x400 && !packet.IsCompressed())
     //    packet.Compress(_worldSession->GetCompressionStream());
