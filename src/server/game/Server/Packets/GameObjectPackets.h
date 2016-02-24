@@ -37,10 +37,10 @@ namespace WorldPackets
             ObjectGuid Guid;
         };
 
-        class GameObjectReportUse final : public ClientPacket
+        class GameObjReportUse final : public ClientPacket
         {
         public:
-            GameObjectReportUse(WorldPacket&& packet) : ClientPacket(CMSG_GAME_OBJ_REPORT_USE, std::move(packet)) { }
+            GameObjReportUse(WorldPacket&& packet) : ClientPacket(CMSG_GAME_OBJ_REPORT_USE, std::move(packet)) { }
 
             void Read() override;
 

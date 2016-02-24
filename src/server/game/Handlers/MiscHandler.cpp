@@ -731,15 +731,6 @@ void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "Client used \"/timetest %d\" command", mode);
 }
 
-void WorldSession::HandleGuildAchievementProgressQuery(WorldPacket& recvData)
-{
-    uint32 achievementId;
-    recvData >> achievementId;
-
-    if (Guild* guild = sGuildMgr->GetGuildById(_player->GetGuildId()))
-        guild->GetAchievementMgr().SendAchievementInfo(_player, achievementId);
-}
-
 void WorldSession::HandleUITimeRequest(WorldPackets::Misc::UITimeRequest& /*request*/)
 {
     WorldPackets::Misc::UITime response;

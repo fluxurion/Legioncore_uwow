@@ -178,7 +178,7 @@ namespace WorldPackets
 
     namespace GameObject
     {
-        class GameObjectReportUse;
+        class GameObjReportUse;
         class GameObjectUse;
     }
 
@@ -258,6 +258,7 @@ namespace WorldPackets
         class LootMoney;
         class SetLootSpecialization;
         class LootRoll;
+        class DoMasterLootRoll;
     }
 
     namespace Mail
@@ -501,6 +502,7 @@ namespace WorldPackets
     namespace Achievement
     {
         class GuildSetFocusedAchievement;
+        class GuildGetAchievementMembers;
     }
 
     namespace Scene
@@ -1176,7 +1178,7 @@ class WorldSession
 
         void HandleGameObjectUse(WorldPackets::GameObject::GameObjectUse& packet);
         void HandleMeetingStoneInfo(WorldPacket& recPacket);
-        void HandleGameobjectReportUse(WorldPacket& recvPacket);
+        void HandleGameobjectReportUse(WorldPackets::GameObject::GameObjReportUse& packet);
 
         void HandleQueryPlayerName(WorldPackets::Query::QueryPlayerName& packet);
 
@@ -1214,7 +1216,7 @@ class WorldSession
         void HandleOptOutOfLoot(WorldPackets::Party::OptOutOfLoot& packet);
         void HandleSetLootMethod(WorldPackets::Party::SetLootMethod& packet);
         void HandleLootRoll(WorldPackets::Loot::LootRoll& packet);
-        void HandleDoMasterLootRoll(WorldPacket& recvData);
+        void HandleDoMasterLootRoll(WorldPackets::Loot::DoMasterLootRoll& packet);
         void HandleRequestPartyJoinUpdates(WorldPackets::Party::RequestPartyJoinUpdates& packet);
         void HandleRequestPartyMemberStats(WorldPackets::Party::RequestPartyMemberStats& packet);
         void HandleReadyCheckResponse(WorldPackets::Party::ReadyCheckResponseClient& packet);
@@ -1638,7 +1640,7 @@ class WorldSession
         void HandleCharCustomizeCallback(PreparedQueryResult result, WorldPackets::Character::CharCustomizeInfo* customizeInfo);
         void HandleCharUndelete(WorldPacket& recvData);
         void HandleQueryInspectAchievements(WorldPackets::Inspect::QueryInspectAchievements& inspect);
-        void HandleGuildAchievementProgressQuery(WorldPacket& recvData);
+        void HandleGuildAchievementProgressQuery(WorldPackets::Achievement::GuildGetAchievementMembers& packet);
         void HandleSaveEquipmentSet(WorldPackets::EquipmentSet::SaveEquipmentSet& packet);
         void HandleDeleteEquipmentSet(WorldPackets::EquipmentSet::DeleteEquipmentSet& packet);
         void HandleEquipmentSetUse(WorldPackets::EquipmentSet::UseEquipmentSet& packet);

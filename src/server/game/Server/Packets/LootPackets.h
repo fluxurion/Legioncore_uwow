@@ -304,6 +304,17 @@ namespace WorldPackets
             uint32 Unk = 0;
             uint32 CurrencyID = 0;
         };
+
+        class DoMasterLootRoll final : public ClientPacket
+        {
+        public:
+            DoMasterLootRoll(WorldPacket&& packet) : ClientPacket(CMSG_DO_MASTER_LOOT_ROLL, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid LootObj;
+            uint8 LootListID = 0;
+        };
     }
 }
 

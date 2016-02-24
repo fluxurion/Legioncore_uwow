@@ -605,3 +605,42 @@ void WorldSession::HandleLootRoll(WorldPackets::Loot::LootRoll& packet)
             break;
     }
 }
+
+void WorldSession::HandleDoMasterLootRoll(WorldPackets::Loot::DoMasterLootRoll& packet)
+{
+    if (!_player->GetGroup() || _player->GetGroup()->GetLooterGuid() != _player->GetGUID())
+    {
+        _player->SendLootRelease(packet.LootObj);
+        return;
+    }
+
+    Loot* loot = nullptr;
+    if (packet.LootObj.IsCreatureOrVehicle())
+    {
+        Creature* creature = GetPlayer()->GetMap()->GetCreature(packet.LootObj);
+        if (creature)
+            loot = &creature->loot;
+    }
+    else if (packet.LootObj.IsGameObject())
+    {
+        GameObject* pGO = GetPlayer()->GetMap()->GetGameObject(packet.LootObj);
+        if (pGO)
+            loot = &pGO->loot;
+    }
+    else if (packet.LootObj.IsLoot())
+    {
+        loot = sLootMgr->GetLoot(packet.LootObj);
+        if (!loot)
+            return;
+    }
+
+    packet.LootListID -= 1; //restore slot index;
+    if (packet.LootListID >= loot->items.size() + loot->quest_items.size())
+    {
+        sLog->outDebug(LOG_FILTER_LOOT, "MasterLootItem: Player %s might be using a hack! (slot %d, size %lu)", GetPlayer()->GetName(), packet.LootListID, (unsigned long)loot->items.size());
+        return;
+    }
+
+    LootItem& item = packet.LootListID >= loot->items.size() ? loot->quest_items[packet.LootListID - loot->items.size()] : loot->items[packet.LootListID];
+    _player->GetGroup()->DoRollForAllMembers(packet.LootObj, packet.LootListID, _player->GetMapId(), loot, item, _player);
+}

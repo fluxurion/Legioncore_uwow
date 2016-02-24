@@ -489,3 +489,9 @@ void WorldSession::HandleGuildSetFocusedAchievement(WorldPackets::Achievement::G
     if (Guild* guild = sGuildMgr->GetGuildById(_player->GetGuildId()))
         guild->GetAchievementMgr().SendAchievementInfo(_player, packet.AchievementID);
 }
+
+void WorldSession::HandleGuildAchievementProgressQuery(WorldPackets::Achievement::GuildGetAchievementMembers& packet)
+{
+    if (Guild* guild = sGuildMgr->GetGuildById(_player->GetGuildId()))
+        guild->GetAchievementMgr().SendAchievementInfo(_player, packet.AchievementID);
+}

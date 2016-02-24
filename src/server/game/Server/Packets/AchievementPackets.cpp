@@ -191,3 +191,8 @@ WorldPacket const* WorldPackets::Achievement::AllAchievementCriteriaDataAccount:
 
     return &_worldPacket;
 }
+
+void WorldPackets::Achievement::GuildGetAchievementMembers::Read()
+{
+    _worldPacket >> AchievementID;
+}

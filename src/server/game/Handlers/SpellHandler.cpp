@@ -150,29 +150,26 @@ void WorldSession::HandleGameObjectUse(WorldPackets::GameObject::GameObjectUse& 
         obj->Use(_player);
 }
 
-void WorldSession::HandleGameobjectReportUse(WorldPacket& recvPacket)
+void WorldSession::HandleGameobjectReportUse(WorldPackets::GameObject::GameObjReportUse& packet)
 {
-    ObjectGuid guid;
-    recvPacket >> guid;
+    GameObject* go = GetPlayer()->GetMap()->GetGameObject(packet.Guid);
+    if (!go)
+        return;
 
-    if (GameObject* go = GetPlayer()->GetMap()->GetGameObject(guid))
-    {
-        // ignore for remote control state
-        if (_player->m_mover != _player)
-            if (!(_player->IsOnVehicle(_player->m_mover) || _player->IsMounted()) && !go->GetGOInfo()->IsUsableMounted())
-                return;
-
-        if (!go->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
+    if (_player->m_mover != _player)
+        if (!(_player->IsOnVehicle(_player->m_mover) || _player->IsMounted()) && !go->GetGOInfo()->IsUsableMounted())
             return;
 
-        if (go->GetEntry() == 193905 || go->GetEntry() == 193967 || //Chest Alexstrasza's Gift
-            go->GetEntry() == 194158 || go->GetEntry() == 194159)   //Chest Heart of Magic
-            _player->CastSpell(go, 6247, true);
-        else
-            go->AI()->GossipHello(_player);
+    if (!go->IsWithinDistInMap(_player, INTERACTION_DISTANCE))
+        return;
 
-        _player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT, go->GetEntry());
-    }
+    //Chest Alexstrasza's Gift | Chest Heart of Magic
+    if (go->GetEntry() == 193905 || go->GetEntry() == 193967 || go->GetEntry() == 194158 || go->GetEntry() == 194159)
+        _player->CastSpell(go, 6247, true);
+    else
+        go->AI()->GossipHello(_player);
+
+    _player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT, go->GetEntry());
 }
 
 void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)

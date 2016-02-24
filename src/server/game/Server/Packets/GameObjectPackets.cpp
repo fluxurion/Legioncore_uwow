@@ -22,7 +22,7 @@ void WorldPackets::GameObject::GameObjectUse::Read()
     _worldPacket >> Guid;
 }
 
-void WorldPackets::GameObject::GameObjectReportUse::Read()
+void WorldPackets::GameObject::GameObjReportUse::Read()
 {
     _worldPacket >> Guid;
 }

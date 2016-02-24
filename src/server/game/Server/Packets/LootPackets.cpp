@@ -240,3 +240,9 @@ WorldPacket const* WorldPackets::Loot::LootDisplayToast::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Loot::DoMasterLootRoll::Read()
+{
+    _worldPacket >> LootObj;
+    _worldPacket >> LootListID;
+}

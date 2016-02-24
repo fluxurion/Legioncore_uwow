@@ -217,6 +217,16 @@ namespace WorldPackets
 
             std::vector<CriteriaTreeProgress> Data;
         };
+
+        class GuildGetAchievementMembers final : public ClientPacket
+        {
+        public:
+            GuildGetAchievementMembers(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_GET_ACHIEVEMENT_MEMBERS, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 AchievementID = 0;
+        };
     }
 }
 
