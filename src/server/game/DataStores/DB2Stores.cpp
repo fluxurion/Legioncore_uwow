@@ -332,7 +332,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sCharStartOutfitStore);            // 21021
     LOAD_DB2(sCharTitlesStore);                 // 21021
     LOAD_DB2(sChatChannelsStore);               // 21021
-    //LOAD_DB2(sChrClassesStore);
+    LOAD_DB2(sChrClassesStore);                 // 21154
     LOAD_DB2(sChrClassesXPowerTypesStore);      // 21021
     LOAD_DB2(sChrRacesStore);                   // 21021
     LOAD_DB2(sChrSpecializationStore);          // 21021

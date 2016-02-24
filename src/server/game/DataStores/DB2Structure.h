@@ -177,24 +177,24 @@ struct BattlemasterListEntry
 struct ChrClassesEntry
 {
     uint32      ID;                                         // 0
-    uint32      PowerType;                                  // 1
-    //char*     PetNameToken                                // 2
-    char*       Name_lang;                                  // 3
-    //char*     NameFemale_lang;                            // 4
-    //char*     NameMale_lang;                              // 5
-    //char*     Filename;                                   // 6
-    uint32      SpellClassSet;                              // 7
-    //uint32    Flags;                                      // 8
-    uint32      CinematicSequenceID;                        // 9
-    uint32      AttackPowerPerStrength;                     // 10 Attack Power bonus per point of strength
-    uint32      AttackPowerPerAgility;                      // 11 Attack Power bonus per point of agility
-    uint32      RangedAttackPowerPerAgility;                // 12 Ranged Attack Power bonus per point of agility
-    uint32      DefaultSpec;                                  // 13
-    //uint32    CreateScreenFileDataID;                     // 14
-    //uint32    SelectScreenFileDataID;                     // 15
-    //uint32    LowResScreenFileDataID;                     // 16
-    //uint32    IconFileDataID;                             // 17
-    //uint32    Unk1;                                       // 18
+    LocalizedString* PetNameToken;                          // 1
+    LocalizedString* Name;                                  // 2
+    LocalizedString* NameFemale;                            // 3
+    LocalizedString* NameMale;                              // 4
+    LocalizedString* Filename;                              // 5
+    uint32      CreateScreenFileDataID;                     // 6
+    uint32      SelectScreenFileDataID;                     // 7
+    uint32      IconFileDataID;                             // 8
+    uint16      Flags;                                      // 9
+    uint16      CinematicSequenceID;                        // 10
+    uint16      DefaultSpec;                                // 11
+    uint8       PowerType;                                  // 12
+    uint8       SpellClassSet;                              // 13
+    uint8       AttackPowerPerStrength;                     // 14
+    uint8       AttackPowerPerAgility;                      // 15
+    uint8       RangedAttackPowerPerAgility;                // 16
+    uint8       LowResScreenFileDataID;                     // 17
+    uint8       LegionUnk;                                  // 18
 };
 
 struct CharSectionsEntry

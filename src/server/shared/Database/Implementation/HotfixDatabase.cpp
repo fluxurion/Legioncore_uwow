@@ -63,8 +63,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "RatedPlayers, MinPlayers, MaxPlayers, Flags FROM battlemaster_list ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ChrClasses.db2
-    PrepareStatement(HOTFIX_SEL_CHR_CLASSES, "SELECT ID, PowerType, Name, SpellClassSet, CinematicSequenceID, AttackPowerPerStrength, "
-        "AttackPowerPerAgility, RangedAttackPowerPerAgility, DefaultSpec FROM chr_classes ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHR_CLASSES, "SELECT ID, PetNameToken, Name, NameFemale, NameMale, Filename, CreateScreenFileDataID, "
+        "SelectScreenFileDataID, IconFileDataID, Flags, CinematicSequenceID, DefaultSpec, PowerType, SpellClassSet, AttackPowerPerStrength, "
+        "AttackPowerPerAgility, RangedAttackPowerPerAgility, LowResScreenFileDataID, LegionUnk FROM chr_classes ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_CHR_CLASSES, "SELECT ID, PetNameToken_lang, Name_lang, NameFemale_lang, NameMale_lang, Filename_lang"
+        " FROM chr_classes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CharSections.db2
     PrepareStatement(HOTFIX_SEL_CHAR_SECTIONS, "SELECT ID, Race, Gender, GenType, TexturePath1, TexturePath2, TexturePath3, Flags, Type, Color"

@@ -386,14 +386,24 @@ DROP TABLE IF EXISTS `chr_classes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `chr_classes` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerType` int(10) unsigned NOT NULL DEFAULT '0',
+  `PetNameToken` text,
   `Name` text,
-  `SpellClassSet` int(10) unsigned NOT NULL DEFAULT '0',
-  `CinematicSequenceID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttackPowerPerStrength` int(10) unsigned NOT NULL DEFAULT '0',
-  `AttackPowerPerAgility` int(10) unsigned NOT NULL DEFAULT '0',
-  `RangedAttackPowerPerAgility` int(10) unsigned NOT NULL DEFAULT '0',
-  `DefaultSpec` int(10) unsigned NOT NULL DEFAULT '0',
+  `NameFemale` text,
+  `NameMale` text,
+  `Filename` text,
+  `CreateScreenFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SelectScreenFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
+  `IconFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `CinematicSequenceID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DefaultSpec` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpellClassSet` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `AttackPowerPerStrength` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `AttackPowerPerAgility` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `RangedAttackPowerPerAgility` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `LowResScreenFileDataID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `LegionUnk` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -406,6 +416,35 @@ CREATE TABLE `chr_classes` (
 LOCK TABLES `chr_classes` WRITE;
 /*!40000 ALTER TABLE `chr_classes` DISABLE KEYS */;
 /*!40000 ALTER TABLE `chr_classes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `chr_classes_locale`
+--
+
+DROP TABLE IF EXISTS `chr_classes_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `chr_classes_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `PetNameToken_lang` text,
+  `Name_lang` text,
+  `NameFemale_lang` text,
+  `NameMale_lang` text,
+  `Filename_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `chr_classes_locale`
+--
+
+LOCK TABLES `chr_classes_locale` WRITE;
+/*!40000 ALTER TABLE `chr_classes_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `chr_classes_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
