@@ -340,14 +340,12 @@ void ScriptMgr::FillSpellSummary()
 
     SpellSummary = new TSpellSummary[sSpellMgr->GetSpellInfoStoreSize()];
 
-    SpellInfo const* pTempSpell;
-
     for (uint32 i = 0; i < sSpellMgr->GetSpellInfoStoreSize(); ++i)
     {
         SpellSummary[i].Effects = 0;
         SpellSummary[i].Targets = 0;
 
-        pTempSpell = sSpellMgr->GetSpellInfo(i);
+        SpellInfo const* pTempSpell = sSpellMgr->GetSpellInfo(i);
         // This spell doesn't exist.
         if (!pTempSpell)
             continue;

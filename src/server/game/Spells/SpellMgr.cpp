@@ -827,8 +827,6 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellPr
     if ((procFlags & EventProcFlag) == 0)
         return false;
 
-    bool hasFamilyMask = false;
-
     /// Quick Check - If PROC_FLAG_TAKEN_DAMAGE is set for aura and procSpell dealt damage, proc no matter what kind of spell that deals the damage.
     if (procFlags & PROC_FLAG_TAKEN_DAMAGE && EventProcFlag & PROC_FLAG_TAKEN_DAMAGE)
         return true;
@@ -898,7 +896,7 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellPr
             {
                 if (!(spellProcEvent->spellFamilyMask & procSpell->ClassOptions.SpellClassMask))
                     return false;
-                hasFamilyMask = true;
+
                 // Some spells are not considered as active even with have spellfamilyflags
                 if (!(procEvent_procEx & PROC_EX_ONLY_ACTIVE_SPELL))
                     active = true;

@@ -257,7 +257,7 @@ uint32 CreatureTextMgr::SendChat(Creature* source, uint8 textGroup, ObjectGuid w
 
     CreatureTextBuilder builder(finalSource, finalType, iter->group, iter->id, finalLang, whisperGuid);
     SendChatPacket(finalSource, builder, finalType, whisperGuid, range, team, gmOnly);
-    if (isEqualChanced || (!isEqualChanced && totalChance == 100.0f))
+    if (isEqualChanced || (totalChance == 100.0f))
         SetRepeatId(source, textGroup, iter->id);
 
     return iter->duration;

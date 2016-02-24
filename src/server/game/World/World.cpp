@@ -1312,7 +1312,6 @@ void World::LoadConfigSettings(bool reload)
     bool enableLOS = sConfigMgr->GetBoolDefault("vmap.enableLOS", true);
     bool enableHeight = sConfigMgr->GetBoolDefault("vmap.enableHeight", true);
     bool enablePetLOS = sConfigMgr->GetBoolDefault("vmap.petLOS", true);
-    std::string ignoreSpellIds = sConfigMgr->GetStringDefault("vmap.ignoreSpellIds", "");
 
     if (!enableHeight)
         sLog->outError(LOG_FILTER_SERVER_LOADING, "VMap height checking disabled! Creatures movements and other various things WILL be broken! Expect no support.");

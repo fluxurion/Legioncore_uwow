@@ -1637,7 +1637,6 @@ void AuraEffect::CalculateFromDummyAmount(Unit* caster, Unit* target, int32 &amo
 
             Unit* _caster = caster;
             Unit* _targetAura = caster;
-            Unit* _target = target;
             bool check = false;
 
             if(itr->caster == 1 && target) //get caster as target
@@ -4117,7 +4116,6 @@ void AuraEffect::HandleAuraModRoot(AuraApplication const* aurApp, uint8 mode, bo
         return;
 
     Unit* target = aurApp->GetTarget();
-    Unit* caster = GetCaster();
 
     // Earthgrab totem - Immunity
     if (apply && target->HasAura(116946))
@@ -6694,7 +6692,6 @@ void AuraEffect::HandleChannelDeathItem(AuraApplication const* aurApp, uint8 mod
         return;
 
     Player* plCaster = caster->ToPlayer();
-    Unit* target = aurApp->GetTarget();
 
     // Item amount
     if (GetAmount() <= 0)
@@ -7216,7 +7213,6 @@ bool AuraEffect::AuraSpellTrigger(Unit* target, Unit* caster, SpellEffIndex effI
                     triggerCaster->GetAreaObjectList(list, GetId());
                     if(!list.empty())
                     {
-                        Unit* owner = triggerCaster->GetAnyOwner();
                         for (std::list<AreaTrigger*>::iterator itr = list.begin(); itr != list.end(); ++itr)
                         {
                             if(AreaTrigger* areaObj = (*itr))

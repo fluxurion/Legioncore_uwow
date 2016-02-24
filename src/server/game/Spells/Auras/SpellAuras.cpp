@@ -425,7 +425,6 @@ Aura* Aura::Create(SpellInfo const* spellproto, uint32 effMask, WorldObject* own
     Aura* aura = NULL;
     if(spellproto->IsSingleTarget(caster))
     {
-        bool moving = false;
         Unit::AuraList& scAuras = caster->GetSingleCastAuras();
         for (Unit::AuraList::iterator itr = scAuras.begin(); itr != scAuras.end();)
         {

@@ -344,7 +344,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiPathStore);
     //LOAD_DB2(sToyStore);
     //LOAD_DB2(sVehicleSeatStore);                // 20914
-    
+
     LOAD_DB2(sAchievementStore);                // 20914
     LOAD_DB2(sAreaTableStore);                  // 20994
     LOAD_DB2(sAreaTriggerStore);                // 20994
@@ -1554,14 +1554,14 @@ ChrSpecializationEntry const* DB2Manager::GetChrSpecializationByID(uint8 classID
     return _chrSpecializationByIndex[classID][ID];
 }
 
- DB2Manager::PetFamilySpellsSet const* DB2Manager::GetPetFamilySpells(uint32 family)
- {
+DB2Manager::PetFamilySpellsSet const* DB2Manager::GetPetFamilySpells(uint32 family)
+{
     auto itr = _petFamilySpells.find(family);
     if (itr != _petFamilySpells.end())
         return &itr->second;
 
     return nullptr;
- }
+}
 
 bool DB2Manager::ChrClassesXPowerTypesEntryComparator::Compare(ChrClassesXPowerTypesEntry const* left, ChrClassesXPowerTypesEntry const* right)
 {
@@ -1688,7 +1688,6 @@ uint32 DB2Manager::GetSpellMisc(uint32 spellID, Difficulty /*difficultyID = DIFF
 
     return 0;
 }
-
 
 uint16 DB2Manager::GetQuestIDbyLineAndPos(uint8 lineID, uint8 pos)
 {
