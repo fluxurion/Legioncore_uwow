@@ -40,6 +40,11 @@ WorldPacket const* WorldPackets::Spells::CategoryCooldown::Write()
     return &_worldPacket;
 }
 
+void WorldPackets::Spells::CancelChannelling::Read()
+{
+    _worldPacket >> ChannelSpell;
+}
+
 WorldPacket const* WorldPackets::Spells::SendKnownSpells::Write()
 {
     _worldPacket.reserve(1 + 4 * KnownSpells.size());

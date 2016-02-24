@@ -122,6 +122,7 @@ namespace WorldPackets
         class SetWatchedFaction;
         class EmoteClient;
         class SetPlayerDeclinedNames;
+        class CharCustomize;
 
         enum class LoginFailureReason : uint8;
     }
@@ -245,6 +246,8 @@ namespace WorldPackets
         class TransmogrifyItems;
         class VoidStorageContents;
         class UseCritterItem;
+        class AutoEquipItemSlot;
+        class CancelTempEnchantment;
     }
 
     namespace Loot
@@ -396,6 +399,8 @@ namespace WorldPackets
         class CancelMountAura;
         class CancelGrowthAura;
         class MissileTrajectoryCollision;
+        class CancelAutoRepeatSpell;
+        class CancelChannelling;
     }
 
     namespace Talent
@@ -522,6 +527,7 @@ namespace WorldPackets
         class CalendarRemoveInvite;
         class CalendarUpdateEvent;
         class SetSavedInstanceExtend;
+        class CalendarComplain;
     }
 
     namespace Retupation
@@ -1074,6 +1080,7 @@ class WorldSession
 
         void SendCharCreate(ResponseCodes result);
         void SendCharDelete(ResponseCodes result);
+        void SendCharCustomize(ResponseCodes result, WorldPackets::Character::CharCustomizeInfo const* customizeInfo);
 
         void HandleRequestPlayedTime(WorldPackets::Character::RequestPlayedTime& packet);
 
@@ -1332,7 +1339,7 @@ class WorldSession
         void HandleMailDelete(WorldPackets::Mail::MailDelete& packet);
         void HandleMailCreateTextItem(WorldPackets::Mail::MailCreateTextItem& packet);
         void HandleQueryNextMailTime(WorldPackets::Mail::MailQueryNextMailTime& packet);
-        void HandleCancelChanneling(WorldPacket& recvData);
+        void HandleCancelChanneling(WorldPackets::Spells::CancelChannelling& packet);
 
         void SendItemPageInfo(ItemTemplate* itemProto);
         void HandleSplitItemOpcode(WorldPackets::Item::SplitItem& splitItem);
@@ -1345,7 +1352,7 @@ class WorldSession
         void HandleListInventory(WorldPackets::NPC::Hello& packet);
         void HandleAutoStoreBagItem(WorldPackets::Item::AutoStoreBagItem& packet);
         void HandleReadItem(WorldPacket& recvPacket);
-        void HandleAutoEquipItemSlotOpcode(WorldPacket& recvPacket);
+        void HandleAutoEquipItemSlotOpcode(WorldPackets::Item::AutoEquipItemSlot& autoEquipItemSlot);
         void HandleSwapItem(WorldPackets::Item::SwapItem& swapItem);
         void HandleBuybackItem(WorldPackets::Item::BuyBackItem& packet);
         void HandleAutoBankItem(WorldPackets::Bank::AutoBankItem& packet);
@@ -1362,7 +1369,7 @@ class WorldSession
         void HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& castRequest);
         void HandleCancelCast(WorldPackets::Spells::CancelCast& packet);
         void HandleCancelAura(WorldPackets::Spells::CancelAura& packet);
-        void HandleCancelAutoRepeatSpellOpcode(WorldPacket& recvPacket);
+        void HandleCancelAutoRepeatSpellOpcode(WorldPackets::Spells::CancelAutoRepeatSpell& packet);
 
         void HandleConfirmRespecWipe(WorldPackets::Misc::ConfirmRespecWipe& packet);
         void HandleUnlearnSkill(WorldPackets::Spells::UnlearnSkill& packet);
@@ -1538,7 +1545,7 @@ class WorldSession
 
         void HandleSortBagsOpcode(WorldPacket& recvData);
 
-        void HandleCancelTempEnchantmentOpcode(WorldPacket& recvData);
+        void HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelTempEnchantment& packet);
 
         void HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo& packet);
         void HandleItemRefund(WorldPacket& recvData);
@@ -1580,11 +1587,11 @@ class WorldSession
         void HandleCalendarGetNumPending(WorldPackets::Calendar::CalendarGetNumPending& packet);
         void HandleCalendarEventSignup(WorldPackets::Calendar::CalendarEventSignUp& packet);
         void HandleSetSavedInstanceExtend(WorldPackets::Calendar::SetSavedInstanceExtend& packet);
+        void HandleCalendarComplain(WorldPackets::Calendar::CalendarComplain& packet);
 
         void SendCalendarRaidLockout(InstanceSave const* save, bool add);
         void SendCalendarRaidLockoutUpdated(InstanceSave const* save);
 
-        void HandleCalendarComplain(WorldPacket& recvData);
 
         // Void Storage
         void HandleVoidStorageUnlock(WorldPackets::VoidStorage::UnlockVoidStorage& packet);
@@ -1627,7 +1634,8 @@ class WorldSession
         void HandleGetMirrorImageData(WorldPackets::Spells::GetMirrorImageData& packet);
         void HandleAlterAppearance(WorldPackets::Character::AlterApperance& packet);
         void HandleRemoveGlyph(WorldPacket& recvData);
-        void HandleCharCustomize(WorldPacket& recvData);
+        void HandleCharCustomize(WorldPackets::Character::CharCustomize& packet);
+        void HandleCharCustomizeCallback(PreparedQueryResult result, WorldPackets::Character::CharCustomizeInfo* customizeInfo);
         void HandleCharUndelete(WorldPacket& recvData);
         void HandleQueryInspectAchievements(WorldPackets::Inspect::QueryInspectAchievements& inspect);
         void HandleGuildAchievementProgressQuery(WorldPacket& recvData);
@@ -1733,6 +1741,7 @@ class WorldSession
         QueryCallback<PreparedQueryResult, ObjectGuid> _sendStabledPetCallback;
         QueryCallback<PreparedQueryResult, uint32> _stableChangeSlotCallback;
         QueryCallback<PreparedQueryResult, std::shared_ptr<WorldPackets::Character::CharacterCreateInfo>, true> _charCreateCallback;
+        QueryCallback<PreparedQueryResult, std::shared_ptr<WorldPackets::Character::CharCustomizeInfo>> _charCustomizeCallback;
         QueryResultHolderFuture _charLoginCallback;
 
     private:

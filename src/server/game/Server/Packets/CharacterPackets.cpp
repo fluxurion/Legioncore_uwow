@@ -239,19 +239,6 @@ WorldPacket const* WorldPackets::Character::CharacterRenameResult::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Character::CharCustomize::Read()
-{
-    CustomizeInfo.reset(new CharCustomizeInfo());
-    _worldPacket >> CustomizeInfo->CharGUID;
-    _worldPacket >> CustomizeInfo->SexID;
-    _worldPacket >> CustomizeInfo->SkinID;
-    _worldPacket >> CustomizeInfo->HairColorID;
-    _worldPacket >> CustomizeInfo->HairStyleID;
-    _worldPacket >> CustomizeInfo->FacialHairStyleID;
-    _worldPacket >> CustomizeInfo->FaceID;
-    CustomizeInfo->CharName = _worldPacket.ReadString(_worldPacket.ReadBits(6));
-}
-
 void WorldPackets::Character::CharRaceOrFactionChange::Read()
 {
     RaceOrFactionChangeInfo.reset(new CharRaceOrFactionChangeInfo());
@@ -555,6 +542,65 @@ WorldPacket const * WorldPackets::Character::SetPlayerDeclinedNamesResult::Write
 {
     _worldPacket << ResultCode;
     _worldPacket << Player;
+
+    return &_worldPacket;
+}
+
+void WorldPackets::Character::CharCustomize::Read()
+{
+    CustomizeInfo.reset(new CharCustomizeInfo());
+    _worldPacket >> CustomizeInfo->CharGUID;
+    _worldPacket >> CustomizeInfo->SexID;
+    _worldPacket >> CustomizeInfo->SkinID;
+    _worldPacket >> CustomizeInfo->HairColorID;
+    _worldPacket >> CustomizeInfo->HairStyleID;
+    _worldPacket >> CustomizeInfo->FacialHairStyleID;
+    _worldPacket >> CustomizeInfo->FaceID;
+    _worldPacket >> CustomizeInfo->Tattoo;
+    _worldPacket >> CustomizeInfo->Horn;
+    _worldPacket >> CustomizeInfo->Blindfold;
+    _worldPacket.ReadString(_worldPacket.ReadBits(6), CustomizeInfo->CharName);
+}
+
+WorldPackets::Character::CharCustomizeResponse::CharCustomizeResponse(WorldPackets::Character::CharCustomizeInfo const* info)
+    : ServerPacket(SMSG_CHAR_CUSTOMIZE, 16 + 9 + 2)
+{
+    CharGUID = info->CharGUID;
+    SexID = info->SexID;
+    SkinID = info->SkinID;
+    HairColorID = info->HairColorID;
+    HairStyleID = info->HairStyleID;
+    FacialHairStyleID = info->FacialHairStyleID;
+    FaceID = info->FaceID;
+    CharName = info->CharName;
+    Tattoo = info->Tattoo;
+    Horn = info->Horn;
+    Blindfold = info->Blindfold;
+}
+
+WorldPacket const* WorldPackets::Character::CharCustomizeResponse::Write()
+{
+    _worldPacket << CharGUID;
+    _worldPacket << SexID;
+    _worldPacket << SkinID;
+    _worldPacket << HairColorID;
+    _worldPacket << HairStyleID;
+    _worldPacket << FacialHairStyleID;
+    _worldPacket << FaceID;
+    _worldPacket << Tattoo;
+    _worldPacket << Horn;
+    _worldPacket << Blindfold;
+    _worldPacket.WriteBits(CharName.length(), 6);
+    _worldPacket.FlushBits();
+    _worldPacket.WriteString(CharName);
+
+    return &_worldPacket;
+}
+
+WorldPacket const* WorldPackets::Character::CharCustomizeFailed::Write()
+{
+    _worldPacket << uint8(Result);
+    _worldPacket << CharGUID;
 
     return &_worldPacket;
 }

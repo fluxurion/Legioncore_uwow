@@ -470,6 +470,28 @@ namespace WorldPackets
             ObjectGuid ItemGUID;
             Optional<ItemPurchaseContents> Contents;
         };
+
+        class AutoEquipItemSlot final : public ClientPacket
+        {
+        public:
+            AutoEquipItemSlot(WorldPacket&& packet) : ClientPacket(CMSG_AUTO_EQUIP_ITEM_SLOT, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Item;
+            InvUpdate Inv;
+            uint8 ItemDstSlot = 0;
+        };
+
+        class CancelTempEnchantment final : public ClientPacket
+        {
+        public:
+            CancelTempEnchantment(WorldPacket&& packet) : ClientPacket(CMSG_CANCEL_TEMP_ENCHANTMENT, std::move(packet)) { }
+
+            void Read() override;
+
+            int32 Slot = 0;
+        };
     }
 }
 

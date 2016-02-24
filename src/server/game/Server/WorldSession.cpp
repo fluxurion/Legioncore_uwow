@@ -1061,6 +1061,13 @@ void WorldSession::ProcessQueryCallbacks()
         HandleStableChangeSlotCallback(result, param);
         _stableChangeSlotCallback.FreeResult();
     }
+
+    if (_charCustomizeCallback.IsReady())
+    {
+        _charCustomizeCallback.GetResult(result);
+        HandleCharCustomizeCallback(result, _charCustomizeCallback.GetParam().get());
+        _charCustomizeCallback.Reset();
+    }
 }
 
 void WorldSession::InitializeWarden(BigNumber* k, std::string os)

@@ -78,6 +78,7 @@ private:
 extern DBCStorage<BannedAddOnsEntry>            sBannedAddOnsStore;
 extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
 extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
+extern DBCStorage<CharSectionsEntry>            sCharSectionsStore;
 extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
 extern DBCStorage<FactionEntry>                 sFactionStore;
 extern DBCStorage<FactionTemplateEntry>         sFactionTemplateStore;
@@ -127,6 +128,8 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);
 void InitDBCCustomStores();
 bool IsValidDifficulty(uint32 diff, bool isRaid);
+
+CharSectionsEntry const* GetCharSectionEntry(uint8 race, CharSectionType genType, uint8 gender, uint8 type, uint8 color);
 
 typedef std::vector<TalentEntry const*> TalentsByPosition[MAX_CLASSES][7][3];
 extern TalentsByPosition                         sTalentByPos;

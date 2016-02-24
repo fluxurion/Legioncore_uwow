@@ -337,7 +337,6 @@ void WorldSocket::SendPacket(WorldPacket const& packet)
 {
     if (!IsOpen())
         return;
-
     
     if (sPacketLog->CanLogPacket())
         sPacketLog->LogPacket(packet, SERVER_TO_CLIENT, GetRemoteIpAddress(), GetRemotePort());

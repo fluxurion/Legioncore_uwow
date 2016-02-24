@@ -517,3 +517,15 @@ WorldPacket const* WorldPackets::Item::ItemPurchaseRefundResult::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Item::AutoEquipItemSlot::Read()
+{
+    _worldPacket >> Inv;
+    _worldPacket >> Item;
+    _worldPacket >> ItemDstSlot;
+}
+
+void WorldPackets::Item::CancelTempEnchantment::Read()
+{
+    _worldPacket >> Slot;
+}

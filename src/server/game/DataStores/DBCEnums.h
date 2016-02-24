@@ -938,4 +938,19 @@ enum CurrencyFlags
     CURRENCY_FLAG_UNK               = 0x2000,
 };
 
+enum CharSectionFlags
+{
+    SECTION_FLAG_PLAYER         = 0x01,
+    SECTION_FLAG_DEATH_KNIGHT   = 0x04
+};
+
+enum CharSectionType
+{
+    SECTION_TYPE_SKIN           = 0,
+    SECTION_TYPE_FACE           = 1,
+    SECTION_TYPE_FACIAL_HAIR    = 2,
+    SECTION_TYPE_HAIR           = 3,
+    SECTION_TYPE_UNDERWEAR      = 4
+};
+
 #endif

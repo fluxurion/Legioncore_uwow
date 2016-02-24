@@ -563,6 +563,18 @@ struct WorldSafeLocsEntry
     //char*         AreaName_lang;                          // 6
 };
 
+struct CharSectionsEntry
+{
+    uint32      ID;
+    uint32      Race;
+    uint32      Gender;
+    uint32      GenType;
+    char*       TexturePath[3];
+    uint32      Flags;
+    uint32      Type;
+    uint32      Color;
+};
+
 #pragma pack(pop)
 
 struct TalentSpellPos

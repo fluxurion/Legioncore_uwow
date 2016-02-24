@@ -457,3 +457,11 @@ WorldPacket const* WorldPackets::Calendar::CalendarEventInviteNotes::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Calendar::CalendarComplain::Read()
+{
+    _worldPacket >> InvitedByGUID;
+    _worldPacket >> EventID;
+    _worldPacket >> InviteID;
+}
+

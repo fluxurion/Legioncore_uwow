@@ -43,6 +43,8 @@ struct WMOAreaTableTripple
     int32 adtId;
 };
 
+typedef std::multimap<uint32, CharSectionsEntry const*> CharSectionsMap;
+CharSectionsMap sCharSectionMap;
 
 typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
@@ -55,6 +57,7 @@ TalentsByPosition                           sTalentByPos;
 DBCStorage<BannedAddOnsEntry>               sBannedAddOnsStore(BannedAddOnsfmt);
 DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterListEntryfmt);
 DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
+DBCStorage<CharSectionsEntry>               sCharSectionsStore(CharSectionsfmt);
 DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
 DBCStorage<FactionEntry>                    sFactionStore(FactionEntryfmt);
 DBCStorage<FactionTemplateEntry>            sFactionTemplateStore(FactionTemplateEntryfmt);
@@ -225,6 +228,7 @@ void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DBC(store, file) LoadDBC(availableDbcLocales, bad_dbc_files, store, dbcPath, file, defaultLocale)
 
+    //LOAD_DBC(sCharSectionsStore,                "CharSections.dbc"); w8 for migrate to db2 in 21108+
     LOAD_DBC(sBannedAddOnsStore,                "BannedAddOns.dbc");
     LOAD_DBC(sBattlemasterListStore,            "BattlemasterList.dbc");
     LOAD_DBC(sChrClassesStore,                  "ChrClasses.dbc");
@@ -325,6 +329,10 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
 
 void InitDBCCustomStores()
 {
+    for (CharSectionsEntry const* entry : sCharSectionsStore)
+        if (entry->Race && ((1 << (entry->Race - 1)) & RACEMASK_ALL_PLAYABLE) != 0)
+            sCharSectionMap.insert({ entry->GenType | (entry->Gender << 8) | (entry->Race << 16), entry });
+
     for (FactionEntry const* faction : sFactionStore)
     {
         if (faction->team)
@@ -460,4 +468,14 @@ bool IsValidDifficulty(uint32 diff, bool isRaid)
     }
 
     return isRaid;
+}
+
+CharSectionsEntry const* GetCharSectionEntry(uint8 race, CharSectionType genType, uint8 gender, uint8 type, uint8 color)
+{
+    std::pair<CharSectionsMap::const_iterator, CharSectionsMap::const_iterator> eqr = sCharSectionMap.equal_range(uint32(genType) | uint32(gender << 8) | uint32(race << 16));
+    for (CharSectionsMap::const_iterator itr = eqr.first; itr != eqr.second; ++itr)
+        if (itr->second->Type == type && itr->second->Color == color)
+            return itr->second;
+
+    return nullptr;
 }

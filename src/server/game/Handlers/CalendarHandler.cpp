@@ -413,7 +413,7 @@ void WorldSession::HandleCalendarEventModeratorStatus(WorldPackets::Calendar::Ca
         sCalendarMgr->SendCalendarCommandResult(guid, CALENDAR_ERROR_EVENT_INVALID);
 }
 
-void WorldSession::HandleCalendarComplain(WorldPacket& recvData)
+void WorldSession::HandleCalendarComplain(WorldPackets::Calendar::CalendarComplain& /*packet*/)
 {
 }
 

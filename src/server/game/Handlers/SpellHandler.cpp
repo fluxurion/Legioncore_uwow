@@ -367,18 +367,15 @@ void WorldSession::HandlePetCancelAura(WorldPackets::PetPackets::PetCancelAura& 
     pet->AddCreatureSpellCooldown(packet.SpellID);
 }
 
-void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPackets::Spells::CancelAutoRepeatSpell& /*packet*/)
 {
     // may be better send SMSG_CANCEL_AUTO_REPEAT?
     // cancel and prepare for deleting
     _player->InterruptSpell(CURRENT_AUTOREPEAT_SPELL);
 }
 
-void WorldSession::HandleCancelChanneling(WorldPacket& recvData)
+void WorldSession::HandleCancelChanneling(WorldPackets::Spells::CancelChannelling& /*packet*/)
 {
-    recvData.read_skip<uint32>();                          // spellid, not used
-
-    // ignore for remote control state (for player case)
     Unit* mover = _player->m_mover;
     if (mover != _player && mover->GetTypeId() == TYPEID_PLAYER)
         return;

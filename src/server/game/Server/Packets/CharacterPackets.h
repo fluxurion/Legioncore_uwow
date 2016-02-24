@@ -65,14 +65,17 @@ namespace WorldPackets
 
         struct CharCustomizeInfo
         {
+            ObjectGuid CharGUID;
+            std::string CharName;
             uint8 HairStyleID = 0;
             uint8 FaceID = 0;
-            ObjectGuid CharGUID;
             uint8 SexID = GENDER_NONE;
-            std::string CharName;
             uint8 HairColorID = 0;
             uint8 FacialHairStyleID = 0;
             uint8 SkinID = 0;
+            uint8 Tattoo = 0;
+            uint8 Horn = 0;
+            uint8 Blindfold = 0;
         };
 
         struct CharRaceOrFactionChangeInfo
@@ -236,16 +239,6 @@ namespace WorldPackets
             std::string Name;
             uint8 Result = 0;
             Optional<ObjectGuid> Guid;
-        };
-
-        class CharCustomize final : public ClientPacket
-        {
-        public:
-            CharCustomize(WorldPacket&& packet) : ClientPacket(CMSG_CHAR_CUSTOMIZE, std::move(packet)) { }
-
-            void Read() override;
-
-            std::shared_ptr<CharCustomizeInfo> CustomizeInfo;
         };
 
         class CharRaceOrFactionChange final : public ClientPacket
@@ -694,6 +687,48 @@ namespace WorldPackets
 
             ObjectGuid Player;
             int32 ResultCode = 0;
+        };
+
+        class CharCustomize final : public ClientPacket
+        {
+        public:
+            CharCustomize(WorldPacket&& packet) : ClientPacket(CMSG_CHAR_CUSTOMIZE, std::move(packet)) { }
+
+            void Read() override;
+
+            std::shared_ptr<CharCustomizeInfo> CustomizeInfo;
+        };
+
+        class CharCustomizeResponse final : public ServerPacket
+        {
+        public:
+            CharCustomizeResponse() : ServerPacket(SMSG_CHAR_CUSTOMIZE, 16 + 9 + 2) { }
+            CharCustomizeResponse(CharCustomizeInfo const* customizeInfo);
+
+            WorldPacket const* Write() override;
+
+            ObjectGuid CharGUID;
+            std::string CharName;
+            uint8 SexID = 0;
+            uint8 SkinID = 0;
+            uint8 HairColorID = 0;
+            uint8 HairStyleID = 0;
+            uint8 FacialHairStyleID = 0;
+            uint8 FaceID = 0;
+            uint8 Tattoo = 0;
+            uint8 Horn = 0;
+            uint8 Blindfold = 0;
+        };
+
+        class CharCustomizeFailed final : public ServerPacket
+        {
+        public:
+            CharCustomizeFailed() : ServerPacket(SMSG_CHAR_CUSTOMIZE_FAILED, 1 + 16) { }
+
+            WorldPacket const* Write() override;
+
+            ObjectGuid CharGUID;
+            ResponseCodes Result = RESPONSE_SUCCESS;
         };
     }
 }

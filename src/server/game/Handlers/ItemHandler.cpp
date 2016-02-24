@@ -105,38 +105,25 @@ void WorldSession::HandleSwapInvItemOpcode(WorldPackets::Item::SwapInvItem& swap
     _player->SwapItem(src, dst);
 }
 
-//! 6.0.3
-void WorldSession::HandleAutoEquipItemSlotOpcode(WorldPacket& recvData)
+void WorldSession::HandleAutoEquipItemSlotOpcode(WorldPackets::Item::AutoEquipItemSlot& autoEquipItemSlot)
 {
-    ObjectGuid itemguid;
-    uint8 dstslot;
-
-    uint32 count = recvData.ReadBits(2);
-    for (uint32 i = 0; i < count; ++i)
-    {
-        recvData.read_skip<uint8>();
-        recvData.read_skip<uint8>();
-    }
-
-    recvData >> itemguid >> dstslot;
-
-    // cheating attempt, client should never send opcode in that case
-    if (!Player::IsEquipmentPos(INVENTORY_SLOT_BAG_0, dstslot))
+    if (autoEquipItemSlot.Inv.Items.size() != 1 || !Player::IsEquipmentPos(INVENTORY_SLOT_BAG_0, autoEquipItemSlot.ItemDstSlot))
         return;
 
-    Item* item = _player->GetItemByGuid(itemguid);
-    uint16 dstpos = dstslot | (INVENTORY_SLOT_BAG_0 << 8);
-
-    if (!item || item->GetPos() == dstpos)
+    Item* item = _player->GetItemByGuid(autoEquipItemSlot.Item);
+    uint16 dstPos = autoEquipItemSlot.ItemDstSlot | (INVENTORY_SLOT_BAG_0 << 8);
+    uint16 srcPos = autoEquipItemSlot.Inv.Items[0].Slot | (uint32(autoEquipItemSlot.Inv.Items[0].ContainerSlot) << 8);
+    
+    if (!item || item->GetPos() != srcPos || srcPos == dstPos)
         return;
 
     if (sObjectMgr->IsPlayerInLogList(GetPlayer()))
     {
         sObjectMgr->DumpDupeConstant(GetPlayer());
-        sLog->outDebug(LOG_FILTER_DUPE, "---WorldSession::HandleAutoEquipItemSlotOpcode dstpos %u entry %u", dstpos, item->GetEntry());
+        sLog->outDebug(LOG_FILTER_DUPE, "---WorldSession::HandleAutoEquipItemSlotOpcode dstpos %u entry %u", dstPos, item->GetEntry());
     }
 
-    _player->SwapItem(item->GetPos(), dstpos);
+    _player->SwapItem(srcPos, dstPos);
 }
 
 void WorldSession::HandleSwapItem(WorldPackets::Item::SwapItem& swapItem)
@@ -1062,18 +1049,12 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
     itemTarget->ClearSoulboundTradeable(_player);           // clear tradeable flag
 }
 
-//! 6.0.3
-void WorldSession::HandleCancelTempEnchantmentOpcode(WorldPacket& recvData)
+void WorldSession::HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelTempEnchantment& packet)
 {
-    uint32 slot;
-
-    recvData >> slot;
-
-    // apply only to equipped item
-    if (!Player::IsEquipmentPos(INVENTORY_SLOT_BAG_0, slot))
+    if (!Player::IsEquipmentPos(INVENTORY_SLOT_BAG_0, packet.Slot))
         return;
 
-    Item* item = GetPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
+    Item* item = GetPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0, packet.Slot);
 
     if (!item)
         return;
