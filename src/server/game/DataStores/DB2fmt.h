@@ -176,7 +176,6 @@ char const ScenarioStepFormat[]= "nssttttbbb";
 char const SkillLineAbilityFormat[] = "niiiittttttbb";
 char const SkillLineFormat[] = "nsssttbbb";
 char const SkillRaceClassInfoFormat[] = "nittttbb";
-char const SoundEntriesFormat[] = "nisiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiififfiifffffii";
 char const SpecializationSpellsFormat[] = "niistb";
 char const SpellAuraOptionsFormat[] = "iniiitbbb";
 char const SpellAuraRestrictionsFormat[] = "iniiiibbbbb";

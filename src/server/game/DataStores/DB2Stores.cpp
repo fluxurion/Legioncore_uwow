@@ -177,7 +177,6 @@ DB2Storage<ScenarioStepEntry>               sScenarioStepStore("ScenarioStep.db2
 DB2Storage<SkillLineAbilityEntry>           sSkillLineAbilityStore("SkillLineAbility.db2", SkillLineAbilityFormat, HOTFIX_SEL_SKILL_LINE_ABILITY);
 DB2Storage<SkillLineEntry>                  sSkillLineStore("SkillLine.db2", SkillLineFormat, HOTFIX_SEL_SKILL_LINE);
 DB2Storage<SkillRaceClassInfoEntry>         sSkillRaceClassInfoStore("SkillRaceClassInfo.db2", SkillRaceClassInfoFormat, HOTFIX_SEL_SKILL_RACE_CLASS_INFO);
-DB2Storage<SoundEntriesEntry>               sSoundEntriesStore("SoundEntries.db2", SoundEntriesFormat, HOTFIX_SEL_SOUND_ENTRIES);
 DB2Storage<SpecializationSpellEntry>        sSpecializationSpellStore("SpecializationSpells.db2", SpecializationSpellsFormat, HOTFIX_SEL_SPECIALIZATION_SPELL);
 DB2Storage<SpellAuraOptionsEntry>           sSpellAuraOptionsStore("SpellAuraOptions.db2", SpellAuraOptionsFormat, HOTFIX_SEL_SPELL_AURA_OPTIONS);
 DB2Storage<SpellAuraRestrictionsEntry>      sSpellAuraRestrictionsStore("SpellAuraRestrictions.db2", SpellAuraRestrictionsFormat, HOTFIX_SEL_SPELL_AURA_RESTRICTIONS);
@@ -459,7 +458,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSkillLineAbilityStore);           // 21021
     LOAD_DB2(sSkillLineStore);                  // 21021
     LOAD_DB2(sSkillRaceClassInfoStore);         // 21021
-    //LOAD_DB2(sSoundEntriesStore);
     LOAD_DB2(sSpecializationSpellStore);        // 21021
     LOAD_DB2(sSpellAuraOptionsStore);           // 21021
     LOAD_DB2(sSpellAuraRestrictionsStore);      // 21021

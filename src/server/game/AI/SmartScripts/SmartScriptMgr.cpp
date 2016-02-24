@@ -630,8 +630,6 @@ bool SmartAIMgr::IsEventValid(SmartScriptHolder& e)
             }
             break;
         case SMART_ACTION_SOUND:
-            if (!IsSoundValid(e, e.action.sound.sound))
-                return false;
             if (e.action.sound.range > TEXT_RANGE_WORLD)
             {
                 sLog->outError(LOG_FILTER_SQL, "SmartAIMgr: Entry %d SourceType %u Event %u Action %u uses invalid Text Range %u, skipped.", e.entryOrGuid, e.GetScriptType(), e.event_id, e.GetActionType(), e.action.sound.range);

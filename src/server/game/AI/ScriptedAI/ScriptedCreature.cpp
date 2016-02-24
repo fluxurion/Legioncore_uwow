@@ -185,16 +185,8 @@ void ScriptedAI::DoCastSpell(Unit* target, SpellInfo const* spellInfo, bool trig
 
 void ScriptedAI::DoPlaySoundToSet(WorldObject* source, uint32 soundId)
 {
-    if (!source)
-        return;
-
-    if (!sSoundEntriesStore.LookupEntry(soundId))
-    {
-        sLog->outError(LOG_FILTER_TSCR, "Invalid soundId %u used in DoPlaySoundToSet (Source: TypeId %u, GUID %u)", soundId, source->GetTypeId(), source->GetGUIDLow());
-        return;
-    }
-
-    source->PlayDirectSound(soundId);
+    if (source)
+        source->PlayDirectSound(soundId);
 }
 
 Creature* ScriptedAI::DoSpawnCreature(uint32 entry, float offsetX, float offsetY, float offsetZ, float angle, uint32 type, uint32 despawntime)

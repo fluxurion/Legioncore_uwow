@@ -7477,15 +7477,7 @@ void Spell::EffectPlayMusic(SpellEffIndex effIndex)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    uint32 soundKitID = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue;
-
-    if (!sSoundEntriesStore.LookupEntry(soundKitID))
-    {
-        sLog->outError(LOG_FILTER_SPELLS_AURAS, "EffectPlayMusic: SoundKitID: %u not exist in spell %u.", soundKitID, m_spellInfo->Id);
-        return;
-    }
-
-    unitTarget->ToPlayer()->SendMusic(soundKitID);
+    unitTarget->ToPlayer()->SendMusic(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
 }
 
 void Spell::EffectSpecCount(SpellEffIndex /*effIndex*/)
@@ -7527,15 +7519,7 @@ void Spell::EffectPlaySound(SpellEffIndex effIndex)
             break;
     }
 
-    uint32 soundId = m_spellInfo->Effects[effIndex].MiscValue;
-
-    if (!sSoundEntriesStore.LookupEntry(soundId))
-    {
-        sLog->outError(LOG_FILTER_SPELLS_AURAS, "EffectPlayerNotification: Sound (Id: %u) not exist in spell %u.", soundId, m_spellInfo->Id);
-        return;
-    }
-
-    unitTarget->ToPlayer()->SendSound(soundId, ObjectGuid::Empty);
+    unitTarget->ToPlayer()->SendSound(m_spellInfo->Effects[effIndex].MiscValue, ObjectGuid::Empty);
 }
 
 void Spell::EffectRemoveAura(SpellEffIndex effIndex)

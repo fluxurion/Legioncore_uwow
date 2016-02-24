@@ -65,12 +65,6 @@ void SystemMgr::LoadScriptTexts()
             continue;
         }
 
-        if (temp.uiSoundId)
-        {
-            if (!sSoundEntriesStore.LookupEntry(temp.uiSoundId))
-                sLog->outError(LOG_FILTER_SQL, "TSCR: Entry %i in table `script_texts` has soundId %u but sound does not exist.", iId, temp.uiSoundId);
-        }
-
         if (!GetLanguageDescByID(temp.uiLanguage))
             sLog->outError(LOG_FILTER_SQL, "TSCR: Entry %i in table `script_texts` using Language %u but Language does not exist.", iId, temp.uiLanguage);
 
@@ -123,12 +117,6 @@ void SystemMgr::LoadScriptTextsCustom()
         {
             sLog->outError(LOG_FILTER_SQL, "TSCR: Entry %i in table `custom_texts` is out of accepted entry range for table.", iId);
             continue;
-        }
-
-        if (temp.uiSoundId)
-        {
-            if (!sSoundEntriesStore.LookupEntry(temp.uiSoundId))
-                sLog->outError(LOG_FILTER_SQL, "TSCR: Entry %i in table `custom_texts` has soundId %u but sound does not exist.", iId, temp.uiSoundId);
         }
 
         if (!GetLanguageDescByID(temp.uiLanguage))

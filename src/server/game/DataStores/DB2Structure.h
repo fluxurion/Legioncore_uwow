@@ -2011,28 +2011,6 @@ struct OverrideSpellDataEntry
     uint8  Flags;                                                   // 12
 };
 
-struct SoundEntriesEntry
-{
-    uint32      ID;                                                 // 0
-    uint32      SoundType;                                          // 1
-    LocalizedString* Name;                                          // 2
-    uint32      FileDataID[20];                                     // 3-22
-    uint32      Freq[20];                                           // 23-42
-    float       VolumeFloat;                                        // 43
-    uint32      Flags;                                              // 44
-    float       MinDistance;                                        // 45
-    float       DistanceCutoff;                                     // 46
-    uint32      EAXDef;                                             // 47
-    uint32      SoundEntriesAdvancedID;                             // 48
-    float       VolumeVariationPlus;                                // 49
-    float       VolumeVariationMinus;                               // 50
-    float       PitchVariationPlus;                                 // 51
-    float       PitchVariationMinus;                                // 52
-    float       PitchAdjust;                                        // 53
-    uint32      DialogType;                                         // 54
-    uint32      BusOverwriteID;                                     // 55
-};
-
 struct SpellAuraRestrictionsEntry
 {
     uint32      ID;

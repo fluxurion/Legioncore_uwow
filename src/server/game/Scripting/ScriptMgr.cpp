@@ -198,14 +198,6 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* target)
 
     sLog->outDebug(LOG_FILTER_TSCR, "DoScriptText: text entry=%i, Sound=%u, Type=%u, Language=%u, Emote=%u", iTextEntry, pData->uiSoundId, pData->uiType, pData->uiLanguage, pData->uiEmote);
 
-    if (pData->uiSoundId)
-    {
-        if (sSoundEntriesStore.LookupEntry(pData->uiSoundId))
-            pSource->SendPlaySound(pData->uiSoundId, false);
-        else
-            sLog->outError(LOG_FILTER_TSCR, "DoScriptText entry %i tried to process invalid sound id %u.", iTextEntry, pData->uiSoundId);
-    }
-
     if (pData->uiEmote)
     {
         if (pSource->GetTypeId() == TYPEID_UNIT || pSource->GetTypeId() == TYPEID_PLAYER)

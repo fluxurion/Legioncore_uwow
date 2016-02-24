@@ -4136,20 +4136,6 @@ void ObjectMgr::LoadQuests()
             }
         }
 
-        if (qinfo->SoundAccept && !sSoundEntriesStore.LookupEntry(qinfo->SoundAccept))
-        {
-            sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundAccept` = %u but sound %u does not exist, set to 0.",
-                               qinfo->GetQuestId(), qinfo->SoundAccept, qinfo->SoundAccept);
-            qinfo->SoundAccept = 0;
-        }
-
-        if (qinfo->SoundTurnIn && !sSoundEntriesStore.LookupEntry(qinfo->SoundTurnIn))
-        {
-            sLog->outError(LOG_FILTER_SQL, "Quest %u has `SoundTurnIn` = %u but sound %u does not exist, set to 0.",
-                               qinfo->GetQuestId(), qinfo->SoundTurnIn, qinfo->SoundTurnIn);
-            qinfo->SoundTurnIn = 0;
-        }
-
         if (qinfo->RewardSkillId)
         {
             if (!sSkillLineStore.LookupEntry(qinfo->RewardSkillId))

@@ -94,13 +94,6 @@ void CreatureTextMgr::LoadCreatureTexts()
         temp.duration       = fields[8].GetUInt32();
         temp.sound          = fields[9].GetUInt32();
 
-        if (temp.sound)
-        {
-            if (!sSoundEntriesStore.LookupEntry(temp.sound)){
-                sLog->outError(LOG_FILTER_SQL, "CreatureTextMgr:  Entry %u, Group %u in table `creature_texts` has Sound %u but sound does not exist.", temp.entry, temp.group, temp.sound);
-                temp.sound = 0;
-            }
-        }
         if (!GetLanguageDescByID(temp.lang))
         {
             sLog->outError(LOG_FILTER_SQL, "CreatureTextMgr:  Entry %u, Group %u in table `creature_texts` using Language %u but Language does not exist.", temp.entry, temp.group, uint32(temp.lang));

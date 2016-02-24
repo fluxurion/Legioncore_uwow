@@ -217,14 +217,6 @@ public:
         }
 
         uint32 soundId = atoi((char*)args);
-
-        if (!sSoundEntriesStore.LookupEntry(soundId))
-        {
-            handler->PSendSysMessage(LANG_SOUND_NOT_EXIST, soundId);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
-
         Unit* unit = handler->getSelectedUnit();
         if (!unit)
         {
