@@ -81,10 +81,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "UnkLegion3, UnkLegion4, UnkLegion5, DeathThudShakeSize FROM creature_model_data ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Faction.db2
-    PrepareStatement(HOTFIX_SEL_FACTION, "SELECT ID, reputationListID, BaseRepRaceMask1, BaseRepRaceMask2, BaseRepRaceMask3, BaseRepRaceMask4, "
-        "BaseRepClassMask1, BaseRepClassMask2, BaseRepClassMask3, BaseRepClassMask4, BaseRepValue1, BaseRepValue2, BaseRepValue3, BaseRepValue4, "
-        "ReputationFlags1, ReputationFlags2, ReputationFlags3, ReputationFlags4, team, spilloverRateIn, spilloverRateOut, spilloverMaxRankIn, name, "
-        "m_flags FROM faction ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_FACTION, "SELECT ID, BaseRepRaceMask1, BaseRepRaceMask2, BaseRepRaceMask3, BaseRepRaceMask4, BaseRepValue1, "
+        "BaseRepValue2, BaseRepValue3, BaseRepValue4, SpilloverRate1, SpilloverRate2, Name, `Desc`, ReputationListID, BaseRepClassMask1, "
+        "BaseRepClassMask2, BaseRepClassMask3, BaseRepClassMask4, ReputationFlags1, ReputationFlags2, ReputationFlags3, ReputationFlags4, Team, "
+        "SpilloverRank1, SpilloverRank2, Expansion, Flags, FriendshipRepID FROM faction ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_FACTION, "SELECT ID, Name_lang, Desc_lang FROM faction_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // FactionTemplate.db2
     PrepareStatement(HOTFIX_SEL_FACTION_TEMPLATE, "SELECT ID, faction, factionFlags, ourMask, friendlyMask, hostileMask, enemyFaction1, "

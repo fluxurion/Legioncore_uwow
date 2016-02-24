@@ -346,7 +346,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sDurabilityQualityStore);          // 21021
     LOAD_DB2(sEmotesStore);                     // 21021
     LOAD_DB2(sEmotesTextStore);                 // 21021
-    //LOAD_DB2(sFactionStore);
+    LOAD_DB2(sFactionStore);                    // 21154
     //LOAD_DB2(sFactionTemplateStore);
     LOAD_DB2(sGameObjectDisplayInfoStore);      // 21021
     //LOAD_DB2(sGameObjectsStore);
@@ -918,9 +918,9 @@ void DB2Manager::InitDB2CustomStores()
             _charSection.insert({entry->GenType | (entry->Gender << 8) | (entry->Race << 16), entry});
 
     for (FactionEntry const* faction : sFactionStore)
-        if (faction->team)
+        if (faction->Team)
         {
-            SimpleFactionsList &flist = _factionTeam[faction->team];
+            SimpleFactionsList &flist = _factionTeam[faction->Team];
             flist.push_back(faction->ID);
         }
 

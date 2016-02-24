@@ -3031,7 +3031,7 @@ Creature* Player::GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask, u
     if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(creature->getFaction()))
         if (factionTemplate->faction)
             if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction))
-                if (faction->reputationListID >= 0 && GetReputationMgr().GetRank(faction) <= REP_UNFRIENDLY)
+                if (faction->ReputationListID >= 0 && GetReputationMgr().GetRank(faction) <= REP_UNFRIENDLY)
                     return NULL;
 
     // not too far
@@ -26234,7 +26234,7 @@ void Player::SetLfgBonusFaction(uint32 factionId)
     }
 
     if (FactionEntry const* faction = sFactionStore.LookupEntry(factionId))
-        if (faction->CanBeLfgBonus() && GetReputationMgr().IsVisible(faction->reputationListID))
+        if (faction->CanBeLfgBonus() && GetReputationMgr().IsVisible(faction->ReputationListID))
             SetUInt32Value(PLAYER_FIELD_LFG_BONUS_FACTION_ID, factionId);
 }
 

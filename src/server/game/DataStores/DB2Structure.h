@@ -246,30 +246,23 @@ struct CreatureModelDataEntry
 
 struct FactionEntry
 {
-    uint32      ID;                                         // 0        m_ID
-    int32       reputationListID;                           // 1        m_reputationIndex
-    uint32      BaseRepRaceMask[4];                         // 2-5      m_reputationRaceMask
-    uint32      BaseRepClassMask[4];                        // 6-9      m_reputationClassMask
-    int32       BaseRepValue[4];                            // 10-13    m_reputationBase
-    uint32      ReputationFlags[4];                         // 14-17    m_reputationFlags
-    uint32      team;                                       // 18       m_parentFactionID
-    float       spilloverRateIn;                            // 19       Faction gains incoming rep * spilloverRateIn
-    float       spilloverRateOut;                           // 20       Faction outputs rep * spilloverRateOut as spillover reputation
-    uint32      spilloverMaxRankIn;                         // 21       The highest rank the faction will profit from incoming spillover
-    //uint32    spilloverRank_unk;                          // 22       It does not seem to be the max standing at which a faction outputs spillover ...so no idea
-    char* name;                                             // 23       m_name_lang
-    //char*     description;                                // 24       m_description_lang
-    //uint32    m_expansion                                 // 25
-    uint32      m_flags;                                    // 26       5.4.1
-    //uint32    m_friendshipRepID                           // 27       5.4.1
+    uint32      ID;                                         // 0
+    uint32      BaseRepRaceMask[4];                         // 1 - 4
+    int32       BaseRepValue[4];                            // 5 - 8
+    float       SpilloverRate[2];                           // 9 - 10
+    LocalizedString* Name;                                  // 11
+    LocalizedString* Desc;                                  // 12
+    int16       ReputationListID;                           // 13
+    uint16      BaseRepClassMask[4];                        // 14 - 17
+    uint16      ReputationFlags[4];                         // 18 - 21
+    uint16      Team;                                       // 22
+    uint8       SpilloverRank[2];                           // 23 - 24
+    uint8       Expansion;                                  // 25
+    uint8       Flags;                                      // 26
+    uint8       FriendshipRepID;                            // 27
 
-    // helpers
-    bool CanHaveReputation() const
-    {
-        return reputationListID >= 0;
-    }
-
-    bool CanBeLfgBonus() const { return m_flags & 0x1; }
+    bool CanHaveReputation() const {  return ReputationListID >= 0; }
+    bool CanBeLfgBonus() const { return Flags & 0x1; }
 };
 
 struct FactionTemplateEntry

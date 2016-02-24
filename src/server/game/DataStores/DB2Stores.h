@@ -162,7 +162,6 @@ extern DB2Storage<ScenarioStepEntry>                sScenarioStepStore;
 extern DB2Storage<SkillLineAbilityEntry>            sSkillLineAbilityStore;
 extern DB2Storage<SkillLineEntry>                   sSkillLineStore;
 extern DB2Storage<SkillRaceClassInfoEntry>          sSkillRaceClassInfoStore;
-extern DB2Storage<SoundEntriesEntry>                sSoundEntriesStore;
 extern DB2Storage<SpecializationSpellEntry>         sSpecializationSpellStore;
 extern DB2Storage<SpellAuraOptionsEntry>            sSpellAuraOptionsStore;
 extern DB2Storage<SpellAuraRestrictionsEntry>       sSpellAuraRestrictionsStore;

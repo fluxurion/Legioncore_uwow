@@ -546,29 +546,33 @@ DROP TABLE IF EXISTS `faction`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `faction` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `reputationListID` int(11) NOT NULL DEFAULT '0',
   `BaseRepRaceMask1` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseRepRaceMask2` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseRepRaceMask3` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseRepRaceMask4` int(10) unsigned NOT NULL DEFAULT '0',
-  `BaseRepClassMask1` int(10) unsigned NOT NULL DEFAULT '0',
-  `BaseRepClassMask2` int(10) unsigned NOT NULL DEFAULT '0',
-  `BaseRepClassMask3` int(10) unsigned NOT NULL DEFAULT '0',
-  `BaseRepClassMask4` int(10) unsigned NOT NULL DEFAULT '0',
   `BaseRepValue1` int(11) NOT NULL DEFAULT '0',
   `BaseRepValue2` int(11) NOT NULL DEFAULT '0',
   `BaseRepValue3` int(11) NOT NULL DEFAULT '0',
   `BaseRepValue4` int(11) NOT NULL DEFAULT '0',
-  `ReputationFlags1` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReputationFlags2` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReputationFlags3` int(10) unsigned NOT NULL DEFAULT '0',
-  `ReputationFlags4` int(10) unsigned NOT NULL DEFAULT '0',
-  `team` int(10) unsigned NOT NULL DEFAULT '0',
-  `spilloverRateIn` float NOT NULL DEFAULT '0',
-  `spilloverRateOut` float NOT NULL DEFAULT '0',
-  `spilloverMaxRankIn` int(10) unsigned NOT NULL DEFAULT '0',
-  `name` text,
-  `m_flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpilloverRate1` float NOT NULL DEFAULT '0',
+  `SpilloverRate2` float NOT NULL DEFAULT '0',
+  `Name` text,
+  `Desc` text,
+  `ReputationListID` smallint(6) NOT NULL DEFAULT '0',
+  `BaseRepClassMask1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `BaseRepClassMask2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `BaseRepClassMask3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `BaseRepClassMask4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReputationFlags1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReputationFlags2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReputationFlags3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ReputationFlags4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Team` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SpilloverRank1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpilloverRank2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Expansion` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `FriendshipRepID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -581,6 +585,32 @@ CREATE TABLE `faction` (
 LOCK TABLES `faction` WRITE;
 /*!40000 ALTER TABLE `faction` DISABLE KEYS */;
 /*!40000 ALTER TABLE `faction` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `faction_locale`
+--
+
+DROP TABLE IF EXISTS `faction_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `faction_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `Desc_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `faction_locale`
+--
+
+LOCK TABLES `faction_locale` WRITE;
+/*!40000 ALTER TABLE `faction_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `faction_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
