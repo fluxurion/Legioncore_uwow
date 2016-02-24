@@ -750,24 +750,6 @@ void WorldSession::SendSetPhaseShift(std::set<uint32> const& phaseIds, std::set<
     SendPacket(phaseShift.Write());
 }
 
-void WorldSession::HandleHearthAndResurrect(WorldPacket& /*recvData*/)
-{
-    if (_player->isInFlight())
-        return;
-
-    AreaTableEntry const* atEntry = sAreaTableStore.LookupEntry(_player->GetAreaId());
-    if (!atEntry || !(atEntry->Flags[0] & AREA_FLAG_WINTERGRASP_2))
-        return;
-
-    Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(_player->GetZoneId());
-    if (!bf || !bf->IsWarTime())
-        return;
-
-    _player->BuildPlayerRepop();
-    _player->ResurrectPlayer(100);
-    _player->TeleportTo(_player->m_homebindMapId, _player->m_homebindX, _player->m_homebindY, _player->m_homebindZ, _player->GetOrientation());
-}
-
 void WorldSession::HandleInstanceLockResponse(WorldPackets::Instance::InstanceLockResponse& packet)
 {
     Player* player = GetPlayer();

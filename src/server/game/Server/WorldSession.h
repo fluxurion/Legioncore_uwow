@@ -441,6 +441,7 @@ namespace WorldPackets
         class Port;
         class QueueRequest;
         class JoinSkirmish;
+        class HearthAndResurrect;
     }
 
     namespace VoidStorage
@@ -1491,7 +1492,7 @@ class WorldSession
         void HandleTimeSyncResp(WorldPackets::Misc::TimeSyncResponse& packet);
         void HandleWhoisOpcode(WorldPackets::Who::WhoIsRequest& packet);
         void HandleResetInstances(WorldPackets::Instance::ResetInstances& packet);
-        void HandleHearthAndResurrect(WorldPacket& recvData);
+        void HandleHearthAndResurrect(WorldPackets::Battleground::HearthAndResurrect& packet);
         void HandleInstanceLockResponse(WorldPackets::Instance::InstanceLockResponse& packet);
         void HandlePersonalRatedInfoRequest(WorldPackets::Battleground::NullCmsg& packet);
 

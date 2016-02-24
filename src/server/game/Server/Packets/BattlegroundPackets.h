@@ -661,6 +661,14 @@ namespace WorldPackets
             bool JoinAsGroup = false;
             bool UnkBool = false;
         };
+
+        class HearthAndResurrect final : public ClientPacket
+        {
+        public:
+            HearthAndResurrect(WorldPacket&& packet) : ClientPacket(CMSG_HEARTH_AND_RESURRECT, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
