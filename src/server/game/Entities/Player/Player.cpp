@@ -740,7 +740,7 @@ Player::Player(WorldSession* session): Unit(true),
     m_ChampioningFactionDungeonLevel = 0;
 
     for (uint8 i = 0; i < MAX_POWERS_PER_CLASS; ++i)
-        m_powerFraction[i] = 0;
+        m_powerFraction[i] = 0.0f;
 
     isDebugAreaTriggers = false;
 
@@ -3029,8 +3029,8 @@ Creature* Player::GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask, u
 
     // not unfriendly
     if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(creature->getFaction()))
-        if (factionTemplate->faction)
-            if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction))
+        if (factionTemplate->Faction)
+            if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->Faction))
                 if (faction->ReputationListID >= 0 && GetReputationMgr().GetRank(faction) <= REP_UNFRIENDLY)
                     return NULL;
 
@@ -25454,10 +25454,10 @@ bool Player::GetBGAccessByLevel(BattlegroundTypeId bgTypeId) const
 float Player::GetReputationPriceDiscount(Creature const* creature) const
 {
     FactionTemplateEntry const* vendor_faction = creature->getFactionTemplateEntry();
-    if (!vendor_faction || !vendor_faction->faction)
+    if (!vendor_faction || !vendor_faction->Faction)
         return 1.0f;
 
-    ReputationRank rank = GetReputationRank(vendor_faction->faction);
+    ReputationRank rank = GetReputationRank(vendor_faction->Faction);
     if (rank <= REP_NEUTRAL)
         return 1.0f;
 

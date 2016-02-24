@@ -347,7 +347,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sEmotesStore);                     // 21021
     LOAD_DB2(sEmotesTextStore);                 // 21021
     LOAD_DB2(sFactionStore);                    // 21154
-    //LOAD_DB2(sFactionTemplateStore);
+    LOAD_DB2(sFactionTemplateStore);            // 21154
     LOAD_DB2(sGameObjectDisplayInfoStore);      // 21021
     //LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameTablesStore);                 // 21021

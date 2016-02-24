@@ -373,10 +373,10 @@ bool ReputationMgr::SetOneFactionReputation(FactionEntry const* factionEntry, in
 
 void ReputationMgr::SetVisible(FactionTemplateEntry const*factionTemplateEntry)
 {
-    if (!factionTemplateEntry->faction)
+    if (!factionTemplateEntry->Faction)
         return;
 
-    if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplateEntry->faction))
+    if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplateEntry->Faction))
         // Never show factions of the opposing team
         if (!(factionEntry->BaseRepRaceMask[1] & _player->getRaceMask() && factionEntry->BaseRepValue[1] == Reputation_Bottom))
             SetVisible(factionEntry);

@@ -88,9 +88,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_FACTION, "SELECT ID, Name_lang, Desc_lang FROM faction_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // FactionTemplate.db2
-    PrepareStatement(HOTFIX_SEL_FACTION_TEMPLATE, "SELECT ID, faction, factionFlags, ourMask, friendlyMask, hostileMask, enemyFaction1, "
-        "enemyFaction2, enemyFaction3, enemyFaction4, friendFaction1, friendFaction2, friendFaction3, friendFaction4 FROM faction_template"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_FACTION_TEMPLATE, "SELECT ID, Faction, Flags, Enemies1, Enemies2, Enemies3, Enemies4, Friends1, Friends2, Friends3, "
+        "Friends4, Mask, FriendMask, EnemyMask FROM faction_template ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GlyphSlot.db2
     PrepareStatement(HOTFIX_SEL_GLYPH_SLOT, "SELECT ID, TypeFlags, `Order` FROM glyph_slot ORDER BY ID DESC", CONNECTION_SYNCH);

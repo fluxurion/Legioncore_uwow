@@ -267,31 +267,32 @@ struct FactionEntry
 
 struct FactionTemplateEntry
 {
-    uint32      ID;                                         // 0        m_ID
-    uint32      faction;                                    // 1        m_faction
-    uint32      factionFlags;                               // 2        m_flags
-    uint32      ourMask;                                    // 3        m_factionGroup
-    uint32      friendlyMask;                               // 4        m_friendGroup
-    uint32      hostileMask;                                // 5        m_enemyGroup
-    uint32      enemyFaction[MAX_FACTION_RELATIONS];        // 6        m_enemies[MAX_FACTION_RELATIONS]
-    uint32      friendFaction[MAX_FACTION_RELATIONS];       // 10       m_friend[MAX_FACTION_RELATIONS]
+    uint32      ID;                                         // 0
+    uint16      Faction;                                    // 1
+    uint16      Flags;                                      // 2
+    uint16      Enemies[MAX_FACTION_RELATIONS];             // 3 - 6
+    uint16      Friends[MAX_FACTION_RELATIONS];             // 7 - 10
+    uint8       Mask;                                       // 11
+    uint8       FriendMask;                                 // 12
+    uint8       EnemyMask;                                  // 13
 
     bool IsFriendlyTo(FactionTemplateEntry const& entry) const
     {
         if (ID == entry.ID)
             return true;
 
-        if (entry.faction)
+        if (entry.Faction)
         {
-            for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
-                if (enemyFaction[i] == entry.faction)
+            for (uint8 i = 0; i < MAX_FACTION_RELATIONS; ++i)
+                if (Enemies[i] == entry.Faction)
                     return false;
-            for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
-                if (friendFaction[i] == entry.faction)
+
+            for (uint8 i = 0; i < MAX_FACTION_RELATIONS; ++i)
+                if (Friends[i] == entry.Faction)
                     return true;
         }
 
-        return (friendlyMask & entry.ourMask) || (ourMask & entry.friendlyMask);
+        return (FriendMask & entry.Mask) || (Mask & entry.FriendMask);
     }
 
     bool IsHostileTo(FactionTemplateEntry const& entry) const
@@ -299,31 +300,32 @@ struct FactionTemplateEntry
         if (ID == entry.ID)
             return false;
 
-        if (entry.faction)
+        if (entry.Faction)
         {
-            for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
-                if (enemyFaction[i] == entry.faction)
+            for (uint8 i = 0; i < MAX_FACTION_RELATIONS; ++i)
+                if (Enemies[i] == entry.Faction)
                     return true;
-            for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
-                if (friendFaction[i] == entry.faction)
+
+            for (uint8 i = 0; i < MAX_FACTION_RELATIONS; ++i)
+                if (Friends[i] == entry.Faction)
                     return false;
         }
 
-        return (hostileMask & entry.ourMask) != 0;
+        return (EnemyMask & entry.Mask) != 0;
     }
 
-    bool IsHostileToPlayers() const { return (hostileMask & FACTION_MASK_PLAYER) != 0; }
+    bool IsHostileToPlayers() const { return (EnemyMask & FACTION_MASK_PLAYER) != 0; }
 
     bool IsNeutralToAll() const
     {
-        for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
-            if (enemyFaction[i] != 0)
+        for (uint8 i = 0; i < MAX_FACTION_RELATIONS; ++i)
+            if (Enemies[i] != 0)
                 return false;
 
-        return hostileMask == 0 && friendlyMask == 0;
+        return EnemyMask == 0 && FriendMask == 0;
     }
 
-    bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
+    bool IsContestedGuardFaction() const { return (Flags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
 };
 
 struct GlyphSlotEntry
