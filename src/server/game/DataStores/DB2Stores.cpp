@@ -16,12 +16,7 @@
  */
 
 #include "DB2Stores.h"
-#include "Common.h"
-#include "Containers.h"
-#include "DBCStores.h"
 #include "DB2fmt.h"
-#include "Log.h"
-#include "World.h"
 
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
@@ -339,7 +334,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sCreatureDifficultyStore);         // 21021
     LOAD_DB2(sCreatureDisplayInfoStore);        // 21021
     LOAD_DB2(sCreatureFamilyStore);             // 21021
-    //LOAD_DB2(sCreatureModelDataStore);
+    LOAD_DB2(sCreatureModelDataStore);          // 21154
     LOAD_DB2(sCreatureTypeStore);               // 21021
     LOAD_DB2(sCriteriaStore);                   // 21021
     LOAD_DB2(sCriteriaTreeStore);               // 21021

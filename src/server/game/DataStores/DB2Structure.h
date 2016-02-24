@@ -214,35 +214,34 @@ struct CreatureModelDataEntry
     uint32      ID;                                         // 0
     uint32      Flags;                                      // 1
     uint32      FileDataID;                                 // 2
-    //uint32    SizeClass;                                  // 3
-    //float     ModelScale;                                 // 4
-    //uint32    BloodID;                                    // 5
-    //uint32    FootprintTextureID;                         // 6
-    //float     FootprintTextureLength;                     // 7
-    //float     FootprintTextureWidth;                      // 8
-    //float     FootprintParticleScale;                     // 9
-    //uint32    FoleyMaterialID;                            // 10
-    //uint32    FootstepShakeSize;                          // 11
-    //uint32    DeathThudShakeSize;                         // 12
-    //uint32    SoundID;                                    // 13
-    //float     CollisionWidth;                             // 14
-    float       CollisionHeight;                            // 15
-    float       MountHeight;                                // 16
-    //float     GeoBoxMin[3];                               // 17-19
-    //float     GeoBoxMax[3];                               // 20-22
-    //float     WorldEffectScale;                           // 23
-    //float     AttachedEffectScale;                        // 24
-    //float     MissileCollisionRadius;                     // 25
-    //float     MissileCollisionPush;                       // 26
-    //float     MissileCollisionRaise;                      // 27
-    //float     OverrideLootEffectScale;                    // 28
-    //float     OverrideNameScale;                          // 29
-    //float     OverrideSelectionRadius;                    // 30
-    //float     TamedPetBaseScale;                          // 31
-    //uint32    CreatureGeosetDataID;                       // 32
-    //float     HoverHeight;                                // 33
-    // 34
-    // 35
+    float       ModelScale;                                 // 3
+    uint32      FootprintTextureID;                         // 4
+    float       FootprintTextureLength;                     // 5
+    float       FootprintTextureWidth;                      // 6
+    float       CollisionWidth;                             // 7
+    float       CollisionHeight;                            // 8
+    float       MountHeight;                                // 9
+    float       GeoBox[6];                                  // 10 - 15
+    float       WorldEffectScale;                           // 16
+    float       AttachedEffectScale;                        // 17
+    float       MissileCollisionRadius;                     // 18
+    float       MissileCollisionPush;                       // 19
+    float       MissileCollisionRaise;                      // 20
+    float       OverrideLootEffectScale;                    // 21
+    float       OverrideNameScale;                          // 22
+    float       OverrideSelectionRadius;                    // 23
+    float       TamedPetBaseScale;                          // 24
+    float       HoverHeight;                                // 25
+    uint16      SoundID;                                    // 26
+    uint16      CreatureGeosetDataID;                       // 27
+    uint8       SizeClass;                                  // 28
+    uint8       UnkLegion;                                  // 29
+    uint8       FootstepShakeSize;                          // 30
+    uint8       UnkLegion2;                                 // 31
+    uint8       UnkLegion3;                                 // 32
+    uint8       UnkLegion4;                                 // 33
+    uint8       UnkLegion5;                                 // 34
+    uint8       DeathThudShakeSize;                         // 35
 };
 
 struct FactionEntry

@@ -74,8 +74,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM char_sections ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // CreatureModelData.db2
-    PrepareStatement(HOTFIX_SEL_CREATURE_MODEL_DATA, "SELECT ID, Flags, FileDataID, CollisionHeight, MountHeight FROM creature_model_data"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CREATURE_MODEL_DATA, "SELECT ID, Flags, FileDataID, ModelScale, FootprintTextureID, FootprintTextureLength, "
+        "FootprintTextureWidth, CollisionWidth, CollisionHeight, MountHeight, GeoBox1, GeoBox2, GeoBox3, GeoBox4, GeoBox5, GeoBox6, WorldEffectScale, "
+        "AttachedEffectScale, MissileCollisionRadius, MissileCollisionPush, MissileCollisionRaise, OverrideLootEffectScale, OverrideNameScale, "
+        "OverrideSelectionRadius, TamedPetBaseScale, HoverHeight, SoundID, CreatureGeosetDataID, SizeClass, UnkLegion, FootstepShakeSize, UnkLegion2, "
+        "UnkLegion3, UnkLegion4, UnkLegion5, DeathThudShakeSize FROM creature_model_data ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Faction.db2
     PrepareStatement(HOTFIX_SEL_FACTION, "SELECT ID, reputationListID, BaseRepRaceMask1, BaseRepRaceMask2, BaseRepRaceMask3, BaseRepRaceMask4, "
