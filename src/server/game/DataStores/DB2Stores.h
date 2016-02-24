@@ -31,7 +31,9 @@ extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
 extern DB2Storage<AuctionHouseEntry>                sAuctionHouseStore;
 extern DB2Storage<BankBagSlotPricesEntry>           sBankBagSlotPricesStore;
+extern DB2Storage<BannedAddonsEntry>                sBannedAddOnsStore;
 extern DB2Storage<BarberShopStyleEntry>             sBarberShopStyleStore;
+extern DB2Storage<BattlemasterListEntry>            sBattlemasterListStore;
 extern DB2Storage<BattlePetAbilityEffectEntry>      sBattlePetAbilityEffectStore;
 extern DB2Storage<BattlePetAbilityEntry>            sBattlePetAbilityStore;
 extern DB2Storage<BattlePetAbilityStateEntry>       sBattlePetAbilityStateStore;
@@ -44,14 +46,17 @@ extern DB2Storage<BattlePetSpeciesStateEntry>       sBattlePetSpeciesStateStore;
 extern DB2Storage<BattlePetSpeciesXAbilityEntry>    sBattlePetSpeciesXAbilityStore;
 extern DB2Storage<BattlePetStateEntry>              sBattlePetStateStore;
 extern DB2Storage<BroadcastTextEntry>               sBroadcastTextStore;
+extern DB2Storage<CharSectionsEntry>                sCharSectionsStore;
 extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
 extern DB2Storage<CharTitlesEntry>                  sCharTitlesStore;
 extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;
+extern DB2Storage<ChrClassesEntry>                  sChrClassesStore;
 extern DB2Storage<ChrClassesXPowerTypesEntry>       sChrClassesXPowerTypesStore;
 extern DB2Storage<ChrRacesEntry>                    sChrRacesStore;
 extern DB2Storage<ChrSpecializationEntry>           sChrSpecializationStore;
 extern DB2Storage<CreatureDisplayInfoEntry>         sCreatureDisplayInfoStore;
 extern DB2Storage<CreatureFamilyEntry>              sCreatureFamilyStore;
+extern DB2Storage<CreatureModelDataEntry>           sCreatureModelDataStore;
 extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
 extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
 extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
@@ -63,6 +68,8 @@ extern DB2Storage<DurabilityCostsEntry>             sDurabilityCostsStore;
 extern DB2Storage<DurabilityQualityEntry>           sDurabilityQualityStore;
 extern DB2Storage<EmotesEntry>                      sEmotesStore;
 extern DB2Storage<EmotesTextEntry>                  sEmotesTextStore;
+extern DB2Storage<FactionEntry>                     sFactionStore;
+extern DB2Storage<FactionTemplateEntry>             sFactionTemplateStore;
 extern DB2Storage<GameObjectDisplayInfoEntry>       sGameObjectDisplayInfoStore;
 extern DB2Storage<GameObjectsEntry>                 sGameObjectsStore;
 extern DB2Storage<GameTablesEntry>                  sGameTablesStore;
@@ -88,6 +95,7 @@ extern DB2Storage<GarrSiteLevelEntry>               sGarrSiteLevelStore;
 extern DB2Storage<GarrSiteLevelPlotInstEntry>       sGarrSiteLevelPlotInstStore;
 extern DB2Storage<GemPropertiesEntry>               sGemPropertiesStore;
 extern DB2Storage<GlyphPropertiesEntry>             sGlyphPropertiesStore;
+extern DB2Storage<GlyphSlotEntry>                   sGlyphSlotStore;
 extern DB2Storage<GuildPerkSpellsEntry>             sGuildPerkSpellsStore;
 extern DB2Storage<HeirloomEntry>                    sHeirloomStore;
 extern DB2Storage<HolidaysEntry>                    sHolidaysStore;
@@ -121,9 +129,12 @@ extern DB2Storage<ItemSpecOverrideEntry>            sItemSpecOverrideStore;
 extern DB2Storage<ItemToBattlePetSpeciesEntry>      sItemToBattlePetSpeciesStore;
 extern DB2Storage<ItemUpgradeEntry>                 sItemUpgradeStore;
 extern DB2Storage<KeyChainEntry>                    sKeyChainStore;
+extern DB2Storage<LFGDungeonEntry>                  sLFGDungeonStore;
+extern DB2Storage<LiquidTypeEntry>                  sLiquidTypeStore;
 extern DB2Storage<LockEntry>                        sLockStore;
 extern DB2Storage<MailTemplateEntry>                sMailTemplateStore;
 extern DB2Storage<MapChallengeModeEntry>            sMapChallengeModeStore;
+extern DB2Storage<MapDifficultyEntry>               sMapDifficultyStore;
 extern DB2Storage<MapEntry>                         sMapStore;
 extern DB2Storage<MinorTalentEntry>                 sMinorTalentStore;
 extern DB2Storage<ModifierTreeEntry>                sModifierTreeStore;
@@ -135,12 +146,12 @@ extern DB2Storage<PhaseEntry>                       sPhaseStores;
 extern DB2Storage<PowerDisplayEntry>                sPowerDisplayStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
-extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
-extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
 extern DB2Storage<QuestLineEntry>                   sQuestLineStore;
 extern DB2Storage<QuestLineXQuestEntry>             sQuestLineXQuestStore;
 extern DB2Storage<QuestMoneyRewardEntry>            sQuestMoneyRewardStore;
 extern DB2Storage<QuestObjectiveEntry>              sQuestObjectiveStore;
+extern DB2Storage<QuestSortEntry>                   sQuestSortStore;
+extern DB2Storage<QuestXPEntry>                     sQuestXPStore;
 extern DB2Storage<RandPropPointsEntry>              sRandPropPointsStore;
 extern DB2Storage<ResearchBranchEntry>              sResearchBranchStore;
 extern DB2Storage<ResearchProjectEntry>             sResearchProjectStore;
@@ -168,10 +179,11 @@ extern DB2Storage<SpellEquippedItemsEntry>          sSpellEquippedItemsStore;
 extern DB2Storage<SpellFocusObjectEntry>            sSpellFocusObjectStore;
 extern DB2Storage<SpellInterruptsEntry>             sSpellInterruptsStore;
 extern DB2Storage<SpellItemEnchantmentConditionEntry> sSpellItemEnchantmentConditionStore;
+extern DB2Storage<SpellItemEnchantmentEntry>        sSpellItemEnchantmentStore;
 extern DB2Storage<SpellLearnSpellEntry>             sSpellLearnSpellStore;
 extern DB2Storage<SpellLevelsEntry>                 sSpellLevelsStore;
-extern DB2Storage<SpellMiscEntry>                   sSpellMiscStore;
 extern DB2Storage<SpellMiscDifficultyEntry>         sSpellMiscDifficultyStore;
+extern DB2Storage<SpellMiscEntry>                   sSpellMiscStore;
 extern DB2Storage<SpellPowerEntry>                  sSpellPowerStore;
 extern DB2Storage<SpellProcsPerMinuteEntry>         sSpellProcsPerMinuteStore;
 extern DB2Storage<SpellProcsPerMinuteModEntry>      sSpellProcsPerMinuteModStore;
@@ -187,12 +199,17 @@ extern DB2Storage<SpellTotemsEntry>                 sSpellTotemsStore;
 extern DB2Storage<SpellVisualEntry>                 sSpellVisualStore;
 extern DB2Storage<SpellXSpellVisualEntry>           sSpellXSpellVisualStore;
 extern DB2Storage<SummonPropertiesEntry>            sSummonPropertiesStore;
+extern DB2Storage<TalentEntry>                      sTalentStore;
 extern DB2Storage<TaxiNodesEntry>                   sTaxiNodesStore;
 extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
+extern DB2Storage<VehicleEntry>                     sVehicleStore;
 extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
+extern DB2Storage<WMOAreaTableEntry>                sWMOAreaTableStore;
+extern DB2Storage<WorldMapAreaEntry>                sWorldMapAreaStore;
 extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
 extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
+extern DB2Storage<WorldSafeLocsEntry>               sWorldSafeLocsStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
 extern TaxiMask                                     sOldContinentsNodesMask;
@@ -200,6 +217,22 @@ extern TaxiMask                                     sHordeTaxiNodesMask;
 extern TaxiMask                                     sAllianceTaxiNodesMask;
 extern TaxiPathSetBySource                          sTaxiPathSetBySource;
 extern TaxiPathNodesByPath                          sTaxiPathNodesByPath;
+
+struct ResearchPOIPoint
+{
+    ResearchPOIPoint(int32 _x = 0, int32 _y = 0) : x(_x), y(_y) { }
+    int32 x, y;
+};
+
+typedef std::vector<ResearchPOIPoint> ResearchPOIPointVector;
+
+struct DigSitePosition
+{
+    DigSitePosition(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y) { }
+    float x, y;
+};
+
+typedef std::vector<DigSitePosition> DigSitePositionVector;
 
 struct ResearchSiteData
 {
@@ -233,6 +266,18 @@ struct SpellEffect
     }
 
     SpellEffectEntry const* effects[MAX_SPELL_EFFECTS];
+};
+
+struct WMOAreaTableTripple
+{
+    WMOAreaTableTripple(int32 r, int32 a, int32 g) : groupId(g), rootId(r), adtId(a) { }
+
+    bool operator <(const WMOAreaTableTripple& b) const { return memcmp(this, &b, sizeof(WMOAreaTableTripple)) < 0; }
+
+    // ordered by entropy; that way memcmp will have a minimal medium runtime
+    int32 groupId;
+    int32 rootId;
+    int32 adtId;
 };
 
 #define DEFINE_DB2_SET_COMPARATOR(structure) \
@@ -314,6 +359,11 @@ public:
     typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
     typedef std::unordered_map<uint32, uint32> SpellMiscDifficultyContainer;
     typedef std::unordered_map<uint16, uint16> QuestLineXQuestContainer;
+    typedef std::multimap<uint32, CharSectionsEntry const*> CharSectionsContainer;
+    typedef std::list<uint32> SimpleFactionsList;
+    typedef std::map<uint32, SimpleFactionsList> FactionTeamContainer;
+    typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTrippleContainer;
+    typedef std::vector<TalentEntry const*> TalentsByPositionContainer[MAX_CLASSES][7][3];
 
     static DB2Manager& Instance()
     {
@@ -390,6 +440,10 @@ public:
     uint32 GetSpellMisc(uint32 spellID, Difficulty difficultyID = DIFFICULTY_NONE);
     uint16 GetQuestIDbyLineAndPos(uint8 lineID, uint8 pos);
     QuestLineXQuestEntry const* GetQuestLineXQuestData(uint16 questID);
+    CharSectionsEntry const* GetCharSectionEntry(uint8 race, CharSectionType genType, uint8 gender, uint8 type, uint8 color);
+    SimpleFactionsList const* GetFactionTeamList(uint32 faction);
+    WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid);
+    uint32 GetLiquidFlags(uint32 liquidType);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -401,6 +455,7 @@ public:
     std::set<uint32> sScenarioCriteriaTreeStore;
     MapDifficultyContainer _mapDifficulty;
     SpellCategoryContainer _spellCategory;
+    TalentsByPositionContainer _talentByPos;
 private:
     StorageMap _stores;
     HotfixData _hotfixData;
@@ -451,6 +506,9 @@ private:
     MinorTalentByIndexContainer _minorTalentByIndexStore;
     SpellMiscDifficultyContainer _spellMiscDifficulty;
     QuestLineXQuestContainer _questLineXQuest;
+    CharSectionsContainer _charSection;
+    FactionTeamContainer _factionTeam;
+    WMOAreaInfoByTrippleContainer _WMOAreaInfoByTripple;
 };
 
 #define sDB2Manager DB2Manager::Instance()

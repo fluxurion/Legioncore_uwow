@@ -202,9 +202,8 @@ bool WorldSocket::ReadDataHandler()
         if (sPacketLog->CanLogPacket())
             sPacketLog->LogPacket(packet, CLIENT_TO_SERVER, GetRemoteIpAddress(), GetRemotePort());
 
-        std::string opcodeName = GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode));
         sLog->outError(LOG_FILTER_GENERAL, "C->S: %s %s",
-            (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), opcodeName.c_str());
+            (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
 
         try
         {
@@ -227,23 +226,14 @@ bool WorldSocket::ReadDataHandler()
                     break;
                 }
                 case CMSG_KEEP_ALIVE:
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
                     sScriptMgr->OnPacketReceive(_worldSession, packet);
                     break;
                 case CMSG_LOG_DISCONNECT:
                     packet.rfinish();   // contains uint32 disconnectReason;
-                    #ifdef WIN32
-                    sLog->outError(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
                     sScriptMgr->OnPacketReceive(_worldSession, packet);
                     return true;
                 case CMSG_ENABLE_NAGLE:
                 {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
                     sScriptMgr->OnPacketReceive(_worldSession, packet);
                     if (_worldSession)
                         SetNoDelay(false);
@@ -251,9 +241,6 @@ bool WorldSocket::ReadDataHandler()
                 }
                 case CMSG_CONNECT_TO_FAILED:
                 {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
                     sScriptMgr->OnPacketReceive(_worldSession, packet);
 
                     WorldPackets::Auth::ConnectToFailed connectToFailed(std::move(packet));
@@ -263,9 +250,6 @@ bool WorldSocket::ReadDataHandler()
                 }
                 case CMSG_AUTH_CONTINUED_SESSION:
                 {
-                    #ifdef WIN32
-                    sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", opcodeName.c_str());
-                    #endif
                     sScriptMgr->OnPacketReceive(_worldSession, packet);
 
                     std::shared_ptr<WorldPackets::Auth::AuthContinuedSession> authSession = std::make_shared<WorldPackets::Auth::AuthContinuedSession>(std::move(packet));

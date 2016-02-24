@@ -122,6 +122,8 @@ public:
                     entry += sizeof(char const*);
                     break;
                 }
+                default:
+                    break;
             }
         }
     }

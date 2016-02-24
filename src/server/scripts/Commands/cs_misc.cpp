@@ -356,7 +356,7 @@ public:
             int32 adtId, rootId, groupId;
             if(map->GetAreaInfo(object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), mogpFlags, adtId, rootId, groupId))
             {
-                if(WMOAreaTableEntry const* wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId))
+                if(WMOAreaTableEntry const* wmoEntry = sDB2Manager.GetWMOAreaTableEntryByTripple(rootId, adtId, groupId))
                     if(std::strlen(wmoEntry->AreaName_lang) > 0)
                         AreaName = wmoEntry->AreaName_lang;
 

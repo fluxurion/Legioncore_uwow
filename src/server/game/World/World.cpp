@@ -1488,16 +1488,6 @@ void World::SetInitialWorldSettings()
     ///- Init highest guids before any table loading to prevent using not initialized guids in some code.
     sObjectMgr->SetHighestGuids();
 
-    ///- Check the existence of the map files for all races' startup areas.
-    if (!MapManager::ExistMapAndVMap(0, -6240.32f, 331.033f) || !MapManager::ExistMapAndVMap(0, -8949.95f, -132.493f) ||
-        !MapManager::ExistMapAndVMap(1, -618.518f, -4251.67f) || !MapManager::ExistMapAndVMap(0, 1676.35f, 1677.45f) ||
-        !MapManager::ExistMapAndVMap(1, 10311.3f, 832.463f) || !MapManager::ExistMapAndVMap(1, -2917.58f, -257.98f) ||
-        !MapManager::ExistMapAndVMap(530, 10349.6f, -6357.29f) || !MapManager::ExistMapAndVMap(530, -3961.64f, -13931.2f))
-    {
-        sLog->outError(LOG_FILTER_SERVER_LOADING, "Correct *.map files not found in path '%smaps' or *.vmtree/*.vmtile files in '%svmaps'. Please place *.map/*.vmtree/*.vmtile files in appropriate directories or correct the DataDir value in the worldserver.conf file.", m_dataPath.c_str(), m_dataPath.c_str());
-        exit(1);
-    }
-
     ///- Initialize pool manager
     sPoolMgr->Initialize();
 
@@ -1523,11 +1513,6 @@ void World::SetInitialWorldSettings()
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_OLD_CORPSES);
     stmt->setUInt32(0, 3 * DAY);
     CharacterDatabase.Execute(stmt);
-
-    ///- Load the DBC files
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading dbc info...");
-    LoadDBCStores(m_dataPath, m_defaultDbcLocale);
-    InitDBCCustomStores();
     
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading db2 info...");
     sDB2Manager.LoadStores(m_dataPath, m_defaultDbcLocale);

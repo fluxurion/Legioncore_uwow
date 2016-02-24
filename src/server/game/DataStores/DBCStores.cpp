@@ -26,62 +26,15 @@
 #include <iostream>
 #include <fstream>
 
-
-struct WMOAreaTableTripple
-{
-    WMOAreaTableTripple(int32 r, int32 a, int32 g) : groupId(g), rootId(r), adtId(a)
-    { }
-
-    bool operator <(const WMOAreaTableTripple& b) const
-    {
-        return memcmp(this, &b, sizeof(WMOAreaTableTripple)) < 0;
-    }
-
-    // ordered by entropy; that way memcmp will have a minimal medium runtime
-    int32 groupId;
-    int32 rootId;
-    int32 adtId;
-};
-
-typedef std::multimap<uint32, CharSectionsEntry const*> CharSectionsMap;
-CharSectionsMap sCharSectionMap;
-
-typedef std::map<uint32, SimpleFactionsList> FactionTeamMap;
-typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTripple;
-
-static FactionTeamMap sFactionTeamMap;
-static WMOAreaInfoByTripple sWMOAreaInfoByTripple;
-
-TalentsByPosition                           sTalentByPos;
-
-DBCStorage<BannedAddOnsEntry>               sBannedAddOnsStore(BannedAddOnsfmt);
-DBCStorage<BattlemasterListEntry>           sBattlemasterListStore(BattlemasterListEntryfmt);
-DBCStorage<ChrClassesEntry>                 sChrClassesStore(ChrClassesEntryfmt);
-DBCStorage<CharSectionsEntry>               sCharSectionsStore(CharSectionsfmt);
-DBCStorage<CreatureModelDataEntry>          sCreatureModelDataStore(CreatureModelDatafmt);
-DBCStorage<FactionEntry>                    sFactionStore(FactionEntryfmt);
-DBCStorage<FactionTemplateEntry>            sFactionTemplateStore(FactionTemplateEntryfmt);
-DBCStorage<GlyphSlotEntry>                  sGlyphSlotStore(GlyphSlotfmt);
-DBCStorage<LFGDungeonEntry>                 sLFGDungeonStore(LFGDungeonEntryfmt);
-DBCStorage<LiquidTypeEntry>                 sLiquidTypeStore(LiquidTypefmt);
-DBCStorage<MapDifficultyEntry>              sMapDifficultyStore(MapDifficultyEntryfmt); // only for loading
-DBCStorage<SpellItemEnchantmentEntry>       sSpellItemEnchantmentStore(SpellItemEnchantmentfmt);
-DBCStorage<TalentEntry>                     sTalentStore(TalentEntryfmt);
-DBCStorage<TeamContributionPointsEntry>     sTeamContributionPointsStore(TeamContributionPointsfmt);
-DBCStorage<VehicleEntry>                    sVehicleStore(VehicleEntryfmt);
-DBCStorage<WMOAreaTableEntry>               sWMOAreaTableStore(WMOAreaTableEntryfmt);
-DBCStorage<WorldMapAreaEntry>               sWorldMapAreaStore(WorldMapAreaEntryfmt);
-DBCStorage<WorldSafeLocsEntry>              sWorldSafeLocsStore(WorldSafeLocsEntryfmt);
-
 GameTable<GtArmorMitigationByLvlEntry>      sGtArmorMitigationByLvlStore(GameTablefmt);
-GameTable<GtBarberShopCostBaseEntry>        sGtBarberShopCostBaseStore(GtBarberShopCostBasefmt);
-GameTable<GtBattlePetTypeDamageModEntry>    sGtBattlePetTypeDamageModStore(GtBattlePetTypeDamageModfmt);
-GameTable<GtChanceToMeleeCritBaseEntry>     sGtChanceToMeleeCritBaseStore(GtChanceToMeleeCritBasefmt);
-GameTable<GtChanceToMeleeCritEntry>         sGtChanceToMeleeCritStore(GtChanceToMeleeCritfmt);
-GameTable<GtChanceToSpellCritBaseEntry>     sGtChanceToSpellCritBaseStore(GtChanceToSpellCritBasefmt);
-GameTable<GtChanceToSpellCritEntry>         sGtChanceToSpellCritStore(GtChanceToSpellCritfmt);
-GameTable<GtCombatRatingsEntry>             sGtCombatRatingsStore(GtCombatRatingsfmt);
-GameTable<GtItemSocketCostPerLevelEntry>    sGtItemSocketCostPerLevelStore(GtItemSocketCostPerLevelfmt);
+GameTable<GtBarberShopCostBaseEntry>        sGtBarberShopCostBaseStore(GameTablefmt);
+GameTable<GtBattlePetTypeDamageModEntry>    sGtBattlePetTypeDamageModStore(GameTablefmt);
+GameTable<GtChanceToMeleeCritBaseEntry>     sGtChanceToMeleeCritBaseStore(GameTablefmt);
+GameTable<GtChanceToMeleeCritEntry>         sGtChanceToMeleeCritStore(GameTablefmt);
+GameTable<GtChanceToSpellCritBaseEntry>     sGtChanceToSpellCritBaseStore(GameTablefmt);
+GameTable<GtChanceToSpellCritEntry>         sGtChanceToSpellCritStore(GameTablefmt);
+GameTable<GtCombatRatingsEntry>             sGtCombatRatingsStore(GameTablefmt);
+GameTable<GtItemSocketCostPerLevelEntry>    sGtItemSocketCostPerLevelStore(GameTablefmt);
 GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStore(GameTablefmt);
 GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp1(GameTablefmt);
 GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp2(GameTablefmt);
@@ -97,13 +50,13 @@ GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp4Store(GameTablefmt)
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp5Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp6Store(GameTablefmt);
 GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpStore(GameTablefmt);
-GameTable<GtOCTBaseHPByClassEntry>          sGtOCTBaseHPByClassStore(GtOCTBaseHPByClassfmt);
-GameTable<GtOCTBaseMPByClassEntry>          sGtOCTBaseMPByClassStore(GtOCTBaseMPByClassfmt);
-GameTable<GtOCTHpPerStaminaEntry>           sGtOCTHpPerStaminaStore(GtOCTHpPerStaminafmt);
-GameTable<GtOCTLevelExperienceEntry>        sGtOCTLevelExperienceStore(GtOCTLevelExperiencefmt);
-GameTable<GtOCTRegenHPEntry>                sGtOCTRegenHPStore(GtOCTRegenHPfmt);
-GameTable<GtRegenMPPerSptEntry>             sGtRegenMPPerSptStore(GtRegenMPPerSptfmt);
-GameTable<GtSpellScalingEntry>              sGtSpellScalingStore(GtSpellScalingfmt);
+GameTable<GtOCTBaseHPByClassEntry>          sGtOCTBaseHPByClassStore(GameTablefmt);
+GameTable<GtOCTBaseMPByClassEntry>          sGtOCTBaseMPByClassStore(GameTablefmt);
+GameTable<GtOCTHpPerStaminaEntry>           sGtOCTHpPerStaminaStore(GameTablefmt);
+GameTable<GtOCTLevelExperienceEntry>        sGtOCTLevelExperienceStore(GameTablefmt);
+GameTable<GtOCTRegenHPEntry>                sGtOCTRegenHPStore(GameTablefmt);
+GameTable<GtRegenMPPerSptEntry>             sGtRegenMPPerSptStore(GameTablefmt);
+GameTable<GtSpellScalingEntry>              sGtSpellScalingStore(GameTablefmt);
 
 typedef std::list<std::string> StoreProblemList;
 
@@ -215,56 +168,6 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
     }
 }
 
-void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale)
-{
-    uint32 oldMSTime = getMSTime();
-
-    std::string dbcPath = dataPath + "dbc/";
-
-    StoreProblemList bad_dbc_files;
-    uint32 availableDbcLocales = 0xFFFFFFFF;
-
-    LoadDBC(availableDbcLocales, bad_dbc_files, sMapDifficultyStore, dbcPath, "MapDifficulty.dbc", defaultLocale, &CustomMapDifficultyEntryfmt, &CustomMapDifficultyEntryIndex);
-
-#define LOAD_DBC(store, file) LoadDBC(availableDbcLocales, bad_dbc_files, store, dbcPath, file, defaultLocale)
-
-    //LOAD_DBC(sCharSectionsStore,                "CharSections.dbc"); w8 for migrate to db2 in 21108+
-    LOAD_DBC(sBannedAddOnsStore,                "BannedAddOns.dbc");
-    LOAD_DBC(sBattlemasterListStore,            "BattlemasterList.dbc");
-    LOAD_DBC(sChrClassesStore,                  "ChrClasses.dbc");
-    LOAD_DBC(sCreatureModelDataStore,           "CreatureModelData.dbc");
-    LOAD_DBC(sFactionStore,                     "Faction.dbc");
-    LOAD_DBC(sFactionTemplateStore,             "FactionTemplate.dbc");
-    //LOAD_DBC(sLFGDungeonStore,                  "LfgDungeons.dbc");
-    LOAD_DBC(sLiquidTypeStore,                  "LiquidType.dbc");
-    //LOAD_DBC(sSpellItemEnchantmentStore,        "SpellItemEnchantment.dbc");
-    LOAD_DBC(sTalentStore,                      "Talent.dbc");
-    LOAD_DBC(sVehicleStore,                     "Vehicle.dbc");
-    LOAD_DBC(sWMOAreaTableStore,                "WMOAreaTable.dbc");
-    LOAD_DBC(sWorldMapAreaStore,                "WorldMapArea.dbc");
-    LOAD_DBC(sWorldSafeLocsStore,               "WorldSafeLocs.dbc");
-
-#undef LOAD_DBC
-
-    // error checks
-    if (bad_dbc_files.size() >= DBCFileCount)
-    {
-        sLog->outError(LOG_FILTER_GENERAL, "Incorrect DataDir value in worldserver.conf or ALL required *.dbc files (%d) not found by path: %sdbc/%s/", DBCFileCount, dataPath.c_str(), localeNames[defaultLocale]);
-        exit(1);
-    }
-    else if (!bad_dbc_files.empty())
-    {
-        std::string str;
-        for (StoreProblemList::iterator i = bad_dbc_files.begin(); i != bad_dbc_files.end(); ++i)
-            str += *i + "\n";
-
-        sLog->outError(LOG_FILTER_GENERAL, "Some required *.dbc files (%u from %d) not found or not compatible:\n%s", (uint32)bad_dbc_files.size(), DBCFileCount, str.c_str());
-        exit(1);
-    }
-
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Initialized %d DBC data stores in %u ms", DBCFileCount, GetMSTimeDiffToNow(oldMSTime));
-}
-
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
 {
     uint32 oldMSTime = getMSTime();
@@ -278,10 +181,10 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     LOAD_GT("ArmorMitigationByLvl",    sGtArmorMitigationByLvlStore,    "gtArmorMitigationByLvl.dbc");
     LOAD_GT("BarberShopCostBase",      sGtBarberShopCostBaseStore,      "gtBarberShopCostBase.dbc");
     LOAD_GT("BattlePetTypeDamageMod",  sGtBattlePetTypeDamageModStore,  "gtBattlePetTypeDamageMod.dbc");
-    LOAD_GT("ChanceToMeleeCrit",       sGtChanceToMeleeCritStore,       "gtChanceToMeleeCrit.dbc");
-    LOAD_GT("ChanceToMeleeCritBase",   sGtChanceToMeleeCritBaseStore,   "gtChanceToMeleeCritBase.dbc");
-    LOAD_GT("ChanceToSpellCrit",       sGtChanceToSpellCritStore,       "gtChanceToSpellCrit.dbc");
-    LOAD_GT("ChanceToSpellCritBase",   sGtChanceToSpellCritBaseStore,   "gtChanceToSpellCritBase.dbc");
+    //LOAD_GT("ChanceToMeleeCrit",       sGtChanceToMeleeCritStore,       "gtChanceToMeleeCrit.dbc");
+    //LOAD_GT("ChanceToMeleeCritBase",   sGtChanceToMeleeCritBaseStore,   "gtChanceToMeleeCritBase.dbc");
+    //LOAD_GT("ChanceToSpellCrit",       sGtChanceToSpellCritStore,       "gtChanceToSpellCrit.dbc");
+    //LOAD_GT("ChanceToSpellCritBase",   sGtChanceToSpellCritBaseStore,   "gtChanceToSpellCritBase.dbc");
     LOAD_GT("CombatRatings",           sGtCombatRatingsStore,           "gtCombatRatings.dbc");
     LOAD_GT("ItemSocketCostPerLevel",  sGtItemSocketCostPerLevelStore,  "gtItemSocketCostPerLevel.dbc");
     LOAD_GT("NpcDamageByClass",        sGtNpcDamageByClassStore,        "gtNpcDamageByClass.dbc");
@@ -299,12 +202,32 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     LOAD_GT("NpcTotalHpExp4",          sGtNpcTotalHpExp4Store,          "gtNpcTotalHpExp4.dbc");
     LOAD_GT("NpcTotalHpExp5",          sGtNpcTotalHpExp5Store,          "gtNpcTotalHpExp5.dbc");
     LOAD_GT("NpcTotalHpExp6",          sGtNpcTotalHpExp6Store,          "gtNpcTotalHpExp6.dbc");
-    LOAD_GT("OCTBaseHPByClass",        sGtOCTBaseHPByClassStore,        "gtOCTBaseHPByClass.dbc");
+    //LOAD_GT("OCTBaseHPByClass",        sGtOCTBaseHPByClassStore,        "gtOCTBaseHPByClass.dbc");
     LOAD_GT("OCTBaseMPByClass",        sGtOCTBaseMPByClassStore,        "gtOCTBaseMPByClass.dbc");
     LOAD_GT("OCTHPPerStamina",         sGtOCTHpPerStaminaStore,         "gtOCTHpPerStamina.dbc");
     LOAD_GT("OCTLevelExperience",      sGtOCTLevelExperienceStore,      "gtOCTLevelExperience.dbc");
-    LOAD_GT("RegenMPPerSpt",           sGtRegenMPPerSptStore,           "gtRegenMPPerSpt.dbc");
+    //LOAD_GT("RegenMPPerSpt",           sGtRegenMPPerSptStore,           "gtRegenMPPerSpt.dbc");
     LOAD_GT("SpellScaling",            sGtSpellScalingStore,            "gtSpellScaling.dbc");
+
+    /*
+        exist but'til unused
+        gtArtifactLevelXP
+        gtBattlePetXP
+        gtChallengeModeDamage
+        gtChallengeModeHealth
+        gtCombatRatings
+        gtCombatRatingsMultByILvl
+        gtHonorLevel
+        gtSandboxScaling
+
+        this was deleted in 21154.... use them from old builds atm
+        gtChanceToMeleeCrit
+        gtChanceToMeleeCritBase
+        gtChanceToSpellCrit
+        gtChanceToSpellCritBase
+        gtOCTBaseHPByClass
+        gtRegenMPPerSpt
+    */
 
 #undef LOAD_GT
 
@@ -325,46 +248,6 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     }
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Initialized %d DBC GameTables data stores in %u ms", GameTableCount, GetMSTimeDiffToNow(oldMSTime));
-}
-
-void InitDBCCustomStores()
-{
-    for (CharSectionsEntry const* entry : sCharSectionsStore)
-        if (entry->Race && ((1 << (entry->Race - 1)) & RACEMASK_ALL_PLAYABLE) != 0)
-            sCharSectionMap.insert({ entry->GenType | (entry->Gender << 8) | (entry->Race << 16), entry });
-
-    for (FactionEntry const* faction : sFactionStore)
-    {
-        if (faction->team)
-        {
-            SimpleFactionsList &flist = sFactionTeamMap[faction->team];
-            flist.push_back(faction->ID);
-        }
-    }
-
-    for (TalentEntry const* talentInfo : sTalentStore)
-        if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 8 && talentInfo->column < 3)
-            sTalentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
-
-    for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
-        sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));
-}
-
-SimpleFactionsList const* GetFactionTeamList(uint32 faction)
-{
-    FactionTeamMap::const_iterator itr = sFactionTeamMap.find(faction);
-    if (itr != sFactionTeamMap.end())
-        return &itr->second;
-
-    return nullptr;
-}
-
-WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid)
-{
-    WMOAreaInfoByTripple::iterator i = sWMOAreaInfoByTripple.find(WMOAreaTableTripple(rootid, adtid, groupid));
-    if (i == sWMOAreaInfoByTripple.end())
-        return nullptr;
-    return i->second;
 }
 
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId)
@@ -468,14 +351,4 @@ bool IsValidDifficulty(uint32 diff, bool isRaid)
     }
 
     return isRaid;
-}
-
-CharSectionsEntry const* GetCharSectionEntry(uint8 race, CharSectionType genType, uint8 gender, uint8 type, uint8 color)
-{
-    std::pair<CharSectionsMap::const_iterator, CharSectionsMap::const_iterator> eqr = sCharSectionMap.equal_range(uint32(genType) | uint32(gender << 8) | uint32(race << 16));
-    for (CharSectionsMap::const_iterator itr = eqr.first; itr != eqr.second; ++itr)
-        if (itr->second->Type == type && itr->second->Color == color)
-            return itr->second;
-
-    return nullptr;
 }

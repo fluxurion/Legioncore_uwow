@@ -22,14 +22,9 @@
 #include "Common.h"
 #include "DBCStore.h"
 #include "DBCStructure.h"
-#include "DB2Store.h"
 #include "DB2Structure.h"
+#include "DB2Store.h"
 #include "SharedDefines.h"
-
-typedef std::list<uint32> SimpleFactionsList;
-SimpleFactionsList const* GetFactionTeamList(uint32 faction);
-
-WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid);
 
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId);
 int32 GetMapFromZone(uint32 zoneId);
@@ -57,10 +52,7 @@ public:
         return _storage.LookupEntry(_gtEntry->NumRows * column + row);
     }
 
-    inline bool HasEntry(uint32 row, uint32 column) const
-    {
-        return row < _gtEntry->NumRows && column < _gtEntry->NumColumns;
-    }
+    inline bool HasEntry(uint32 row, uint32 column) const {  return row < _gtEntry->NumRows && column < _gtEntry->NumColumns; }
 
     char const* GetFormat() const { return _storage.GetFormat(); }
     uint32 GetFieldCount() const { return _storage.GetFieldCount(); }
@@ -73,25 +65,6 @@ private:
     DBCStorage<T> _storage;
     GameTablesEntry const* _gtEntry;
 };
-
-
-extern DBCStorage<BannedAddOnsEntry>            sBannedAddOnsStore;
-extern DBCStorage<BattlemasterListEntry>        sBattlemasterListStore;
-extern DBCStorage<ChrClassesEntry>              sChrClassesStore;
-extern DBCStorage<CharSectionsEntry>            sCharSectionsStore;
-extern DBCStorage<CreatureModelDataEntry>       sCreatureModelDataStore;
-extern DBCStorage<FactionEntry>                 sFactionStore;
-extern DBCStorage<FactionTemplateEntry>         sFactionTemplateStore;
-extern DBCStorage<GlyphSlotEntry>               sGlyphSlotStore;
-extern DBCStorage<LFGDungeonEntry>              sLFGDungeonStore;
-extern DBCStorage<LiquidTypeEntry>              sLiquidTypeStore;
-extern DBCStorage<MapDifficultyEntry>           sMapDifficultyStore;
-extern DBCStorage<SpellItemEnchantmentEntry>    sSpellItemEnchantmentStore;
-extern DBCStorage<TalentEntry>                  sTalentStore;
-extern DBCStorage<VehicleEntry>                 sVehicleStore;
-extern DBCStorage<WMOAreaTableEntry>            sWMOAreaTableStore;
-extern DBCStorage<WorldMapAreaEntry>            sWorldMapAreaStore; //-- use Zone2MapCoordinates and Map2ZoneCoordinates
-extern DBCStorage<WorldSafeLocsEntry>           sWorldSafeLocsStore;
 
 extern GameTable<GtArmorMitigationByLvlEntry>   sGtArmorMitigationByLvlStore;
 extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
@@ -124,14 +97,7 @@ extern GameTable<GtOCTLevelExperienceEntry>     sGtOCTLevelExperienceStore;
 extern GameTable<GtRegenMPPerSptEntry>          sGtRegenMPPerSptStore;
 extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
 
-void LoadDBCStores(std::string const& dataPath, uint32 defaultLocale);
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);
-void InitDBCCustomStores();
 bool IsValidDifficulty(uint32 diff, bool isRaid);
-
-CharSectionsEntry const* GetCharSectionEntry(uint8 race, CharSectionType genType, uint8 gender, uint8 type, uint8 color);
-
-typedef std::vector<TalentEntry const*> TalentsByPosition[MAX_CLASSES][7][3];
-extern TalentsByPosition                         sTalentByPos;
 
 #endif

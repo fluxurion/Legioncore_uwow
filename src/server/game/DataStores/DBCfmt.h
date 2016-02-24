@@ -22,42 +22,6 @@
 // x - skip<uint32>, X - skip<uint8>, s - char*, f - float, i - uint32, b - uint8, d - index (not included)
 // n - index (included), l - bool, p - field present in sql dbc, a - field absent in sql dbc
 
-char const BannedAddOnsfmt[] = "nxxxxxxxxxx";
-char const BattlemasterListEntryfmt[] = "niiiiiiiiiiiiiiiiixsiiiiiiiixxx";
-char const ChrClassesEntryfmt[] = "nixsxxxixiiiiixxxxx";
-char const CharSectionsfmt[] = "iiiisssiii";
-char const CreatureModelDatafmt[] = "niixxxxxxxxxxxxffxxxxxxxxxxxxxxxxxxx";
-char const FactionEntryfmt[] = "niiiiiiiiiiiiiiiiiiffixsxxix";
-char const FactionTemplateEntryfmt[] = "niiiiiiiiiiiii";
 char const GameTablefmt[] = "xf";
-char const GlyphSlotfmt[] = "nii";
-char const GtBarberShopCostBasefmt[] = "xf";
-char const GtBattlePetTypeDamageModfmt[]= "nf";
-char const GtChanceToMeleeCritBasefmt[] = "xf";
-char const GtChanceToMeleeCritfmt[] = "xf";
-char const GtChanceToSpellCritBasefmt[] = "xf";
-char const GtChanceToSpellCritfmt[] = "xf";
-char const GtCombatRatingsfmt[] = "xf";
-char const GtItemSocketCostPerLevelfmt[] = "xf";
-char const GtOCTBaseHPByClassfmt[] = "df";
-char const GtOCTBaseMPByClassfmt[] = "df";
-char const GtOCTHpPerStaminafmt[] = "df";
-char const GtOCTLevelExperiencefmt[] = "xf";
-char const GtOCTRegenHPfmt[] = "f";
-char const GtRegenMPPerSptfmt[] = "xf";
-char const GtSpellScalingfmt[] = "df";
-char const LFGDungeonEntryfmt[]= "nsiiiiiiiiiixixixiiiiiiiiiixx";
-char const LiquidTypefmt[] = "nxxixixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-char const MapDifficultyEntryfmt[] = "diisiiii";
-char const SpellItemEnchantmentfmt[] = "niiiiiiiiiixiiiiiiiiiiifff";
-char const TalentEntryfmt[] = "niiiixxxiis";
-char const TeamContributionPointsfmt[] = "df";
-char const VehicleEntryfmt[] = "niiffffiiiiiiiifffffffffffffffxxxxfifiiii";
-char const WMOAreaTableEntryfmt[] = "niiixxxxxiisxxx";
-char const WorldMapAreaEntryfmt[] = "xinxffffixxxii";
-char const WorldSafeLocsEntryfmt[] = "niffffx";
-
-const std::string CustomMapDifficultyEntryfmt= "pppappaa";
-const std::string CustomMapDifficultyEntryIndex = "m_id";
 
 #endif

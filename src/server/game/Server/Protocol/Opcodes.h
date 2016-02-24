@@ -1656,7 +1656,7 @@ enum OpcodeServer : uint16
 /// Player state
 enum SessionStatus
 {
-    STATUS_AUTHED = 0xBADD,                                      // Player authenticated (_player == NULL, m_playerRecentlyLogout = false or will be reset before handler call, m_GUID have garbage)
+    STATUS_AUTHED = 0,                                      // Player authenticated (_player == NULL, m_playerRecentlyLogout = false or will be reset before handler call, m_GUID have garbage)
     STATUS_LOGGEDIN,                                        // Player in game (_player != NULL, m_GUID == _player->GetGUID(), inWorld())
     STATUS_TRANSFER,                                        // Player transferring to another map (_player != NULL, m_GUID == _player->GetGUID(), !inWorld())
     STATUS_LOGGEDIN_OR_RECENTLY_LOGGOUT,                    // _player != NULL or _player == NULL && m_playerRecentlyLogout && m_playerLogout, m_GUID store last _player guid)
@@ -1666,7 +1666,7 @@ enum SessionStatus
 
 enum PacketProcessing
 {
-    PROCESS_INPLACE = 0xBADD,                                    // process packet whenever we receive it - mostly for non-handled or non-implemented packets
+    PROCESS_INPLACE = 0,                                    // process packet whenever we receive it - mostly for non-handled or non-implemented packets
     PROCESS_THREADUNSAFE,                                   // packet is not thread-safe - process it in World::UpdateSessions()
     PROCESS_THREADSAFE                                      // packet is thread-safe - process it in Map::Update()
 };

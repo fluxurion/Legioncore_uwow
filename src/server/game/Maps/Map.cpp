@@ -1783,7 +1783,7 @@ bool Map::IsOutdoors(float x, float y, float z) const
         return true;
 
     AreaTableEntry const* atEntry = 0;
-    WMOAreaTableEntry const* wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
+    WMOAreaTableEntry const* wmoEntry = sDB2Manager.GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
     if (wmoEntry)
     {
         #ifdef TRINITY_DEBUG
@@ -1847,7 +1847,7 @@ uint32 Map::GetAreaId(float x, float y, float z, bool *isOutdoors) const
     if (GetAreaInfo(x, y, z, mogpFlags, adtId, rootId, groupId))
     {
         haveAreaInfo = true;
-        wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
+        wmoEntry = sDB2Manager.GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
         if (wmoEntry)
             atEntry = sAreaTableStore.LookupEntry(wmoEntry->AreaTableID);
     }

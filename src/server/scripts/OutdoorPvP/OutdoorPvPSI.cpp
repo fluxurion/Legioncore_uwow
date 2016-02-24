@@ -25,6 +25,7 @@
 #include "OutdoorPvPMgr.h"
 #include "Language.h"
 #include "World.h"
+#include "DB2Stores.h"
 
 OutdoorPvPSI::OutdoorPvPSI()
 {

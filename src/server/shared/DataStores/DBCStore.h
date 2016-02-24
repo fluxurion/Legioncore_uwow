@@ -107,10 +107,7 @@ class DBCStorage
             DBCFileLoader dbc;
             // Check if load was successful, only then continue
             if (!dbc.Load(fn, fmt))
-            {
-                sLog->outError(LOG_FILTER_GENERAL, "dbc Load if (!dbc.Load(fn, fmt))");
                 return false;
-            }
 
             uint32 sqlRecordCount = 0;
             uint32 sqlHighestIndex = 0;

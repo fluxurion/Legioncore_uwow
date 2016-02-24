@@ -3467,7 +3467,7 @@ void Player::InitTalentForLevel()
 
         for (uint32 t = talentPointsForLevel; t < 7; ++t)
             for (uint32 c = 0; c < 3; ++c)
-                for (TalentEntry const* talent : sTalentByPos[getClass()][t][c])
+                for (TalentEntry const* talent : sDB2Manager._talentByPos[getClass()][t][c])
                     RemoveTalent(talent);
     }
 
@@ -17773,9 +17773,9 @@ bool Player::ValidateAppearance(uint8 race, uint8 class_, uint8 gender, uint8 ha
 {
     return true; //@TODO:Legion w8 for CharSections enabling
 
-    if (CharSectionsEntry const* entry = GetCharSectionEntry(race, SECTION_TYPE_SKIN, gender, 0, skinColor))
+    if (CharSectionsEntry const* entry = sDB2Manager.GetCharSectionEntry(race, SECTION_TYPE_SKIN, gender, 0, skinColor))
     { 
-        if (CharSectionsEntry const* entry2 = GetCharSectionEntry(race, SECTION_TYPE_FACE, gender, faceID, skinColor))
+        if (CharSectionsEntry const* entry2 = sDB2Manager.GetCharSectionEntry(race, SECTION_TYPE_FACE, gender, faceID, skinColor))
         {
             if (((entry->Flags & SECTION_FLAG_DEATH_KNIGHT) || (entry2->Flags & SECTION_FLAG_DEATH_KNIGHT)) && class_ != CLASS_DEATH_KNIGHT)
                 return false;
@@ -17789,7 +17789,7 @@ bool Player::ValidateAppearance(uint8 race, uint8 class_, uint8 gender, uint8 ha
     else
         return false;
 
-    if (CharSectionsEntry const* entry = GetCharSectionEntry(race, SECTION_TYPE_HAIR, gender, hairID, hairColor))
+    if (CharSectionsEntry const* entry = sDB2Manager.GetCharSectionEntry(race, SECTION_TYPE_HAIR, gender, hairID, hairColor))
     {
         if ((entry->Flags & SECTION_FLAG_DEATH_KNIGHT) && class_ != CLASS_DEATH_KNIGHT)
             return false;
@@ -17799,7 +17799,7 @@ bool Player::ValidateAppearance(uint8 race, uint8 class_, uint8 gender, uint8 ha
 
         if (!((race == RACE_TAUREN) || (race == RACE_DRAENEI) || (gender == GENDER_FEMALE && race != RACE_NIGHTELF && race != RACE_UNDEAD_PLAYER)))
         {
-            if (CharSectionsEntry const* entry2 = GetCharSectionEntry(race, SECTION_TYPE_FACIAL_HAIR, gender, facialHair, hairColor))
+            if (CharSectionsEntry const* entry2 = sDB2Manager.GetCharSectionEntry(race, SECTION_TYPE_FACIAL_HAIR, gender, facialHair, hairColor))
             {
                 if ((entry2->Flags & SECTION_FLAG_DEATH_KNIGHT) && class_ != CLASS_DEATH_KNIGHT)
                     return false;
@@ -26503,7 +26503,7 @@ void Player::InitGlyphsForLevel()
     uint32 slot = 0;
     for (uint32 i = 0; i < sGlyphSlotStore.GetNumRows() && slot < MAX_GLYPH_SLOT_INDEX; ++i)
         if (GlyphSlotEntry const* gs = sGlyphSlotStore.LookupEntry(i))
-            SetGlyphSlot(slot++, gs->Id);
+            SetGlyphSlot(slot++, gs->ID);
 
     uint8 level = getLevel();
     uint32 slotMask = 0;
@@ -27390,7 +27390,7 @@ bool Player::LearnTalent(uint32 talentId)
         return false;
 
     TalentEntry const* bestSlotMatch = nullptr;
-    for (TalentEntry const* talent : sTalentByPos[getClass()][talentInfo->row][talentInfo->column])
+    for (TalentEntry const* talent : sDB2Manager._talentByPos[getClass()][talentInfo->row][talentInfo->column])
     {
         if (!talent->SpecID)
             bestSlotMatch = talent;
@@ -27405,7 +27405,7 @@ bool Player::LearnTalent(uint32 talentId)
         return false;
 
     for (uint32 c = 0; c < 3; ++c)
-        for (TalentEntry const* talent : sTalentByPos[getClass()][talentInfo->row][c])
+        for (TalentEntry const* talent : sDB2Manager._talentByPos[getClass()][talentInfo->row][c])
             if (HasTalent(talent->Id, GetActiveSpec()))
                 return false;
 
@@ -27446,8 +27446,8 @@ void Player::LearnTalentSpecialization(uint32 talentSpec)
     uint32 class_ = getClass();
     for (uint32 t = 0; t < 7; ++t)
         for (uint32 c = 0; c < 3; ++c)
-            if (sTalentByPos[class_][t][c].size() > 1)
-                for (TalentEntry const* talent : sTalentByPos[class_][t][c])
+            if (sDB2Manager._talentByPos[class_][t][c].size() > 1)
+                for (TalentEntry const* talent : sDB2Manager._talentByPos[class_][t][c])
                     RemoveTalent(talent);
 
     LearnSpecializationSpells();
@@ -27467,8 +27467,8 @@ void Player::ResetTalentSpecialization()
     uint32 class_ = getClass();
     for (uint32 t = 0; t < 7; ++t)
         for (uint32 c = 0; c < 3; ++c)
-            if (sTalentByPos[class_][t][c].size() > 1)
-                for (TalentEntry const* talent : sTalentByPos[class_][t][c])
+            if (sDB2Manager._talentByPos[class_][t][c].size() > 1)
+                for (TalentEntry const* talent : sDB2Manager._talentByPos[class_][t][c])
                     RemoveTalent(talent);
 
     RemoveSpecializationSpells();

@@ -450,6 +450,7 @@ char* DB2FileLoader::AutoProduceStrings(const char* format, char* dataTable, uin
             }
         }
 
+        sLog->outError(LOG_FILTER_GENERAL, "Attempted to load %s which has locales %s as %s. Check if you placed your localized db2 files in correct directory.", fileName, str.str().c_str(), localeNames[locale]);
         return nullptr;
     }
 
@@ -732,6 +733,8 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
 
             ASSERT(offset == recordSize);
         }
+        else
+            sLog->outError(LOG_FILTER_GENERAL, "Hotfix locale table for storage %s references row that does not exist %u!", _storageName.c_str(), indexValue);
 
     }
     while (result->NextRow());
