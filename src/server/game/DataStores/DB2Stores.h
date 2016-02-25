@@ -133,7 +133,6 @@ extern DB2Storage<LiquidTypeEntry>                  sLiquidTypeStore;
 extern DB2Storage<LockEntry>                        sLockStore;
 extern DB2Storage<MailTemplateEntry>                sMailTemplateStore;
 extern DB2Storage<MapChallengeModeEntry>            sMapChallengeModeStore;
-extern DB2Storage<MapDifficultyEntry>               sMapDifficultyStore;
 extern DB2Storage<MapEntry>                         sMapStore;
 extern DB2Storage<MinorTalentEntry>                 sMinorTalentStore;
 extern DB2Storage<ModifierTreeEntry>                sModifierTreeStore;

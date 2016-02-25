@@ -103,8 +103,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_LIQUID_TYPE, "SELECT Id, Type, SpellId FROM liquid_type ORDER BY Id DESC", CONNECTION_SYNCH);
 
     // MapDifficulty.db2
-    PrepareStatement(HOTFIX_SEL_MAP_DIFFICULTY, "SELECT MapID, DifficultyID, Message, RaidDuration, MaxPlayers, LockID, ItemBonusTreeModID"
-        " FROM map_difficulty ORDER BY MapID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MAP_DIFFICULTY, "SELECT ID, Message, RaidDuration, MapID, DifficultyID, MaxPlayers, LockID, ItemBonusTreeModID"
+        " FROM map_difficulty ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_MAP_DIFFICULTY, "SELECT ID, Message_lang FROM map_difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellItemEnchantment.db2
     PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT, "SELECT ID, Charges, Effect1, Effect2, Effect3, EffectPointsMin1, EffectPointsMin2, "

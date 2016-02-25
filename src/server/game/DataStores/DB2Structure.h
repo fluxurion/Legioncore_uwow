@@ -449,14 +449,14 @@ struct LiquidTypeEntry
 
 struct MapDifficultyEntry
 {
-    //uint32    ID;                                         // 0
-    uint32      MapID;                                      // 1
-    uint32      DifficultyID;                               // 2 (for arenas: arena slot)
-    char*       Message_lang;                               // 3 m_message_lang (text showed when transfer to map failed)
-    uint32      RaidDuration;                               // 4 m_raidDuration in secs, 0 if no fixed reset time
-    uint32      MaxPlayers;                                 // 5 m_maxPlayers some heroic versions have 0 when expected same amount as in normal version
-    uint32      LockID;                                     // 6
-    uint32      ItemBonusTreeModID;                         // 7
+    uint32      ID;                                         // 0
+    LocalizedString* Message;                               // 1
+    uint32      RaidDuration;                               // 2
+    uint16      MapID;                                      // 3
+    uint8       DifficultyID;                               // 4
+    uint8       MaxPlayers;                                 // 5
+    uint8       LockID;                                     // 6
+    uint8       ItemBonusTreeModID;                         // 7
 };
 
 struct SpellItemEnchantmentEntry

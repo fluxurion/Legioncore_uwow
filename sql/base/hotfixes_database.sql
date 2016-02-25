@@ -753,15 +753,16 @@ DROP TABLE IF EXISTS `map_difficulty`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `map_difficulty` (
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Message` text,
   `RaidDuration` int(10) unsigned NOT NULL DEFAULT '0',
-  `MaxPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `LockID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ItemBonusTreeModID` int(10) unsigned NOT NULL DEFAULT '0',
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MaxPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `LockID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ItemBonusTreeModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MapID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -772,6 +773,31 @@ CREATE TABLE `map_difficulty` (
 LOCK TABLES `map_difficulty` WRITE;
 /*!40000 ALTER TABLE `map_difficulty` DISABLE KEYS */;
 /*!40000 ALTER TABLE `map_difficulty` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `map_difficulty_locale`
+--
+
+DROP TABLE IF EXISTS `map_difficulty_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `map_difficulty_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Message_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `map_difficulty_locale`
+--
+
+LOCK TABLES `map_difficulty_locale` WRITE;
+/*!40000 ALTER TABLE `map_difficulty_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `map_difficulty_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
