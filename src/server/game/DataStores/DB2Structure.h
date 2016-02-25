@@ -200,13 +200,13 @@ struct ChrClassesEntry
 struct CharSectionsEntry
 {
     uint32      ID;
-    uint32      Race;
-    uint32      Gender;
-    uint32      GenType;
-    char*       TexturePath[3];
-    uint32      Flags;
-    uint32      Type;
-    uint32      Color;
+    uint32      FileDataID[3];
+    uint16      Flags;
+    uint8       Race;
+    uint8       Gender;
+    uint8       GenType;
+    uint8       Type;
+    uint8       Color;
 };
 
 struct CreatureModelDataEntry

@@ -70,7 +70,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM chr_classes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CharSections.db2
-    PrepareStatement(HOTFIX_SEL_CHAR_SECTIONS, "SELECT ID, Race, Gender, GenType, TexturePath1, TexturePath2, TexturePath3, Flags, Type, Color"
+    PrepareStatement(HOTFIX_SEL_CHAR_SECTIONS, "SELECT ID, FileDataID1, FileDataID2, FileDataID3, Flags, Race, Gender, GenType, Type, Color"
         " FROM char_sections ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // CreatureModelData.db2

@@ -545,7 +545,7 @@ void BossAI::_JustDied()
             return;
 
         if (DungeonEncounterEntry const* entry = sDB2Manager.GetDungeonEncounterByDisplayID(me->GetNativeDisplayId()))
-            map->SendToPlayers(WorldPackets::Instance::BossKillCredit(entry->id).Write());
+            map->SendToPlayers(WorldPackets::Instance::BossKillCredit(entry->ID).Write());
 
         Map::PlayerList const& PlayerList = map->GetPlayers();
         for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)

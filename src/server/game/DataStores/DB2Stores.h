@@ -46,7 +46,6 @@ extern DB2Storage<BattlePetSpeciesStateEntry>       sBattlePetSpeciesStateStore;
 extern DB2Storage<BattlePetSpeciesXAbilityEntry>    sBattlePetSpeciesXAbilityStore;
 extern DB2Storage<BattlePetStateEntry>              sBattlePetStateStore;
 extern DB2Storage<BroadcastTextEntry>               sBroadcastTextStore;
-extern DB2Storage<CharSectionsEntry>                sCharSectionsStore;
 extern DB2Storage<CharStartOutfitEntry>             sCharStartOutfitStore;
 extern DB2Storage<CharTitlesEntry>                  sCharTitlesStore;
 extern DB2Storage<ChatChannelsEntry>                sChatChannelsStore;

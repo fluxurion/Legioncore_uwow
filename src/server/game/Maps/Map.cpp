@@ -3194,16 +3194,16 @@ void Map::UpdateEncounterState(EncounterCreditType type, uint32 creditEntry, Uni
         DungeonEncounter const* encounter = *itr;
         if (encounter->creditType == type && encounter->creditEntry == creditEntry)
         {
-            completedEncounters |= 1 << encounter->dbcEntry->encounterIndex;
+            completedEncounters |= 1 << encounter->dbcEntry->EncounterID;
             if (encounter->lastEncounterDungeon)
             {
                 dungeonId = encounter->lastEncounterDungeon;
-                sLog->outDebug(LOG_FILTER_LFG, "UpdateEncounterState: Instance %s (instanceId %u) completed encounter %s. Credit Dungeon: %u, diff %i, creditEntry %i", GetMapName(), GetInstanceId(), encounter->dbcEntry->encounterName, dungeonId, diff, creditEntry);
+                sLog->outDebug(LOG_FILTER_LFG, "UpdateEncounterState: Instance %s (instanceId %u) completed encounter %s. Credit Dungeon: %u, diff %i, creditEntry %i", GetMapName(), GetInstanceId(), encounter->dbcEntry->Name, dungeonId, diff, creditEntry);
                 // no break need check all encounters.
                 //break;
             }
         }
-        fullEncounterIndex |= 1 << encounter->dbcEntry->encounterIndex;
+        fullEncounterIndex |= 1 << encounter->dbcEntry->EncounterID;
     }
 
     if (dungeonId && (fullEncounterIndex == completedEncounters || GetDifficultyID() != DIFFICULTY_CHALLENGE))

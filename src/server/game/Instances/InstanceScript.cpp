@@ -517,7 +517,7 @@ void InstanceScript::SendEncounterUnit(uint32 type, Unit* unit /*= NULL*/, uint8
             if (DungeonEncounterEntry const* dungeon = sDB2Manager.GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
             {
                 WorldPackets::Instance::EncounterStart start;
-                start.EncounterID = dungeon->id;
+                start.EncounterID = dungeon->ID;
                 start.DifficultyID = unit->GetSpawnMode();
                 start.GroupSize = instance->GetMaxPlayer();
                 instance->SendToPlayers(start.Write());
@@ -539,7 +539,7 @@ void InstanceScript::SendEncounterUnit(uint32 type, Unit* unit /*= NULL*/, uint8
             if (DungeonEncounterEntry const* dungeon = sDB2Manager.GetDungeonEncounterByDisplayID(unit->GetNativeDisplayId()))
             {
                 WorldPackets::Instance::EncounterEnd end;
-                end.EncounterID = dungeon->id;
+                end.EncounterID = dungeon->ID;
                 end.DifficultyID = unit->GetSpawnMode();
                 end.GroupSize = instance->GetMaxPlayer();
                 end.Success = true;

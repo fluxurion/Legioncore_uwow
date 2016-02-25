@@ -456,15 +456,15 @@ DROP TABLE IF EXISTS `char_sections`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `char_sections` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Race` int(10) unsigned NOT NULL DEFAULT '0',
-  `Gender` int(10) unsigned NOT NULL DEFAULT '0',
-  `GenType` int(10) unsigned NOT NULL DEFAULT '0',
-  `TexturePath1` text,
-  `TexturePath2` text,
-  `TexturePath3` text,
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
-  `Color` int(10) unsigned NOT NULL DEFAULT '0',
+  `FileDataID1` int(10) unsigned NOT NULL DEFAULT '0',
+  `FileDataID2` int(10) unsigned NOT NULL DEFAULT '0',
+  `FileDataID3` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Race` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Gender` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GenType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Color` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
