@@ -894,7 +894,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_EMOTES, "SELECT ID, EmoteSlashCommand_lang FROM emotes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // GemProperties.db2
-    PrepareStatement(HOTFIX_SEL_GEM_PROPERTIES, "SELECT ID, Type, EnchantID FROM gem_properties ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_GEM_PROPERTIES, "SELECT ID, UnkLegion, Type, EnchantID FROM gem_properties ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GlyphProperties.db2
     PrepareStatement(HOTFIX_SEL_GLYPH_PROPERTIES, "SELECT ID, SpellId, TypeFlags, SpellIconID, GlyphExclusiveCategoryID FROM glyph_properties"

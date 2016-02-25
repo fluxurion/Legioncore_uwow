@@ -8143,6 +8143,7 @@ DROP TABLE IF EXISTS `gem_properties`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gem_properties` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkLegion` int(10) unsigned NOT NULL DEFAULT '0',
   `Type` smallint(5) unsigned NOT NULL DEFAULT '0',
   `EnchantID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',

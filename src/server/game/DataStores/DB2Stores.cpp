@@ -372,7 +372,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGarrPlotStore);
     //LOAD_DB2(sGarrSiteLevelPlotInstStore);
     //LOAD_DB2(sGarrSiteLevelStore);
-    //LOAD_DB2(sGemPropertiesStore);              // 21021 there's some magic
+    LOAD_DB2(sGemPropertiesStore);              // 21154
     //LOAD_DB2(sGlyphPropertiesStore);
     //LOAD_DB2(sGlyphSlotStore);
     LOAD_DB2(sGuildPerkSpellsStore);            // 21021

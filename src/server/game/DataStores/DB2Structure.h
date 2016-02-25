@@ -2736,8 +2736,9 @@ struct EmotesEntry
 struct GemPropertiesEntry
 {
     uint32      ID;
-    uint16      Type;                                       // 0
-    uint16      EnchantID;                                  // 1
+    uint32      UnkLegion;                                  // 0
+    uint16      Type;                                       // 1
+    uint16      EnchantID;                                  // 2
 };
 
 struct GlyphPropertiesEntry
