@@ -49,7 +49,7 @@ public:
     typedef DBStorageIterator<T> iterator;
 
     DB2Storage(char const* fileName, char const* format, HotfixDatabaseStatements preparedStmtIndex)
-        : _fileName(fileName), _indexTableSize(0), _fieldCount(0), _format(format), _dataTable(nullptr), _dataTableEx(nullptr), _hotfixStatement(preparedStmtIndex)
+        : _fileName(fileName), _indexTableSize(0), _fieldCount(0), _format(format), _dataTable(nullptr), _dataTableEx(nullptr), _hotfixStatement(preparedStmtIndex), _hasIndex(false)
     {
         _indexTable.AsT = NULL;
     }
@@ -71,11 +71,17 @@ public:
         ASSERT(entry);
 
         std::size_t fields = strlen(_format);
-        for (uint32 i = 1; i < fields; ++i)
+        for (uint32 i = 0; i < fields; ++i)
         {
             switch (_format[i])
             {
                 case FT_IND:
+                    if (_hasIndex)
+                    {
+                        buffer << *(uint32*)entry;
+                        entry += 4;
+                    }
+                    break;
                 case FT_INT:
                     buffer << *(uint32*)entry;
                     entry += 4;
@@ -146,6 +152,7 @@ public:
 
         _fieldCount = db2.GetCols();
         _tableHash = db2.GetHash();
+        _hasIndex = db2.HasIndex();
 
         // load raw non-string data
         _dataTable = reinterpret_cast<T*>(db2.AutoProduceData(_format, _indexTableSize, _indexTable.AsChar));
@@ -225,6 +232,7 @@ private:
     T* _dataTableEx;
     StringPoolList _stringPoolList;
     HotfixDatabaseStatements _hotfixStatement;
+    bool _hasIndex;
 };
 
 #endif

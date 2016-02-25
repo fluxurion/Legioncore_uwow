@@ -70,6 +70,7 @@ class DB2FileLoader
     uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < header.FieldCount) ? fieldsOffset[id] : 0; }
     uint32 GetHash() const { return header.Hash; }
     bool IsLoaded() const { return (recordTable != nullptr); }
+    bool HasIndex() const { return _hasIndex; }
     char* AutoProduceData(const char* fmt, uint32& count, char**& indexTable);
     char* AutoProduceStringsArrayHolders(const char* fmt, char* dataTable);
     char* AutoProduceStrings(const char* fmt, char* dataTable, uint32 locale);
@@ -100,6 +101,8 @@ private:
         uint32 ReferenceDataSize;
         uint32 MetaFlags;
     } header;
+
+    bool _hasIndex;
 };
 
 class DB2DatabaseLoader

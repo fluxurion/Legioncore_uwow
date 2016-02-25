@@ -40,6 +40,8 @@ DB2FileLoader::DB2FileLoader()
     header.Locale = 0;
     header.ReferenceDataSize = 0;
     header.MetaFlags = 0;
+
+    _hasIndex = false;
 }
 
 bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name)
@@ -148,6 +150,7 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name
 
     recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.BlockValue];
     stringTable = recordTable + header.RecordSize * header.RecordCount;
+    _hasIndex = (header.MetaFlags & Index) != 0;
 
     if (fread(recordTable, header.RecordSize * header.RecordCount + header.BlockValue, 1, f) != 1)
     {
