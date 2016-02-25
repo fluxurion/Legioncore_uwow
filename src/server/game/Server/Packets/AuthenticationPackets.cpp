@@ -560,3 +560,17 @@ WorldPacket const* WorldPackets::Auth::WaitQueueUpdate::Write()
 
     return &_worldPacket;
 }
+
+WorldPacket const* WorldPackets::Auth::ResumeToken::Write()
+{
+    _worldPacket << Sequence;
+    _worldPacket.WriteBits(Reason, 2);
+    _worldPacket.FlushBits();
+
+    return &_worldPacket;
+}
+
+void WorldPackets::Auth::SuspendTokenResponse::Read()
+{
+    _worldPacket >> Sequence;
+}

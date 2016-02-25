@@ -1467,7 +1467,7 @@ enum OpcodeServer : uint16
     SMSG_RESPOND_INSPECT_ACHIEVEMENTS                 = 0x2572,
     SMSG_RESUME_CAST_BAR                              = 0x2C3D,
     SMSG_RESUME_COMMS                                 = 0x304A,
-    SMSG_RESUME_TOKEN                                 = 0xBADD,
+    SMSG_RESUME_TOKEN                                 = 0x25BD,
     SMSG_RESURRECT_REQUEST                            = 0x257F,
     SMSG_RESYNC_RUNES                                 = 0x273C,
     SMSG_ROLE_CHANGED_INFORM                          = 0x258D,

@@ -233,6 +233,27 @@ namespace WorldPackets
 
             WorldPacket const* Write() override { return &_worldPacket; }
         };
+
+        class ResumeToken final : public ServerPacket
+        {
+        public:
+            ResumeToken() : ServerPacket(SMSG_RESUME_TOKEN, 4 + 1) { }
+
+            WorldPacket const* Write() override;
+
+            uint32 Sequence = 0;
+            uint16 Reason = 0; // SuspendReason
+        };
+
+        class SuspendTokenResponse final : public ClientPacket
+        {
+        public:
+            SuspendTokenResponse(WorldPacket&& packet) : ClientPacket(CMSG_SUSPEND_TOKEN_RESPONSE, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 Sequence = 0;
+        };
     }
 }
 

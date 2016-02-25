@@ -21,6 +21,7 @@
 #include "AccountMgr.h"
 #include "AchievementMgr.h"
 #include "AuctionHouseMgr.h"
+#include "AuthenticationPackets.h"
 #include "Battlefield.h"
 #include "BattlefieldMgr.h"
 #include "BattlegroundAV.h"
@@ -24700,19 +24701,12 @@ void Player::SendInitialPacketsBeforeAddToMap()
     SendEquipmentSetList();
     m_achievementMgr.SendAllAchievementData(this);  //second send
 
-    WorldPacket data (SMSG_RESUME_TOKEN, 15);
-    data << uint32(0);
-    data.WriteBits(2, 2);
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(WorldPackets::Auth::ResumeToken().Write());
 
-    /// SMSG_LOGIN_SET_TIME_SPEED
-    static float const TimeSpeed = 0.01666667f;
     WorldPackets::Misc::LoginSetTimeSpeed loginSetTimeSpeed;
-    loginSetTimeSpeed.NewSpeed = TimeSpeed;
+    loginSetTimeSpeed.NewSpeed = 0.01666667f;
     loginSetTimeSpeed.GameTime = sWorld->GetGameTime();
     loginSetTimeSpeed.ServerTime = sWorld->GetGameTime();
-    loginSetTimeSpeed.GameTimeHolidayOffset = 0; /// @todo
-    loginSetTimeSpeed.ServerTimeHolidayOffset = 0; /// @todo
     SendDirectMessage(loginSetTimeSpeed.Write());
 
     // SMSG_UPDATE_WORLD_STATE

@@ -547,6 +547,7 @@ namespace WorldPackets
     namespace Auth
     {
         enum class ConnectToSerial : uint32;
+        class SuspendTokenResponse;
     }
 
     namespace Bank
@@ -1712,7 +1713,7 @@ class WorldSession
         void HandleScenePlaybackComplete(WorldPackets::Scene::SceneInstance& packet);
         void HandleSceneTriggerEvent(WorldPackets::Scene::SceneTriggerEvent& packet);
 
-        void SuspendTokenResponse(WorldPacket& recvPacket);
+        void SuspendTokenResponse(WorldPackets::Auth::SuspendTokenResponse& packet);
         void HandleGetUndeleteCharacterCooldownStatus(WorldPackets::Character::GetUndeleteCharacterCooldownStatus& packet);
         void HandleWowTokenMarketPrice(WorldPackets::Token::RequestWowTokenMarketPrice& packet);
         void HandleUpdateListedAuctionableTokens(WorldPackets::Token::UpdateListedAuctionableTokens& packet);
