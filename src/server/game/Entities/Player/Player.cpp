@@ -13203,11 +13203,8 @@ void Player::VisualizeItem(uint8 slot, Item* pItem)
         SetVisibleItemSlot(slot, pItem);
 
     if (slot < EQUIPMENT_SLOT_END)
-    {
-        //float avgItemLevel = GetAverageItemLevel();
-        //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
-        //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
-    }
+        for (uint8 i = 0; i < 4; ++i)
+            SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL + i, GetAverageItemLevel());
 
     pItem->SetState(ITEM_CHANGED, this);
 }
@@ -13278,11 +13275,8 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update)
         pItem->SetSlot(NULL_SLOT);
 
         if (slot < EQUIPMENT_SLOT_END)
-        {
-            //float avgItemLevel = GetAverageItemLevel();
-            //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED, avgItemLevel);
-            //SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL, avgItemLevel); // TODO: total
-        }
+            for (uint8 i = 0; i < 4; ++i)
+                SetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL + i, GetAverageItemLevel());
 
         if (IsInWorld() && update)
             pItem->SendUpdateToPlayer(this);
@@ -22769,7 +22763,7 @@ void Player::SetRestBonus (float rest_bonus_new)
     else if (m_rest_bonus <= 1)
         SetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_REST_STATE, REST_STATE_NOT_RAF_LINKED);              // Set Reststate = Normal
 
-    SetUInt32Value(PLAYER_FIELD_REST_INFO, uint32(m_rest_bonus));
+    SetUInt32Value(PLAYER_FIELD_REST_INFO + 1, uint32(m_rest_bonus));
     SetUInt32Value(PLAYER_FIELD_REST_INFO + 2, uint32(m_rest_bonus));
 }
 
