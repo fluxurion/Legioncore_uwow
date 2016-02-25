@@ -826,26 +826,27 @@ Garrison::Mission* Garrison::GetMissionByRecID(uint32 missionRecID)
 void Garrison::SendInfo()
 {
     WorldPackets::Garrison::GetGarrisonInfoResult garrisonInfo;
-    garrisonInfo.GarrSiteID = _siteLevel->SiteID;
-    garrisonInfo.GarrSiteLevelID = _siteLevel->ID;
-    garrisonInfo.FactionIndex = GetFaction();
-    garrisonInfo.NumFollowerActivationsRemaining = _followerActivationsRemainingToday;
+    WorldPackets::Garrison::GetGarrisonInfoResult::Info info;
+    info.GarrSiteID = _siteLevel->SiteID;
+    info.GarrSiteLevelID = _siteLevel->ID;
+    info.FactionIndex = GetFaction();
+    info.NumFollowerActivationsRemaining = _followerActivationsRemainingToday;
     for (auto& p : _plots)
     {
         Plot& plot = p.second;
-        garrisonInfo.Plots.push_back(&plot.PacketInfo);
+        info.Plots.push_back(&plot.PacketInfo);
         if (plot.BuildingInfo.PacketInfo)
-            garrisonInfo.Buildings.push_back(plot.BuildingInfo.PacketInfo.get_ptr());
+            info.Buildings.push_back(plot.BuildingInfo.PacketInfo.get_ptr());
     }
 
     for (auto const& p : _followers)
-        garrisonInfo.Followers.push_back(&p.second.PacketInfo);
+        info.Followers.push_back(&p.second.PacketInfo);
 
     for (auto const& i : _missions)
-        garrisonInfo.Missions.push_back(&i.second.PacketInfo);
+        info.Missions.push_back(&i.second.PacketInfo);
     
-    garrisonInfo.ArchivedMissions.resize(0);
-
+    info.ArchivedMissions.resize(0);
+    garrisonInfo.Data.push_back(info);
     _owner->SendDirectMessage(garrisonInfo.Write());
 }
 

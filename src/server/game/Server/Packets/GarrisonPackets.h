@@ -120,19 +120,25 @@ namespace WorldPackets
         class GetGarrisonInfoResult final : public ServerPacket
         {
         public:
-            GetGarrisonInfoResult() : ServerPacket(SMSG_GET_GARRISON_INFO_RESULT, 36) { }
+            GetGarrisonInfoResult() : ServerPacket(SMSG_GET_GARRISON_INFO_RESULT, 8) { }
 
             WorldPacket const* Write() override;
 
-            uint32 GarrSiteID = 0;
-            uint32 GarrSiteLevelID = 0;
-            uint32 FactionIndex = 0;
-            uint32 NumFollowerActivationsRemaining = 0;
-            std::vector<GarrisonPlotInfo*> Plots;
-            std::vector<GarrisonBuildingInfo const*> Buildings;
-            std::vector<GarrisonFollower const*> Followers;
-            std::vector<GarrisonMission const*> Missions;
-            std::vector<int32> ArchivedMissions;
+            struct Info
+            {
+                uint32 GarrSiteID = 0;
+                uint32 GarrSiteLevelID = 0;
+                uint32 FactionIndex = 0;
+                uint32 NumFollowerActivationsRemaining = 0;
+                std::vector<GarrisonPlotInfo*> Plots;
+                std::vector<GarrisonBuildingInfo const*> Buildings;
+                std::vector<GarrisonFollower const*> Followers;
+                std::vector<GarrisonMission const*> Missions;
+                std::vector<int32> ArchivedMissions;
+            };
+
+            uint32 Unk = 0; // maybe garrType?
+            std::vector<Info> Data;
         };
 
         struct GarrisonRemoteBuildingInfo

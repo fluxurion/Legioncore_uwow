@@ -913,17 +913,6 @@ WorldPacket const* WorldPackets::Spells::UpdateChainTargets::Write()
     return &_worldPacket;
 }
 
-WorldPacket const* WorldPackets::Spells::SpellMultistrikeEffect::Write()
-{
-    _worldPacket << Caster;
-    _worldPacket << Target;
-    _worldPacket << SpellID;
-    _worldPacket << ProcCount;
-    _worldPacket << ProcNum;
-
-    return &_worldPacket;
-}
-
 WorldPacket const* WorldPackets::Spells::ResumeCastBar::Write()
 {
     _worldPacket << Guid;

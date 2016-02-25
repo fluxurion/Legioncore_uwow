@@ -90,37 +90,35 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::GarrisonMission
 
 WorldPacket const* WorldPackets::Garrison::GetGarrisonInfoResult::Write()
 {
-    _worldPacket.reserve(4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 +
-        Buildings.size() * sizeof(GarrisonBuildingInfo) +
-        Plots.size() * sizeof(GarrisonPlotInfo) +
-        Followers.size() * (sizeof(GarrisonFollower) + 5 * 4) +
-        Missions.size() * sizeof(GarrisonMission) +
-        ArchivedMissions.size() * 4);
+    _worldPacket << Unk;
+    _worldPacket << static_cast<uint32>(Data.size());
+    for (auto const& v : Data)
+    {
+        _worldPacket << int32(v.GarrSiteID);
+        _worldPacket << int32(v.GarrSiteLevelID);
+        _worldPacket << int32(v.FactionIndex);
+        _worldPacket << static_cast<uint32>(v.Buildings.size());
+        _worldPacket << static_cast<uint32>(v.Plots.size());
+        _worldPacket << static_cast<uint32>(v.Followers.size());
+        _worldPacket << static_cast<uint32>(v.Missions.size());
+        _worldPacket << static_cast<uint32>(v.ArchivedMissions.size());
+        _worldPacket << int32(v.NumFollowerActivationsRemaining);
 
-    _worldPacket << int32(GarrSiteID);
-    _worldPacket << int32(GarrSiteLevelID);
-    _worldPacket << int32(FactionIndex);
-    _worldPacket << static_cast<uint32>(Buildings.size());
-    _worldPacket << static_cast<uint32>(Plots.size());
-    _worldPacket << static_cast<uint32>(Followers.size());
-    _worldPacket << static_cast<uint32>(Missions.size());
-    _worldPacket << static_cast<uint32>(ArchivedMissions.size());
-    _worldPacket << int32(NumFollowerActivationsRemaining);
+        for (GarrisonBuildingInfo const* building : v.Buildings)
+            _worldPacket << *building;
 
-    for (GarrisonBuildingInfo const* building : Buildings)
-        _worldPacket << *building;
+        for (GarrisonPlotInfo* plot : v.Plots)
+            _worldPacket << *plot;
 
-    for (GarrisonPlotInfo* plot : Plots)
-        _worldPacket << *plot;
+        for (GarrisonFollower const* follower : v.Followers)
+            _worldPacket << *follower;
 
-    for (GarrisonFollower const* follower : Followers)
-        _worldPacket << *follower;
+        for (GarrisonMission const* mission : v.Missions)
+            _worldPacket << *mission;
 
-    for (GarrisonMission const* mission : Missions)
-        _worldPacket << *mission;
-
-    if (!ArchivedMissions.empty())
-        _worldPacket.append(ArchivedMissions.data(), ArchivedMissions.size());
+        if (!v.ArchivedMissions.empty())
+            _worldPacket.append(v.ArchivedMissions.data(), v.ArchivedMissions.size());
+    }
 
     return &_worldPacket;
 }
