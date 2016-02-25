@@ -610,10 +610,10 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            bool IsPet = false;
             uint32 Category = 0;
             uint32 NextRecoveryTime = 0;
             uint8 ConsumedCharges = 0;
+            bool IsPet = false;
         };
 
         struct SpellChargeEntry
