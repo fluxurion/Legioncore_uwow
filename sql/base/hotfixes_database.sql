@@ -3115,7 +3115,6 @@ DROP TABLE IF EXISTS `mount_type`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mount_type` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MountTypeID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -6332,29 +6331,29 @@ DROP TABLE IF EXISTS `gameobjects`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gameobjects` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DisplayID` int(10) unsigned NOT NULL DEFAULT '0',
   `PositionX` float NOT NULL DEFAULT '0',
   `PositionY` float NOT NULL DEFAULT '0',
   `PositionZ` float NOT NULL DEFAULT '0',
   `RotationX` float NOT NULL DEFAULT '0',
   `RotationY` float NOT NULL DEFAULT '0',
   `RotationZ` float NOT NULL DEFAULT '0',
-  `RotationW` float NOT NULL DEFAULT '0',
+  `RotationO` float NOT NULL DEFAULT '0',
   `Size` float NOT NULL DEFAULT '0',
-  `PhaseUseFlags` int(10) unsigned NOT NULL DEFAULT '0',
-  `PhaseID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PhaseGroupID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data1` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data2` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data3` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data4` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data5` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data6` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data7` int(10) unsigned NOT NULL DEFAULT '0',
-  `Data8` int(10) unsigned NOT NULL DEFAULT '0',
+  `Data1` int(11) NOT NULL DEFAULT '0',
+  `Data2` int(11) NOT NULL DEFAULT '0',
+  `Data3` int(11) NOT NULL DEFAULT '0',
+  `Data4` int(11) NOT NULL DEFAULT '0',
+  `Data5` int(11) NOT NULL DEFAULT '0',
+  `Data6` int(11) NOT NULL DEFAULT '0',
+  `Data7` int(11) NOT NULL DEFAULT '0',
+  `Data8` int(11) NOT NULL DEFAULT '0',
   `Name` text,
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DisplayID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PhaseID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PhaseUseFlags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PhaseGroupID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

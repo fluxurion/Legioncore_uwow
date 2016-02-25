@@ -25,7 +25,6 @@
 #include <boost/regex.hpp>
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
-extern DB2Storage<AreaGroupMemberEntry>             sAreaGroupMemberStore;
 extern DB2Storage<AreaTableEntry>                   sAreaTableStore;
 extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;

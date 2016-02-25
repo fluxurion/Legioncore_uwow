@@ -22,7 +22,7 @@
 #define TRINITY_DB2SFRM_H
 
 char const AchievementFormat[] = "nssistttttttbib";
-char const AreaGroupMemberFormat[] = "nii";
+char const AreaGroupMemberFormat[] = "ntt";
 char const AreaTableFormat[] = "niisfstttttttttttttbbbbbbbbb";
 char const AreaTriggerFormat[] = "nifffiiifffffiiii";
 char const ArmorLocationFormat[] = "nfffff";
@@ -71,7 +71,7 @@ char const EmotesTextFormat[] = "nst";
 char const FactionFormat[] = "niiiiiiiiffssttttttttttbbbbb";
 char const FactionTemplateFormat[] = "nttttttttttbbb";
 char const GameObjectDisplayInfoFormat[] = "nifffffffft";
-char const GameObjectsFormat[] = "niiffffffffiiiiiiiiiiiis";
+char const GameObjectsFormat[] = "nffffffffiiiiiiiisttttbb";
 char const GameTablesFormat[] = "nstb";
 char const GarrAbilityEffectFormat[] = "niiiiifffii";
 char const GarrAbilityFormat[] = "nissiii";
@@ -143,7 +143,7 @@ char const MinorTalentFormat[] = "niii";
 char const ModifierTreeFormat[]= "niitbbbb";
 char const MountCapabilityFormat[] = "niiitttbb";
 char const MountFormat[] = "niissstttb";
-char const MountTypeFormat[] = "ni";
+char const MountTypeFormat[] = "n";
 char const MountTypeXCapabilityFormat[] = "nttb";
 char const MovieFormat[] = "niibb";
 char const NameGenFormat[] = "nsbb";

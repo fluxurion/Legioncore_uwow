@@ -300,7 +300,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     LOAD_DB2(sAchievementStore);                // 21021
-    //LOAD_DB2(sAreaGroupMemberStore);
+    LOAD_DB2(sAreaGroupMemberStore);            // 21154
     LOAD_DB2(sAreaTableStore);                  // 21021
     LOAD_DB2(sAreaTriggerStore);                // 21021
     LOAD_DB2(sArmorLocationStore);              // 21021
@@ -349,7 +349,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sFactionStore);                    // 21154
     LOAD_DB2(sFactionTemplateStore);            // 21154
     LOAD_DB2(sGameObjectDisplayInfoStore);      // 21021
-    //LOAD_DB2(sGameObjectsStore);
+    LOAD_DB2(sGameObjectsStore);                // 21154
     LOAD_DB2(sGameTablesStore);                 // 21021
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
@@ -425,7 +425,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sModifierTreeStore);               // 21021
     //LOAD_DB2(sMountCapabilityStore);
     LOAD_DB2(sMountStore);                      // 21021
-    //LOAD_DB2(sMountTypeStore);
+    LOAD_DB2(sMountTypeStore);                  // 21154
     LOAD_DB2(sMountTypeXCapabilityStore);       // 21021
     LOAD_DB2(sMovieStore);                      // 21021
     LOAD_DB2(sNameGenStore);                    // 21021

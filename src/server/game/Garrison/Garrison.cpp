@@ -374,7 +374,7 @@ void Garrison::InitializePlots()
 
             Plot& plotInfo = _plots[garrPlotInstanceId];
             plotInfo.PacketInfo.GarrPlotInstanceID = garrPlotInstanceId;
-            plotInfo.PacketInfo.PlotPos.Relocate(gameObject->Position.X, gameObject->Position.Y, gameObject->Position.Z, 2 * std::acos(gameObject->RotationW));
+            plotInfo.PacketInfo.PlotPos.Relocate(gameObject->Position.X, gameObject->Position.Y, gameObject->Position.Z, 2 * std::acos(gameObject->Rotation.O));
             plotInfo.PacketInfo.PlotType = plot->PlotType;
             plotInfo.EmptyGameObjectId = gameObject->ID;
             plotInfo.GarrSiteLevelPlotInstId = plots->at(i)->ID;

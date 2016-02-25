@@ -354,7 +354,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "RequiredMap, Flags, Unknown7 FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountType.db2
-    PrepareStatement(HOTFIX_SEL_MOUNT_TYPE, "SELECT ID, MountTypeID FROM mount_type ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MOUNT_TYPE, "SELECT ID FROM mount_type ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountTypeXCapability.db2
     PrepareStatement(HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY, "SELECT ID, MountTypeID, MountCapabilityID, OrderIndex FROM mount_type_x_capability"
@@ -701,8 +701,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_RULE_SET_ITEM_UPGRADE, "SELECT id, levelUpd, startUpgrade, itemEntry FROM rule_set_item_upgrade ORDER BY id DESC", CONNECTION_SYNCH);
 
     // Gameobjects.db2
-    PrepareStatement(HOTFIX_SEL_GAMEOBJECTS, "SELECT ID, MapID, DisplayID, PositionX, PositionY, PositionZ, RotationX, RotationY, RotationZ, "
-        "RotationW, Size, PhaseUseFlags, PhaseID, PhaseGroupID, Type, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Name FROM gameobjects"
+    PrepareStatement(HOTFIX_SEL_GAMEOBJECTS, "SELECT ID, PositionX, PositionY, PositionZ, RotationX, RotationY, RotationZ, RotationO, Size, Data1, "
+        "Data2, Data3, Data4, Data5, Data6, Data7, Data8, Name, MapID, DisplayID, PhaseID, PhaseUseFlags, PhaseGroupID, Type FROM gameobjects"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_GAMEOBJECTS, "SELECT ID, Name_lang FROM gameobjects_locale WHERE locale = ?", CONNECTION_SYNCH);
 

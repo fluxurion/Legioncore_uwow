@@ -498,14 +498,14 @@ struct TalentEntry
 
 struct VehicleEntry
 {
-    uint32      ID;                                         // 0
-    uint32      Flags;                                      // 1
+    uint32      ID;                                         // 0 -
+    uint32      Flags;                                      // 1 -
     uint32      FlagsB;                                     // 2
     float       TurnSpeed;                                  // 3
     float       PitchSpeed;                                 // 4
     float       PitchMin;                                   // 5
     float       PitchMax;                                   // 6
-    uint32      SeatID[MAX_VEHICLE_SEATS];                  // 7-14
+    uint32      SeatID[MAX_VEHICLE_SEATS];                  // 7-14 -
     float       MouseLookOffsetPitch;                       // 15
     float       CameraFadeDistScalarMin;                    // 16
     float       CameraFadeDistScalarMax;                    // 17
@@ -527,7 +527,7 @@ struct VehicleEntry
     uint32      UILocomotionType;                           // 35
     float       MsslTrgtImpactTexRadius;                    // 36
     uint32      VehicleUIIndicatorID;                       // 37
-    uint32      PowerDisplayID[3];                          // 38-40
+    uint32      PowerDisplayID[3];                          // 38-40 -
 };
 
 struct WMOAreaTableEntry
@@ -1268,7 +1268,6 @@ struct MountCapabilityEntry
 struct MountTypeEntry
 {
     uint32      ID;
-    uint32      MountTypeID;
 };
 
 struct MountTypeXCapabilityEntry
@@ -2194,21 +2193,18 @@ struct RuleSetItemUpgradeEntry
 
 struct GameObjectsEntry
 {
-    uint32 ID;                                                      // 0
-    uint32 MapID;                                                   // 1
-    uint32 DisplayID;                                               // 2
-    DBCPosition3D Position;                                         // 3-5
-    float RotationX;                                                // 6
-    float RotationY;                                                // 7
-    float RotationZ;                                                // 8
-    float RotationW;                                                // 9
-    float Size;                                                     // 10
-    uint32 PhaseUseFlags;                                           // 11
-    uint32 PhaseID;                                                 // 12
-    uint32 PhaseGroupID;                                            // 13
-    uint32 Type;                                                    // 14
-    uint32 Data[GO_DBC_DATA_COUNT];                                 // 15-22
-    LocalizedString* Name;                                          // 23
+    uint32      ID;                                                 // 0
+    DBCPosition3D Position;                                         // 1 - 3
+    DBCPosition4D Rotation;                                         // 4 - 7
+    float       Size;                                               // 8
+    int32       Data[GO_DBC_DATA_COUNT];                            // 9 - 16
+    LocalizedString* Name;                                          // 17
+    uint16      MapID;                                              // 18
+    uint16      DisplayID;                                          // 19
+    uint16      PhaseID;                                            // 20
+    uint16      PhaseUseFlags;                                      // 21
+    uint8       PhaseGroupID;                                       // 22
+    uint8       Type;                                               // 23
 };
 
 struct GameTablesEntry

@@ -6220,9 +6220,9 @@ void ObjectMgr::LoadGameObjectTemplate()
 
     _gameObjectTemplateStore.rehash(result->GetRowCount() + tempList.size());
 
-    for (std::list<uint32>::const_iterator itr = tempList.begin(); itr != tempList.end(); ++itr)
+    for (uint32 const& itr : tempList)
     {
-        if (GameObjectsEntry const* goe = sGameObjectsStore.LookupEntry(*itr))
+        if (GameObjectsEntry const* goe = sGameObjectsStore.LookupEntry(itr))
         {
             GameObjectTemplate& got = _gameObjectTemplateStore[goe->ID];
 
@@ -6259,7 +6259,6 @@ void ObjectMgr::LoadGameObjectTemplate()
         uint32 entry = fields[0].GetUInt32();
 
         GameObjectTemplate& got = _gameObjectTemplateStore[entry];
-
         got.entry          = entry;
         got.type           = uint32(fields[1].GetUInt8());
         got.displayId      = fields[2].GetUInt32();
@@ -6293,28 +6292,21 @@ void ObjectMgr::LoadGameObjectTemplate()
         switch (got.type)
         {
             case GAMEOBJECT_TYPE_DOOR:                      //0
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 1);
                 CheckGONoDamageImmuneId(&got, got.door.noDamageImmune, 3);
                 break;
-            }
             case GAMEOBJECT_TYPE_BUTTON:                    //1
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 1);
                 CheckGONoDamageImmuneId(&got, got.button.noDamageImmune, 4);
                 break;
-            }
             case GAMEOBJECT_TYPE_QUESTGIVER:                //2
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
                 CheckGONoDamageImmuneId(&got, got.questgiver.noDamageImmune, 5);
                 break;
-            }
             case GAMEOBJECT_TYPE_CHEST:                     //3
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
 
@@ -6323,47 +6315,37 @@ void ObjectMgr::LoadGameObjectTemplate()
                 if (got.chest.linkedTrap)              // linked trap
                     CheckGOLinkedTrapId(&got, got.chest.linkedTrap, 7);
                 break;
-            }
             case GAMEOBJECT_TYPE_TRAP:                      //6
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
                 break;
-            }
             case GAMEOBJECT_TYPE_CHAIR:                     //7
                 CheckAndFixGOChairHeightId(&got, got.chair.chairheight, 1);
                 break;
             case GAMEOBJECT_TYPE_SPELL_FOCUS:               //8
-            {
                 if (got.spellFocus.spellFocusType)
-                {
                     if (!sSpellFocusObjectStore.LookupEntry(got.spellFocus.spellFocusType))
                         sLog->outError(LOG_FILTER_SQL, "GameObject (Entry: %u GoType: %u) have data0=%u but SpellFocus (Id: %u) not exist.",
                         entry, got.type, got.spellFocus.spellFocusType, got.spellFocus.spellFocusType);
-                }
 
                 if (got.spellFocus.linkedTrap)        // linked trap
                     CheckGOLinkedTrapId(&got, got.spellFocus.linkedTrap, 2);
                 break;
-            }
             case GAMEOBJECT_TYPE_GOOBER:                    //10
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
 
                 CheckGOConsumable(&got, got.goober.consumable, 3);
 
                 if (got.goober.pageID)                  // pageId
-                {
                     if (!GetPageText(got.goober.pageID))
                         sLog->outError(LOG_FILTER_SQL, "GameObject (Entry: %u GoType: %u) have data7=%u but PageText (Entry %u) not exist.",
                         entry, got.type, got.goober.pageID, got.goober.pageID);
-                }
+
                 CheckGONoDamageImmuneId(&got, got.goober.noDamageImmune, 11);
                 if (got.goober.linkedTrap)            // linked trap
                     CheckGOLinkedTrapId(&got, got.goober.linkedTrap, 12);
                 break;
-            }
             case GAMEOBJECT_TYPE_TRANSPORT:                 // 11
             {
                 auto const& itr = sDB2Manager._transportAnimationsByEntry.find(got.entry);
@@ -6376,92 +6358,56 @@ void ObjectMgr::LoadGameObjectTemplate()
 
                 //ToDo:: Timeto5thfloor is it old frames???????
                 if (uint32 frame = got.transport.Timeto2ndfloor)
-                {
                     if (itr->second.find(frame) == itr->second.end())
-                    {
                         sLog->outError(LOG_FILTER_SQL, "Gameobject (Entry: %u GoType: %u) has data0=%u but this frame is not in TransportAnimation.dbc!",
                             got.entry, got.type, frame);
-                    }
-                }
 
                 if (uint32 frame = got.transport.Timeto3rdfloor)
-                {
                     if (itr->second.find(frame) == itr->second.end())
-                    {
                         sLog->outError(LOG_FILTER_SQL, "Gameobject (Entry: %u GoType: %u) has data6=%u but this frame is not in TransportAnimation.dbc!",
                             got.entry, got.type, frame);
-                    }
-                }
 
                 if (uint32 frame = got.transport.Timeto4thfloor)
-                {
                     if (itr->second.find(frame) == itr->second.end())
-                    {
                         sLog->outError(LOG_FILTER_SQL, "Gameobject (Entry: %u GoType: %u) has data8=%u but this frame is not in TransportAnimation.dbc!",
                             got.entry, got.type, frame);
-                    }
-                }
 
                 if (uint32 frame = got.transport.Timeto5thfloor)
-                {
                     if (itr->second.find(frame) == itr->second.end())
-                    {
                         sLog->outError(LOG_FILTER_SQL, "Gameobject (Entry: %u GoType: %u) has data10=%u but this frame is not in TransportAnimation.dbc!",
                             got.entry, got.type, frame);
-                    }
-                }
                 break;
             }
             case GAMEOBJECT_TYPE_AREADAMAGE:                //12
-            {
-                if (got.GetLockId())
-                    CheckGOLockId(&got, got.GetLockId(), 0);
-                break;
-            }
             case GAMEOBJECT_TYPE_CAMERA:                    //13
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
                 break;
-            }
             case GAMEOBJECT_TYPE_MAP_OBJ_TRANSPORT:              //15
-            {
                 if (got.moTransport.taxiPathID)
-                {
                     if (got.moTransport.taxiPathID >= sTaxiPathNodesByPath.size() || sTaxiPathNodesByPath[got.moTransport.taxiPathID].empty())
                         sLog->outError(LOG_FILTER_SQL, "GameObject (Entry: %u GoType: %u) have data0=%u but TaxiPath (Id: %u) not exist.",
                         entry, got.type, got.moTransport.taxiPathID, got.moTransport.taxiPathID);
-                }
                 break;
-            }
             case GAMEOBJECT_TYPE_RITUAL:          //18
                 break;
             case GAMEOBJECT_TYPE_SPELLCASTER:               //22
-            {
-                // always must have spell
                 CheckGOSpellId(&got, got.spellCaster.spell, 0);
                 break;
-            }
             case GAMEOBJECT_TYPE_FLAGSTAND:                 //24
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
                 CheckGONoDamageImmuneId(&got, got.flagStand.noDamageImmune, 5);
                 break;
-            }
             case GAMEOBJECT_TYPE_FISHINGHOLE:               //25
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 4);
                 break;
-            }
             case GAMEOBJECT_TYPE_FLAGDROP:                  //26
-            {
                 if (got.GetLockId())
                     CheckGOLockId(&got, got.GetLockId(), 0);
                 CheckGONoDamageImmuneId(&got, got.flagDrop.noDamageImmune, 3);
                 break;
-            }
             case GAMEOBJECT_TYPE_BARBER_CHAIR:              //32
                 CheckAndFixGOChairHeightId(&got, got.barberChair.chairheight, 0);
                 break;
