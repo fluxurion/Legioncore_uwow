@@ -660,15 +660,15 @@ struct DifficultyEntry
 
 struct DungeonEncounterEntry
 {
-    uint32      id;                                              // 0        unique id
-    uint32      mapId;                                           // 1        map id
-    uint32      difficulty;                                      // 2        instance mode
-    uint32      orderIndex;                                    // 3
-    uint32      encounterIndex;                                  // 4        encounter index for creating completed mask
-    LocalizedString* encounterName;                                    // 5        encounter name
-    uint32      creatureDisplayID;                               // 6
-    uint32      spellIconID;                                     // 7
-    uint32      flags;                                         // 8
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      CreatureDisplayID;                          // 2
+    uint16      MapID;                                      // 3
+    uint16      OrderID;                                    // 4
+    uint16      SpellIconID;                                // 5
+    uint8       DifficultyID;                               // 6
+    uint8       EncounterID;                                // 7
+    uint8       Flags;                                      // 8
 };
 
 struct EmotesTextEntry

@@ -5031,7 +5031,7 @@ void ObjectMgr::LoadInstanceEncounters()
 
         if (lastEncounterDungeon && !sLFGMgr->GetLFGDungeonEntry(lastEncounterDungeon))
         {
-            sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an encounter %u (%s) marked as final for invalid dungeon id %u, skipped!", entry, dungeonEncounter->encounterName, lastEncounterDungeon);
+            sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an encounter %u (%s) marked as final for invalid dungeon id %u, skipped!", entry, dungeonEncounter->Name, lastEncounterDungeon);
             continue;
         }
 
@@ -5040,7 +5040,7 @@ void ObjectMgr::LoadInstanceEncounters()
         {
             if (itr != dungeonLastBosses.end())
             {
-                sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` specified encounter %u (%s) as last encounter but %u (%s) is already marked as one, skipped!", entry, dungeonEncounter->encounterName, itr->second->id, itr->second->encounterName);
+                sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` specified encounter %u (%s) as last encounter but %u (%s) is already marked as one, skipped!", entry, dungeonEncounter->Name, itr->second->ID, itr->second->Name);
                 continue;
             }
 
@@ -5054,7 +5054,7 @@ void ObjectMgr::LoadInstanceEncounters()
                 CreatureTemplate const* creatureInfo = GetCreatureTemplate(creditEntry);
                 if (!creatureInfo)
                 {
-                    sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid creature (entry %u) linked to the encounter %u (%s), skipped!", creditEntry, entry, dungeonEncounter->encounterName);
+                    sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid creature (entry %u) linked to the encounter %u (%s), skipped!", creditEntry, entry, dungeonEncounter->Name);
                     continue;
                 }
                 const_cast<CreatureTemplate*>(creatureInfo)->flags_extra |= CREATURE_FLAG_EXTRA_DUNGEON_BOSS;
@@ -5063,34 +5063,32 @@ void ObjectMgr::LoadInstanceEncounters()
             case ENCOUNTER_CREDIT_CAST_SPELL:
                 if (!sSpellMgr->GetSpellInfo(creditEntry))
                 {
-                    sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid spell (entry %u) linked to the encounter %u (%s), skipped!", creditEntry, entry, dungeonEncounter->encounterName);
+                    sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid spell (entry %u) linked to the encounter %u (%s), skipped!", creditEntry, entry, dungeonEncounter->Name);
                     continue;
                 }
                 break;
             default:
-                sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid credit type (%u) for encounter %u (%s), skipped!", creditType, entry, dungeonEncounter->encounterName);
+                sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` has an invalid credit type (%u) for encounter %u (%s), skipped!", creditType, entry, dungeonEncounter->Name);
                 continue;
         }
 
-        if (dungeonEncounter->difficulty > 0 && dungeonEncounter->difficulty != DungeonDifficult)
+        if (dungeonEncounter->DifficultyID > 0 && dungeonEncounter->DifficultyID != DungeonDifficult)
         {
-            sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` overvrite dificult from dbc for encounter %u. DBC %i, DB %i", entry, dungeonEncounter->difficulty, DungeonDifficult);
-            DungeonDifficult = dungeonEncounter->difficulty;
+            sLog->outError(LOG_FILTER_SQL, "Table `instance_encounters` overvrite dificult from dbc for encounter %u. DBC %i, DB %i", entry, dungeonEncounter->DifficultyID, DungeonDifficult);
+            DungeonDifficult = dungeonEncounter->DifficultyID;
         }
 
         if (DungeonDifficult > 0)
         {
-            DungeonEncounterList& encounters = _dungeonEncounterStore[MAKE_PAIR32(dungeonEncounter->mapId, DungeonDifficult)];
+            DungeonEncounterList& encounters = _dungeonEncounterStore[MAKE_PAIR32(dungeonEncounter->MapID, DungeonDifficult)];
             encounters.push_back(new DungeonEncounter(dungeonEncounter, EncounterCreditType(creditType), creditEntry, lastEncounterDungeon));
-        }else
-        {
-            //all
+        }
+        else
             for (int32 i = 0; i < MAX_DIFFICULTY; ++i)
             {
-                DungeonEncounterList& encounters = _dungeonEncounterStore[MAKE_PAIR32(dungeonEncounter->mapId, Difficulty(i))];
+                DungeonEncounterList& encounters = _dungeonEncounterStore[MAKE_PAIR32(dungeonEncounter->MapID, Difficulty(i))];
                 encounters.push_back(new DungeonEncounter(dungeonEncounter, EncounterCreditType(creditType), creditEntry, lastEncounterDungeon));
             }
-        }
 
         ++count;
     } while (result->NextRow());

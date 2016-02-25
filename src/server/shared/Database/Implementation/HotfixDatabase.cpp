@@ -166,9 +166,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_DIFFICULTY, "SELECT ID, NameLang_lang FROM difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // DungeonEncounter.db2
-    PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, mapId, difficulty, orderIndex, encounterIndex, encounterName, creatureDisplayID, "
-        "spellIconID, flags FROM dungeon_encounter ORDER BY id DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT id, encounterName_lang FROM dungeon_encounter_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT ID, Name, CreatureDisplayID, MapID, OrderID, SpellIconID, DifficultyID, EncounterID, "
+        "Flags FROM dungeon_encounter ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT ID, Name_lang FROM dungeon_encounter_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // EmotesText.db2
     PrepareStatement(HOTFIX_SEL_EMOTES_TEXT, "SELECT ID, Name, TextID FROM emotes_text ORDER BY ID DESC", CONNECTION_SYNCH);

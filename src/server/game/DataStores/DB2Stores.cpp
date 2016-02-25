@@ -341,7 +341,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sCurvePointStore);                 // 21021
     LOAD_DB2(sDestructibleModelDataStore);      // 21021
     LOAD_DB2(sDifficultyStore);                 // 21021
-    //LOAD_DB2(sDungeonEncounterStore);
+    LOAD_DB2(sDungeonEncounterStore);           // 21154
     LOAD_DB2(sDurabilityCostsStore);            // 21021
     LOAD_DB2(sDurabilityQualityStore);          // 21021
     LOAD_DB2(sEmotesStore);                     // 21021
@@ -878,8 +878,8 @@ void DB2Manager::InitDB2CustomStores()
     }
 
     for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
-        if (store->creatureDisplayID)
-            _dungeonEncounterByDisplayID[store->creatureDisplayID] = store;
+        if (store->CreatureDisplayID)
+            _dungeonEncounterByDisplayID[store->CreatureDisplayID] = store;
 
     memset(_minorTalentByIndexStore, 0, sizeof(_minorTalentByIndexStore));
     for (MinorTalentEntry const* minotTal : sMinorTalentStore)
