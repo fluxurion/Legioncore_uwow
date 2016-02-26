@@ -23,25 +23,25 @@ ALTER TABLE `creature_template_locale`
   ADD PRIMARY KEY (`ID`,`Locale`);
 
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "koKR", `name_loc1`, `subname_loc1`  FROM `locales_creature`);
+  (SELECT `entry`, "koKR", `name_loc1`, `subname_loc1`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "frFR", `name_loc2`, `subname_loc2`  FROM `locales_creature`);
+  (SELECT `entry`, "frFR", `name_loc2`, `subname_loc2`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "deDE", `name_loc3`, `subname_loc3`  FROM `locales_creature`);
+  (SELECT `entry`, "deDE", `name_loc3`, `subname_loc3`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "zhCN", `name_loc4`, `subname_loc4`  FROM `locales_creature`);
+  (SELECT `entry`, "zhCN", `name_loc4`, `subname_loc4`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "zhTW", `name_loc5`, `subname_loc5`  FROM `locales_creature`);
+  (SELECT `entry`, "zhTW", `name_loc5`, `subname_loc5`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "esES", `name_loc6`, `subname_loc6`  FROM `locales_creature`);
+  (SELECT `entry`, "esES", `name_loc6`, `subname_loc6`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "esMX", `name_loc7`, `subname_loc7`  FROM `locales_creature`);
+  (SELECT `entry`, "esMX", `name_loc7`, `subname_loc7`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "ruRU", `name_loc8`, `subname_loc8`  FROM `locales_creature`);
+  (SELECT `entry`, "ruRU", `name_loc8`, `subname_loc8`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "ptBR", `name_loc9`, `subname_loc9`  FROM `locales_creature`);
+  (SELECT `entry`, "ptBR", `name_loc9`, `subname_loc9`  FROM `locales_creature`);
 INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `ID`, "itIT", `name_loc10`, `subname_loc10`  FROM `locales_creature`);
+  (SELECT `entry`, "itIT", `name_loc10`, `subname_loc10`  FROM `locales_creature`);
 
 DROP TABLE IF EXISTS `locales_creature`;
 
