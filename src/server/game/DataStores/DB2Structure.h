@@ -119,7 +119,7 @@ struct AchievementEntry
     uint16      RefAchievement;                             // 10
     uint16      CriteriaTree;                               // 11
     uint8       FactionFlag;                                // 12
-    uint32      RewardPoints;                               // 13
+    uint8       RewardPoints;                               // 13
     uint8       Amount;                                     // 14
 };
 
@@ -425,26 +425,22 @@ struct LFGDungeonEntry
 
 struct LiquidTypeEntry
 {
-    uint32 Id;
-    //char*  Name;
-    //uint32 Flags;
-    uint32 Type;
-    //uint32 SoundId;
-    uint32 SpellId;
-    //float     MaxDarkenDepth;                             // 6
-    //float     FogDarkenIntensity;                         // 7
-    //float     AmbDarkenIntensity;                         // 8
-    //float     DirDarkenIntensity;                         // 9
-    //uint32    LightID;                                    // 10
-    //float     ParticleScale;                              // 11
-    //uint32    ParticleMovement;                           // 12
-    //uint32    ParticleTexSlots;                           // 13
-    //uint32    MaterialID;                                 // 14
-    //char*     Texture[6];                                 // 15-20
-    //uint32    Color[2];                                   // 21-23
-    //float     Unk1[18];                                   // 24-41
-    //uint32    Unk2[4];                                    // 42-45
-    //uint32    Unk3[5];                                    // 46-50
+    uint32      ID;
+    LocalizedString* Name;
+    uint32      SpellId;
+    float       unk_[5];
+    LocalizedString* Texture[6];
+    uint32      unk2_;
+    uint32      unk3_;
+    float       unk4_[18];
+    uint32      unk5_;
+    uint32      unk6_;
+    uint32      unk7_;
+    uint32      unk8_;
+    uint16      unk9_;
+    uint16      unk10_;
+    uint8       Type;
+    uint8       unk11_[10];
 };
 
 struct MapDifficultyEntry
@@ -551,20 +547,22 @@ struct WMOAreaTableEntry
 
 struct WorldMapAreaEntry
 {
-    //uint32    ID;                                         // 0
-    uint32      MapID;                                      // 1
-    uint32      AreaID;                                     // 2 index (continent 0 areas ignored)
-    //char*     AreaName                                    // 3
-    float       LocLeft;                                    // 4
-    float       LocRight;                                   // 5
-    float       LocTop;                                     // 6
-    float       LocBottom;                                  // 7
-    int32       DisplayMapID;                               // 8 -1 (map_id have correct map) other: virtual map where zone show (map_id - where zone in fact internally)
-    //int32     DefaultDungeonFloor;                        // 9 pointer to DungeonMap.dbc (owerride loc coordinates)
-    //uint32    ParentWorldMapID;                           // 10
-    //uint32    Flags;                                      // 11
-    uint32    LevelRangeMin;                              // 12 Minimum recommended level displayed on world map
-    uint32    LevelRangeMax;                              // 13 Maximum recommended level displayed on world map
+    uint32      ID;                                         // 0
+    LocalizedString* AreaName;                              // 1
+    float       LocLeft;                                    // 2
+    float       LocRight;                                   // 3
+    float       LocTop;                                     // 4
+    float       LocBottom;                                  // 5
+    uint16      MapID;                                      // 6
+    uint16      AreaID;                                     // 7
+    int16       DisplayMapID;                               // 8
+    int16       DefaultDungeonFloor;                        // 9
+    uint16      ParentWorldMapID;                           // 10
+    uint16      Flags;                                      // 11
+    uint8       LevelRangeMin;                              // 12
+    uint8       LevelRangeMax;                              // 13
+    uint8       Unk;                                        // 14
+    uint8       Unk2;                                       // 15
 };
 
 struct WorldSafeLocsEntry

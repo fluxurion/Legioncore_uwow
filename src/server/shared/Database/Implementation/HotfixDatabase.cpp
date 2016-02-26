@@ -100,7 +100,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "subType, bonusRepAmt FROM l_f_g_dungeon ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // LiquidType.db2
-    PrepareStatement(HOTFIX_SEL_LIQUID_TYPE, "SELECT Id, Type, SpellId FROM liquid_type ORDER BY Id DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_LIQUID_TYPE, "SELECT ID, Name, SpellId, unk_1, unk_2, unk_3, unk_4, unk_5, Texture1, Texture2, Texture3, Texture4, "
+        "Texture5, Texture6, unk2_, unk3_, unk4_1, unk4_2, unk4_3, unk4_4, unk4_5, unk4_6, unk4_7, unk4_8, unk4_9, unk4_10, unk4_11, unk4_12, "
+        "unk4_13, unk4_14, unk4_15, unk4_16, unk4_17, unk4_18, unk5_, unk6_, unk7_, unk8_, unk9_, unk10_, Type, unk11_1, unk11_2, unk11_3, unk11_4, "
+        "unk11_5, unk11_6, unk11_7, unk11_8, unk11_9, unk11_10 FROM liquid_type ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_LIQUID_TYPE, "SELECT ID, Name_lang, Texture1_lang, Texture2_lang, Texture3_lang, Texture4_lang, Texture5_lang, "
+        "Texture6_lang FROM liquid_type_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // MapDifficulty.db2
     PrepareStatement(HOTFIX_SEL_MAP_DIFFICULTY, "SELECT ID, Message, RaidDuration, MapID, DifficultyID, MaxPlayers, LockID, ItemBonusTreeModID"
@@ -129,8 +134,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // WorldMapArea.db2
-    PrepareStatement(HOTFIX_SEL_WORLD_MAP_AREA, "SELECT MapID, AreaID, LocLeft, LocRight, LocTop, LocBottom, DisplayMapID, LevelRangeMin, "
-        "LevelRangeMax FROM world_map_area ORDER BY MapID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_WORLD_MAP_AREA, "SELECT ID, AreaName, LocLeft, LocRight, LocTop, LocBottom, MapID, AreaID, DisplayMapID, "
+        "DefaultDungeonFloor, ParentWorldMapID, Flags, LevelRangeMin, LevelRangeMax, Unk, Unk2 FROM world_map_area ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_WORLD_MAP_AREA, "SELECT ID, AreaName_lang FROM world_map_area_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // WorldSafeLocs.db2
     PrepareStatement(HOTFIX_SEL_WORLD_SAFE_LOCS, "SELECT ID, MapID, LocX, LocY, LocZ, LocO FROM world_safe_locs ORDER BY ID DESC", CONNECTION_SYNCH);

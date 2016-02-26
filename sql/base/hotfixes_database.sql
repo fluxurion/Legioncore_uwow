@@ -147,7 +147,7 @@ CREATE TABLE `achievement` (
   `RefAchievement` smallint(5) unsigned NOT NULL DEFAULT '0',
   `CriteriaTree` smallint(5) unsigned NOT NULL DEFAULT '0',
   `FactionFlag` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `RewardPoints` int(10) unsigned NOT NULL DEFAULT '0',
+  `RewardPoints` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Amount` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
@@ -728,11 +728,59 @@ DROP TABLE IF EXISTS `liquid_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `liquid_type` (
-  `Id` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
   `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk_1` float NOT NULL DEFAULT '0',
+  `unk_2` float NOT NULL DEFAULT '0',
+  `unk_3` float NOT NULL DEFAULT '0',
+  `unk_4` float NOT NULL DEFAULT '0',
+  `unk_5` float NOT NULL DEFAULT '0',
+  `Texture1` text,
+  `Texture2` text,
+  `Texture3` text,
+  `Texture4` text,
+  `Texture5` text,
+  `Texture6` text,
+  `unk2_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk3_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk4_1` float NOT NULL DEFAULT '0',
+  `unk4_2` float NOT NULL DEFAULT '0',
+  `unk4_3` float NOT NULL DEFAULT '0',
+  `unk4_4` float NOT NULL DEFAULT '0',
+  `unk4_5` float NOT NULL DEFAULT '0',
+  `unk4_6` float NOT NULL DEFAULT '0',
+  `unk4_7` float NOT NULL DEFAULT '0',
+  `unk4_8` float NOT NULL DEFAULT '0',
+  `unk4_9` float NOT NULL DEFAULT '0',
+  `unk4_10` float NOT NULL DEFAULT '0',
+  `unk4_11` float NOT NULL DEFAULT '0',
+  `unk4_12` float NOT NULL DEFAULT '0',
+  `unk4_13` float NOT NULL DEFAULT '0',
+  `unk4_14` float NOT NULL DEFAULT '0',
+  `unk4_15` float NOT NULL DEFAULT '0',
+  `unk4_16` float NOT NULL DEFAULT '0',
+  `unk4_17` float NOT NULL DEFAULT '0',
+  `unk4_18` float NOT NULL DEFAULT '0',
+  `unk5_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk6_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk7_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk8_` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk9_` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `unk10_` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_4` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_5` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_6` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_7` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_8` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_9` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk11_10` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -743,6 +791,37 @@ CREATE TABLE `liquid_type` (
 LOCK TABLES `liquid_type` WRITE;
 /*!40000 ALTER TABLE `liquid_type` DISABLE KEYS */;
 /*!40000 ALTER TABLE `liquid_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `liquid_type_locale`
+--
+
+DROP TABLE IF EXISTS `liquid_type_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `liquid_type_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `Texture1_lang` text,
+  `Texture2_lang` text,
+  `Texture3_lang` text,
+  `Texture4_lang` text,
+  `Texture5_lang` text,
+  `Texture6_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `liquid_type_locale`
+--
+
+LOCK TABLES `liquid_type_locale` WRITE;
+/*!40000 ALTER TABLE `liquid_type_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `liquid_type_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -973,17 +1052,24 @@ DROP TABLE IF EXISTS `world_map_area`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `world_map_area` (
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AreaID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `AreaName` text,
   `LocLeft` float NOT NULL DEFAULT '0',
   `LocRight` float NOT NULL DEFAULT '0',
   `LocTop` float NOT NULL DEFAULT '0',
   `LocBottom` float NOT NULL DEFAULT '0',
-  `DisplayMapID` int(11) NOT NULL DEFAULT '0',
-  `LevelRangeMin` int(10) unsigned NOT NULL DEFAULT '0',
-  `LevelRangeMax` int(10) unsigned NOT NULL DEFAULT '0',
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AreaID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DisplayMapID` smallint(6) NOT NULL DEFAULT '0',
+  `DefaultDungeonFloor` smallint(6) NOT NULL DEFAULT '0',
+  `ParentWorldMapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LevelRangeMin` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `LevelRangeMax` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`MapID`)
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -994,6 +1080,31 @@ CREATE TABLE `world_map_area` (
 LOCK TABLES `world_map_area` WRITE;
 /*!40000 ALTER TABLE `world_map_area` DISABLE KEYS */;
 /*!40000 ALTER TABLE `world_map_area` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `world_map_area_locale`
+--
+
+DROP TABLE IF EXISTS `world_map_area_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `world_map_area_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `AreaName_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `world_map_area_locale`
+--
+
+LOCK TABLES `world_map_area_locale` WRITE;
+/*!40000 ALTER TABLE `world_map_area_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `world_map_area_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

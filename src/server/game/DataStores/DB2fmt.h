@@ -21,7 +21,7 @@
 #ifndef TRINITY_DB2SFRM_H
 #define TRINITY_DB2SFRM_H
 
-char const AchievementFormat[] = "nssistttttttbib";
+char const AchievementFormat[] = "nssistttttttbbb";
 char const AreaGroupMemberFormat[] = "ntt";
 char const AreaTableFormat[] = "niisfstttttttttttttbbbbbbbbb";
 char const AreaTriggerFormat[] = "nifffiiifffffiiii";
@@ -133,7 +133,7 @@ char const ItemXBonusTreeFormat[] = "nit";
 char const KeyChainFormat[] = "nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 char const LanguageWordsFormat[] = "nsb";
 char const LFGDungeonFormat[]= "nsiiiiiiiiiixixixiiiiiiiiiixx";
-char const LiquidTypeFormat[] = "nxxixixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+char const LiquidTypeFormat[] = "nsifffffssssssiiffffffffffffffffffiiiittbbbbbbbbbbb";
 char const LockFormat[] = "niiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii";
 char const MailTemplateFormat[] = "ns";
 char const MapChallengeModeFormat[] = "niiiiiiiii";
@@ -224,7 +224,7 @@ char const UnitPowerBarFormat[] = "niffiiiiiiiiiiiissssffttbbb";
 char const VehicleFormat[] = "niiffffiiiiiiiifffffffffffffffxxxxfifiiii";
 char const VehicleSeatFormat[] = "niiffffffffffiiiiiifffffffiiifffiiiiiiiffiiiiffffffffffffiiiiiiiii";
 char const WMOAreaTableFormat[] = "niiixxxxxiisxxx";
-char const WorldMapAreaFormat[] = "xinxffffixxxii";
+char const WorldMapAreaFormat[] = "nsffffttttttbbbb";
 char const WorldMapOverlayFormat[] = "nstttttttttttttt";
 char const WorldMapTransformsFormat[] = "nfffffffffttttb";
 char const WorldSafeLocsFormat[] = "niffffx";

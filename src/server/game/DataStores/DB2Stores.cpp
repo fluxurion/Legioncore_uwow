@@ -415,7 +415,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sKeyChainStore);                   // 21021
     LOAD_DB2(sLanguageWordsStore);              // 21021
     //LOAD_DB2(sLFGDungeonStore);
-    //LOAD_DB2(sLiquidTypeStore);
+    LOAD_DB2(sLiquidTypeStore);                 // 21154
     LOAD_DB2(sLockStore);                       // 21021
     LOAD_DB2(sMailTemplateStore);               // 21021
     //LOAD_DB2(sMapChallengeModeStore);
@@ -506,7 +506,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sVehicleSeatStore);
     //LOAD_DB2(sVehicleStore);
     //LOAD_DB2(sWMOAreaTableStore);
-    //LOAD_DB2(sWorldMapAreaStore);
+    LOAD_DB2(sWorldMapAreaStore);               // 21154
     LOAD_DB2(sWorldMapOverlayStore);            // 21021
     LOAD_DB2(sWorldMapTransformsStore);         // 21021
     //LOAD_DB2(sWorldSafeLocsStore);
