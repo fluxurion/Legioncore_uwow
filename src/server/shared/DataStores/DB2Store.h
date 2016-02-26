@@ -76,7 +76,7 @@ public:
             switch (_format[i])
             {
                 case FT_IND:
-                    if (_hasIndex)
+                    if (!_hasIndex)
                     {
                         buffer << *(uint32*)entry;
                         entry += 4;
