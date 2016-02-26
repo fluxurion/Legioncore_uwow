@@ -223,7 +223,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool s
     SetUInt32Value(UNIT_FIELD_CREATED_BY_SPELL, summon_spell_id);
 
     CreatureTemplate const* cinfo = GetCreatureTemplate();
-    if (cinfo->type == CREATURE_TYPE_CRITTER)
+    if (cinfo->Type == CREATURE_TYPE_CRITTER)
     {
         map->AddToMap(this->ToCreature());
         return true;
@@ -770,7 +770,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
 
     SetDisplayId(creature->GetDisplayId());
 
-    if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family))
+    if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->Family))
         SetName(cFamily->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
     else
         SetName(creature->GetNameForLocaleIdx(sObjectMgr->GetDBCLocaleIndex()));
@@ -783,7 +783,7 @@ bool Pet::CreateBaseAtCreatureInfo(CreatureTemplate const* cinfo, Unit* owner)
     if (!CreateBaseAtTamed(cinfo, owner->GetMap(), owner->GetPhaseMask()))
         return false;
 
-    if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family))
+    if (CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->Family))
         SetName(cFamily->Name->Str[sObjectMgr->GetDBCLocaleIndex()]);
 
     Relocate(owner->GetPositionX(), owner->GetPositionY(), owner->GetPositionZ(), owner->GetOrientation());
@@ -805,7 +805,7 @@ bool Pet::CreateBaseAtTamed(CreatureTemplate const* cinfo, Map* map, uint32 phas
     SetUInt32Value(UNIT_FIELD_PET_NEXT_LEVEL_EXPERIENCE, uint32(sObjectMgr->GetXPForLevel(getLevel()+1)*PET_XP_FACTOR));
     SetUInt32Value(UNIT_FIELD_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
 
-    if (cinfo->type == CREATURE_TYPE_BEAST)
+    if (cinfo->Type == CREATURE_TYPE_BEAST)
     {
         SetClass(CLASS_WARRIOR);
         SetGender(GENDER_NONE);
@@ -855,7 +855,7 @@ bool Guardian::InitStatsForLevel(uint8 petlevel)
     //health, mana, armor and resistance
     if(!InitBaseStat(creature_ID, damageSet))
     {
-        SetCreateHealth(stats->BaseHealth[cinfo->expansion]);
+        SetCreateHealth(stats->BaseHealth[cinfo->RequiredExpansion]);
         SetCreateMana(stats->BaseMana);
         SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
     }
@@ -965,7 +965,7 @@ bool Pet::HaveInDiet(ItemTemplate const* item) const
     if (!cInfo)
         return false;
 
-    CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cInfo->family);
+    CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cInfo->Family);
     if (cFamily)
         return (cFamily->PetFoodMask & (1 << (item->FoodType - 1))) != 0;
 
@@ -1424,7 +1424,7 @@ void TempSummon::InitLevelupSpellsForLevel()
 
     if(m_charmInfo)
     {
-        if (PetLevelupSpellSet const* levelupSpells = GetCreatureTemplate()->family ? sSpellMgr->GetPetLevelupSpellList(GetCreatureTemplate()->family) : NULL)
+        if (PetLevelupSpellSet const* levelupSpells = GetCreatureTemplate()->Family ? sSpellMgr->GetPetLevelupSpellList(GetCreatureTemplate()->Family) : NULL)
         {
             // PetLevelupSpellSet ordered by levels, process in reversed order
             for (PetLevelupSpellSet::const_reverse_iterator itr = levelupSpells->rbegin(); itr != levelupSpells->rend(); ++itr)
@@ -1558,11 +1558,11 @@ bool Pet::IsPermanentPetFor(Player* owner)
             switch (owner->getClass())
             {
                 case CLASS_WARLOCK:
-                    return GetCreatureTemplate()->type == CREATURE_TYPE_DEMON;
+                    return GetCreatureTemplate()->Type == CREATURE_TYPE_DEMON;
                 case CLASS_DEATH_KNIGHT:
-                    return GetCreatureTemplate()->type == CREATURE_TYPE_UNDEAD;
+                    return GetCreatureTemplate()->Type == CREATURE_TYPE_UNDEAD;
                 case CLASS_MAGE:
-                    return GetCreatureTemplate()->type == CREATURE_TYPE_ELEMENTAL;
+                    return GetCreatureTemplate()->Type == CREATURE_TYPE_ELEMENTAL;
                 default:
                     return false;
             }
@@ -1606,9 +1606,9 @@ void TempSummon::LearnPetPassives()
     if (!cInfo)
         return;
 
-    sCreatureFamilyStore.AssertEntry(cInfo->family);;
+    sCreatureFamilyStore.AssertEntry(cInfo->Family);;
 
-    DB2Manager::PetFamilySpellsSet const* spells = sDB2Manager.GetPetFamilySpells(cInfo->family);
+    DB2Manager::PetFamilySpellsSet const* spells = sDB2Manager.GetPetFamilySpells(cInfo->Family);
     if (!spells)
         return;
 

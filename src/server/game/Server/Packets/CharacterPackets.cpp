@@ -90,7 +90,7 @@ WorldPackets::Character::EnumCharactersResult::CharacterInfo::CharacterInfo(Fiel
         {
             Pet.CreatureDisplayId = fields[17].GetUInt32();
             Pet.Level = fields[18].GetUInt16();
-            Pet.CreatureFamily = creatureInfo->family;
+            Pet.CreatureFamily = creatureInfo->Family;
         }
     }
 

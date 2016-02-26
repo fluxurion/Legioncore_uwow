@@ -92,20 +92,20 @@ uint32 CreatureTemplate::GetRandomValidModelId() const
     uint8 c = 0;
     uint32 modelIDs[4];
 
-    if (Modelid1) modelIDs[c++] = Modelid1;
-    if (Modelid2) modelIDs[c++] = Modelid2;
-    if (Modelid3) modelIDs[c++] = Modelid3;
-    if (Modelid4) modelIDs[c++] = Modelid4;
+    if (Modelid[0]) modelIDs[c++] = Modelid[0];
+    if (Modelid[1]) modelIDs[c++] = Modelid[1];
+    if (Modelid[2]) modelIDs[c++] = Modelid[2];
+    if (Modelid[3]) modelIDs[c++] = Modelid[3];
 
     return ((c>0) ? modelIDs[urand(0, c-1)] : 0);
 }
 
 uint32 CreatureTemplate::GetFirstValidModelId() const
 {
-    if (Modelid1) return Modelid1;
-    if (Modelid2) return Modelid2;
-    if (Modelid3) return Modelid3;
-    if (Modelid4) return Modelid4;
+    if (Modelid[0]) return Modelid[0];
+    if (Modelid[1]) return Modelid[1];
+    if (Modelid[2]) return Modelid[2];
+    if (Modelid[3]) return Modelid[3];
     return 0;
 }
 
@@ -490,7 +490,7 @@ void Creature::UpdateStat()
     CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(level, cInfo->unit_class);
 
     // health
-    float healthmod = _GetHealthMod(cInfo->rank);
+    float healthmod = _GetHealthMod(cInfo->Classification);
 
     uint32 basehp = stats->GenerateHealth(cInfo, diffStats);
     uint32 health = uint32(basehp * healthmod);
@@ -842,7 +842,7 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
         return false;
     }
 
-    switch (GetCreatureTemplate()->rank)
+    switch (GetCreatureTemplate()->Classification)
     {
         case CREATURE_ELITE_RARE:
             m_corpseDelay = sWorld->getIntConfig(CONFIG_CORPSE_DECAY_RARE);
@@ -862,7 +862,7 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
     }
 
     // All rare npc have max visibility distance.
-    if (GetCreatureTemplate()->rank)
+    if (GetCreatureTemplate()->Classification)
         m_SightDistance = MAX_VISIBILITY_DISTANCE;
 
     switch(GetMapId())
@@ -1182,8 +1182,8 @@ void Creature::SaveToDB(uint32 mapid, uint32 spawnMask, uint32 phaseMask)
     CreatureTemplate const* cinfo = GetCreatureTemplate();
     if (cinfo)
     {
-        if (displayId == cinfo->Modelid1 || displayId == cinfo->Modelid2 ||
-            displayId == cinfo->Modelid3 || displayId == cinfo->Modelid4)
+        if (displayId == cinfo->Modelid[0] || displayId == cinfo->Modelid[1] ||
+            displayId == cinfo->Modelid[2] || displayId == cinfo->Modelid[3])
             displayId = 0;
 
         if (npcflag == cinfo->npcflag)
@@ -1271,7 +1271,7 @@ void Creature::SaveToDB(uint32 mapid, uint32 spawnMask, uint32 phaseMask)
 
 void Creature::SelectLevel(const CreatureTemplate* cinfo)
 {
-    uint32 rank = isPet()? 0 : cinfo->rank;
+    uint32 rank = isPet()? 0 : cinfo->Classification;
 
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
@@ -1291,7 +1291,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     SetLevel(level);
 
     // for wild battle pets
-    if (cinfo->type == CREATURE_TYPE_WILD_PET)
+    if (cinfo->Type == CREATURE_TYPE_WILD_PET)
     {
         // random level depends on zone data
         if (AreaTableEntry const * aEntry = sAreaTableStore.LookupEntry(GetZoneId()))
@@ -1393,7 +1393,7 @@ float Creature::_GetHealthMod(int32 Rank)
 
 float Creature::_GetHealthModPersonal(uint32 &count)
 {
-    switch (GetCreatureTemplate()->rank)
+    switch (GetCreatureTemplate()->Classification)
     {
         case CREATURE_ELITE_NORMAL:
         case CREATURE_ELITE_ELITE:
@@ -1559,7 +1559,7 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType guid, Map* map, bool addTo
         curhealth = data->curhealth;
         if (curhealth)
         {
-            curhealth = uint32(curhealth*_GetHealthMod(GetCreatureTemplate()->rank));
+            curhealth = uint32(curhealth*_GetHealthMod(GetCreatureTemplate()->Classification));
             if (curhealth < 1)
                 curhealth = 1;
         }
@@ -2009,7 +2009,7 @@ bool Creature::IsImmunedToSpellEffect(SpellInfo const* spellInfo, uint32 index) 
     if (GetCreatureTemplate()->MechanicImmuneMask & (1 << (spellInfo->Effects[index].Mechanic - 1)))
         return true;
 
-    if (GetCreatureTemplate()->type == CREATURE_TYPE_MECHANICAL && spellInfo->Effects[index].Effect == SPELL_EFFECT_HEAL)
+    if (GetCreatureTemplate()->Type == CREATURE_TYPE_MECHANICAL && spellInfo->Effects[index].Effect == SPELL_EFFECT_HEAL)
         return true;
 
     return Unit::IsImmunedToSpellEffect(spellInfo, index);
@@ -2775,17 +2775,14 @@ TrainerSpellData const* Creature::GetTrainerSpells() const
 }
 
 // overwrite WorldObject function for proper name localization
-const char* Creature::GetNameForLocaleIdx(LocaleConstant loc_idx) const
+const char* Creature::GetNameForLocaleIdx(LocaleConstant locale) const
 {
-    if (loc_idx != DEFAULT_LOCALE)
+    if (locale != DEFAULT_LOCALE && locale != LOCALE_none)
     {
-        uint8 uloc_idx = uint8(loc_idx);
-        CreatureLocale const* cl = sObjectMgr->GetCreatureLocale(GetEntry());
-        if (cl)
-        {
-            if (cl->Name.size() > uloc_idx && !cl->Name[uloc_idx].empty())
-                return cl->Name[uloc_idx].c_str();
-        }
+        uint8 localeID = uint8(locale);
+        if (CreatureLocale const* cl = sObjectMgr->GetCreatureLocale(GetEntry()))
+            if (cl->Name.size() > localeID && !cl->Name[localeID].empty())
+                return cl->Name[localeID].c_str();
     }
 
     return GetName();

@@ -255,10 +255,10 @@ class boss_anubarak_trial : public CreatureScript
                         _burrowGUID.push_back(summoned->GetGUID());
                         summoned->SetReactState(REACT_PASSIVE);
                         summoned->CastSpell(summoned, SPELL_CHURNING_GROUND, false);
-                        summoned->SetDisplayId(summoned->GetCreatureTemplate()->Modelid2);
+                        summoned->SetDisplayId(summoned->GetCreatureTemplate()->Modelid[1]);
                         break;
                     case NPC_SPIKE:
-                        summoned->SetDisplayId(summoned->GetCreatureTemplate()->Modelid1);
+                        summoned->SetDisplayId(summoned->GetCreatureTemplate()->Modelid[0]);
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true))
                         {
                             summoned->CombatStart(target);
@@ -620,7 +620,7 @@ class npc_frost_sphere : public CreatureScript
             {
                 me->SetReactState(REACT_PASSIVE);
                 DoCast(SPELL_FROST_SPHERE);
-                me->SetDisplayId(me->GetCreatureTemplate()->Modelid2);
+                me->SetDisplayId(me->GetCreatureTemplate()->Modelid[1]);
                 me->GetMotionMaster()->MoveRandom(20.0f);
             }
 

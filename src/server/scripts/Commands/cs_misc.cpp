@@ -2702,7 +2702,7 @@ public:
 
         CreatureTemplate const* creatrueTemplate = sObjectMgr->GetCreatureTemplate(creatureTarget->GetEntry());
         // Creatures with family 0 crashes the server
-        if (!creatrueTemplate->family)
+        if (!creatrueTemplate->Family)
         {
             handler->PSendSysMessage("This creature cannot be tamed. (family id: 0).");
             handler->SetSentErrorMessage(true);

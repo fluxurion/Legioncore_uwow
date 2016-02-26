@@ -366,7 +366,7 @@ public:
         void Reset()
         {
             _events.Reset();
-            me->SetDisplayId(me->GetCreatureTemplate()->Modelid2);
+            me->SetDisplayId(me->GetCreatureTemplate()->Modelid[1]);
         }
 
         void EnterCombat(Unit* /*who*/)

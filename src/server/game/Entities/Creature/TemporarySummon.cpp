@@ -363,7 +363,7 @@ bool TempSummon::InitBaseStat(uint32 creatureId, bool& damageSet)
         }
         else
         {
-            SetCreateHealth(stats->BaseHealth[cinfo->expansion]);
+            SetCreateHealth(stats->BaseHealth[cinfo->RequiredExpansion]);
             SetMaxHealth(int32(owner->GetMaxHealth() * pStats->hp));
             SetHealth(GetCreateHealth());
         }
@@ -453,7 +453,7 @@ void TempSummon::UnSummon(uint32 msTime)
 
     Unit* owner = GetSummoner();
 
-    if (owner && owner->GetTypeId() == TYPEID_PLAYER && GetCreatureTemplate()->type == CREATURE_TYPE_WILD_PET)
+    if (owner && owner->GetTypeId() == TYPEID_PLAYER && GetCreatureTemplate()->Type == CREATURE_TYPE_WILD_PET)
     {
         owner->SetGuidValue(PLAYER_FIELD_SUMMONED_BATTLE_PET_GUID, ObjectGuid::Empty);
         owner->SetUInt32Value(PLAYER_FIELD_CURRENT_BATTLE_PET_BREED_QUALITY, 0);

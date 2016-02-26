@@ -1252,8 +1252,10 @@ class ObjectMgr
         void LoadCreatureEvaseWmoData();
         void LoadCreatureDifficultyStat();
         void LoadCreatureTemplates();
+        void LoadWDBCreatureTemplates();
         void LoadCreatureTemplateAddons();
         void CheckCreatureTemplate(CreatureTemplate const* cInfo);
+        void CheckCreatureTemplateWDB(CreatureTemplate const* cInfo);
         void RestructCreatureGUID();
         void RestructGameObjectGUID();
         void LoadTempSummons();

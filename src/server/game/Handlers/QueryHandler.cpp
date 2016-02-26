@@ -76,59 +76,46 @@ void WorldSession::SendQueryTimeResponse()
 void WorldSession::HandleCreatureQuery(WorldPackets::Query::QueryCreature& packet)
 {
     WorldPackets::Query::QueryCreatureResponse response;
-
-    CreatureTemplate const* creatureInfo = sObjectMgr->GetCreatureTemplate(packet.CreatureID);
-
     response.CreatureID = packet.CreatureID;
 
-    if (creatureInfo)
+    if (CreatureTemplate const* creatureInfo = sObjectMgr->GetCreatureTemplate(packet.CreatureID))
     {
         response.Allow = true;
 
         WorldPackets::Query::CreatureStats& stats = response.Stats;
+        stats.Name[0] = creatureInfo->Name;
+        stats.NameAlt[0] = creatureInfo->NameAlt;
+        stats.Title = creatureInfo->Title;
+        stats.TitleAlt = creatureInfo->TitleAlt;
 
-        stats.Title = creatureInfo->SubName;
-        stats.CursorName = creatureInfo->IconName;
-        stats.CreatureType = creatureInfo->type;
-        stats.CreatureFamily = creatureInfo->family;
-        stats.Classification = creatureInfo->rank;
-        stats.HpMulti = creatureInfo->ModHealth;
-        stats.EnergyMulti = creatureInfo->ModMana;
-        stats.Leader = creatureInfo->RacialLeader;
-        for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
-            if (creatureInfo->questItems[i])
-                stats.QuestItems.push_back(creatureInfo->questItems[i]);
-        stats.CreatureMovementInfoID = creatureInfo->movementId;
-        stats.RequiredExpansion = creatureInfo->expansionUnknown;
-        stats.Flags[0] = creatureInfo->type_flags;
-        stats.Flags[1] = creatureInfo->type_flags2;
-        for (uint32 i = 0; i < MAX_KILL_CREDIT; ++i)
-            stats.ProxyCreatureID[i] = creatureInfo->KillCredit[i];
-        stats.CreatureDisplayID[0] = creatureInfo->Modelid1;
-        stats.CreatureDisplayID[1] = creatureInfo->Modelid2;
-        stats.CreatureDisplayID[2] = creatureInfo->Modelid3;
-        stats.CreatureDisplayID[3] = creatureInfo->Modelid4;
-        if (CreatureLocale const* cl = sObjectMgr->GetCreatureLocale(response.CreatureID))
-        {
-            if (cl->Name.size() > GetSessionDbLocaleIndex() && !cl->Name[GetSessionDbLocaleIndex()].empty())
+        LocaleConstant localeConstant = GetSessionDbLocaleIndex();
+        if (localeConstant >= LOCALE_enUS && (localeConstant != LOCALE_none))
+            if (CreatureLocale const* creatureLocale = sObjectMgr->GetCreatureLocale(packet.CreatureID))
             {
-                stats.Name[0] = cl->Name[GetSessionDbLocaleIndex()];
-                stats.NameAlt[0] = stats.Name[0];
+                ObjectMgr::GetLocaleString(creatureLocale->Name, localeConstant, stats.Name[0]);
+                ObjectMgr::GetLocaleString(creatureLocale->NameAlt, localeConstant, stats.NameAlt[0]);
+                ObjectMgr::GetLocaleString(creatureLocale->Title, localeConstant, stats.Title);
+                ObjectMgr::GetLocaleString(creatureLocale->TitleAlt, localeConstant, stats.TitleAlt);
             }
 
-            if (cl->SubName.size() > GetSessionDbLocaleIndex() && !cl->SubName[GetSessionDbLocaleIndex()].empty())
-                stats.Title = cl->SubName[GetSessionDbLocaleIndex()];
-        }
-
-        {
-            if (stats.Name[0].empty())
-                stats.Name[0] = creatureInfo->Name;
-            if (stats.NameAlt[0].empty())
-                stats.NameAlt[0] = creatureInfo->Name;
-        }
+        stats.CursorName = creatureInfo->CursorName;
+        stats.CreatureType = creatureInfo->Type;
+        stats.CreatureFamily = creatureInfo->Family;
+        stats.Classification = creatureInfo->Classification;
+        stats.HpMulti = creatureInfo->HpMulti;
+        stats.EnergyMulti = creatureInfo->PowerMulti;
+        stats.Leader = creatureInfo->Leader;
+        stats.CreatureMovementInfoID = creatureInfo->MovementInfoID;
+        stats.RequiredExpansion = creatureInfo->RequiredExpansion;
+        for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
+            stats.QuestItems.push_back(creatureInfo->QuestItem[i]);
+        for (uint8 i = 0; i < MAX_TYPE_FLAGS; ++i)
+            stats.Flags[i] = creatureInfo->TypeFlags[i];
+        for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)
+            stats.ProxyCreatureID[i] = creatureInfo->KillCredit[i];
+        for (uint8 i = 0; i < MAX_CREATURE_MODELS; ++i)
+            stats.CreatureDisplayID[i] = creatureInfo->Modelid[i];
     }
-    else
-        response.Allow = false;
 
     SendPacket(response.Write());
 }

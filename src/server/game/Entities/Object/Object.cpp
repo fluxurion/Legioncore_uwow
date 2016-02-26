@@ -946,15 +946,15 @@ void Object::_BuildValuesUpdate(uint8 updateType, ByteBuffer* data, Player* targ
                         {
                             if (target->isGameMaster())
                             {
-                                if (cinfo->Modelid1)
-                                    fieldBuffer << cinfo->Modelid1;//Modelid1 is a visible model for gms
+                                if (cinfo->Modelid[0])
+                                    fieldBuffer << cinfo->Modelid[0];//Modelid1 is a visible model for gms
                                 else
                                     fieldBuffer << 17519; // world invisible trigger's model
                             }
                             else
                             {
-                                if (cinfo->Modelid2)
-                                    fieldBuffer << cinfo->Modelid2;//Modelid2 is an invisible model for players
+                                if (cinfo->Modelid[1])
+                                    fieldBuffer << cinfo->Modelid[1];//Modelid2 is an invisible model for players
                                 else
                                     fieldBuffer << 11686; // world invisible trigger's model
                             }

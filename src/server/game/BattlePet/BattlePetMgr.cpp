@@ -1058,7 +1058,7 @@ void PetBattle::InitializePetBattle(ObjectGuid opponentGuid)
     {
         if (CreatureTemplate const* npc = sObjectMgr->GetCreatureTemplate(opponentGuid.GetEntry()))
         {
-            initial.MsgData.NpcDisplayID = npc->Modelid1;
+            initial.MsgData.NpcDisplayID = npc->Modelid[0];
             initial.MsgData.InitialWildPetGUID = opponentGuid;
             initial.MsgData.NpcCreatureID = npc->Entry;
         }

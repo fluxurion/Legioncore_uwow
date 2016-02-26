@@ -155,7 +155,7 @@ namespace Trinity
 
             if (u->GetTypeId() == TYPEID_UNIT && (creature->isTotem() || creature->isPet() ||
                 creature->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL) ||
-                creature->GetCreatureTemplate()->type == CREATURE_TYPE_CRITTER)
+                creature->GetCreatureTemplate()->Type == CREATURE_TYPE_CRITTER)
                 gain = 0;
             else
             {
@@ -164,7 +164,7 @@ namespace Trinity
                 if (gain != 0 && u->GetTypeId() == TYPEID_UNIT && creature->isElite())
                 {
                     // Players get only 10% xp for killing creatures of lower expansion levels than himself
-                    if ((uint32(creature->GetCreatureTemplate()->expansion) < GetExpansionForLevel(player->getLevel())))
+                    if ((uint32(creature->GetCreatureTemplate()->RequiredExpansion) < GetExpansionForLevel(player->getLevel())))
                         gain = uint32(round(gain / 10.0f));
 
                     // Elites in instances have a 2.75x XP bonus instead of the regular 2x world bonus.

@@ -81,6 +81,7 @@ enum CreatureFlagsExtra
 #define ENTRY_RUNE_WEAPON       27893
 
 #define MAX_KILL_CREDIT 2
+#define MAX_TYPE_FLAGS 2
 #define MAX_CREATURE_MODELS 4
 #define MAX_CREATURE_QUEST_ITEMS 6
 #define MAX_CREATURE_NAMES 4
@@ -95,83 +96,84 @@ enum CreatureFlagsExtra
 // from `creature_template` table
 struct CreatureTemplate
 {
-    uint32  Entry;
-    uint32  KillCredit[MAX_KILL_CREDIT];
-    uint32  Modelid1;
-    uint32  Modelid2;
-    uint32  Modelid3;
-    uint32  Modelid4;
-    std::string  Name;
-    std::string  SubName;
-    std::string  IconName;
-    uint32  GossipMenuId;
-    uint8   minlevel;
-    uint8   maxlevel;
-    uint32  expansion;
-    uint32  expansionUnknown;                               // either 0 or 3, sent to the client / wdb
-    uint32  faction;
-    uint32  npcflag;
-    uint32  npcflag2;
-    float   speed_walk;
-    float   speed_run;
-    float   speed_fly;
-    float   scale;
-    uint32  rank;
-    float   mindmg;
-    float   maxdmg;
-    uint32  dmgschool;
-    uint32  attackpower;
-    float   dmg_multiplier;
-    uint32  baseattacktime;
-    uint32  rangeattacktime;
-    uint32  unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
-    uint32  unit_flags;                                     // enum UnitFlags mask values
-    uint32  unit_flags2;                                    // enum UnitFlags2 mask values
-    uint32  unit_flags3;                                    // enum UnitFlags3 mask values
-    uint32  dynamicflags;
-    uint32  family;                                         // enum CreatureFamily values (optional)
-    uint32  trainer_type;
-    uint32  trainer_spell;
-    uint32  trainer_class;
-    uint32  trainer_race;
-    float   minrangedmg;
-    float   maxrangedmg;
-    uint32  rangedattackpower;
-    uint32  type;                                           // enum CreatureType values
-    uint32  type_flags;                                     // enum CreatureTypeFlags mask values
-    uint32  type_flags2;                                    // unknown enum, only set for 4 creatures (with value 1)
-    uint32  lootid;
-    uint32  pickpocketLootId;
-    uint32  SkinLootId;
-    int32   resistance[MAX_SPELL_SCHOOL];
-    uint32  spells[CREATURE_MAX_SPELLS];
-    uint32  PetSpellDataId;
-    uint32  VehicleId;
-    uint32  mingold;
-    uint32  maxgold;
+    uint32 Entry;
+    std::string Name;
+    std::string NameAlt;
+    std::string Title;
+    std::string TitleAlt;
+    std::string CursorName;
+    uint32 KillCredit[MAX_KILL_CREDIT];
+    uint32 Modelid[MAX_CREATURE_MODELS];
+    uint32 QuestItem[MAX_CREATURE_QUEST_ITEMS];
+    uint32 UnkInt;
+    uint32 FlagQuest;
+    uint32 VerifiedBuild;
+    uint32 Classification;
+    uint32 MovementInfoID;
+    uint32 Family;                                         // enum CreatureFamily
+    uint32  RequiredExpansion;
+    uint32 TypeFlags[2];                                   // enum CreatureTypeFlags[0] mask values [1] unk for now
+    uint32 Type;                                           // enum CreatureType values
+    float HpMulti;
+    float PowerMulti;
+    bool Leader;
+    
     std::string AIName;
-    uint32  MovementType;
-    uint32  InhabitType;
-    float   HoverHeight;
-    float   ModHealth;
-    float   ModMana;
-    float   ModManaExtra;                                   // Added in 4.x, this value is usually 2 for a small group of creatures with double mana
-    float   ModArmor;
-    bool    RacialLeader;
-    uint32  questItems[MAX_CREATURE_QUEST_ITEMS];
-    uint32  movementId;
-    bool    RegenHealth;
-    uint32  MechanicImmuneMask;
-    uint32  flags_extra;
-    uint32  ScriptID;
-    uint32  GetRandomValidModelId() const;
-    uint32  GetFirstValidModelId() const;
-    uint32  personalloot;
-    uint32  VignetteId;
-    uint32  WorldEffectID;
-    uint32  AiID;
-    uint32  MovementIDKit;
-    uint32  MeleeID;
+    int32 resistance[MAX_SPELL_SCHOOL];
+    uint32 AiID;
+    uint32 attackpower;
+    uint32 baseattacktime;
+    uint32 dmgschool;
+    uint32 dynamicflags;
+    uint32 faction;
+    uint32 flags_extra;
+    uint32 GetFirstValidModelId() const;
+    uint32 GetRandomValidModelId() const;
+    uint32 GossipMenuId;
+    uint32 InhabitType;
+    uint32 lootid;
+    uint32 maxgold;
+    uint32 MechanicImmuneMask;
+    uint32 MeleeID;
+    uint32 mingold;
+    uint32 MovementIDKit;
+    uint32 MovementType;
+    uint32 npcflag;
+    uint32 npcflag2;
+    uint32 personalloot;
+    uint32 PetSpellDataId;
+    uint32 pickpocketLootId;
+    uint32 rangeattacktime;
+    uint32 rangedattackpower;
+    uint32 ScriptID;
+    uint32 SkinLootId;
+    uint32 spells[CREATURE_MAX_SPELLS];
+    uint32 trainer_class;
+    uint32 trainer_race;
+    uint32 trainer_spell;
+    uint32 trainer_type;
+    uint32 unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
+    uint32 unit_flags;                                     // enum UnitFlags mask values
+    uint32 unit_flags2;                                    // enum UnitFlags2 mask values
+    uint32 unit_flags3;                                    // enum UnitFlags3 mask values
+    uint32 VehicleId;
+    uint32 VignetteId;
+    uint32 WorldEffectID;
+    uint8 maxlevel;
+    uint8 minlevel;
+    float dmg_multiplier;
+    float HoverHeight;
+    float maxdmg;
+    float maxrangedmg;
+    float mindmg;
+    float minrangedmg;
+    float ModArmor;
+    float ModManaExtra;                                   // Added in 4.x, this value is usually 2 for a small group of creatures with double mana
+    float scale;
+    float speed_fly;
+    float speed_run;
+    float speed_walk;
+    bool RegenHealth;
 
     //Get difficulty from spawnmode
     static uint8 GetDiffFromSpawn(uint8 spawnmode)
@@ -216,11 +218,11 @@ struct CreatureTemplate
     // helpers
     SkillType GetRequiredLootSkill() const
     {
-        if (type_flags & CREATURE_TYPEFLAGS_HERBLOOT)
+        if (TypeFlags[0] & CREATURE_TYPEFLAGS_HERBLOOT)
             return SKILL_HERBALISM;
-        else if (type_flags & CREATURE_TYPEFLAGS_MININGLOOT)
+        else if (TypeFlags[0] & CREATURE_TYPEFLAGS_MININGLOOT)
             return SKILL_MINING;
-        else if (type_flags & CREATURE_TYPEFLAGS_ENGINEERLOOT)
+        else if (TypeFlags[0] & CREATURE_TYPEFLAGS_ENGINEERLOOT)
             return SKILL_ENGINEERING;
         else
             return SKILL_SKINNING;                          // normal case
@@ -228,11 +230,11 @@ struct CreatureTemplate
 
     bool isTameable(bool exotic) const
     {
-        if (type != CREATURE_TYPE_BEAST || family == 0 || (type_flags & CREATURE_TYPEFLAGS_TAMEABLE) == 0)
+        if (Type != CREATURE_TYPE_BEAST || Family == 0 || (TypeFlags[0] & CREATURE_TYPEFLAGS_TAMEABLE) == 0)
             return false;
 
         // if can tame exotic then can tame any temable
-        return exotic || (type_flags & CREATURE_TYPEFLAGS_EXOTIC) == 0;
+        return exotic || (TypeFlags[0] & CREATURE_TYPEFLAGS_EXOTIC) == 0;
     }
 };
 
@@ -264,14 +266,14 @@ struct CreatureBaseStats
     uint32 GenerateHealth(CreatureTemplate const* info, CreatureDifficultyStat const* diffStats = NULL) const
     {
         if(diffStats)
-            return uint32((BaseHealth[info->expansion] * diffStats->ModHealth) + 0.5f);
+            return uint32((BaseHealth[info->RequiredExpansion] * diffStats->ModHealth) + 0.5f);
         else
-            return uint32((BaseHealth[info->expansion] * info->ModHealth) + 0.5f);
+            return uint32((BaseHealth[info->RequiredExpansion] * info->HpMulti) + 0.5f);
     }
 
     float GenerateBaseDamage(CreatureTemplate const* info) const
     {
-        return BaseDamage[info->expansion];
+        return BaseDamage[info->RequiredExpansion];
     }
 
     uint32 GenerateMana(CreatureTemplate const* info) const
@@ -280,7 +282,7 @@ struct CreatureBaseStats
         if (!BaseMana)
             return 0;
 
-        return uint32((BaseMana * info->ModMana * info->ModManaExtra) + 0.5f);
+        return uint32((BaseMana * info->PowerMulti * info->ModManaExtra) + 0.5f);
     }
 
     uint32 GenerateArmor(CreatureTemplate const* info) const
@@ -296,7 +298,9 @@ typedef std::unordered_map<uint16, CreatureBaseStats> CreatureBaseStatsContainer
 struct CreatureLocale
 {
     StringVector Name;
-    StringVector SubName;
+    StringVector NameAlt;
+    StringVector Title;
+    StringVector TitleAlt;
 };
 
 struct GossipMenuItemsLocale
@@ -657,7 +661,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
 
         void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
         uint32 GetCorpseDelay() const { return m_corpseDelay; }
-        bool isRacialLeader() const { return GetCreatureTemplate()->RacialLeader; }
+        bool isRacialLeader() const { return GetCreatureTemplate()->Leader; }
         bool isCivilian() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN) != 0; }
         bool isTrigger() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER) != 0; }
         bool isGuard() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_GUARD) != 0; }
@@ -692,7 +696,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
             if (isPet())
                 return false;
 
-            uint32 rank = GetCreatureTemplate()->rank;
+            uint32 rank = GetCreatureTemplate()->Classification;
             return rank != CREATURE_ELITE_NORMAL && rank != CREATURE_ELITE_RARE;
         }
 
@@ -701,7 +705,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
             if (isPet())
                 return false;
 
-            return GetCreatureTemplate()->type_flags & CREATURE_TYPEFLAGS_BOSS;
+            return GetCreatureTemplate()->TypeFlags[0] & CREATURE_TYPEFLAGS_BOSS;
         }
 
         bool IsDungeonBoss() const;
