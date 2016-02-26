@@ -15218,16 +15218,13 @@ void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool 
             std::string strOptionText = itr->second.OptionText;
             std::string strBoxText = itr->second.BoxText;
 
-            LocaleConstant locale = GetSession()->GetSessionDbLocaleIndex();
-            if (locale >= 0)
-            {
-                uint32 idxEntry = MAKE_PAIR32(menuId, itr->second.OptionIndex);
-                if (GossipMenuItemsLocale const* no = sObjectMgr->GetGossipMenuItemsLocale(idxEntry))
+            LocaleConstant localeConstant = GetSession()->GetSessionDbLocaleIndex();
+            if (localeConstant >= LOCALE_enUS && (localeConstant != LOCALE_none))
+                if (GossipMenuItemsLocale const* no = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, itr->second.OptionIndex)))
                 {
-                    ObjectMgr::GetLocaleString(no->OptionText, locale, strOptionText);
-                    ObjectMgr::GetLocaleString(no->BoxText, locale, strBoxText);
+                    ObjectMgr::GetLocaleString(no->OptionText, localeConstant, strOptionText);
+                    ObjectMgr::GetLocaleString(no->BoxText, localeConstant, strBoxText);
                 }
-            }
 
             menu->GetGossipMenu().AddMenuItem(itr->second.OptionIndex, itr->second.OptionIcon, strOptionText, 0, itr->second.OptionType, strBoxText, itr->second.BoxMoney, itr->second.BoxCoded);
             menu->GetGossipMenu().AddGossipMenuItemData(itr->second.OptionIndex, itr->second.ActionMenuId, itr->second.ActionPoiId);

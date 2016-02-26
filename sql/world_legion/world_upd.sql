@@ -118,4 +118,38 @@ DROP COLUMN `questItem5`,
 DROP COLUMN `questItem6`,
 DROP COLUMN `VerifiedBuild`;
 
-  
+DROP TABLE IF EXISTS `gossip_menu_option_locale`;
+CREATE TABLE IF NOT EXISTS `gossip_menu_option_locale` (
+  `MenuID` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0',
+  `ID` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0',
+  `Locale` VARCHAR(4) NOT NULL,
+  `OptionText` TEXT,
+  `BoxText` TEXT,
+  `VerifiedBuild` SMALLINT(5) DEFAULT '0'
+) ENGINE=MYISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `gossip_menu_option_locale`
+  ADD PRIMARY KEY (`MenuID`,`ID`, `Locale`);
+
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "koKR", `option_text_loc1`, `box_text_loc1`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "frFR", `option_text_loc2`, `box_text_loc2`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "deDE", `option_text_loc3`, `box_text_loc3`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "zhCN", `option_text_loc4`, `box_text_loc4`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "zhTW", `option_text_loc5`, `box_text_loc5`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "esES", `option_text_loc6`, `box_text_loc6`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "esMX", `option_text_loc7`, `box_text_loc7`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "ruRU", `option_text_loc8`, `box_text_loc8`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "ptBR", `option_text_loc9`, `box_text_loc9`  FROM `locales_gossip_menu_option`);
+INSERT INTO `gossip_menu_option_locale` (`MenuID`, `ID`, `Locale`, `OptionText`, `BoxText`)
+  (SELECT `menu_id`, `id`, "itIT", `option_text_loc10`, `box_text_loc10`  FROM `locales_gossip_menu_option`);
+
+DROP TABLE IF EXISTS `locales_gossip_menu_option`;
