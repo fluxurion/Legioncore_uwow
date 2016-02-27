@@ -2159,7 +2159,7 @@ void Garrison::SendShipmentInfo(ObjectGuid const& guid)
 
         // check if has finish quest for activate. if rewardet - use usual state. if in progress - send 
         shipmentResponse.ShipmentID = (!questID || _owner->GetQuestStatus(questID) == QUEST_STATUS_REWARDED) ? shipmentID : getProgressShipment(questID);
-        shipmentResponse.MaxShipments = existingBuilding->MaxShipments;
+        shipmentResponse.MaxShipments = existingBuilding->MaxShipments + GetShipmentMaxMod();
         shipmentResponse.PlotInstanceID = plot->BuildingInfo.PacketInfo->GarrPlotInstanceID;
 
         shipmentResponse.Shipments.assign(_shipments[shipment->cEntry->BuildingType].begin(), _shipments[shipment->cEntry->BuildingType].end());
@@ -2229,6 +2229,16 @@ void Garrison::CreateGarrisonShipment(uint32 shipmentID)
     _owner->SendDirectMessage(shipmentResponse.Write());
 }
 
+uint32 Garrison::GetShipmentMaxMod()
+{
+    if (Garrison::Plot* store = GetPlotWithBuildingType(GARR_BTYPE_STOREHOUSE))
+    {
+        GarrBuildingEntry const* storeBuilding = sGarrBuildingStore.AssertEntry(store->BuildingInfo.PacketInfo->GarrBuildingID);
+        return storeBuilding->Level == 3 ? 15 : 5;
+    }
+    return 0;
+}
+
 uint64 Garrison::PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID/* = 0*/)
 {
     CharShipmentEntry const* shipmentEntry = sCharShipmentStore.LookupEntry(shipmentID);
@@ -2247,7 +2257,7 @@ uint64 Garrison::PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID/
     if (!existingBuilding)
         return 0;
 
-    if (_shipments[shipmentConteinerEntry->BuildingType].size() >= existingBuilding->MaxShipments)
+    if (_shipments[shipmentConteinerEntry->BuildingType].size() >= (existingBuilding->MaxShipments + GetShipmentMaxMod()))
         return 0;
 
     uint32 EndShipment = shipmentEntry->TimeForShipment + placeTime;

@@ -258,6 +258,7 @@ public:
     void SendGarrisonShipmentLandingPage();
     void CompleteShipments(GameObject *go);
     void FreeShipmentChest(uint32 shipment);
+    uint32 GetShipmentMaxMod();
 
     //TradeSkill
     bool CanCastTradeSkill(ObjectGuid const& guid, uint32 spellID);
