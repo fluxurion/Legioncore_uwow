@@ -27,6 +27,8 @@
 #include "LootPackets.h"
 
 #define RESP_GO_LOOT 12 * HOUR * MINUTE
+#define SALVAGE_ITEM 114119
+#define SALVAGE_ITEM_BIG 114120
 
 uint32 getSiteLevelIdById(uint32 team, uint8 lvl)
 {
@@ -2002,6 +2004,29 @@ void Garrison::RewardMission(uint32 missionRecID)
             {
                 if (Item* item = _owner->StoreNewItem(dest, entry->RewardItemID, true, Item::GenerateItemRandomPropertyId(entry->RewardItemID)))
                     _owner->SendNewItem(item, entry->ItemAmount, true, false);
+            }
+
+            //
+            if (Garrison::Plot* sYard = GetPlotWithBuildingType(GARR_BTYPE_SALVAGE_YARD))
+            {
+                GarrBuildingEntry const* _building = sGarrBuildingStore.AssertEntry(sYard->BuildingInfo.PacketInfo->GarrBuildingID);
+                float chance = 30.0f;
+                uint32 itemID = SALVAGE_ITEM;
+                switch (_building->Level)
+                {
+                    case 2: chance = 60.0f; break;
+                    case 3: chance = 90.0f; itemID = SALVAGE_ITEM_BIG; break;
+                }
+
+                if (roll_chance_f(chance))
+                {
+                    ItemPosCountVec dest;
+                    if (_owner->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemID, 1) == EQUIP_ERR_OK)
+                    {
+                        if (Item* item = _owner->StoreNewItem(dest, itemID, true, Item::GenerateItemRandomPropertyId(itemID)))
+                            _owner->SendNewItem(item, itemID, true, false);
+                    }
+                }
             }
         }
     }
