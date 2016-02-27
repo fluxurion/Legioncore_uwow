@@ -28,7 +28,7 @@
 class DBCFile
 {
 public:
-    DBCFile(char const* file, bool isDBC);
+    DBCFile(char const* file, char const* fmt);
     ~DBCFile();
 
     bool open();
@@ -37,31 +37,12 @@ public:
     class Record
     {
     public:
-        float getFloat(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            return *reinterpret_cast<float*>(offset + field * 4);
-        }
-
-        unsigned int getUInt(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            return *reinterpret_cast<unsigned int*>(offset + field * 4);
-        }
-
-        int getInt(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            return *reinterpret_cast<int*>(offset + field * 4);
-        }
-
-        char const* getString(size_t field) const
-        {
-            assert(field < file.header.FieldCount);
-            size_t stringOffset = getUInt(field);
-            assert(stringOffset < file._stringSize);
-            return reinterpret_cast<char*>(file.stringTable + stringOffset);
-        }
+        float getFloat(size_t field) const;
+        uint32 getUInt(size_t field) const;
+        uint8 getUInt8(size_t field) const;
+        uint16 getUInt16(size_t field) const;
+        uint64 getUInt64(size_t field) const;
+        char const* getString(size_t field) const;
 
     private:
         Record(DBCFile& file, unsigned char* offset) : file(file), offset(offset)  { }
@@ -95,6 +76,7 @@ public:
     };
 
     Record getRecord(size_t id);
+    uint32 GetOffset(size_t id) const { return (fieldsOffset != nullptr && id < header.FieldCount) ? fieldsOffset[id] : 0; }
     Iterator begin();
     Iterator end();
     size_t getRecordCount() const { return header.RecordCount; }
@@ -102,10 +84,11 @@ public:
     size_t getMaxId();
 
 private:
+    uint32* fieldsOffset;
     char const* _file;
-    bool _isDBC;
     unsigned char* recordTable;
     unsigned char* stringTable;
+    char const* _fmt;
 
     struct
     {

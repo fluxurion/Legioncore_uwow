@@ -277,11 +277,11 @@ uint32 ReadBuild(int locale)
     return build;
 }
 
-uint32 ReadMapDBC()
+uint32 LoadMapDB2Data()
 {
     printf("Read Map.db2 file...\n");
 
-    DBCFile dbc("DBFilesClient\\Map.db2", false);
+    DBCFile dbc("DBFilesClient\\Map.db2", "nsiiiisissififfiiiiiii");
     if (!dbc.open())
     {
         printf("Fatal error: Invalid Map.db2 file format!\n");
@@ -310,13 +310,13 @@ uint32 ReadMapDBC()
     return mapCount;
 }
 
-void ReadLiquidTypeTableDBC()
+void LoadLiquidTypeDB2Data()
 {
-    printf("Read LiquidType.dbc file...");
-    DBCFile dbc("DBFilesClient\\LiquidType.dbc", true);
+    printf("Read LiquidType.db2 file...");
+    DBCFile dbc("DBFilesClient\\LiquidType.db2", "nsifffffssssssiiffffffffffffffffffiiiittbbbbbbbbbbb");
     if (!dbc.open())
     {
-        printf("Fatal error: Invalid LiquidType.dbc file format!\n");
+        printf("Fatal error: Invalid LiquidType.db2 file format!\n");
         exit(1);
     }
 
@@ -326,7 +326,7 @@ void ReadLiquidTypeTableDBC()
     memset(LiqType, 0xff, (liqTypeMaxId + 1) * sizeof(uint16));
 
     for (uint32 x = 0; x < liqTypeCount; ++x)
-        LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt(3);
+        LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt8(40);
 
     printf("Done! (%u LiqTypes loaded)\n", liqTypeCount);
 }
@@ -1088,9 +1088,9 @@ void ExtractMaps(uint32 build)
 
     printf("Extracting maps...\n");
 
-    uint32 map_count = ReadMapDBC();
+    uint32 map_count = LoadMapDB2Data();
 
-    ReadLiquidTypeTableDBC();
+    LoadLiquidTypeDB2Data();
 
     std::string path = output_path;
     path += "/maps/";

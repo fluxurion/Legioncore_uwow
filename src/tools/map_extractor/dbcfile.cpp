@@ -20,12 +20,13 @@
 
 #include "dbcfile.h"
 
-DBCFile::DBCFile(char const* file, bool isDBC)
+DBCFile::DBCFile(char const* file, char const* fmt)
 {
     _file = file;
-    _isDBC = isDBC;
+    _fmt = fmt;
     recordTable = nullptr;
     stringTable = nullptr;
+    fieldsOffset = nullptr;
 
     header.RecordSize = 0;
     header.RecordCount = 0;
@@ -84,17 +85,14 @@ bool DBCFile::open()
         return false;
     }
 
-    if (!_isDBC)
-    {
-        fread(&header.Hash, sizeof(uint32), 1, f);
-        fread(&header.Build, sizeof(uint32), 1, f);
-        fread(&header.TimeStamp, sizeof(uint32), 1, f);
-        fread(&header.Min, sizeof(uint32), 1, f);
-        fread(&header.Max, sizeof(uint32), 1, f);
-        fread(&header.Locale, sizeof(uint32), 1, f);
-        fread(&header.ReferenceDataSize, sizeof(uint32), 1, f);
-        fread(&header.MetaFlags, sizeof(uint32), 1, f);
-    }
+    fread(&header.Hash, sizeof(uint32), 1, f);
+    fread(&header.Build, sizeof(uint32), 1, f);
+    fread(&header.TimeStamp, sizeof(uint32), 1, f);
+    fread(&header.Min, sizeof(uint32), 1, f);
+    fread(&header.Max, sizeof(uint32), 1, f);
+    fread(&header.Locale, sizeof(uint32), 1, f);
+    fread(&header.ReferenceDataSize, sizeof(uint32), 1, f);
+    fread(&header.MetaFlags, sizeof(uint32), 1, f);
 
     recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.BlockValue];
     stringTable = recordTable + header.RecordSize * header.RecordCount;
@@ -103,6 +101,36 @@ bool DBCFile::open()
     {
         fclose(f);
         return false;
+    }
+
+    fieldsOffset = new uint32[header.FieldCount];
+    fieldsOffset[0] = 0;
+    for (uint32 i = 1; i < header.FieldCount; i++)
+    {
+        fieldsOffset[i] = fieldsOffset[i - 1];
+        switch (_fmt[i - 1])
+        {
+            case 'l':
+                fieldsOffset[i] += sizeof(uint64);
+                break;
+            case 'n':
+            case 'i':
+            case 'f':
+                fieldsOffset[i] += sizeof(uint32);
+                break;
+            case 't':
+                fieldsOffset[i] += sizeof(uint16);
+                break;
+            case 'b':
+                fieldsOffset[i] += sizeof(uint8);
+                break;
+            case 's':
+                fieldsOffset[i] += sizeof(char*);
+                break;
+            default:
+                break;
+
+        }
     }
 
     fclose(f);
@@ -118,6 +146,42 @@ DBCFile::Record DBCFile::getRecord(size_t id)
 {
     assert(recordTable);
     return Record(*this, recordTable + id * header.RecordSize);
+}
+
+float DBCFile::Record::getFloat(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<float*>(offset + file.GetOffset(field));
+}
+
+uint32 DBCFile::Record::getUInt(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint32*>(offset + file.GetOffset(field));
+}
+
+uint8 DBCFile::Record::getUInt8(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint8*>(offset + file.GetOffset(field));
+}
+
+uint16 DBCFile::Record::getUInt16(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint16*>(offset + file.GetOffset(field));
+}
+
+uint64 DBCFile::Record::getUInt64(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return *reinterpret_cast<uint64*>(offset + file.GetOffset(field));
+}
+
+char const* DBCFile::Record::getString(size_t field) const
+{
+    assert(field < file.header.FieldCount);
+    return reinterpret_cast<char*>(file.stringTable + getUInt(field));
 }
 
 size_t DBCFile::getMaxId()
