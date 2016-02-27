@@ -1569,16 +1569,16 @@ float GridMap::getHeightFromUint16(float x, float y) const
     return (float)((a * x) + (b * y) + c)*_gridIntHeightMultiplier + _gridHeight;
 }
 
-float GridMap::getMinHeight(float x, float y) const
+uint16 GridMap::getArea(float x, float y) const
 {
-    if (!_minHeight)
-        return -500.0f;
+    if (!_areaMap)
+        return _gridArea;
 
     x = 16 * (CENTER_GRID_ID - x / SIZE_OF_GRIDS);
     y = 16 * (CENTER_GRID_ID - y / SIZE_OF_GRIDS);
     int lx = (int)x & 15;
     int ly = (int)y & 15;
-    return _minHeight[lx * 16 + ly];
+    return _areaMap[lx * 16 + ly];
 }
 
 float GridMap::getLiquidLevel(float x, float y) const
