@@ -164,8 +164,8 @@ class GridMap
         uint8* m_uint8_V8;
     };
     // Height level data
-    float* _maxHeight;
-    float* _minHeight;
+    int16* _maxHeight;
+    int16* _minHeight;
     float _gridHeight;
     float _gridIntHeightMultiplier;
 

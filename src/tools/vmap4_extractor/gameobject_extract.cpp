@@ -64,10 +64,10 @@ void ExtractGameobjectModels()
         exit(1);
     }
 
-    DBCFile fileData("DBFilesClient\\FileData.dbc", "nss", true);
+    DBCFile fileData("DBFilesClient\\FileDataComplete.dbc", "nss", true);
     if (!fileData.open())
     {
-        printf("Fatal error: Invalid FileData.dbc file format!\n");
+        printf("Fatal error: Invalid FileDataComplete.dbc file format!\n");
         exit(1);
     }
 
