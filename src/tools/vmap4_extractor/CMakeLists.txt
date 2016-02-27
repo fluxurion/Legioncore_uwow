@@ -22,6 +22,7 @@ if( NOT MSVC )
 endif()
 
 include_directories(
+  ${CMAKE_SOURCE_DIR}/src/server/shared
   ${CMAKE_SOURCE_DIR}/dep/CascLib/src
 )
 

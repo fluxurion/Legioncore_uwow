@@ -57,14 +57,14 @@ extern HANDLE CascStorage;
 void ExtractGameobjectModels()
 {
     printf("Extracting GameObject models...");
-    DBCFile dbc(CascStorage, "DBFilesClient\\GameObjectDisplayInfo.dbc");
+    DBCFile dbc("DBFilesClient\\GameObjectDisplayInfo.db2", "nifffffffft");
     if(!dbc.open())
     {
-        printf("Fatal error: Invalid GameObjectDisplayInfo.dbc file format!\n");
+        printf("Fatal error: Invalid GameObjectDisplayInfo.db2 file format!\n");
         exit(1);
     }
 
-    DBCFile fileData(CascStorage, "DBFilesClient\\FileData.dbc");
+    DBCFile fileData("DBFilesClient\\FileData.dbc", "nss", true);
     if (!fileData.open())
     {
         printf("Fatal error: Invalid FileData.dbc file format!\n");
@@ -76,8 +76,8 @@ void ExtractGameobjectModels()
     std::string path;
 
     std::string modelListPath = basepath + "temp_gameobject_models";
-    FILE* model_list = fopen(modelListPath.c_str(), "wb");
-    if (!model_list)
+    FILE* modelList = fopen(modelListPath.c_str(), "wb");
+    if (!modelList)
     {
         printf("Fatal error: Could not open file %s\n", modelListPath.c_str());
         return;
@@ -99,20 +99,19 @@ void ExtractGameobjectModels()
         uint32 fileIndex = fileDataIndex[fileId];
         if (!fileIndex)
             continue;
-
-        std::string filename = fileData.getRecord(fileIndex).getString(1);
-        std::string filepath = fileData.getRecord(fileIndex).getString(2);
+            
+        std::string filepath = fileData.getRecord(fileIndex).getString(1);
+        std::string filename = fileData.getRecord(fileIndex).getString(2);
 
         path = filepath + filename;
-
         if (path.length() < 4)
             continue;
 
         FixNameCase((char*)path.c_str(), path.size());
-        char * name = GetPlainName((char*)path.c_str());
+        char* name = GetPlainName((char*)path.c_str());
         FixNameSpaces(name, strlen(name));
 
-        char * ch_ext = GetExtension(name);
+        char* ch_ext = GetExtension(name);
         if (!ch_ext)
             continue;
 
@@ -128,15 +127,15 @@ void ExtractGameobjectModels()
 
         if (result)
         {
-            uint32 displayId = it->getUInt(0);
-            uint32 path_length = strlen(name);
-            fwrite(&displayId, sizeof(uint32), 1, model_list);
-            fwrite(&path_length, sizeof(uint32), 1, model_list);
-            fwrite(name, sizeof(char), path_length, model_list);
+            uint32 displayID = it->getUInt(0);
+            uint32 pathLength = strlen(name);
+            fwrite(&displayID, sizeof(uint32), 1, modelList);
+            fwrite(&pathLength, sizeof(uint32), 1, modelList);
+            fwrite(name, sizeof(char), pathLength, modelList);
         }
     }
 
-    fclose(model_list);
+    fclose(modelList);
 
     delete[] fileDataIndex;
 

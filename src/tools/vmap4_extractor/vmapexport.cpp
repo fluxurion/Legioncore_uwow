@@ -108,14 +108,13 @@ void strToLower(char* str)
 }
 
 // copied from contrib/extractor/System.cpp
-void ReadLiquidTypeTableDBC()
+void LoadLiquidTypeDB2Data()
 {
-    printf("Read LiquidType.dbc file...");
-
-    DBCFile dbc(CascStorage, "DBFilesClient\\LiquidType.dbc");
-    if(!dbc.open())
+    printf("Read LiquidType.db2 file...");
+    DBCFile dbc("DBFilesClient\\LiquidType.db2", "nsifffffssssssiiffffffffffffffffffiiiittbbbbbbbbbbb");
+    if (!dbc.open())
     {
-        printf("Fatal error: Invalid LiquidType.dbc file format!\n");
+        printf("Fatal error: Invalid LiquidType.db2 file format!\n");
         exit(1);
     }
 
@@ -125,7 +124,7 @@ void ReadLiquidTypeTableDBC()
     memset(LiqType, 0xff, (LiqType_maxid + 1) * sizeof(uint16));
 
     for(uint32 x = 0; x < LiqType_count; ++x)
-        LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt(3);
+        LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt8(40);
 
     printf("Done! (%u LiqTypes loaded)\n", (unsigned int)LiqType_count);
 }
@@ -393,10 +392,10 @@ int main(int argc, char ** argv)
         return 1;
     }
 
-    // Extract models, listed in GameObjectDisplayInfo.dbc
+    // Extract models, listed in GameObjectDisplayInfo.db2
     ExtractGameobjectModels();
 
-    ReadLiquidTypeTableDBC();
+    LoadLiquidTypeDB2Data();
 
     // extract data
     if (success)
@@ -406,12 +405,12 @@ int main(int argc, char ** argv)
     //map.dbc
     if (success)
     {
-        DBCFile * dbc = new DBCFile(CascStorage, "DBFilesClient\\Map.dbc");
+        printf("Read Map.db2 file...\n");
+        DBCFile * dbc = new DBCFile("DBFilesClient\\Map.db2", "nsiiiisissififfiiiiiii");
         if (!dbc->open())
         {
-            delete dbc;
-            printf("FATAL ERROR: Map.dbc not found in data file.\n");
-            return 1;
+            printf("Fatal error: Invalid Map.db2 file format!\n");
+            exit(1);
         }
 
         map_count = dbc->getRecordCount();
