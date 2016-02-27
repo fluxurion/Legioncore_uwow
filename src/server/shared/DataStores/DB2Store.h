@@ -70,18 +70,14 @@ public:
         char const* entry = _indexTable.AsChar[id];
         ASSERT(entry);
 
-        std::size_t fields = strlen(_format);
-        for (uint32 i = 0; i < fields; ++i)
+        size_t fields = strlen(_format);
+        for (size_t i = 0; i < fields; ++i)
         {
             switch (_format[i])
             {
                 case FT_IND:
-                    if (!_hasIndex)
-                    {
-                        buffer << *(uint32*)entry;
-                        entry += 4;
-                    }
-                    break;
+                    if (_hasIndex)
+                        break;
                 case FT_INT:
                     buffer << *(uint32*)entry;
                     entry += 4;
@@ -101,12 +97,12 @@ public:
                 case FT_STRING:
                 {
                     LocalizedString* locStr = *(LocalizedString**)entry;
-                    if (locStr->Str[locale][0] == '\0')
+                    if (locStr->Str[locale] == '\0')
                         locale = 0;
 
                     char const* str = locStr->Str[locale];
                     std::size_t len = strlen(str);
-                    buffer << uint16(len ? len + 1 : 0);
+                    //buffer << uint16(len ? len + 1 : 0);
                     if (len)
                     {
                         buffer.append(str, len);
@@ -119,7 +115,7 @@ public:
                 {
                     char const* str = *(char const**)entry;
                     std::size_t len = strlen(str);
-                    buffer << uint16(len ? len + 1 : 0);
+                    //buffer << uint16(len ? len + 1 : 0);
                     if (len)
                     {
                         buffer.append(str, len);
