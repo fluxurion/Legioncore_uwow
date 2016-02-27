@@ -57,6 +57,9 @@ INSERT IGNORE INTO `gameobject_loot_template` (`entry`, `item`, `ChanceOrQuestCh
 (235126, 115530, 100, 1, 0, 1, 1, 0),
 (234018, 114925, 100, 1, 0, 1, 1, 0),
 (234019, 114924, 100, 1, 0, 1, 1, 0);
-
 --
 UPDATE `gameobject_loot_template` SET ChanceOrQuestChance = 0.1 WHERE `entry` in (239066, 239067);
+--
+UPDATE `gameobject_template` SET `Data1` = '237257' WHERE `entry` = 237257;
+REPLACE INTO `gameobject_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES
+(237257, 118417, 100, 1, 0, 1, 1, 0);
