@@ -108,6 +108,8 @@ uint32 getProgressShipment(uint32 questID)
         case 37572: return 130;
         //GARR_BTYPE_LUMBER_MILL
         case 36189: case 36137: return 0;
+        //GARR_BTYPE_TRADING_POST:
+        case 37088: case 37062: return 0;
     }
     ASSERT(false);
     return 0;
