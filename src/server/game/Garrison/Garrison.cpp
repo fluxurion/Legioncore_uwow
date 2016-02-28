@@ -161,6 +161,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
     _siteLevel = sGarrSiteLevelStore.LookupEntry(fields[0].GetUInt32());
     _followerActivationsRemainingToday = fields[1].GetUInt32();
     _lastResTaken = fields[2].GetUInt32();
+    _MissionGen = fields[3].GetUInt32();
 
     if (!_siteLevel)
         return false;
@@ -355,6 +356,8 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
 
         } while (shipments->NextRow());
     }
+
+
     return true;
 }
 
@@ -367,7 +370,8 @@ void Garrison::SaveToDB(SQLTransaction trans)
     stmt->setUInt32(1, _siteLevel->ID);
     stmt->setUInt32(2, _followerActivationsRemainingToday);
     stmt->setUInt32(3, _lastResTaken);
-    
+    stmt->setUInt32(4, _MissionGen);
+
     trans->Append(stmt);
 
     for (uint32 building : _knownBuildings)
@@ -774,6 +778,13 @@ void Garrison::Update(uint32 diff)
             }
         }
     }
+
+    //
+    if (time(nullptr) > _MissionGen)
+    {
+        _MissionGen = time(nullptr) + DAY;
+        GenerateRandomMission();
+    }
 }
 
 GarrisonFactionIndex Garrison::GetFaction() const
@@ -1128,6 +1139,66 @@ void Garrison::AddMission(uint32 missionRecID)
     addMissionResult.unk = 1;
     addMissionResult.MissionData = mission.PacketInfo;
     _owner->SendDirectMessage(addMissionResult.Write());
+}
+
+void Garrison::GenerateRandomMission(uint16 count /*=0*/)
+{
+    uint16 lvlMax = GetMaxFolowerLvl();
+    uint16 itemMaxLvl = GetMaxFolowerItemLvl();
+    if (!lvlMax)
+        return;
+
+    bool hasBarrack = GetPlotWithBuildingType(GARR_BTYPE_BARRACKS);
+
+    if (!count)
+        count = _owner->getLevel() >= 99 ? 10 : 5;
+
+    if (count > _followers.size())
+        count = _followers.size();
+
+    uint32 check = 0;
+    do
+    {
+        check = 0;
+        while (true)
+        {
+            if (++check > 100)
+                break;
+
+            if (GarrMissionEntry const* mission = sGarrMissionStore.LookupEntry(rand() % sGarrMissionStore.GetFieldCount()))
+            {
+                if (mission->ReqLevel > lvlMax || (mission->ReqLevel) + 1 < lvlMax || mission->ReqFollowersItemLevel > itemMaxLvl)
+                    continue;
+
+                if (mission->GarrMissionTypeID == 13/*Patrol*/ && !hasBarrack)
+                    continue;
+
+                AddMission(mission->ID);
+                break;
+            }
+        }
+
+    } while (count-- > 0);
+}
+
+uint16 Garrison::GetMaxFolowerLvl()
+{
+    uint16 lvl = 0;
+    for (auto& v : _followers)
+        if (v.second.PacketInfo.FollowerLevel > lvl)
+            lvl = v.second.PacketInfo.FollowerLevel;
+
+    return lvl;
+}
+
+uint16 Garrison::GetMaxFolowerItemLvl()
+{
+    uint16 lvl = 0;
+    for (auto& v : _followers)
+        if (v.second.PacketInfo.ItemLevelWeapon > lvl || v.second.PacketInfo.ItemLevelArmor > lvl)
+            lvl = v.second.PacketInfo.FollowerLevel;
+
+    return lvl;
 }
 
 Garrison::Follower const* Garrison::GetFollower(uint64 dbId) const
@@ -2015,7 +2086,7 @@ void Garrison::RewardMission(uint32 missionRecID)
                 switch (_building->Level)
                 {
                     case 2: chance = 60.0f; break;
-                    case 3: chance = 90.0f; itemID = SALVAGE_ITEM_BIG; break;
+                    case 3: chance = 60.0f; itemID = SALVAGE_ITEM_BIG; break;
                 }
 
                 if (roll_chance_f(chance))
@@ -2033,6 +2104,9 @@ void Garrison::RewardMission(uint32 missionRecID)
 
     if (GarrMissionEntry const* mission = sGarrisonMgr.GetNextMissionInQuestLine(missionRecID))
         AddMission(mission->ID);
+    else
+        GenerateRandomMission(1);
+
 }
 
 /*

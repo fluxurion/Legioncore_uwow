@@ -1,0 +1,1 @@
+ALTER TABLE `character_garrison` ADD `_MissionGen` INT(11) NOT NULL DEFAULT '0' AFTER `lastResTaken`;

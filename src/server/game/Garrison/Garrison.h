@@ -219,9 +219,12 @@ public:
     Follower* GetFollower(uint64 dbId);
     Follower* GetFollowerByID(uint32 entry);
     void ReTrainFollower(SpellInfo const* spellInfo, uint32 followerID);
+    uint16 GetMaxFolowerLvl();
+    uint16 GetMaxFolowerItemLvl();
 
     // Missions
     void AddMission(uint32 missionRecID);
+    void GenerateRandomMission(uint16 count = 0);
     Mission const* GetMission(uint64 dbId) const;
     Mission* GetMissionByRecID(uint32 missionRecID);
     void RewardMission(uint32 missionRecID);
@@ -272,6 +275,7 @@ protected:
     GarrSiteLevelEntry const* _siteLevel;
     uint32 _followerActivationsRemainingToday;
     uint32 _lastResTaken;
+    uint32 _MissionGen = 0;
 
     std::unordered_map<uint32 /*garrPlotInstanceId*/, Plot> _plots;
     std::unordered_set<uint32 /*garrBuildingId*/> _knownBuildings;
