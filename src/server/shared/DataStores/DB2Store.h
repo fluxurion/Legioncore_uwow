@@ -97,7 +97,7 @@ public:
                 case FT_STRING:
                 {
                     LocalizedString* locStr = *(LocalizedString**)entry;
-                    if (locStr->Str[locale] == '\0')
+                    if (locStr->Str[locale][0] == '\0')
                         locale = 0;
 
                     char const* str = locStr->Str[locale];

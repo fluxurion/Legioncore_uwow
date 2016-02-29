@@ -8,40 +8,38 @@ INSERT INTO `player_levelstats` VALUES
 ('10', '12', '98', '10', '10', '10', '10', '10');
 INSERT INTO `class_expansion_requirement` VALUES ('12', '0');
 
-DROP TABLE IF EXISTS `creature_template_locale`;
-CREATE TABLE IF NOT EXISTS `creature_template_locale` (
-  `ID` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0',
-  `Locale` VARCHAR(4) NOT NULL,
-  `Name` TEXT,
-  `NameAlt` TEXT,
-  `Title` TEXT,
-  `TitleAlt` TEXT,
-  `VerifiedBuild` SMALLINT(5) DEFAULT '0'
-) ENGINE=MYISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `creature_template_wdb_locale`;
+CREATE TABLE `creature_template_wdb_locale` (
+  `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `Locale` varchar(4) NOT NULL,
+  `Name` varchar(255) NOT NULL DEFAULT '',
+  `NameAlt` varchar(255) NOT NULL DEFAULT '',
+  `Title` varchar(255) NOT NULL DEFAULT '',
+  `TitleAlt` varchar(255) NOT NULL DEFAULT '',
+  `VerifiedBuild` smallint(5) DEFAULT '1',
+  PRIMARY KEY (`ID`,`Locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `creature_template_locale`
-  ADD PRIMARY KEY (`ID`,`Locale`);
-
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "koKR", `name_loc1`, `subname_loc1`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "frFR", `name_loc2`, `subname_loc2`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "deDE", `name_loc3`, `subname_loc3`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "zhCN", `name_loc4`, `subname_loc4`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "zhTW", `name_loc5`, `subname_loc5`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "esES", `name_loc6`, `subname_loc6`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "esMX", `name_loc7`, `subname_loc7`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "ruRU", `name_loc8`, `subname_loc8`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "ptBR", `name_loc9`, `subname_loc9`  FROM `locales_creature`);
-INSERT INTO `creature_template_locale` (`ID`, `Locale`, `Name`, `Title`)
-  (SELECT `entry`, "itIT", `name_loc10`, `subname_loc10`  FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "koKR", `name_loc1`, `subname_loc1` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "frFR", `name_loc2`, `subname_loc2` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "deDE", `name_loc3`, `subname_loc` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "zhCN", `name_loc4`, `box_text_loc4` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "zhTW", `name_loc5`, `box_text_loc5` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "esES", `name_loc6`, `box_text_loc6` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "esMX", `name_loc7`, `box_text_loc7` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "ruRU", `name_loc8`, `box_text_loc8` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "ptBR", `name_loc9`, `box_text_loc9` FROM `locales_creature`);
+INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
+  (SELECT `entry`, "itIT", `name_loc10`, `box_text_loc10` FROM `locales_creature`);
 
 DROP TABLE IF EXISTS `locales_creature`;
 

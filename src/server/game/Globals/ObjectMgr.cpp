@@ -366,7 +366,7 @@ void ObjectMgr::LoadCreatureLocales()
     _creatureLocaleStore.clear();
 
     //                                               0   1       2     3        4      5
-    QueryResult result = WorldDatabase.Query("SELECT ID, Locale, Name, NameAlt, Title, TitleAlt FROM creature_template_locale");
+    QueryResult result = WorldDatabase.Query("SELECT ID, Locale, Name, NameAlt, Title, TitleAlt FROM creature_template_wdb_locale");
     if (!result)
         return;
 
