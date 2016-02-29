@@ -488,7 +488,7 @@ void ObjectMgr::LoadWDBCreatureTemplates()
         creatureTemplate.PowerMulti = fields[index++].GetFloat();
         creatureTemplate.Leader = fields[index++].GetBool();
         for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)
-            creatureTemplate.KillCredit[MAX_KILL_CREDIT] = fields[index++].GetUInt32();
+            creatureTemplate.KillCredit[i] = fields[index++].GetUInt32();
         creatureTemplate.UnkInt = fields[index++].GetUInt32();
         for (uint8 i = 0; i < MAX_CREATURE_MODELS; ++i)
             creatureTemplate.Modelid[i] = fields[index++].GetUInt32();
