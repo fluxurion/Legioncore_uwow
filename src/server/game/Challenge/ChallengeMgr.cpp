@@ -186,7 +186,7 @@ void ChallengeMgr::GroupReward(Map *instance, uint32 recordTime, ChallengeMode m
 
             /// @quest reward for finish challenge. daily
             if (npcRewardCredit)    //should never happend
-                player->KilledMonsterCredit(npcRewardCredit, ObjectGuid::Empty);
+                player->KilledMonsterCredit(npcRewardCredit);
         }
 
     // not save if no medal

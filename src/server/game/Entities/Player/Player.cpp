@@ -17093,26 +17093,23 @@ void Player::KilledMonster(CreatureTemplate const* cInfo, ObjectGuid guid)
 
     for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)
         if (cInfo->KillCredit[i])
-            KilledMonsterCredit(cInfo->KillCredit[i], ObjectGuid::Empty);
+            KilledMonsterCredit(cInfo->KillCredit[i]);
 }
 
-void Player::KilledMonsterCredit(uint32 entry, ObjectGuid guid)
+void Player::KilledMonsterCredit(uint32 entry, ObjectGuid guid /*= ObjectGuid::Empty*/)
 {
     uint16 addKillCount = 1;
     uint32 real_entry = entry;
     if (!guid.IsEmpty())
-    {
-        Creature* killed = GetMap()->GetCreature(guid);
-        if (killed && killed->GetEntry())
-            real_entry = killed->GetEntry();
-
-        if(killed)
+        if (Creature const* killed = GetMap()->GetCreature(guid))
         {
+            if (killed->GetEntry())
+                real_entry = killed->GetEntry();
+
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE_TYPE, killed->GetCreatureType(), addKillCount, 0, GetMap()->GetCreature(guid));
             if (Guild* guild = sGuildMgr->GetGuildById(GetGuildId()))
                 guild->GetAchievementMgr().UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE_TYPE_GUILD, killed->GetCreatureType(), addKillCount, 0, GetMap()->GetCreature(guid), this);
         }
-    }
 
     GetAchievementMgr().StartTimedAchievement(ACHIEVEMENT_TIMED_TYPE_CREATURE, real_entry);   // MUST BE CALLED FIRST
     GetAchievementMgr().StartTimedAchievement(ACHIEVEMENT_TIMED_TYPE_CREATURE2, real_entry);   // MUST BE CALLED FIRST
@@ -27337,7 +27334,7 @@ void Player::UpdateAchievementCriteria(AchievementCriteriaTypes type, uint32 mis
 
     // Quest "A Test of Valor"
     if (HasAchieved(8030) || HasAchieved(8031))
-        KilledMonsterCredit(69145, ObjectGuid::Empty);
+        KilledMonsterCredit(69145);
 }
 
 void Player::CompletedAchievement(AchievementEntry const* entry)
@@ -29428,7 +29425,7 @@ void Player::TrigerScene(uint32 instanceID, std::string const type)
         if (spell_scene->MonsterCredit)
         {
             prock = true;
-            KilledMonsterCredit(spell_scene->MonsterCredit, ObjectGuid::Empty);
+            KilledMonsterCredit(spell_scene->MonsterCredit);
         }
 
         if (!prock)

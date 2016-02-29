@@ -25,21 +25,21 @@ INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
   (SELECT `entry`, "frFR", `name_loc2`, `subname_loc2` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "deDE", `name_loc3`, `subname_loc` FROM `locales_creature`);
+  (SELECT `entry`, "deDE", `name_loc3`, `subname_loc3` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "zhCN", `name_loc4`, `box_text_loc4` FROM `locales_creature`);
+  (SELECT `entry`, "zhCN", `name_loc4`, `subname_loc4` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "zhTW", `name_loc5`, `box_text_loc5` FROM `locales_creature`);
+  (SELECT `entry`, "zhTW", `name_loc5`, `subname_loc5` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "esES", `name_loc6`, `box_text_loc6` FROM `locales_creature`);
+  (SELECT `entry`, "esES", `name_loc6`, `subname_loc6` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "esMX", `name_loc7`, `box_text_loc7` FROM `locales_creature`);
+  (SELECT `entry`, "esMX", `name_loc7`, `subname_loc7` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "ruRU", `name_loc8`, `box_text_loc8` FROM `locales_creature`);
+  (SELECT `entry`, "ruRU", `name_loc8`, `subname_loc8` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "ptBR", `name_loc9`, `box_text_loc9` FROM `locales_creature`);
+  (SELECT `entry`, "ptBR", `name_loc9`, `subname_loc9` FROM `locales_creature`);
 INSERT INTO `creature_template_wdb_locale` (`ID`, `Locale`, `Name`, `NameAlt`)
-  (SELECT `entry`, "itIT", `name_loc10`, `box_text_loc10` FROM `locales_creature`);
+  (SELECT `entry`, "itIT", `name_loc10`, `subname_loc10` FROM `locales_creature`);
 
 DROP TABLE IF EXISTS `locales_creature`;
 
