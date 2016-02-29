@@ -50,11 +50,11 @@ DROP TABLE IF EXISTS `locales_creature`;
 DROP TABLE IF EXISTS `creature_template_wdb`;
 CREATE TABLE `creature_template_wdb` (
   `Entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `Name` char(255) NOT NULL DEFAULT '',
-  `NameAlt` char(255) NOT NULL DEFAULT '',
-  `Title` char(255) DEFAULT '',
-  `TitleAlt` char(255) DEFAULT '',
-  `CursorName` char(100) DEFAULT '',
+  `Name` varchar(255) NOT NULL DEFAULT '',
+  `NameAlt` varchar(255) NOT NULL DEFAULT '',
+  `Title` varchar(255) NOT NULL DEFAULT '',
+  `TitleAlt` varchar(255) NOT NULL DEFAULT '',
+  `CursorName` varchar(100) NOT NULL DEFAULT '',
   `TypeFlags` int(10) unsigned NOT NULL DEFAULT '0',
   `TypeFlags2` int(10) unsigned NOT NULL DEFAULT '0',
   `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
