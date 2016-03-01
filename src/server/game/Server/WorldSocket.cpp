@@ -202,7 +202,7 @@ bool WorldSocket::ReadDataHandler()
         if (sPacketLog->CanLogPacket())
             sPacketLog->LogPacket(packet, CLIENT_TO_SERVER, GetRemoteIpAddress(), GetRemotePort());
 
-        sLog->outError(LOG_FILTER_GENERAL, "C->S: %s %s",
+        sLog->outDebug(LOG_FILTER_OPCODES, "C->S: %s %s",
             (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
 
         try
@@ -326,7 +326,7 @@ void WorldSocket::SendPacket(WorldPacket const& packet)
         sPacketLog->LogPacket(packet, SERVER_TO_CLIENT, GetRemoteIpAddress(), GetRemotePort());
 
     if (packet.GetOpcode() != SMSG_ON_MONSTER_MOVE && packet.GetOpcode() != SMSG_EMOTE)
-        sLog->outError(LOG_FILTER_GENERAL, "S->C: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
+        sLog->outDebug(LOG_FILTER_OPCODES, "S->C: %s %s", (_worldSession ? _worldSession->GetPlayerName().c_str() : GetRemoteIpAddress().to_string()).c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
 
     //if (_worldSession && packet.size() > 0x400 && !packet.IsCompressed())
     //    packet.Compress(_worldSession->GetCompressionStream());
