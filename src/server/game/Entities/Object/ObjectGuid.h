@@ -70,7 +70,10 @@ enum class HighGuid
     Vehicle         = 9,
     Pet             = 10,
     GameObject      = 11,
+    DynamicObject   = 12,
     AreaTrigger     = 13,
+    Corpse          = 14,
+    LootObject      = 15,
     ClientActor     = 20,
     Vignette        = 21,
     Cast            = 26,
@@ -80,9 +83,6 @@ enum class HighGuid
     BattlePet       = 45,
 
     // wrong id's - just PH
-    DynamicObject,
-    Corpse,
-    LootObject,
     Party,
     Guild,
     SceneObject,

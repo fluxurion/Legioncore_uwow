@@ -3458,11 +3458,10 @@ void WorldObject::SummonCreatureGroup(uint8 group, std::list<TempSummon*>* list 
     //If group exist derespawn
     if(!tempSummonGroupList[groupKey].empty())
     {
-        for (std::list<ObjectGuid>::const_iterator iter = tempSummonGroupList[groupKey].begin(); iter != tempSummonGroupList[groupKey].end(); ++iter)
-        {
-            if(Creature* temp = ObjectAccessor::GetCreature(*this, (*iter)))
+        for (GuidList::const_iterator::value_type const& iter : tempSummonGroupList[groupKey])
+            if(Creature* temp = ObjectAccessor::GetCreature(*this, iter))
                 temp->DespawnOrUnsummon();
-        }
+
         tempSummonGroupList[groupKey].clear();
     }
 
@@ -3547,15 +3546,13 @@ void WorldObject::SummonCreatureGroupDespawn(uint8 group, std::list<TempSummon*>
         return;
 
     TempSummonGroupKey groupKey = TempSummonGroupKey(GetEntry(), GetTypeId() == TYPEID_GAMEOBJECT ? SUMMONER_TYPE_GAMEOBJECT : SUMMONER_TYPE_CREATURE, group);
-
-    if(tempSummonGroupList[groupKey].empty())
+    if (tempSummonGroupList[groupKey].empty())
         return;
 
-    for (std::list<ObjectGuid>::const_iterator iter = tempSummonGroupList[groupKey].begin(); iter != tempSummonGroupList[groupKey].end(); ++iter)
-    {
-        if(Creature* temp = ObjectAccessor::GetCreature(*this, *iter))
+    for (GuidList::const_iterator::value_type const& iter : tempSummonGroupList[groupKey])
+        if(Creature* temp = ObjectAccessor::GetCreature(*this, iter))
             temp->DespawnOrUnsummon();
-    }
+
     tempSummonGroupList[groupKey].clear();
 }
 
