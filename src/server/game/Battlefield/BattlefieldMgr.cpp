@@ -60,17 +60,17 @@ void BattlefieldMgr::InitBattlefield()
         sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Battlefield : Tol Barad successfully initiated.");
     } 
 
-    pBf = new BattlefieldAshran;
-    if (!pBf->SetupBattlefield())
-    {
-        sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Battlefield : Ashran init failed.");
-        delete pBf;
-    }
-    else
-    {
-        m_BattlefieldSet.push_back(pBf);
-        sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Battlefield : Ashran successfully initiated.");
-    }
+    // pBf = new BattlefieldAshran;
+    // if (!pBf->SetupBattlefield())
+    // {
+        // sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Battlefield : Ashran init failed.");
+        // delete pBf;
+    // }
+    // else
+    // {
+        // m_BattlefieldSet.push_back(pBf);
+        // sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Battlefield : Ashran successfully initiated.");
+    // }
 }
 
 void BattlefieldMgr::AddZone(uint32 zoneid, Battlefield *handle)
