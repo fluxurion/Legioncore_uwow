@@ -512,9 +512,9 @@ void ObjectMgr::CheckCreatureTemplateWDB(CreatureTemplate const* cInfo)
 
     const_cast<CreatureTemplate*>(cInfo)->AIName = "";
     for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
-        const_cast<CreatureTemplate*>(cInfo)->resistance[MAX_SPELL_SCHOOL] = 0;
+        const_cast<CreatureTemplate*>(cInfo)->resistance[i] = 0;
     for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
-        const_cast<CreatureTemplate*>(cInfo)->spells[CREATURE_MAX_SPELLS] = 0;
+        const_cast<CreatureTemplate*>(cInfo)->spells[i] = 0;
     const_cast<CreatureTemplate*>(cInfo)->AiID = 0;
     const_cast<CreatureTemplate*>(cInfo)->attackpower = 0;
     const_cast<CreatureTemplate*>(cInfo)->baseattacktime = 0;
