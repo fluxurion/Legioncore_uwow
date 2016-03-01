@@ -185,9 +185,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_PHASE, "SELECT ID, Flags FROM phase ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Map.db2
-    PrepareStatement(HOTFIX_SEL_MAP, "SELECT ID, Directory, InstanceType, Flags1, Flags2, unk5, MapName, AreaTableID, MapDescription0, "
-        "MapDescription1, LoadingScreenID, MinimapIconScale, CorpseMapID, CorpsePosX, CorpsePosY, TimeOfDayOverride, ExpansionID, RaidOffset, "
-        "MaxPlayers, ParentMapID, CosmeticParentMapID, TimeOffset FROM map ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MAP, "SELECT ID, Directory, Flags1, Flags2, MinimapIconScale, CorpsePosX, CorpsePosY, RaidOffset, MapName, "
+        "MapDescription0, MapDescription1, AreaTableID, LoadingScreenID, CorpseMapID, TimeOfDayOverride, ParentMapID, CosmeticParentMapID, "
+        "InstanceType, MapType, ExpansionID, MaxPlayers, TimeOffset FROM map ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MAP, "SELECT ID, Directory_lang, MapName_lang, MapDescription0_lang, MapDescription1_lang FROM map_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 

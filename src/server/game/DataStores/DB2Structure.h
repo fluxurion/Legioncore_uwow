@@ -686,24 +686,24 @@ struct MapEntry
 {
     uint32      ID;                                     // 0
     LocalizedString* Directory;                         // 1
-    uint32      InstanceType;                           // 2
-    uint32      Flags[2];                               // 3 - 4
-    uint32      unk5;                                   // 5
-    LocalizedString* MapName;                           // 6
-    uint32      AreaTableID;                            // 7
-    LocalizedString* MapDescription0;                   // 8
-    LocalizedString* MapDescription1;                   // 9
-    uint32      LoadingScreenID;                        // 10
-    float       MinimapIconScale;                       // 11
-    int32       CorpseMapID;                            // 12
-    DBCPosition2D CorpsePos;                            // 13 - 14
-    uint32      TimeOfDayOverride;                      // 15
-    uint32      ExpansionID;                            // 16
-    uint32      RaidOffset;                             // 17
-    uint32      MaxPlayers;                             // 18
-    int32       ParentMapID;                            // 19
-    int32       CosmeticParentMapID;                    // 20
-    uint32      TimeOffset;                             // 21
+    uint32      Flags[2];                               // 2 - 3
+    float       MinimapIconScale;                       // 4
+    DBCPosition2D CorpsePos;                            // 5 - 6
+    uint32      RaidOffset;                             // 7
+    LocalizedString* MapName;                           // 8
+    LocalizedString* MapDescription0;                   // 9
+    LocalizedString* MapDescription1;                   // 10
+    uint16      AreaTableID;                            // 11
+    uint16      LoadingScreenID;                        // 12
+    int16       CorpseMapID;                            // 13
+    uint16      TimeOfDayOverride;                      // 14
+    int16       ParentMapID;                            // 15
+    int16       CosmeticParentMapID;                    // 16
+    uint8       InstanceType;                           // 17
+    uint8       MapType;                                // 18
+    uint8       ExpansionID;                            // 19
+    uint8       MaxPlayers;                             // 20
+    uint8       TimeOffset;                             // 21
 
     bool IsDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_RAID || InstanceType == MAP_SCENARIO; }
     bool IsNonRaidDungeon() const { return InstanceType == MAP_INSTANCE || InstanceType == MAP_SCENARIO; }
