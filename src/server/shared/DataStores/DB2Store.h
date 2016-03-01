@@ -76,8 +76,9 @@ public:
             switch (_format[i])
             {
                 case FT_IND:
-                    if (_hasIndex)
-                        break;
+                //    if (_hasIndex)
+                    entry += 4;
+                    break;
                 case FT_INT:
                     buffer << *(uint32*)entry;
                     entry += 4;
@@ -100,27 +101,13 @@ public:
                     if (locStr->Str[locale][0] == '\0')
                         locale = 0;
 
-                    char const* str = locStr->Str[locale];
-                    std::size_t len = strlen(str);
-                    //buffer << uint16(len ? len + 1 : 0);
-                    if (len)
-                    {
-                        buffer.append(str, len);
-                        buffer << uint8(0);
-                    }
+                    buffer << locStr->Str[locale];
                     entry += sizeof(LocalizedString*);
                     break;
                 }
                 case FT_STRING_NOT_LOCALIZED:
                 {
-                    char const* str = *(char const**)entry;
-                    std::size_t len = strlen(str);
-                    //buffer << uint16(len ? len + 1 : 0);
-                    if (len)
-                    {
-                        buffer.append(str, len);
-                        buffer << uint8(0);
-                    }
+                    buffer << *(char const**)entry;
                     entry += sizeof(char const*);
                     break;
                 }
