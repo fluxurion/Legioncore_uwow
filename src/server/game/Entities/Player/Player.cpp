@@ -566,7 +566,7 @@ Player::Player(WorldSession* session): Unit(true),
     m_social = NULL;
 
     // group is initialized in the reference constructor
-    SetGroupInvite(NULL);
+    SetGroupInvite(nullptr);
     m_groupUpdateMask = 0;
     m_bPassOnGroupLoot = false;
 
