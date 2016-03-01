@@ -4030,6 +4030,10 @@ void ObjectMgr::LoadQuests()
                 case QUEST_OBJECTIVE_AREATRIGGER:
                     if (!qinfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
                         const_cast<Quest*>(qinfo)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
+                    if (sAreaTriggerStore.LookupEntry(uint32(obj.ObjectID)))
+                        _questAreaTriggerStore[obj.ObjectID].insert(qinfo->Id);
+                    else if (obj.ObjectID != -1)
+                        sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has non existing areatrigger id %d", qinfo->GetQuestId(), obj.ID, obj.ObjectID);
                     break;
                 case QUEST_OBJECTIVE_MONEY:
                 case QUEST_OBJECTIVE_PET_TRAINER_DEFEAT:
@@ -5375,7 +5379,6 @@ void ObjectMgr::LoadQuestAreaTriggers()
         }
 
         Quest const* quest = GetQuestTemplate(quest_ID);
-
         if (!quest)
         {
             sLog->outError(LOG_FILTER_SQL, "Table `areatrigger_involvedrelation` has record (id: %u) for not existing quest %u", trigger_ID, quest_ID);
@@ -5385,14 +5388,10 @@ void ObjectMgr::LoadQuestAreaTriggers()
         if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT))
         {
             sLog->outError(LOG_FILTER_SQL, "Table `areatrigger_involvedrelation` has record (id: %u) for not quest %u, but quest not have flag QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT. Trigger or quest flags must be fixed, quest modified to require objective.", trigger_ID, quest_ID);
-
-            // this will prevent quest completing without objective
-            const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT);
-
-            // continue; - quest modified to required objective and trigger can be allowed.
+            const_cast<Quest*>(quest)->SetSpecialFlag(QUEST_SPECIAL_FLAGS_EXPLORATION_OR_EVENT); // this will prevent quest completing without objective
         }
 
-        _questAreaTriggerStore[trigger_ID] = quest_ID;
+        _questAreaTriggerStore[trigger_ID].insert(quest_ID);
 
     } while (result->NextRow());
 

@@ -414,9 +414,28 @@ void WorldSession::HandleAreaTrigger(WorldPackets::Misc::AreaTrigger& packet)
         return;
 
     if (player->isAlive())
-        if (uint32 questId = sObjectMgr->GetQuestForAreaTrigger(packet.AreaTriggerID))
-            if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE)
-                player->AreaExploredOrEventHappens(questId);
+    {
+        if (std::unordered_set<uint32> const* quests = sObjectMgr->GetQuestsForAreaTrigger(packet.AreaTriggerID))
+        {
+            for (uint32 questId : *quests)
+            {
+                Quest const* qInfo = sObjectMgr->GetQuestTemplate(questId);
+                if (qInfo && player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE)
+                {
+                    for (QuestObjective const& obj : qInfo->GetObjectives())
+                    {
+                        if (obj.Type != QUEST_OBJECTIVE_AREATRIGGER)
+                            continue;
+
+                        player->SetQuestObjectiveData(qInfo, &obj, int32(true));
+                        break;
+                    }
+
+                    player->AreaExploredOrEventHappens(questId);
+                }
+            }
+        }
+    }  
 
     if (sObjectMgr->IsTavernAreaTrigger(packet.AreaTriggerID))
     {
