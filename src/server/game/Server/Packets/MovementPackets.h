@@ -288,6 +288,7 @@ namespace WorldPackets
         {
             ObjectGuid ID;
             Position Direction;
+            Position TransportPosition;
             uint32 TransportID = 0;
             float Magnitude = 0;
             uint8 Type = 0;
@@ -568,6 +569,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFi
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementSpline const& movementSpline);
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementMonsterSpline const& movementMonsterSpline);
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Movement::MovementAck& movementAck);
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce const& movementForce);
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce);
 
 #endif // MovementPackets_h__
