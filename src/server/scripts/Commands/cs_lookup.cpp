@@ -148,9 +148,9 @@ public:
             uint8 localeIndex = handler->GetSessionDbLocaleIndex();
             if (CreatureLocale const* creatureLocale = sObjectMgr->GetCreatureLocale(id))
             {
-                if (creatureLocale->Name.size() > localeIndex && !creatureLocale->Name[localeIndex].empty())
+                if (creatureLocale->Name[0].size() > localeIndex && !creatureLocale->Name[0][localeIndex].empty())
                 {
-                    std::string name = creatureLocale->Name[localeIndex];
+                    std::string name = creatureLocale->Name[0][localeIndex];
 
                     if (Utf8FitTo(name, wNamePart))
                     {
@@ -173,7 +173,7 @@ public:
                 }
             }
 
-            std::string name = itr->second.Name;
+            std::string name = itr->second.Name[0];
             if (name.empty())
                 continue;
 

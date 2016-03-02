@@ -138,7 +138,7 @@ WorldPacket const* WorldPackets::Quest::QueryQuestInfoResponse::Write()
         _worldPacket << Info.TimeAllowed;
 
         _worldPacket << static_cast<int32>(Info.Objectives.size());
-        _worldPacket << static_cast<int32>(Info.AllowableRaces);
+        _worldPacket << Info.AllowableRaces;
 
         for (QuestObjective const& questObjective : Info.Objectives)
         {

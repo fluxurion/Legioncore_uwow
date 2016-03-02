@@ -1743,7 +1743,7 @@ public:
                 if (!cInfo)
                     continue;
 
-                handler->PSendSysMessage(LANG_NPC_LIST_CHAT, guid, entry, guid, cInfo->Name.c_str(), x, y, z, mapId);
+                handler->PSendSysMessage(LANG_NPC_LIST_CHAT, guid, entry, guid, cInfo->Name[0].c_str(), x, y, z, mapId);
 
                 ++count;
             } while (result->NextRow());

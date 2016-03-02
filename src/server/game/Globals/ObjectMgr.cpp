@@ -365,8 +365,8 @@ void ObjectMgr::LoadCreatureLocales()
 
     _creatureLocaleStore.clear();
 
-    //                                               0   1       2     3        4      5
-    QueryResult result = WorldDatabase.Query("SELECT ID, Locale, Name, NameAlt, Title, TitleAlt FROM creature_template_wdb_locale");
+    //                                               0   1       2      3         4      5      6      7      8         9         10        11
+    QueryResult result = WorldDatabase.Query("SELECT ID, Locale, Title, TitleAlt, Name1, Name2, Name3, Name4, NameAlt1, NameAlt2, NameAlt3, NameAlt4 FROM creature_template_wdb_locale");
     if (!result)
         return;
 
@@ -374,15 +374,19 @@ void ObjectMgr::LoadCreatureLocales()
     {
         Field* fields = result->Fetch();
 
-        CreatureLocale& data = _creatureLocaleStore[fields[0].GetUInt32()];
         LocaleConstant locale = GetLocaleByName(fields[1].GetString());
         if (locale == LOCALE_enUS || locale == LOCALE_none)
             continue;
 
-        AddLocaleString(fields[2].GetString(), locale, data.Name);
-        AddLocaleString(fields[3].GetString(), locale, data.NameAlt);
-        AddLocaleString(fields[4].GetString(), locale, data.Title);
-        AddLocaleString(fields[5].GetString(), locale, data.TitleAlt);
+        CreatureLocale& data = _creatureLocaleStore[fields[0].GetUInt32()];
+        AddLocaleString(fields[2].GetString(), locale, data.Title);
+        AddLocaleString(fields[3].GetString(), locale, data.TitleAlt);
+
+        for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+            AddLocaleString(fields[4 + i].GetString(), locale, data.Name[i]);
+
+        for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+            AddLocaleString(fields[8 + i].GetString(), locale, data.NameAlt[i]);
 
     } while (result->NextRow());
 
@@ -448,12 +452,12 @@ void ObjectMgr::LoadWDBCreatureTemplates()
     uint32 oldMSTime = getMSTime();
 
     QueryResult result = WorldDatabase.Query(
-    //      0      1     2        3      4         5           6     7          8           9                  10      11              12
-    "SELECT Entry, Name, NameAlt, Title, TitleAlt, CursorName, Type, TypeFlags, TypeFlags2, RequiredExpansion, Family, Classification, MovementInfoID, "
-    //13      14          15       16           17           18      19          20          21          22          23         24          25
-    "HpMulti, PowerMulti, Leader,  KillCredit1, KillCredit2, UnkInt, DisplayId1, DisplayId2, DisplayId3, DisplayId4, FlagQuest, QuestItem1, QuestItem2, "
-    //26         27          28          29          30
-    "QuestItem3, QuestItem4, QuestItem5, QuestItem6, VerifiedBuild FROM creature_template_wdb;");
+    //      0      1      2       3     4       5         6        7         8         9      10        11          12    13         14          15
+    "SELECT Entry, Name1, Name2, Name3, Name4, NameAlt1, NameAlt2, NameAlt3, NameAlt4, Title, TitleAlt, CursorName, Type, TypeFlags, TypeFlags2, RequiredExpansion, "
+    //16     17              18              19       20          21      22           23           24      25          26          28          29
+    "Family, Classification, MovementInfoID, HpMulti, PowerMulti, Leader, KillCredit1, KillCredit2, UnkInt, DisplayId1, DisplayId2, DisplayId3, DisplayId4, "
+    //30        31          32          33          34          35          36          37
+    "FlagQuest, QuestItem1, QuestItem2, QuestItem3, QuestItem4, QuestItem5, QuestItem6, VerifiedBuild FROM creature_template_wdb;");
 
     if (!result)
     {
@@ -472,8 +476,10 @@ void ObjectMgr::LoadWDBCreatureTemplates()
         CreatureTemplate& creatureTemplate = _creatureTemplateStore[entry];
 
         creatureTemplate.Entry = entry;
-        creatureTemplate.Name = fields[index++].GetString();
-        creatureTemplate.NameAlt = fields[index++].GetString();
+        for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+            creatureTemplate.Name[i] = fields[index++].GetString();
+        for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+            creatureTemplate.NameAlt[i] = fields[index++].GetString();
         creatureTemplate.Title = fields[index++].GetString();
         creatureTemplate.TitleAlt = fields[index++].GetString();
         creatureTemplate.CursorName = fields[index++].GetString();
@@ -6622,9 +6628,9 @@ std::string ObjectMgr::GeneratePetName(uint32 entry)
     if (list0.empty() || list1.empty())
     {
         CreatureTemplate const* cinfo = GetCreatureTemplate(entry);
-        const char* petname = sDB2Manager.GetPetName(cinfo->Family);
+        const char* petname = sDB2Manager.GetPetName(cinfo->Family, sWorld->GetDefaultDbcLocale());
         if (!petname)
-            return cinfo->Name;
+            return cinfo->Name[0];
 
         return std::string(petname);
     }

@@ -1631,14 +1631,14 @@ uint32 DB2Manager::GetParentZoneOrSelf(uint32 zone)
     return area->ParentAreaID ? area->ParentAreaID : zone;
 }
 
-char const* DB2Manager::GetPetName(uint32 petfamily)
+char const* DB2Manager::GetPetName(uint32 petfamily, LocaleConstant localeConstant)
 {
     if (!petfamily)
         return nullptr;
 
     CreatureFamilyEntry const* family = sCreatureFamilyStore.LookupEntry(petfamily);
     if (family)
-        return family->Name->Str[sObjectMgr->GetDBCLocaleIndex()] ? family->Name->Str[sObjectMgr->GetDBCLocaleIndex()] : nullptr;
+        return family->Name->Str[localeConstant] ? family->Name->Str[localeConstant] : nullptr;
 
     return nullptr;
 }

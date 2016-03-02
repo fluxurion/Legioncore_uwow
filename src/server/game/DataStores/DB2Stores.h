@@ -427,7 +427,7 @@ public:
     uint32 GetPowerIndexByClass(uint32 powerType, uint32 classId) const;
     AreaTableEntry const* FindAreaEntry(uint32 area);
     uint32 GetParentZoneOrSelf(uint32 zone);
-    char const* GetPetName(uint32 petfamily);
+    char const* GetPetName(uint32 petfamily, LocaleConstant localeConstant);
     MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty &difficulty);
     MapDifficultyEntry const* GetDefaultMapDifficulty(uint32 mapID);
     DungeonEncounterEntry const* GetDungeonEncounterByDisplayID(uint32 displayID);

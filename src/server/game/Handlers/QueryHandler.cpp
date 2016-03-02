@@ -83,17 +83,23 @@ void WorldSession::HandleCreatureQuery(WorldPackets::Query::QueryCreature& packe
         response.Allow = true;
 
         WorldPackets::Query::CreatureStats& stats = response.Stats;
-        stats.Name[0] = creatureInfo->Name;
-        stats.NameAlt[0] = creatureInfo->NameAlt;
+        for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+        {
+            stats.Name[i] = creatureInfo->Name[i];
+            stats.NameAlt[i] = creatureInfo->NameAlt[i];
+        }
         stats.Title = creatureInfo->Title;
         stats.TitleAlt = creatureInfo->TitleAlt;
 
         LocaleConstant localeConstant = GetSessionDbLocaleIndex();
-        if (localeConstant >= LOCALE_enUS && (localeConstant != LOCALE_none))
+        if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
             if (CreatureLocale const* creatureLocale = sObjectMgr->GetCreatureLocale(packet.CreatureID))
             {
-                ObjectMgr::GetLocaleString(creatureLocale->Name, localeConstant, stats.Name[0]);
-                ObjectMgr::GetLocaleString(creatureLocale->NameAlt, localeConstant, stats.NameAlt[0]);
+                for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
+                {
+                    ObjectMgr::GetLocaleString(creatureLocale->Name[i], localeConstant, stats.Name[i]);
+                    ObjectMgr::GetLocaleString(creatureLocale->NameAlt[i], localeConstant, stats.NameAlt[i]);
+                }
                 ObjectMgr::GetLocaleString(creatureLocale->Title, localeConstant, stats.Title);
                 ObjectMgr::GetLocaleString(creatureLocale->TitleAlt, localeConstant, stats.TitleAlt);
             }

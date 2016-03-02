@@ -54,7 +54,7 @@ WorldPacket const* WorldPackets::Query::QueryCreatureResponse::Write()
                 _worldPacket << Stats.NameAlt[i];
         }
 
-        for (uint8 i = 0; i < 2; ++i)
+        for (uint8 i = 0; i < MAX_TYPE_FLAGS; ++i)
             _worldPacket << Stats.Flags[i];
 
         _worldPacket << Stats.CreatureType;

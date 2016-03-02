@@ -97,8 +97,8 @@ enum CreatureFlagsExtra
 struct CreatureTemplate
 {
     uint32 Entry;
-    std::string Name;
-    std::string NameAlt;
+    std::string Name[MAX_CREATURE_NAMES];
+    std::string NameAlt[MAX_CREATURE_NAMES];
     std::string Title;
     std::string TitleAlt;
     std::string CursorName;
@@ -297,8 +297,8 @@ typedef std::unordered_map<uint16, CreatureBaseStats> CreatureBaseStatsContainer
 
 struct CreatureLocale
 {
-    StringVector Name;
-    StringVector NameAlt;
+    StringVector Name[MAX_CREATURE_NAMES];
+    StringVector NameAlt[MAX_CREATURE_NAMES];
     StringVector Title;
     StringVector TitleAlt;
 };

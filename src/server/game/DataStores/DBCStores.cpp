@@ -136,7 +136,7 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
             if (!gt)
                 continue;
 
-            for (uint32 l = 0; l < TOTAL_LOCALES; ++l)
+            for (uint32 l = 0; l < MAX_LOCALES; ++l)
             {
                 if (i != LOCALE_none && tableName == gt->Name->Str[l])
                 {

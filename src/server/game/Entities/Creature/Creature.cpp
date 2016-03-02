@@ -344,7 +344,7 @@ bool Creature::InitEntry(uint32 entry, uint32 /*team*/, const CreatureData* data
         LoadEquipment(data->equipmentId);
     }
 
-    SetName(cinfo->Name);                              // at normal entry always
+    SetName(cinfo->Name[0]);                              // at normal entry always
 
     SetFloatValue(UNIT_FIELD_BOUNDING_RADIUS, minfo->bounding_radius);
     SetFloatValue(UNIT_FIELD_COMBAT_REACH, minfo->combat_reach);
@@ -2781,8 +2781,8 @@ const char* Creature::GetNameForLocaleIdx(LocaleConstant locale) const
     {
         uint8 localeID = uint8(locale);
         if (CreatureLocale const* cl = sObjectMgr->GetCreatureLocale(GetEntry()))
-            if (cl->Name.size() > localeID && !cl->Name[localeID].empty())
-                return cl->Name[localeID].c_str();
+            if (cl->Name[0].size() > localeID && !cl->Name[0][localeID].empty())
+                return cl->Name[0][localeID].c_str();
     }
 
     return GetName();
