@@ -367,10 +367,9 @@ void WorldSession::HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet)
 
         if (store->HasRecord(rec.RecordID))
         {
-            sLog->outTrace(LOG_FILTER_NETWORKIO, "DBQueryBulk::WriteRecord: RecordID %u, Locale %u", rec.RecordID, GetSessionDbcLocale());
             response.Allow = true;
             response.Timestamp = sDB2Manager.GetHotfixDate(rec.RecordID, packet.TableHash);
-            store->WriteRecord(rec.RecordID, GetSessionDbcLocale(), response.Data);
+            store->WriteRecord(rec.RecordID, GetSessionDbLocaleIndex(), response.Data);
         }
         else
             response.Timestamp = time(nullptr);
