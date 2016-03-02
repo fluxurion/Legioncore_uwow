@@ -1838,8 +1838,8 @@ uint32 Map::GetAreaId(float x, float y, float z, bool *isOutdoors) const
 {
     uint32 mogpFlags;
     int32 adtId, rootId, groupId;
-    WMOAreaTableEntry const* wmoEntry = 0;
-    AreaTableEntry const* atEntry = 0;
+    WMOAreaTableEntry const* wmoEntry = nullptr;
+    AreaTableEntry const* atEntry = nullptr;
     bool haveAreaInfo = false;
 
     GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y);  //Load vmap and grid before get areaInfo.
@@ -1852,7 +1852,7 @@ uint32 Map::GetAreaId(float x, float y, float z, bool *isOutdoors) const
             atEntry = sAreaTableStore.LookupEntry(wmoEntry->AreaTableID);
     }
 
-    uint32 areaId;
+    uint32 areaId = 0;
 
     if (atEntry)
         areaId = atEntry->ID;
@@ -1860,8 +1860,9 @@ uint32 Map::GetAreaId(float x, float y, float z, bool *isOutdoors) const
     {
         if (gmap)
             areaId = gmap->getArea(x, y);
-        else
-            areaId = i_mapEntry->ID;
+
+        if (!areaId)
+            areaId = i_mapEntry->AreaTableID;
     }
 
     if (isOutdoors)
@@ -1872,7 +1873,7 @@ uint32 Map::GetAreaId(float x, float y, float z, bool *isOutdoors) const
             *isOutdoors = true;
     }
     return areaId;
- }
+}
 
 uint32 Map::GetAreaId(float x, float y, float z) const
  {
