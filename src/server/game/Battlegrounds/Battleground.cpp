@@ -1812,10 +1812,10 @@ void Battleground::SendBroadcastTextToAll(int32 broadcastTextID, ChatMsg type, U
         if (Player* _player = ObjectAccessor::FindPlayer(v.first))
             if (WorldSession* session = _player->GetSession())
             {
-                LocaleConstant locale = session->GetSessionDbLocaleIndex();
-                if (locale >= LOCALE_enUS)
+                LocaleConstant localeConstant = session->GetSessionDbLocaleIndex();
+                if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
                 {
-                    c.message = DB2Manager::GetBroadcastTextValue(bct, locale);
+                    c.message = DB2Manager::GetBroadcastTextValue(bct, localeConstant);
                     Trinity::BuildChatPacket(data, c);
                     session->SendPacket(&data);
                 }

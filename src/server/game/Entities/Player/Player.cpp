@@ -17611,12 +17611,10 @@ void Player::SendQuestConfirmAccept(Quest const* quest, Player* receiver)
     if (receiver)
     {
         std::string questTitle = quest->LogTitle;
-
-        LocaleConstant loc_idx = receiver->GetSession()->GetSessionDbLocaleIndex();
-        if (loc_idx >= LOCALE_enUS)
+        LocaleConstant localeConstant = receiver->GetSession()->GetSessionDbLocaleIndex();
+        if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
             if (QuestTemplateLocale const* pLocale = sObjectMgr->GetQuestLocale(quest->GetQuestId()))
-                ObjectMgr::GetLocaleString(pLocale->LogTitle, loc_idx, questTitle);
-
+                ObjectMgr::GetLocaleString(pLocale->LogTitle, localeConstant, questTitle);
 
         WorldPackets::Quest::QuestConfirmAcceptResponse packet;
         packet.QuestID = quest->GetQuestId();

@@ -315,13 +315,13 @@ std::list<CurrencyLoot> ObjectMgr::GetCurrencyLoot(uint32 entry, uint8 type, uin
 
 void ObjectMgr::AddLocaleString(std::string const& value, LocaleConstant localeConstant, StringVector& data)
 {
-    if (!value.empty())
-    {
-        if (data.size() <= size_t(localeConstant))
-            data.resize(localeConstant + 1);
+    if (value.empty())
+        return;
 
-        data[localeConstant] = value;
-    }
+    if (data.size() <= size_t(localeConstant))
+        data.resize(localeConstant + 1);
+
+    data[localeConstant] = value;
 }
 
 void ObjectMgr::LoadWorldVisibleDistance()
@@ -4320,31 +4320,20 @@ void ObjectMgr::LoadQuestTemplateLocale()
     {
         Field* fields = result->Fetch();
 
-        uint32 id = fields[0].GetUInt32();
-        std::string localeName = fields[1].GetString();
-
-        std::string logTitle = fields[2].GetString();
-        std::string logDescription = fields[3].GetString();
-        std::string questDescription = fields[4].GetString();
-        std::string areaDescription = fields[5].GetString();
-        std::string portraitGiverText = fields[6].GetString();
-        std::string portraitGiverName = fields[7].GetString();
-        std::string portraitTurnInText = fields[8].GetString();
-        std::string portraitTurnInName = fields[9].GetString();
-        std::string questCompletionLog = fields[10].GetString();
-
-        QuestTemplateLocale& data = _questTemplateLocaleStore[id];
-        LocaleConstant locale = GetLocaleByName(localeName);
-
-        AddLocaleString(logTitle, locale, data.LogTitle);
-        AddLocaleString(logDescription, locale, data.LogDescription);
-        AddLocaleString(questDescription, locale, data.QuestDescription);
-        AddLocaleString(areaDescription, locale, data.AreaDescription);
-        AddLocaleString(portraitGiverText, locale, data.PortraitGiverText);
-        AddLocaleString(portraitGiverName, locale, data.PortraitGiverName);
-        AddLocaleString(portraitTurnInText, locale, data.PortraitTurnInText);
-        AddLocaleString(portraitTurnInName, locale, data.PortraitTurnInName);
-        AddLocaleString(questCompletionLog, locale, data.QuestCompletionLog);
+        LocaleConstant locale = GetLocaleByName(fields[1].GetString());
+        if (locale == LOCALE_enUS || locale == LOCALE_none)
+            continue;
+            
+        QuestTemplateLocale& data = _questTemplateLocaleStore[fields[0].GetUInt32()];
+        AddLocaleString(fields[2].GetString(), locale, data.LogTitle);
+        AddLocaleString(fields[3].GetString(), locale, data.LogDescription);
+        AddLocaleString(fields[4].GetString(), locale, data.QuestDescription);
+        AddLocaleString(fields[5].GetString(), locale, data.AreaDescription);
+        AddLocaleString(fields[6].GetString(), locale, data.PortraitGiverText);
+        AddLocaleString(fields[7].GetString(), locale, data.PortraitGiverName);
+        AddLocaleString(fields[8].GetString(), locale, data.PortraitTurnInText);
+        AddLocaleString(fields[9].GetString(), locale, data.PortraitTurnInName);
+        AddLocaleString(fields[10].GetString(), locale, data.QuestCompletionLog);
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u Quest Tempalate locale strings in %u ms", uint32(_questTemplateLocaleStore.size()), GetMSTimeDiffToNow(oldMSTime));
@@ -4364,15 +4353,12 @@ void ObjectMgr::LoadQuestObjectivesLocale()
     {
         Field* fields = result->Fetch();
 
-        uint32 id = fields[0].GetUInt32();
-        std::string localeName = fields[1].GetString();
+        LocaleConstant localeConstant = GetLocaleByName(fields[1].GetString());
+        if (localeConstant == LOCALE_enUS || localeConstant == LOCALE_none)
+            continue;
 
-        std::string Description = fields[2].GetString();
-
-        QuestObjectivesLocale& data = _questObjectivesLocaleStore[id];
-        LocaleConstant locale = GetLocaleByName(localeName);
-
-        AddLocaleString(Description, locale, data.Description);
+        QuestObjectivesLocale& data = _questObjectivesLocaleStore[fields[0].GetUInt32()];
+        AddLocaleString(fields[2].GetString(), localeConstant, data.Description);
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u Quest Objectives locale strings in %u ms", uint32(_questObjectivesLocaleStore.size()), GetMSTimeDiffToNow(oldMSTime));

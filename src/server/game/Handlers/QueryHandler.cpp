@@ -138,15 +138,6 @@ void WorldSession::HandleQueryGameObject(WorldPackets::Query::QueryGameObject& p
         WorldPackets::Query::GameObjectStats& stats = response.Stats;
 
         stats.DisplayID = gameObjectInfo->displayId;
-
-        LocaleConstant localeConstant = GetSessionDbLocaleIndex();
-        if (localeConstant >= LOCALE_enUS)
-            if (GameObjectLocale const* gameObjectLocale = sObjectMgr->GetGameObjectLocale(packet.GameObjectID))
-            {
-                ObjectMgr::GetLocaleString(gameObjectLocale->Name, localeConstant, stats.Name[0]);
-                ObjectMgr::GetLocaleString(gameObjectLocale->CastBarCaption, localeConstant, stats.CastBarCaption);
-            }
-
         stats.IconName = gameObjectInfo->IconName;
         stats.Name[0] = gameObjectInfo->name;
         stats.CastBarCaption = gameObjectInfo->castBarCaption;
@@ -162,6 +153,14 @@ void WorldSession::HandleQueryGameObject(WorldPackets::Query::QueryGameObject& p
         stats.Type = gameObjectInfo->type;
         stats.UnkString = gameObjectInfo->unk1;
         stats.Expansion = 0;
+
+        LocaleConstant localeConstant = GetSessionDbLocaleIndex();
+        if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
+            if (GameObjectLocale const* gameObjectLocale = sObjectMgr->GetGameObjectLocale(packet.GameObjectID))
+            {
+                ObjectMgr::GetLocaleString(gameObjectLocale->Name, localeConstant, stats.Name[0]);
+                ObjectMgr::GetLocaleString(gameObjectLocale->CastBarCaption, localeConstant, stats.CastBarCaption);
+            }
     }
     else
         response.Allow = false;
@@ -256,7 +255,7 @@ void WorldSession::HandleQueryPageText(WorldPackets::Query::QueryPageText& packe
             response.Info.Text = pageText->Text;
 
             LocaleConstant localeConstant = GetSessionDbLocaleIndex();
-            if (localeConstant >= LOCALE_enUS)
+            if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
                 if (PageTextLocale const* player = sObjectMgr->GetPageTextLocale(pageID))
                     ObjectMgr::GetLocaleString(player->Text, localeConstant, response.Info.Text);
 

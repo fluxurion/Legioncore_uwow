@@ -520,7 +520,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
     uint32 inventoryType, uint32 itemClass, uint32 itemSubClass, uint32 quality, uint32& totalcount)
 {
     LocaleConstant loc_idx = player->GetSession()->GetSessionDbLocaleIndex();
-    LocaleConstant locdbc_idx = player->GetSession()->GetSessionDbcLocale();
+    LocaleConstant localeConstant = player->GetSession()->GetSessionDbcLocale();
 
     for (AuctionEntryMap::const_iterator itr = AuctionsMap.begin(); itr != AuctionsMap.end(); ++itr)
     {
@@ -558,9 +558,9 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
                 continue;
 
             // local name
-            if (loc_idx >= 0)
-                if (ItemLocale const* il = sObjectMgr->GetItemLocale(proto->ItemId))
-                    ObjectMgr::GetLocaleString(il->Name, loc_idx, name);
+            if (localeConstant != LOCALE_enUS && localeConstant != LOCALE_none)
+                if (ItemLocale const* itemLocale = sObjectMgr->GetItemLocale(proto->ItemId))
+                    ObjectMgr::GetLocaleString(itemLocale->Name, localeConstant, name);
 
             // DO NOT use GetItemEnchantMod(proto->RandomProperty) as it may return a result
             //  that matches the search but it may not equal item->GetItemRandomPropertyId()

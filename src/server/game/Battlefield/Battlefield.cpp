@@ -511,10 +511,10 @@ void Battlefield::SendWorldTextToTeam(uint32 broadcastID, ObjectGuid guid, uint3
             if (Player* _player = ObjectAccessor::FindPlayer(v))
                 if (WorldSession* session = _player->GetSession())
                 {
-                    LocaleConstant locale = session->GetSessionDbLocaleIndex();
-                    if (locale >= LOCALE_enUS)
+                    LocaleConstant localeConstant = session->GetSessionDbLocaleIndex();
+                    if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
                     {
-                        packet.Text = DB2Manager::GetBroadcastTextValue(bct, locale);
+                        packet.Text = DB2Manager::GetBroadcastTextValue(bct, localeConstant);
                         session->SendPacket(packet.Write());
                     }
                 }
@@ -554,10 +554,10 @@ void Battlefield::SendBroadcastTextToAll(int32 broadcastTextID, ChatMsg type, Un
             if (Player* _player = ObjectAccessor::FindPlayer(v))
                 if (WorldSession* session = _player->GetSession())
                 {
-                    LocaleConstant locale = session->GetSessionDbLocaleIndex();
-                    if (locale >= LOCALE_enUS)
+                    LocaleConstant localeConstant = session->GetSessionDbLocaleIndex();
+                    if (localeConstant >= LOCALE_enUS && localeConstant != LOCALE_none)
                     {
-                        c.message = DB2Manager::GetBroadcastTextValue(bct, locale);
+                        c.message = DB2Manager::GetBroadcastTextValue(bct, localeConstant);
                         Trinity::BuildChatPacket(data, c);
                         session->SendPacket(&data);
                     }

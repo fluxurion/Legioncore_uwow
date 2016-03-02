@@ -214,14 +214,13 @@ bool ItemChatLink::ValidateName(char* buffer, const char* context)
     bool res = (FormatName(LOCALE_enUS, suffixStrings) == buffer);
     if (!res)
     {
-        for (uint8 index = LOCALE_koKR; index < TOTAL_LOCALES; ++index)
-        {
-            if (FormatName(index, suffixStrings) == buffer)
-            {
-                res = true;
-                break;
-            }
-        }
+        for (uint8 locale = LOCALE_koKR; locale < MAX_LOCALES; ++locale)
+            if (locale != LOCALE_none)
+                if (FormatName(locale, suffixStrings) == buffer)
+                {
+                    res = true;
+                    break;
+                }
     }
     if (!res)
         sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): linked item (id: %u) name wasn't found in any localization", context, _item->ItemId);
@@ -399,7 +398,7 @@ bool AchievementChatLink::ValidateName(char* buffer, const char* context)
 {
     ChatLink::ValidateName(buffer, context);
 
-    for (uint8 locale = LOCALE_enUS; locale < TOTAL_LOCALES; ++locale)
+    for (uint8 locale = LOCALE_enUS; locale < MAX_LOCALES; ++locale)
         if (strcmp(_achievement->Name->Str[locale], buffer) == 0)
             return true;
 
