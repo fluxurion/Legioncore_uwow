@@ -24699,7 +24699,10 @@ void Player::SendInitialPacketsBeforeAddToMap()
     SendEquipmentSetList();
     m_achievementMgr.SendAllAchievementData(this);  //second send
 
-    GetSession()->SendPacket(WorldPackets::Auth::ResumeToken().Write());
+    WorldPackets::Auth::ResumeToken resumeToken;
+    resumeToken.Reason = 1;
+    resumeToken.Sequence = 2;
+    GetSession()->SendPacket(resumeToken.Write());
 
     WorldPackets::Misc::LoginSetTimeSpeed loginSetTimeSpeed;
     loginSetTimeSpeed.NewSpeed = 0.01666667f;
