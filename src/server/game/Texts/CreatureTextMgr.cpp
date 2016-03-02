@@ -395,10 +395,7 @@ std::string CreatureTextMgr::GetLocalizedChatString(uint32 entry, uint8 textGrou
         return "";
 
     std::string baseText = groupItr->text;
-    if (locale == DEFAULT_LOCALE)
-        return baseText;
-
-    if (locale > TOTAL_LOCALES - 1)
+    if (locale == LOCALE_enUS || locale == LOCALE_none)
         return baseText;
 
     LocaleCreatureTextMap::const_iterator locItr = mLocaleTextMap.find(CreatureTextId(entry, uint32(textGroup), id));

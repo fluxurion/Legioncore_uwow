@@ -519,7 +519,6 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
     std::wstring const& wsearchedname, uint32 listfrom, uint8 levelmin, uint8 levelmax, uint8 usable,
     uint32 inventoryType, uint32 itemClass, uint32 itemSubClass, uint32 quality, uint32& totalcount)
 {
-    LocaleConstant loc_idx = player->GetSession()->GetSessionDbLocaleIndex();
     LocaleConstant localeConstant = player->GetSession()->GetSessionDbcLocale();
 
     for (AuctionEntryMap::const_iterator itr = AuctionsMap.begin(); itr != AuctionsMap.end(); ++itr)
@@ -569,24 +568,20 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPackets::AuctionHouse::Aucti
 
             if (propRefID)
             {
-                // Append the suffix to the name (ie: of the Monkey) if one exists
-                // These are found in ItemRandomProperties.dbc, not ItemRandomSuffix.dbc
-                //  even though the DBC names seem misleading
-                const ItemRandomPropertiesEntry* itemRandProp = sItemRandomPropertiesStore.LookupEntry(propRefID);
-
-                if (itemRandProp)
+                const char* suffix = nullptr;
+                if (propRefID < 0)
                 {
-                    auto temp = itemRandProp->Name->Str[DEFAULT_LOCALE];
-                    //char* temp = itemRandProp->nameSuffix;
+                    if (ItemRandomSuffixEntry const* itemRandSuffix = sItemRandomSuffixStore.LookupEntry(-propRefID))
+                        suffix = itemRandSuffix->Name->Str[localeConstant];
+                }
+                else if (ItemRandomPropertiesEntry const* itemRandProp = sItemRandomPropertiesStore.LookupEntry(propRefID))
+                        suffix = itemRandProp->Name->Str[localeConstant];
 
-                    // dbc local name
-                    if (temp)
-                    {
-                        // Append the suffix (ie: of the Monkey) to the name using localization
-                        // or default enUS if localization is invalid
-                        name += ' ';
-                        name += temp[locdbc_idx >= 0 ? locdbc_idx : LOCALE_enUS];
-                    }
+                // dbc local name
+                if (suffix)
+                {
+                    name += ' ';
+                    name += suffix;
                 }
             }
 
