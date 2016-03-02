@@ -8320,11 +8320,10 @@ void ObjectMgr::LoadGossipMenuItems()
     _gossipMenuItemsStore.clear();
 
     QueryResult result = WorldDatabase.Query(
-        //          0              1            2           3              4
-        "SELECT menu_id, id, option_icon, option_text, option_id, npc_option_npcflag, "
-        //       5              6           7          8         9
-        "action_menu_id, action_poi_id, box_coded, box_money, box_text "
-        "FROM gossip_menu_option ORDER BY menu_id, id");
+        //      0        1   2            3            4          5                   6               7              8          9          10
+        "SELECT menu_id, id, option_icon, option_text, option_id, npc_option_npcflag, action_menu_id, action_poi_id, box_coded, box_money, box_text, "
+        //11                    12
+        "OptionBroadcastTextID, BoxBroadcastTextID FROM gossip_menu_option ORDER BY menu_id, id");
 
     if (!result)
     {
@@ -8340,7 +8339,6 @@ void ObjectMgr::LoadGossipMenuItems()
         Field* fields = result->Fetch();
 
         GossipMenuItems gMenuItem;
-
         gMenuItem.MenuId                = fields[0].GetUInt32();
         gMenuItem.OptionIndex           = fields[1].GetUInt16();
         gMenuItem.OptionIcon            = fields[2].GetUInt32();
@@ -8352,6 +8350,8 @@ void ObjectMgr::LoadGossipMenuItems()
         gMenuItem.BoxCoded              = fields[8].GetBool();
         gMenuItem.BoxMoney              = fields[9].GetUInt32();
         gMenuItem.BoxText               = fields[10].GetString();
+        gMenuItem.OptionBroadcastTextID = fields[11].GetUInt32();
+        gMenuItem.BoxBroadcastTextID    = fields[12].GetUInt32();
 
         if (gMenuItem.OptionIcon >= GOSSIP_ICON_MAX)
         {
@@ -8367,6 +8367,20 @@ void ObjectMgr::LoadGossipMenuItems()
             sLog->outError(LOG_FILTER_SQL, "Table gossip_menu_option for menu %u, id %u use non-existing action_poi_id %u, ignoring", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.ActionPoiId);
             gMenuItem.ActionPoiId = 0;
         }
+
+        if (gMenuItem.OptionBroadcastTextID)
+            if (!sBroadcastTextStore.LookupEntry(gMenuItem.OptionBroadcastTextID))
+            {
+                sLog->outError(LOG_FILTER_SQL, "Table `gossip_menu_option` for menu %u, id %u has non-existing or incompatible OptionBroadcastTextId %u, ignoring.", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.OptionBroadcastTextID);
+                gMenuItem.OptionBroadcastTextID = 0;
+            }
+
+        if (gMenuItem.BoxBroadcastTextID)
+            if (!sBroadcastTextStore.LookupEntry(gMenuItem.BoxBroadcastTextID))
+            {
+                sLog->outError(LOG_FILTER_SQL, "Table `gossip_menu_option` for menu %u, id %u has non-existing or incompatible BoxBroadcastTextID %u, ignoring.", gMenuItem.MenuId, gMenuItem.OptionIndex, gMenuItem.BoxBroadcastTextID);
+                gMenuItem.BoxBroadcastTextID = 0;
+            }
 
         _gossipMenuItemsStore.insert(GossipMenuItemsContainer::value_type(gMenuItem.MenuId, gMenuItem));
         ++count;

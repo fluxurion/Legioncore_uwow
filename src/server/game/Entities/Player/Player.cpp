@@ -15219,12 +15219,18 @@ void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool 
             std::string strBoxText = itr->second.BoxText;
 
             LocaleConstant localeConstant = GetSession()->GetSessionDbLocaleIndex();
-            if (localeConstant >= LOCALE_enUS && (localeConstant != LOCALE_none))
-                if (GossipMenuItemsLocale const* no = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, itr->second.OptionIndex)))
-                {
-                    ObjectMgr::GetLocaleString(no->OptionText, localeConstant, strOptionText);
-                    ObjectMgr::GetLocaleString(no->BoxText, localeConstant, strBoxText);
-                }
+            if (localeConstant != LOCALE_enUS && localeConstant != LOCALE_none)
+            {
+                if (BroadcastTextEntry const* optionBroadcastText = sBroadcastTextStore.LookupEntry(itr->second.OptionBroadcastTextID))
+                    strOptionText = DB2Manager::GetBroadcastTextValue(optionBroadcastText, localeConstant, getGender());
+                else if (GossipMenuItemsLocale const* gossipMenuLocale = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, itr->second.OptionIndex)))
+                    ObjectMgr::GetLocaleString(gossipMenuLocale->OptionText, localeConstant, strOptionText);
+
+                if (BroadcastTextEntry const* boxBroadcastText = sBroadcastTextStore.LookupEntry(itr->second.BoxBroadcastTextID))
+                    strBoxText = DB2Manager::GetBroadcastTextValue(boxBroadcastText, localeConstant, getGender());
+                else if (GossipMenuItemsLocale const* gossipMenuLocale = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, itr->second.OptionIndex)))
+                    ObjectMgr::GetLocaleString(gossipMenuLocale->BoxText, localeConstant, strBoxText);
+            }
 
             menu->GetGossipMenu().AddMenuItem(itr->second.OptionIndex, itr->second.OptionIcon, strOptionText, 0, itr->second.OptionType, strBoxText, itr->second.BoxMoney, itr->second.BoxCoded);
             menu->GetGossipMenu().AddGossipMenuItemData(itr->second.OptionIndex, itr->second.ActionMenuId, itr->second.ActionPoiId);

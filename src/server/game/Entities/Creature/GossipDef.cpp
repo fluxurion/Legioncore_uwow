@@ -75,6 +75,7 @@ void GossipMenu::AddMenuItem(uint32 menuId, uint32 menuItemId, uint32 sender, ui
     if (bounds.first == bounds.second)
         return;
 
+    LocaleConstant localeConstant = GetLocale();
     for (GossipMenuItemsContainer::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
     {
         if (itr->second.OptionIndex != menuItemId)
@@ -83,13 +84,18 @@ void GossipMenu::AddMenuItem(uint32 menuId, uint32 menuItemId, uint32 sender, ui
         std::string strOptionText = itr->second.OptionText;
         std::string strBoxText = itr->second.BoxText;
 
-        LocaleConstant localeConstant = GetLocale();
-        if (localeConstant >= LOCALE_enUS && (localeConstant != LOCALE_none))
-            if (GossipMenuItemsLocale const* no = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, menuItemId)))
-            {
-                ObjectMgr::GetLocaleString(no->OptionText, localeConstant, strOptionText);
-                ObjectMgr::GetLocaleString(no->BoxText, localeConstant, strBoxText);
-            }
+        if (localeConstant != LOCALE_enUS && localeConstant != LOCALE_none)
+        {
+            if (BroadcastTextEntry const* optionBroadcastText = sBroadcastTextStore.LookupEntry(itr->second.OptionBroadcastTextID))
+                strOptionText = DB2Manager::GetBroadcastTextValue(optionBroadcastText, GetLocale());
+            else if (GossipMenuItemsLocale const* gossipMenuLocale = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, menuItemId)))
+                ObjectMgr::GetLocaleString(gossipMenuLocale->OptionText, GetLocale(), strOptionText);
+
+            if (BroadcastTextEntry const* boxBroadcastText = sBroadcastTextStore.LookupEntry(itr->second.BoxBroadcastTextID))
+                strBoxText = DB2Manager::GetBroadcastTextValue(boxBroadcastText, GetLocale());
+            else if (GossipMenuItemsLocale const* gossipMenuLocale = sObjectMgr->GetGossipMenuItemsLocale(MAKE_PAIR32(menuId, menuItemId)))
+                ObjectMgr::GetLocaleString(gossipMenuLocale->BoxText, GetLocale(), strBoxText);
+        }
 
         AddMenuItem(-1, itr->second.OptionIcon, strOptionText, sender, action, strBoxText, itr->second.BoxMoney, itr->second.BoxCoded);
     }

@@ -555,15 +555,17 @@ struct GossipMenuItems
 {
     uint32          MenuId;
     uint32          OptionIndex;
-    uint8           OptionIcon;
-    std::string     OptionText;
+    uint32          OptionBroadcastTextID;
+    uint32          BoxBroadcastTextID;
     uint32          OptionType;
     uint32          OptionNpcflag;
     uint32          ActionMenuId;
     uint32          ActionPoiId;
-    bool            BoxCoded;
     uint32          BoxMoney;
+    std::string     OptionText;
     std::string     BoxText;
+    uint8           OptionIcon;
+    bool            BoxCoded;
     ConditionList   Conditions;
 };
 

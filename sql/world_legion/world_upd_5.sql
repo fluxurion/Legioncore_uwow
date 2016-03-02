@@ -20,3 +20,7 @@ ADD COLUMN `NameAlt2`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci N
 ADD COLUMN `NameAlt3`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `NameAlt2`,
 ADD COLUMN `NameAlt4`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `NameAlt3`;
 
+ALTER TABLE `gossip_menu_option`
+ADD COLUMN `OptionBroadcastTextID`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `box_text`,
+ADD COLUMN `BoxBroadcastTextID`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `OptionBroadcastTextID`;
+
