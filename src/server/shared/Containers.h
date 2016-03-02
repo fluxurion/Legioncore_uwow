@@ -18,10 +18,11 @@
 #ifndef CONTAINERS_H
 #define CONTAINERS_H
 
+#include <algorithm>
+#include <functional>
 #include <list>
 
-//! Because circular includes are bad
-extern uint32 urand(uint32 min, uint32 max);
+#include "Random.h"
 
 namespace Trinity
 {
@@ -62,6 +63,34 @@ namespace Trinity
             typename C::const_iterator it = container.begin();
             std::advance(it, urand(0, container.size() - 1));
             return *it;
+        }
+
+        template <class C>
+        typename C::const_iterator SelectRandomWeightedContainerElement(C const& container, std::vector<double> weights)
+        {
+            Trinity::discrete_distribution_param<uint32> ddParam(weights.begin(), weights.end());
+            std::discrete_distribution<uint32> dd(ddParam);
+            typename C::const_iterator it = container.begin();
+            std::advance(it, dd(SFMTEngine::Instance()));
+            return it;
+        }
+
+        template <class C, class Fn>
+        typename C::const_iterator SelectRandomWeightedContainerElement(C const& container, Fn weightExtractor)
+        {
+            std::vector<double> weights;
+            weights.reserve(container.size());
+            double weightSum = 0.0;
+            for (auto itr = container.begin(); itr != container.end(); ++itr)
+            {
+                double weight = weightExtractor(*itr);
+                weights.push_back(weight);
+                weightSum += weight;
+            }
+            if (weightSum <= 0.0)
+                weights.assign(container.size(), 1.0);
+
+            return SelectRandomWeightedContainerElement(container, weights);
         }
     }
     //! namespace Containers

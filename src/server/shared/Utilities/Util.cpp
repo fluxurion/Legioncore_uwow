@@ -21,61 +21,14 @@
 #include "Common.h"
 #include "CompilerDefs.h"
 #include "utf8.h"
-#include "SFMT.h"
 #include "Errors.h" // for ASSERT
 #include <stdarg.h>
-#include <boost/thread/tss.hpp>
 
 #if COMPILER == COMPILER_GNU
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
 #endif
-
-static boost::thread_specific_ptr<SFMTRand> sfmtRand;
-
-static SFMTRand* GetRng()
-{
-    SFMTRand* rand = sfmtRand.get();
-
-    if (!rand)
-    {
-        rand = new SFMTRand();
-        sfmtRand.reset(rand);
-    }
-
-    return rand;
-}
-
-int32 irand(int32 min, int32 max)
-{
-    return int32(GetRng()->IRandom(min, max));
-}
-
-uint32 urand(uint32 min, uint32 max)
-{
-    return GetRng()->URandom(min, max);
-}
-
-float frand(float min, float max)
-{
-    return float(GetRng()->Random() * (max - min) + min);
-}
-
-uint32 rand32()
-{
-    return GetRng()->BRandom();
-}
-
-double rand_norm()
-{
-    return GetRng()->Random();
-}
-
-double rand_chance()
-{
-    return GetRng()->Random() * 100.0;
-}
 
 Tokenizer::Tokenizer(const std::string &src, const char sep, uint32 vectorReserve)
 {
