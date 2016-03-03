@@ -37,7 +37,7 @@
 #define CORPSE_FIELD_BYTES_1 CORPSE_FIELD_SKIN_ID
 #define CORPSE_FIELD_BYTES_2 CORPSE_FIELD_FACIAL_HAIR_STYLE_ID
 
-// Updatefields auto generated for version 7.0.1.20979
+// Updatefields auto generated for version 7.0.1.21021
 enum EObjectFields
 {
     OBJECT_FIELD_GUID = 0x0, // Size: 4 Flags: Public
