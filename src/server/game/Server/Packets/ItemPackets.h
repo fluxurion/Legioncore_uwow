@@ -281,14 +281,14 @@ namespace WorldPackets
         class ItemPushResult final : public ServerPacket
         {
         public:
-            ItemPushResult() : ServerPacket(SMSG_ITEM_PUSH_RESULT) { }
+            ItemPushResult() : ServerPacket(SMSG_ITEM_PUSH_RESULT, 14 + 32 + 32 + 2 + 1 + 4) { }
 
             WorldPacket const* Write() override;
 
-            ObjectGuid PlayerGUID;
-            uint8 Slot = 0;
-            int32 SlotInBag = 0;
             ItemInstance Item;
+            ObjectGuid PlayerGUID;
+            ObjectGuid ItemGUID;
+            int32 SlotInBag = 0;
             uint32 QuestLogItemID = 0;
             int32 Quantity = 0;
             int32 QuantityInInventory = 0;
@@ -296,7 +296,8 @@ namespace WorldPackets
             uint32 BattlePetBreedQuality = 0;
             int32 BattlePetSpeciesID = 0;
             int32 BattlePetLevel = 0;
-            ObjectGuid ItemGUID;
+            uint16 DisplayText = 0;
+            uint8 Slot = 0;
             bool Pushed = false;
             bool Created = false;
             bool IsBonusRoll = false;
@@ -411,8 +412,8 @@ namespace WorldPackets
 
         enum ReadItemFailure : int32
         {
-            ITEM_FAILURE_NONE   = 0,
-            ITEM_FAILURE_UNK_1  = 1,
+            ITEM_FAILURE_NONE = 0,
+            ITEM_FAILURE_UNK_1 = 1,
         };
 
         class ReadItemResultFailed final : public ServerPacket
