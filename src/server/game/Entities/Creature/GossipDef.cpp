@@ -29,6 +29,7 @@
 GossipMenu::GossipMenu()
 {
     _menuId = 0;
+    _locale = DEFAULT_LOCALE;
 }
 
 GossipMenu::~GossipMenu()

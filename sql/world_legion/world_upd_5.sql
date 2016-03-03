@@ -24,4 +24,17 @@ ALTER TABLE `gossip_menu_option`
 ADD COLUMN `OptionBroadcastTextID`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `box_text`,
 ADD COLUMN `BoxBroadcastTextID`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `OptionBroadcastTextID`;
 
+ALTER TABLE `creature_text`
+CHANGE COLUMN `entry` `Entry`  mediumint(8) UNSIGNED NOT NULL DEFAULT 0 FIRST ,
+CHANGE COLUMN `groupid` `GroupID`  tinyint(3) UNSIGNED NOT NULL DEFAULT 0 AFTER `Entry`,
+CHANGE COLUMN `id` `ID`  tinyint(3) UNSIGNED NOT NULL DEFAULT 0 AFTER `GroupID`,
+CHANGE COLUMN `text` `Text`  longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL AFTER `ID`,
+CHANGE COLUMN `type` `Type`  tinyint(3) UNSIGNED NOT NULL DEFAULT 0 AFTER `Text`,
+CHANGE COLUMN `language` `Language`  tinyint(3) UNSIGNED NOT NULL DEFAULT 0 AFTER `Type`,
+CHANGE COLUMN `probability` `Probability`  float NOT NULL DEFAULT 0 AFTER `Language`,
+CHANGE COLUMN `emote` `Emote`  mediumint(8) UNSIGNED NOT NULL DEFAULT 0 AFTER `Probability`,
+CHANGE COLUMN `duration` `Duration`  mediumint(8) UNSIGNED NOT NULL DEFAULT 0 AFTER `Emote`,
+CHANGE COLUMN `sound` `Sound`  mediumint(8) UNSIGNED NOT NULL DEFAULT 0 AFTER `Duration`,
+ADD COLUMN `BroadcastTextID`  mediumint(8) UNSIGNED NOT NULL DEFAULT 0 AFTER `Sound`;
+
 
