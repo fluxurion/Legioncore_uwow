@@ -36,13 +36,19 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Inspect::InspectItemData 
     data << itemData.CreatorGUID;
     data << itemData.Item;
     data << uint8(itemData.Index);
-
-    data << static_cast<uint32>(itemData.Enchants.size());
-    for (size_t i = 0; i < itemData.Enchants.size(); ++i)
-        data << itemData.Enchants[i];
-
     data.WriteBit(itemData.Usable);
+    data.WriteBits(itemData.Enchants.size(), 4);
+    data.WriteBits(itemData.ItemsUnk.size(), 2);
     data.FlushBits();
+
+    for (auto const& enchant : itemData.Enchants)
+        data << enchant;
+
+    for (auto const& item : itemData.ItemsUnk)
+    {
+        data << item.UnkByte;
+        data << item.ItemUnk;
+    }
 
     return data;
 }
@@ -65,10 +71,8 @@ WorldPackets::Inspect::InspectItemData::InspectItemData(::Item const* item, uint
     Usable = true; /// @todo
 
     for (uint8 i = 0; i < MAX_ENCHANTMENT_SLOT; ++i)
-    {
         if (uint32 enchId = item->GetEnchantmentId(EnchantmentSlot(i)))
             Enchants.emplace_back(enchId, i);
-    }
 }
 
 WorldPacket const* WorldPackets::Inspect::InspectResult::Write()
@@ -78,19 +82,23 @@ WorldPacket const* WorldPackets::Inspect::InspectResult::Write()
     _worldPacket << static_cast<uint32>(Items.size());
     _worldPacket << static_cast<uint32>(Glyphs.size());
     _worldPacket << static_cast<uint32>(Talents.size());
+    _worldPacket << static_cast<uint32>(UnkShorts.size());
 
     _worldPacket << int32(ClassID);
     _worldPacket << int32(SpecializationID);
     _worldPacket << int32(GenderID);
 
-    for (size_t i = 0; i < Items.size(); ++i)
-        _worldPacket << Items[i];
+    for (auto const& item : Items)
+        _worldPacket << item;
+        
+    for (uint16 const& i : UnkShorts)
+        _worldPacket << i;
 
-    for (size_t i = 0; i < Glyphs.size(); ++i)
-        _worldPacket << uint16(Glyphs[i]);
+    for (uint16 const& glyph : Glyphs)
+        _worldPacket << glyph;
 
-    for (size_t i = 0; i < Talents.size(); ++i)
-        _worldPacket << uint16(Talents[i]);
+    for (uint16 const& talent : Talents)
+        _worldPacket << talent;
 
     _worldPacket.WriteBit(GuildData.is_initialized());
     _worldPacket.FlushBits();

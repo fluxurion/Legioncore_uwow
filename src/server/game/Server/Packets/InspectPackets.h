@@ -45,6 +45,12 @@ namespace WorldPackets
             uint8 Index = 0;
         };
 
+        struct InspectUnkData
+        {
+            int8 UnkByte = 0;
+            Item::ItemInstance ItemUnk;
+        };
+
         struct InspectItemData
         {
             InspectItemData(::Item const* item, uint8 index);
@@ -54,6 +60,7 @@ namespace WorldPackets
             uint8 Index = 0;
             bool Usable = false;
             std::vector<InspectEnchantData> Enchants;
+            std::vector<InspectUnkData> ItemsUnk;
         };
 
         struct InspectGuildData
@@ -66,17 +73,18 @@ namespace WorldPackets
         class InspectResult final : public ServerPacket
         {
         public:
-            InspectResult() : ServerPacket(SMSG_INSPECT_RESULT, 45) { }
+            InspectResult() : ServerPacket(SMSG_INSPECT_RESULT, 29) { }
 
             WorldPacket const* Write() override;
 
             std::vector<InspectItemData> Items;
-            int32 ClassID = CLASS_NONE;
-            int32 GenderID = GENDER_NONE;
-            std::vector<uint16> Talents;
-            std::vector<uint16> Glyphs;
             Optional<InspectGuildData> GuildData;
             ObjectGuid InspecteeGUID;
+            std::vector<uint16> Talents;
+            std::vector<uint16> Glyphs;
+            std::vector<uint16> UnkShorts; // maybe pvp talents?
+            int32 ClassID = CLASS_NONE;
+            int32 GenderID = GENDER_NONE;
             int32 SpecializationID = 0;
         };
 
