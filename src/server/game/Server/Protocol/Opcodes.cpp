@@ -783,7 +783,7 @@ void OpcodeTable::Initialize()
     DEFINE_OPCODE_HANDLER_OLD(CMSG_WARDEN_DATA,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleWardenDataOpcode          ); // STATUS_AUTHED
     DEFINE_HANDLER(CMSG_WHO,                                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Who::WhoRequestPkt, &WorldSession::HandleWhoOpcode);
     DEFINE_HANDLER(CMSG_WHO_IS,                                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Who::WhoIsRequest, &WorldSession::HandleWhoisOpcode);
-    DEFINE_HANDLER(CMSG_WORLD_PORT_RESPONSE,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Movement::WorldPortAck, &WorldSession::HandleWorldPortAck);
+    DEFINE_HANDLER(CMSG_WORLD_PORT_RESPONSE,                                STATUS_TRANSFER,  PROCESS_THREADUNSAFE, WorldPackets::Movement::WorldPortAck, &WorldSession::HandleWorldPortAck);
     DEFINE_HANDLER(CMSG_WORLD_TELEPORT,                                     STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::WorldTeleport, &WorldSession::HandleWorldTeleport);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_WRAP_ITEM,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleWrapItemOpcode            );
     
