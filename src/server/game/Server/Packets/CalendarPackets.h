@@ -464,7 +464,6 @@ namespace WorldPackets
         {
         public:
             CalendarCommandResult() : ServerPacket(SMSG_CALENDAR_COMMAND_RESULT, 3) { }
-            CalendarCommandResult(uint8 command, uint8 result, std::string const& name) : ServerPacket(SMSG_CALENDAR_COMMAND_RESULT, 3), Command(command), Result(result), Name(name) { }
 
             WorldPacket const* Write() override;
 
