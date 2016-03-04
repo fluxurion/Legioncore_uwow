@@ -48,9 +48,6 @@ void WorldSession::HandleWorldPortAck(WorldPackets::Movement::WorldPortAck& /*pa
 void WorldSession::HandleWorldPortAck()
 {
     Player* player = GetPlayer();
-    if (!player)
-        return;
-
     if (!player->IsBeingTeleportedFar())
         return;
 
@@ -96,13 +93,12 @@ void WorldSession::HandleWorldPortAck()
 
         WorldPackets::Movement::NewWorld packet;
         packet.MapID = loc.GetMapId();
-        packet.Pos = loc;
-        packet.Reason = seamlessTeleport ? NEW_WORLD_SEAMLESS : NEW_WORLD_NORMAL;
+        packet.Pos = static_cast<Position>(loc);
+        packet.Reason = WorldPackets::Movement::NewWorldReason::SEAMLESS;
         player->SendDirectMessage(packet.Write());
         player->SendSavedInstances();
     }
-
-    if (!seamlessTeleport)
+    else
         player->SendInitialPacketsBeforeAddToMap();
 
     if (!player->GetMap()->AddPlayerToMap(player, !seamlessTeleport))

@@ -532,10 +532,12 @@ WorldPacket const* WorldPackets::Movement::TransferAborted::Write()
 
 WorldPacket const* WorldPackets::Movement::NewWorld::Write()
 {
-    _worldPacket << MapID;
+    _worldPacket << int32(MapID);
     _worldPacket << Pos.PositionXYZOStream();
-    _worldPacket << Reason;
-    _worldPacket << Pos2.PositionXYZStream();
+    _worldPacket << uint32(Reason);
+    _worldPacket << float(0.0f);
+    _worldPacket << float(0.0f);
+    _worldPacket << float(0.0f);
 
     return &_worldPacket;
 }

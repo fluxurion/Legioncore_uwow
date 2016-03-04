@@ -241,6 +241,13 @@ namespace WorldPackets
             uint32 MapID = 0;
         };
 
+        enum class NewWorldReason : uint8
+        {
+            TELEPORT    = 6,    // Name can be little confusing/incorrect
+            NORMAL      = 16,   // Normal map change
+            SEAMLESS    = 21,   // Teleport to another map without a loading screen, used for outdoor scenarios
+        };
+
         class NewWorld final : public ServerPacket
         {
         public:
@@ -249,7 +256,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             int32 MapID = 0;
-            uint32 Reason = 0;
+            NewWorldReason Reason = NewWorldReason::NORMAL;
             Position Pos;
             Position Pos2;
         };

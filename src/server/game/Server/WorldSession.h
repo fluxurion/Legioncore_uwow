@@ -309,6 +309,7 @@ namespace WorldPackets
 
     namespace Movement
     {
+        enum class NewWorldReason : uint8;
         class ClientPlayerMovement;
         class WorldPortAck;
         class MoveTeleportAck;

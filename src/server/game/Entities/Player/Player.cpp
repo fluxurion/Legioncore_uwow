@@ -2343,8 +2343,8 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
                 WorldPackets::Movement::NewWorld packet;
                 packet.MapID = mapid;
-                packet.Pos = m_teleport_dest;
-                packet.Reason = !(options & TELE_TO_SEAMLESS) ? NEW_WORLD_NORMAL : NEW_WORLD_SEAMLESS;
+                packet.Pos = static_cast<Position>(m_teleport_dest);
+                packet.Reason = WorldPackets::Movement::NewWorldReason::TELEPORT; //!(options & NewWorldReason::SEAMLESS) ? NewWorldReason::NORMAL : NewWorldReason::SEAMLESS;
                 SendDirectMessage(packet.Write());
                 SendSavedInstances();
             }
