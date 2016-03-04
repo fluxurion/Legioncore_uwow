@@ -3619,6 +3619,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     //@TODO:Legino - temp    
     SetUInt32Value(PLAYER_FIELD_PRESTIGE, 1);
     SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, 1);
+    SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, 750);
 
     uint32 basehp = 0, basemana = 0;
     sObjectMgr->GetPlayerClassLevelInfo(getClass(), getLevel(), basehp, basemana);
