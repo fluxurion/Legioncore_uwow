@@ -6295,7 +6295,7 @@ void ObjectMgr::LoadGameObjectTemplate()
             for (uint8 i = 0; i < MAX_GAMEOBJECT_QUEST_ITEMS; ++i)
                 got.questItems[i] = 0;
 
-            for (uint8 i = 0; i < MAX_GAMEOBJECT_DATA; ++i)
+            for (uint8 i = 0; i < 8; ++i)
                 got.raw.data[i] = goe->Data[i];
 
             got.unkInt32 = 0;
