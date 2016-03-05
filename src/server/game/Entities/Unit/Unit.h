@@ -2482,6 +2482,7 @@ class Unit : public WorldObject
         float GetTransOffsetY() const { return m_movementInfo.transport.pos.GetPositionY(); }
         float GetTransOffsetZ() const { return m_movementInfo.transport.pos.GetPositionZ(); }
         float GetTransOffsetO() const { return m_movementInfo.transport.pos.GetOrientation(); }
+        Position GetTransPosition() const { return Position{GetTransOffsetX(), GetTransOffsetY(), GetTransOffsetZ(), GetTransOffsetO()}; }
         uint32 GetTransTime()   const { return m_movementInfo.transport.time; }
         int8 GetTransSeat()     const { return m_movementInfo.transport.seat; }
         ObjectGuid GetTransGUID()   const;

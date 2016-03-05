@@ -353,8 +353,7 @@ void WorldPackets::Query::QueryCorpseTransport::Read()
 
 WorldPacket const* WorldPackets::Query::CorpseTransportQuery::Write()
 {
-    _worldPacket << position.PositionXYZStream();
-    _worldPacket << Facing;
+    _worldPacket << position.PositionXYZOStream();
 
     return &_worldPacket;
 }

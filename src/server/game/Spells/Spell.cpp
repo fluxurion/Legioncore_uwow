@@ -88,7 +88,7 @@ SpellDestination::SpellDestination(Position const& pos)
 SpellDestination::SpellDestination(WorldObject const& wObj)
 {
     _transportGUID = wObj.GetTransGUID();
-    _transportOffset.Relocate(wObj.GetTransOffsetX(), wObj.GetTransOffsetY(), wObj.GetTransOffsetZ(), wObj.GetTransOffsetO());
+    _transportOffset.Relocate(wObj.GetTransPosition());
     _position.Relocate(wObj);
     _position.SetOrientation(wObj.GetOrientation());
 }

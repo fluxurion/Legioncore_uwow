@@ -35,10 +35,11 @@ namespace Movement
 {
     struct Location : public Vector3
     {
-        Location() : orientation(0) {}
-        Location(float x, float y, float z, float o) : Vector3(x,y,z), orientation(o) {}
-        Location(const Vector3& v) : Vector3(v), orientation(0) {}
-        Location(const Vector3& v, float o) : Vector3(v), orientation(o) {}
+        Location() : orientation(0.0f) { }
+        Location(float x, float y, float z, float o) : Vector3(x, y, z), orientation(o) { }
+        Location(Vector3 const& v) : Vector3(v), orientation(0.0f) { }
+        Location(Vector3 const& v, float o) : Vector3(v), orientation(o) { }
+        Location(Position pos) : Vector3(pos.m_positionX, pos.m_positionY, pos.m_positionZ), orientation(pos.m_orientation) { }
 
         float orientation;
     };

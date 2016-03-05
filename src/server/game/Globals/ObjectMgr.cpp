@@ -4936,7 +4936,7 @@ void ObjectMgr::LoadPageTexts()
     uint32 oldMSTime = getMSTime();
 
     //                                                 0      1       2
-    QueryResult result = WorldDatabase.Query("SELECT entry, text, next_page FROM page_text");
+    QueryResult result = WorldDatabase.Query("SELECT ID, Text, NextPageID FROM page_text");
 
     if (!result)
     {
@@ -4950,24 +4950,20 @@ void ObjectMgr::LoadPageTexts()
         Field* fields = result->Fetch();
 
         PageText& pageText = _pageTextStore[fields[0].GetUInt32()];
-
-        pageText.Text     = fields[1].GetString();
+        pageText.Text = fields[1].GetString();
         pageText.NextPage = fields[2].GetUInt32();
 
         ++count;
     }
     while (result->NextRow());
 
-    for (PageTextContainer::const_iterator itr = _pageTextStore.begin(); itr != _pageTextStore.end(); ++itr)
-    {
-        if (itr->second.NextPage)
+    for (PageTextContainer::const_iterator::value_type const& itr : _pageTextStore)
+        if (itr.second.NextPage)
         {
-            PageTextContainer::const_iterator itr2 = _pageTextStore.find(itr->second.NextPage);
+            PageTextContainer::const_iterator itr2 = _pageTextStore.find(itr.second.NextPage);
             if (itr2 == _pageTextStore.end())
-                sLog->outError(LOG_FILTER_SQL, "Page text (Id: %u) has not existing next page (Id: %u)", itr->first, itr->second.NextPage);
-
+                sLog->outError(LOG_FILTER_SQL, "Page text (Id: %u) has not existing next page (Id: %u)", itr.first, itr.second.NextPage);
         }
-    }
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u page texts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }

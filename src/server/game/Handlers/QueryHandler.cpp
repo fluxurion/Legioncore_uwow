@@ -269,19 +269,10 @@ void WorldSession::HandleQueryPageText(WorldPackets::Query::QueryPageText& packe
 
 void WorldSession::HandleQueryCorpseTransport(WorldPackets::Query::QueryCorpseTransport& packet)
 {
-    Corpse* corpse = _player->GetCorpse();
-
     WorldPackets::Query::CorpseTransportQuery response;
-    if (!corpse || corpse->GetTransGUID().IsEmpty() || corpse->GetTransGUID() != packet.Transport)
-    {
-        response.position = {0.0f, 0.0f, 0.0f};
-        response.Facing = 0.0f;
-    }
-    else
-    {
-        response.position = {corpse->GetTransOffsetX(), corpse->GetTransOffsetY(), corpse->GetTransOffsetZ()};
-        response.Facing = corpse->GetTransOffsetO();
-    }
+    if (Corpse* corpse = _player->GetCorpse())
+        if (!corpse->GetTransGUID().IsEmpty() && corpse->GetTransGUID() == packet.Transport)
+            response.position = corpse->GetTransPosition();
 
     SendPacket(response.Write());
 }

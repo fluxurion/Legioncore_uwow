@@ -65,12 +65,7 @@ namespace Movement
         // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
         //if (unit.GetTransGUID())
         if (unit.m_movementInfo.transport.guid) //for vehicle too
-        {
-            real_position.x = unit.GetTransOffsetX();
-            real_position.y = unit.GetTransOffsetY();
-            real_position.z = unit.GetTransOffsetZ();
-            real_position.orientation = unit.GetTransOffsetO();
-        }
+            real_position = unit.GetTransPosition();
 
         // there is a big chance that current position is unknown if current state is not finalized, need compute it
         // this also allows calculate spline position and update map position in much greater intervals

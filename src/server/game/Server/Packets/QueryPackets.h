@@ -309,7 +309,6 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             Position position;
-            float Facing = 0.0f;
         };
 
         class QueryTime final : public ClientPacket
