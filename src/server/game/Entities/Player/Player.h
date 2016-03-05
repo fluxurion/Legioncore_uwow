@@ -563,7 +563,12 @@ enum PlayerBytes2Offsets
     PLAYER_BYTES_2_OFFSET_FACIAL_STYLE      = 0,
     PLAYER_BYTES_2_OFFSET_PARTY_TYPE        = 1,
     PLAYER_BYTES_2_OFFSET_BANK_BAG_SLOTS    = 2,
-    PLAYER_BYTES_2_OFFSET_REST_STATE        = 3
+    //PLAYER_BYTES_2_OFFSET_REST_STATE        = 3 UNK
+};
+
+enum PlayerRestStateOffsets
+{
+    PLAYER_REST_STATE_OFFSET_STATE          = 0,
 };
 
 enum PlayerBytes3Offsets
