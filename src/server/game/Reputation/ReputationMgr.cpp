@@ -179,18 +179,18 @@ void ReputationMgr::SendState(FactionState const* faction)
     s1.Standing = faction->Standing;
     standing.Faction.push_back(s1);
 
-    for (auto& x : _factions)
+    for (FactionStateList::iterator x = _factions.begin(); x != _factions.end(); ++x)
     {
-        if (x.second.needSend)
+        if (!x->second.needSend)
+            continue;
+
+        x->second.needSend = false;
+        if (x->second.ReputationListID != faction->ReputationListID)
         {
-            x.second.needSend = false;
-            if (x.second.ReputationListID != faction->ReputationListID)
-            {
-                WorldPackets::Reputation::FactionStandingData s;
-                s.Index = x.second.ReputationListID;
-                s.Standing = x.second.Standing;
-                standing.Faction.push_back(s);
-            }
+            WorldPackets::Reputation::FactionStandingData s;
+            s.Index = x->second.ReputationListID;
+            s.Standing = x->second.Standing;
+            standing.Faction.push_back(s);
         }
     }
     
@@ -241,8 +241,9 @@ void ReputationMgr::Initialize()
     _exaltedFactionCount = 0;
     _sendFactionIncreased = false;
 
-    for (FactionEntry const* factionEntry : sFactionStore)
+    for (uint32 i = 1; i < sFactionStore.GetNumRows(); i++)
     {
+        FactionEntry const* factionEntry = sFactionStore.LookupEntry(i);
         if (factionEntry && (factionEntry->ReputationListID >= 0))
         {
             FactionState newFaction;
