@@ -209,7 +209,7 @@ std::string Position::ToString() const
     return sstr.str();
 }
 
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYStreamer& streamer)
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYStreamer const& streamer)
 {
     buf << streamer.Pos->GetPositionX();
     buf << streamer.Pos->GetPositionY();
@@ -226,7 +226,7 @@ ByteBuffer& operator>>(ByteBuffer& buf, Position::PositionXYStreamer const& stre
     return buf;
 }
 
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZStreamer& streamer)
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZStreamer const& streamer)
 {
     buf << streamer.m_pos->GetPositionX();
     buf << streamer.m_pos->GetPositionY();
@@ -244,7 +244,7 @@ ByteBuffer& operator>>(ByteBuffer& buf, Position::PositionXYZStreamer const& str
     return buf;
 }
 
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZOStreamer& streamer)
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZOStreamer const& streamer)
 {
     buf << streamer.m_pos->GetPositionX();
     buf << streamer.m_pos->GetPositionY();

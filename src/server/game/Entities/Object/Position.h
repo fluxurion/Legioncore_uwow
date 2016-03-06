@@ -172,11 +172,11 @@ public:
     uint32 m_mapId;
 };
 
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYStreamer& streamer);
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYStreamer const& streamer);
 ByteBuffer& operator>>(ByteBuffer& buf, Position::PositionXYStreamer const& streamer);
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZStreamer& streamer);
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZStreamer const& streamer);
 ByteBuffer& operator>>(ByteBuffer& buf, Position::PositionXYZStreamer const& streamer);
-ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZOStreamer& streamer);
+ByteBuffer& operator<<(ByteBuffer& buf, Position::PositionXYZOStreamer const& streamer);
 ByteBuffer& operator>>(ByteBuffer& buf, Position::PositionXYZOStreamer const& streamer);
 
 #endif // Trinity_game_Position_h__
