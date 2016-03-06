@@ -25,6 +25,7 @@
 #include "RealmList.h"
 #include "SHA256.h"
 #include <map>
+#include "Random.h"
 
 Battlenet::Session::ModuleHandler const Battlenet::Session::ModuleHandlers[MODULE_COUNT] =
 {
