@@ -97,7 +97,10 @@ KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround)
 inline void KillRewarder::_InitGroupData()
 {
     if (!_group)
+    {
         _count = 1;
+        return;
+    }
 
     // 2. In case when player is in group, initialize variables necessary for group calculations:
     for (GroupReference* itr = _group->GetFirstMember(); itr != NULL; itr = itr->next())
