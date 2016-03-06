@@ -2355,18 +2355,16 @@ void SpellMgr::LoadEnchantCustomAttr()
             continue;
 
         for (uint32 j = 0; j < MAX_SPELL_EFFECTS; ++j)
-        {
             if (spellInfo->Effects[j].Effect == SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY)
             {
                 uint32 enchId = spellInfo->Effects[j].MiscValue;
-                SpellItemEnchantmentEntry const* ench = sSpellItemEnchantmentStore.LookupEntry(enchId);
-                if (!ench)
+                if (!sSpellItemEnchantmentStore.LookupEntry(enchId))
                     continue;
+
                 mEnchantCustomAttr[enchId] = true;
                 ++count;
                 break;
             }
-        }
     }
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u custom enchant attributes in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
@@ -2392,20 +2390,16 @@ void SpellMgr::LoadSpellEnchantProcData()
         Field* fields = result->Fetch();
 
         uint32 enchantId = fields[0].GetUInt32();
-
-        SpellItemEnchantmentEntry const* ench = sSpellItemEnchantmentStore.LookupEntry(enchantId);
-        if (!ench)
+        if (!sSpellItemEnchantmentStore.LookupEntry(enchantId))
         {
             sLog->outError(LOG_FILTER_SQL, "Enchancment %u listed in `spell_enchant_proc_data` does not exist", enchantId);
             continue;
         }
 
         SpellEnchantProcEntry spe;
-
         spe.customChance = fields[1].GetUInt32();
         spe.PPMChance = fields[2].GetFloat();
         spe.procEx = fields[3].GetUInt32();
-
         mSpellEnchantProcEventMap[enchantId] = spe;
 
         ++count;

@@ -458,23 +458,25 @@ struct MapDifficultyEntry
 struct SpellItemEnchantmentEntry
 {
     uint32      ID;                                             // 0
-    uint32      Charges;                                        // 1
-    uint32      Effect[MAX_ITEM_ENCHANTMENT_EFFECTS];           // 2-4
-    uint32      EffectPointsMin[MAX_ITEM_ENCHANTMENT_EFFECTS];  // 5-7
-    uint32      EffectSpellID[MAX_ITEM_ENCHANTMENT_EFFECTS];    // 8-10
-    //char*     Name_lang                                       // 11
-    uint32      ItemVisual;                                     // 12
-    uint32      Flags;                                          // 13
-    uint32      SRCItemID;                                      // 14
-    uint32      ConditionID;                                    // 15
-    uint32      RequiredSkillID;                                // 16
-    uint32      RequiredSkillRank;                              // 17
-    uint32      MinLevel;                                       // 18
-    uint32      MaxLevel;                                       // 19
-    uint32      ItemLevel;                                      // 20
-    int32       ScalingClass;                                   // 21
-    int32       ScalingClassRestricted;                         // 22
-    float       EffectScalingPoints[MAX_ITEM_ENCHANTMENT_EFFECTS];//23-25
+    uint32      EffectSpellID[MAX_ITEM_ENCHANTMENT_EFFECTS];    // 1 - 3
+    LocalizedString* Name;                                      // 4
+    float       EffectScalingPoints[MAX_ITEM_ENCHANTMENT_EFFECTS];// 5 - 7
+    uint32      UnkLegion;                                      // 8
+    int16       EffectPointsMin[MAX_ITEM_ENCHANTMENT_EFFECTS];  // 9 - 11
+    uint16      ItemVisual;                                     // 12
+    uint16      Flags;                                          // 13
+    uint16      RequiredSkillID;                                // 14
+    uint16      RequiredSkillRank;                              // 15
+    uint16      ItemLevel;                                      // 16
+    uint8       Charges;                                        // 17
+    uint8       Effect[MAX_ITEM_ENCHANTMENT_EFFECTS];           // 18 - 20
+    uint8       UnkLegion2;                                     // 21
+    uint8       MinLevel;                                       // 22
+    uint8       MaxLevel;                                       // 23
+    int8        ScalingClass;                                   // 24
+    int8        ScalingClassRestricted;                         // 25
+    uint8       UnkLegion3;                                     // 26
+    uint8       UnkLegion4;                                     // 27
 };
 
 struct TalentEntry
@@ -1232,6 +1234,16 @@ struct ItemAppearanceEntry
     uint8       UnkLegion2;                                 // 3
 };
 
+struct ItemModifiedAppearanceEntry
+{
+    uint32      ID;                                         // 0
+    uint32      ItemID;                                     // 1
+    uint16      AppearanceID;                               // 2
+    uint8       AppearanceModID;                            // 3
+    uint8       VariationID;                                // 4
+    int8        UnkLegion;                                  // 5
+};
+
 struct MailTemplateEntry
 {
     uint32      ID;
@@ -1466,16 +1478,6 @@ struct ItemEffectEntry
     uint8       SpecID;                                     // 7
     uint8       OrderIndex;                                 // 8
     uint8       Trigger;                                    // 9
-};
-
-struct ItemModifiedAppearanceEntry
-{
-    uint32      ID;
-    uint32      ItemID;                                             // 0
-    uint16      AppearanceID;                                       // 1
-    uint8       AppearanceModID;                                    // 2
-    uint8       VariationID;                                        // 3
-    uint8       UnkLegion;                                          // 4
 };
 
 struct ItemSparseEntry

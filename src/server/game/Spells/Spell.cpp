@@ -8046,6 +8046,7 @@ SpellCastResult Spell::CheckItems()
                 {
                     if (!pEnchant)
                         return SPELL_FAILED_ERROR;
+
                     if (pEnchant->Flags & ENCHANTMENT_CAN_SOULBOUND)
                         return SPELL_FAILED_NOT_TRADEABLE;
                 }
@@ -8059,10 +8060,10 @@ SpellCastResult Spell::CheckItems()
                 // Not allow enchant in trade slot for some enchant type
                 if (item->GetOwner() != m_caster)
                 {
-                    uint32 enchant_id = m_spellInfo->GetEffect(i, m_diffMode)->MiscValue;
-                    SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(enchant_id);
+                    SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(m_spellInfo->GetEffect(i, m_diffMode)->MiscValue);
                     if (!pEnchant)
                         return SPELL_FAILED_ERROR;
+
                     if (pEnchant->Flags & ENCHANTMENT_CAN_SOULBOUND)
                         return SPELL_FAILED_NOT_TRADEABLE;
                 }

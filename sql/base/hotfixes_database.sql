@@ -888,30 +888,33 @@ DROP TABLE IF EXISTS `spell_item_enchantment`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `spell_item_enchantment` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Charges` int(10) unsigned NOT NULL DEFAULT '0',
-  `Effect1` int(10) unsigned NOT NULL DEFAULT '0',
-  `Effect2` int(10) unsigned NOT NULL DEFAULT '0',
-  `Effect3` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectPointsMin1` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectPointsMin2` int(10) unsigned NOT NULL DEFAULT '0',
-  `EffectPointsMin3` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectSpellID1` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectSpellID2` int(10) unsigned NOT NULL DEFAULT '0',
   `EffectSpellID3` int(10) unsigned NOT NULL DEFAULT '0',
-  `ItemVisual` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `SRCItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ConditionID` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredSkillID` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredSkillRank` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `MaxLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `ItemLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `ScalingClass` int(11) NOT NULL DEFAULT '0',
-  `ScalingClassRestricted` int(11) NOT NULL DEFAULT '0',
+  `Name` text,
   `EffectScalingPoints1` float NOT NULL DEFAULT '0',
   `EffectScalingPoints2` float NOT NULL DEFAULT '0',
   `EffectScalingPoints3` float NOT NULL DEFAULT '0',
+  `UnkLegion` int(10) unsigned NOT NULL DEFAULT '0',
+  `EffectPointsMin1` smallint(6) NOT NULL DEFAULT '0',
+  `EffectPointsMin2` smallint(6) NOT NULL DEFAULT '0',
+  `EffectPointsMin3` smallint(6) NOT NULL DEFAULT '0',
+  `ItemVisual` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `RequiredSkillID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `RequiredSkillRank` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ItemLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Charges` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Effect1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Effect2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Effect3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkLegion2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MinLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MaxLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ScalingClass` tinyint(4) NOT NULL DEFAULT '0',
+  `ScalingClassRestricted` tinyint(4) NOT NULL DEFAULT '0',
+  `UnkLegion3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkLegion4` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -924,6 +927,31 @@ CREATE TABLE `spell_item_enchantment` (
 LOCK TABLES `spell_item_enchantment` WRITE;
 /*!40000 ALTER TABLE `spell_item_enchantment` DISABLE KEYS */;
 /*!40000 ALTER TABLE `spell_item_enchantment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `spell_item_enchantment_locale`
+--
+
+DROP TABLE IF EXISTS `spell_item_enchantment_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `spell_item_enchantment_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `spell_item_enchantment_locale`
+--
+
+LOCK TABLES `spell_item_enchantment_locale` WRITE;
+/*!40000 ALTER TABLE `spell_item_enchantment_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `spell_item_enchantment_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3108,6 +3136,34 @@ LOCK TABLES `item_appearance` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `item_modified_appearance`
+--
+
+DROP TABLE IF EXISTS `item_modified_appearance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `item_modified_appearance` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
+  `AppearanceID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AppearanceModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VariationID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkLegion` tinyint(4) NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `item_modified_appearance`
+--
+
+LOCK TABLES `item_modified_appearance` WRITE;
+/*!40000 ALTER TABLE `item_modified_appearance` DISABLE KEYS */;
+/*!40000 ALTER TABLE `item_modified_appearance` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mail_template`
 --
 
@@ -4031,34 +4087,6 @@ CREATE TABLE `item_effect` (
 LOCK TABLES `item_effect` WRITE;
 /*!40000 ALTER TABLE `item_effect` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item_effect` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `item_modified_appearance`
---
-
-DROP TABLE IF EXISTS `item_modified_appearance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `item_modified_appearance` (
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ItemID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AppearanceID` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `AppearanceModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `VariationID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `UnkLegion` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `item_modified_appearance`
---
-
-LOCK TABLES `item_modified_appearance` WRITE;
-/*!40000 ALTER TABLE `item_modified_appearance` DISABLE KEYS */;
-/*!40000 ALTER TABLE `item_modified_appearance` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

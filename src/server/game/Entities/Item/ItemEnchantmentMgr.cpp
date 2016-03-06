@@ -221,15 +221,15 @@ bool CheckSpecProp(uint32 ench, uint32 type, uint32 SpecID)
             {
                 if(!random_id->Enchantment[slot])
                     continue;
-                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
+
+                if (SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
                 {
-                    for (int s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
+                    for (uint8 s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
                     {
-                        uint32 enchant_type = pEnchant->Effect[s];
-                        uint32 enchant_stat_id = pEnchant->EffectSpellID[s];
-                        if(enchant_type != ITEM_ENCHANTMENT_TYPE_STAT)
+                        if (pEnchant->Effect[s] != ITEM_ENCHANTMENT_TYPE_STAT)
                             continue;
-                        if(!CheckStatsSpec(enchant_stat_id, SpecID))
+
+                        if (!CheckStatsSpec(pEnchant->EffectSpellID[s], SpecID))
                             return false;
                     }
                 }
@@ -244,15 +244,15 @@ bool CheckSpecProp(uint32 ench, uint32 type, uint32 SpecID)
             {
                 if(!random_id->Enchantment[slot])
                     continue;
-                if(SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
+
+                if (SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(random_id->Enchantment[slot]))
                 {
-                    for (int s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
+                    for (uint8 s = 0; s < MAX_ITEM_ENCHANTMENT_EFFECTS; ++s)
                     {
-                        uint32 enchant_type = pEnchant->Effect[s];
-                        uint32 enchant_stat_id = pEnchant->EffectSpellID[s];
-                        if(enchant_type != ITEM_ENCHANTMENT_TYPE_STAT)
+                        if (pEnchant->Effect[s] != ITEM_ENCHANTMENT_TYPE_STAT)
                             continue;
-                        if(!CheckStatsSpec(enchant_stat_id, SpecID))
+
+                        if (!CheckStatsSpec(pEnchant->EffectSpellID[s], SpecID))
                             return false;
                     }
                 }

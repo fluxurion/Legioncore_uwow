@@ -4121,8 +4121,7 @@ void Spell::EffectEnchantItemTmp(SpellEffIndex effIndex)
         return;
     }
 
-    SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(enchant_id);
-    if (!pEnchant)
+    if (!sSpellItemEnchantmentStore.LookupEntry(enchant_id))
     {
         sLog->outError(LOG_FILTER_SPELLS_AURAS, "Spell %u Effect %u (SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY) have not existed enchanting id %u ", m_spellInfo->Id, effIndex, enchant_id);
         return;
@@ -5912,8 +5911,7 @@ void Spell::EffectEnchantHeldItem(SpellEffIndex effIndex)
         if (!duration)
             duration = 10;                                  //10 seconds for enchants which don't have listed duration
 
-        SpellItemEnchantmentEntry const* pEnchant = sSpellItemEnchantmentStore.LookupEntry(enchant_id);
-        if (!pEnchant)
+        if (!sSpellItemEnchantmentStore.LookupEntry(enchant_id))
             return;
 
         // Always go to temp enchantment slot

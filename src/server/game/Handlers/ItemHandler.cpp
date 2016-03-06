@@ -953,17 +953,15 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
                         return;
                     }
                 }
-                else if (OldEnchants[j])
+                /*else if (OldEnchants[j])
                 {
                     if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(OldEnchants[j]))
-                    {
                         if (iGemProto->ItemId == enchantEntry->SRCItemID)
                         {
                             _player->SendEquipError(EQUIP_ERR_ITEM_UNIQUE_EQUIPPABLE_SOCKETED, itemTarget, NULL);
                             return;
                         }
-                    }
-                }
+                }*/
             }
         }
 
@@ -982,14 +980,14 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
                         if (iGemProto->ItemLimitCategory == Gems[j]->GetTemplate()->ItemLimitCategory)
                             ++limit_newcount;
                     }
-                    else if (OldEnchants[j])
+                    /*else if (OldEnchants[j])
                     {
                         // existing gem
                         if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(OldEnchants[j]))
                             if (ItemTemplate const* jProto = sObjectMgr->GetItemTemplate(enchantEntry->SRCItemID))
                                 if (iGemProto->ItemLimitCategory == jProto->ItemLimitCategory)
                                     ++limit_newcount;
-                    }
+                    }*/
                 }
 
                 if (limit_newcount > 0 && uint32(limit_newcount) > limitEntry->Quantity)

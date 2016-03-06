@@ -784,16 +784,13 @@ bool Item::CanBeTraded(bool mail, bool trade) const
     return true;
 }
 
-bool Item::HasEnchantRequiredSkill(const Player* player) const
+bool Item::HasEnchantRequiredSkill(Player const* player) const
 {
-    // Check all enchants for required skill
-    for (uint32 enchant_slot = PERM_ENCHANTMENT_SLOT; enchant_slot < MAX_ENCHANTMENT_SLOT; ++enchant_slot)
-    {
-        if (uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot)))
-            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(enchant_id))
+    for (uint32 i = PERM_ENCHANTMENT_SLOT; i < MAX_ENCHANTMENT_SLOT; ++i)
+        if (uint32 id = GetEnchantmentId(EnchantmentSlot(i)))
+            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(id))
                 if (enchantEntry->RequiredSkillID && player->GetSkillValue(enchantEntry->RequiredSkillID) < enchantEntry->RequiredSkillRank)
                     return false;
-    }
 
     return true;
 }
@@ -802,28 +799,22 @@ uint32 Item::GetEnchantRequiredLevel() const
 {
     uint32 level = 0;
 
-    // Check all enchants for required level
-    for (uint32 enchant_slot = PERM_ENCHANTMENT_SLOT; enchant_slot < MAX_ENCHANTMENT_SLOT; ++enchant_slot)
-    {
-        if (uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot)))
-            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(enchant_id))
+    for (uint32 i = PERM_ENCHANTMENT_SLOT; i < MAX_ENCHANTMENT_SLOT; ++i)
+        if (uint32 id = GetEnchantmentId(EnchantmentSlot(i)))
+            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(id))
                 if (enchantEntry->MinLevel > level)
                     level = enchantEntry->MinLevel;
-    }
 
     return level;
 }
 
 bool Item::IsBoundByEnchant() const
 {
-    // Check all enchants for soulbound
-    for (uint32 enchant_slot = PERM_ENCHANTMENT_SLOT; enchant_slot < MAX_ENCHANTMENT_SLOT; ++enchant_slot)
-    {
-        if (uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot)))
-            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(enchant_id))
+    for (uint32 i = PERM_ENCHANTMENT_SLOT; i < MAX_ENCHANTMENT_SLOT; ++i)
+        if (uint32 id = GetEnchantmentId(EnchantmentSlot(i)))
+            if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(id))
                 if (enchantEntry->Flags & ENCHANTMENT_CAN_SOULBOUND)
                     return true;
-    }
 
     return false;
 }
@@ -977,7 +968,7 @@ bool Item::GemsFitSockets() const
 
         uint8 GemColor = 0;
 
-        uint32 gemid = enchantEntry->SRCItemID;
+        /*uint32 gemid = enchantEntry->SRCItemID;
         if (gemid)
         {
             ItemTemplate const* gemProto = sObjectMgr->GetItemTemplate(gemid);
@@ -987,7 +978,7 @@ bool Item::GemsFitSockets() const
                 if (gemProperty)
                     GemColor = gemProperty->Type;
             }
-        }
+        }*/
 
         if (!(GemColor & SocketColor)) // bad gem color on this socket
             return false;
@@ -998,7 +989,7 @@ bool Item::GemsFitSockets() const
 uint8 Item::GetGemCountWithID(uint32 GemID) const
 {
     uint8 count = 0;
-    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
+    /*for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
     {
         uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot));
         if (!enchant_id)
@@ -1010,14 +1001,14 @@ uint8 Item::GetGemCountWithID(uint32 GemID) const
 
         if (GemID == enchantEntry->SRCItemID)
             ++count;
-    }
+    }*/
     return count;
 }
 
 uint8 Item::GetGemCountWithLimitCategory(uint32 limitCategory) const
 {
     uint8 count = 0;
-    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
+    /*for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
     {
         uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot));
         if (!enchant_id)
@@ -1033,7 +1024,7 @@ uint8 Item::GetGemCountWithLimitCategory(uint32 limitCategory) const
 
         if (gemProto->ItemLimitCategory == limitCategory)
             ++count;
-    }
+    }*/
     return count;
 }
 

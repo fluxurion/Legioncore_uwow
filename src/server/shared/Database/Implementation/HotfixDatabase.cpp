@@ -113,10 +113,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MAP_DIFFICULTY, "SELECT ID, Message_lang FROM map_difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellItemEnchantment.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT, "SELECT ID, Charges, Effect1, Effect2, Effect3, EffectPointsMin1, EffectPointsMin2, "
-        "EffectPointsMin3, EffectSpellID1, EffectSpellID2, EffectSpellID3, ItemVisual, Flags, SRCItemID, ConditionID, RequiredSkillID, "
-        "RequiredSkillRank, MinLevel, MaxLevel, ItemLevel, ScalingClass, ScalingClassRestricted, EffectScalingPoints1, EffectScalingPoints2, "
-        "EffectScalingPoints3 FROM spell_item_enchantment ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT, "SELECT ID, EffectSpellID1, EffectSpellID2, EffectSpellID3, Name, EffectScalingPoints1, "
+        "EffectScalingPoints2, EffectScalingPoints3, UnkLegion, EffectPointsMin1, EffectPointsMin2, EffectPointsMin3, ItemVisual, Flags, "
+        "RequiredSkillID, RequiredSkillRank, ItemLevel, Charges, Effect1, Effect2, Effect3, UnkLegion2, MinLevel, MaxLevel, ScalingClass, "
+        "ScalingClassRestricted, UnkLegion3, UnkLegion4 FROM spell_item_enchantment ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT, "SELECT ID, Name_lang FROM spell_item_enchantment_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Talent.db2
     PrepareStatement(HOTFIX_SEL_TALENT, "SELECT Id, SpecID, `row`, `column`, spellId, classId, OverridesSpellID, description FROM talent"
@@ -347,6 +348,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // ItemAppearance.db2
     PrepareStatement(HOTFIX_SEL_ITEM_APPEARANCE, "SELECT ID, DisplayID, FileDataID, UnkLegion, UnkLegion2 FROM item_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // ItemModifiedAppearance.db2
+    PrepareStatement(HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE, "SELECT ID, ItemID, AppearanceID, AppearanceModID, VariationID, UnkLegion"
+        " FROM item_modified_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // MailTemplate.db2
     PrepareStatement(HOTFIX_SEL_MAIL_TEMPLATE, "SELECT ID, Content FROM mail_template ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MAIL_TEMPLATE, "SELECT ID, Content_lang FROM mail_template_locale WHERE locale = ?", CONNECTION_SYNCH);
@@ -446,10 +451,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // ItemEffect.db2
     PrepareStatement(HOTFIX_SEL_ITEM_EFFECT, "SELECT ID, ItemID, SpellID, Cooldown, CategoryCooldown, Charges, Category, SpecID, OrderIndex, "
         "`Trigger` FROM item_effect ORDER BY ID DESC", CONNECTION_SYNCH);
-
-    // ItemModifiedAppearance.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_MODIFIED_APPEARANCE, "SELECT ID, ItemID, AppearanceID, AppearanceModID, VariationID, UnkLegion"
-        " FROM item_modified_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemSparse.db2
     PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Flags, UnkFloat1, UnkFloat2, BuyPrice, SellPrice, AllowableClass, AllowableRace, "

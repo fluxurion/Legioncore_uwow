@@ -474,7 +474,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellFocusObjectStore);           // 21021
     LOAD_DB2(sSpellInterruptsStore);            // 21021
     //LOAD_DB2(sSpellItemEnchantmentConditionStore);
-    //LOAD_DB2(sSpellItemEnchantmentStore);
+    LOAD_DB2(sSpellItemEnchantmentStore);       // 21154
     LOAD_DB2(sSpellLearnSpellStore);            // 21021
     LOAD_DB2(sSpellLevelsStore);                // 21021
     LOAD_DB2(sSpellMiscDifficultyStore);        // 21021
