@@ -493,6 +493,16 @@ namespace WorldPackets
 
             int32 Slot = 0;
         };
+
+        class WrapItem final : public ClientPacket
+        {
+        public:
+            WrapItem(WorldPacket&& packet) : ClientPacket(CMSG_WRAP_ITEM, std::move(packet)) { }
+
+            void Read() override;
+
+            InvUpdate Inv;
+        };
     }
 }
 

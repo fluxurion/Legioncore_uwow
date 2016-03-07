@@ -530,3 +530,8 @@ void WorldPackets::Item::CancelTempEnchantment::Read()
 {
     _worldPacket >> Slot;
 }
+
+void WorldPackets::Item::WrapItem::Read()
+{
+    _worldPacket >> Inv;
+}

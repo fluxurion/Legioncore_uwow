@@ -719,87 +719,70 @@ void WorldSession::HandleAutoStoreBankItem(WorldPackets::Bank::AutoStoreBankItem
     }
 }
 
-//! 6.0.3
-void WorldSession::HandleWrapItemOpcode(WorldPacket& recvData)
+void WorldSession::HandleWrapItem(WorldPackets::Item::WrapItem& packet)
 {
-    //sLog->outDebug(LOG_FILTER_NETWORKIO, "Received opcode CMSG_WRAP_ITEM");
-
-    uint8 gift_bag = 0, gift_slot = 0, item_bag = 0, item_slot = 0;
-
-    uint8 count = recvData.ReadBits(2);
-    if (count != 2)
-    {
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "WRAP: data count != 2 (%u)", count);
-        recvData.rfinish();
+    if (packet.Inv.Items.size() != 2)
         return;
-    }
 
-    recvData >> gift_bag >> gift_slot >> item_bag >> item_slot;
-
-
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WRAP: receive gift_bag = %u, gift_slot = %u, item_bag = %u, item_slot = %u", gift_bag, gift_slot, item_bag, item_slot);
-
-    Item* gift = _player->GetItemByPos(gift_bag, gift_slot);
+    Item* gift = _player->GetItemByPos(packet.Inv.Items[0].ContainerSlot, packet.Inv.Items[0].Slot);
     if (!gift)
     {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, NULL);
+        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, nullptr);
         return;
     }
 
     if (!(gift->GetTemplate()->Flags & ITEM_PROTO_FLAG_WRAPPER)) // cheating: non-wrapper wrapper
     {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, NULL);
+        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, nullptr);
         return;
     }
 
-    Item* item = _player->GetItemByPos(item_bag, item_slot);
-
+    Item* item = _player->GetItemByPos(packet.Inv.Items[1].ContainerSlot, packet.Inv.Items[1].Slot);
     if (!item)
     {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, item, nullptr);
         return;
     }
 
-    if (item == gift)                                          // not possable with pacjket from real client
+    if (item == gift)
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_WRAPPED, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_WRAPPED, item, nullptr);
         return;
     }
 
     if (item->IsEquipped())
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_EQUIPPED, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_EQUIPPED, item, nullptr);
         return;
     }
 
-    if (item->GetGuidValue(ITEM_FIELD_GIFT_CREATOR))        // HasFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_FLAGS_WRAPPED);
+    if (!item->GetGuidValue(ITEM_FIELD_GIFT_CREATOR).IsEmpty())
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_WRAPPED, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_WRAPPED, item, nullptr);
         return;
     }
 
     if (item->IsBag())
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_BAGS, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_BAGS, item, nullptr);
         return;
     }
 
     if (item->IsSoulBound())
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_BOUND, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_BOUND, item, nullptr);
         return;
     }
 
     if (item->GetMaxStackCount() != 1)
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_STACKABLE, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_STACKABLE, item, nullptr);
         return;
     }
 
-    // maybe not correct check  (it is better than nothing)
     if (item->GetTemplate()->MaxCount > 0)
     {
-        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_UNIQUE, item, NULL);
+        _player->SendEquipError(EQUIP_ERR_CANT_WRAP_UNIQUE, item, nullptr);
         return;
     }
 
@@ -835,8 +818,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recvData)
     }
     CharacterDatabase.CommitTransaction(trans);
 
-    uint32 count_dest = 1;
-    _player->DestroyItemCount(gift, count_dest, true);
+    _player->DestroyItem(gift->GetBagSlot(), gift->GetSlot(), true);
 }
 
 //! 6.0.3

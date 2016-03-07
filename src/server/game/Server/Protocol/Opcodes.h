@@ -727,7 +727,7 @@ enum OpcodeClient : uint16
     CMSG_WHO_IS                                       = 0x3686,
     CMSG_WORLD_PORT_RESPONSE                          = 0x35F7,
     CMSG_WORLD_TELEPORT                               = 0xBADD,
-    CMSG_WRAP_ITEM                                    = 0xBADD,
+    CMSG_WRAP_ITEM                                    = 0x3994,
 };
 
 enum OpcodeServer : uint16

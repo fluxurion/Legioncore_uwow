@@ -248,6 +248,7 @@ namespace WorldPackets
         class UseCritterItem;
         class AutoEquipItemSlot;
         class CancelTempEnchantment;
+        class WrapItem;
     }
 
     namespace Loot
@@ -1362,7 +1363,7 @@ class WorldSession
         void HandleBuybackItem(WorldPackets::Item::BuyBackItem& packet);
         void HandleAutoBankItem(WorldPackets::Bank::AutoBankItem& packet);
         void HandleAutoStoreBankItem(WorldPackets::Bank::AutoStoreBankItem& packet);
-        void HandleWrapItemOpcode(WorldPacket& recvPacket);
+        void HandleWrapItem(WorldPackets::Item::WrapItem& packet);
         void HandleUseCritterItem(WorldPackets::Item::UseCritterItem& packet);
 
         void HandleAttackSwing(WorldPackets::Combat::AttackSwing& packet);
