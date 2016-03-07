@@ -42,8 +42,6 @@ class Player;
 class WorldSocket;
 class SystemMgr;
 
-#define PACKETS_COUNT 14749
-
 // ServerMessages.dbc
 enum ServerMessageType
 {
@@ -1002,7 +1000,7 @@ class World
         void ProcessQueryCallbacks();
         std::deque<std::future<PreparedQueryResult>> m_realmCharCallbacks;
 
-        uint16 loadantispamm[PACKETS_COUNT][2];//0 maxcount, 1 time
+        uint16 loadantispamm[MAX_OPCODE][2];//0 maxcount, 1 time
 };
 
 extern Realm realm;

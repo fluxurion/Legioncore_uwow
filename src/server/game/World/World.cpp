@@ -3500,7 +3500,7 @@ void World::LoadWorldAntispamm()
         return;
     }
 
-    for (uint32 i = 0; i < PACKETS_COUNT; ++i)
+    for (uint32 i = 0; i < MAX_OPCODE; ++i)
     {
        loadantispamm[i][0] = 0;
        loadantispamm[i][1] = 0;

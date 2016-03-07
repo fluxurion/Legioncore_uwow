@@ -1811,7 +1811,7 @@ class WorldSession
 
         bool wardenModuleFailed;
 
-        uint32 antispamm[PACKETS_COUNT][2];//0 count, 1 savetime
+        uint32 antispamm[MAX_OPCODE][2];//0 count, 1 savetime
 
         ObjectGuid m_currentBankerGUID;
 

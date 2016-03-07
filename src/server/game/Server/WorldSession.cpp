@@ -123,7 +123,7 @@ m_currentBankerGUID(), wardenModuleFailed(false)
         LoginDatabase.PExecute("UPDATE account SET online = 1 WHERE id = %u;", GetAccountId());     // One-time query
     }
 
-    for (uint32 i = 0; i < PACKETS_COUNT; ++i)
+    for (uint32 i = 0; i < MAX_OPCODE; ++i)
     {
         antispamm[i][0] = 0;
         antispamm[i][1] = 0;
