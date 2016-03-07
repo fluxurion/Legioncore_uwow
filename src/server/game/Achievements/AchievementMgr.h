@@ -30,10 +30,10 @@
 struct CriteriaTreeInfo
 {
     uint32 criteriaTreeID = 0;
-    CriteriaTreeEntry const* parentTree = NULL;
-    AchievementEntry const* achievement = NULL;
-    CriteriaTreeEntry const* criteriaTree = NULL;
-    CriteriaEntry const* criteria = NULL;
+    CriteriaTreeEntry const* parentTree = nullptr;
+    AchievementEntry const* achievement = nullptr;
+    CriteriaTreeEntry const* criteriaTree = nullptr;
+    CriteriaEntry const* criteria = nullptr;
 };
 
 typedef std::vector<CriteriaTreeInfo> CriteriaTreeList;
@@ -44,7 +44,7 @@ typedef std::unordered_map<uint32, AchievementEntryList> AchievementListByRefere
 struct CriteriaTreeProgress
 {
     CriteriaTreeProgress() : counter(0), CompletedGUID(), date(0), changed(false), updated(false), completed(false), deactiveted(true)
-    , achievement(NULL), criteriaTree(NULL), parent(NULL), criteria(NULL)    { }
+    , achievement(nullptr), criteriaTree(nullptr), parent(nullptr), criteria(nullptr)    { }
 
     uint32 counter;
     time_t date;                                            // latest update time.
@@ -62,11 +62,11 @@ struct CriteriaTreeProgress
 
 struct CriteriaProgressTree
 {
-    CriteriaProgressTree() : completed(false), achievement(NULL), criteriaTree(NULL) { }
+    CriteriaProgressTree() : completed(false), achievement(nullptr), criteriaTree(nullptr) { }
 
     bool completed;
-    AchievementEntry const* achievement = NULL;
-    CriteriaTreeEntry const* criteriaTree = NULL;
+    AchievementEntry const* achievement = nullptr;
+    CriteriaTreeEntry const* criteriaTree = nullptr;
     std::vector<CriteriaProgressTree *> ChildrenTree;
     std::vector<CriteriaTreeProgress const*> ChildrenCriteria;
 };
@@ -278,12 +278,12 @@ class AchievementMgr
 
         void Reset();
         static void DeleteFromDB(ObjectGuid lowguid, uint32 accountId = 0);
-        void LoadFromDB(PreparedQueryResult achievementResult, PreparedQueryResult criteriaResult, PreparedQueryResult achievementAccountResult = NULL, PreparedQueryResult criteriaAccountResult = NULL);
+        void LoadFromDB(PreparedQueryResult achievementResult, PreparedQueryResult criteriaResult, PreparedQueryResult achievementAccountResult = nullptr, PreparedQueryResult criteriaAccountResult = nullptr);
         void SaveToDB(SQLTransaction& trans);
         void ResetAchievementCriteria(AchievementCriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, bool evenIfCriteriaComplete = false);
-        void UpdateAchievementCriteria(AchievementCriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, uint32 miscValue3 = 0,Unit const* unit = NULL, Player* referencePlayer = NULL, bool init = false);
-        void CompletedAchievement(AchievementEntry const* achievement, Player* referencePlayer, CriteriaProgressMap* progressMap = NULL);
-        bool IsCompletedAchievement(AchievementEntry const* achievement, Player* referencePlayer, CriteriaProgressMap* progressMap = NULL);
+        void UpdateAchievementCriteria(AchievementCriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, uint32 miscValue3 = 0,Unit const* unit = nullptr, Player* referencePlayer = nullptr, bool init = false);
+        void CompletedAchievement(AchievementEntry const* achievement, Player* referencePlayer, CriteriaProgressMap* progressMap = nullptr);
+        bool IsCompletedAchievement(AchievementEntry const* achievement, Player* referencePlayer, CriteriaProgressMap* progressMap = nullptr);
         void CheckAllAchievementCriteria(Player* referencePlayer);
         void SendAllAchievementData(Player* receiver);
         void SendAllAccountCriteriaData(Player* receiver);
@@ -298,7 +298,7 @@ class AchievementMgr
         void RemoveTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry);   // used for quest and scripted timed achievements
         uint32 GetAchievementPoints() const { return _achievementPoints; }
         CriteriaSort GetCriteriaSort() const;
-        bool IsCompletedCriteria(CriteriaTreeEntry const* criteriaTree, AchievementEntry const* achievement, CriteriaEntry const* criteria, CriteriaProgressMap* progressMap = NULL, CriteriaTreeProgress* progress = NULL);
+        bool IsCompletedCriteria(CriteriaTreeEntry const* criteriaTree, AchievementEntry const* achievement, CriteriaEntry const* criteria, CriteriaProgressMap* progressMap = nullptr, CriteriaTreeProgress* progress = nullptr);
         uint32 IsCompletedCriteriaTreeCounter(CriteriaTreeEntry const* criteriaTree, AchievementEntry const* achievement);
         bool IsCompletedCriteriaTree(CriteriaTreeEntry const* criteriaTree, AchievementEntry const* achievement, CriteriaProgressMap* progressMap, bool parent = false);
         bool IsCompletedScenarioTree(CriteriaTreeEntry const* criteriaTree);
@@ -317,7 +317,7 @@ class AchievementMgr
         void SendCriteriaUpdate(CriteriaEntry const* criteria, CriteriaTreeProgress const* progress, uint32 timeElapsed, bool timedCompleted) const;
         void SendAccountCriteriaUpdate(CriteriaEntry const* criteria, CriteriaTreeProgress const* progress, uint32 timeElapsed, bool timedCompleted) const;
 
-        CriteriaTreeProgress* GetCriteriaProgress(uint32 entry, uint32 achievementId, CriteriaProgressMap* progressMap = NULL);
+        CriteriaTreeProgress* GetCriteriaProgress(uint32 entry, uint32 achievementId, CriteriaProgressMap* progressMap = nullptr);
         bool SetCriteriaProgress(AchievementEntry const* achievement, CriteriaTreeEntry const* treeEntry, CriteriaEntry const* criteria, uint32 changeValue, Player* referencePlayer, ProgressType ptype, CriteriaProgressMap*& progressMap, CriteriaTreeProgress*& progress);
         void RemoveCriteriaProgress(CriteriaTreeEntry const* criteriaTree, uint32 achievementId);
         bool CanCompleteCriteria(AchievementEntry const* achievement);
@@ -374,25 +374,25 @@ class AchievementGlobalMgr
         CriteriaTreeInfo const* GetCriteriaTreeInfoById(uint32 id) const
         {
             CriteriaTreeInfoMap::const_iterator itr = m_CriteriaTreeInfoById.find(id);
-            return itr != m_CriteriaTreeInfoById.end() ? &itr->second : NULL;
+            return itr != m_CriteriaTreeInfoById.end() ? &itr->second : nullptr;
         }
 
         AchievementEntryList const* GetAchievementByReferencedId(uint32 id) const
         {
             AchievementListByReferencedId::const_iterator itr = m_AchievementListByReferencedId.find(id);
-            return itr != m_AchievementListByReferencedId.end() ? &itr->second : NULL;
+            return itr != m_AchievementListByReferencedId.end() ? &itr->second : nullptr;
         }
 
         AchievementReward const* GetAchievementReward(AchievementEntry const* achievement) const
         {
             AchievementRewards::const_iterator iter = m_achievementRewards.find(achievement->ID);
-            return iter != m_achievementRewards.end() ? &iter->second : NULL;
+            return iter != m_achievementRewards.end() ? &iter->second : nullptr;
         }
 
         AchievementRewardLocale const* GetAchievementRewardLocale(AchievementEntry const* achievement) const
         {
             AchievementRewardLocales::const_iterator iter = m_achievementRewardLocales.find(achievement->ID);
-            return iter != m_achievementRewardLocales.end() ? &iter->second : NULL;
+            return iter != m_achievementRewardLocales.end() ? &iter->second : nullptr;
         }
 
         AchievementCriteriaDataSet const* GetCriteriaDataSet(CriteriaEntry const* achievementCriteria) const
@@ -430,7 +430,7 @@ class AchievementGlobalMgr
         }
 
         void LoadAchievementCriteriaList();
-        void AddCriteriaTreeEntry(uint32 criteriaTreeID, uint32& criterias, uint32& guildCriterias, uint32& scenarioCriterias, AchievementEntry const* achievement = NULL, bool isScenario = false);
+        void AddCriteriaTreeEntry(uint32 criteriaTreeID, uint32& criterias, uint32& guildCriterias, uint32& scenarioCriterias, AchievementEntry const* achievement = nullptr, bool isScenario = false);
         void LoadAchievementCriteriaData();
         void LoadAchievementReferenceList();
         void LoadCompletedAchievements();

@@ -196,16 +196,13 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_MINOR_TALENT, "SELECT ID, SpecID, SpellID, OrderIndex FROM minor_talent ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Criteria.db2
-    PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, CreatureID, MapID, SkillID, AchievementID, ZoneID, CurrencyID, ManLimit, RaidSize, "
-        "EnviromentalDamageType, QuestID, SpellID, ObjectiveID, AreaID, ItemID, TeamType, rank, FactionID, ItemSlot, RollValue, ClassID, RaceID, "
-        "EmoteID, GoEntry, ScriptDataVal, SkillLine, AddPet, LootType, LevelUP, GarrBuildingID, GarrisonLevel, GarrMissionID, "
-        "CharShipmentContainerID, StartAsset, FailAsset, StartTimer, ModifyTree, Flags, Type, StartEvent, FailEvent, EligibilityWorldStateID, "
-        "EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, Asset, StartAsset, FailAsset, StartTimer, ModifyTree, Flags, Type, StartEvent, FailEvent, "
+        "EligibilityWorldStateID, EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // CriteriaTree.db2
-    PrepareStatement(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Amount, DescriptionLang, CriteriaID, Parent, flags2, UNK, Flags FROM criteria_tree"
+    PrepareStatement(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Amount, Description, CriteriaID, Parent, Flags, OrderIndex, Operator FROM criteria_tree"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, DescriptionLang_lang FROM criteria_tree_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Description_lang FROM criteria_tree_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CharacterLoadoutItem.db2
     PrepareStatement(HOTFIX_SEL_CHARACTER_LOADOUT_ITEM, "SELECT ID, LoadOutID, ItemID FROM character_loadout_item ORDER BY ID DESC", CONNECTION_SYNCH);

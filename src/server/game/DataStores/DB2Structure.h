@@ -749,126 +749,8 @@ struct MinorTalentEntry
 
 struct CriteriaEntry
 {
-    uint32 ID;
-    union //int32 Asset;
-    {
-        // ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE                  = 0
-        // ACHIEVEMENT_CRITERIA_TYPE_KILLED_BY_CREATURE             = 20
-        uint32 CreatureID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_BG                         = 1
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_BATTLEGROUND          = 15
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATH_AT_MAP                   = 16
-        // ACHIEVEMENT_CRITERIA_TYPE_WIN_ARENA                      = 32
-        // ACHIEVEMENT_CRITERIA_TYPE_PLAY_ARENA                     = 33
-        // ACHIEVEMENT_CRITERIA_TYPE_INSTANSE_MAP_ID                = 71
-        uint32 MapID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_REACH_SKILL_LEVEL              = 7
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LEVEL              = 40
-        uint32 SkillID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_ACHIEVEMENT           = 8
-        uint32 AchievementID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE        = 11
-        uint32 ZoneID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_CURRENCY                       = 12
-        uint32 CurrencyID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATH_IN_DUNGEON               = 18
-        uint32 ManLimit;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_RAID                  = 19
-        uint32 RaidSize;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM                    = 26
-        uint32 EnviromentalDamageType;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUEST                 = 27
-        uint32 QuestID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET                = 28
-        // ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET2               = 69
-        // ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL                     = 29
-        // ACHIEVEMENT_CRITERIA_TYPE_CAST_SPELL2                    = 110
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SPELL                    = 34
-        uint32 SpellID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BG_OBJECTIVE_CAPTURE
-        uint32 ObjectiveID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HONORABLE_KILL_AT_AREA         = 31
-        // ACHIEVEMENT_CRITERIA_TYPE_EXPLORE_AREA                   = 43
-        uint32 AreaID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_OWN_ITEM                       = 36
-        // ACHIEVEMENT_CRITERIA_TYPE_USE_ITEM                       = 41
-        // ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM                      = 42
-        // ACHIEVEMENT_CRITERIA_TYPE_EQUIP_ITEM                     = 57
-        uint32 ItemID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_TEAM_RATING            = 38
-        // ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_PERSONAL_RATING        = 39
-        uint32 TeamType;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_OWN_RANK                       = 44
-        uint32 rank; // TODO: This rank is _NOT_ the index from CharTitles.dbc
-
-        // ACHIEVEMENT_CRITERIA_TYPE_GAIN_REPUTATION                = 46
-        uint32 FactionID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_EQUIP_EPIC_ITEM                = 49
-        uint32 ItemSlot;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_ROLL_GREED_ON_LOOT             = 51
-        uint32 RollValue;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HK_CLASS                       = 52
-        uint32 ClassID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_HK_RACE                        = 53
-        uint32 RaceID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE                       = 54
-        uint32 EmoteID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_USE_GAMEOBJECT                 = 68
-        // ACHIEVEMENT_CRITERIA_TYPE_FISH_IN_GAMEOBJECT             = 72
-        uint32 GoEntry;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT                   = 73
-        // ACHIEVEMENT_CRITERIA_TYPE_SCRIPT_EVENT_2                 = 92
-        uint32 ScriptDataVal;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS         = 75
-        // ACHIEVEMENT_CRITERIA_TYPE_LEARN_SKILL_LINE               = 112
-        uint32 SkillLine;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_ADD_BATTLE_PET_JOURNAL         = 96
-        uint32 AddPet;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE                      = 109
-        uint32 LootType;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_BATTLEPET_LEVEL_UP             = 160
-        uint32 LevelUP;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_PLACE_GARRISON_BUILDING        = 167
-        // ACHIEVEMENT_CRITERIA_TYPE_UPGRADE_GARRISON_BUILDING      = 168
-        // ACHIEVEMENT_CRITERIA_TYPE_CONSTRUCT_GARRISON_BUILDING    = 169
-        uint32 GarrBuildingID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_UPGRADE_GARRISON               = 170
-        uint32 GarrisonLevel;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_GARRISON_MISSION      = 174
-        uint32 GarrMissionID;
-
-        // ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_GARRISON_SHIPMENT     = 182
-        uint32 CharShipmentContainerID;
-    } Asset;
+    uint32      ID;
+    int32       Asset;                                      // 0
     uint32      StartAsset;                                 // 1
     uint32      FailAsset;                                  // 2
     uint16      StartTimer;                                 // 3
@@ -885,12 +767,12 @@ struct CriteriaTreeEntry
 {
     uint32      ID;
     uint32      Amount;                                     // 0
-    LocalizedString* DescriptionLang;                       // 1
+    LocalizedString* Description;                           // 1
     uint16      CriteriaID;                                 // 2
     uint16      Parent;                                     // 3
-    uint16      flags2;                                     // 4 Operator/OrderIndex
-    uint16      UNK;                                        // 5 Operator/OrderIndex
-    uint8       Flags;                                      // 6
+    int16       Flags;                                      // 4
+    int16       OrderIndex;                                 // 5
+    int8        Operator;                                   // 6
 };
 
 struct CharacterLoadoutItemEntry

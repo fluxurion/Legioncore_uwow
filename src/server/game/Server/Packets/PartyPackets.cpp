@@ -330,9 +330,9 @@ WorldPacket const* WorldPackets::Party::PartyUpdate::Write()
     _worldPacket << PartyFlags;
 
     _worldPacket << MyIndex;
-    _worldPacket << LeaderGUID;
-    _worldPacket << SequenceNum;
     _worldPacket << PartyGUID;
+    _worldPacket << SequenceNum;
+    _worldPacket << LeaderGUID;
 
     _worldPacket << PlayerList;
 

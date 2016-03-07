@@ -27,12 +27,12 @@ ScenarioProgress::ScenarioProgress(uint32 _instanceId, lfg::LFGDungeonData const
     : instanceId(_instanceId), dungeonData(_dungeonData),
     m_achievementMgr(this), currentStep(0), currentTree(0), bonusRewarded(false), rewarded(false)
 {
-    if(dungeonData->dbc->scenarioId)
+    if (dungeonData->dbc->scenarioId)
         scenarioId = dungeonData->dbc->scenarioId;
     else
     {
         ScenarioData const* scenarioData = sObjectMgr->GetScenarioOnMap(dungeonData->map);
-        if(scenarioData)
+        if (scenarioData)
             scenarioId = scenarioData->ScenarioID;
 
         //sLog->outDebug(LOG_FILTER_MAPSCRIPTS, "ScenarioProgress::ScenarioProgress _instanceId %u scenarioId %u dungeonData %u scenarioData %u", _instanceId, scenarioId, dungeonData->map, scenarioData);
@@ -93,7 +93,7 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
     for (ScenarioSteps::const_iterator itr = steps.begin(); itr != steps.end(); ++itr)
     {
         //Not check if ctep already complete
-        if(currentStep > itr->second->OrderIndex)
+        if (currentStep > itr->second->OrderIndex)
             continue;
 
         CriteriaTreeEntry const* criteriaTree = sCriteriaTreeStore.LookupEntry(itr->second->Criteriatreeid);
@@ -125,7 +125,7 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
 uint32 ScenarioProgress::GetScenarioCriteriaByStep(uint8 step)
 {
     for (ScenarioSteps::const_iterator itr = steps.begin(); itr != steps.end(); ++itr)
-        if(step == itr->second->OrderIndex)
+        if (step == itr->second->OrderIndex)
             return itr->second->Criteriatreeid;
 
     return 0;
@@ -223,7 +223,7 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
     //}
 
     CriteriaProgressMap* progressMap = GetAchievementMgr().GetCriteriaProgressMap(0);
-    
+
     WorldPackets::Achievement::CriteriaTreeProgress progress;
 
     state.ScenarioID = GetScenarioId();
@@ -232,7 +232,7 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
     state.WaveCurrent = 0;
     state.WaveMax = 0;
     state.TimerDuration = 0;
-    state.ScenarioComplete = IsCompleted(false);    
+    state.ScenarioComplete = IsCompleted(false);
 
     if (full)
     {
@@ -249,9 +249,9 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
                 progress.Quantity = treeProgress.counter;
                 progress.Player = ObjectGuid::Create<HighGuid::Scenario>(0, GetScenarioId(), 1); // whats the fuck ?
                 progress.Flags = 0;
-                progress.Date = time(NULL) - treeProgress.date;
-                progress.TimeFromStart = time(NULL) - treeProgress.date;
-                progress.TimeFromCreate = time(NULL) - treeProgress.date;
+                progress.Date = time(nullptr) - treeProgress.date;
+                progress.TimeFromStart = time(nullptr) - treeProgress.date;
+                progress.TimeFromCreate = time(nullptr) - treeProgress.date;
                 state.Progress.push_back(progress);
             }
         }
@@ -300,14 +300,14 @@ bool ScenarioProgress::CanUpdateCriteria(uint32 criteriaId, uint32 recursTree /*
 
     for (std::vector<CriteriaTreeEntry const*>::const_iterator itr = cTreeList->begin(); itr != cTreeList->end(); ++itr)
     {
-        if(CriteriaTreeEntry const* criteriaTree = *itr)
+        if (CriteriaTreeEntry const* criteriaTree = *itr)
         {
-            if(criteriaTree->CriteriaID == 0)
+            if (criteriaTree->CriteriaID == 0)
             {
-                if(CanUpdateCriteria(criteriaId, criteriaTree->ID))
+                if (CanUpdateCriteria(criteriaId, criteriaTree->ID))
                     return true;
             }
-            else if(criteriaTree->ID == criteriaId)
+            else if (criteriaTree->ID == criteriaId)
                 return true;
         }
     }
@@ -335,7 +335,7 @@ ScenarioMgr::~ScenarioMgr()
 ScenarioProgress* ScenarioMgr::GetScenarioProgress(uint32 instanceId)
 {
     ScenarioProgressMap::iterator itr = m_scenarioProgressMap.find(instanceId);
-    return itr != m_scenarioProgressMap.end() ? itr->second : NULL;
+    return itr != m_scenarioProgressMap.end() ? itr->second : nullptr;
 }
 
 void ScenarioMgr::AddScenarioProgress(uint32 instanceId, lfg::LFGDungeonData const* dungeonData, bool /*loading*/)
@@ -382,5 +382,5 @@ void ScenarioMgr::Update(uint32 diff)
 ScenarioSteps const* ScenarioMgr::GetScenarioSteps(uint32 scenarioId)
 {
     ScenarioStepsByScenarioMap::const_iterator itr = m_stepMap.find(scenarioId);
-    return itr != m_stepMap.end() ? &itr->second : NULL;
+    return itr != m_stepMap.end() ? &itr->second : nullptr;
 }
