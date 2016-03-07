@@ -423,7 +423,7 @@ enum OpcodeClient : uint16
     CMSG_MOVE_ENABLE_SWIM_TO_FLY_TRANS_ACK            = 0x3A21,
     CMSG_MOVE_FALL_LAND                               = 0x39F9,
     CMSG_MOVE_FALL_RESET                              = 0x3A16,
-    CMSG_MOVE_FEATHER_FALL_ACK                        = 0xBADD,
+    CMSG_MOVE_FEATHER_FALL_ACK                        = 0x3A1B,
     CMSG_MOVE_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK      = 0xBADD,
     CMSG_MOVE_FORCE_FLIGHT_SPEED_CHANGE_ACK           = 0x3A2A,
     CMSG_MOVE_FORCE_PITCH_RATE_CHANGE_ACK             = 0x3A0F,
