@@ -536,6 +536,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_TIME_SKIPPED,                                  STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Movement::MoveTimeSkipped, &WorldSession::HandleMoveTimeSkipped);
     DEFINE_HANDLER(CMSG_MOVE_TOGGLE_COLLISION_CHEAT,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_MOVE_WATER_WALK_ACK,                                STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
+    DEFINE_HANDLER(CMSG_MOVE_STATUS_UNK,                                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_NEUTRAL_PLAYER_SELECT_FACTION,           STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSetFactionOpcode          );
     DEFINE_HANDLER(CMSG_NEXT_CINEMATIC_CAMERA,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::NextCinematicCamera, &WorldSession::HandleNextCinematicCamera);
     DEFINE_HANDLER(CMSG_OBJECT_UPDATE_FAILED,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::ObjectUpdateFailed, &WorldSession::HandleObjectUpdateFailed);
