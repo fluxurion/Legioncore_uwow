@@ -667,7 +667,8 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
 
             if (plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING_FAR))
             {
-                if (movementInfo.pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY()))
+                //@TODO::Legion
+                /*if (movementInfo.pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY()))
                     if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))
                     {
                         // by CyberBrest: Nice! Best regards. Just kill man,  maybe return them to the grave??? 
@@ -683,7 +684,7 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
                             if (!plrMover->isAlive())
                                 plrMover->KillPlayer();
                         }
-                    }
+                    }*/
             }
         }
     }
