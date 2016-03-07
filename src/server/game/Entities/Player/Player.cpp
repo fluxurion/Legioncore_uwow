@@ -21021,11 +21021,6 @@ void Player::_SaveQuestStatus(SQLTransaction& trans)
                 stmt->setUInt32(0, GetSession()->GetAccountId());
                 stmt->setUInt32(1, saveItr->first);
                 trans->Append(stmt);
-
-                stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ACC_QUESTSTATUS_OBJECTIVES_BY_QUEST);
-                stmt->setUInt32(0, GetSession()->GetAccountId());
-                stmt->setUInt32(1, saveItr->first);
-                trans->Append(stmt);
             }
             else
             {
