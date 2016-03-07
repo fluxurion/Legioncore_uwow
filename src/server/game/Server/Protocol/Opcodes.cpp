@@ -132,7 +132,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_AUTH_CONTINUED_SESSION,                             STATUS_NEVER,     PROCESS_THREADUNSAFE, WorldPacket, &WorldSession::Handle_EarlyProccess);
     DEFINE_HANDLER(CMSG_AUTH_SESSION,                                       STATUS_NEVER,     PROCESS_INPLACE,      WorldPacket, &WorldSession::Handle_EarlyProccess);
     DEFINE_HANDLER(CMSG_AUTO_EQUIP_ITEM,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::AutoEquipItem, &WorldSession::HandleAutoEquipItem);
-    DEFINE_HANDLER(CMSG_AUTO_EQUIP_ITEM_SLOT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::AutoEquipItemSlot, &WorldSession::HandleAutoEquipItemSlotOpcode);
+    DEFINE_HANDLER(CMSG_AUTO_EQUIP_ITEM_SLOT,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::AutoEquipItemSlot, &WorldSession::HandleAutoEquipItemSlotOpcode);
     DEFINE_HANDLER(CMSG_AUTO_STORE_BAG_ITEM,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::AutoStoreBagItem, &WorldSession::HandleAutoStoreBagItem);
     DEFINE_HANDLER(CMSG_AUTOBANK_ITEM,                                      STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Bank::AutoBankItem, &WorldSession::HandleAutoBankItem);
     DEFINE_HANDLER(CMSG_AUTOBANK_REAGENT,                                   STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -719,7 +719,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SORT_REAGENT_BANK_BAGS,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SPELL_CLICK,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::SpellClick, &WorldSession::HandleSpellClick);
     DEFINE_HANDLER(CMSG_SPIRIT_HEALER_ACTIVATE,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::NPC::SpiritHealerActivate, &WorldSession::HandleSpiritHealerActivate);
-    DEFINE_HANDLER(CMSG_SPLIT_ITEM,                                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::SplitItem, &WorldSession::HandleSplitItemOpcode);
+    DEFINE_HANDLER(CMSG_SPLIT_ITEM,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::SplitItem, &WorldSession::HandleSplitItemOpcode);
     DEFINE_HANDLER(CMSG_STAND_STATE_CHANGE,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::StandStateChange, &WorldSession::HandleStandStateChangeOpcode);
     DEFINE_HANDLER(CMSG_START_SPECTATOR_WAR_GAME,                           STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_START_WAR_GAME,                                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -729,7 +729,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SUPPORT_TICKET_SUBMIT_SUGGESTION,                   STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SUSPEND_COMMS_ACK,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SUSPEND_TOKEN_RESPONSE,                             STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Auth::SuspendTokenResponse, &WorldSession::SuspendTokenResponse);
-    DEFINE_HANDLER(CMSG_SWAP_INV_ITEM,                                      STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Item::SwapInvItem, &WorldSession::HandleSwapInvItemOpcode);
+    DEFINE_HANDLER(CMSG_SWAP_INV_ITEM,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::SwapInvItem, &WorldSession::HandleSwapInvItemOpcode);
     DEFINE_HANDLER(CMSG_SWAP_ITEM,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::SwapItem, &WorldSession::HandleSwapItem);
     DEFINE_HANDLER(CMSG_SWAP_SUB_GROUPS,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::SwapSubGroups, &WorldSession::HandleSwapSubGroups);
     DEFINE_HANDLER(CMSG_SWAP_VOID_ITEM,                                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::SwapVoidItem, &WorldSession::HandleVoidSwapItem);
