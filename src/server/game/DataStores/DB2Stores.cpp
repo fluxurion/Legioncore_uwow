@@ -299,14 +299,14 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
-    LOAD_DB2(sAchievementStore);                // 21021
-    LOAD_DB2(sAreaGroupMemberStore);            // 21154
-    LOAD_DB2(sAreaTableStore);                  // 21021
-    LOAD_DB2(sAreaTriggerStore);                // 21021
-    LOAD_DB2(sArmorLocationStore);              // 21021
-    LOAD_DB2(sAuctionHouseStore);               // 21021
-    LOAD_DB2(sBankBagSlotPricesStore);          // 21021
-    LOAD_DB2(sBannedAddOnsStore);               // 21154
+    LOAD_DB2(sAchievementStore);
+    LOAD_DB2(sAreaGroupMemberStore);
+    LOAD_DB2(sAreaTableStore);
+    LOAD_DB2(sAreaTriggerStore);
+    LOAD_DB2(sArmorLocationStore);
+    LOAD_DB2(sAuctionHouseStore);
+    LOAD_DB2(sBankBagSlotPricesStore);
+    LOAD_DB2(sBannedAddOnsStore);
     //LOAD_DB2(sBarberShopStyleStore);
     //LOAD_DB2(sBattlemasterListStore);
     //LOAD_DB2(sBattlePetAbilityEffectStore);
@@ -320,37 +320,37 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetSpeciesStore);
     //LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     //LOAD_DB2(sBattlePetStateStore);
-    LOAD_DB2(sBroadcastTextStore);              // 21021
-    LOAD_DB2(sCharacterLoadoutItemStore);       // 21021
-    LOAD_DB2(sCharSectionsStore);               // 21154
-    LOAD_DB2(sCharStartOutfitStore);            // 21021
-    LOAD_DB2(sCharTitlesStore);                 // 21021
-    LOAD_DB2(sChatChannelsStore);               // 21021
-    LOAD_DB2(sChrClassesStore);                 // 21154
-    LOAD_DB2(sChrClassesXPowerTypesStore);      // 21021
-    LOAD_DB2(sChrRacesStore);                   // 21021
-    LOAD_DB2(sChrSpecializationStore);          // 21021
-    LOAD_DB2(sCreatureDifficultyStore);         // 21021
-    LOAD_DB2(sCreatureDisplayInfoStore);        // 21021
-    LOAD_DB2(sCreatureFamilyStore);             // 21021
-    LOAD_DB2(sCreatureModelDataStore);          // 21154
-    LOAD_DB2(sCreatureTypeStore);               // 21021
-    LOAD_DB2(sCriteriaStore);                   // 21021
-    LOAD_DB2(sCriteriaTreeStore);               // 21021
-    LOAD_DB2(sCurrencyTypesStore);              // 21021
-    LOAD_DB2(sCurvePointStore);                 // 21021
-    LOAD_DB2(sDestructibleModelDataStore);      // 21021
-    LOAD_DB2(sDifficultyStore);                 // 21021
-    LOAD_DB2(sDungeonEncounterStore);           // 21154
-    LOAD_DB2(sDurabilityCostsStore);            // 21021
-    LOAD_DB2(sDurabilityQualityStore);          // 21021
-    LOAD_DB2(sEmotesStore);                     // 21021
-    LOAD_DB2(sEmotesTextStore);                 // 21021
-    LOAD_DB2(sFactionStore);                    // 21154
-    LOAD_DB2(sFactionTemplateStore);            // 21154
-    LOAD_DB2(sGameObjectDisplayInfoStore);      // 21021
-    LOAD_DB2(sGameObjectsStore);                // 21154
-    LOAD_DB2(sGameTablesStore);                 // 21021
+    LOAD_DB2(sBroadcastTextStore);
+    LOAD_DB2(sCharacterLoadoutItemStore);
+    LOAD_DB2(sCharSectionsStore);
+    LOAD_DB2(sCharStartOutfitStore);
+    LOAD_DB2(sCharTitlesStore);
+    LOAD_DB2(sChatChannelsStore);
+    LOAD_DB2(sChrClassesStore);
+    LOAD_DB2(sChrClassesXPowerTypesStore);
+    LOAD_DB2(sChrRacesStore);
+    LOAD_DB2(sChrSpecializationStore);
+    LOAD_DB2(sCreatureDifficultyStore);
+    LOAD_DB2(sCreatureDisplayInfoStore);
+    LOAD_DB2(sCreatureFamilyStore);
+    LOAD_DB2(sCreatureModelDataStore);
+    LOAD_DB2(sCreatureTypeStore);
+    LOAD_DB2(sCriteriaStore);
+    LOAD_DB2(sCriteriaTreeStore);
+    LOAD_DB2(sCurrencyTypesStore);
+    LOAD_DB2(sCurvePointStore);
+    LOAD_DB2(sDestructibleModelDataStore);
+    LOAD_DB2(sDifficultyStore);
+    LOAD_DB2(sDungeonEncounterStore);
+    LOAD_DB2(sDurabilityCostsStore);
+    LOAD_DB2(sDurabilityQualityStore);
+    LOAD_DB2(sEmotesStore);
+    LOAD_DB2(sEmotesTextStore);
+    LOAD_DB2(sFactionStore);
+    LOAD_DB2(sFactionTemplateStore);
+    LOAD_DB2(sGameObjectDisplayInfoStore);
+    LOAD_DB2(sGameObjectsStore);
+    LOAD_DB2(sGameTablesStore);
     //LOAD_DB2(sGarrAbilityEffectStore);
     //LOAD_DB2(sGarrAbilityStore);
     //LOAD_DB2(sGarrBuildingPlotInstStore);
@@ -372,143 +372,143 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGarrPlotStore);
     //LOAD_DB2(sGarrSiteLevelPlotInstStore);
     //LOAD_DB2(sGarrSiteLevelStore);
-    LOAD_DB2(sGemPropertiesStore);              // 21154
+    LOAD_DB2(sGemPropertiesStore);
     //LOAD_DB2(sGlyphPropertiesStore);
     //LOAD_DB2(sGlyphSlotStore);
-    LOAD_DB2(sGuildPerkSpellsStore);            // 21021
+    LOAD_DB2(sGuildPerkSpellsStore);
     //LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
-    LOAD_DB2(sImportPriceArmorStore);           // 21021
-    LOAD_DB2(sImportPriceQualityStore);         // 21021
-    LOAD_DB2(sImportPriceShieldStore);          // 21021
-    LOAD_DB2(sImportPriceWeaponStore);          // 21021
-    LOAD_DB2(sItemAppearanceStore);             // 21021
-    LOAD_DB2(sItemArmorQualityStore);           // 21021
-    LOAD_DB2(sItemArmorShieldStore);            // 21021
-    LOAD_DB2(sItemArmorTotalStore);             // 21021
-    LOAD_DB2(sItemBonusStore);                  // 21021
-    LOAD_DB2(sItemBonusTreeNodeStore);          // 21021
-    LOAD_DB2(sItemClassStore);                  // 21021
-    LOAD_DB2(sItemCurrencyCostStore);           // 21021
-    LOAD_DB2(sItemDamageAmmoStore);             // 21021
-    LOAD_DB2(sItemDamageOneHandCasterStore);    // 21021
-    LOAD_DB2(sItemDamageOneHandStore);          // 21021
-    LOAD_DB2(sItemDamageTwoHandCasterStore);    // 21021
-    LOAD_DB2(sItemDamageTwoHandStore);          // 21021
-    LOAD_DB2(sItemDisenchantLootStore);         // 21021
-    LOAD_DB2(sItemEffectStore);                 // 21021
-    LOAD_DB2(sItemExtendedCostStore);           // 21021
-    LOAD_DB2(sItemLimitCategoryStore);          // 21021
-    LOAD_DB2(sItemModifiedAppearanceStore);     // 21021
-    LOAD_DB2(sItemPriceBaseStore);              // 21021
-    LOAD_DB2(sItemRandomPropertiesStore);       // 21021
-    LOAD_DB2(sItemRandomSuffixStore);           // 21021
-    LOAD_DB2(sItemSetSpellStore);               // 21021
-    LOAD_DB2(sItemSetStore);                    // 21021
-    LOAD_DB2(sItemSparseStore);                 // 21021
-    LOAD_DB2(sItemSpecOverrideStore);           // 21021
-    LOAD_DB2(sItemSpecStore);                   // 21021
-    LOAD_DB2(sItemStore);                       // 21021
+    LOAD_DB2(sImportPriceArmorStore);
+    LOAD_DB2(sImportPriceQualityStore);
+    LOAD_DB2(sImportPriceShieldStore);
+    LOAD_DB2(sImportPriceWeaponStore);
+    LOAD_DB2(sItemAppearanceStore);
+    LOAD_DB2(sItemArmorQualityStore);
+    LOAD_DB2(sItemArmorShieldStore);
+    LOAD_DB2(sItemArmorTotalStore);
+    LOAD_DB2(sItemBonusStore);
+    LOAD_DB2(sItemBonusTreeNodeStore);
+    LOAD_DB2(sItemClassStore);
+    LOAD_DB2(sItemCurrencyCostStore);
+    LOAD_DB2(sItemDamageAmmoStore);
+    LOAD_DB2(sItemDamageOneHandCasterStore);
+    LOAD_DB2(sItemDamageOneHandStore);
+    LOAD_DB2(sItemDamageTwoHandCasterStore);
+    LOAD_DB2(sItemDamageTwoHandStore);
+    LOAD_DB2(sItemDisenchantLootStore);
+    LOAD_DB2(sItemEffectStore);
+    LOAD_DB2(sItemExtendedCostStore);
+    LOAD_DB2(sItemLimitCategoryStore);
+    LOAD_DB2(sItemModifiedAppearanceStore);         // 21154
+    LOAD_DB2(sItemPriceBaseStore);
+    LOAD_DB2(sItemRandomPropertiesStore);
+    LOAD_DB2(sItemRandomSuffixStore);
+    LOAD_DB2(sItemSetSpellStore);
+    LOAD_DB2(sItemSetStore);
+    LOAD_DB2(sItemSparseStore);
+    LOAD_DB2(sItemSpecOverrideStore);
+    LOAD_DB2(sItemSpecStore);
+    LOAD_DB2(sItemStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
     //LOAD_DB2(sItemUpgradeStore);
-    LOAD_DB2(sItemXBonusTreeStore);             // 21021
-    LOAD_DB2(sKeyChainStore);                   // 21021
-    LOAD_DB2(sLanguageWordsStore);              // 21021
+    LOAD_DB2(sItemXBonusTreeStore);
+    LOAD_DB2(sKeyChainStore);
+    LOAD_DB2(sLanguageWordsStore);
     //LOAD_DB2(sLFGDungeonStore);
-    LOAD_DB2(sLiquidTypeStore);                 // 21154
-    LOAD_DB2(sLockStore);                       // 21021
-    LOAD_DB2(sMailTemplateStore);               // 21021
+    LOAD_DB2(sLiquidTypeStore);
+    LOAD_DB2(sLockStore);
+    LOAD_DB2(sMailTemplateStore);
     //LOAD_DB2(sMapChallengeModeStore);
-    LOAD_DB2(sMapDifficultyStore);              // 21154
-    LOAD_DB2(sMapStore);                        // 21154
+    LOAD_DB2(sMapDifficultyStore);
+    LOAD_DB2(sMapStore);
     //LOAD_DB2(sMinorTalentStore);
-    LOAD_DB2(sModifierTreeStore);               // 21021
+    LOAD_DB2(sModifierTreeStore);
     //LOAD_DB2(sMountCapabilityStore);
-    LOAD_DB2(sMountStore);                      // 21021
-    LOAD_DB2(sMountTypeStore);                  // 21154
-    LOAD_DB2(sMountTypeXCapabilityStore);       // 21021
-    LOAD_DB2(sMovieStore);                      // 21021
-    LOAD_DB2(sNameGenStore);                    // 21021
-    LOAD_DB2(sNamesProfanityStore);             // 21021
-    LOAD_DB2(sNamesReservedLocaleStore);        // 21021
-    LOAD_DB2(sNamesReservedStore);              // 21021
-    LOAD_DB2(sOverrideSpellDataStore);          // 21021
-    LOAD_DB2(sPhaseStores);                     // 21021
-    LOAD_DB2(sPowerDisplayStore);               // 21021
-    LOAD_DB2(sPvPDifficultyStore);              // 21021
-    LOAD_DB2(sPvpItemStore);                    // 21021
-    LOAD_DB2(sQuestFactionRewardStore);         // 21021
-    LOAD_DB2(sQuestLineStore);                  // 21021
-    LOAD_DB2(sQuestLineXQuestStore);            // 21021
-    LOAD_DB2(sQuestMoneyRewardStore);           // 21021
-    LOAD_DB2(sQuestObjectiveStore);             // 21021
-    LOAD_DB2(sQuestPackageItemStore);           // 21021
-    LOAD_DB2(sQuestPOIPointStore);              // 21021
-    LOAD_DB2(sQuestSortStore);                  // 21021
-    LOAD_DB2(sQuestV2Store);                    // 21021
-    LOAD_DB2(sQuestXPStore);                    // 21021
-    LOAD_DB2(sRandPropPointsStore);             // 21021
-    LOAD_DB2(sResearchBranchStore);             // 21021
+    LOAD_DB2(sMountStore);
+    LOAD_DB2(sMountTypeStore);
+    LOAD_DB2(sMountTypeXCapabilityStore);
+    LOAD_DB2(sMovieStore);
+    LOAD_DB2(sNameGenStore);
+    LOAD_DB2(sNamesProfanityStore);
+    LOAD_DB2(sNamesReservedLocaleStore);
+    LOAD_DB2(sNamesReservedStore);
+    LOAD_DB2(sOverrideSpellDataStore);
+    LOAD_DB2(sPhaseStores);
+    LOAD_DB2(sPowerDisplayStore);
+    LOAD_DB2(sPvPDifficultyStore);
+    LOAD_DB2(sPvpItemStore);
+    LOAD_DB2(sQuestFactionRewardStore);
+    LOAD_DB2(sQuestLineStore);
+    LOAD_DB2(sQuestLineXQuestStore);
+    LOAD_DB2(sQuestMoneyRewardStore);
+    LOAD_DB2(sQuestObjectiveStore);
+    LOAD_DB2(sQuestPackageItemStore);
+    LOAD_DB2(sQuestPOIPointStore);
+    LOAD_DB2(sQuestSortStore);
+    LOAD_DB2(sQuestV2Store);
+    LOAD_DB2(sQuestXPStore);
+    LOAD_DB2(sRandPropPointsStore);
+    LOAD_DB2(sResearchBranchStore);
     //LOAD_DB2(sResearchProjectStore);
     //LOAD_DB2(sResearchSiteStore);
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
-    LOAD_DB2(sScalingStatDistributionStore);    // 21021
-    LOAD_DB2(sScenarioStepStore);               // 21021
-    LOAD_DB2(sScenarioStore);                   // 21021
-    LOAD_DB2(sSkillLineAbilityStore);           // 21021
-    LOAD_DB2(sSkillLineStore);                  // 21021
-    LOAD_DB2(sSkillRaceClassInfoStore);         // 21021
-    LOAD_DB2(sSpecializationSpellStore);        // 21021
-    LOAD_DB2(sSpellAuraOptionsStore);           // 21021
-    LOAD_DB2(sSpellAuraRestrictionsStore);      // 21021
-    LOAD_DB2(sSpellCastingRequirementsStore);   // 21021
-    LOAD_DB2(sSpellCastTimesStore);             // 21021
-    LOAD_DB2(sSpellCategoriesStore);            // 21021
-    LOAD_DB2(sSpellCategoryStores);             // 21021
-    LOAD_DB2(sSpellClassOptionsStore);          // 21021
-    LOAD_DB2(sSpellCooldownsStore);             // 21021
-    LOAD_DB2(sSpellDurationStore);              // 21021
-    LOAD_DB2(sSpellEffectScalingStore);         // 21021
-    LOAD_DB2(sSpellEffectStore);                // 21021
-    LOAD_DB2(sSpellEquippedItemsStore);         // 21021
-    LOAD_DB2(sSpellFocusObjectStore);           // 21021
-    LOAD_DB2(sSpellInterruptsStore);            // 21021
+    LOAD_DB2(sScalingStatDistributionStore);
+    LOAD_DB2(sScenarioStepStore);
+    LOAD_DB2(sScenarioStore);
+    LOAD_DB2(sSkillLineAbilityStore);
+    LOAD_DB2(sSkillLineStore);
+    LOAD_DB2(sSkillRaceClassInfoStore);
+    LOAD_DB2(sSpecializationSpellStore);
+    LOAD_DB2(sSpellAuraOptionsStore);
+    LOAD_DB2(sSpellAuraRestrictionsStore);
+    LOAD_DB2(sSpellCastingRequirementsStore);
+    LOAD_DB2(sSpellCastTimesStore);
+    LOAD_DB2(sSpellCategoriesStore);
+    LOAD_DB2(sSpellCategoryStores);
+    LOAD_DB2(sSpellClassOptionsStore);
+    LOAD_DB2(sSpellCooldownsStore);
+    LOAD_DB2(sSpellDurationStore);
+    LOAD_DB2(sSpellEffectScalingStore);
+    LOAD_DB2(sSpellEffectStore);
+    LOAD_DB2(sSpellEquippedItemsStore);
+    LOAD_DB2(sSpellFocusObjectStore);
+    LOAD_DB2(sSpellInterruptsStore);
     //LOAD_DB2(sSpellItemEnchantmentConditionStore);
-    LOAD_DB2(sSpellItemEnchantmentStore);       // 21154
-    LOAD_DB2(sSpellLearnSpellStore);            // 21021
-    LOAD_DB2(sSpellLevelsStore);                // 21021
-    LOAD_DB2(sSpellMiscDifficultyStore);        // 21021
-    LOAD_DB2(sSpellMiscStore);                  // 21021
-    LOAD_DB2(sSpellPowerStore);                 // 21021
-    LOAD_DB2(sSpellProcsPerMinuteModStore);     // 21021
-    LOAD_DB2(sSpellProcsPerMinuteStore);        // 21021
-    LOAD_DB2(sSpellRadiusStore);                // 21021
-    LOAD_DB2(sSpellRangeStore);                 // 21021
-    LOAD_DB2(sSpellReagentsCurrencyStore);      // 21021
-    LOAD_DB2(sSpellReagentsStore);              // 21021
-    LOAD_DB2(sSpellScalingStore);               // 21021
-    LOAD_DB2(sSpellShapeshiftFormStore);        // 21021
-    LOAD_DB2(sSpellShapeshiftStore);            // 21021
-    LOAD_DB2(sSpellStore);                      // 21021
-    LOAD_DB2(sSpellTargetRestrictionsStore);    // 21021
-    LOAD_DB2(sSpellTotemsStore);                // 21021
+    LOAD_DB2(sSpellItemEnchantmentStore);
+    LOAD_DB2(sSpellLearnSpellStore);
+    LOAD_DB2(sSpellLevelsStore);
+    LOAD_DB2(sSpellMiscDifficultyStore);
+    LOAD_DB2(sSpellMiscStore);
+    LOAD_DB2(sSpellPowerStore);
+    LOAD_DB2(sSpellProcsPerMinuteModStore);
+    LOAD_DB2(sSpellProcsPerMinuteStore);
+    LOAD_DB2(sSpellRadiusStore);
+    LOAD_DB2(sSpellRangeStore);
+    LOAD_DB2(sSpellReagentsCurrencyStore);
+    LOAD_DB2(sSpellReagentsStore);
+    LOAD_DB2(sSpellScalingStore);
+    LOAD_DB2(sSpellShapeshiftFormStore);
+    LOAD_DB2(sSpellShapeshiftStore);
+    LOAD_DB2(sSpellStore);
+    LOAD_DB2(sSpellTargetRestrictionsStore);
+    LOAD_DB2(sSpellTotemsStore);
     //LOAD_DB2(sSpellVisualStore);
-    LOAD_DB2(sSpellXSpellVisualStore);          // 21021
-    LOAD_DB2(sSummonPropertiesStore);           // 21021
+    LOAD_DB2(sSpellXSpellVisualStore);
+    LOAD_DB2(sSummonPropertiesStore);
     //LOAD_DB2(sTalentStore);
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
-    LOAD_DB2(sTotemCategoryStore);              // 21021
+    LOAD_DB2(sTotemCategoryStore);
     //LOAD_DB2(sToyStore);
-    LOAD_DB2(sTransportAnimationStore);         // 21021
-    LOAD_DB2(sUnitPowerBarStore);               // 21021
+    LOAD_DB2(sTransportAnimationStore);
+    LOAD_DB2(sUnitPowerBarStore);
     //LOAD_DB2(sVehicleSeatStore);
     //LOAD_DB2(sVehicleStore);
     //LOAD_DB2(sWMOAreaTableStore);
-    LOAD_DB2(sWorldMapAreaStore);               // 21154
-    LOAD_DB2(sWorldMapOverlayStore);            // 21021
-    LOAD_DB2(sWorldMapTransformsStore);         // 21021
+    LOAD_DB2(sWorldMapAreaStore);
+    LOAD_DB2(sWorldMapOverlayStore);
+    LOAD_DB2(sWorldMapTransformsStore);
     //LOAD_DB2(sWorldSafeLocsStore);
 
 #undef LOAD_DB2

@@ -101,7 +101,6 @@ extern DB2Storage<ImportPriceArmorEntry>            sImportPriceArmorStore;
 extern DB2Storage<ImportPriceQualityEntry>          sImportPriceQualityStore;
 extern DB2Storage<ImportPriceShieldEntry>           sImportPriceShieldStore;
 extern DB2Storage<ImportPriceWeaponEntry>           sImportPriceWeaponStore;
-extern DB2Storage<ItemAppearanceEntry>              sItemAppearanceStore;
 extern DB2Storage<ItemArmorQualityEntry>            sItemArmorQualityStore;
 extern DB2Storage<ItemArmorShieldEntry>             sItemArmorShieldStore;
 extern DB2Storage<ItemArmorTotalEntry>              sItemArmorTotalStore;
@@ -201,10 +200,8 @@ extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
 extern DB2Storage<VehicleEntry>                     sVehicleStore;
 extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
-extern DB2Storage<WMOAreaTableEntry>                sWMOAreaTableStore;
-extern DB2Storage<WorldMapAreaEntry>                sWorldMapAreaStore;
+extern DB2Storage<WorldMapAreaEntry>                sWorldMapAreaStore;     //@TODO
 extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
-extern DB2Storage<WorldMapTransformsEntry>          sWorldMapTransformsStore;
 extern DB2Storage<WorldSafeLocsEntry>               sWorldSafeLocsStore;
 
 extern TaxiMask                                     sTaxiNodesMask;
