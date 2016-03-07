@@ -42,7 +42,7 @@ class Player;
 class WorldSocket;
 class SystemMgr;
 
-#define PACKETS_COUNT 10000
+#define PACKETS_COUNT 14749
 
 // ServerMessages.dbc
 enum ServerMessageType

@@ -3296,6 +3296,7 @@ class Player : public Unit, public GridObject<Player>
         bool m_needUpdateMeleeHastMod = false;
         bool m_needUpdateRangeHastMod = false;
         bool m_needUpdateHastMod = false;
+        bool m_duelLock = false;
 
         std::unordered_map<uint32, uint32> m_sceneInstanceID;
         uint32 sceneInstanceID = 0;

@@ -639,7 +639,7 @@ void AchievementMgr<Player>::SaveToDB(SQLTransaction& trans)
 
             for (CriteriaProgressMap::iterator iter = progressMap->begin(); iter != progressMap->end(); ++iter)
             {
-                if (iter->second.deactiveted || (!iter->second.changed && !iter->second.updated))
+                if (!iter->second || iter->second.deactiveted || (!iter->second.changed && !iter->second.updated))
                     continue;
 
                 //disable? active before test achivement system
