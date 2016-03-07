@@ -639,7 +639,8 @@ void AchievementMgr<Player>::SaveToDB(SQLTransaction& trans)
 
             for (CriteriaProgressMap::iterator iter = progressMap->begin(); iter != progressMap->end(); ++iter)
             {
-                if (!iter->second || iter->second.deactiveted || (!iter->second.changed && !iter->second.updated))
+                CriteriaTreeProgress* progress = &iter->second;
+                if (!progress || iter->second.deactiveted || (!iter->second.changed && !iter->second.updated))
                     continue;
 
                 //disable? active before test achivement system
@@ -1500,8 +1501,10 @@ void AchievementMgr<T>::UpdateAchievementCriteria(AchievementCriteriaTypes type,
             continue;
         }
 
+        m_CompletedAchievementsLock.lock();
         CriteriaProgressMap* progressMap = GetCriteriaProgressMap(achievement ? achievement->ID : 0);
         CriteriaTreeProgress* progress = GetCriteriaProgress(criteriaTree->ID, achievement ? achievement->ID : 0, progressMap);
+        m_CompletedAchievementsLock.unlock();
 
         if (!CanUpdateCriteria(criteriaTree, criteria, achievement, miscValue1, miscValue2, miscValue3, unit, referencePlayer, progressMap, progress))
             continue;

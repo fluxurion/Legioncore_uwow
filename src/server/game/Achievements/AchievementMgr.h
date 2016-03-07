@@ -25,6 +25,8 @@
 #include "DB2Stores.h"
 #include "ObjectGuid.h"
 
+#include <mutex>
+
 struct CriteriaTreeInfo
 {
     uint32 criteriaTreeID = 0;
@@ -333,6 +335,7 @@ class AchievementMgr
         AchievementProgressMap m_achievementProgress;
         AchievementTreeProgressMap m_achievementTreeProgress;
         CompletedAchievementMap m_completedAchievements;
+        std::mutex m_CompletedAchievementsLock;
         typedef std::unordered_map<uint32, uint32> TimedAchievementMap;
         TimedAchievementMap m_timedAchievements;      // Criteria id/time left in MS
         uint32 _achievementPoints;
