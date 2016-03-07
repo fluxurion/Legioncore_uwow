@@ -1013,7 +1013,7 @@ class ObjectMgr
                 return nullptr;
 
             PlayerInfo const* info = _playerInfo[race][class_];
-            if (info->displayId_m == 0 || info->displayId_f == 0)
+            if (!info || info->displayId_m == 0 || info->displayId_f == 0)
                 return nullptr;
 
             return info;
