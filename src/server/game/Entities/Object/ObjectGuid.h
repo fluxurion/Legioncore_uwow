@@ -77,13 +77,13 @@ enum class HighGuid
     ClientActor     = 20,
     Vignette        = 21,
     Cast            = 26,
+    Party           = 28,
     WowAccount      = 30,
     BNetAccount     = 31,
     Spell           = 35,
     BattlePet       = 45,
 
     // wrong id's - just PH
-    Party,
     Guild,
     SceneObject,
     Conversation,
