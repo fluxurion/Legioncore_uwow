@@ -491,7 +491,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_FORCE_RUN_SPEED_CHANGE_ACK,                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
     DEFINE_HANDLER(CMSG_MOVE_FORCE_SWIM_BACK_SPEED_CHANGE_ACK,              STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
     DEFINE_HANDLER(CMSG_MOVE_FORCE_SWIM_SPEED_CHANGE_ACK,                   STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
-    DEFINE_HANDLER(CMSG_MOVE_FORCE_TURN_RATE_CHANGE_ACK,                    STATUS_UNHANDLED, PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
+    DEFINE_HANDLER(CMSG_MOVE_FORCE_TURN_RATE_CHANGE_ACK,                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
     DEFINE_HANDLER(CMSG_MOVE_FORCE_UNROOT_ACK,                              STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_FORCE_WALK_SPEED_CHANGE_ACK,                   STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementSpeedAck, &WorldSession::HandleForceSpeedChangeAck);
     DEFINE_HANDLER(CMSG_MOVE_GRAVITY_DISABLE_ACK,                           STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
