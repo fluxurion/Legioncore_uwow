@@ -66,6 +66,7 @@ enum class HighGuid
     Player          = 2,
     Item            = 3,
     Transport       = 6,
+    Conversation    = 7,
     Creature        = 8,
     Vehicle         = 9,
     Pet             = 10,
@@ -86,7 +87,6 @@ enum class HighGuid
     BattlePet       = 45,
 
     // wrong id's - just PH
-    Conversation,
     StaticDoor,
     Scenario,
     AIGroup,
