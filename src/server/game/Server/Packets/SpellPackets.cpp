@@ -484,10 +484,10 @@ WorldPacket const* WorldPackets::Spells::CastFailed::Write()
 {
     _worldPacket << CastGuid;
     _worldPacket << SpellID;
+    _worldPacket << SpellXSpellVisualID;
     _worldPacket << Reason;
     _worldPacket << FailedArg1;
     _worldPacket << FailedArg2;
-    _worldPacket << SpellXSpellVisualID;
 
     return &_worldPacket;
 }
