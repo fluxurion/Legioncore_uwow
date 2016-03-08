@@ -3709,11 +3709,8 @@ void SpellMgr::LoadSpellInfoStore()
     }
 
     for (TalentEntry const* talentInfo : sTalentStore)
-    {
-        SpellInfo* spellEntry = mSpellInfoMap[talentInfo->spellId];
-        if (spellEntry)
-            spellEntry->talentId = talentInfo->Id;
-    }
+        if (SpellInfo* spellEntry = mSpellInfoMap[talentInfo->SpellID])
+            spellEntry->talentId = talentInfo->ID;
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded SpellInfo store in %u seconds", GetMSTimeDiffToNow(oldMSTime) / 1000);
 }
@@ -5687,7 +5684,7 @@ void SpellMgr::LoadSpellCustomAttr()
 void SpellMgr::LoadTalentSpellInfo()
 {
     for (TalentEntry const* talent : sTalentStore)
-        mTalentSpellInfo.insert(talent->spellId);
+        mTalentSpellInfo.insert(talent->SpellID);
 }
 
 void SpellMgr::LoadSpellPowerInfo()

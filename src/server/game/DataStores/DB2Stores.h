@@ -356,7 +356,7 @@ public:
     typedef std::list<uint32> SimpleFactionsList;
     typedef std::map<uint32, SimpleFactionsList> FactionTeamContainer;
     typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTrippleContainer;
-    typedef std::vector<TalentEntry const*> TalentsByPositionContainer[MAX_CLASSES][7][3];
+    typedef std::vector<TalentEntry const*> TalentsByPositionContainer[MAX_CLASSES][MAX_TALENT_TIERS][MAX_TALENT_COLUMNS];
 
     static DB2Manager& Instance()
     {

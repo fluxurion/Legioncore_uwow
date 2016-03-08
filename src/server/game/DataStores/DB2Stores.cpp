@@ -399,7 +399,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemEffectStore);
     LOAD_DB2(sItemExtendedCostStore);
     LOAD_DB2(sItemLimitCategoryStore);
-    LOAD_DB2(sItemModifiedAppearanceStore);         // 21154
+    LOAD_DB2(sItemModifiedAppearanceStore);
     LOAD_DB2(sItemPriceBaseStore);
     LOAD_DB2(sItemRandomPropertiesStore);
     LOAD_DB2(sItemRandomSuffixStore);
@@ -495,7 +495,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sSpellVisualStore);
     LOAD_DB2(sSpellXSpellVisualStore);
     LOAD_DB2(sSummonPropertiesStore);
-    //LOAD_DB2(sTalentStore);
+    LOAD_DB2(sTalentStore);
     //LOAD_DB2(sTaxiNodesStore);
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
@@ -925,8 +925,8 @@ void DB2Manager::InitDB2CustomStores()
         }
 
     for (TalentEntry const* talentInfo : sTalentStore)
-        if (talentInfo->classId < MAX_CLASSES && talentInfo->row < 8 && talentInfo->column < 3)
-            _talentByPos[talentInfo->classId][talentInfo->row][talentInfo->column].push_back(talentInfo);
+        if (talentInfo->ClassID < MAX_CLASSES && talentInfo->Row < MAX_TALENT_TIERS && talentInfo->Column < MAX_TALENT_COLUMNS)
+            _talentByPos[talentInfo->ClassID][talentInfo->Row][talentInfo->Column].push_back(talentInfo);
 
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
         _WMOAreaInfoByTripple.insert(WMOAreaInfoByTrippleContainer::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));

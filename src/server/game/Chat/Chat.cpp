@@ -933,22 +933,6 @@ uint32 ChatHandler::extractSpellIdFromLink(char* text)
     {
         case SPELL_LINK_SPELL:
             return id;
-        /*case SPELL_LINK_TALENT:
-        {
-            // talent
-            TalentEntry const* talentEntry = sTalentStore.LookupEntry(id);
-            if (!talentEntry)
-                return 0;
-
-            int32 rank = param1_str ? (uint32)atol(param1_str) : 0;
-            if (rank >= MAX_TALENT_RANK)
-                return 0;
-
-            if (rank < 0)
-                rank = 0;
-
-            return talentEntry->RankID[rank];
-        }*/
         case SPELL_LINK_ENCHANT:
         case SPELL_LINK_TRADE:
             return id;

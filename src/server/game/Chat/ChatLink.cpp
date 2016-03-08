@@ -477,10 +477,10 @@ bool TalentChatLink::Initialize(std::istringstream& iss)
         return false;
     }
     // Validate talent's spell
-    _spell = sSpellMgr->GetSpellInfo(talentInfo->spellId);
+    _spell = sSpellMgr->GetSpellInfo(talentInfo->SpellID);
     if (!_spell)
     {
-        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): got invalid spell id %u in |trade command", iss.str().c_str(), talentInfo->spellId);
+        sLog->outDebug(LOG_FILTER_CHATSYS, "ChatHandler::isValidChatMessage('%s'): got invalid spell id %u in |trade command", iss.str().c_str(), talentInfo->SpellID);
         return false;
     }
     // Delimiter

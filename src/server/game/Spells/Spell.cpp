@@ -4815,7 +4815,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
             break;
         case  SPELL_FAILED_CANT_UNTALENT:
             if (TalentEntry const* talent = sTalentStore.LookupEntry(misc[0]))
-                packet.FailedArg1 = talent->spellId;
+                packet.FailedArg1 = talent->SpellID;
             break;
         case SPELL_FAILED_REAGENTS:
         {
@@ -7060,7 +7060,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_BAD_TARGETS;
                 if (TalentEntry const* talent = sTalentStore.LookupEntry(m_misc.Raw.Data[0]))
                 {
-                    if (m_caster->ToPlayer()->HasSpellCooldown(talent->spellId))
+                    if (m_caster->ToPlayer()->HasSpellCooldown(talent->SpellID))
                         return SPELL_FAILED_CANT_UNTALENT;
                 }else
                     return SPELL_FAILED_DONT_REPORT;

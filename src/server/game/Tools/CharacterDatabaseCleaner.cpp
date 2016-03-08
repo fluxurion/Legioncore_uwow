@@ -52,9 +52,6 @@ void CharacterDatabaseCleaner::CleanDatabase()
     if (flags & CLEANING_FLAG_SPELLS)
         CleanCharacterSpell();
 
-    if (flags & CLEANING_FLAG_TALENTS)
-        CleanCharacterTalent();
-
     if (flags & CLEANING_FLAG_QUESTSTATUS)
         CleanCharacterQuestStatus();
 
@@ -139,23 +136,6 @@ bool CharacterDatabaseCleaner::SpellCheck(uint32 spell_id)
 void CharacterDatabaseCleaner::CleanCharacterSpell()
 {
     CheckUnique("spell", "character_spell", &SpellCheck);
-}
-
-bool CharacterDatabaseCleaner::TalentCheck(uint32 talent_id)
-{
-    return false;
-    /*
-    TalentEntry const* talentInfo = sTalentStore.LookupEntry(talent_id);
-    if (!talentInfo)
-        return false;
-
-    return sTalentTabStore.LookupEntry(talentInfo->TalentTab) != nullptr;*/
-}
-
-void CharacterDatabaseCleaner::CleanCharacterTalent()
-{
-    CharacterDatabase.DirectPExecute("DELETE FROM character_talent WHERE spec > %u", MAX_TALENT_SPECS);
-    CheckUnique("spell", "character_talent", &TalentCheck);
 }
 
 void CharacterDatabaseCleaner::CleanCharacterQuestStatus()

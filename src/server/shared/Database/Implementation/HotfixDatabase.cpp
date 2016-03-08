@@ -120,8 +120,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_SPELL_ITEM_ENCHANTMENT, "SELECT ID, Name_lang FROM spell_item_enchantment_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Talent.db2
-    PrepareStatement(HOTFIX_SEL_TALENT, "SELECT Id, SpecID, `row`, `column`, spellId, classId, OverridesSpellID, description FROM talent"
-        " ORDER BY Id DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TALENT, "SELECT ID, SpellID, OverridesSpellID, Description, SpecID, `Row`, `Column`, Flags, CategoryMask1, "
+        "CategoryMask2, ClassID FROM talent ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_TALENT, "SELECT ID, Description_lang FROM talent_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Vehicle.db2
     PrepareStatement(HOTFIX_SEL_VEHICLE, "SELECT ID, Flags, FlagsB, TurnSpeed, PitchSpeed, PitchMin, PitchMax, SeatID1, SeatID2, SeatID3, SeatID4, "

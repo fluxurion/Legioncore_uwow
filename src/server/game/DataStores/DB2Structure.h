@@ -481,17 +481,16 @@ struct SpellItemEnchantmentEntry
 
 struct TalentEntry
 {
-    uint32  Id;                                     // 0
-    uint32  SpecID;                                 // 1
-    uint32  row;                                    // 2
-    uint32  column;                                 // 3
-    uint32  spellId;                                // 4
-    //uint32  m_flags;                              // 5
-    //uint32  m_categoryMask1;                      // 6
-    //uint32  m_categoryMask2;                      // 7
-    uint32  classId;                                // 8
-    uint32  OverridesSpellID;                       // 9
-    char*   description;                            // 10
+    uint32      ID;                                         // 0
+    uint32      SpellID;                                    // 1
+    uint32      OverridesSpellID;                           // 2
+    LocalizedString* Description;                           // 3
+    uint16      SpecID;                                     // 4
+    uint8       Row;                                        // 5
+    uint8       Column;                                     // 6
+    uint8       Flags;                                      // 7
+    uint8       CategoryMask[2];                            // 8 - 9
+    uint8       ClassID;                                    // 10
 };
 
 struct VehicleEntry

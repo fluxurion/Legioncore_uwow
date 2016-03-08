@@ -1322,9 +1322,9 @@ struct ResurrectionData
     uint32 Aura;
 };
 
-static uint32 const DefaultTalentRowLevels[7] = { 15, 30, 45, 60, 75, 90, 100 };
-static uint32 const DKTalentRowLevels[7] = { 56, 57, 58, 60, 75, 90, 100 };
-static uint32 const DHTalentRowLevels[7] = { 99, 100, 102, 104, 106, 108, 110 };
+static uint32 const DefaultTalentRowLevels[MAX_TALENT_TIERS] = { 15, 30, 45, 60, 75, 90, 100, 110 };
+static uint32 const DKTalentRowLevels[MAX_TALENT_TIERS] = { 56, 57, 58, 60, 75, 90, 100, 110 };
+static uint32 const DHTalentRowLevels[MAX_TALENT_TIERS] = { 99, 100, 102, 104, 106, 108, 110 };
 
 struct PlayerTalentInfo
 {
