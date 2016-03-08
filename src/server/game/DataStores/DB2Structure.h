@@ -755,12 +755,12 @@ struct CriteriaEntry
     uint32      FailAsset;                                  // 2
     uint16      StartTimer;                                 // 3
     uint16      ModifyTree;                                 // 4
-    uint16      Flags;                                      // 5 
+    int16       EligibilityWorldStateID;                    // 5
     uint8       Type;                                       // 6
     uint8       StartEvent;                                 // 7
     uint8       FailEvent;                                  // 8
-    uint8       EligibilityWorldStateID;                    // 9
-    uint8       EligibilityWorldStateValue;                 // 10
+    uint8       Flags;                                      // 9
+    int8        EligibilityWorldStateValue;                 // 10
 };
 
 struct CriteriaTreeEntry

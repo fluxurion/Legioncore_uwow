@@ -196,8 +196,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_MINOR_TALENT, "SELECT ID, SpecID, SpellID, OrderIndex FROM minor_talent ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Criteria.db2
-    PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, Asset, StartAsset, FailAsset, StartTimer, ModifyTree, Flags, Type, StartEvent, FailEvent, "
-        "EligibilityWorldStateID, EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, Asset, StartAsset, FailAsset, StartTimer, ModifyTree, EligibilityWorldStateID, Type, "
+        "StartEvent, FailEvent, Flags, EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // CriteriaTree.db2
     PrepareStatement(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Amount, Description, CriteriaID, Parent, Flags, OrderIndex, Operator FROM criteria_tree"

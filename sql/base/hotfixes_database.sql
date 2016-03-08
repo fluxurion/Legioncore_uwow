@@ -1749,12 +1749,12 @@ CREATE TABLE `criteria` (
   `FailAsset` int(10) unsigned NOT NULL DEFAULT '0',
   `StartTimer` smallint(5) unsigned NOT NULL DEFAULT '0',
   `ModifyTree` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `EligibilityWorldStateID` smallint(6) NOT NULL DEFAULT '0',
   `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `StartEvent` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `FailEvent` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `EligibilityWorldStateID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `EligibilityWorldStateValue` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `EligibilityWorldStateValue` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
