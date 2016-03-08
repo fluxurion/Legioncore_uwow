@@ -165,8 +165,8 @@ class GridMap
         uint8* m_uint8_V8;
     };
     // Height level data
-    float* _maxHeight;
-    float* _minHeight;
+    int16* _maxHeight;
+    int16* _minHeight;
     float _gridHeight;
     float _gridIntHeightMultiplier;
 
@@ -187,7 +187,7 @@ class GridMap
 
 
     bool loadAreaData(FILE* in, uint32 offset, uint32 size);
-    bool loadHeihgtData(FILE* in, uint32 offset, uint32 size);
+    bool loadHeightData(FILE* in, uint32 offset, uint32 size);
     bool loadLiquidData(FILE* in, uint32 offset, uint32 size);
 
     // Get height functions and pointers

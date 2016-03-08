@@ -46,7 +46,7 @@ union u_map_magic
 };
 
 u_map_magic MapMagic        = { {'M','A','P','S'} };
-u_map_magic MapVersionMagic = { {'v','1','.','7'} };
+u_map_magic MapVersionMagic = { {'v','1','.','8'} };
 u_map_magic MapAreaMagic    = { {'A','R','E','A'} };
 u_map_magic MapHeightMagic  = { {'M','H','G','T'} };
 u_map_magic MapLiquidMagic  = { {'M','L','I','Q'} };
@@ -1103,6 +1103,7 @@ GridMap::GridMap()
     // Height level data
     _gridHeight = INVALID_HEIGHT;
     _gridGetHeight = &GridMap::getHeightFromFlat;
+    _gridIntHeightMultiplier = 0;
     m_V9 = nullptr;
     m_V8 = nullptr;
     _maxHeight = nullptr;
@@ -1114,9 +1115,9 @@ GridMap::GridMap()
     _liquidWidth  = 0;
     _liquidHeight = 0;
     _liquidLevel = INVALID_HEIGHT;
-    _liquidEntry = NULL;
-    _liquidFlags = NULL;
-    _liquidMap  = NULL;
+    _liquidEntry = nullptr;
+    _liquidFlags = nullptr;
+    _liquidMap  = nullptr;
 }
 
 GridMap::~GridMap()
@@ -1151,7 +1152,7 @@ bool GridMap::loadData(char *filename)
             return false;
         }
         // loadup height data
-        if (header.heightMapOffset && !loadHeihgtData(in, header.heightMapOffset, header.heightMapSize))
+        if (header.heightMapOffset && !loadHeightData(in, header.heightMapOffset, header.heightMapSize))
         {
             sLog->outError(LOG_FILTER_MAPS, "Error loading map height data\n");
             fclose(in);
@@ -1204,14 +1205,14 @@ bool GridMap::loadAreaData(FILE* in, uint32 offset, uint32 /*size*/)
     _gridArea = header.gridArea;
     if (!(header.flags & MAP_AREA_NO_AREA))
     {
-        _areaMap = new uint16 [16*16];
+        _areaMap = new uint16[16 * 16];
         if (fread(_areaMap, sizeof(uint16), 16*16, in) != 16*16)
             return false;
     }
     return true;
 }
 
-bool GridMap::loadHeihgtData(FILE* in, uint32 offset, uint32 /*size*/)
+bool GridMap::loadHeightData(FILE* in, uint32 offset, uint32 /*size*/)
 {
     map_heightHeader header;
     fseek(in, offset, SEEK_SET);
@@ -1257,12 +1258,12 @@ bool GridMap::loadHeihgtData(FILE* in, uint32 offset, uint32 /*size*/)
 
     if (header.flags & MAP_HEIGHT_HAS_FLIGHT_BOUNDS)
     {
-        _maxHeight = new float[16 * 16];
-        _minHeight = new float[16 * 16];
-        if (fread(_maxHeight, sizeof(float), 16 * 16, in) != 16 * 16 ||
-            fread(_minHeight, sizeof(float), 16 * 16, in) != 16 * 16)
+        _maxHeight = new int16[3 * 3];
+        _minHeight = new int16[3 * 3];
+        if (fread(_maxHeight, sizeof(int16), 3 * 3, in) != 3 * 3 ||
+            fread(_minHeight, sizeof(int16), 3 * 3, in) != 3 * 3)
             return false;
-     }
+    }
 
     return true;
 }
@@ -1295,7 +1296,7 @@ bool GridMap::loadLiquidData(FILE* in, uint32 offset, uint32 /*size*/)
     if (!(header.flags & MAP_LIQUID_NO_HEIGHT))
     {
         _liquidMap = new float[uint32(_liquidWidth) * uint32(_liquidHeight)];
-          if (fread(_liquidMap, sizeof(float), _liquidWidth*_liquidHeight, in) != (uint32(_liquidWidth) * uint32(_liquidHeight)))
+        if (fread(_liquidMap, sizeof(float), _liquidWidth*_liquidHeight, in) != (uint32(_liquidWidth) * uint32(_liquidHeight)))
             return false;
     }
     return true;
@@ -1310,8 +1311,7 @@ uint16 GridMap::getArea(float x, float y) const
     y = 16 * (CENTER_GRID_ID - y / SIZE_OF_GRIDS);
     int lx = (int)x & 15;
     int ly = (int)y & 15;
-    uint16 res = _areaMap[lx * 16 + ly];
-    return res;
+    return _areaMap[lx * 16 + ly];
 }
 
 float GridMap::getHeightFromFlat(float /*x*/, float /*y*/) const
@@ -1324,8 +1324,8 @@ float GridMap::getHeightFromFloat(float x, float y) const
     if (!m_V8 || !m_V9)
         return _gridHeight;
 
-    x = MAP_RESOLUTION * (32 - x/SIZE_OF_GRIDS);
-    y = MAP_RESOLUTION * (32 - y/SIZE_OF_GRIDS);
+    x = MAP_RESOLUTION * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    y = MAP_RESOLUTION * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
 
     int x_int = (int)x;
     int y_int = (int)y;
@@ -1406,8 +1406,8 @@ float GridMap::getHeightFromUint8(float x, float y) const
     if (!m_uint8_V8 || !m_uint8_V9)
         return _gridHeight;
 
-    x = MAP_RESOLUTION * (32 - x/SIZE_OF_GRIDS);
-    y = MAP_RESOLUTION * (32 - y/SIZE_OF_GRIDS);
+    x = MAP_RESOLUTION * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    y = MAP_RESOLUTION * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
 
     int x_int = (int)x;
     int y_int = (int)y;
@@ -1473,8 +1473,8 @@ float GridMap::getHeightFromUint16(float x, float y) const
     if (!m_uint16_V8 || !m_uint16_V9)
         return _gridHeight;
 
-    x = MAP_RESOLUTION * (32 - x/SIZE_OF_GRIDS);
-    y = MAP_RESOLUTION * (32 - y/SIZE_OF_GRIDS);
+    x = MAP_RESOLUTION * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    y = MAP_RESOLUTION * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
 
     int x_int = (int)x;
     int y_int = (int)y;
@@ -1537,14 +1537,58 @@ float GridMap::getHeightFromUint16(float x, float y) const
 
 float GridMap::getMinHeight(float x, float y) const
 {
-    if (!_areaMap)
-        return _gridArea;
+    if (!_minHeight)
+        return -500.0f;
 
-    x = 16 * (CENTER_GRID_ID - x / SIZE_OF_GRIDS);
-    y = 16 * (CENTER_GRID_ID - y / SIZE_OF_GRIDS);
-    int lx = (int)x & 15;
-    int ly = (int)y & 15;
-    return _areaMap[lx * 16 + ly];
+    static uint32 const indices[] =
+    {
+        3, 0, 4,
+        0, 1, 4,
+        1, 2, 4,
+        2, 5, 4,
+        5, 8, 4,
+        8, 7, 4,
+        7, 6, 4,
+        6, 3, 4
+    };
+
+    static float const boundGridCoords[] =
+    {
+        0.0f, 0.0f,
+        0.0f, -266.66666f,
+        0.0f, -533.33331f,
+        -266.66666f, 0.0f,
+        -266.66666f, -266.66666f,
+        -266.66666f, -533.33331f,
+        -533.33331f, 0.0f,
+        -533.33331f, -266.66666f,
+        -533.33331f, -533.33331f
+    };
+
+    Cell cell(x, y);
+    float gx = x - (int32(cell.GridX()) - CENTER_GRID_ID + 1) * SIZE_OF_GRIDS;
+    float gy = y - (int32(cell.GridY()) - CENTER_GRID_ID + 1) * SIZE_OF_GRIDS;
+
+    uint32 quarterIndex = 0;
+    if (cell.CellY() < MAX_NUMBER_OF_CELLS / 2)
+    {
+        if (cell.CellX() < MAX_NUMBER_OF_CELLS / 2)
+            quarterIndex = 4 + (gy > gx);
+        else
+            quarterIndex = 2 + ((-SIZE_OF_GRIDS - gx) > gy);
+    }
+    else if (cell.CellX() < MAX_NUMBER_OF_CELLS / 2)
+        quarterIndex = 6 + ((-SIZE_OF_GRIDS - gx) <= gy);
+    else
+        quarterIndex = gx > gy;
+
+    quarterIndex *= 3;
+
+    return G3D::Plane(
+        G3D::Vector3(boundGridCoords[indices[quarterIndex + 0] * 2 + 0], boundGridCoords[indices[quarterIndex + 0] * 2 + 1], _minHeight[indices[quarterIndex + 0]]),
+        G3D::Vector3(boundGridCoords[indices[quarterIndex + 1] * 2 + 0], boundGridCoords[indices[quarterIndex + 1] * 2 + 1], _minHeight[indices[quarterIndex + 1]]),
+        G3D::Vector3(boundGridCoords[indices[quarterIndex + 2] * 2 + 0], boundGridCoords[indices[quarterIndex + 2] * 2 + 1], _minHeight[indices[quarterIndex + 2]])
+    ).distance(G3D::Vector3(gx, gy, 0.0f));
 }
 
 float GridMap::getLiquidLevel(float x, float y) const
@@ -1552,8 +1596,8 @@ float GridMap::getLiquidLevel(float x, float y) const
     if (!_liquidMap)
         return _liquidLevel;
 
-    x = MAP_RESOLUTION * (32 - x/SIZE_OF_GRIDS);
-    y = MAP_RESOLUTION * (32 - y/SIZE_OF_GRIDS);
+    x = MAP_RESOLUTION * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    y = MAP_RESOLUTION * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
 
     int cx_int = ((int)x & (MAP_RESOLUTION-1)) - _liquidOffY;
     int cy_int = ((int)y & (MAP_RESOLUTION-1)) - _liquidOffX;
@@ -1572,8 +1616,8 @@ uint8 GridMap::getTerrainType(float x, float y) const
     if (!_liquidFlags)
         return 0;
 
-    x = 16 * (32 - x/SIZE_OF_GRIDS);
-    y = 16 * (32 - y/SIZE_OF_GRIDS);
+    x = 16 * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    y = 16 * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
     int lx = (int)x & 15;
     int ly = (int)y & 15;
     return _liquidFlags[lx*16 + ly];
@@ -1587,8 +1631,8 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
         return LIQUID_MAP_NO_WATER;
 
     // Get cell
-    float cx = MAP_RESOLUTION * (32 - x/SIZE_OF_GRIDS);
-    float cy = MAP_RESOLUTION * (32 - y/SIZE_OF_GRIDS);
+    float cx = MAP_RESOLUTION * (CENTER_GRID_ID - x/SIZE_OF_GRIDS);
+    float cy = MAP_RESOLUTION * (CENTER_GRID_ID - y/SIZE_OF_GRIDS);
 
     int x_int = (int)cx & (MAP_RESOLUTION-1);
     int y_int = (int)cy & (MAP_RESOLUTION-1);
@@ -1678,12 +1722,12 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
 inline GridMap* Map::GetGrid(float x, float y)
 {
     // half opt method
-    int gx = (int) (CENTER_GRID_ID - x / SIZE_OF_GRIDS);                       //grid x
-    int gy = (int) (CENTER_GRID_ID - y / SIZE_OF_GRIDS);                       //grid y
+    int gx = (int)(CENTER_GRID_ID - x / SIZE_OF_GRIDS);                       //grid x
+    int gy = (int)(CENTER_GRID_ID - y / SIZE_OF_GRIDS);                       //grid y
 
     // ensure GridMap is loaded
-    //! WARN! MAX_NUMBER_OF_GRIDS is 64
-    EnsureGridCreated(GridCoord(63 - gx, 63 - gy));
+    EnsureGridCreated(GridCoord((MAX_NUMBER_OF_GRIDS - 1) - gx, (MAX_NUMBER_OF_GRIDS - 1) - gy));
+
     return GridMaps[gx][gy];
 }
 

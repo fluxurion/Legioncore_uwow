@@ -279,7 +279,7 @@ uint32 LoadMapDB2Data()
 {
     printf("Read Map.db2 file...\n");
 
-    DBCFile dbc("DBFilesClient\\Map.db2", "nsiiiisissififfiiiiiii");
+    DBCFile dbc("DBFilesClient\\Map.db2", "nsiifffisssttttttbbbbb");
     if (!dbc.open())
     {
         printf("Fatal error: Invalid Map.db2 file format!\n");
