@@ -393,7 +393,7 @@ SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* 
     SpellAPBonusMultiplier = _effect ? _effect->BonusCoefficientFromAP : 0.0f;
     ImplicitTargetConditions = NULL;
 
-    SpellEffectScalingEntry const* _effectScaling = sDB2Manager.GetSpellEffectScaling(_effect->ID);
+    SpellEffectScalingEntry const* _effectScaling = sDB2Manager.GetSpellEffectScaling(_effect ? _effect->ID : 0);
     Scaling.Coefficient = _effectScaling ? _effectScaling->Coefficient : 0.0f;
     Scaling.Variance = _effectScaling ? _effectScaling->Variance : 0.0f;
     Scaling.ResourceCoefficient = _effectScaling ? _effectScaling->ResourceCoefficient : 0.0f;
