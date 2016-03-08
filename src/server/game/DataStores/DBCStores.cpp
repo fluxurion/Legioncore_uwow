@@ -138,7 +138,7 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
 
             for (uint32 l = 0; l < MAX_LOCALES; ++l)
             {
-                if (i != LOCALE_none && tableName == gt->Name->Str[l])
+                if (l != LOCALE_none && tableName == gt->Name->Str[l])
                 {
                     found = true;
                     storage.SetGameTableEntry(gt);
