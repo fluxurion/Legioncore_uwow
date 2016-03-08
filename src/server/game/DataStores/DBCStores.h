@@ -46,8 +46,10 @@ public:
 
     T const* EvaluateTable(uint32 row, uint32 column) const
     {
-        ASSERT(row < _gtEntry->NumRows, "Requested row %u from GameTable %s but there are only %u rows!", row, _gtEntry->Name->Str[0], _gtEntry->NumRows);
-        ASSERT(column < _gtEntry->NumColumns, "Requested column %u from GameTable %s but there are only %u columns!", column, _gtEntry->Name->Str[0], _gtEntry->NumColumns);
+        //ASSERT(row < _gtEntry->NumRows, "Requested row %u from GameTable %s but there are only %u rows!", row, _gtEntry->Name->Str[0], _gtEntry->NumRows);
+        //ASSERT(column < _gtEntry->NumColumns, "Requested column %u from GameTable %s but there are only %u columns!", column, _gtEntry->Name->Str[0], _gtEntry->NumColumns);
+        if (row > _gtEntry->NumRows || column > _gtEntry->NumColumns)
+            return nullptr;
 
         return _storage.LookupEntry(_gtEntry->NumRows * column + row);
     }

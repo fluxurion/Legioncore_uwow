@@ -3733,8 +3733,6 @@ void SpellMgr::UnloadSpellInfoImplicitTargetConditionLists()
 
 void SpellMgr::LoadSpellCustomAttr()
 {
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading spell custom attributes... DISABLED");
-    return;
 
     uint32 oldMSTime = getMSTime();
 
