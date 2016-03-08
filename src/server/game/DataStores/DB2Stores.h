@@ -357,6 +357,7 @@ public:
     typedef std::map<uint32, SimpleFactionsList> FactionTeamContainer;
     typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTrippleContainer;
     typedef std::vector<TalentEntry const*> TalentsByPositionContainer[MAX_CLASSES][MAX_TALENT_TIERS][MAX_TALENT_COLUMNS];
+    typedef std::unordered_map<uint32, uint32> SpellEffectScallingByEffectIDContainer;
 
     static DB2Manager& Instance()
     {
@@ -437,6 +438,7 @@ public:
     SimpleFactionsList const* GetFactionTeamList(uint32 faction);
     WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid);
     uint32 GetLiquidFlags(uint32 liquidType);
+    SpellEffectScalingEntry const* GetSpellEffectScaling(uint32 effectID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -502,6 +504,7 @@ private:
     CharSectionsContainer _charSection;
     FactionTeamContainer _factionTeam;
     WMOAreaInfoByTrippleContainer _WMOAreaInfoByTripple;
+    SpellEffectScallingByEffectIDContainer _spellEffectScaling;
 };
 
 #define sDB2Manager DB2Manager::Instance()

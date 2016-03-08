@@ -852,6 +852,9 @@ void DB2Manager::InitDB2CustomStores()
             _reversTriggerSpellList[spellEffect->EffectTriggerSpell] = spellEffect->SpellID;
     }
 
+    for (SpellEffectScalingEntry const* entry : sSpellEffectScalingStore)
+        _spellEffectScaling.insert(std::make_pair(entry->SpellEffectId, entry->ID));
+
     memset(_chrSpecializationByIndex, 0, sizeof(_chrSpecializationByIndex));
     for (ChrSpecializationEntry const* chrSpec : sChrSpecializationStore)
         _chrSpecializationByIndex[chrSpec->ClassID][chrSpec->OrderIndex] = chrSpec;
@@ -1779,3 +1782,13 @@ uint32 DB2Manager::GetLiquidFlags(uint32 liquidType)
 
     return 0;
 }
+
+SpellEffectScalingEntry const* DB2Manager::GetSpellEffectScaling(uint32 effectID)
+{
+    SpellEffectScallingByEffectIDContainer::const_iterator itr = _spellEffectScaling.find(effectID);
+    if (itr != _spellEffectScaling.end())
+        return sSpellEffectScalingStore.LookupEntry(itr->second);
+
+    return nullptr;
+}
+

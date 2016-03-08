@@ -366,8 +366,6 @@ SpellImplicitTargetInfo::StaticData  SpellImplicitTargetInfo::_data[TOTAL_SPELL_
 
 SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* spellInfo, uint8 effIndex, SpellEffectEntry const* _effect)
 {
-    SpellEffectScalingEntry const* _effectScaling = sSpellEffectScalingStore.LookupEntry(_effect ? _effect->ID : 0);
-
     _spellInfo = spellInfo;
     EffectIndex = effIndex;
     Effect = _effect ? _effect->Effect : 0;
@@ -392,13 +390,13 @@ SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* 
     ItemType = _effect ? _effect->EffectItemType : 0;
     TriggerSpell = _effect ? _effect->EffectTriggerSpell : 0;
     SpellClassMask = _effect ? _effect->EffectSpellClassMask : flag128(0);
+    SpellAPBonusMultiplier = _effect ? _effect->BonusCoefficientFromAP : 0.0f;
     ImplicitTargetConditions = NULL;
 
+    SpellEffectScalingEntry const* _effectScaling = sDB2Manager.GetSpellEffectScaling(_effect->ID);
     Scaling.Coefficient = _effectScaling ? _effectScaling->Coefficient : 0.0f;
     Scaling.Variance = _effectScaling ? _effectScaling->Variance : 0.0f;
     Scaling.ResourceCoefficient = _effectScaling ? _effectScaling->ResourceCoefficient : 0.0f;
-
-    SpellAPBonusMultiplier = _effect ? _effect->BonusCoefficientFromAP : 0.0f;
 }
 
 bool SpellEffectInfo::IsEffect() const
