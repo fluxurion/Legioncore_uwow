@@ -288,9 +288,7 @@ Player::Player(WorldSession* session): Unit(true),
     m_regenTimer = 0;
     m_regenTimerCount = 0;
     m_chiholyPowerRegenTimerCount = 0;
-    m_demonicFuryPowerRegenTimerCount = 0;
     m_soulShardsRegenTimerCount = 0;
-    m_burningEmbersRegenTimerCount = 0;
     m_focusRegenTimerCount = 0;
     m_weaponChangeTimer = 0;
     m_statsUpdateTimer = 0;
@@ -765,18 +763,21 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
     UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
     SetFullHealth();
-    if (getPowerType() == POWER_MANA)
-    {
-        UpdateMaxPower(POWER_MANA);                         // Update max Mana (for add bonus from intellect)
-        SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-    }
 
-    if (getPowerType() == POWER_RUNIC_POWER)
+    switch (getPowerType())
     {
-        SetPower(POWER_RUNES, 8);
-        SetMaxPower(POWER_RUNES, 8);
-        SetPower(POWER_RUNIC_POWER, 0);
-        SetMaxPower(POWER_RUNIC_POWER, 1000);
+        case POWER_MANA:
+            UpdateMaxPower(POWER_MANA);                         // Update max Mana (for add bonus from intellect)
+            SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+            break;
+        case POWER_RUNIC_POWER:
+            SetPower(POWER_RUNES, 8);
+            SetMaxPower(POWER_RUNES, 8);
+            SetPower(POWER_RUNIC_POWER, 0);
+            SetMaxPower(POWER_RUNIC_POWER, 1000);
+            break;
+        default:
+            break;
     }
 
     // original spells
@@ -2348,14 +2349,6 @@ void Player::RegenerateAll()
         else
             m_chiholyPowerRegenTimerCount -= m_regenTimer;
 
-        if (m_demonicFuryPowerRegenTimerCount <= m_regenTimer)
-        {
-            m_demonicFuryPowerRegenTimerCount = 320;
-            Regenerate(POWER_OBSOLETE2, m_demonicFuryPowerRegenTimerCount);
-        }
-        else
-            m_demonicFuryPowerRegenTimerCount -= m_regenTimer;
-
         if (m_soulShardsRegenTimerCount <= m_regenTimer)
         {
             m_soulShardsRegenTimerCount = 20000;
@@ -2363,22 +2356,10 @@ void Player::RegenerateAll()
         }
         else
             m_soulShardsRegenTimerCount -= m_regenTimer;
-
-        if (m_burningEmbersRegenTimerCount <= m_regenTimer)
-        {
-            if (AuraEffect* aurEff = GetAuraEffect(108647, 0))
-                aurEff->ChangeAmount(0);
-            m_burningEmbersRegenTimerCount = 2500;
-            Regenerate(POWER_OBSOLETE, m_burningEmbersRegenTimerCount);
-        }
-        else
-            m_burningEmbersRegenTimerCount -= m_regenTimer;
     }
     else
     {
         m_chiholyPowerRegenTimerCount = 10000;
-        m_demonicFuryPowerRegenTimerCount = 30000;
-        m_burningEmbersRegenTimerCount = 28000;
         m_soulShardsRegenTimerCount = 20000;
     }
 
@@ -2469,35 +2450,10 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
         case POWER_CHI:
             addvalue -= 1.0f; // remove 1 each 10 sec
             break;
+        case POWER_MAELSTROM:
         case POWER_RUNES:
         case POWER_HEALTH:
             break;
-        // Regenerate Demonic Fury
-        case POWER_OBSOLETE2:
-        {
-            if (curValue > 200)
-                addvalue -= 0.0125f * saveTimer;    // remove 1 each 100ms
-            else if (curValue < 200)
-                addvalue += 0.0125f * saveTimer;     // give 1 each 100ms while player has less than 200 demonic fury
-            else
-                return;
-
-            regenType = -1;
-            break;
-        }
-        // Regenerate Burning Embers
-        case POWER_OBSOLETE:
-        {
-            // After 15s return to one embers if no one
-            // or return to one if more than one
-            if (saveCur < 10)
-                addvalue += 1.0f;
-            else if (saveCur > 10)
-                addvalue -= 1.0f;
-            else
-                return;
-            break;
-        }
         // Regenerate Soul Shards
         case POWER_SOUL_SHARDS:
         {
@@ -2665,10 +2621,13 @@ void Player::ResetAllPowers(bool preparation)
             SetPower(POWER_RUNIC_POWER, 0);
             break;
         case POWER_FURY:
-            SetPower(POWER_FURY, 100);
+            SetPower(POWER_FURY, 0);
             break;
         case POWER_PAIN:
-            SetPower(POWER_PAIN, 100);
+            SetPower(POWER_PAIN, 0);
+            break;
+        case POWER_MAELSTROM:
+            SetPower(POWER_MAELSTROM, 0);
             break;
         default:
             break;
@@ -2687,11 +2646,15 @@ void Player::ResetAllPowers(bool preparation)
             break;
         case CLASS_WARLOCK:
             SetPower(POWER_SOUL_SHARDS, 400, false);
-            SetPower(POWER_OBSOLETE2, 200, false);
-            SetPower(POWER_OBSOLETE, 10, false);
             break;
         case CLASS_PALADIN:
             SetPower(POWER_HOLY_POWER, 0);
+            break;
+        case CLASS_DEMON_HUNTER:
+            SetPower(POWER_PAIN, 0);
+            SetPower(POWER_FURY, 0);
+            break;
+        default:
             break;
     }
 }
@@ -5666,8 +5629,6 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         SetPower(POWER_ENERGY, uint32(GetMaxPower(POWER_ENERGY)*restore_percent));
         SetPower(POWER_FOCUS, uint32(GetMaxPower(POWER_FOCUS)*restore_percent));
         SetPower(POWER_LUNAR_POWER, 0, false);
-        SetPower(POWER_OBSOLETE2, 200, false);
-        SetPower(POWER_OBSOLETE, 10, false);
         SetPower(POWER_SOUL_SHARDS, 100, false);
         SetPower(POWER_CHI, 0);
         SetPower(POWER_INSANITY, 0);
@@ -25704,9 +25665,7 @@ void Player::ResurectUsingRequestData()
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
     SetPower(POWER_FOCUS, GetMaxPower(POWER_FOCUS));
     SetPower(POWER_LUNAR_POWER, 0, false);
-    SetPower(POWER_OBSOLETE, 10, false);
     SetPower(POWER_SOUL_SHARDS, 100, false);
-    SetPower(POWER_OBSOLETE2, 200, false);
     SetPower(POWER_INSANITY, 0);
     SetPower(POWER_CHI, 0);
 

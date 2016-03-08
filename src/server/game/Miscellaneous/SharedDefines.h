@@ -333,8 +333,6 @@ enum Powers
     POWER_MAELSTROM                     = 11,
     POWER_CHI                           = 12,
     POWER_INSANITY                      = 13,
-    POWER_OBSOLETE                      = 14,
-    POWER_OBSOLETE2                     = 15,
     POWER_ARCANE_CHARGES                = 16,
     POWER_FURY                          = 17,
     POWER_PAIN                          = 18,
@@ -343,7 +341,11 @@ enum Powers
 
     POWER_NULL                          = 126,
     POWER_ALL                           = 127,          // default for class?
-    POWER_HEALTH                        = 0xFFFFFFFE    // (-2 as signed value)
+    POWER_HEALTH                        = 0xFFFFFFFE,   // (-2 as signed value)
+
+    // just for complete - would not delete this from scripts
+    POWER_OBSOLETE                      = 14,
+    POWER_OBSOLETE2                     = 15,
 };
 
 // PowerDisplay.dbc

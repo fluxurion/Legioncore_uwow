@@ -1218,62 +1218,33 @@ void Unit::UpdatePowerRegen(uint32 power)
     if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
-    float meleeHaste = GetFloatValue(UNIT_FIELD_MOD_HASTE);
     float addvalue = 0.0f;
 
     //add value in 1s
     switch (power)
     {
-        case POWER_RAGE: // Regenerate Rage
-        {
-            addvalue -= 25 / meleeHaste / 2;
+        case POWER_RAGE:
+            addvalue -= 25 / GetFloatValue(UNIT_FIELD_MOD_HASTE) / 2;
             break;
-        }
-        case POWER_FOCUS: // Regenerate Focus
-        {
+        case POWER_FOCUS:
             addvalue += 1.0f * 5;
             break;
-        }
-        case POWER_ENERGY: // Regenerate Energy
-        {
+        case POWER_ENERGY:
             addvalue += 0.01f * 1000;
             break;
-        }
-        case POWER_RUNIC_POWER: // Regenerate Runic Power
-        {
+        case POWER_RUNIC_POWER:
             addvalue -= 30 / 2;
             break;
-        }
         case POWER_HOLY_POWER:
         case POWER_CHI:
-        {
             addvalue -= 1.0f / 10;
             break;
-        }
-        // Regenerate Demonic Fury
-        case POWER_OBSOLETE2:
-        {
-            addvalue -= 1.0f * 12.5f;
-            break;
-        }
-        // Regenerate Burning Embers
-        case POWER_OBSOLETE:
-        {
-            addvalue -= 1.0f / 2.5f;
-            break;
-        }
-        // Regenerate Soul Shards
         case POWER_SOUL_SHARDS:
-        {
             addvalue += 100.0f / 20;
             break;
-        }
-        // Regenerate Soul Shards
         case POWER_LUNAR_POWER:
-        {
             addvalue += 1.0f;
             break;
-        }
         default:
             break;
     }

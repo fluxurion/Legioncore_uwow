@@ -14525,109 +14525,6 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
             }
             break;
         }
-        case POWER_OBSOLETE2:
-        {
-            if(specId != SPEC_WARLOCK_DEMONOLOGY)
-            {
-                RemoveAura(122738);
-                RemoveAura(131755);
-                break;
-            }
-
-            if(curentVal <= 200 && oldVal > curentVal && GetShapeshiftForm() == FORM_METAMORPHOSIS)
-                if (AuraEffect* aurEff = GetAuraEffect(109145, 0))
-                    aurEff->ChangeAmount(-100);
-
-            // Demonic Fury visuals
-            if (curentVal == 1000)
-                CastSpell(this, 131755, true);
-            else if (curentVal >= 500)
-            {
-                if (!HasAura(122738))
-                    CastSpell(this, 122738, true);
-
-                RemoveAura(131755);
-            }
-            else
-            {
-                RemoveAura(122738);
-                RemoveAura(131755);
-            }
-            break;
-        }
-        case POWER_OBSOLETE:
-        {
-            if(specId != SPEC_WARLOCK_DESTRUCTION)
-            {
-                RemoveAura(116920);
-                if (HasAura(56241))
-                {
-                    RemoveAura(123728);
-                    RemoveAura(123730);
-                    RemoveAura(123731);
-                }
-                break;
-            }
-
-            if(curentVal < 10)
-                RemoveAura(108683);
-
-            if(curentVal < 10 && oldVal > curentVal)
-                if (AuraEffect* aurEff = GetAuraEffect(108647, 0))
-                    aurEff->ChangeAmount(-100);
-
-            if (curentVal >= 10 && curentVal > oldVal)
-                if (AuraEffect* aurEff = GetAuraEffect(108647, 0))
-                    aurEff->ChangeAmount(-100);
-
-            if (curentVal >= 20 && !HasAura(116920))
-                CastSpell(this, 116920, true);
-            else if (curentVal < 20)
-                RemoveAura(116920);
-
-            if(HasAura(56241))
-            {
-                uint32 spellid[] = {123728, 123730, 123731};
-
-                switch(curentVal)
-                {
-                    case 10:
-                    {
-                        RemoveAura(spellid[1]);
-                        RemoveAura(spellid[2]);
-                        CastSpell(this, spellid[0], true);
-                        break;
-                    }
-                    case 20:
-                    {
-                        RemoveAura(spellid[0]);
-                        RemoveAura(spellid[2]);
-                        CastSpell(this, spellid[1], true);
-                        break;
-                    }
-                    case 30:
-                    {
-                        RemoveAura(spellid[2]);
-                        CastSpell(this, spellid[1], true);
-                        CastSpell(this, spellid[0], true);
-                        break;
-                    }
-                    case 40:
-                    {
-                        RemoveAura(spellid[0]);
-                        CastSpell(this, spellid[2], true);
-                        CastSpell(this, spellid[1], true);
-                        break;
-                    }
-                    default:
-                    {
-                        RemoveAura(spellid[0]);
-                        break;
-                    }
-                }
-            }
-            break;
-        }
         case POWER_INSANITY:
         {
             if(specId != SPEC_PRIEST_SHADOW)
@@ -14748,7 +14645,7 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
 }
 
 // returns negative amount on power reduction
-int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
+int32 Unit::ModifyPower(Powers power, int32 dVal, bool set /*= false*/)
 {
     uint32 powerIndex = GetPowerIndex(power);
     if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
@@ -14768,7 +14665,7 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
 
     if (val <= GetMinPower(power))
     {
-        if(set)
+        if (set)
             SetPower(power, GetMinPower(power));
         else
             SetInt32Value(UNIT_FIELD_POWER + powerIndex, GetMinPower(power));
@@ -14781,7 +14678,7 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
 
     if (val < maxPower)
     {
-        if(set)
+        if (set)
             SetPower(power, val);
         else
             SetInt32Value(UNIT_FIELD_POWER + powerIndex, val);
@@ -14789,7 +14686,7 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
     }
     else if (curPower != maxPower)
     {
-        if(set)
+        if (set)
             SetPower(power, maxPower);
         else
             SetInt32Value(UNIT_FIELD_POWER + powerIndex, maxPower);
@@ -14798,12 +14695,6 @@ int32 Unit::ModifyPower(Powers power, int32 dVal, bool set)
 
     if (gain && power == POWER_LUNAR_POWER)
         TriggerEclipse(curPower);
-
-    if(power == POWER_OBSOLETE)
-    {
-        if(val >= maxPower && curPower < maxPower)
-            SetPower(power, val);
-    }
 
     return gain;
 }
@@ -16167,13 +16058,11 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
         case POWER_RUNIC_POWER:
             return 1000;
         case POWER_RUNES:
+        case POWER_MAELSTROM:
+        case POWER_HEALTH:
             return 0;
         case POWER_INSANITY:
             return 3;
-        case POWER_OBSOLETE:
-            return 40;
-        case POWER_OBSOLETE2:
-            return 1000;
         case POWER_SOUL_SHARDS:
             return 400;
         case POWER_FURY:
@@ -16182,8 +16071,6 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return 100; // Should be -100 to 100 this needs the power to be int32 instead of uint32
         case POWER_HOLY_POWER:
             return HasAura(115675) ? 5 : 3;
-        case POWER_HEALTH:
-            return 0;
         case POWER_CHI:
             return 4;
         case POWER_COMBO_POINTS:
@@ -16195,32 +16082,27 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
     return 0;
 }
 
-int32 Unit::GetPowerForReset(Powers power, bool maxpower, uint16 powerDisplayID/* = 0*/) const
+int32 Unit::GetPowerForReset(Powers power, bool maxpower /*= false*/, uint16 powerDisplayID /*= 0*/) const
 {
     switch (powerDisplayID)
     {
         case POWER_TYPE_VAULT_CRACKING_PROGRESS:
             return 0;
-        default:break;
+        default:
+            break;
     }
 
     switch (power)
     {
-        case POWER_OBSOLETE:
-            return  10;
         case POWER_SOUL_SHARDS:
             return  400;
-        case POWER_OBSOLETE2:
-            return  200;
         case POWER_MANA:
         case POWER_ENERGY:
         case POWER_FOCUS:
-        {
-            if(maxpower)
+            if (maxpower)
                 return GetMaxPower(power);
             else
                 return 0;
-        }
         default:
             break;
     }
@@ -16992,15 +16874,6 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
             }
         }
     }
-
-    // Hack Fix Immolate - Critical strikes generate burning embers
-    if (GetTypeId() == TYPEID_PLAYER && procSpell && (procSpell->Id == 348 || procSpell->Id == 108686) && procExtra & PROC_EX_CRITICAL_HIT)
-        ModifyPower(POWER_OBSOLETE, 1);
-
-    // Hack Rain of Fire - Has a chance to generate burning embers
-    if (GetTypeId() == TYPEID_PLAYER && procSpell && procSpell->Id == 42223)
-        if (roll_chance_i(30))
-            ModifyPower(POWER_OBSOLETE, 1);
 
     Unit* actor = isVictim ? target : this;
     Unit* actionTarget = !isVictim ? target : this;
