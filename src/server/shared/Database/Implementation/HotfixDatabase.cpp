@@ -626,6 +626,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT ID, Word, Lang FROM language_words ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_LANGUAGE_WORDS, "SELECT ID, Word_lang FROM language_words_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // Light.db2
+    PrepareStatement(HOTFIX_SEL_LIGHT, "SELECT ID, PosX, PosY, PosZ, FalloffStart, FalloffEnd, MapID, LightParamsID1, LightParamsID2, LightParamsID3, "
+        "LightParamsID4, LightParamsID5, LightParamsID6, LightParamsID7, LightParamsID8 FROM light ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // KeyChain.db2
     PrepareStatement(HOTFIX_SEL_KEY_CHAIN, "SELECT Id, Key1, Key2, Key3, Key4, Key5, Key6, Key7, Key8, Key9, Key10, Key11, Key12, Key13, Key14, "
         "Key15, Key16, Key17, Key18, Key19, Key20, Key21, Key22, Key23, Key24, Key25, Key26, Key27, Key28, Key29, Key30, Key31, Key32 FROM key_chain"

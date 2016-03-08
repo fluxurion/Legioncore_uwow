@@ -133,6 +133,7 @@ DB2Storage<ItemUpgradeEntry>                sItemUpgradeStore("ItemUpgrade.db2",
 DB2Storage<ItemXBonusTreeEntry>             sItemXBonusTreeStore("ItemXBonusTree.db2", ItemXBonusTreeFormat, HOTFIX_SEL_ITEM_X_BONUS_TREE);
 DB2Storage<KeyChainEntry>                   sKeyChainStore("KeyChain.db2", KeyChainFormat, HOTFIX_SEL_KEY_CHAIN);
 DB2Storage<LanguageWordsEntry>              sLanguageWordsStore("LanguageWords.db2", LanguageWordsFormat, HOTFIX_SEL_LANGUAGE_WORDS);
+DB2Storage<LightEntry>                      sLightStore("Light.db2", LightFormat, HOTFIX_SEL_LIGHT);
 DB2Storage<LFGDungeonEntry>                 sLFGDungeonStore("LfgDungeons.db2", LFGDungeonFormat, HOTFIX_SEL_L_F_G_DUNGEON);
 DB2Storage<LiquidTypeEntry>                 sLiquidTypeStore("LiquidType.db2", LiquidTypeFormat, HOTFIX_SEL_LIQUID_TYPE);
 DB2Storage<LockEntry>                       sLockStore("Lock.db2", LockFormat, HOTFIX_SEL_LOCK);
@@ -414,6 +415,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemXBonusTreeStore);
     LOAD_DB2(sKeyChainStore);
     LOAD_DB2(sLanguageWordsStore);
+    LOAD_DB2(sLightStore);
     //LOAD_DB2(sLFGDungeonStore);
     LOAD_DB2(sLiquidTypeStore);
     LOAD_DB2(sLockStore);
@@ -1792,3 +1794,11 @@ SpellEffectScalingEntry const* DB2Manager::GetSpellEffectScaling(uint32 effectID
     return nullptr;
 }
 
+uint32 DB2Manager::GetDefaultMapLight(uint32 mapID)
+{
+    for (LightEntry const* light : sLightStore)
+        if (light->MapID == mapID && light->Pos.X == 0.0f && light->Pos.Y == 0.0f && light->Pos.Z == 0.0f)
+            return light->ID;
+
+    return 0;
+}

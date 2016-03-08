@@ -822,13 +822,6 @@ class npc_muradin_gunship : public CreatureScript
                 EventScheduled = false;
             }
 
-            void SendMusicToPlayers(uint32 musicId) const
-            {
-                WorldPacket data(SMSG_PLAY_MUSIC, 4);
-                data << uint32(musicId);
-                SendPacketToPlayers(&data);
-            }
-
             // Send packet to all players
             void SendPacketToPlayers(WorldPacket const* data) const
             {
@@ -1020,7 +1013,7 @@ class npc_muradin_gunship : public CreatureScript
                             break;
                         case EVENT_INTRO_ALLIANCE_6:
                             Talk(SAY_INTRO_ALLIANCE_5);
-                            SendMusicToPlayers(17289);
+                            me->GetMap()->SetZoneMusic(me->GetZoneId(), 17289);
                             me->AI()->DoAction(ACTION_BATTLE_EVENT);
                             break;
                         case EVENT_INTRO_ALLIANCE_7:
@@ -2050,13 +2043,6 @@ class npc_saurfang_gunship : public CreatureScript
                 EventScheduled = false;
             }
 
-            void SendMusicToPlayers(uint32 musicId) const
-            {
-                WorldPacket data(SMSG_PLAY_MUSIC, 4);
-                data << uint32(musicId);
-                SendPacketToPlayers(&data);
-            }
-
             // Send packet to all players
             void SendPacketToPlayers(WorldPacket const* data) const
             {
@@ -2245,7 +2231,7 @@ class npc_saurfang_gunship : public CreatureScript
                             Talk(SAY_INTRO_HORDE_2);
                             break;
                         case EVENT_INTRO_HORDE_4:
-                            SendMusicToPlayers(17289);
+                            me->GetMap()->SetZoneMusic(me->GetZoneId(), 17289);
                             me->AI()->DoAction(ACTION_BATTLE_EVENT);
                             if (Creature* pMuradin = ObjectAccessor::GetCreature(*me, _instance->GetGuidData(DATA_MURADIN_BRONZEBEARD_NOT_VISUAL)))
                             {

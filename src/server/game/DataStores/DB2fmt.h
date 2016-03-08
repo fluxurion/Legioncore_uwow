@@ -132,6 +132,7 @@ char const ItemUpgradeFormat[] = "niiiii";
 char const ItemXBonusTreeFormat[] = "nit";
 char const KeyChainFormat[] = "nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 char const LanguageWordsFormat[] = "nsb";
+char const LightFormat[] = "nfffffttttttttt";
 char const LFGDungeonFormat[]= "nsiiiiiiiiiixixixiiiiiiiiiixx";
 char const LiquidTypeFormat[] = "nsifffffssssssiiffffffffffffffffffiiiittbbbbbbbbbbb";
 char const LockFormat[] = "niiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii";

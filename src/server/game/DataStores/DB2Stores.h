@@ -439,6 +439,7 @@ public:
     WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid);
     uint32 GetLiquidFlags(uint32 liquidType);
     SpellEffectScalingEntry const* GetSpellEffectScaling(uint32 effectID);
+    uint32 GetDefaultMapLight(uint32 mapID);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;

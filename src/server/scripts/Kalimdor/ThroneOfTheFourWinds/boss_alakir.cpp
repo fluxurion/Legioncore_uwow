@@ -210,7 +210,7 @@ public:
                     plr->RemoveAurasDueToSpell(SPELL_EYE_OFTHE_STORM);
                 }
             }
-            SendWeather(WEATHER_STATE_FINE);
+            me->GetMap()->SetZoneWeather(me->GetZoneId(), WEATHER_STATE_FINE, 0.5f);
         }
 
         void KilledUnit(Unit* /*who*/)
@@ -267,8 +267,8 @@ public:
         void StartPhaseTwo()
         {
             SetPhase(PHASE_TWO, true);
-            SendLightOverride(NORMAL, 5000);
-            SendWeather(WEATHER_STATE_MEDIUM_RAIN);
+            me->GetMap()->SetZoneOverrideLight(me->GetZoneId(), NORMAL, 5 * IN_MILLISECONDS);
+            me->GetMap()->SetZoneWeather(me->GetZoneId(), WEATHER_STATE_MEDIUM_RAIN, 0.5f);
         }
 
         void StartPhaseThree()
@@ -281,9 +281,8 @@ public:
 
             me->AddAura(SPELL_RELENTLESS_STORM, me);	
 
-            SendWeather(WEATHER_STATE_FINE);
-
-            SendLightOverride(DARK, 5000);
+            me->GetMap()->SetZoneWeather(me->GetZoneId(), WEATHER_STATE_FINE, 0.5f);
+            me->GetMap()->SetZoneOverrideLight(me->GetZoneId(), DARK, 5 * IN_MILLISECONDS);
 
             Map* pMap = me->GetMap();
             Map::PlayerList const &PlayerList = pMap->GetPlayers();
@@ -419,30 +418,6 @@ public:
         }
 
     private:
-        void SendLightOverride(uint32 overrideId, uint32 fadeInTime) const
-        {
-            WorldPacket data(SMSG_OVERRIDE_LIGHT, 12);
-            data << uint32(NORMAL);     // Light.dbc entry (map default)
-            data << uint32(overrideId); // Light.dbc entry (override)
-            data << uint32(fadeInTime);
-            SendPacketToPlayers(&data);
-        }
-
-        void SendWeather(WeatherState weather) const
-        {
-            SendPacketToPlayers(WorldPackets::Misc::Weather(weather, 0.5f).Write());
-        }
-
-        void SendPacketToPlayers(WorldPacket const* data) const
-        {
-            Map::PlayerList const& players = me->GetMap()->GetPlayers();
-            if (!players.isEmpty())
-                for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-                    if (Player* player = itr->getSource())
-                        if (player->GetAreaId() == AREA_TO4W)
-                            player->GetSession()->SendPacket(data);
-        }
-
         InstanceScript* instance;
         uint8 _phase;
         uint32 phase;

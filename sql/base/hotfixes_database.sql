@@ -5772,6 +5772,43 @@ LOCK TABLES `language_words_locale` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `light`
+--
+
+DROP TABLE IF EXISTS `light`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `light` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `PosX` float NOT NULL DEFAULT '0',
+  `PosY` float NOT NULL DEFAULT '0',
+  `PosZ` float NOT NULL DEFAULT '0',
+  `FalloffStart` float NOT NULL DEFAULT '0',
+  `FalloffEnd` float NOT NULL DEFAULT '0',
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID5` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID6` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID7` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LightParamsID8` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `light`
+--
+
+LOCK TABLES `light` WRITE;
+/*!40000 ALTER TABLE `light` DISABLE KEYS */;
+/*!40000 ALTER TABLE `light` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `key_chain`
 --
 

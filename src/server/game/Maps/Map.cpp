@@ -16,27 +16,28 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Map.h"
-#include "GridStates.h"
-#include "ScriptMgr.h"
-#include "VMapFactory.h"
-#include "MMapFactory.h"
-#include "MapInstanced.h"
 #include "CellImpl.h"
+#include "ChallengeMgr.h"
+#include "DynamicTree.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
-#include "Transport.h"
-#include "InstanceScript.h"
-#include "ObjectAccessor.h"
-#include "MapManager.h"
-#include "ObjectMgr.h"
+#include "GridStates.h"
 #include "Group.h"
-#include "DynamicTree.h"
-#include "Vehicle.h"
-#include "LFGMgr.h"
-#include "ChallengeMgr.h"
-#include "ScenarioMgr.h"
 #include "InstancePackets.h"
+#include "InstanceScript.h"
+#include "LFGMgr.h"
+#include "Map.h"
+#include "MapInstanced.h"
+#include "MapManager.h"
+#include "MiscPackets.h"
+#include "MMapFactory.h"
+#include "ObjectAccessor.h"
+#include "ObjectMgr.h"
+#include "ScenarioMgr.h"
+#include "ScriptMgr.h"
+#include "Transport.h"
+#include "Vehicle.h"
+#include "VMapFactory.h"
 
 union u_map_magic
 {
@@ -55,6 +56,15 @@ u_map_magic MapLiquidMagic  = { {'M','L','I','Q'} };
 #define MAX_CREATURE_ATTACK_RADIUS  (45.0f * sWorld->getRate(RATE_CREATURE_AGGRO))
 
 GridState* si_GridStates[MAX_GRID_STATE];
+
+ZoneDynamicInfo::ZoneDynamicInfo()
+{ 
+    MusicID = 0;
+    WeatherID = WEATHER_STATE_FINE;
+    WeatherGrade = 0.0f;
+    OverrideLightID = 0;
+    LightFadeInTime = 0;
+}
 
 Map::~Map()
 {
@@ -282,6 +292,8 @@ i_scriptLock(false), m_has_item_lvl_cap(false)
 
     if (i_spawnMode == DIFFICULTY_CHALLENGE)
         m_has_item_lvl_cap = true;
+
+     _defaultLight = sDB2Manager.GetDefaultMapLight(id);
 }
 
 void Map::InitVisibilityDistance()
@@ -489,6 +501,7 @@ bool Map::AddPlayerToMap(Player* player, bool initPlayer /*= true*/)
         SendInitSelf(player);
     
     SendInitTransports(player);
+    SendZoneDynamicInfo(player);
 
     if (initPlayer)
         player->m_clientGUIDs.clear();
@@ -2178,6 +2191,83 @@ void Map::SendRemoveTransports(Player* player)
     WorldPacket packet;
     transData.BuildPacket(&packet);
     player->GetSession()->SendPacket(&packet);
+}
+
+void Map::SendZoneDynamicInfo(Player* player)
+{
+    ZoneDynamicInfoMap::const_iterator itr = _zoneDynamicInfo.find(GetZoneId(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ()));
+    if (itr == _zoneDynamicInfo.end())
+        return;
+
+    if (uint32 music = itr->second.MusicID)
+        player->SendDirectMessage(WorldPackets::Misc::PlayMusic(music).Write());
+
+    if (WeatherState weatherID = itr->second.WeatherID)
+        player->SendDirectMessage(WorldPackets::Misc::Weather(weatherID, itr->second.WeatherGrade).Write());
+
+    if (uint32 overrideLightID = itr->second.OverrideLightID)
+    {
+        WorldPackets::Misc::OverrideLight overrideLight;
+        overrideLight.AreaLightID = _defaultLight;
+        overrideLight.OverrideLightID = overrideLightID;
+        overrideLight.TransitionMilliseconds = itr->second.LightFadeInTime;
+        player->SendDirectMessage(overrideLight.Write());
+    }
+}
+
+void Map::SetZoneMusic(uint32 zoneID, uint32 musicID)
+{
+    if (_zoneDynamicInfo.find(zoneID) == _zoneDynamicInfo.end())
+        _zoneDynamicInfo.insert(ZoneDynamicInfoMap::value_type(zoneID, ZoneDynamicInfo()));
+
+    _zoneDynamicInfo[zoneID].MusicID = musicID;
+
+    Map::PlayerList const& players = GetPlayers();
+    if (!players.isEmpty())
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            if (Player* player = itr->getSource())
+                if (player->GetZoneId() == zoneID)
+                    player->SendDirectMessage(WorldPackets::Misc::PlayMusic(musicID).Write());
+}
+
+void Map::SetZoneWeather(uint32 zoneID, WeatherState weatherID, float weatherGrade)
+{
+    if (_zoneDynamicInfo.find(zoneID) == _zoneDynamicInfo.end())
+        _zoneDynamicInfo.insert(ZoneDynamicInfoMap::value_type(zoneID, ZoneDynamicInfo()));
+
+    ZoneDynamicInfo& info = _zoneDynamicInfo[zoneID];
+    info.WeatherID = weatherID;
+    info.WeatherGrade = weatherGrade;
+    Map::PlayerList const& players = GetPlayers();
+    if (!players.isEmpty())
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            if (Player* player = itr->getSource())
+                if (player->GetZoneId() == zoneID)
+                    player->SendDirectMessage(WorldPackets::Misc::Weather(weatherID, weatherGrade).Write());
+}
+
+void Map::SetZoneOverrideLight(uint32 zoneID, uint32 lightID, uint32 fadeInTime)
+{
+    if (_zoneDynamicInfo.find(zoneID) == _zoneDynamicInfo.end())
+        _zoneDynamicInfo.insert(ZoneDynamicInfoMap::value_type(zoneID, ZoneDynamicInfo()));
+
+    ZoneDynamicInfo& info = _zoneDynamicInfo[zoneID];
+    info.OverrideLightID = lightID;
+    info.LightFadeInTime = fadeInTime;
+    Map::PlayerList const& players = GetPlayers();
+    if (!players.isEmpty())
+    {
+        WorldPackets::Misc::OverrideLight overrideLight;
+        overrideLight.AreaLightID = _defaultLight;
+        overrideLight.OverrideLightID = lightID;
+        overrideLight.TransitionMilliseconds = fadeInTime;
+        overrideLight.Write();
+
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            if (Player* player = itr->getSource())
+                if (player->GetZoneId() == zoneID)
+                    player->SendDirectMessage(overrideLight.GetRawPacket());
+    }
 }
 
 inline void Map::setNGrid(NGridType *grid, uint32 x, uint32 y)

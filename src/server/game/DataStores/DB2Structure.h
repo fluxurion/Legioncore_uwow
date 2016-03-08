@@ -1872,6 +1872,16 @@ struct LanguageWordsEntry
     uint8       Lang;                                           // 1
 };
 
+struct LightEntry
+{
+    uint32      ID;                                         // 0
+    DBCPosition3D Pos;                                      // 1 - 3
+    float       FalloffStart;                               // 4
+    float       FalloffEnd;                                 // 5
+    uint16      MapID;                                      // 6
+    uint16      LightParamsID[8];                           // 7 - 14
+};
+
 struct KeyChainEntry
 {
     uint32      Id;

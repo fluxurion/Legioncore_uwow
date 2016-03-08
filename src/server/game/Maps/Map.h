@@ -19,18 +19,19 @@
 #ifndef TRINITY_MAP_H
 #define TRINITY_MAP_H
 
-#include "DBCStructure.h"
-#include "DB2Structure.h"
-#include "GridDefines.h"
+#include <bitset>
+
 #include "Cell.h"
-#include "Timer.h"
-#include "SharedDefines.h"
-#include "GridRefManager.h"
-#include "MapRefManager.h"
+#include "DB2Structure.h"
+#include "DBCStructure.h"
 #include "DynamicTree.h"
 #include "GameObjectModel.h"
-
-#include <bitset>
+#include "GridDefines.h"
+#include "GridRefManager.h"
+#include "MapRefManager.h"
+#include "SharedDefines.h"
+#include "Timer.h"
+#include "Weather.h"
 
 class Unit;
 class WorldPacket;
@@ -231,6 +232,17 @@ enum LevelRequirementVsMode
     LEVELREQUIREMENT_HEROIC = 70
 };
 
+struct ZoneDynamicInfo
+{
+    ZoneDynamicInfo();
+    
+    WeatherState WeatherID;
+    uint32 MusicID;
+    uint32 OverrideLightID;
+    uint32 LightFadeInTime;
+    float WeatherGrade;
+};
+
 #if defined(__GNUC__)
 #pragma pack()
 #else
@@ -244,6 +256,7 @@ enum LevelRequirementVsMode
 #define MIN_UNLOAD_DELAY      60000                         // immediate unload
 
 typedef std::map<ObjectGuid::LowType/*leaderDBGUID*/, CreatureGroup*> CreatureGroupHolderType;
+typedef std::unordered_map<uint32 /*zoneId*/, ZoneDynamicInfo> ZoneDynamicInfoMap;
 
 class Map : public GridRefManager<NGridType>
 {
@@ -495,6 +508,10 @@ class Map : public GridRefManager<NGridType>
 
         static void DeleteRespawnTimesInDB(uint16 mapId, uint32 instanceId);
         WorldObject* GetActiveObjectWithEntry(uint32 entry);    ///< Hard iteration of all active object on map
+
+        void SetZoneMusic(uint32 zoneID, uint32 musicID);
+        void SetZoneWeather(uint32 zoneID, WeatherState weatherID, float weatherGrade);
+        void SetZoneOverrideLight(uint32 zoneID, uint32 lightID, uint32 fadeInTime);
     private:
         void LoadMapAndVMap(int gx, int gy);
         void LoadVMap(int gx, int gy);
@@ -508,6 +525,7 @@ class Map : public GridRefManager<NGridType>
 
         void SendInitTransports(Player* player);
         void SendRemoveTransports(Player* player);
+        void SendZoneDynamicInfo(Player* player);
 
         bool CreatureCellRelocation(Creature* creature, Cell new_cell);
 
@@ -582,6 +600,9 @@ class Map : public GridRefManager<NGridType>
         GameObject* _FindGameObject(WorldObject* pWorldObject, ObjectGuid::LowType const& guid) const;
 
         time_t i_gridExpiry;
+
+        uint32 _defaultLight;
+        ZoneDynamicInfoMap _zoneDynamicInfo;
 
         //used for fast base_map (e.g. MapInstanced class object) search for
         //InstanceMaps and BattlegroundMaps...
