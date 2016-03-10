@@ -260,6 +260,7 @@ namespace WorldPackets
         class SetLootSpecialization;
         class LootRoll;
         class DoMasterLootRoll;
+        class MasterLootItem;
     }
 
     namespace Mail
@@ -1126,7 +1127,7 @@ class WorldSession
         void HandleSetLootSpecialization(WorldPackets::Loot::SetLootSpecialization& packet);
         void HandleLootUnit(WorldPackets::Loot::LootUnit& packet);
         void HandleLootRelease(WorldPackets::Loot::LootRelease& packet);
-        void HandleLootMasterGiveOpcode(WorldPacket& recvPacket);
+        void HandleMasterLootItem(WorldPackets::Loot::MasterLootItem& packet);
         void HandleWhoOpcode(WorldPackets::Who::WhoRequestPkt& whoRequest);
         void HandleLogoutRequestOpcode(WorldPacket& recvPacket);
         void HandlePlayerLogoutOpcode(WorldPacket& recvPacket);

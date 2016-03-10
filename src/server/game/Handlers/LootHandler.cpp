@@ -644,3 +644,96 @@ void WorldSession::HandleDoMasterLootRoll(WorldPackets::Loot::DoMasterLootRoll& 
     LootItem& item = packet.LootListID >= loot->items.size() ? loot->quest_items[packet.LootListID - loot->items.size()] : loot->items[packet.LootListID];
     _player->GetGroup()->DoRollForAllMembers(packet.LootObj, packet.LootListID, _player->GetMapId(), loot, item, _player);
 }
+
+void WorldSession::HandleMasterLootItem(WorldPackets::Loot::MasterLootItem& packet)
+{
+    Group* group = _player->GetGroup();
+    if (!group || group->isLFGGroup() || group->GetLooterGuid() != _player->GetGUID())
+    {
+        _player->SendLootRelease(GetPlayer()->GetLootGUID());
+        return;
+    }
+
+    for (auto const& lootData : packet.Loot)
+    {
+        Player* target = ObjectAccessor::FindPlayer(packet.Target);
+        if (!target)
+            continue;
+
+        Loot* loot = nullptr;
+        if (lootData.Object.IsCreatureOrVehicle())
+        {
+            Creature* creature = GetPlayer()->GetMap()->GetCreature(lootData.Object);
+            if (!creature)
+                continue;
+
+            loot = &creature->loot;
+        }
+        else if (lootData.Object.IsGameObject())
+        {
+            GameObject* pGO = GetPlayer()->GetMap()->GetGameObject(lootData.Object);
+            if (!pGO)
+                continue;
+
+            loot = &pGO->loot;
+        }
+        else if (lootData.Object.IsLoot())
+        {
+            loot = sLootMgr->GetLoot(lootData.Object);
+            if (!loot)
+                continue;
+        }
+
+        if (!loot)
+            continue;
+
+        uint8 _LootListID = lootData.LootListID - 1;    //restore slot index; WTF?
+        if (_LootListID >= loot->items.size() + loot->quest_items.size())
+        {
+            sLog->outDebug(LOG_FILTER_LOOT, "MasterLootItem: Player %s might be using a hack! (slot %d, size %lu)",
+                GetPlayer()->GetName(), _LootListID, static_cast<uint32>(loot->items.size()));
+            return;
+        }
+
+        LootItem& item = _LootListID >= static_cast<uint8>(loot->items.size()) ? loot->quest_items[_LootListID - static_cast<uint8>(loot->items.size())] : loot->items[_LootListID];
+        if (item.currency)
+        {
+            sLog->outDebug(LOG_FILTER_LOOT, "WorldSession::HandleMasterLootItem: player %s tried to give currency via master loot! Hack alert! Slot %u, currency id %u",
+                GetPlayer()->GetName(), _LootListID, item.item.ItemID);
+            return;
+        }
+
+        ItemPosCountVec dest;
+        InventoryResult msg = target->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item.item.ItemID, item.count);
+        if (item.follow_loot_rules && !item.AllowedForPlayer(target))
+            msg = EQUIP_ERR_CANT_EQUIP_EVER;
+        if (msg != EQUIP_ERR_OK)
+        {
+            target->SendEquipError(msg, nullptr, nullptr, item.item.ItemID);
+            _player->SendEquipError(msg, nullptr, nullptr, item.item.ItemID);
+            return;
+        }
+
+        // delete roll's in progress for this aoeSlot
+        group->ErraseRollbyRealSlot(_LootListID, loot);
+
+        // ToDo: check for already rolled items. This could posible on packet spaming (special tools should be writen, no so important now)
+
+        // list of players allowed to receive this item in trade
+        GuidSet looters = item.GetAllowedLooters();
+
+        // not move item from loot to target inventory
+        Item* newitem = target->StoreNewItem(dest, item.item.ItemID, true, item.item.RandomPropertiesID, looters, item.item.ItemBonus.BonusListIDs);
+        target->SendNewItem(newitem, uint32(item.count), false, false, true);
+        target->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM, item.item.ItemID, item.count);
+        target->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE, loot->loot_type, item.count);
+        target->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_EPIC_ITEM, item.item.ItemID, item.count);
+
+        // mark as looted
+        item.count = 0;
+        item.is_looted = true;
+
+        loot->NotifyItemRemoved(_LootListID);
+        --loot->unlootedCount;
+    }
+}

@@ -37,6 +37,13 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Loot::LootItem const& ite
     return data;
 }
 
+
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Loot::LootRequest& loot)
+{
+    data >> loot.Object;
+    data >> loot.LootListID;
+}
+
 WorldPacket const* WorldPackets::Loot::LootResponse::Write()
 {
     _worldPacket << Owner;
@@ -72,15 +79,9 @@ WorldPacket const* WorldPackets::Loot::LootResponse::Write()
 
 void WorldPackets::Loot::AutoStoreLootItem::Read()
 {
-    uint32 Count;
-    _worldPacket >> Count;
-
-    Loot.resize(Count);
-    for (uint32 i = 0; i < Count; ++i)
-    {
-        _worldPacket >> Loot[i].Object;
-        _worldPacket >> Loot[i].LootListID;
-    }
+    Loot.resize(_worldPacket.read<uint32>());
+    for (auto loot : Loot)
+        _worldPacket >> loot;
 }
 
 WorldPacket const* WorldPackets::Loot::LootRemoved::Write()
@@ -245,4 +246,12 @@ void WorldPackets::Loot::DoMasterLootRoll::Read()
 {
     _worldPacket >> LootObj;
     _worldPacket >> LootListID;
+}
+
+void WorldPackets::Loot::MasterLootItem::Read()
+{
+    Loot.resize(_worldPacket.read<uint32>());
+    _worldPacket >> Target;
+    for (auto loot : Loot)
+        _worldPacket >> loot;
 }

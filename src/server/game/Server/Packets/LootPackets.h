@@ -315,9 +315,21 @@ namespace WorldPackets
             ObjectGuid LootObj;
             uint8 LootListID = 0;
         };
+
+        class MasterLootItem final : public ClientPacket
+        {
+        public:
+            MasterLootItem(WorldPacket&& packet) : ClientPacket(CMSG_MASTER_LOOT_ITEM, std::move(packet)) { }
+
+            void Read() override;
+
+            std::array<LootRequest, 100> Loot;
+            ObjectGuid Target;
+        };
     }
 }
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Loot::LootItem const& item);
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Loot::LootRequest& loot);
 
 #endif // LootPackets_h__
