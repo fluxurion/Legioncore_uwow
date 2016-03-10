@@ -88,20 +88,20 @@ struct AreaTableEntry
 struct AreaTriggerEntry
 {
     uint32      ID;                                         // 0
-    uint32      MapID;                                      // 1
-    DBCPosition3D Pos;                                      // 2-4
-    uint32      PhaseUseFlags;                              // 5
-    uint32      PhaseID;                                    // 6
-    uint32      PhaseGroupID;                               // 7
-    float       Radius;                                     // 8
-    float       BoxLength;                                  // 9
-    float       BoxWidth;                                   // 10
-    float       BoxHeight;                                  // 11
-    float       BoxYaw;                                     // 12
-    uint32      ShapeType;                                  // 13
-    uint32      ShapeID;                                    // 14
-    uint32      AreaTriggerActionSetID;                     // 15
-    uint32      Flags;                                      // 16
+    DBCPosition3D Pos;                                      // 1 - 3
+    float       Radius;                                     // 4
+    float       BoxLength;                                  // 5
+    float       BoxWidth;                                   // 6
+    float       BoxHeight;                                  // 7
+    float       BoxYaw;                                     // 8
+    uint16      MapID;                                      // 9
+    uint16      PhaseID;                                    // 10
+    uint16      PhaseGroupID;                               // 11
+    uint16      ShapeID;                                    // 12
+    uint16      AreaTriggerActionSetID;                     // 13
+    uint8       PhaseUseFlags;                              // 14
+    uint8       ShapeType;                                  // 16
+    uint8       Flags;                                      // 
 };
 
 struct AchievementEntry

@@ -35,8 +35,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_AREA_TABLE, "SELECT ID, ZoneName_lang, AreaName_lang FROM area_table_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // AreaTrigger.db2
-    PrepareStatement(HOTFIX_SEL_AREA_TRIGGER, "SELECT ID, MapID, PosX, PosY, PosZ, PhaseUseFlags, PhaseID, PhaseGroupID, Radius, BoxLength, BoxWidth, "
-        "BoxHeight, BoxYaw, ShapeType, ShapeID, AreaTriggerActionSetID, Flags FROM area_trigger ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_AREA_TRIGGER, "SELECT ID, PosX, PosY, PosZ, Radius, BoxLength, BoxWidth, BoxHeight, BoxYaw, MapID, PhaseID, "
+        "PhaseGroupID, ShapeID, AreaTriggerActionSetID, PhaseUseFlags, ShapeType, Flags FROM area_trigger ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Achievement.db2
     PrepareStatement(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Name, Description, Flags, Reward, MapID, ParentAchievement, CategoryID, OrderInCategory, "

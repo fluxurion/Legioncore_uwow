@@ -24,7 +24,7 @@
 char const AchievementFormat[] = "nssistttttttbbb";
 char const AreaGroupMemberFormat[] = "ntt";
 char const AreaTableFormat[] = "niisfstttttttttttttbbbbbbbbb";
-char const AreaTriggerFormat[] = "nifffiiifffffiiii";
+char const AreaTriggerFormat[] = "nfffffffftttttbbb";
 char const ArmorLocationFormat[] = "nfffff";
 char const AuctionHouseFormat[] = "nsiii";
 char const BankBagSlotPricesFormat[] = "ni";
