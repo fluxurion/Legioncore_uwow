@@ -97,6 +97,66 @@ void AddSC_wp_commandscript();
 void AddSC_garrison_general();
 void AddSC_garrison_instance();
 
+//legion
+void AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
+void AddSC_boss_the_amalgam_of_souls();
+void AddSC_boss_illysanna_ravencrest();
+void AddSC_boss_smashspite_the_hateful();
+void AddSC_boss_lord_kurtalos_ravencrest();
+
+void AddSC_instance_darkheart_thicket();       //Dark Heart Thicket
+void AddSC_boss_arch_druid_glaidalis();
+void AddSC_boss_oakheart();
+void AddSC_boss_dresaron();
+void AddSC_boss_shade_of_xavius();
+
+void AddSC_instance_eye_of_azshara();           //Eye of Azshara
+void AddSC_boss_warlord_parjesh();
+void AddSC_boss_lady_hatecoil();
+void AddSC_boss_king_deepbeard();
+void AddSC_boss_serpentrix();
+void AddSC_boss_wrath_of_azshara();
+
+void AddSC_instance_halls_of_valor();           //Halls of Valor
+void AddSC_boss_odyn();
+void AddSC_boss_hyrja();
+void AddSC_boss_hymdall();
+void AddSC_boss_fenryr();
+void AddSC_boss_god_king_skovald();
+void AddSC_instance_maw_of_souls();
+void AddSC_boss_ymiron_the_fallen_king();
+void AddSC_boss_harbaron();
+void AddSC_boss_helya();
+
+void AddSC_instance_neltharions_lair();         //Neltharions Lair
+void AddSC_boss_naraxas();
+void AddSC_boss_rokmora();
+void AddSC_boss_ularogg_cragshaper();
+void AddSC_boss_dargrul_the_underking();
+
+void AddSC_instance_the_arcway();               //The Arcway
+void AddSC_boss_ivanyr();
+void AddSC_boss_corstilax();
+void AddSC_boss_general_xakal();
+void AddSC_boss_naltira();
+void AddSC_boss_advisor_vandros();
+
+void AddSC_instance_vault_of_the_wardens();     //Vault of the Wardens
+void AddSC_boss_tirathon_saltheril();
+void AddSC_boss_inquisitor_tormentorum();
+void AddSC_boss_ashgolm();
+void AddSC_boss_glazer();
+void AddSC_boss_cordana();
+
+void AddSC_instance_violet_hold_legion();       //Violet Hold Legion
+void AddSC_boss_mindflayer_kaahrj();
+void AddSC_boss_millificent_manastorm();
+void AddSC_boss_festerface();
+void AddSC_boss_shivermaw();
+void AddSC_boss_anubesset();
+void AddSC_boss_saelorn();
+void AddSC_boss_blood_princess_thalena();
+
 //draenor
 void AddSC_wod_dark_portal();
 void AddSC_wod_frostfire_ridge();
@@ -994,6 +1054,7 @@ void AddScripts()
     AddCommandScripts();
 #ifdef SCRIPTS
     AddWorldScripts();
+    AddLegionScripts();
     AddDraenorScripts();
     AddEasternKingdomsScripts();
     AddKalimdorScripts();
@@ -1093,6 +1154,70 @@ void AddWorldScripts()
     AddSC_achievement_scripts();
     AddSC_challenge_scripts();
     AddSC_chat_log();
+#endif
+}
+
+void AddLegionScripts()
+{
+#ifdef SCRIPTS
+    AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
+    AddSC_boss_the_amalgam_of_souls();
+    AddSC_boss_illysanna_ravencrest();
+    AddSC_boss_smashspite_the_hateful();
+    AddSC_boss_lord_kurtalos_ravencrest();
+
+    AddSC_instance_darkheart_thicket();       //Dark Heart Thicket
+    AddSC_boss_arch_druid_glaidalis();
+    AddSC_boss_oakheart();
+    AddSC_boss_dresaron();
+    AddSC_boss_shade_of_xavius();
+
+    AddSC_instance_eye_of_azshara();           //Eye of Azshara
+    AddSC_boss_warlord_parjesh();
+    AddSC_boss_lady_hatecoil();
+    AddSC_boss_king_deepbeard();
+    AddSC_boss_serpentrix();
+    AddSC_boss_wrath_of_azshara();
+
+    AddSC_instance_halls_of_valor();           //Halls of Valor
+    AddSC_boss_odyn();
+    AddSC_boss_hyrja();
+    AddSC_boss_hymdall();
+    AddSC_boss_fenryr();
+    AddSC_boss_god_king_skovald();
+    AddSC_instance_maw_of_souls();
+    AddSC_boss_ymiron_the_fallen_king();
+    AddSC_boss_harbaron();
+    AddSC_boss_helya();
+
+    AddSC_instance_neltharions_lair();         //Neltharions Lair
+    AddSC_boss_naraxas();
+    AddSC_boss_rokmora();
+    AddSC_boss_ularogg_cragshaper();
+    AddSC_boss_dargrul_the_underking();
+
+    AddSC_instance_the_arcway();               //The Arcway
+    AddSC_boss_ivanyr();
+    AddSC_boss_corstilax();
+    AddSC_boss_general_xakal();
+    AddSC_boss_naltira();
+    AddSC_boss_advisor_vandros();
+
+    AddSC_instance_vault_of_the_wardens();     //Vault of the Wardens
+    AddSC_boss_tirathon_saltheril();
+    AddSC_boss_inquisitor_tormentorum();
+    AddSC_boss_ashgolm();
+    AddSC_boss_glazer();
+    AddSC_boss_cordana();
+
+    AddSC_instance_violet_hold_legion();       //Violet Hold Legion
+    AddSC_boss_mindflayer_kaahrj();
+    AddSC_boss_millificent_manastorm();
+    AddSC_boss_festerface();
+    AddSC_boss_shivermaw();
+    AddSC_boss_anubesset();
+    AddSC_boss_saelorn();
+    AddSC_boss_blood_princess_thalena();
 #endif
 }
 
