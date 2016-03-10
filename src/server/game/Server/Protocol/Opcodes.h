@@ -602,7 +602,7 @@ enum OpcodeClient : uint16
     CMSG_SELL_ITEM                                    = 0x349B,
     CMSG_SELL_WOW_TOKEN_CONFIRM                       = 0xBADD,
     CMSG_SELL_WOW_TOKEN_START                         = 0xBADD,
-    CMSG_SEND_CONTACT_LIST                            = 0xBADD,
+    CMSG_SEND_CONTACT_LIST                            = 0x36D3,
     CMSG_SEND_MAIL                                    = 0x35F8,
     CMSG_SEND_SOR_REQUEST_VIA_ADDRESS                 = 0xBADD,
     CMSG_SEND_SOR_REQUEST_VIA_BNET_ACCOUNT_ID         = 0xBADD,
