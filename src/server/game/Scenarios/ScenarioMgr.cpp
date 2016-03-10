@@ -27,8 +27,8 @@ ScenarioProgress::ScenarioProgress(uint32 _instanceId, lfg::LFGDungeonData const
     : instanceId(_instanceId), dungeonData(_dungeonData),
     m_achievementMgr(this), currentStep(0), currentTree(0), bonusRewarded(false), rewarded(false)
 {
-    if (dungeonData->dbc->scenarioId)
-        scenarioId = dungeonData->dbc->scenarioId;
+    if (dungeonData->dbc->ScenarioID)
+        scenarioId = dungeonData->dbc->ScenarioID;
     else
     {
         ScenarioData const* scenarioData = sObjectMgr->GetScenarioOnMap(dungeonData->map);

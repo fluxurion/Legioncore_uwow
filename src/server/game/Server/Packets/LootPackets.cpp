@@ -42,6 +42,8 @@ ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Loot::LootRequest& loot)
 {
     data >> loot.Object;
     data >> loot.LootListID;
+
+    return data;
 }
 
 WorldPacket const* WorldPackets::Loot::LootResponse::Write()

@@ -243,7 +243,7 @@ void Group::ChangeFlagEveryoneAssistant(bool apply)
 
 void Group::ConvertToLFG(lfg::LFGDungeonData const* dungeon)
 {
-    if (dungeon->dbc->subType == LFG_SUBTYPE_FLEX || dungeon->dbc->subType == LFG_SUBTYPE_RAID)
+    if (dungeon->dbc->SubType == LFG_SUBTYPE_FLEX || dungeon->dbc->SubType == LFG_SUBTYPE_RAID)
         ConvertToRaid(false);
 
     m_groupType = GroupType(m_groupType | GROUPTYPE_LFG | GROUPTYPE_LFG_RESTRICTED);
@@ -1738,7 +1738,7 @@ void Group::SendUpdateToPlayer(ObjectGuid playerGUID, MemberSlot* slot)
 
         lfg::LfgState lfgState = sLFGMgr->GetState(m_guid);
         uint8 flags = 0;
-        if (lfgState == lfg::LFG_STATE_FINISHED_DUNGEON || dungeon && dungeon->dbc->flags & LFG_FLAG_NON_BACKFILLABLE)
+        if (lfgState == lfg::LFG_STATE_FINISHED_DUNGEON || dungeon && dungeon->dbc->Flags & LFG_FLAG_NON_BACKFILLABLE)
             flags |= 2;
 
         partyUpdate.LfgInfos = boost::in_place();

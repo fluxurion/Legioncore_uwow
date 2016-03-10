@@ -198,8 +198,7 @@ LFGDungeonData const* LFGMgr::GetLFGDungeon(uint32 mapId, Difficulty diff, uint3
     {
         LFGDungeonEntry const* dungeonEntry = itr->second.dbc;
 
-        if (dungeonEntry->difficulty == uint8(diff) && dungeonEntry->map == mapId &&
-            dungeonEntry->FitsTeam(team))
+        if (dungeonEntry->DifficultyID == diff && dungeonEntry->MapID == mapId && dungeonEntry->FitsTeam(team))
             return &itr->second;
     }
 
@@ -215,7 +214,7 @@ void LFGMgr::LoadLFGDungeons(bool reload /* = false */)
     // Initialize Dungeon map with data from dbcs
     for (LFGDungeonEntry const* dungeon : sLFGDungeonStore)
     {
-        if (dungeon->type == LFG_TYPE_ZONE)
+        if (dungeon->Type == LFG_TYPE_ZONE)
             continue;
 
         LfgDungeonStore[dungeon->ID] = LFGDungeonData(dungeon);
@@ -509,7 +508,7 @@ void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, const
                 break;
             }
 
-            switch (entry->dbc->subType)
+            switch (entry->dbc->SubType)
             {
                 case LFG_SUBTYPE_DUNGEON:
                     isDungeon = true;
@@ -529,7 +528,7 @@ void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, const
                 joinData.result = LFG_JOIN_INTERNAL_ERROR;
             }
 
-            switch (entry->dbc->type)
+            switch (entry->dbc->Type)
             {
                 // FIXME: can join to random dungeon and random scenario at the same time
                 case LFG_TYPE_RANDOM:
@@ -542,16 +541,16 @@ void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, const
                 case LFG_TYPE_RAID:
                     break;
                 default:
-                    sLog->outError(LOG_FILTER_LFG, "Wrong dungeon type %u for dungeon %u", entry->dbc->type, *it);
+                    sLog->outError(LOG_FILTER_LFG, "Wrong dungeon type %u for dungeon %u", entry->dbc->Type, *it);
                     joinData.result = LFG_JOIN_DUNGEON_INVALID;
                     break;
             }
 
-            switch (entry->dbc->subType)
+            switch (entry->dbc->SubType)
             {
                 case LFG_SUBTYPE_SCENARIO:
                 {
-                    if (entry->dbc->difficulty == DIFFICULTY_HC_SCENARIO && !isContinueDungeonRequest)
+                    if (entry->dbc->DifficultyID == DIFFICULTY_HC_SCENARIO && !isContinueDungeonRequest)
                     {
                         if (sWorld->getBoolConfig(CONFIG_LFG_DEBUG_JOIN))
                             break;
@@ -1790,7 +1789,7 @@ LfgLockMap const LFGMgr::GetLockedDungeons(ObjectGuid guid)
             lockData.status = LFG_LOCKSTATUS_TOO_HIGH_LEVEL;
         else if (dungeon->seasonal && !IsSeasonActive(dungeon->id))
             lockData.status = LFG_LOCKSTATUS_NOT_IN_SEASON;
-        else if (dungeon->dbc->groupId == LFG_GROUP_HEROIC_WOD && dungeon->dbc->type != LFG_TYPE_RANDOM && !IsCompleteChalange(player, guid)) // Check complete Proving Grounds for dungeon WOD
+        else if (dungeon->dbc->GroupID == LFG_GROUP_HEROIC_WOD && dungeon->dbc->Type != LFG_TYPE_RANDOM && !IsCompleteChalange(player, guid)) // Check complete Proving Grounds for dungeon WOD
             lockData.status = LFG_LOCKSTATUS_NOT_COMLETE_CHALANGE;
         // merge faction check with check on invalid TP pos and check on test invalid maps (BUT we still have to send it! LOL, in WoD blizz deleted invalid maps from client DBC)
         else if (!dungeon->dbc->FitsTeam(player->GetTeam()) || DisableMgr::IsDisabledFor(DISABLE_TYPE_MAP, dungeon->map, player)
@@ -2294,13 +2293,13 @@ LfgRoleData::LfgRoleData(LFGDungeonData const* data)
 
 void LfgRoleData::Init(LFGDungeonData const* data)
 {
-    tanksNeeded = data->dbc->tankNeeded;
-    healerNeeded = data->dbc->healerNeeded;
-    dpsNeeded = data->dbc->dpsNeeded;
+    tanksNeeded = data->dbc->CountTank;
+    healerNeeded = data->dbc->CountHealer;
+    dpsNeeded = data->dbc->CountDamage;
 
-    minTanksNeeded = data->dbc->minTankNeeded;
-    minHealerNeeded = data->dbc->minHealerNeeded;
-    minDpsNeeded = data->dbc->minDpsNeeded;
+    minTanksNeeded = data->dbc->MinCountTank;
+    minHealerNeeded = data->dbc->MinCountHealer;
+    minDpsNeeded = data->dbc->MinCountDamage;
 }
 
 bool LfgReward::RewardPlayer(Player* player, LFGDungeonData const* randomDungeon, LFGDungeonData const* normalDungeon, bool bonusObjective) const
@@ -2316,7 +2315,7 @@ bool LfgReward::RewardPlayer(Player* player, LFGDungeonData const* randomDungeon
         player->RewardQuest(quest, 0, nullptr, false);
 
         // reward lfg bonus reputation on first completion
-        if (uint32 bonusRep = randomDungeon && !bonusObjective ? randomDungeon->dbc->bonusRepAmt : 0)
+        if (uint32 bonusRep = randomDungeon && !bonusObjective ? randomDungeon->dbc->BonusReputationAmount : 0)
         {
             if (uint32 faction = player->GetLfgBonusFaction())
                 player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(faction), bonusRep);

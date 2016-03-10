@@ -480,7 +480,7 @@ enum AreaFlags
 };
 
 
-enum Difficulty
+enum Difficulty : uint8
 {
     DIFFICULTY_NONE              = 0,                       // entry
     DIFFICULTY_NORMAL            = 1,                        // entry 

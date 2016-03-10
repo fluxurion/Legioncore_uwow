@@ -323,7 +323,7 @@ namespace WorldPackets
 
             void Read() override;
 
-            std::array<LootRequest, 100> Loot;
+            Array<LootRequest, 100> Loot;
             ObjectGuid Target;
         };
     }

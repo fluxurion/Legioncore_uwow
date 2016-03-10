@@ -296,10 +296,10 @@ struct LFGDungeonData
     LFGDungeonData(): id(0), name(""), map(0), type(0), expansion(0), random_id(0), minlevel(0),
         maxlevel(0), difficulty(DIFFICULTY_NORMAL), seasonal(false), x(0.0f), y(0.0f), z(0.0f), o(0.0f), internalType(LFG_TYPE_DUNGEON), dbc(NULL)
        { }
-    LFGDungeonData(LFGDungeonEntry const* _dbc): id(_dbc->ID), name(_dbc->name), map(_dbc->map),
-        type(_dbc->type), expansion(_dbc->expansion), random_id(_dbc->random_id),
-        minlevel(_dbc->minlevel), maxlevel(_dbc->maxlevel), difficulty(Difficulty(_dbc->difficulty)),
-        seasonal((_dbc->flags & LFG_FLAG_SEASONAL) != 0), x(0.0f), y(0.0f), z(0.0f), o(0.0f),
+    LFGDungeonData(LFGDungeonEntry const* _dbc): id(_dbc->ID), name(_dbc->Name->Str[LOCALE_enUS]), map(_dbc->MapID),
+        type(_dbc->Type), expansion(_dbc->Expansion), random_id(_dbc->RandomID),
+        minlevel(_dbc->MinLevel), maxlevel(_dbc->MaxLevel), difficulty(Difficulty(_dbc->DifficultyID)),
+        seasonal((_dbc->Flags & LFG_FLAG_SEASONAL) != 0), x(0.0f), y(0.0f), z(0.0f), o(0.0f),
         internalType(_dbc->GetInternalType()), dbc(_dbc)
         { }
 

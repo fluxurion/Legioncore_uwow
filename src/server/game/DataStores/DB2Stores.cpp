@@ -416,7 +416,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sKeyChainStore);
     LOAD_DB2(sLanguageWordsStore);
     LOAD_DB2(sLightStore);
-    //LOAD_DB2(sLFGDungeonStore);
+    LOAD_DB2(sLFGDungeonStore);
     LOAD_DB2(sLiquidTypeStore);
     LOAD_DB2(sLockStore);
     LOAD_DB2(sMailTemplateStore);

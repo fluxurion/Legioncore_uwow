@@ -337,44 +337,45 @@ struct GlyphSlotEntry
 
 struct LFGDungeonEntry
 {
-    uint32  ID;                                             // 0
-    char*   name;                                           // 1
-    uint32  minlevel;                                       // 2
-    uint32  maxlevel;                                       // 3
-    uint32  reclevel;                                       // 4
-    uint32  recminlevel;                                    // 5
-    uint32  recmaxlevel;                                    // 6
-    int32   map;                                            // 7
-    uint32  difficulty;                                     // 8
-    uint32  flags;                                          // 9
-    uint32  type;                                           // 10
-    int32   faction;                                        // 11
-    //char*   textureFileName;                              // 12 Name lite
-    uint32  expansion;                                      // 13
-    //uint32 orderIndex;                                    // 14
-    uint32 groupId;                                         // 15
-    //char* descr                                           // 16 Description
-    uint32 random_id;                                       // 17 random id
-    uint32 tankNeeded;                                      // 18
-    uint32 healerNeeded;                                    // 19
-    uint32 dpsNeeded;                                       // 20
-    uint32 minTankNeeded;                                   // 21
-    uint32 minHealerNeeded;                                 // 22
-    uint32 minDpsNeeded;                                    // 23   5.4.1
-    uint32 scenarioId;                                      // 24   5.4.1
-    uint32 subType;                                         // 25   5.4.1
-    uint32 bonusRepAmt;                                     // 26   5.4.1
-    //uint32 mentorCharLevel;                               // 27   5.4.1
-    //uint32 mentorItemLevel;                               // 28   5.4.1
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      Flags;                                      // 2
+    LocalizedString* TextureFilename;                       // 3
+    LocalizedString* Description;                           // 4
+    uint16      MaxLevel;                                   // 5
+    uint16      TargetLevelMax;                             // 6
+    int16       MapID;                                      // 7
+    uint16      RandomID;                                   // 8
+    uint16      ScenarioID;                                 // 9
+    uint16      LastBossJournalEncounterID;                 // 10
+    uint16      BonusReputationAmount;                      // 11
+    uint16      TimeWalkerItemLvl;                          // 12
+    uint8       MinLevel;                                   // 13
+    uint8       TargetLevel;                                // 14
+    uint8       TargetLevelMin;                             // 15
+    uint8       DifficultyID;                               // 16
+    uint8       Type;                                       // 17
+    int8        Faction;                                    // 18
+    uint8       Expansion;                                  // 19
+    uint8       OrderIndex;                                 // 20
+    uint8       GroupID;                                    // 21
+    uint8       CountTank;                                  // 22
+    uint8       CountHealer;                                // 23
+    uint8       CountDamage;                                // 24
+    uint8       MinCountTank;                               // 25
+    uint8       MinCountHealer;                             // 26
+    uint8       MinCountDamage;                             // 27
+    uint8       SubType;                                    // 28
+    uint8       UnkLegion;                                  // 29
 
     // Helpers
-    uint32 Entry() const { return ID + (type << 24); }
-    bool IsScenario() const { return subType == LFG_SUBTYPE_SCENARIO; }
-    bool IsChallenge() const { return difficulty == DIFFICULTY_CHALLENGE; }
-    bool IsRaidFinder() const { return difficulty == DIFFICULTY_LFR; }
-    bool IsFlex() const { return difficulty == FLEXIBLE_DIFFICULTY; }
-    uint32 GetMinGroupSize() const { return minTankNeeded + minHealerNeeded + minDpsNeeded; }
-    uint32 GetMaxGroupSize() const { return tankNeeded + healerNeeded + dpsNeeded; }
+    uint32 Entry() const { return ID + (Type << 24); }
+    bool IsScenario() const { return SubType == LFG_SUBTYPE_SCENARIO; }
+    bool IsChallenge() const { return DifficultyID == DIFFICULTY_CHALLENGE; }
+    bool IsRaidFinder() const { return DifficultyID == DIFFICULTY_LFR; }
+    bool IsFlex() const { return DifficultyID == FLEXIBLE_DIFFICULTY; }
+    uint32 GetMinGroupSize() const { return MinCountTank + MinCountHealer + MinCountDamage; }
+    uint32 GetMaxGroupSize() const { return CountTank + CountHealer + CountDamage; }
     bool IsValid() const
     {
         switch (ID)
@@ -394,7 +395,7 @@ struct LFGDungeonEntry
 
     LfgType GetInternalType() const
     {
-        switch (subType)
+        switch (SubType)
         {
             case LFG_SUBTYPE_DUNGEON:
                 return LFG_TYPE_DUNGEON;
@@ -410,13 +411,13 @@ struct LFGDungeonEntry
         return LFG_TYPE_DUNGEON;
     }
 
-    bool CanBeRewarded() const {  return type == LFG_TYPE_RANDOM || IsRaidFinder() || IsChallenge() || flags & LFG_FLAG_SEASONAL; }
+    bool CanBeRewarded() const {  return Type == LFG_TYPE_RANDOM || IsRaidFinder() || IsChallenge() || Flags & LFG_FLAG_SEASONAL; }
 
     bool FitsTeam(uint32 team) const
     {
-        if (faction == -1)
+        if (Faction == -1)
             return true;
-        else if (faction == 0)
+        else if (Faction == 0)
             return team == HORDE;
         else
             return team == ALLIANCE;

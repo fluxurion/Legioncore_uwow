@@ -674,18 +674,18 @@ LfgQueueData::LfgQueueData(time_t _joinTime, LfgDungeonSet const& _dungeons, con
 {
     LFGDungeonData const* dungeon = !_dungeons.empty() ? sLFGMgr->GetLFGDungeon(*_dungeons.begin() & 0xFFFFF) : NULL;
     type = dungeon ? dungeon->internalType : LFG_TYPE_DUNGEON;
-    subType = dungeon ? dungeon->dbc->subType : LFG_SUBTYPE_DUNGEON;
+    subType = dungeon ? dungeon->dbc->SubType : LFG_SUBTYPE_DUNGEON;
     joinTime = _joinTime;
     dungeons = _dungeons;
     roles = _roles;
 
-    minTanksNeeded = dungeon ? dungeon->dbc->minTankNeeded : LFG_TANKS_NEEDED;
-    minHealerNeeded = dungeon ? dungeon->dbc->minHealerNeeded : LFG_HEALERS_NEEDED;
-    minDpsNeeded = dungeon ? dungeon->dbc->minDpsNeeded : LFG_DPS_NEEDED;
+    minTanksNeeded = dungeon ? dungeon->dbc->MinCountTank : LFG_TANKS_NEEDED;
+    minHealerNeeded = dungeon ? dungeon->dbc->MinCountHealer : LFG_HEALERS_NEEDED;
+    minDpsNeeded = dungeon ? dungeon->dbc->MinCountDamage : LFG_DPS_NEEDED;
 
-    tanksNeeded = dungeon ? dungeon->dbc->tankNeeded : LFG_TANKS_NEEDED;
-    healerNeeded = dungeon ? dungeon->dbc->healerNeeded : LFG_HEALERS_NEEDED;
-    dpsNeeded = dungeon ? dungeon->dbc->dpsNeeded : LFG_DPS_NEEDED;
+    tanksNeeded = dungeon ? dungeon->dbc->CountTank : LFG_TANKS_NEEDED;
+    healerNeeded = dungeon ? dungeon->dbc->CountHealer : LFG_HEALERS_NEEDED;
+    dpsNeeded = dungeon ? dungeon->dbc->CountDamage : LFG_DPS_NEEDED;
 
     tanks = tanksNeeded;
     healers = healerNeeded;

@@ -95,9 +95,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_GLYPH_SLOT, "SELECT ID, TypeFlags, `Order` FROM glyph_slot ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // LFGDungeon.db2
-    PrepareStatement(HOTFIX_SEL_L_F_G_DUNGEON, "SELECT ID, name, minlevel, maxlevel, reclevel, recminlevel, recmaxlevel, map, difficulty, flags, "
-        "type, faction, expansion, groupId, random_id, tankNeeded, healerNeeded, dpsNeeded, minTankNeeded, minHealerNeeded, minDpsNeeded, scenarioId, "
-        "subType, bonusRepAmt FROM l_f_g_dungeon ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_L_F_G_DUNGEON, "SELECT ID, Name, Flags, TextureFilename, Description, MaxLevel, TargetLevelMax, MapID, RandomID, "
+        "ScenarioID, LastBossJournalEncounterID, BonusReputationAmount, TimeWalkerItemLvl, MinLevel, TargetLevel, TargetLevelMin, DifficultyID, Type, "
+        "Faction, Expansion, OrderIndex, GroupID, CountTank, CountHealer, CountDamage, MinCountTank, MinCountHealer, MinCountDamage, SubType, "
+        "UnkLegion FROM l_f_g_dungeon ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_L_F_G_DUNGEON, "SELECT ID, Name_lang, TextureFilename_lang, Description_lang FROM l_f_g_dungeon_locale"
+        " WHERE locale = ?", CONNECTION_SYNCH);
 
     // LiquidType.db2
     PrepareStatement(HOTFIX_SEL_LIQUID_TYPE, "SELECT ID, Name, SpellId, unk_1, unk_2, unk_3, unk_4, unk_5, Texture1, Texture2, Texture3, Texture4, "
