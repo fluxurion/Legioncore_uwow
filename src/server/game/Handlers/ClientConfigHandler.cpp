@@ -61,7 +61,7 @@ void WorldSession::HandleUpdateAccountData(WorldPackets::ClientConfig::UserClien
 
     if (packet.Size == 0)
     {
-        SetAccountData(AccountDataType(packet.DataType), 0, "");
+        SetAccountData(AccountDataType(packet.DataType));
         return;
     }
 

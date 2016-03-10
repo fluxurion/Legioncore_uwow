@@ -729,23 +729,23 @@ enum AccountDataType
     PER_CHARACTER_MACROS_CACHE      = 5,                    // 0x20 p
     PER_CHARACTER_LAYOUT_CACHE      = 6,                    // 0x40 p
     PER_CHARACTER_CHAT_CACHE        = 7,                    // 0x80 p
+
+    NUM_ACCOUNT_DATA_TYPES
 };
 
-#define NUM_ACCOUNT_DATA_TYPES        8
-
 #define GLOBAL_CACHE_MASK           0x15
-#define PER_CHARACTER_CACHE_MASK    0xAA
+#define PER_CHARACTER_CACHE_MASK    0xEA
 
 enum TutorialAction
 {
-    TUTORIAL_ACTION_RESET  = 0,
-    TUTORIAL_ACTION_UPDATE = 1,
-    TUTORIAL_ACTION_CLEAR  = 2
+    TUTORIAL_ACTION_UPDATE  = 0,
+    TUTORIAL_ACTION_CLEAR   = 1,
+    TUTORIAL_ACTION_RESET   = 2
 };
 
 struct AccountData
 {
-    AccountData() : Time(0), Data("") {}
+    AccountData() : Time(0), Data("") { }
 
     time_t Time;
     std::string Data;
@@ -987,7 +987,7 @@ class WorldSession
 
         // Account Data
         AccountData* GetAccountData(AccountDataType type) { return &m_accountData[type]; }
-        void SetAccountData(AccountDataType type, time_t tm, std::string data);
+        void SetAccountData(AccountDataType type, time_t tm = time_t(0), std::string data = "");
         void SendTimeZoneInformation();
         void LoadGlobalAccountData();
         void LoadAccountData(PreparedQueryResult result, uint32 mask);

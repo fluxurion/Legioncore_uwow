@@ -799,7 +799,7 @@ void WorldSession::LoadAccountData(PreparedQueryResult result, uint32 mask)
     while (result->NextRow());
 }
 
-void WorldSession::SetAccountData(AccountDataType type, time_t tm, std::string data)
+void WorldSession::SetAccountData(AccountDataType type, time_t tm /*= time_t(0)*/, std::string data /*= ""*/)
 {
     if ((1 << type) & GLOBAL_CACHE_MASK)
     {
