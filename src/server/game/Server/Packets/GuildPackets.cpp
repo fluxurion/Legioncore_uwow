@@ -926,3 +926,10 @@ WorldPacket const* WorldPackets::Guild::PlayerSaveGuildEmblem::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Guild::QyeryMemberRecipes::Read()
+{
+    _worldPacket >> GuildMember;
+    _worldPacket >> GuildGUID;
+    _worldPacket >> SkillLineID;
+}

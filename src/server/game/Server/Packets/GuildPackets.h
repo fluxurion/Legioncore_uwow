@@ -1121,6 +1121,18 @@ namespace WorldPackets
 
             int32 Error = 0;
         };
+
+        class QyeryMemberRecipes final : public ClientPacket
+        {
+        public:
+            QyeryMemberRecipes(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_QUERY_MEMBER_RECIPES, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid GuildMember;
+            ObjectGuid GuildGUID;
+            uint32 SkillLineID = 0;
+        };
     }
 }
 

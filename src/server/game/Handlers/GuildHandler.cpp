@@ -463,19 +463,13 @@ void WorldSession::HandleGuildQueryGuildMembersForRecipe(WorldPacket& recvPacket
         guild->SendGuildMembersForRecipeResponse(this, skillId, spellId);
 }
 
-//! 6.0.3
-void WorldSession::HandleGuildQueryGuildMembersRecipes(WorldPacket& recvPacket)
+void WorldSession::HandleQyeryMemberRecipes(WorldPackets::Guild::QyeryMemberRecipes& packet)
 {
-    ObjectGuid playerGuid, guildGuid;
-    uint32 skillId;
-
-    recvPacket >> playerGuid >> guildGuid >> skillId;
-
     Guild* guild = _player->GetGuild();
-    if (!guild || !guild->IsMember(playerGuid))
+    if (!guild || !guild->IsMember(packet.GuildMember))
         return;
 
-    guild->SendGuildMemberRecipesResponse(this, playerGuid, skillId);
+    guild->SendGuildMemberRecipesResponse(this, packet.GuildMember, packet.SkillLineID);
 }
 
 void WorldSession::HandleGuildRequestChallengeUpdate(WorldPackets::Guild::GuildChallengeUpdateRequest& /*packet*/)
