@@ -23,47 +23,24 @@
 #include "GuildMgr.h"
 #include "GuildPackets.h"
 
-void WorldSession::HandleGuildFinderAddRecruit(WorldPacket& recvPacket)
+void WorldSession::HandleLFGuildAddRecruit(WorldPackets::Guild::LFGuildAddRecruit& packet)
 {
     if (sGuildFinderMgr->GetAllMembershipRequestsForPlayer(GetPlayer()->GetGUID()).size() == 10)
         return;
 
-    uint32 classRoles = 0;
-    uint32 availability = 0;
-    uint32 guildInterests = 0;
-
-    recvPacket >> classRoles >> guildInterests >> availability;
-
-    ObjectGuid guid;
-    uint16 commentLength = recvPacket.ReadBits(11);
-
-    uint8 bitOrder[8] = {7, 2, 6, 5, 0, 3, 4, 1};
-    //recvPacket.ReadBitInOrder(guid, bitOrder);
-
-    uint8 nameLength = recvPacket.ReadBits(7);
-    
-    //recvPacket.ReadByteSeq(guid[3]);
-    //recvPacket.ReadByteSeq(guid[0]);
-    //recvPacket.ReadByteSeq(guid[2]);
-    std::string playerName = recvPacket.ReadString(nameLength);
-    std::string comment = recvPacket.ReadString(commentLength);
-    //recvPacket.ReadByteSeq(guid[4]);
-    //recvPacket.ReadByteSeq(guid[7]);
-    //recvPacket.ReadByteSeq(guid[1]);
-    //recvPacket.ReadByteSeq(guid[5]);
-    //recvPacket.ReadByteSeq(guid[6]);
-
-    if (!guid.IsGuild())
-        return;
-    if (!(classRoles & GUILDFINDER_ALL_ROLES) || classRoles > GUILDFINDER_ALL_ROLES)
-        return;
-    if (!(availability & ALL_WEEK) || availability > ALL_WEEK)
-        return;
-    if (!(guildInterests & ALL_INTERESTS) || guildInterests > ALL_INTERESTS)
+    if (!packet.GuildGUID.IsGuild())
         return;
 
-    MembershipRequest request = MembershipRequest(GetPlayer()->GetGUID(), guid, availability, classRoles, guildInterests, comment, time(NULL));
-    sGuildFinderMgr->AddMembershipRequest(guid, request);
+    if (!(packet.ClassRoles & GUILDFINDER_ALL_ROLES) || packet.ClassRoles > GUILDFINDER_ALL_ROLES)
+        return;
+
+    if (!(packet.Availability & ALL_WEEK) || packet.Availability > ALL_WEEK)
+        return;
+
+    if (!(packet.PlayStyle & ALL_PLAY_STYLES) || packet.PlayStyle > ALL_PLAY_STYLES)
+        return;
+
+    sGuildFinderMgr->AddMembershipRequest(packet.GuildGUID, MembershipRequest(GetPlayer()->GetGUID(), packet.GuildGUID, packet.Availability, packet.ClassRoles, packet.PlayStyle, packet.Comment, time(nullptr)));
 }
 
 void WorldSession::HandleGuildFinderBrowse(WorldPacket& recvPacket)
@@ -79,7 +56,7 @@ void WorldSession::HandleGuildFinderBrowse(WorldPacket& recvPacket)
         return;
     if (!(availability & ALL_WEEK) || availability > ALL_WEEK)
         return;
-    if (!(guildInterests & ALL_INTERESTS) || guildInterests > ALL_INTERESTS)
+    if (!(guildInterests & ALL_PLAY_STYLES) || guildInterests > ALL_PLAY_STYLES)
         return;
     if (playerLevel > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) || playerLevel < 1)
         return;
@@ -261,7 +238,7 @@ void WorldSession::HandleLFGuildSetGuildPost(WorldPackets::Guild::LFGuildSetGuil
     if (!(packet.Availability & ALL_WEEK) || packet.Availability > ALL_WEEK)
         return;
 
-    if (!(packet.PlayStyle & ALL_INTERESTS) || packet.PlayStyle > ALL_INTERESTS)
+    if (!(packet.PlayStyle & ALL_PLAY_STYLES) || packet.PlayStyle > ALL_PLAY_STYLES)
         return;
 
     if (!(packet.LevelRange & ALL_GUILDFINDER_LEVELS) || packet.LevelRange > ALL_GUILDFINDER_LEVELS)

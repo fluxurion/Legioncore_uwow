@@ -23,14 +23,15 @@
 #include "GuildMgr.h"
 #include "ObjectGuid.h"
 
-enum GuildFinderOptionsInterest
+enum GuildFinderPlayStyle
 {
-    INTEREST_QUESTING        = 0x01,
-    INTEREST_DUNGEONS        = 0x02,
-    INTEREST_RAIDS           = 0x04,
-    INTEREST_PVP             = 0x08,
-    INTEREST_ROLE_PLAYING    = 0x10,
-    ALL_INTERESTS            = INTEREST_QUESTING | INTEREST_DUNGEONS | INTEREST_RAIDS | INTEREST_PVP | INTEREST_ROLE_PLAYING
+    PLAY_STYLE_QUESTING      = 0x01,
+    PLAY_STYLE_DUNGEONS      = 0x02,
+    PLAY_STYLE_RAIDS         = 0x04,
+    PLAY_STYLE_PVP           = 0x08,
+    PLAY_STYLE_ROLE_PLAYING  = 0x10,
+
+    ALL_PLAY_STYLES           = PLAY_STYLE_QUESTING | PLAY_STYLE_DUNGEONS | PLAY_STYLE_RAIDS | PLAY_STYLE_PVP | PLAY_STYLE_ROLE_PLAYING
 };
 
 enum GuildFinderOptionsAvailability

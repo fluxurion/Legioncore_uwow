@@ -946,3 +946,12 @@ void WorldPackets::Guild::QueryRecipes::Read()
 {
     _worldPacket >> GuildGUID;
 }
+
+void WorldPackets::Guild::LFGuildAddRecruit::Read()
+{
+    _worldPacket >> GuildGUID;
+    _worldPacket >> PlayStyle;
+    _worldPacket >> Availability;
+    _worldPacket >> ClassRoles;
+    _worldPacket.ReadString(_worldPacket.ReadBits(10), Comment);
+}

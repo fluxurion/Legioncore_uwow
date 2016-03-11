@@ -231,6 +231,8 @@ namespace WorldPackets
         class LFGuildSetGuildPost;
 
         class GuildChallengeUpdateRequest;
+
+        class LFGuildAddRecruit;
     }
 
     namespace Item
@@ -1291,7 +1293,7 @@ class WorldSession
 
         void HandleGuildRequestChallengeUpdate(WorldPackets::Guild::GuildChallengeUpdateRequest& /*packet*/);
 
-        void HandleGuildFinderAddRecruit(WorldPacket& recvPacket);
+        void HandleLFGuildAddRecruit(WorldPackets::Guild::LFGuildAddRecruit& packet);
         void HandleGuildFinderBrowse(WorldPacket& recvPacket);
         void HandleGuildFinderDeclineRecruit(WorldPacket& recvPacket);
         void HandleGuildFinderGetApplications(WorldPacket& recvPacket);
