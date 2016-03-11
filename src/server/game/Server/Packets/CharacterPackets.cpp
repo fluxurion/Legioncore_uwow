@@ -393,6 +393,12 @@ WorldPacket const* WorldPackets::Character::LogoutComplete::Write()
     return &_worldPacket;
 }
 
+void WorldPackets::Character::LogoutInstant::Read()
+{
+    if (_worldPacket.ReadBit())
+        _worldPacket >> *Reason;
+}
+
 void WorldPackets::Character::LoadingScreenNotify::Read()
 {
     _worldPacket >> MapID;

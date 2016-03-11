@@ -89,13 +89,6 @@ void WorldSession::HandleRepopRequest(WorldPackets::Misc::RepopRequest& packet)
     GetPlayer()->RepopAtGraveyard();
 }
 
-void WorldSession::HandlePlayerLogoutOpcode(WorldPacket& recvData)
-{
-    bool bit = !recvData.ReadBit();
-    if (bit)
-        recvData >> Unused<uint32>();
-}
-
 void WorldSession::HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet)
 {
     Player* player = GetPlayer();

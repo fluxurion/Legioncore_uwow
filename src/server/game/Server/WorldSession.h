@@ -108,6 +108,7 @@ namespace WorldPackets
         class PlayerLogin;
         class LogoutRequest;
         class LogoutCancel;
+        class LogoutInstant;
         class LoadingScreenNotify;
         class GetUndeleteCharacterCooldownStatus;
         class SetActionBarToggles;
@@ -1149,7 +1150,7 @@ class WorldSession
         void HandleMasterLootItem(WorldPackets::Loot::MasterLootItem& packet);
         void HandleWhoOpcode(WorldPackets::Who::WhoRequestPkt& whoRequest);
         void HandleLogoutRequest(WorldPackets::Character::LogoutRequest& packet);
-        void HandlePlayerLogoutOpcode(WorldPacket& recvPacket);
+        void HandleLogoutInstant(WorldPackets::Character::LogoutInstant& packet);
         void HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet);
 
         // GM Ticket opcodes

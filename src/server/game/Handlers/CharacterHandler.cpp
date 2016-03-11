@@ -2350,3 +2350,7 @@ void WorldSession::HandleLogoutRequest(WorldPackets::Character::LogoutRequest& /
 
     LogoutRequest(time(nullptr));
 }
+
+void WorldSession::HandleLogoutInstant(WorldPackets::Character::LogoutInstant& /*packet*/)
+{
+}

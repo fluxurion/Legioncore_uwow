@@ -440,6 +440,16 @@ namespace WorldPackets
             void Read() override { }
         };
 
+        class LogoutInstant final : public ClientPacket
+        {
+        public:
+            LogoutInstant(WorldPacket&& packet) : ClientPacket(CMSG_LOGOUT_INSTANT, std::move(packet)) { }
+
+            void Read() override { }
+
+            Optional<uint32> Reason;
+        };
+
         class LogoutCancelAck final : public ServerPacket
         {
         public:
