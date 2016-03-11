@@ -173,11 +173,10 @@ void WorldSession::HandleLFGuildGetRecruits(WorldPackets::Guild::LFGuildGetRecru
     player->SendDirectMessage(recruits.Write());
 }
 
-void WorldSession::HandleGuildFinderPostRequest(WorldPacket& recvPacket)
+void WorldSession::HandleLFGuildGetGuildPost(WorldPackets::Guild::LFGuildGetGuildPost& /*packet*/)
 {
     Player* player = GetPlayer();
-
-    if (!player->GetGuildId()) // Player must be in guild
+    if (!player->GetGuildId())
         return;
 
     bool isGuildMaster = true;

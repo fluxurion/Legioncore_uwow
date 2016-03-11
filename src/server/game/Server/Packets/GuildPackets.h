@@ -1203,6 +1203,14 @@ namespace WorldPackets
 
             uint32 LastUpdate = 0;
         };
+
+        class LFGuildGetGuildPost final : public ClientPacket
+        {
+        public:
+            LFGuildGetGuildPost(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_GET_GUILD_POST, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
