@@ -1081,7 +1081,8 @@ class WorldSession
         void HandleLoadScreenOpcode(WorldPackets::Character::LoadingScreenNotify& loadingScreenNotify);
         void HandleCharEnum(PreparedQueryResult result, bool isDelete);
         void HandlePlayerLogin(LoginQueryHolder * holder);
-        void HandleCharFactionOrRaceChange(WorldPacket& recvData);
+        void SendCharFactionChange(ResponseCodes result, WorldPackets::Character::CharRaceOrFactionChangeInfo const* factionChangeInfo);
+        void HandleCharFactionOrRaceChange(WorldPackets::Character::CharRaceOrFactionChange& packet);
         void HandleGenerateRandomCharacterName(WorldPackets::Character::GenerateRandomCharacterName& packet);
         void HandleReorderCharacters(WorldPacket& recvData);
 

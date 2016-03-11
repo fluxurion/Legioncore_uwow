@@ -270,9 +270,9 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            uint8 Result = 0;
-            ObjectGuid Guid;
             Optional<CharFactionChangeDisplayInfo> Display;
+            ObjectGuid Guid;
+            uint8 Result = 0;
         };
 
         class GenerateRandomCharacterName final : public ClientPacket
