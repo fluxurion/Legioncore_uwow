@@ -450,6 +450,7 @@ namespace WorldPackets
         class QueueRequest;
         class JoinSkirmish;
         class HearthAndResurrect;
+        class JoinRatedBattleground;
     }
 
     namespace VoidStorage
@@ -1485,7 +1486,7 @@ class WorldSession
         void HandleLeaveBattlefield(WorldPackets::Battleground::NullCmsg& packet);
         void HandleBattlemasterJoinArena(WorldPackets::Battleground::JoinArena& packet);
         void HandleJoinSkirmish(WorldPackets::Battleground::JoinSkirmish& packet);
-        void HandleBattlemasterJoinRated(WorldPacket& recvData);
+        void HandleJoinRatedBattleground(WorldPackets::Battleground::JoinRatedBattleground& packet);
         void JoinBracket(uint8 slot);
 
         void HandleReportPvPAFK(WorldPacket& recvData);

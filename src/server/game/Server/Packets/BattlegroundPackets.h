@@ -669,6 +669,14 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class JoinRatedBattleground final : public ClientPacket
+        {
+        public:
+            JoinRatedBattleground(WorldPacket&& packet) : ClientPacket(CMSG_JOIN_RATED_BATTLEGROUND, std::move(packet)) { }
+
+            void Read() override;
+        };
     }
 }
 

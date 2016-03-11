@@ -584,7 +584,7 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPackets::Battleground::JoinA
     JoinBracket(packet.TeamSizeIndex);
 }
 
-void WorldSession::HandleBattlemasterJoinRated(WorldPacket& recvData)
+void WorldSession::HandleJoinRatedBattleground(WorldPackets::Battleground::JoinRatedBattleground& /*packet*/)
 {
     JoinBracket(BRACKET_TYPE_RATED_BG);
 }
