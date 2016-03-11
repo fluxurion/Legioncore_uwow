@@ -2306,3 +2306,47 @@ void WorldSession::HandleSetTitle(WorldPackets::Character::SetTitle& packet)
 
     GetPlayer()->SetUInt32Value(PLAYER_FIELD_PLAYER_TITLE, packet.TitleID);
 }
+
+void WorldSession::HandleLogoutRequest(WorldPackets::Character::LogoutRequest& /*packet*/)
+{
+    Player* player = GetPlayer();
+
+    ObjectGuid lguid = player->GetLootGUID();
+    if (!lguid.IsEmpty())
+        DoLootRelease(lguid);
+    player->ClearAoeLootList();
+
+    uint32 reason = 0;
+    if (player->isInCombat())
+        reason = 1;
+    else if (player->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR))
+        reason = 3;                                         // is jumping or falling
+    else if (player->duel || player->HasAura(9454)) // is dueling or frozen by GM via freeze command
+        reason = 2;                                         // FIXME - Need the correct value
+
+    //instant logout in taverns/cities or on taxi or for admins, gm's, mod's if its enabled in worldserver.conf
+    bool instantLogout = player->HasFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_RESTING) || player->isInFlight() ||
+        GetSecurity() >= AccountTypes(sWorld->getIntConfig(CONFIG_INSTANT_LOGOUT));
+
+    WorldPackets::Character::LogoutResponse logoutResponse;
+    logoutResponse.LogoutResult = reason;
+    logoutResponse.Instant = instantLogout;
+    SendPacket(logoutResponse.Write());
+
+    // instant logout in taverns/cities or on taxi or for admins, gm's, mod's if its enabled in worldserver.conf
+    if (instantLogout)
+    {
+        LogoutPlayer(true);
+        return;
+    }
+
+    // not set flags if player can't free move to prevent lost state at logout cancel
+    if (player->CanFreeMove())
+    {
+        player->SetStandState(UNIT_STAND_STATE_SIT);
+        player->SetRooted(true);
+        player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+    }
+
+    LogoutRequest(time(nullptr));
+}

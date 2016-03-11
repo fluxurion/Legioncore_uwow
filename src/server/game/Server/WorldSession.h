@@ -1148,7 +1148,7 @@ class WorldSession
         void HandleLootRelease(WorldPackets::Loot::LootRelease& packet);
         void HandleMasterLootItem(WorldPackets::Loot::MasterLootItem& packet);
         void HandleWhoOpcode(WorldPackets::Who::WhoRequestPkt& whoRequest);
-        void HandleLogoutRequestOpcode(WorldPacket& recvPacket);
+        void HandleLogoutRequest(WorldPackets::Character::LogoutRequest& packet);
         void HandlePlayerLogoutOpcode(WorldPacket& recvPacket);
         void HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet);
 
