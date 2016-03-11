@@ -1183,6 +1183,16 @@ namespace WorldPackets
             int32 ClassRoles = 0;
             int32 PlayStyle = 0;
         };
+
+        class LFGuildRemoveRecruit final : public ClientPacket
+        {
+        public:
+            LFGuildRemoveRecruit(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_REMOVE_RECRUIT, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid GuildGUID;
+        };
     }
 }
 

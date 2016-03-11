@@ -228,12 +228,12 @@ namespace WorldPackets
         class GuildBankTextQuery;
         class GuildBankSetTabText;
 
-        class LFGuildSetGuildPost;
-
         class GuildChallengeUpdateRequest;
 
+        class LFGuildSetGuildPost;
         class LFGuildAddRecruit;
         class LFGuildBrowse;
+        class LFGuildRemoveRecruit;
     }
 
     namespace Item
@@ -1300,7 +1300,7 @@ class WorldSession
         void HandleGuildFinderGetApplications(WorldPacket& recvPacket);
         void HandleGuildFinderGetRecruits(WorldPacket& recvPacket);
         void HandleGuildFinderPostRequest(WorldPacket& recvPacket);
-        void HandleGuildFinderRemoveRecruit(WorldPacket& recvPacket);
+        void HandleGuildFinderRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet);
         void HandleLFGuildSetGuildPost(WorldPackets::Guild::LFGuildSetGuildPost& packet);
 
         void HandleEnableTaxiNode(WorldPackets::Taxi::EnableTaxiNode& packet);

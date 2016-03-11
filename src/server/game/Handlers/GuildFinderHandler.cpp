@@ -206,20 +206,10 @@ void WorldSession::HandleGuildFinderPostRequest(WorldPacket& recvPacket)
     player->SendDirectMessage(post.Write());
 }
 
-void WorldSession::HandleGuildFinderRemoveRecruit(WorldPacket& recvPacket)
+void WorldSession::HandleGuildFinderRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet)
 {
-    ObjectGuid guildGuid;
-
-    uint8 bitOrder[8] = {3, 7, 4, 2, 6, 1, 0, 5};
-    //recvPacket.ReadBitInOrder(guildGuid, bitOrder);
-
-    uint8 byteOrder[8] = {6, 2, 7, 1, 5, 4, 0, 3};
-    //recvPacket.ReadBytesSeq(guildGuid, byteOrder);
-
-    if (!guildGuid.IsGuild())
-        return;
-
-    sGuildFinderMgr->RemoveMembershipRequest(GetPlayer()->GetGUID(), guildGuid);
+    if (packet.GuildGUID.IsGuild())
+        sGuildFinderMgr->RemoveMembershipRequest(GetPlayer()->GetGUID(), packet.GuildGUID);
 }
 
 void WorldSession::HandleLFGuildSetGuildPost(WorldPackets::Guild::LFGuildSetGuildPost& packet)

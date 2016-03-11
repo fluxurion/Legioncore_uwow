@@ -963,3 +963,8 @@ void WorldPackets::Guild::LFGuildBrowse::Read()
     _worldPacket >> ClassRoles;
     _worldPacket >> CharacterLevel;
 }
+
+void WorldPackets::Guild::LFGuildRemoveRecruit::Read()
+{
+    _worldPacket >> GuildGUID;
+}
