@@ -30,17 +30,31 @@
 void WorldSession::HandleComplaint(WorldPackets::Ticket::Complaint& packet)
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_COMPLAINTS);
-    stmt->setUInt64(0, packet.Offender.PlayerGuid.GetCounter());
-    stmt->setUInt8(1, packet.ComplaintType);
-    stmt->setUInt32(2, packet.MailID);
-    stmt->setUInt32(3, packet.Offender.TimeSinceOffence);
-    stmt->setString(4, packet.Chat.MessageLog);
+    stmt->setUInt64(0, sObjectMgr->GenerateReportComplaintID());
+    stmt->setUInt64(1, packet.Offender.PlayerGuid.GetCounter());
+    stmt->setUInt8(2, packet.ComplaintType);
+    stmt->setUInt32(3, packet.MailID); 
+    stmt->setUInt32(4, packet.Offender.TimeSinceOffence);
+    stmt->setString(5, packet.Chat.MessageLog);
     CharacterDatabase.Execute(stmt);
 
     WorldPackets::Ticket::ComplaintResult result;
     result.ComplaintType = packet.ComplaintType;
     result.Result = 0;
     SendPacket(result.Write());
+}
+
+void WorldSession::HandleSupportTicketSubmitBug(WorldPackets::Ticket::SupportTicketSubmitBug& packet)
+{
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_BUG_REPORT);
+    stmt->setUInt64(0, sObjectMgr->GenerateSupportTicketSubmitBugID());
+    stmt->setUInt64(1, _player->GetGUID().GetCounter());
+    stmt->setString(2, packet.Note);
+    stmt->setUInt32(3, packet.Header.MapID);
+    stmt->setFloat(4, packet.Header.Position.GetPositionX());
+    stmt->setFloat(5, packet.Header.Position.GetPositionY());
+    stmt->setFloat(6, packet.Header.Position.GetPositionZ());
+    CharacterDatabase.Execute(stmt);
 }
 
 void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recvData)

@@ -221,24 +221,6 @@ void WorldSession::HandleAddFriendOpcodeCallBack(PreparedQueryResult result, std
     sSocialMgr->SendFriendStatus(player, friendResult, friendGuid, false);
 }
 
-//! 5.4.1
-void WorldSession::HandleBugOpcode(WorldPacket& recvData)
-{
-    uint32 contentlen, typelen;
-    uint8 suggestion;   //bit
-    std::string content, type;
-
-    recvData >> suggestion >> contentlen;
-    content = recvData.ReadString(contentlen);
-    recvData >> typelen;
-    type = recvData.ReadString(typelen);
-
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_BUG_REPORT);
-    stmt->setString(0, type);
-    stmt->setString(1, content);
-    CharacterDatabase.Execute(stmt);
-}
-
 void WorldSession::HandleReclaimCorpse(WorldPackets::Misc::ReclaimCorpse& /*packet*/)
 {
     Player* player = GetPlayer();

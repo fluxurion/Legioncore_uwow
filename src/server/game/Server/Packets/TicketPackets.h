@@ -72,6 +72,23 @@ namespace WorldPackets
             uint32 ComplaintType = 0;
             uint8 Result = 0;
         };
+
+        struct SupportTicketHeader
+        {
+            Position Position;
+            int32 MapID = 0;
+        };
+
+        class SupportTicketSubmitBug final : public ClientPacket
+        {
+        public:
+            SupportTicketSubmitBug(WorldPacket&& packet) : ClientPacket(CMSG_SUPPORT_TICKET_SUBMIT_BUG, std::move(packet)) { }
+
+            void Read() override;
+
+            SupportTicketHeader Header;
+            std::string Note;
+        };
     }
 }
 

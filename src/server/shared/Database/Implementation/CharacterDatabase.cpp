@@ -413,7 +413,6 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG, "UPDATE characters SET at_login = at_login | ? WHERE guid = ?", CONNECTION_BOTH);
     PrepareStatement(CHAR_UPD_REM_AT_LOGIN_FLAG, "UPDATE characters set at_login = at_login & ~ ? WHERE guid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_UPD_ALL_AT_LOGIN_FLAGS, "UPDATE characters SET at_login = at_login | ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_INS_BUG_REPORT, "INSERT INTO bugreport (type, content) VALUES(?, ?)", CONNECTION_ASYNC);
     PrepareStatement(CHAR_UPD_PETITION_NAME, "UPDATE petition SET name = ? WHERE petitionguid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_INS_PETITION_SIGNATURE, "INSERT INTO petition_sign (ownerguid, petitionguid, playerguid, player_account) VALUES (?, ?, ?, ?)", CONNECTION_ASYNC);
     PrepareStatement(CHAR_UPD_ACCOUNT_ONLINE, "UPDATE characters SET online = 0 WHERE account = ?", CONNECTION_ASYNC);
@@ -702,6 +701,8 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_SEL_HEIRLOOMS, "SELECT itemId, flags FROM account_heirlooms WHERE accountId = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_REP_HEIRLOOMS, "REPLACE INTO account_heirlooms (accountId, itemId, flags) VALUES (?, ?, ?)", CONNECTION_ASYNC);
 
-    PrepareStatement(CHAR_SEL_CHARACTER_COMPLAINTS, "SELECT PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog FROM complaints WHERE PlayerGuid = ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_INS_CHARACTER_COMPLAINTS, "INSERT INTO complaints (PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog) VALUES (?, ?, ?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_CHARACTER_COMPLAINTS, "SELECT ID, PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog FROM report_complaints WHERE PlayerGuid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_INS_CHARACTER_COMPLAINTS, "INSERT INTO report_complaints (ID, PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
+
+    PrepareStatement(CHAR_INS_BUG_REPORT, "INSERT INTO report_bugreport (ID, PlayerGuid, Note, MapID, PosX, PosY, PosZ) VALUES(?, ?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
 }

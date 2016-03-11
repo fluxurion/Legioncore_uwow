@@ -64,3 +64,17 @@ WorldPacket const* WorldPackets::Ticket::ComplaintResult::Write()
 
     return &_worldPacket;
 }
+
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Ticket::SupportTicketHeader& header)
+{
+    data >> header.MapID;
+    data >> header.Position.PositionXYZOStream();
+
+    return data;
+}
+
+void WorldPackets::Ticket::SupportTicketSubmitBug::Read()
+{
+    _worldPacket >> Header;
+    _worldPacket.ReadString(_worldPacket.ReadBits(10), Note);
+}

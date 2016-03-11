@@ -1378,6 +1378,8 @@ class ObjectMgr
         uint32 GenerateMailID();
         uint32 GeneratePetNumber();
         uint64 GenerateVoidStorageItemId();
+        uint64 GenerateReportComplaintID();
+        uint64 GenerateSupportTicketSubmitBugID();
 
         typedef std::multimap<int32, uint32> ExclusiveQuestGroups;
         ExclusiveQuestGroups mExclusiveQuestGroups;
@@ -1752,6 +1754,8 @@ class ObjectMgr
         uint32 _mailId;
         uint32 _hiPetNumber;
         ObjectGuid::LowType _voidItemId;
+        uint64 _reportComplaintID;
+        uint64 _supportTicketSubmitBugID;
 
         // first free low guid for selected guid type
         ObjectGuidGenerator<HighGuid::Player> _playerGuidGenerator;

@@ -738,6 +738,7 @@ namespace WorldPackets
     namespace Ticket
     {
         class Complaint;
+        class SupportTicketSubmitBug;
     }
 
     class Null final : public ClientPacket
@@ -1186,7 +1187,7 @@ class WorldSession
         void HandleAddIgnoreOpcodeCallBack(PreparedQueryResult result);
         void HandleDelIgnoreOpcode(WorldPackets::Social::DelIgnore& packet);
         void HandleSetContactNotesOpcode(WorldPackets::Social::SetContactNotes& packet);
-        void HandleBugOpcode(WorldPacket& recvPacket);
+        void HandleSupportTicketSubmitBug(WorldPackets::Ticket::SupportTicketSubmitBug& packet);
 
         void HandleCanDuel(WorldPackets::Duel::CanDuel& packet);
         void HandleDuelResponse(WorldPackets::Duel::DuelResponse& duelResponse);

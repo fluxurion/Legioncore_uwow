@@ -270,10 +270,17 @@ ObjectGuidGenerator<type>* ObjectMgr::GetGenerator()
     return nullptr;
 }
 
-ObjectMgr::ObjectMgr(): _auctionId(1), _equipmentSetGuid(1),
-    _itemTextId(1), _mailId(1), _hiPetNumber(1), _voidItemId(1), 
-    _skipUpdateCount(1)
-{}
+ObjectMgr::ObjectMgr()
+{
+    _auctionId = 1;
+    _equipmentSetGuid = 1;
+    _itemTextId = 1;
+    _hiPetNumber = 1;
+    _voidItemId = 1;
+    _skipUpdateCount = 1;
+    _reportComplaintID = 1;
+    _supportTicketSubmitBugID = 1;
+}
 
 ObjectMgr::~ObjectMgr()
 {
@@ -6124,6 +6131,32 @@ void ObjectMgr::SetHighestGuids()
     result = CharacterDatabase.Query("SELECT MAX(guid) FROM account_battle_pet_journal");
     if (result)
         _PetBattleGuidGenerator.Set((*result)[0].GetUInt64() + 1);
+}
+
+uint64 ObjectMgr::GenerateReportComplaintID()
+{
+    if (QueryResult result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_complaints"))
+        _reportComplaintID = (*result)[0].GetUInt64();
+
+    if (_reportComplaintID >= std::numeric_limits<uint64>::max())
+    {
+        sLog->outError(LOG_FILTER_GENERAL, "_reportComplaintID overflow!! Can't continue, shutting down server. ");
+        World::StopNow(ERROR_EXIT_CODE);
+    }
+    return _reportComplaintID++;
+}
+
+uint64 ObjectMgr::GenerateSupportTicketSubmitBugID()
+{
+    if (QueryResult result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_bugreport"))
+        _supportTicketSubmitBugID = (*result)[0].GetUInt64();
+
+    if (_supportTicketSubmitBugID >= std::numeric_limits<uint64>::max())
+    {
+        sLog->outError(LOG_FILTER_GENERAL, "_reportComplaintID overflow!! Can't continue, shutting down server. ");
+        World::StopNow(ERROR_EXIT_CODE);
+    }
+    return _supportTicketSubmitBugID++;
 }
 
 uint32 ObjectMgr::GenerateAuctionID()
