@@ -1178,10 +1178,10 @@ namespace WorldPackets
 
             void Read() override;
 
-            int32 CharacterLevel = 0;
-            int32 Availability = 0;
-            int32 ClassRoles = 0;
-            int32 PlayStyle = 0;
+            uint32 CharacterLevel = 0;
+            uint32 Availability = 0;
+            uint32 ClassRoles = 0;
+            uint32 PlayStyle = 0;
         };
 
         class LFGuildRemoveRecruit final : public ClientPacket
