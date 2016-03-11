@@ -357,8 +357,8 @@ public:
             if(map->GetAreaInfo(object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), mogpFlags, adtId, rootId, groupId))
             {
                 if(WMOAreaTableEntry const* wmoEntry = sDB2Manager.GetWMOAreaTableEntryByTripple(rootId, adtId, groupId))
-                    if(std::strlen(wmoEntry->AreaName_lang) > 0)
-                        AreaName = wmoEntry->AreaName_lang;
+                    if(std::strlen(wmoEntry->AreaName->Str[LOCALE_enUS]) > 0)
+                        AreaName = wmoEntry->AreaName->Str[LOCALE_enUS];
 
                 handler->PSendSysMessage("WMO rootId %i adtId %i groupId %i mogpFlags %u", rootId, adtId, groupId, mogpFlags);
             }

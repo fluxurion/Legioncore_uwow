@@ -224,11 +224,11 @@ char const TransportAnimationFormat[] = "niifffb";
 char const UnitPowerBarFormat[] = "niffiiiiiiiiiiiissssffttbbb";
 char const VehicleFormat[] = "niiffffiiiiiiiifffffffffffffffxxxxfifiiii";
 char const VehicleSeatFormat[] = "niiffffffffffiiiiiifffffffiiifffiiiiiiiffiiiiffffffffffffiiiiiiiii";
-char const WMOAreaTableFormat[] = "niiixxxxxiisxxx";
+char const WMOAreaTableFormat[] = "nistttttttbbbbb";
 char const WorldMapAreaFormat[] = "nsffffttttttbbbb";
 char const WorldMapOverlayFormat[] = "nstttttttttttttt";
 char const WorldMapTransformsFormat[] = "nfffffffffttttb";
-char const WorldSafeLocsFormat[] = "niffffx";
+char const WorldSafeLocsFormat[] = "nffffsi";
 
 #endif
 

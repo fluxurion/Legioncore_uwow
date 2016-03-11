@@ -530,21 +530,21 @@ struct VehicleEntry
 
 struct WMOAreaTableEntry
 {
-    uint32      ID;                                         // 0 index
-    int32       WMOID;                                      // 1 used in root WMO
-    int32       NameSet;                                    // 2 used in adt file
-    int32       WMOGroupID;                                 // 3 used in group WMO
-    //uint32    SoundProviderPref;                          // 4
-    //uint32    SoundProviderPrefUnderwater;                // 5
-    //uint32    AmbienceID;                                 // 6
-    //uint32    ZoneMusic;                                  // 7
-    //uint32    IntroSound;                                 // 8
-    uint32      Flags;                                      // 9 used for indoor/outdoor determination
-    uint32      AreaTableID;                                // 10 link to AreaTableEntry.ID
-    char*       AreaName_lang;                              // 11       m_AreaName_lang
-    //uint32    UWIntroSound;                               // 12
-    //uint32    UWZoneMusic;                                // 13
-    //uint32    UWAmbience;                                 // 14
+    uint32      ID;                                         // 0
+    int32       WMOGroupID;                                 // 1
+    LocalizedString* AreaName;                              // 2
+    uint16      WMOID;                                      // 3
+    uint16      AmbienceID;                                 // 4
+    uint16      ZoneMusic;                                  // 5
+    uint16      IntroSound;                                 // 6
+    uint16      AreaTableID;                                // 7
+    uint16      UWIntroSound;                               // 8
+    uint16      UWAmbience;                                 // 9
+    uint8       NameSet;                                    // 10
+    uint8       SoundProviderPref;                          // 11
+    uint8       SoundProviderPrefUnderwater;                // 12
+    uint8       Flags;                                      // 13
+    uint8       UWZoneMusic;                                // 14
 };
 
 struct WorldMapAreaEntry
@@ -570,9 +570,9 @@ struct WorldMapAreaEntry
 struct WorldSafeLocsEntry
 {
     uint32          ID;                                     // 0
-    uint32          MapID;                                  // 1
-    DBCPosition4D   Loc;                                    // 2 - 5
-    //char*         AreaName_lang;                          // 6
+    DBCPosition4D   Loc;                                    // 1 - 4
+    LocalizedString* AreaName;                              // 5
+    uint32          MapID;                                  // 6
 };
 
 struct BankBagSlotPricesEntry

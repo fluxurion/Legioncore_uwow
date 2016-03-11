@@ -1113,12 +1113,20 @@ DROP TABLE IF EXISTS `w_m_o_area_table`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `w_m_o_area_table` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `WMOID` int(11) NOT NULL DEFAULT '0',
-  `NameSet` int(11) NOT NULL DEFAULT '0',
   `WMOGroupID` int(11) NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `AreaTableID` int(10) unsigned NOT NULL DEFAULT '0',
   `AreaName` text,
+  `WMOID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AmbienceID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ZoneMusic` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `IntroSound` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AreaTableID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UWIntroSound` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UWAmbience` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `NameSet` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SoundProviderPref` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SoundProviderPrefUnderwater` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UWZoneMusic` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1131,6 +1139,31 @@ CREATE TABLE `w_m_o_area_table` (
 LOCK TABLES `w_m_o_area_table` WRITE;
 /*!40000 ALTER TABLE `w_m_o_area_table` DISABLE KEYS */;
 /*!40000 ALTER TABLE `w_m_o_area_table` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `w_m_o_area_table_locale`
+--
+
+DROP TABLE IF EXISTS `w_m_o_area_table_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `w_m_o_area_table_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `AreaName_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `w_m_o_area_table_locale`
+--
+
+LOCK TABLES `w_m_o_area_table_locale` WRITE;
+/*!40000 ALTER TABLE `w_m_o_area_table_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `w_m_o_area_table_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1205,11 +1238,12 @@ DROP TABLE IF EXISTS `world_safe_locs`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `world_safe_locs` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `LocX` float NOT NULL DEFAULT '0',
   `LocY` float NOT NULL DEFAULT '0',
   `LocZ` float NOT NULL DEFAULT '0',
   `LocO` float NOT NULL DEFAULT '0',
+  `AreaName` text,
+  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1222,6 +1256,31 @@ CREATE TABLE `world_safe_locs` (
 LOCK TABLES `world_safe_locs` WRITE;
 /*!40000 ALTER TABLE `world_safe_locs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `world_safe_locs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `world_safe_locs_locale`
+--
+
+DROP TABLE IF EXISTS `world_safe_locs_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `world_safe_locs_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `AreaName_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `world_safe_locs_locale`
+--
+
+LOCK TABLES `world_safe_locs_locale` WRITE;
+/*!40000 ALTER TABLE `world_safe_locs_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `world_safe_locs_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

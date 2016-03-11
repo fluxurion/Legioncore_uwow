@@ -135,8 +135,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "MsslTrgtImpactTexRadius, VehicleUIIndicatorID, PowerDisplayID1, PowerDisplayID2, PowerDisplayID3 FROM vehicle ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // WMOAreaTable.db2
-    PrepareStatement(HOTFIX_SEL_W_M_O_AREA_TABLE, "SELECT ID, WMOID, NameSet, WMOGroupID, Flags, AreaTableID, AreaName FROM w_m_o_area_table"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_W_M_O_AREA_TABLE, "SELECT ID, WMOGroupID, AreaName, WMOID, AmbienceID, ZoneMusic, IntroSound, AreaTableID, "
+        "UWIntroSound, UWAmbience, NameSet, SoundProviderPref, SoundProviderPrefUnderwater, Flags, UWZoneMusic FROM w_m_o_area_table ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_W_M_O_AREA_TABLE, "SELECT ID, AreaName_lang FROM w_m_o_area_table_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // WorldMapArea.db2
     PrepareStatement(HOTFIX_SEL_WORLD_MAP_AREA, "SELECT ID, AreaName, LocLeft, LocRight, LocTop, LocBottom, MapID, AreaID, DisplayMapID, "
@@ -144,7 +145,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_WORLD_MAP_AREA, "SELECT ID, AreaName_lang FROM world_map_area_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // WorldSafeLocs.db2
-    PrepareStatement(HOTFIX_SEL_WORLD_SAFE_LOCS, "SELECT ID, MapID, LocX, LocY, LocZ, LocO FROM world_safe_locs ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_WORLD_SAFE_LOCS, "SELECT ID, LocX, LocY, LocZ, LocO, AreaName, MapID FROM world_safe_locs ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_WORLD_SAFE_LOCS, "SELECT ID, AreaName_lang FROM world_safe_locs_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BankBagSlotPrices.db2
     PrepareStatement(HOTFIX_SEL_BANK_BAG_SLOT_PRICES, "SELECT ID, Price FROM bank_bag_slot_prices ORDER BY ID DESC", CONNECTION_SYNCH);
