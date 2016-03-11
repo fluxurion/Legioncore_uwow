@@ -783,9 +783,9 @@ WorldPacket const* WorldPackets::Misc::OverrideLight::Write()
 
 void WorldPackets::Misc::WardenData::Read()
 {
-    if (CryptedSize = _worldPacket.read<uint32>())
+    if (uint32 size = _worldPacket.read<uint32>())
     {
-        Data.resize(CryptedSize);
-        _worldPacket.read(Data.contents(), CryptedSize);
+        Data.resize(size);
+        _worldPacket.read(Data.contents(), size);
     }
 }

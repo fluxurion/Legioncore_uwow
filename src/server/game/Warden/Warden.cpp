@@ -246,12 +246,14 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
 
 void WorldSession::HandleWardenData(WorldPackets::Misc::WardenData& packet)
 {
-    _warden->DecryptData(const_cast<uint8*>(packet.Data.contents() + sizeof(uint32)), packet.CryptedSize);
-    
-    uint8 opcode = 0;
-    //recvData >> opcode;
-    //sLog->outDebug(LOG_FILTER_WARDEN, "Got packet, opcode %02X, size %u", opcode, uint32(recvData.size()));
-    //recvData.hexlike();
+    if (packet.Data.empty())
+        return;
+
+    _warden->DecryptData(packet.Data.contents(), packet.Data.size());
+    uint8 opcode;
+    packet.Data >> opcode;
+    sLog->outDebug(LOG_FILTER_WARDEN, "Got packet, opcode %02X, size %u", opcode, uint32(packet.Data.size()));
+    packet.Data.hexlike();
 
     switch (opcode)
     {
