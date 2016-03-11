@@ -1146,6 +1146,16 @@ namespace WorldPackets
             uint32 SpellID = 0;
             uint32 UniqueBit = 0;
         };
+
+        class QueryRecipes final : public ClientPacket
+        {
+        public:
+            QueryRecipes(WorldPacket&& packet) : ClientPacket(CMSG_GUILD_QUERY_RECIPES, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid GuildGUID;
+        };
     }
 }
 

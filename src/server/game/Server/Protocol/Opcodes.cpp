@@ -400,7 +400,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_GUILD_QUERY_MEMBER_RECIPES,                         STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Guild::QueryMemberRecipes, &WorldSession::HandleQyeryMemberRecipes);
     DEFINE_HANDLER(CMSG_GUILD_QUERY_MEMBERS_FOR_RECIPE,                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Guild::QueryGuildMembersForRecipe, &WorldSession::HandleQueryGuildMembersForRecipe);
     DEFINE_HANDLER(CMSG_GUILD_QUERY_NEWS,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::GuildQueryNews, &WorldSession::HandleGuildQueryNews);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GUILD_QUERY_RECIPES,                     STATUS_UNHANDLED, PROCESS_INPLACE,      &WorldSession::HandleGuildQueryGuildRecipesOpcode);
+    DEFINE_HANDLER(CMSG_GUILD_QUERY_RECIPES,                                STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Guild::QueryRecipes, &WorldSession::HandleQueryRecipes);
     DEFINE_HANDLER(CMSG_GUILD_REPLACE_GUILD_MASTER,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GUILD_SET_ACHIEVEMENT_TRACKING,                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GUILD_SET_FOCUSED_ACHIEVEMENT,                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Achievement::GuildSetFocusedAchievement, &WorldSession::HandleGuildSetFocusedAchievement);

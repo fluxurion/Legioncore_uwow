@@ -941,3 +941,8 @@ void WorldPackets::Guild::QueryGuildMembersForRecipe::Read()
     _worldPacket >> SpellID;
     _worldPacket >> UniqueBit;
 }
+
+void WorldPackets::Guild::QueryRecipes::Read()
+{
+    _worldPacket >> GuildGUID;
+}

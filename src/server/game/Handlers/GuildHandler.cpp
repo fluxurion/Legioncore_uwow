@@ -415,12 +415,8 @@ void WorldSession::HandleGuildNewsUpdateStickyOpcode(WorldPackets::Guild::GuildN
         guild->HandleNewsSetSticky(this, packet.NewsID, packet.Sticky);
 }
 
-//! 6.0.3
-void WorldSession::HandleGuildQueryGuildRecipesOpcode(WorldPacket& recvPacket)
+void WorldSession::HandleQueryRecipes(WorldPackets::Guild::QueryRecipes& /*packet*/)
 {
-    ObjectGuid guildGuid;
-    recvPacket >> guildGuid;
-
     Guild* guild = _player->GetGuild();
     if (!guild)
         return;
