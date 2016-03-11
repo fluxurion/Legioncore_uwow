@@ -649,6 +649,7 @@ namespace WorldPackets
         class NameQuery;
         class SetAction;
         class PetCancelAura;
+        class PetAbandon;
     }
 
     namespace LFG
@@ -1002,7 +1003,7 @@ class WorldSession
 
         void SendPetitionQueryOpcode(ObjectGuid petitionguid);
 
-        void SendStablePet(ObjectGuid const& guid);
+        void SendStablePet(ObjectGuid const& guid = ObjectGuid::Empty);
         void SendStablePetCallback(PreparedQueryResult result, ObjectGuid const& guid);
         void SendStableResult(uint8 res);
         bool CheckStableMaster(ObjectGuid const& guid);
@@ -1472,7 +1473,7 @@ class WorldSession
         void HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spellid, uint16 flag, ObjectGuid guid2, float x, float y, float z);
         void HandleQueryPetName(WorldPackets::Query::QueryPetName& packet);
         void HandlePetSetAction(WorldPacket& recvData);
-        void HandlePetAbandon(WorldPacket& recvData);
+        void HandlePetAbandon(WorldPackets::PetPackets::PetAbandon& packet);
         void HandlePetRename(WorldPacket& recvData);
         void HandlePetCancelAura(WorldPackets::PetPackets::PetCancelAura& packet);
         void HandlePetSpellAutocastOpcode(WorldPacket& recvPacket);

@@ -200,3 +200,8 @@ void WorldPackets::PetPackets::PetCancelAura::Read()
     _worldPacket >> PetGUID;
     _worldPacket >> SpellID;
 }
+
+void WorldPackets::PetPackets::PetAbandon::Read()
+{
+    _worldPacket >> Pet;
+}

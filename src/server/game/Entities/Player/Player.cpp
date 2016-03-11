@@ -24514,7 +24514,7 @@ void Player::SendInitialPacketsAfterAddToMap()
         RestoreAllBaseRunes();
         SetPower(POWER_RUNIC_POWER, 0);
     }
-    GetSession()->SendStablePet(ObjectGuid::Empty);
+    GetSession()->SendStablePet();
 
     // send step data when entering scenarios
     if (uint32 instanceId = inst ? inst->GetInstanceId() : 0)

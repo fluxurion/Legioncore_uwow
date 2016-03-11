@@ -374,25 +374,17 @@ void WorldSession::HandlePetRename(WorldPacket & recvData)
     pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, uint32(time(NULL))); // cast can't be helped
 }
 
-//! 6.0.3
-void WorldSession::HandlePetAbandon(WorldPacket& recvData)
+void WorldSession::HandlePetAbandon(WorldPackets::PetPackets::PetAbandon& packet)
 {
-    ObjectGuid guid;
-    recvData >> guid;
-
-    //sLog->outInfo(LOG_FILTER_NETWORKIO, "HandlePetAbandon. CMSG_PET_ABANDON pet guid is %u", guid.GetGUIDLow());
-
     if (!_player->IsInWorld())
         return;
 
-    // pet/charmed
-    Creature* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, guid);
-    if (pet)
+    if (Creature* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.Pet))
     {
         if (pet->isPet())
         {
-            _player->RemovePet((Pet*)pet, true);
-            _player->GetSession()->SendStablePet(ObjectGuid::Empty);
+            _player->RemovePet(static_cast<Pet*>(pet), true);
+            _player->GetSession()->SendStablePet();
         }
         else if (pet->GetGUID() == _player->GetCharmGUID())
             _player->StopCastingCharm();
@@ -1048,12 +1040,10 @@ void WorldSession::SendPetNameInvalid(uint32 error, ObjectGuid const& guid, cons
     SendPacket(&data);
 }
 
-void WorldSession::SendStablePet(ObjectGuid const& guid)
+void WorldSession::SendStablePet(ObjectGuid const& guid /*= ObjectGuid::Empty*/)
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_DETAIL);
-
     stmt->setUInt64(0, _player->GetGUIDLow());
-
     _sendStabledPetCallback.SetParam(guid);
     _sendStabledPetCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }

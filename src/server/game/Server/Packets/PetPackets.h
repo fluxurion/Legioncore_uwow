@@ -259,6 +259,16 @@ namespace WorldPackets
             ObjectGuid PetGUID;
             int32 SpellID = 0;
         };
+
+        class PetAbandon final : public ClientPacket
+        {
+        public:
+            PetAbandon(WorldPacket&& packet) : ClientPacket(CMSG_PET_ABANDON, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Pet;
+        };
     }
 }
 

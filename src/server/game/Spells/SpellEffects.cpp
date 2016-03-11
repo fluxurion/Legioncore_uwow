@@ -4232,7 +4232,7 @@ void Spell::EffectTameCreature(SpellEffIndex /*effIndex*/)
         pet->SetSlot(slot);
         pet->SavePetToDB();
         m_caster->ToPlayer()->PetSpellInitialize();
-        m_caster->ToPlayer()->GetSession()->SendStablePet(ObjectGuid::Empty);
+        m_caster->ToPlayer()->GetSession()->SendStablePet();
     }
 }
 
@@ -7296,7 +7296,7 @@ void Spell::EffectCreateTamedPet(SpellEffIndex effIndex)
     pet->SavePetToDB();
     unitTarget->ToPlayer()->PetSpellInitialize();
 
-    unitTarget->ToPlayer()->GetSession()->SendStablePet(ObjectGuid::Empty);
+    unitTarget->ToPlayer()->GetSession()->SendStablePet();
 }
 
 void Spell::EffectDiscoverTaxi(SpellEffIndex effIndex)
