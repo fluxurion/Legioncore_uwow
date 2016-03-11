@@ -968,3 +968,8 @@ void WorldPackets::Guild::LFGuildRemoveRecruit::Read()
 {
     _worldPacket >> GuildGUID;
 }
+
+void WorldPackets::Guild::LFGuildGetRecruits::Read()
+{
+    _worldPacket >> LastUpdate;
+}

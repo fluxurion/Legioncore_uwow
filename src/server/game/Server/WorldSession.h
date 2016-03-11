@@ -234,6 +234,7 @@ namespace WorldPackets
         class LFGuildAddRecruit;
         class LFGuildBrowse;
         class LFGuildRemoveRecruit;
+        class LFGuildGetRecruits;
     }
 
     namespace Item
@@ -1298,9 +1299,9 @@ class WorldSession
         void HandleLFGuildBrowse(WorldPackets::Guild::LFGuildBrowse& packet);
         void HandleGuildFinderDeclineRecruit(WorldPacket& recvPacket);
         void HandleGuildFinderGetApplications(WorldPacket& recvPacket);
-        void HandleGuildFinderGetRecruits(WorldPacket& recvPacket);
+        void HandleLFGuildGetRecruits(WorldPackets::Guild::LFGuildGetRecruits& packet);
         void HandleGuildFinderPostRequest(WorldPacket& recvPacket);
-        void HandleGuildFinderRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet);
+        void HandleLFGuildRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet);
         void HandleLFGuildSetGuildPost(WorldPackets::Guild::LFGuildSetGuildPost& packet);
 
         void HandleEnableTaxiNode(WorldPackets::Taxi::EnableTaxiNode& packet);

@@ -145,12 +145,9 @@ void WorldSession::HandleGuildFinderGetApplications(WorldPacket& /*recvPacket*/)
     GetPlayer()->SendDirectMessage(application.Write());
 }
 
-void WorldSession::HandleGuildFinderGetRecruits(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleLFGuildGetRecruits(WorldPackets::Guild::LFGuildGetRecruits& /*packet*/)
 {
     Player* player = GetPlayer();
-    if (!player->GetGuildId())
-        return;
-
     std::vector<MembershipRequest> recruitsList = sGuildFinderMgr->GetAllMembershipRequestsForGuild(ObjectGuid::Create<HighGuid::Guild>(player->GetGuildId()));
     
     WorldPackets::Guild::LFGuildRecruits recruits;
@@ -206,7 +203,7 @@ void WorldSession::HandleGuildFinderPostRequest(WorldPacket& recvPacket)
     player->SendDirectMessage(post.Write());
 }
 
-void WorldSession::HandleGuildFinderRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet)
+void WorldSession::HandleLFGuildRemoveRecruit(WorldPackets::Guild::LFGuildRemoveRecruit& packet)
 {
     if (packet.GuildGUID.IsGuild())
         sGuildFinderMgr->RemoveMembershipRequest(GetPlayer()->GetGUID(), packet.GuildGUID);

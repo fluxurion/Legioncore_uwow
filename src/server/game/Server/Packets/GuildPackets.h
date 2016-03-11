@@ -1193,6 +1193,16 @@ namespace WorldPackets
 
             ObjectGuid GuildGUID;
         };
+
+        class LFGuildGetRecruits final : public ClientPacket
+        {
+        public:
+            LFGuildGetRecruits(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_GET_RECRUITS, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 LastUpdate = 0;
+        };
     }
 }
 
