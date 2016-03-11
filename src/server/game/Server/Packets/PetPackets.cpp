@@ -205,3 +205,11 @@ void WorldPackets::PetPackets::PetAbandon::Read()
 {
     _worldPacket >> Pet;
 }
+
+void WorldPackets::PetPackets::PetAction::Read()
+{
+    _worldPacket >> PetGUID;
+    _worldPacket >> Action;
+    _worldPacket >> TargetGUID;
+    _worldPacket >> ActionPosition.PositionXYZStream();
+}

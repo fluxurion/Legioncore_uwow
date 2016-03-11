@@ -552,7 +552,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_PARTY_INVITE_RESPONSE,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::PartyInviteResponse, &WorldSession::HandlePartyInviteResponse);
     DEFINE_HANDLER(CMSG_PARTY_UNINVITE,                                     STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::PartyUninvite, &WorldSession::HandlePartyUninvite);
     DEFINE_HANDLER(CMSG_PET_ABANDON,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::PetAbandon ,&WorldSession::HandlePetAbandon);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_PET_ACTION,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandlePetAction                 );
+    DEFINE_HANDLER(CMSG_PET_ACTION,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::PetAction, &WorldSession::HandlePetAction);
     DEFINE_HANDLER(CMSG_PET_BATTLE_FINAL_NOTIFY,                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandlePetBattleFinalNotify);
     DEFINE_HANDLER(CMSG_PET_BATTLE_INPUT,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::PetBattleInput, &WorldSession::HandlePetBattleInput);
     DEFINE_HANDLER(CMSG_PET_BATTLE_QUEUE_PROPOSE_MATCH_RESULT,              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::QueueProposeMatchResult, &WorldSession::HanldeQueueProposeMatchResult);

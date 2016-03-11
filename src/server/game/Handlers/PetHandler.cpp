@@ -62,67 +62,60 @@ void WorldSession::HandleDismissCritter(WorldPackets::PetPackets::DismissCritter
     }
 }
 
-//! 6.0.3
-void WorldSession::HandlePetAction(WorldPacket & recvData)
+void WorldSession::HandlePetAction(WorldPackets::PetPackets::PetAction& packet)
 {
-    ObjectGuid guid1;   //pet guid
-    ObjectGuid guid2;   //tag guid
-    uint32 data;
-    float x, y, z;
+    uint32 spellID = UNIT_ACTION_BUTTON_ACTION(packet.Action);
+    uint8 flag = UNIT_ACTION_BUTTON_TYPE(packet.Action); //delete = 0x07 CastSpell = C1
 
-    recvData >> guid1 >> data >> guid2 >> x >> y >> z;
-
-    uint32 spellid = UNIT_ACTION_BUTTON_ACTION(data);
-    uint8 flag = UNIT_ACTION_BUTTON_TYPE(data);             //delete = 0x07 CastSpell = C1
-
-    // used also for charmed creature
-    Unit* pet= ObjectAccessor::GetUnit(*_player, guid1);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet %u - flag: %u, spellid: %u, target: %u.", guid1.GetGUIDLow(), uint32(flag), spellid, guid2.GetGUIDLow());
-
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet %u - flag: %u, spellID: %u, target: %u.", packet.PetGUID.GetGUIDLow(), uint32(flag), spellID, packet.TargetGUID.GetGUIDLow());
+    
+    Unit* pet = ObjectAccessor::GetUnit(*_player, packet.PetGUID);
     if (!pet)
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet (GUID: %u) doesn't exist for player '%s'", guid1.GetGUIDLow(), GetPlayer()->GetName());
+        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet (GUID: %u) doesn't exist for player '%s'", packet.PetGUID.GetGUIDLow(), GetPlayer()->GetName());
         return;
     }
 
     if (pet != GetPlayer()->GetFirstControlled())
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet (GUID: %u) does not belong to player '%s'", guid1.GetGUIDLow(), GetPlayer()->GetName());
+        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetAction: Pet (GUID: %u) does not belong to player '%s'", packet.PetGUID.GetGUIDLow(), GetPlayer()->GetName());
         return;
     }
 
     if (!pet->isAlive())
     {
-        SpellInfo const* spell = (flag == ACT_ENABLED || flag == ACT_PASSIVE) ? sSpellMgr->GetSpellInfo(spellid) : NULL;
+        SpellInfo const* spell = (flag == ACT_ENABLED || flag == ACT_PASSIVE) ? sSpellMgr->GetSpellInfo(spellID) : nullptr;
         if (!spell)
             return;
+
         if (!(spell->HasAttribute(SPELL_ATTR0_CASTABLE_WHILE_DEAD)))
             return;
     }
 
     //TODO: allow control charmed player?
-    if (pet->GetTypeId() == TYPEID_PLAYER && !(flag == ACT_COMMAND && spellid == COMMAND_ATTACK))
+    if (pet->GetTypeId() == TYPEID_PLAYER && !(flag == ACT_COMMAND && spellID == COMMAND_ATTACK))
         return;
 
     if (GetPlayer()->m_Controlled.size() == 1)
-        HandlePetActionHelper(pet, guid1, spellid, flag, guid2, x, y ,z);
+        HandlePetActionHelper(pet, packet.PetGUID, spellID, flag, packet.TargetGUID, packet.ActionPosition);
     else
     {
         //If a pet is dismissed, m_Controlled will change
         std::vector<Unit*> controlled;
-        for (Unit::ControlList::iterator itr = GetPlayer()->m_Controlled.begin(); itr != GetPlayer()->m_Controlled.end(); ++itr)
-            if ((*itr)->GetEntry() == pet->GetEntry() && (*itr)->isAlive())
+        for (Unit::ControlList::const_iterator::value_type const& itr : GetPlayer()->m_Controlled)
+            if (itr->GetEntry() == pet->GetEntry() && itr->isAlive())
             {
-                if((*itr)->ToCreature())
+                if (itr->ToCreature())
                 {
-                    if(!(*itr)->ToCreature()->m_Stampeded && (*itr)->HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN))
-                        controlled.push_back(*itr);
+                    if (!itr->ToCreature()->m_Stampeded && itr->HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN))
+                        controlled.push_back(itr);
                 }
                 else
-                    controlled.push_back(*itr);
+                    controlled.push_back(itr);
             }
-        for (std::vector<Unit*>::iterator itr = controlled.begin(); itr != controlled.end(); ++itr)
-            HandlePetActionHelper(*itr, guid1, spellid, flag, guid2, x, y, z);
+
+        for (std::vector<Unit*>::const_iterator::value_type const& itr : controlled)
+            HandlePetActionHelper(itr, packet.PetGUID, spellID, flag, packet.TargetGUID, packet.ActionPosition);
     }
 }
 
@@ -740,13 +733,13 @@ void WorldSession::SendStableResult(uint8 res)
     SendPacket(stableResult.Write());
 }
 
-void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spellid, uint16 flag, ObjectGuid guid2, float x, float y, float z)
+void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid petGuid, uint32 spellid, uint16 flag, ObjectGuid targetGuid, Position pos)
 {
     CharmInfo* charmInfo = pet->GetCharmInfo();
     if (!charmInfo)
     {
         sLog->outError(LOG_FILTER_NETWORKIO, "WorldSession::HandlePetAction(petGuid: " UI64FMTD ", tagGuid: " UI64FMTD ", spellId: %u, flag: %u): object (entry: %u TypeId: %u) is considered pet-like but doesn't have a charminfo!",
-            guid1, guid2, spellid, flag, pet->GetGUIDLow(), pet->GetTypeId());
+            petGuid, targetGuid, spellid, flag, pet->GetGUIDLow(), pet->GetTypeId());
         return;
     }
 
@@ -789,7 +782,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                     }
 
                     // only place where pet can be player
-                    Unit* TargetUnit = ObjectAccessor::GetUnit(*_player, guid2);
+                    Unit* TargetUnit = ObjectAccessor::GetUnit(*_player, targetGuid);
                     if (!TargetUnit)
                         return;
 
@@ -824,10 +817,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                             if (pet->ToCreature()->isPet() && ((Pet*)pet)->getPetType() == SUMMON_PET && pet != TargetUnit && urand(0, 100) < 10)
                                 pet->SendPetTalk((uint32)PET_TALK_ATTACK);
                             else
-                            {
-                                // 90% chance for pet and 100% chance for charmed creature
-                                pet->SendPetAIReaction(guid1);
-                            }
+                                pet->SendPetAIReaction(petGuid); // 90% chance for pet and 100% chance for charmed creature
                         }
                         else                                // charmed player
                         {
@@ -840,7 +830,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                             charmInfo->SetIsReturning(false);
 
                             pet->Attack(TargetUnit, true);
-                            pet->SendPetAIReaction(guid1);
+                            pet->SendPetAIReaction(petGuid);
                         }
                     }
                     break;
@@ -862,7 +852,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                 case COMMAND_MOVE_TO:
                     pet->StopMoving();
                     pet->GetMotionMaster()->Clear(false);
-                    pet->GetMotionMaster()->MovePoint(0, x, y, z);
+                    pet->GetMotionMaster()->MovePoint(0, pos);
                     charmInfo->SetCommandState(COMMAND_MOVE_TO);
                     charmInfo->SetIsCommandAttack(false);
                     charmInfo->SetIsAtStay(true);
@@ -897,10 +887,10 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
         case ACT_PASSIVE:                                   // 0x01
         case ACT_ENABLED:                                   // 0xC1    spell
         {
-            Unit* unit_target = NULL;
+            Unit* unit_target = nullptr;
 
-            if (guid2)
-                unit_target = ObjectAccessor::GetUnit(*_player, guid2);
+            if (targetGuid)
+                unit_target = ObjectAccessor::GetUnit(*_player, targetGuid);
 
             // do not cast unknown spells
             SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellid);
@@ -972,9 +962,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spe
                 if (pet->ToCreature()->isPet() && (((Pet*)pet)->getPetType() == SUMMON_PET) && (pet != unit_target) && (urand(0, 100) < 10))
                     pet->SendPetTalk((uint32)PET_TALK_SPECIAL_SPELL);
                 else
-                {
-                    pet->SendPetAIReaction(guid1);
-                }
+                    pet->SendPetAIReaction(petGuid);
 
                 if (unit_target && !GetPlayer()->IsFriendlyTo(unit_target) && !pet->isPossessed() && !pet->IsVehicle())
                 {

@@ -269,6 +269,19 @@ namespace WorldPackets
 
             ObjectGuid Pet;
         };
+
+        class PetAction final : public ClientPacket
+        {
+        public:
+            PetAction(WorldPacket&& packet) : ClientPacket(CMSG_PET_ACTION, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid PetGUID;
+            ObjectGuid TargetGUID;
+            Position ActionPosition;
+            uint32 Action = 0;
+        };
     }
 }
 
