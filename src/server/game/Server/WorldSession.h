@@ -124,6 +124,7 @@ namespace WorldPackets
         class EmoteClient;
         class SetPlayerDeclinedNames;
         class CharCustomize;
+        class NeutralPlayerSelectFaction;
 
         enum class LoginFailureReason : uint8;
     }
@@ -1685,7 +1686,7 @@ class WorldSession
         void HandleObjectUpdateFailed(WorldPackets::Misc::ObjectUpdateFailed& packet);
         void HandleObjectUpdateRescued(WorldPackets::Misc::ObjectUpdateRescued& packet);
         void HandleOpeningCinematic(WorldPackets::Misc::OpeningCinematic& packet);
-        void HandleSetFactionOpcode(WorldPacket& recvPacket);
+        void HandleNeutralPlayerSelectFaction(WorldPackets::Character::NeutralPlayerSelectFaction& packet);
         void HandleRequestResearchHistory(WorldPacket& recvPacket);
         void HandleChangeCurrencyFlags(WorldPacket& recvPacket);
         void HandleRequestCategoryCooldowns(WorldPackets::Spells::RequestCategoryCooldowns& packet);

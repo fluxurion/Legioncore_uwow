@@ -439,7 +439,7 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
     // Faction change for neutral pandaren
     if (pCurrChar->getRace() == RACE_PANDAREN_NEUTRAL)
     {
-        //FROM WorldSession::HandleSetFactionOpcode
+        //FROM WorldSession::HandleNeutralPlayerSelectFaction
         if (!purchase.factionChose) //0 == HORDE
         {
             pCurrChar->SetByteValue(UNIT_FIELD_BYTES_0, 0, RACE_PANDAREN_HORDE);

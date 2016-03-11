@@ -720,14 +720,12 @@ void WorldSession::HandleObjectUpdateRescued(WorldPackets::Misc::ObjectUpdateRes
 #define JOIN_THE_ALLIANCE 1
 #define JOIN_THE_HORDE    0
 
-void WorldSession::HandleSetFactionOpcode(WorldPacket& recvPacket)
+void WorldSession::HandleNeutralPlayerSelectFaction(WorldPackets::Character::NeutralPlayerSelectFaction& packet)
 {
-    uint32 choice = recvPacket.read<uint32>();
-
     if (_player->getRace() != RACE_PANDAREN_NEUTRAL)
         return;
 
-    if (choice == JOIN_THE_HORDE)
+    if (packet.Faction == JOIN_THE_HORDE)
     {
         _player->SetByteValue(UNIT_FIELD_BYTES_0, 0, RACE_PANDAREN_HORDE);
         _player->setFactionForRace(RACE_PANDAREN_HORDE);
@@ -738,7 +736,7 @@ void WorldSession::HandleSetFactionOpcode(WorldPacket& recvPacket)
         _player->learnSpell(669, false); // Language Orcish
         _player->learnSpell(108127, false); // Language Pandaren
     }
-    else if (choice == JOIN_THE_ALLIANCE)
+    else if (packet.Faction == JOIN_THE_ALLIANCE)
     {
         _player->SetByteValue(UNIT_FIELD_BYTES_0, 0, RACE_PANDAREN_ALLIANCE);
         _player->setFactionForRace(RACE_PANDAREN_ALLIANCE);

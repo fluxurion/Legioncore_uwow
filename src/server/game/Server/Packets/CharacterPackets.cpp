@@ -610,3 +610,8 @@ WorldPacket const* WorldPackets::Character::CharCustomizeFailed::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Character::NeutralPlayerSelectFaction::Read()
+{
+    _worldPacket >> Faction;
+}

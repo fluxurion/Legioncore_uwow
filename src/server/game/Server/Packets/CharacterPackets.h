@@ -740,6 +740,16 @@ namespace WorldPackets
             ObjectGuid CharGUID;
             ResponseCodes Result = RESPONSE_SUCCESS;
         };
+
+        class NeutralPlayerSelectFaction final : public ClientPacket
+        {
+        public:
+            NeutralPlayerSelectFaction(WorldPacket&& packet) : ClientPacket(CMSG_NEUTRAL_PLAYER_SELECT_FACTION, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 Faction = 0;
+        };
     }
 }
 
