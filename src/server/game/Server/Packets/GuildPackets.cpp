@@ -973,3 +973,8 @@ void WorldPackets::Guild::LFGuildGetRecruits::Read()
 {
     _worldPacket >> LastUpdate;
 }
+
+void WorldPackets::Guild::LFGuildDeclineRecruit::Read()
+{
+    _worldPacket >> RecruitGUID;
+}

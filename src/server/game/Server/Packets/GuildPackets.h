@@ -1219,6 +1219,16 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class LFGuildDeclineRecruit final : public ClientPacket
+        {
+        public:
+            LFGuildDeclineRecruit(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_DECLINE_RECRUIT, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid RecruitGUID;
+        };
     }
 }
 

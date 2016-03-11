@@ -237,6 +237,7 @@ namespace WorldPackets
         class LFGuildGetRecruits;
         class LFGuildGetGuildPost;
         class LFGuildGetApplications;
+        class LFGuildDeclineRecruit;
     }
 
     namespace Item
@@ -1299,7 +1300,7 @@ class WorldSession
 
         void HandleLFGuildAddRecruit(WorldPackets::Guild::LFGuildAddRecruit& packet);
         void HandleLFGuildBrowse(WorldPackets::Guild::LFGuildBrowse& packet);
-        void HandleGuildFinderDeclineRecruit(WorldPacket& recvPacket);
+        void HandleLFGuildDeclineRecruit(WorldPackets::Guild::LFGuildDeclineRecruit& packet);
         void HandleLFGuildGetApplications(WorldPackets::Guild::LFGuildGetApplications& packet);
         void HandleLFGuildGetRecruits(WorldPackets::Guild::LFGuildGetRecruits& packet);
         void HandleLFGuildGetGuildPost(WorldPackets::Guild::LFGuildGetGuildPost& packet);

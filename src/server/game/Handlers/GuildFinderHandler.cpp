@@ -97,20 +97,10 @@ void WorldSession::HandleLFGuildBrowse(WorldPackets::Guild::LFGuildBrowse& packe
     player->SendDirectMessage(browse.Write());
 }
 
-void WorldSession::HandleGuildFinderDeclineRecruit(WorldPacket& recvPacket)
+void WorldSession::HandleLFGuildDeclineRecruit(WorldPackets::Guild::LFGuildDeclineRecruit& packet)
 {
-    ObjectGuid playerGuid;
-
-    uint8 bitOrder[8] = {5, 1, 3, 7, 6, 2, 0, 4};
-    //recvPacket.ReadBitInOrder(playerGuid, bitOrder);
-
-    uint8 byteOrder[8] = {4, 2, 3, 7, 6, 0, 1, 5};
-    //recvPacket.ReadBytesSeq(playerGuid, byteOrder);
-
-    if (!playerGuid.IsPlayer())
-        return;
-
-    sGuildFinderMgr->RemoveMembershipRequest(playerGuid, ObjectGuid::Create<HighGuid::Guild>(GetPlayer()->GetGuildId()));
+    if (packet.RecruitGUID.IsPlayer())
+        sGuildFinderMgr->RemoveMembershipRequest(packet.RecruitGUID, ObjectGuid::Create<HighGuid::Guild>(GetPlayer()->GetGuildId()));
 }
 
 void WorldSession::HandleLFGuildGetApplications(WorldPackets::Guild::LFGuildGetApplications& /*packet*/)
