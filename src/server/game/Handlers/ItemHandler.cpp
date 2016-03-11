@@ -1059,13 +1059,9 @@ void WorldSession::HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo&
     GetPlayer()->SendRefundInfo(item);
 }
 
-//! 6.0.3
-void WorldSession::HandleItemRefund(WorldPacket &recvData)
+void WorldSession::HandleItemPurchaseRefund(WorldPackets::Item::ItemPurchaseRefund& packet)
 {
-    ObjectGuid guid;
-    recvData >> guid;
-
-    Item* item = _player->GetItemByGuid(guid);
+    Item* item = _player->GetItemByGuid(packet.ItemGUID);
     if (!item)
     {
         sLog->outDebug(LOG_FILTER_NETWORKIO, "Item refund: item not found!");

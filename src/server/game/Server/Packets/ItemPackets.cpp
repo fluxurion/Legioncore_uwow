@@ -535,3 +535,8 @@ void WorldPackets::Item::WrapItem::Read()
 {
     _worldPacket >> Inv;
 }
+
+void WorldPackets::Item::ItemPurchaseRefund::Read()
+{
+    _worldPacket >> ItemGUID;
+}

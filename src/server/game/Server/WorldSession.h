@@ -253,6 +253,7 @@ namespace WorldPackets
         class AutoEquipItemSlot;
         class CancelTempEnchantment;
         class WrapItem;
+        class ItemPurchaseRefund;
     }
 
     namespace Loot
@@ -1565,7 +1566,7 @@ class WorldSession
         void HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelTempEnchantment& packet);
 
         void HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo& packet);
-        void HandleItemRefund(WorldPacket& recvData);
+        void HandleItemPurchaseRefund(WorldPackets::Item::ItemPurchaseRefund& packet);
         void HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packet);
         void HandleVoiceSessionEnableOpcode(WorldPacket& recvData);
         void HandleSetActiveVoiceChannel(WorldPacket& recvData);

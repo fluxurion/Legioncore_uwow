@@ -503,6 +503,16 @@ namespace WorldPackets
 
             InvUpdate Inv;
         };
+
+        class ItemPurchaseRefund final : public ClientPacket
+        {
+        public:
+            ItemPurchaseRefund(WorldPacket&& packet) : ClientPacket(CMSG_ITEM_PURCHASE_REFUND, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid ItemGUID;
+        };
     }
 }
 

@@ -418,7 +418,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_INSPECT,                                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Inspect::Inspect, &WorldSession::HandleInspect);
     DEFINE_HANDLER(CMSG_INSPECT_PVP,                                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Inspect::InspectPVPRequest, &WorldSession::HandleInspectPVP);
     DEFINE_HANDLER(CMSG_INSTANCE_LOCK_RESPONSE,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Instance::InstanceLockResponse, &WorldSession::HandleInstanceLockResponse);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_ITEM_PURCHASE_REFUND,                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleItemRefund                );
+    DEFINE_HANDLER(CMSG_ITEM_PURCHASE_REFUND,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::ItemPurchaseRefund, &WorldSession::HandleItemPurchaseRefund);
     DEFINE_HANDLER(CMSG_ITEM_TEXT_QUERY,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::ItemTextQuery, &WorldSession::HandleItemTextQuery);
     DEFINE_HANDLER(CMSG_JOIN_PET_BATTLE_QUEUE,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleJoinPetBattleQueue);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_JOIN_RATED_BATTLEGROUND,                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleBattlemasterJoinRated     );
