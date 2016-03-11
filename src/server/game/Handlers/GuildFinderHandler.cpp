@@ -43,36 +43,32 @@ void WorldSession::HandleLFGuildAddRecruit(WorldPackets::Guild::LFGuildAddRecrui
     sGuildFinderMgr->AddMembershipRequest(packet.GuildGUID, MembershipRequest(GetPlayer()->GetGUID(), packet.GuildGUID, packet.Availability, packet.ClassRoles, packet.PlayStyle, packet.Comment, time(nullptr)));
 }
 
-void WorldSession::HandleGuildFinderBrowse(WorldPacket& recvPacket)
-{
-    uint32 classRoles = 0;
-    uint32 availability = 0;
-    uint32 guildInterests = 0;
-    uint32 playerLevel = 0; // Raw player level (1-90), do they use MAX_FINDER_LEVEL when on level 90 ?
+void WorldSession::HandleLFGuildBrowse(WorldPackets::Guild::LFGuildBrowse& packet)
+{    
+    if (!(packet.ClassRoles & GUILDFINDER_ALL_ROLES) || packet.ClassRoles > GUILDFINDER_ALL_ROLES)
+        return;
 
-    recvPacket >> guildInterests >> availability >> classRoles >> playerLevel;
-    
-    if (!(classRoles & GUILDFINDER_ALL_ROLES) || classRoles > GUILDFINDER_ALL_ROLES)
+    if (!(packet.Availability & ALL_WEEK) || packet.Availability > ALL_WEEK)
         return;
-    if (!(availability & ALL_WEEK) || availability > ALL_WEEK)
+
+    if (!(packet.PlayStyle & ALL_PLAY_STYLES) || packet.PlayStyle > ALL_PLAY_STYLES)
         return;
-    if (!(guildInterests & ALL_PLAY_STYLES) || guildInterests > ALL_PLAY_STYLES)
-        return;
-    if (playerLevel > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) || playerLevel < 1)
+
+    if (packet.CharacterLevel > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) || packet.CharacterLevel < 1)
         return;
 
     Player* player = GetPlayer();
 
-    LFGuildPlayer settings(player->GetGUID(), classRoles, availability, guildInterests, ANY_FINDER_LEVEL);
+    LFGuildPlayer settings(player->GetGUID(), packet.ClassRoles, packet.Availability, packet.PlayStyle, ANY_FINDER_LEVEL);
     LFGuildStore guildList = sGuildFinderMgr->GetGuildsMatchingSetting(settings, player->GetTeamId());
 
     if (!guildList.size())
     {
-        player->SendDirectMessage(WorldPackets::Guild::LFGuildBrowse().Write());
+        player->SendDirectMessage(WorldPackets::Guild::LFGuildBrowseResponse().Write());
         return;
     }
 
-    WorldPackets::Guild::LFGuildBrowse browse;
+    WorldPackets::Guild::LFGuildBrowseResponse browse;
     browse.Browses.reserve(guildList.size());
     for (auto const& x : guildList)
     {
@@ -81,7 +77,7 @@ void WorldSession::HandleGuildFinderBrowse(WorldPacket& recvPacket)
         data.GuildGUID = guild->GetGUID();
         data.GuildVirtualRealm = GetVirtualRealmAddress();
         data.GuildMembers = guild->GetMembersCount();
-        data.GuildAchievementPoints = 0;
+        data.GuildAchievementPoints = guild->GetAchievementMgr().GetAchievementPoints();
         data.PlayStyle = x.second.GetPlayStyle();
         data.Availability = x.second.GetAvailability();
         data.ClassRoles = x.second.GetClassRoles();

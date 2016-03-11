@@ -524,10 +524,10 @@ namespace WorldPackets
             int8 MembershipRequested = 0;
         };
 
-        class LFGuildBrowse final : public ServerPacket
+        class LFGuildBrowseResponse final : public ServerPacket
         {
         public:
-            LFGuildBrowse() : ServerPacket(SMSG_LF_GUILD_BROWSE, 4) { }
+            LFGuildBrowseResponse() : ServerPacket(SMSG_LF_GUILD_BROWSE, 4) { }
 
             WorldPacket const* Write() override;
 
@@ -1169,6 +1169,19 @@ namespace WorldPackets
             int32 ClassRoles = 0;
             int32 PlayStyle = 0;
             std::string Comment;
+        };
+
+        class LFGuildBrowse final : public ClientPacket
+        {
+        public:
+            LFGuildBrowse(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_BROWSE, std::move(packet)) { }
+
+            void Read() override;
+
+            int32 CharacterLevel = 0;
+            int32 Availability = 0;
+            int32 ClassRoles = 0;
+            int32 PlayStyle = 0;
         };
     }
 }

@@ -507,7 +507,7 @@ WorldPacket const* WorldPackets::Guild::LFGuildPost::Write()
     return &_worldPacket;
 }
 
-WorldPacket const* WorldPackets::Guild::LFGuildBrowse::Write()
+WorldPacket const* WorldPackets::Guild::LFGuildBrowseResponse::Write()
 {
     _worldPacket << static_cast<uint32>(Browses.size());
     for (auto const& v : Browses)
@@ -954,4 +954,12 @@ void WorldPackets::Guild::LFGuildAddRecruit::Read()
     _worldPacket >> Availability;
     _worldPacket >> ClassRoles;
     _worldPacket.ReadString(_worldPacket.ReadBits(10), Comment);
+}
+
+void WorldPackets::Guild::LFGuildBrowse::Read()
+{
+    _worldPacket >> PlayStyle;
+    _worldPacket >> Availability;
+    _worldPacket >> ClassRoles;
+    _worldPacket >> CharacterLevel;
 }

@@ -430,7 +430,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_LEAVE_GROUP,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::LeaveGroup, &WorldSession::HandleLeaveGroup);
     DEFINE_HANDLER(CMSG_LEAVE_PET_BATTLE_QUEUE,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::LeaveQueue, &WorldSession::HandleLeaveQueue);
     DEFINE_HANDLER(CMSG_LF_GUILD_ADD_RECRUIT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::LFGuildAddRecruit, &WorldSession::HandleLFGuildAddRecruit);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_LF_GUILD_BROWSE,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGuildFinderBrowse         );
+    DEFINE_HANDLER(CMSG_LF_GUILD_BROWSE,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::LFGuildBrowse, &WorldSession::HandleLFGuildBrowse);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_LF_GUILD_DECLINE_RECRUIT,                STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGuildFinderDeclineRecruit );
     DEFINE_OPCODE_HANDLER_OLD(CMSG_LF_GUILD_GET_APPLICATIONS,               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGuildFinderGetApplications);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_LF_GUILD_GET_GUILD_POST,                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGuildFinderPostRequest    );
