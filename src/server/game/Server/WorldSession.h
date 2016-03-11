@@ -320,6 +320,7 @@ namespace WorldPackets
         class ShowTradeSkill;
         class CompleteMovie;
         class SaveCUFProfiles;
+        class MountSpecialAnim;
     }
 
     namespace Movement
@@ -1125,7 +1126,7 @@ class WorldSession
 
         void HandleMoveWaterWalkAck(WorldPacket& recvPacket);
 
-        void HandleMountSpecialAnimOpcode(WorldPacket& recvdata);
+        void HandleMountSpecialAnim(WorldPackets::Misc::MountSpecialAnim& packet);
 
         // character view
         void HandleShowingHelm(WorldPackets::Character::ShowingHelm& /*packet*/);

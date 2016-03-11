@@ -764,6 +764,14 @@ namespace WorldPackets
             ObjectGuid UnitGUID;
         };
 
+        class MountSpecialAnim final : public ClientPacket
+        {
+        public:
+            MountSpecialAnim(WorldPacket&& packet) : ClientPacket(CMSG_MOUNT_SPECIAL_ANIM, std::move(packet)) { }
+
+            void Read() override { }
+        };
+
         //< SMSG_SHOW_NEUTRAL_PLAYER_FACTION_SELECT_UI
         class NullSMsg final : public ServerPacket
         {

@@ -812,11 +812,9 @@ void WorldSession::HandleWarGameStart(WorldPacket& recvPacket) { }
 
 void WorldSession::HandleWarGameAccept(WorldPacket& recvPacket) { }
 
-void WorldSession::HandleMountSpecialAnimOpcode(WorldPacket& /*recvData*/)
+void WorldSession::HandleMountSpecialAnim(WorldPackets::Misc::MountSpecialAnim& /*packet*/)
 {
-    Player* player = GetPlayer();
-    if (player)
-        player->SendMessageToSet(WorldPackets::Misc::SpecialMountAnim(player->GetGUID()).Write(), false);
+    _player->SendMessageToSet(WorldPackets::Misc::SpecialMountAnim(_player->GetGUID()).Write(), false);
 }
 
 void WorldSession::HandleSummonResponse(WorldPackets::Movement::SummonResponse& packet)
