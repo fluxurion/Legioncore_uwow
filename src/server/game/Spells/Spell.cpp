@@ -4932,16 +4932,17 @@ void Spell::SendSpellStart()
 
     if (castFlags & CAST_FLAG_POWER_LEFT_SELF)
     {
-        Powers powertype = POWER_MANA;
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-            powertype = (Powers)power.PowerType;
+        {
+            Powers powerType = Powers(power.PowerType);
 
-        /// @todo Implement multiple power types
-        WorldPackets::Spells::SpellPowerData powerData;
-        powerData.Type = powertype;
-        powerData.Cost = m_caster->GetPower(powertype);
-        castData.RemainingPower.push_back(powerData);
+            /// @todo Implement multiple power types
+            WorldPackets::Spells::SpellPowerData powerData;
+            powerData.Type = powerType;
+            powerData.Cost = m_caster->GetPower(powerType);
+            castData.RemainingPower.push_back(powerData);
+        }
     }
 
     if (castFlags & CAST_FLAG_RUNE_LIST) // rune cooldowns list
