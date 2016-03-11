@@ -16,15 +16,32 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Language.h"
-#include "WorldPacket.h"
 #include "Common.h"
+#include "Language.h"
 #include "ObjectMgr.h"
-#include "TicketMgr.h"
 #include "Player.h"
-#include "World.h"
-#include "WorldSession.h"
+#include "TicketMgr.h"
+#include "TicketPackets.h"
 #include "Util.h"
+#include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
+
+void WorldSession::HandleComplainOpcode(WorldPackets::Ticket::Complaint& packet)
+{
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_COMPLAINTS);
+    stmt->setUInt64(0, packet.Offender.PlayerGuid.GetCounter());
+    stmt->setUInt8(1, packet.ComplaintType);
+    stmt->setUInt32(2, packet.MailID);
+    stmt->setUInt32(3, packet.Offender.TimeSinceOffence);
+    stmt->setString(4, packet.Chat.MessageLog);
+    CharacterDatabase.Execute(stmt);
+
+    WorldPackets::Ticket::ComplaintResult result;
+    result.ComplaintType = packet.ComplaintType;
+    result.Result = 0;
+    SendPacket(result.Write());
+}
 
 void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recvData)
 {

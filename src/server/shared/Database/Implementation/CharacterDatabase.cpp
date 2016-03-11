@@ -701,4 +701,7 @@ void CharacterDatabaseConnection::DoPrepareStatements()
 
     PrepareStatement(CHAR_SEL_HEIRLOOMS, "SELECT itemId, flags FROM account_heirlooms WHERE accountId = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_REP_HEIRLOOMS, "REPLACE INTO account_heirlooms (accountId, itemId, flags) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+
+    PrepareStatement(CHAR_SEL_CHARACTER_COMPLAINTS, "SELECT PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog FROM complaints WHERE PlayerGuid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_INS_CHARACTER_COMPLAINTS, "INSERT INTO complaints (PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog) VALUES (?, ?, ?, ?, ?)", CONNECTION_ASYNC);
 }

@@ -712,6 +712,11 @@ namespace WorldPackets
         class UpdateListedAuctionableTokens;
     }
 
+    namespace Ticket
+    {
+        class Complaint;
+    }
+
     class Null final : public ClientPacket
     {
     public:
@@ -1546,7 +1551,7 @@ class WorldSession
         void HandleCancelMountAura(WorldPackets::Spells::CancelMountAura& packet);
         void HandleCancelGrowthAura(WorldPackets::Spells::CancelGrowthAura& packet);
         void HandleSelfRes(WorldPackets::Spells::SelfRes& packet);
-        void HandleComplainOpcode(WorldPacket& recvData);
+        void HandleComplainOpcode(WorldPackets::Ticket::Complaint& packet);
         void HandleRequestPetInfoOpcode(WorldPacket& recvData);
 
         // Socket gem

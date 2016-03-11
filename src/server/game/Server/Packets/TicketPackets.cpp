@@ -16,3 +16,51 @@
  */
 
 #include "TicketPackets.h"
+
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Ticket::Complaint::ComplaintOffender& complaintOffender)
+{
+    data >> complaintOffender.PlayerGuid;
+    data >> complaintOffender.RealmAddress;
+    data >> complaintOffender.TimeSinceOffence;
+
+    return data;
+}
+
+ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Ticket::Complaint::ComplaintChat& chat)
+{
+    data >> chat.Command;
+    data >> chat.ChannelID;
+    data.ReadString(data.ReadBits(12), chat.MessageLog);
+
+    return data;
+}
+
+void WorldPackets::Ticket::Complaint::Read()
+{
+    _worldPacket >> ComplaintType;
+    _worldPacket >> Offender;
+
+    switch (ComplaintType)
+    {
+        case SUPPORT_SPAM_TYPE_MAIL:
+            _worldPacket >> MailID;
+            break;
+        case SUPPORT_SPAM_TYPE_CHAT:
+            _worldPacket >> Chat;
+            break;
+        case SUPPORT_SPAM_TYPE_CALENDAR:
+            _worldPacket >> EventGuid;
+            _worldPacket >> InviteGuid;
+            break;
+        default:
+            break;
+    }
+}
+
+WorldPacket const* WorldPackets::Ticket::ComplaintResult::Write()
+{
+    _worldPacket << ComplaintType;
+    _worldPacket << Result;
+
+    return &_worldPacket;
+}
