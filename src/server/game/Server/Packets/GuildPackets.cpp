@@ -927,9 +927,17 @@ WorldPacket const* WorldPackets::Guild::PlayerSaveGuildEmblem::Write()
     return &_worldPacket;
 }
 
-void WorldPackets::Guild::QyeryMemberRecipes::Read()
+void WorldPackets::Guild::QueryMemberRecipes::Read()
 {
     _worldPacket >> GuildMember;
     _worldPacket >> GuildGUID;
     _worldPacket >> SkillLineID;
+}
+
+void WorldPackets::Guild::QueryGuildMembersForRecipe::Read()
+{
+    _worldPacket >> GuildGUID;
+    _worldPacket >> SkillLineID;
+    _worldPacket >> SpellID;
+    _worldPacket >> UniqueBit;
 }

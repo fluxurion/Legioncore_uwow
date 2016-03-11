@@ -448,22 +448,13 @@ void WorldSession::HandleGuildQueryGuildRecipesOpcode(WorldPacket& recvPacket)
     _player->ScheduleMessageSend(data, 500);
 }
 
-//! 6.0.3 ToDo: check order unk, skill, spell
-void WorldSession::HandleGuildQueryGuildMembersForRecipe(WorldPacket& recvPacket)
+void WorldSession::HandleQueryGuildMembersForRecipe(WorldPackets::Guild::QueryGuildMembersForRecipe& packet)
 {
-    //CMSG_GUILD_QUERY_MEMBERS_FOR_RECIPE
-    uint32 skillId, spellId, unk;
-    ObjectGuid guildGuid;
-    recvPacket >> guildGuid;
-    recvPacket >> unk;
-    recvPacket >> skillId;
-    recvPacket >> spellId;
-
     if (Guild* guild = _player->GetGuild())
-        guild->SendGuildMembersForRecipeResponse(this, skillId, spellId);
+        guild->SendGuildMembersForRecipeResponse(this, packet.SkillLineID, packet.SpellID);
 }
 
-void WorldSession::HandleQyeryMemberRecipes(WorldPackets::Guild::QyeryMemberRecipes& packet)
+void WorldSession::HandleQyeryMemberRecipes(WorldPackets::Guild::QueryMemberRecipes& packet)
 {
     Guild* guild = _player->GetGuild();
     if (!guild || !guild->IsMember(packet.GuildMember))

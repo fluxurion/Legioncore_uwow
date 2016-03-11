@@ -211,7 +211,8 @@ namespace WorldPackets
         class RequestGuildPartyState;
         class AutoDeclineGuildInvites;
         class RequestGuildRewardsList;
-        class QyeryMemberRecipes;
+        class QueryMemberRecipes;
+        class QueryGuildMembersForRecipe;
 
         class GuildPermissionsQuery;
         class GuildBankRemainingWithdrawMoneyQuery;
@@ -1282,8 +1283,8 @@ class WorldSession
         void HandleGuildSetFocusedAchievement(WorldPackets::Achievement::GuildSetFocusedAchievement& packet);
         void HandleAutoDeclineGuildInvites(WorldPackets::Guild::AutoDeclineGuildInvites& packet);
         void HandleGuildQueryGuildRecipesOpcode(WorldPacket& recvPacket);
-        void HandleGuildQueryGuildMembersForRecipe(WorldPacket& recvPacket);
-        void HandleQyeryMemberRecipes(WorldPackets::Guild::QyeryMemberRecipes& packet);
+        void HandleQueryGuildMembersForRecipe(WorldPackets::Guild::QueryGuildMembersForRecipe& packet);
+        void HandleQyeryMemberRecipes(WorldPackets::Guild::QueryMemberRecipes& packet);
 
         void HandleGuildRequestChallengeUpdate(WorldPackets::Guild::GuildChallengeUpdateRequest& /*packet*/);
 
