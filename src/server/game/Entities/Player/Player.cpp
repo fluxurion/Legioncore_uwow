@@ -613,6 +613,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
         return false;
     }
 
+    SetSpecializationId(0, cEntry->DefaultSpec, true);
+
     SetMap(sMapMgr->CreateMap(info->mapId, this));
 
     uint8 powertype = cEntry->PowerType;
@@ -4930,9 +4932,12 @@ void Player::ResetSpec(bool takeMoney)
     InitialPowers();
 }
 
-void Player::SetSpecializationId(uint8 spec, uint32 id)
+void Player::SetSpecializationId(uint8 spec, uint32 id, bool initial /*= false*/)
 {
     _talentMgr->SpecInfo[spec].SpecializationId = id;
+
+    if (initial)
+        return;
 
     if (GetGroup())
         SetGroupUpdateFlag(GROUP_UPDATE_FLAG_SPECIALIZATION_ID);
@@ -17629,7 +17634,8 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     }
 
     // overwrite some data fields
-    SetRace(fields[3].GetUInt8());
+    uint8 classID = fields[4].GetUInt8();
+    SetRace(classID);
     SetClass(fields[4].GetUInt8());
     SetGender(Gender);
 
@@ -18102,18 +18108,12 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SetSpecsCount(specCount == 0 ? 1 : specCount);
     SetActiveSpec(specCount > 1 ? fields[55].GetUInt8() : 0);
 
-    SetSpecializationId(0, fields[56].GetUInt32());
+    uint32 specID = fields[56].GetUInt32();
+    if (!specID)
+        if (ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(classID))
+            specID = cEntry->DefaultSpec;
+    SetSpecializationId(0, specID);
     SetSpecializationId(1, fields[57].GetUInt32());
-
-    //switch(fields[4].GetUInt8())
-    //{
-    //    case CLASS_DEMON_HUNTER:
-    //        if (!GetSpecializationId(GetActiveSpec()))
-    //            LearnTalentSpecialization(577);
-    //        break;
-    //    default:
-    //        break;
-    //}
             
     // sanity check
     if (GetSpecsCount() > MAX_TALENT_SPECS || GetActiveSpec() > MAX_TALENT_SPEC || GetSpecsCount() < MIN_TALENT_SPECS)
@@ -18198,11 +18198,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
 
     if (GetPowerIndex(POWER_MANA) != MAX_POWERS)
-    {
-        uint32 savedPower = fields[47].GetUInt32();
-        uint32 maxPower = GetUInt32Value(UNIT_FIELD_MAX_POWER + 0);
-        SetPower(POWER_MANA, (savedPower > maxPower) ? maxPower : savedPower);
-    }
+        SetPower(POWER_MANA, std::min(fields[47].GetUInt32(), GetUInt32Value(UNIT_FIELD_MAX_POWER + 0)));
 
     // must be after loading spells and talents
     Tokenizer talentTrees(fields[26].GetString(), ' ', MAX_TALENT_SPECS);
