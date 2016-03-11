@@ -540,3 +540,12 @@ void WorldPackets::Item::ItemPurchaseRefund::Read()
 {
     _worldPacket >> ItemGUID;
 }
+
+void WorldPackets::Item::UpgradeItem::Read()
+{
+    _worldPacket >> ItemMaster;
+    _worldPacket >> ItemGUID;
+    _worldPacket >> UpgradeID;
+    _worldPacket >> ContainerSlot;
+    _worldPacket >> Slot;
+}

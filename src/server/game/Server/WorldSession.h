@@ -158,6 +158,7 @@ namespace WorldPackets
         class ChatRegisterAddonPrefixes;
         class ChatUnregisterAllAddonPrefixes;
         class ChatReportIgnored;
+        class VoiceSessionEnable;
     }
 
     namespace Combat
@@ -264,6 +265,7 @@ namespace WorldPackets
         class CancelTempEnchantment;
         class WrapItem;
         class ItemPurchaseRefund;
+        class UpgradeItem;
     }
 
     namespace Loot
@@ -323,6 +325,7 @@ namespace WorldPackets
         class CompleteMovie;
         class SaveCUFProfiles;
         class MountSpecialAnim;
+        class WardenData;
     }
 
     namespace Movement
@@ -1508,7 +1511,7 @@ class WorldSession
         void HandleRequestPvpReward(WorldPacket& recvData);
         void HandleRequestRatedBgStats(WorldPacket& recvData);
 
-        void HandleWardenDataOpcode(WorldPacket& recvData);
+        void HandleWardenData(WorldPackets::Misc::WardenData& packet);
         void HandleWorldTeleport(WorldPackets::Misc::WorldTeleport& packet);
         void HandleMinimapPing(WorldPackets::Party::MinimapPingClient& packet);
         void HandleRandomRollClient(WorldPackets::Misc::RandomRollClient& packet);
@@ -1582,7 +1585,7 @@ class WorldSession
         void HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo& packet);
         void HandleItemPurchaseRefund(WorldPackets::Item::ItemPurchaseRefund& packet);
         void HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packet);
-        void HandleVoiceSessionEnableOpcode(WorldPacket& recvData);
+        void HandleVoiceSessionEnable(WorldPackets::Chat::VoiceSessionEnable& packet);
         void HandleSetActiveVoiceChannel(WorldPacket& recvData);
         void HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData);
 
@@ -1633,11 +1636,8 @@ class WorldSession
         void SendVoidStorageTransferResult(VoidTransferError result);
         void SendVoidStorageFailed(int8 reason = 0);
 
-        // Transmogrification
         void HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems& request);
-
-        // Upgrade item
-        void HandleUpgradeItem(WorldPacket& recvData);
+        void HandleUpgradeItem(WorldPackets::Item::UpgradeItem& packet);
 
         void HandleBattlePetSetFlags(WorldPackets::BattlePet::SetFlags& packet);
         void HandleModifyName(WorldPackets::BattlePet::ModifyName& packet);

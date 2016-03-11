@@ -780,3 +780,12 @@ WorldPacket const* WorldPackets::Misc::OverrideLight::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Misc::WardenData::Read()
+{
+    if (uint32 size = _worldPacket.read<uint32>())
+    {
+        Data.resize(size);
+        _worldPacket.read(Data.contents(), size);
+    }
+}

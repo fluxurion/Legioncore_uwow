@@ -769,19 +769,19 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST,                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Token::UpdateListedAuctionableTokens, &WorldSession::HandleUpdateListedAuctionableTokens);
     DEFINE_HANDLER(CMSG_UPDATE_WOW_TOKEN_COUNT,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_UPGRADE_GARRISON,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Garrison::UpgradeGarrison, &WorldSession::HandleUpgradeGarrison);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_UPGRADE_ITEM,                            STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleUpgradeItem               );
+    DEFINE_HANDLER(CMSG_UPGRADE_ITEM,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::UpgradeItem, &WorldSession::HandleUpgradeItem);
     DEFINE_HANDLER(CMSG_USE_CRITTER_ITEM,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::UseCritterItem, &WorldSession::HandleUseCritterItem);
     DEFINE_HANDLER(CMSG_USE_EQUIPMENT_SET,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::EquipmentSet::UseEquipmentSet, &WorldSession::HandleEquipmentSetUse);
-    DEFINE_HANDLER(CMSG_USE_ITEM,                                           STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::ItemUse, &WorldSession::HandleUseItemOpcode             );
+    DEFINE_HANDLER(CMSG_USE_ITEM,                                           STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::ItemUse, &WorldSession::HandleUseItemOpcode);
     DEFINE_HANDLER(CMSG_USE_TOY,                                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Toy::UseToy, &WorldSession::HandleUseToy);
     DEFINE_HANDLER(CMSG_USED_FOLLOW,                                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_VIOLENCE_LEVEL,                                     STATUS_AUTHED,    PROCESS_INPLACE,      WorldPackets::Misc::ViolenceLevel, &WorldSession::HandleViolenceLevel);
     DEFINE_HANDLER(CMSG_VOICE_ADD_IGNORE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Social::VoiceAddIgnore, &WorldSession::HandleVoiceAddIgnore);
     DEFINE_HANDLER(CMSG_VOICE_DEL_IGNORE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Social::VoiceDelIgnore, &WorldSession::HandleVoiceDelIgnore);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_VOICE_SESSION_ENABLE,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleVoiceSessionEnableOpcode  );
+    DEFINE_HANDLER(CMSG_VOICE_SESSION_ENABLE,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::VoiceSessionEnable, &WorldSession::HandleVoiceSessionEnable);
     DEFINE_HANDLER(CMSG_QUERY_VOID_STORAGE,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::QueryVoidStorage, &WorldSession::HandleVoidStorageQuery);
     DEFINE_HANDLER(CMSG_VOID_STORAGE_TRANSFER,                              STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::VoidStorageTransfer, &WorldSession::HandleVoidStorageTransfer);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_WARDEN_DATA,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleWardenDataOpcode          ); // STATUS_AUTHED
+    DEFINE_HANDLER(CMSG_WARDEN_DATA,                                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::WardenData, &WorldSession::HandleWardenData);
     DEFINE_HANDLER(CMSG_WHO,                                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Who::WhoRequestPkt, &WorldSession::HandleWhoOpcode);
     DEFINE_HANDLER(CMSG_WHO_IS,                                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Who::WhoIsRequest, &WorldSession::HandleWhoisOpcode);
     DEFINE_HANDLER(CMSG_WORLD_PORT_RESPONSE,                                STATUS_TRANSFER,  PROCESS_THREADUNSAFE, WorldPackets::Movement::WorldPortAck, &WorldSession::HandleWorldPortAck);

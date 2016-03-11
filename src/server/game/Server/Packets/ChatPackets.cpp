@@ -249,3 +249,9 @@ void WorldPackets::Chat::ChatReportIgnored::Read()
     _worldPacket >> IgnoredGUID;
     _worldPacket >> Reason;
 }
+
+void WorldPackets::Chat::VoiceSessionEnable::Read()
+{
+    EnableVoiceChat = _worldPacket.ReadBit();
+    EnableMicrophone = _worldPacket.ReadBit();
+}

@@ -243,7 +243,7 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
     return "Undefined";
 }
 
-void WorldSession::HandleWardenDataOpcode(WorldPacket& recvData)
+void WorldSession::HandleWardenData(WorldPackets::Misc::WardenData& packet)
 {
     uint32 cryptedSize;
     recvData >> cryptedSize;

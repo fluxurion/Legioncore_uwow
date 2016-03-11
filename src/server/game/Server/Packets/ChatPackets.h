@@ -285,6 +285,17 @@ namespace WorldPackets
             ObjectGuid IgnoredGUID;
             uint8 Reason = 0;
         };
+
+        class VoiceSessionEnable final : public ClientPacket
+        {
+        public:
+            VoiceSessionEnable(WorldPacket&& packet) : ClientPacket(CMSG_VOICE_SESSION_ENABLE, std::move(packet)) { }
+        
+            void Read() override;
+
+            bool EnableVoiceChat = false;
+            bool EnableMicrophone = false;
+        };
     }
 }
 

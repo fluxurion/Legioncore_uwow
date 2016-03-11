@@ -2109,12 +2109,9 @@ struct GameTablesEntry
 
 struct ItemUpgradeData
 {
-    ItemUpgradeData()
-    {
-        memset(upgrade, 0, sizeof(upgrade));
-    }
+    ItemUpgradeData() { }
 
-    ItemUpgradeEntry const* upgrade[MAX_ITEM_UPDGRADES];
+    std::array<ItemUpgradeEntry const*, MAX_ITEM_UPDGRADES> upgrade;
 };
 
 struct MapChallengeModeEntry

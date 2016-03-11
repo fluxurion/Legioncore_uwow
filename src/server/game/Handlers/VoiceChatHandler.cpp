@@ -22,12 +22,7 @@
 #include "Opcodes.h"
 #include "Log.h"
 
-void WorldSession::HandleVoiceSessionEnableOpcode(WorldPacket& recvData)
-{
-    // uint8 isVoiceEnabled, uint8 isMicrophoneEnabled
-    recvData.read_skip<uint8>();
-    recvData.read_skip<uint8>();
-}
+void WorldSession::HandleVoiceSessionEnable(WorldPackets::Chat::VoiceSessionEnable& /*packet*/) { }
 
 void WorldSession::HandleSetActiveVoiceChannel(WorldPacket& recvData)
 {

@@ -1018,6 +1018,16 @@ namespace WorldPackets
             int32 TransitionMilliseconds = 0;
             int32 OverrideLightID = 0;
         };
+
+        class WardenData final : public ClientPacket
+        {
+        public:
+            WardenData(WorldPacket&& packet) : ClientPacket(CMSG_WARDEN_DATA, std::move(packet)) { }
+        
+            void Read() override;
+
+            ByteBuffer Data;
+        };
     }
 }
 
