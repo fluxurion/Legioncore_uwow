@@ -1551,7 +1551,7 @@ class WorldSession
         void HandleCancelMountAura(WorldPackets::Spells::CancelMountAura& packet);
         void HandleCancelGrowthAura(WorldPackets::Spells::CancelGrowthAura& packet);
         void HandleSelfRes(WorldPackets::Spells::SelfRes& packet);
-        void HandleComplainOpcode(WorldPackets::Ticket::Complaint& packet);
+        void HandleComplaint(WorldPackets::Ticket::Complaint& packet);
         void HandleRequestPetInfoOpcode(WorldPacket& recvData);
 
         // Socket gem

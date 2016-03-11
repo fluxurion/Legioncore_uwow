@@ -27,7 +27,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 
-void WorldSession::HandleComplainOpcode(WorldPackets::Ticket::Complaint& packet)
+void WorldSession::HandleComplaint(WorldPackets::Ticket::Complaint& packet)
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_COMPLAINTS);
     stmt->setUInt64(0, packet.Offender.PlayerGuid.GetCounter());
