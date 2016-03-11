@@ -135,7 +135,7 @@ class ObjectGuid
         static ObjectGuid Create(LowType counter);
 
         template<HighGuid type>
-        static ObjectGuid Create(uint16 mapId, uint32 entry, LowType counter);
+        static ObjectGuid Create(uint16 mapId, uint32 entry, LowType counter, uint8 subType = 0);
 
         ObjectGuid() : _low(0), _high(0) { }
         ObjectGuid(ObjectGuid const&) = default;

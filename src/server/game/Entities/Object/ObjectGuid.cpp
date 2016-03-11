@@ -185,7 +185,7 @@ public:
 
 #define GLOBAL_GUID_CREATE(highguid) template<> ObjectGuid ObjectGuid::Create<highguid>(LowType counter) { return GuidFormat::Global(highguid, counter); }
 #define REALM_GUID_CREATE(highguid) template<> ObjectGuid ObjectGuid::Create<highguid>(LowType counter) { return GuidFormat::RealmSpecific(highguid, counter); }
-#define MAP_GUID_CREATE(highguid) template<> ObjectGuid ObjectGuid::Create<highguid>(uint16 mapId, uint32 entry, LowType counter) { return GuidFormat::MapSpecific(highguid, 0, mapId, 0, entry, counter); }
+#define MAP_GUID_CREATE(highguid) template<> ObjectGuid ObjectGuid::Create<highguid>(uint16 mapId, uint32 entry, LowType counter, uint8 subType) { return GuidFormat::MapSpecific(highguid, subType, mapId, 0, entry, counter); }
 
 GLOBAL_GUID_CREATE(HighGuid::Uniq)
 GLOBAL_GUID_CREATE(HighGuid::Party)
@@ -235,9 +235,9 @@ ObjectGuid ObjectGuid::Create(LowType /*counter*/)
 }
 
 template<HighGuid type>
-ObjectGuid ObjectGuid::Create(uint16 /*mapId*/, uint32 /*entry*/, LowType /*counter*/)
+ObjectGuid ObjectGuid::Create(uint16 /*mapId*/, uint32 /*entry*/, LowType /*counter*/, uint8 /*subType = 0*/)
 {
-    static_assert(type == HighGuid::Count, "This guid type cannot be constructed using Create(uint16 mapId, uint32 entry, LowType counter).");
+    static_assert(type == HighGuid::Count, "This guid type cannot be constructed using Create(uint16 mapId, uint32 entry, LowType counter, uint8 subType).");
 }
 
 template ObjectGuid::LowType ObjectGuidGenerator<HighGuid::Player>::Generate();
