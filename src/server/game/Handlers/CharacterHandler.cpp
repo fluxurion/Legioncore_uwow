@@ -359,15 +359,10 @@ void WorldSession::SendCharacterEnum(bool deleted /*= false*/)
     _charEnumCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }
 
-void WorldSession::HandleCharUndelete(WorldPacket & recvData)
+void WorldSession::HandleUndeleteCharacter(WorldPackets::Character::UndeleteCharacter& packet)
 {
-    int32 token = recvData.read<int32>();
-    ObjectGuid guid;
-    recvData >> guid;
-
     WorldPackets::Character::UndeleteCharacterResponse response;
-    response.UndeleteInfo->ClientToken = token;
-    response.UndeleteInfo->CharacterGuid = guid;
+    response.UndeleteInfo = packet.UndeleteInfo.get();
 
     if (!HasAuthFlag(AT_AUTH_FLAG_RESTORE_DELETED_CHARACTER))
     {
@@ -379,7 +374,7 @@ void WorldSession::HandleCharUndelete(WorldPacket & recvData)
     uint32 res = CHARACTER_UNDELETE_RESULT_ERROR_UNKNOWN;
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHECK_DELETED_CHARACTER);
-    stmt->setUInt64(0, guid.GetCounter());
+    stmt->setUInt64(0, packet.UndeleteInfo->CharacterGuid.GetCounter());
     stmt->setUInt32(1, GetAccountId());
     if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
     {
@@ -388,7 +383,7 @@ void WorldSession::HandleCharUndelete(WorldPacket & recvData)
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_RESTORE_DELETED_CHARACTER);
         stmt->setUInt32(0, GetAccountId());
         stmt->setUInt32(1, rand()); //rand int name send with future rename option.
-        stmt->setUInt64(2, guid.GetCounter());
+        stmt->setUInt64(2, packet.UndeleteInfo->CharacterGuid.GetCounter());
         CharacterDatabase.Execute(stmt);
 
         RemoveAuthFlag(AT_AUTH_FLAG_RESTORE_DELETED_CHARACTER);
@@ -396,7 +391,6 @@ void WorldSession::HandleCharUndelete(WorldPacket & recvData)
     }
 
     response.Result = res;
-    response.UndeleteInfo->CharacterGuid = guid;
     SendPacket(response.Write());
 }
 

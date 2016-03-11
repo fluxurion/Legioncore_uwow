@@ -615,3 +615,10 @@ void WorldPackets::Character::NeutralPlayerSelectFaction::Read()
 {
     _worldPacket >> Faction;
 }
+
+void WorldPackets::Character::UndeleteCharacter::Read()
+{
+    UndeleteInfo.reset(new CharacterUndeleteInfo());
+    _worldPacket >> UndeleteInfo->ClientToken;
+    _worldPacket >> UndeleteInfo->CharacterGuid;
+}

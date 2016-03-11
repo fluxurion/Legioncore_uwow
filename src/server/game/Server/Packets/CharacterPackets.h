@@ -750,6 +750,16 @@ namespace WorldPackets
 
             uint32 Faction = 0;
         };
+
+        class UndeleteCharacter final : public ClientPacket
+        {
+        public:
+            UndeleteCharacter(WorldPacket&& packet) : ClientPacket(CMSG_UNDELETE_CHARACTER, std::move(packet)) { }
+
+            void Read() override;
+
+            std::shared_ptr<CharacterUndeleteInfo> UndeleteInfo;
+        };
     }
 }
 

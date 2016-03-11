@@ -126,6 +126,7 @@ namespace WorldPackets
         class SetPlayerDeclinedNames;
         class CharCustomize;
         class NeutralPlayerSelectFaction;
+        class UndeleteCharacter;
 
         enum class LoginFailureReason : uint8;
     }
@@ -1669,7 +1670,7 @@ class WorldSession
         void HandleRemoveGlyph(WorldPacket& recvData);
         void HandleCharCustomize(WorldPackets::Character::CharCustomize& packet);
         void HandleCharCustomizeCallback(PreparedQueryResult result, WorldPackets::Character::CharCustomizeInfo* customizeInfo);
-        void HandleCharUndelete(WorldPacket& recvData);
+        void HandleUndeleteCharacter(WorldPackets::Character::UndeleteCharacter& packet);
         void HandleQueryInspectAchievements(WorldPackets::Inspect::QueryInspectAchievements& inspect);
         void HandleGuildAchievementProgressQuery(WorldPackets::Achievement::GuildGetAchievementMembers& packet);
         void HandleSaveEquipmentSet(WorldPackets::EquipmentSet::SaveEquipmentSet& packet);
