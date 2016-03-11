@@ -44,23 +44,16 @@
 #include "GuildMgr.h"
 #include "NPCPackets.h"
 
-void WorldSession::HandleTabardVendorActivateOpcode(WorldPacket & recvData)
+void WorldSession::HandleTabardVendorActivate(WorldPackets::NPC::Hello& packet)
 {
-    ObjectGuid guid;
-    recvData >> guid;
-
-    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TABARDDESIGNER);
+    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(packet.Unit, UNIT_NPC_FLAG_TABARDDESIGNER);
     if (!unit)
-    {
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleTabardVendorActivateOpcode - Unit (GUID: %u) not found or you can not interact with him.", uint32(guid.GetGUIDLow()));
         return;
-    }
 
-    // remove fake death
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
-    SendTabardVendorActivate(guid);
+    SendTabardVendorActivate(packet.Unit);
 }
 
 void WorldSession::SendTabardVendorActivate(ObjectGuid const& guid)

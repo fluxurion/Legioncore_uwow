@@ -1326,7 +1326,7 @@ class WorldSession
         void SendActivateTaxiReply(ActivateTaxiReply reply);
         void HandleTaxiRequestEarlyLanding(WorldPackets::Taxi::TaxiRequestEarlyLanding& packet);
 
-        void HandleTabardVendorActivateOpcode(WorldPacket& recvPacket);
+        void HandleTabardVendorActivate(WorldPackets::NPC::Hello& packet);
         void HandleBankerActivate(WorldPackets::NPC::Hello& packet);
         void HandleBuyBankSlot(WorldPackets::Bank::BuyBankSlot& packet);
         void HandleTrainerList(WorldPackets::NPC::Hello& packet);
