@@ -29,6 +29,7 @@
 #include "Util.h"
 #include "Warden.h"
 #include "AccountMgr.h"
+#include "MiscPackets.h"
 
 Warden::Warden() : _inputCrypto(16), _outputCrypto(16), _checkTimer(10000/*10 sec*/), _clientResponseTimer(0), _dataSent(false), _initialized(false)
 {
@@ -245,13 +246,12 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
 
 void WorldSession::HandleWardenData(WorldPackets::Misc::WardenData& packet)
 {
-    uint32 cryptedSize;
-    recvData >> cryptedSize;
-    _warden->DecryptData(const_cast<uint8*>(recvData.contents() + sizeof(uint32)), cryptedSize);
-    uint8 opcode;
-    recvData >> opcode;
-    sLog->outDebug(LOG_FILTER_WARDEN, "Got packet, opcode %02X, size %u", opcode, uint32(recvData.size()));
-    recvData.hexlike();
+    _warden->DecryptData(const_cast<uint8*>(packet.Data.contents() + sizeof(uint32)), packet.CryptedSize);
+    
+    uint8 opcode = 0;
+    //recvData >> opcode;
+    //sLog->outDebug(LOG_FILTER_WARDEN, "Got packet, opcode %02X, size %u", opcode, uint32(recvData.size()));
+    //recvData.hexlike();
 
     switch (opcode)
     {
@@ -262,13 +262,13 @@ void WorldSession::HandleWardenData(WorldPackets::Misc::WardenData& packet)
             _warden->RequestHash();
             break;
         case WARDEN_CMSG_CHEAT_CHECKS_RESULT:
-            _warden->HandleData(recvData);
+            _warden->HandleData(packet.Data);
             break;
         case WARDEN_CMSG_MEM_CHECKS_RESULT:
             sLog->outDebug(LOG_FILTER_WARDEN, "NYI WARDEN_CMSG_MEM_CHECKS_RESULT received!");
             break;
         case WARDEN_CMSG_HASH_RESULT:
-            _warden->HandleHashResult(recvData);
+            _warden->HandleHashResult(packet.Data);
             //_warden->InitializeModule();
             //_warden->TestSendMemCheck();
             break;
@@ -277,7 +277,7 @@ void WorldSession::HandleWardenData(WorldPackets::Misc::WardenData& packet)
             SetWardenModuleFailed(true);
             break;
         default:
-            sLog->outDebug(LOG_FILTER_WARDEN, "Got unknown warden opcode %02X of size %u.", opcode, uint32(recvData.size() - 1));
+            sLog->outDebug(LOG_FILTER_WARDEN, "Got unknown warden opcode %02X of size %u.", opcode, uint32(packet.Data.size() - 1));
             break;
     }
 }

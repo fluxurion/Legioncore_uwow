@@ -424,6 +424,7 @@ namespace WorldPackets
         class MissileTrajectoryCollision;
         class CancelAutoRepeatSpell;
         class CancelChannelling;
+        class UpdateMissileTrajectory;
     }
 
     namespace Talent
@@ -1682,7 +1683,7 @@ class WorldSession
         void HandleSetVehicleRecId(WorldPackets::Vehicle::MoveSetVehicleRecIdAck& packet);
         void HandleMissileTrajectoryCollision(WorldPackets::Spells::MissileTrajectoryCollision& packet);
         void HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet);
-        void HandleUpdateMissileTrajectory(WorldPacket& recvPacket);
+        void HandleUpdateMissileTrajectory(WorldPackets::Spells::UpdateMissileTrajectory& packet);
         void HandleViolenceLevel(WorldPackets::Misc::ViolenceLevel& packet);
         void HandleVoiceDelIgnore(WorldPackets::Social::VoiceDelIgnore& packet);
         void HandleVoiceAddIgnore(WorldPackets::Social::VoiceAddIgnore& packet);

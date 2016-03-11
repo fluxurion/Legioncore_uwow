@@ -1121,6 +1121,23 @@ namespace WorldPackets
             int32 Duration = 0;
             int32 DurationRemaining = 0;
         };
+
+        class UpdateMissileTrajectory final : public ClientPacket
+        {
+        public:
+            UpdateMissileTrajectory(WorldPacket&& packet) : ClientPacket(CMSG_UPDATE_MISSILE_TRAJECTORY, std::move(packet)) { }
+        
+            void Read() override;
+
+            Optional<MovementInfo> Status;
+            ObjectGuid Guid;
+            Position FirePos;
+            Position ImpactPos;
+            int32 SpellID = 0;
+            float Pitch = 0.0f;
+            float Speed = 0.0f;
+            uint16 MoveMsgID = 0;
+        };
     }
 }
 

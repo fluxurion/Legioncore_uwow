@@ -1027,6 +1027,7 @@ namespace WorldPackets
             void Read() override;
 
             ByteBuffer Data;
+            uint32 CryptedSize = 0;
         };
     }
 }

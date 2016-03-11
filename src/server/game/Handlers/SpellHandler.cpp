@@ -544,46 +544,26 @@ void WorldSession::HandleMissileTrajectoryCollision(WorldPackets::Spells::Missil
     caster->SendMessageToSet(notify.Write(), true);
 }
 
-void WorldSession::HandleUpdateMissileTrajectory(WorldPacket& recvPacket)
+void WorldSession::HandleUpdateMissileTrajectory(WorldPackets::Spells::UpdateMissileTrajectory& packet)
 {
-    ObjectGuid guid;
-    uint32 spellId;
-    float elevation, speed;
-    float curX, curY, curZ;
-    float targetX, targetY, targetZ;
-    uint8 moveStop;
-
-    recvPacket >> guid >> spellId >> elevation >> speed;
-    recvPacket >> curX >> curY >> curZ;
-    recvPacket >> targetX >> targetY >> targetZ;
-    recvPacket >> moveStop;
-
-    Unit* caster = ObjectAccessor::GetUnit(*_player, guid);
-    Spell* spell = caster ? caster->GetCurrentSpell(CURRENT_GENERIC_SPELL) : NULL;
-    if (!spell || spell->m_spellInfo->Id != spellId || !spell->m_targets.HasDst() || !spell->m_targets.HasSrc())
-    {
-        recvPacket.rfinish();
+    Unit* caster = ObjectAccessor::GetUnit(*_player, packet.Guid);
+    Spell* spell = caster ? caster->GetCurrentSpell(CURRENT_GENERIC_SPELL) : nullptr;
+    if (!spell || spell->m_spellInfo->Id != uint32(packet.SpellID) || !spell->m_targets.HasDst() || !spell->m_targets.HasSrc())
         return;
-    }
 
     Position pos = *spell->m_targets.GetSrcPos();
-    pos.Relocate(curX, curY, curZ);
+    pos.Relocate(packet.FirePos);
     spell->m_targets.ModSrc(pos);
 
     pos = *spell->m_targets.GetDstPos();
-    pos.Relocate(targetX, targetY, targetZ);
+    pos.Relocate(packet.ImpactPos);
     spell->m_targets.ModDst(pos);
 
-    spell->m_targets.SetPitch(elevation);
-    spell->m_targets.SetSpeed(speed);
+    spell->m_targets.SetPitch(packet.Pitch);
+    spell->m_targets.SetSpeed(packet.Speed);
 
-    if (moveStop)
-    {
-        uint32 opcode;
-        recvPacket >> opcode;
-        recvPacket.SetOpcode(CMSG_MOVE_STOP); // always set to MSG_MOVE_STOP in client SetOpcode
-        //HandleMovementOpcodes(recvPacket);
-    }
+    if (packet.Status.is_initialized())
+        GetPlayer()->ValidateMovementInfo(packet.Status.get_ptr());
 }
 
 void WorldSession::HandleRequestCategoryCooldowns(WorldPackets::Spells::RequestCategoryCooldowns& /*packet*/)

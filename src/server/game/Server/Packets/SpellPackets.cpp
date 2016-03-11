@@ -1086,3 +1086,16 @@ WorldPacket const* WorldPackets::Spells::AddLossOfControl::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Spells::UpdateMissileTrajectory::Read()
+{
+    _worldPacket >> Guid;
+    _worldPacket >> MoveMsgID;
+    _worldPacket >> SpellID;
+    _worldPacket >> Pitch;
+    _worldPacket >> Speed;
+    _worldPacket >> FirePos.PositionXYZStream();
+    _worldPacket >> ImpactPos.PositionXYZStream();
+    if (_worldPacket.ReadBit())
+        _worldPacket >> *Status;
+}
