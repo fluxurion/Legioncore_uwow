@@ -311,7 +311,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
         {
             Field* fields = result->Fetch();
             WorldPackets::Character::EnumCharactersResult::CharacterInfo charInfo(fields);
-            sLog->outInfo(LOG_FILTER_NETWORKIO, "Loading char guid %s from account %u.", charInfo.Guid.ToString().c_str(), GetAccountId());
+            sLog->outTrace(LOG_FILTER_NETWORKIO, "Loading char guid %s from account %u.", charInfo.Guid.ToString().c_str(), GetAccountId());
 
             //Player::BuildEnumData(result, &dataBuffer, &bitBuffer);
             // Do not allow locked characters to login

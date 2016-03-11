@@ -263,6 +263,7 @@ template<> ObjectGuidGenerator<HighGuid::Transport>* ObjectMgr::GetGenerator() {
 template<> ObjectGuidGenerator<HighGuid::BattlePet>* ObjectMgr::GetGenerator() { return &_BattlePetGuidGenerator; }
 template<> ObjectGuidGenerator<HighGuid::PetBattle>* ObjectMgr::GetGenerator() { return &_PetBattleGuidGenerator; }
 template<> ObjectGuidGenerator<HighGuid::Conversation>* ObjectMgr::GetGenerator() { return &_conversationGuidGenerator; }
+template<> ObjectGuidGenerator<HighGuid::Cast>* ObjectMgr::GetGenerator() { return &_castGuidGenerator; }
 
 template<HighGuid type>
 ObjectGuidGenerator<type>* ObjectMgr::GetGenerator()

@@ -1772,6 +1772,7 @@ class ObjectMgr
         ObjectGuidGenerator<HighGuid::BattlePet> _BattlePetGuidGenerator;
         ObjectGuidGenerator<HighGuid::PetBattle> _PetBattleGuidGenerator;
         ObjectGuidGenerator<HighGuid::Conversation> _conversationGuidGenerator;
+        ObjectGuidGenerator<HighGuid::Cast> _castGuidGenerator;
 
         QuestMap _questTemplates;
 
