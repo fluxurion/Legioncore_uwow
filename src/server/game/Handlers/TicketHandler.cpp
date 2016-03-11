@@ -51,9 +51,9 @@ void WorldSession::HandleSupportTicketSubmitBug(WorldPackets::Ticket::SupportTic
     stmt->setUInt64(1, _player->GetGUID().GetCounter());
     stmt->setString(2, packet.Note);
     stmt->setUInt32(3, packet.Header.MapID);
-    stmt->setFloat(4, packet.Header.Position.GetPositionX());
-    stmt->setFloat(5, packet.Header.Position.GetPositionY());
-    stmt->setFloat(6, packet.Header.Position.GetPositionZ());
+    stmt->setFloat(4, packet.Header.Pos.GetPositionX());
+    stmt->setFloat(5, packet.Header.Pos.GetPositionY());
+    stmt->setFloat(6, packet.Header.Pos.GetPositionZ());
     CharacterDatabase.Execute(stmt);
 }
 

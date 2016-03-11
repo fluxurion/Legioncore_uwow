@@ -75,7 +75,7 @@ namespace WorldPackets
 
         struct SupportTicketHeader
         {
-            Position Position;
+            Position Pos;
             int32 MapID = 0;
         };
 

@@ -68,7 +68,7 @@ WorldPacket const* WorldPackets::Ticket::ComplaintResult::Write()
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Ticket::SupportTicketHeader& header)
 {
     data >> header.MapID;
-    data >> header.Position.PositionXYZOStream();
+    data >> header.Pos.PositionXYZOStream();
 
     return data;
 }
