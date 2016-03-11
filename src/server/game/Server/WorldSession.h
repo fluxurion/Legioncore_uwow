@@ -58,6 +58,7 @@ struct BlackMarketTemplate;
 struct DeclinedName;
 struct ItemTemplate;
 struct MovementInfo;
+struct Position;
 
 namespace lfg
 {

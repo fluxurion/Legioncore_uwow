@@ -445,7 +445,7 @@ namespace WorldPackets
         public:
             LogoutInstant(WorldPacket&& packet) : ClientPacket(CMSG_LOGOUT_INSTANT, std::move(packet)) { }
 
-            void Read() override { }
+            void Read() override;
 
             Optional<uint32> Reason;
         };
