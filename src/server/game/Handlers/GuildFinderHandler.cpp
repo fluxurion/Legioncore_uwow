@@ -113,7 +113,7 @@ void WorldSession::HandleGuildFinderDeclineRecruit(WorldPacket& recvPacket)
     sGuildFinderMgr->RemoveMembershipRequest(playerGuid, ObjectGuid::Create<HighGuid::Guild>(GetPlayer()->GetGuildId()));
 }
 
-void WorldSession::HandleGuildFinderGetApplications(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleLFGuildGetApplications(WorldPackets::Guild::LFGuildGetApplications& /*packet*/)
 {
     std::list<MembershipRequest> applicatedGuilds = sGuildFinderMgr->GetAllMembershipRequestsForPlayer(GetPlayer()->GetGUID());
     WorldPackets::Guild::LFGuildApplication application;

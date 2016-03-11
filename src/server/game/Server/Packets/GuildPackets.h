@@ -1211,6 +1211,14 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class LFGuildGetApplications final : public ClientPacket
+        {
+        public:
+            LFGuildGetApplications(WorldPacket&& packet) : ClientPacket(CMSG_LF_GUILD_GET_APPLICATIONS, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
