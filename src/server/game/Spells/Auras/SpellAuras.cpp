@@ -217,7 +217,7 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
 
     Aura const* aura = GetBase();
     WorldPackets::Spells::AuraDataInfo auraData;
-    auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
+    auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(GetTarget()->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
     auraData.SpellID = overrideAura ? overrideAura : aura->GetId();
     auraData.SpellXSpellVisualID = aura->GetSpellInfo()->GetSpellXSpellVisualId(_target->GetMap()->GetDifficultyID());
     auraData.Flags = GetFlags();

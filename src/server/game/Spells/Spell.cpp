@@ -582,8 +582,10 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
 
     memset(m_misc.Raw.Data, 0, sizeof(m_misc.Raw.Data));
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
-    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
-    m_castGuid[1] = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
+
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
+    m_castGuid[1] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
+    m_spellGuid = ObjectGuid::Empty;
 }
 
 Spell::~Spell()
@@ -3683,6 +3685,7 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
 
         m_caster->SetCurrentCastedSpell(this);
         SendSpellPendingCast(); //Send activation spell
+        SendSpellCastGuids();
         SendSpellStart();
 
         // set target for proper facing
@@ -4727,7 +4730,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
+    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
     packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
@@ -4856,6 +4859,17 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
     caster->GetSession()->SendPacket(packet.Write());
 }
 
+void Spell::SendSpellCastGuids()
+{
+    if (m_spellGuid.IsEmpty())
+        return;
+
+    WorldPackets::Spells::SpellCastGuids packet;
+    packet.SpellGuid = m_spellGuid;
+    packet.CastGuid = m_castGuid[IsTriggered() ? 1 : 0];
+    m_caster->SendMessageToSet(packet.Write(), true);
+}
+
 void Spell::SendSpellStart()
 {
     if (!IsNeedSendToClient())
@@ -4943,6 +4957,8 @@ void Spell::SendSpellStart()
             powerData.Cost = m_caster->GetPower(powerType);
             castData.RemainingPower.push_back(powerData);
         }
+        else
+            castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
 
     if (castFlags & CAST_FLAG_RUNE_LIST) // rune cooldowns list

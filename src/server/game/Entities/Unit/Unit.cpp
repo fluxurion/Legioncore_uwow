@@ -5924,7 +5924,7 @@ void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
     WorldPackets::CombatLog::SpellNonMeleeDamageLog packet;
     packet.Me = log->target->GetGUID();
     packet.CasterGUID = log->attacker->GetGUID();
-    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
+    packet.CastGuid = ObjectGuid::Create<HighGuid::Cast>(GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
     packet.SpellID = log->SpellID;
     packet.Damage = newDamage;
     if (newDamage > log->preHitHealth)
@@ -23846,7 +23846,7 @@ void Unit::SendFakeAuraUpdate(uint32 auraId, uint32 flags, uint32 duration, uint
     if (!remove)
     {
         WorldPackets::Spells::AuraDataInfo auraData;
-        auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate());
+        auraData.CastGuid = ObjectGuid::Create<HighGuid::Cast>(GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
         auraData.SpellID = auraId;
         auraData.Flags = flags;
         auraData.ActiveFlags = 1;

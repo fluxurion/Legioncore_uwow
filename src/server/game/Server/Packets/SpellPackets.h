@@ -1138,6 +1138,17 @@ namespace WorldPackets
             float Speed = 0.0f;
             uint16 MoveMsgID = 0;
         };
+
+        class SpellCastGuids final : public ServerPacket
+        {
+        public:
+            SpellCastGuids() : ServerPacket(SMSG_SPELL_CAST_GUIDS, 32) { }
+            
+            WorldPacket const* Write() override;
+
+            ObjectGuid CastGuid;
+            ObjectGuid SpellGuid;
+        };
     }
 }
 

@@ -585,6 +585,7 @@ class Spell
 
         static void SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCastResult result, SpellCustomErrors customError = SPELL_CUSTOM_ERROR_NONE, uint32* misc = nullptr, bool pet = false);
         void SendCastResult(SpellCastResult result);
+        void SendSpellCastGuids();
         void SendSpellStart();
         void SendSpellGo();
         void SendSpellPendingCast();
@@ -625,6 +626,7 @@ class Spell
             } Raw;
         } m_misc;
 
+        ObjectGuid m_spellGuid;
         ObjectGuid m_castGuid[2];
         uint32 m_preCastSpell;
         SpellCastTargets m_targets;

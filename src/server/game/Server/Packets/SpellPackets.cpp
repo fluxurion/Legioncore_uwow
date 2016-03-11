@@ -1099,3 +1099,11 @@ void WorldPackets::Spells::UpdateMissileTrajectory::Read()
     if (_worldPacket.ReadBit())
         _worldPacket >> *Status;
 }
+
+WorldPacket const* WorldPackets::Spells::SpellCastGuids::Write()
+{
+    _worldPacket << SpellGuid;
+    _worldPacket << CastGuid;
+
+    return &_worldPacket;
+}

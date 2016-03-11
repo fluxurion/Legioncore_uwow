@@ -194,7 +194,6 @@ GLOBAL_GUID_CREATE(HighGuid::BNetAccount)
 GLOBAL_GUID_CREATE(HighGuid::GMTask)
 GLOBAL_GUID_CREATE(HighGuid::RaidGroup)
 GLOBAL_GUID_CREATE(HighGuid::Spell)
-GLOBAL_GUID_CREATE(HighGuid::Cast)
 GLOBAL_GUID_CREATE(HighGuid::Mail)
 GLOBAL_GUID_CREATE(HighGuid::UserRouter)
 GLOBAL_GUID_CREATE(HighGuid::PVPQueueGroup)
@@ -224,6 +223,7 @@ MAP_GUID_CREATE(HighGuid::CallForHelp)
 MAP_GUID_CREATE(HighGuid::AIResource)
 MAP_GUID_CREATE(HighGuid::AILock)
 MAP_GUID_CREATE(HighGuid::AILockTicket)
+MAP_GUID_CREATE(HighGuid::Cast)
 
 ObjectGuid const ObjectGuid::Empty = ObjectGuid();
 ObjectGuid const ObjectGuid::TradeItem = ObjectGuid::Create<HighGuid::Uniq>(uint64(10));
