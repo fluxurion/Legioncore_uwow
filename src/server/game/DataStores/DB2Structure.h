@@ -643,19 +643,19 @@ struct CreatureFamilyEntry
 struct DifficultyEntry
 {
     uint32      ID;                                         // 0
-    uint32      FallbackDifficultyID;                       // 1
-    uint32      InstanceType;                               // 2
-    uint32      MinPlayers;                                 // 3
-    uint32      MaxPlayers;                                 // 4
-    int32       OldEnumValue;                               // 5
-    uint32      Flags;                                      // 6
-    uint32      ToggleDifficultyID;                         // 7
-    uint32      GroupSizeHealthCurveID;                     // 8
-    uint32      GroupSizeDmgCurveID;                        // 9
-    uint32      GroupSizeSpellPointsCurveID;                // 10
-    LocalizedString* NameLang;                              // 11
-    uint32      ItemBonusTreeModID;                         // 12
-    uint32      UnkLegion;                                  // 13
+    LocalizedString* Name;                                  // 1
+    uint8       FallbackDifficultyID;                       // 2
+    uint8       InstanceType;                               // 3
+    uint8       MinPlayers;                                 // 4
+    uint8       MaxPlayers;                                 // 5
+    int8        OldEnumValue;                               // 6
+    uint8       Flags;                                      // 7
+    uint8       ToggleDifficultyID;                         // 8
+    uint8       GroupSizeHealthCurveID;                     // 9
+    uint8       GroupSizeDmgCurveID;                        // 10
+    uint8       GroupSizeSpellPointsCurveID;                // 11
+    uint8       ItemBonusTreeModID;                         // 12
+    uint8       OrderIndex;                                 // 13
 };
 
 struct DungeonEncounterEntry

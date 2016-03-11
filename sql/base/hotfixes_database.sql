@@ -1516,19 +1516,19 @@ DROP TABLE IF EXISTS `difficulty`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `difficulty` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `FallbackDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
-  `InstanceType` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `MaxPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `OldEnumValue` int(11) NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `ToggleDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
-  `GroupSizeHealthCurveID` int(10) unsigned NOT NULL DEFAULT '0',
-  `GroupSizeDmgCurveID` int(10) unsigned NOT NULL DEFAULT '0',
-  `GroupSizeSpellPointsCurveID` int(10) unsigned NOT NULL DEFAULT '0',
-  `NameLang` text,
-  `ItemBonusTreeModID` int(10) unsigned NOT NULL DEFAULT '0',
-  `UnkLegion` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `FallbackDifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `InstanceType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MinPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MaxPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `OldEnumValue` tinyint(4) NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ToggleDifficultyID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GroupSizeHealthCurveID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GroupSizeDmgCurveID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GroupSizeSpellPointsCurveID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ItemBonusTreeModID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `OrderIndex` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1553,7 +1553,7 @@ DROP TABLE IF EXISTS `difficulty_locale`;
 CREATE TABLE `difficulty_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `NameLang_lang` text,
+  `Name_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

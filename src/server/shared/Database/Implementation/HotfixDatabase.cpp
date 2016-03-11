@@ -172,10 +172,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CREATURE_FAMILY, "SELECT ID, Name_lang, IconFile_lang FROM creature_family_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Difficulty.db2
-    PrepareStatement(HOTFIX_SEL_DIFFICULTY, "SELECT ID, FallbackDifficultyID, InstanceType, MinPlayers, MaxPlayers, OldEnumValue, Flags, "
-        "ToggleDifficultyID, GroupSizeHealthCurveID, GroupSizeDmgCurveID, GroupSizeSpellPointsCurveID, NameLang, ItemBonusTreeModID, UnkLegion"
-        " FROM difficulty ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_DIFFICULTY, "SELECT ID, NameLang_lang FROM difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_DIFFICULTY, "SELECT ID, Name, FallbackDifficultyID, InstanceType, MinPlayers, MaxPlayers, OldEnumValue, Flags, "
+        "ToggleDifficultyID, GroupSizeHealthCurveID, GroupSizeDmgCurveID, GroupSizeSpellPointsCurveID, ItemBonusTreeModID, OrderIndex FROM difficulty"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_DIFFICULTY, "SELECT ID, Name_lang FROM difficulty_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // DungeonEncounter.db2
     PrepareStatement(HOTFIX_SEL_DUNGEON_ENCOUNTER, "SELECT ID, Name, CreatureDisplayID, MapID, OrderID, SpellIconID, DifficultyID, EncounterID, "
