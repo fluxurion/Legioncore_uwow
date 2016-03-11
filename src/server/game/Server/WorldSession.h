@@ -154,6 +154,7 @@ namespace WorldPackets
         class CTextEmote;
         class ChatRegisterAddonPrefixes;
         class ChatUnregisterAllAddonPrefixes;
+        class ChatReportIgnored;
     }
 
     namespace Combat
@@ -1082,7 +1083,7 @@ class WorldSession
         void HandleCharEnum(PreparedQueryResult result, bool isDelete);
         void HandlePlayerLogin(LoginQueryHolder * holder);
         void SendCharFactionChange(ResponseCodes result, WorldPackets::Character::CharRaceOrFactionChangeInfo const* factionChangeInfo);
-        void HandleCharFactionOrRaceChange(WorldPackets::Character::CharRaceOrFactionChange& packet);
+        void HandleCharRaceOrFactionChange(WorldPackets::Character::CharRaceOrFactionChange& packet);
         void HandleGenerateRandomCharacterName(WorldPackets::Character::GenerateRandomCharacterName& packet);
         void HandleReorderCharacters(WorldPacket& recvData);
 
@@ -1418,7 +1419,7 @@ class WorldSession
         void SendPlayerAmbiguousNotice(std::string name);
         void SendChatRestrictedNotice(ChatRestrictionType restriction);
         void HandleTextEmoteOpcode(WorldPackets::Chat::CTextEmote& packet);
-        void HandleChatIgnoredOpcode(WorldPacket& recvPacket);
+        void HandleChatReportIgnored(WorldPackets::Chat::ChatReportIgnored& packet);
 
         void HandleChatUnregisterAllAddonPrefixes(WorldPackets::Chat::ChatUnregisterAllAddonPrefixes& packet);
         void HandleChatRegisterAddonPrefixes(WorldPackets::Chat::ChatRegisterAddonPrefixes& packet);

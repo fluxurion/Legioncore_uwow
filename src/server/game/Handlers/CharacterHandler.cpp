@@ -1643,7 +1643,7 @@ void WorldSession::SendCharFactionChange(ResponseCodes result, WorldPackets::Cha
     SendPacket(packet.Write());
 }
 
-void WorldSession::HandleCharFactionOrRaceChange(WorldPackets::Character::CharRaceOrFactionChange& packet)
+void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRaceOrFactionChange& packet)
 {
     WorldPackets::Character::CharRaceOrFactionChangeInfo* info = packet.RaceOrFactionChangeInfo.get();
     ObjectGuid::LowType lowGuid = info->Guid.GetCounter();

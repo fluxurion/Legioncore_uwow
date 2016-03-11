@@ -274,6 +274,17 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class ChatReportIgnored final : public ClientPacket
+        {
+        public:
+            ChatReportIgnored(WorldPacket&& packet) : ClientPacket(CMSG_CHAT_REPORT_IGNORED, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid IgnoredGUID;
+            uint8 Reason = 0;
+        };
     }
 }
 

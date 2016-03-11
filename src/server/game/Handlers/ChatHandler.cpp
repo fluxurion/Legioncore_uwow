@@ -692,16 +692,9 @@ void WorldSession::HandleTextEmoteOpcode(WorldPackets::Chat::CTextEmote& packet)
         ((Creature*)unit)->AI()->ReceiveEmote(player, packet.SoundIndex);
 }
 
-void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recvData)
+void WorldSession::HandleChatReportIgnored(WorldPackets::Chat::ChatReportIgnored& packet)
 {
-    ObjectGuid guid;
-    uint8 unk;
-    recvData >> unk;                                       // probably related to spam reporting
-
-    //recvData.ReadGuidMask<0, 6, 7, 3, 2, 1, 4, 5>(guid);
-    //recvData.ReadGuidBytes<7, 5, 2, 6, 0, 1, 3, 4>(guid);
-
-    Player* player = ObjectAccessor::FindPlayer(guid);
+    Player* player = ObjectAccessor::FindPlayer(packet.IgnoredGUID);
     if (!player || !player->GetSession())
         return;
 

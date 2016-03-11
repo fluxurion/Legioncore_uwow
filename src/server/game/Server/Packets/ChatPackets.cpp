@@ -243,3 +243,9 @@ void WorldPackets::Chat::ChatRegisterAddonPrefixes::Read()
     for (std::string& prefix : Prefixes)
         prefix.assign(_worldPacket.ReadString(_worldPacket.ReadBits(5)));
 }
+
+void WorldPackets::Chat::ChatReportIgnored::Read()
+{
+    _worldPacket >> IgnoredGUID;
+    _worldPacket >> Reason;
+}
