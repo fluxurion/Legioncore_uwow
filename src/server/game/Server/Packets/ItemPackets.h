@@ -546,6 +546,17 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class SocketGems final : public ClientPacket
+        {
+        public:
+            SocketGems(WorldPacket&& packet) : ClientPacket(CMSG_SOCKET_GEMS, std::move(packet)) { }
+
+            void Read() override;
+            
+            std::array<ObjectGuid, MAX_GEM_SOCKETS> GemItem;
+            ObjectGuid ItemGuid;
+        };
     }
 }
 

@@ -816,26 +816,18 @@ void WorldSession::HandleWrapItem(WorldPackets::Item::WrapItem& packet)
     _player->DestroyItem(gift->GetBagSlot(), gift->GetSlot(), true);
 }
 
-//! 6.0.3
-void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
+void WorldSession::HandleSocketGems(WorldPackets::Item::SocketGems& packet)
 {
-    ObjectGuid item_guid;
-    ObjectGuid gem_guids[MAX_GEM_SOCKETS];
-
-    recvData >> item_guid;
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)
-        recvData >> gem_guids[i];
-
-    if (item_guid.IsEmpty())
+    if (packet.ItemGuid.IsEmpty())
         return;
 
-    //cheat -> tried to socket same gem multiple times
-    if ((!gem_guids[0].IsEmpty() && (gem_guids[0] == gem_guids[1] || gem_guids[0] == gem_guids[2])) ||
-        (!gem_guids[1].IsEmpty() && (gem_guids[1] == gem_guids[2])))
+
+    if ((!packet.GemItem[0].IsEmpty() && (packet.GemItem[0] == packet.GemItem[1] || packet.GemItem[0] == packet.GemItem[2])) ||
+        (!packet.GemItem[1].IsEmpty() && (packet.GemItem[1] == packet.GemItem[2])))
         return;
 
-    Item* itemTarget = _player->GetItemByGuid(item_guid);
-    if (!itemTarget)                                         //missing item to socket
+    Item* itemTarget = _player->GetItemByGuid(packet.ItemGuid);
+    if (!itemTarget)
         return;
 
     ItemTemplate const* itemProto = itemTarget->GetTemplate();
@@ -846,14 +838,14 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
     uint8 slot = itemTarget->IsEquipped() ? itemTarget->GetSlot() : uint8(NULL_SLOT);
 
     Item* Gems[MAX_GEM_SOCKETS];
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)
-        Gems[i] = !gem_guids[i].IsEmpty() ? _player->GetItemByGuid(gem_guids[i]) : NULL;
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)
+        Gems[i] = !packet.GemItem[i].IsEmpty() ? _player->GetItemByGuid(packet.GemItem[i]) : NULL;
 
     GemPropertiesEntry const* GemProps[MAX_GEM_SOCKETS];
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)                //get geminfo from dbc storage
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)                //get geminfo from dbc storage
         GemProps[i] = (Gems[i]) ? sGemPropertiesStore.LookupEntry(Gems[i]->GetTemplate()->GemProperties) : NULL;
 
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)                //check for hack maybe
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)                //check for hack maybe
     {
         if (!GemProps[i])
             continue;
@@ -866,7 +858,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
                 return;
 
             // not first not-colored (not normaly used) socket
-            if (i != 0 && !itemProto->Socket[i-1].Color && (i+1 >= MAX_GEM_SOCKETS || itemProto->Socket[i+1].Color))
+            if (i != 0 && !itemProto->Socket[i - 1].Color && (i + 1 >= MAX_GEM_SOCKETS || itemProto->Socket[i + 1].Color))
                 return;
 
             // ok, this is first not colored socket for item with prismatic socket
@@ -902,11 +894,11 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
     for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)                //get new and old enchantments
     {
         GemEnchants[i] = (GemProps[i]) ? GemProps[i]->EnchantID : 0;
-        OldEnchants[i] = itemTarget->GetEnchantmentId(EnchantmentSlot(SOCK_ENCHANTMENT_SLOT+i));
+        OldEnchants[i] = itemTarget->GetEnchantmentId(EnchantmentSlot(SOCK_ENCHANTMENT_SLOT + i));
     }
 
     // check unique-equipped conditions
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)
     {
         if (!Gems[i])
             continue;
@@ -949,7 +941,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
             if (ItemLimitCategoryEntry const* limitEntry = sItemLimitCategoryStore.LookupEntry(iGemProto->ItemLimitCategory))
             {
                 // NOTE: limitEntry->mode is not checked because if item has limit then it is applied in equip case
-                for (int j = 0; j < MAX_GEM_SOCKETS; ++j)
+                for (uint8 j = 0; j < MAX_GEM_SOCKETS; ++j)
                 {
                     if (Gems[j])
                     {
@@ -995,18 +987,18 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recvData)
     for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
         _player->ApplyEnchantment(itemTarget, EnchantmentSlot(enchant_slot), false);
 
-    for (int i = 0; i < MAX_GEM_SOCKETS; ++i)
+    for (uint8 i = 0; i < MAX_GEM_SOCKETS; ++i)
     {
         if (GemEnchants[i])
         {
             uint32 gemCount = 1;
-            itemTarget->SetEnchantment(EnchantmentSlot(SOCK_ENCHANTMENT_SLOT+i), GemEnchants[i], 0, 0);
-            if (Item* guidItem = _player->GetItemByGuid(gem_guids[i]))
+            itemTarget->SetEnchantment(EnchantmentSlot(SOCK_ENCHANTMENT_SLOT + i), GemEnchants[i], 0, 0);
+            if (Item* guidItem = _player->GetItemByGuid(packet.GemItem[i]))
                 _player->DestroyItemCount(guidItem, gemCount, true);
         }
     }
 
-    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT+MAX_GEM_SOCKETS; ++enchant_slot)
+    for (uint32 enchant_slot = SOCK_ENCHANTMENT_SLOT; enchant_slot < SOCK_ENCHANTMENT_SLOT + MAX_GEM_SOCKETS; ++enchant_slot)
         _player->ApplyEnchantment(itemTarget, EnchantmentSlot(enchant_slot), true);
 
     bool SocketBonusToBeActivated = itemTarget->GemsFitSockets();//current socketbonus state

@@ -555,3 +555,10 @@ void WorldPackets::Item::ReadItem::Read()
     _worldPacket >> PackSlot;
     _worldPacket >> Slot;
 }
+
+void WorldPackets::Item::SocketGems::Read()
+{
+    _worldPacket >> ItemGuid;
+    for (ObjectGuid &gem : GemItem)
+        _worldPacket >> gem;
+}

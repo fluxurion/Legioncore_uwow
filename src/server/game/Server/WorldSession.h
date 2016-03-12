@@ -271,6 +271,7 @@ namespace WorldPackets
         class UpgradeItem;
         class ReadItem;
         class SortBags;
+        class SocketGems;
     }
 
     namespace Loot
@@ -1593,8 +1594,7 @@ class WorldSession
         void HandleComplaint(WorldPackets::Ticket::Complaint& packet);
         void HandleRequestPetInfo(WorldPackets::PetPackets::RequestPetInfo& packet);
 
-        // Socket gem
-        void HandleSocketOpcode(WorldPacket& recvData);
+        void HandleSocketGems(WorldPackets::Item::SocketGems& packet);
 
         void HandleSortBags(WorldPackets::Item::SortBags& packet);
 
