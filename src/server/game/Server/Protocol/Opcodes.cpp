@@ -63,7 +63,7 @@ void OpcodeTable::ValidateAndSetClientOpcode(OpcodeClient opcode, char const* na
         return;
     }
 
-    if (_internalTableClient[opcode] != NULL)
+    if (_internalTableClient[opcode] != nullptr)
     {
         sLog->outError(LOG_FILTER_NETWORKIO, "Tried to override client handler of %s with %s (opcode %u)", GetOpcodeNameForLogging(opcode).c_str(), name, opcode);
         return;
@@ -86,7 +86,7 @@ void OpcodeTable::ValidateAndSetServerOpcode(OpcodeServer opcode, char const* na
         return;
     }
 
-    if (_internalTableServer[opcode] != NULL)
+    if (_internalTableServer[opcode] != nullptr)
     {
         sLog->outError(LOG_FILTER_NETWORKIO, "Tried to override server handler of %s with %s (opcode %u)", GetOpcodeNameForLogging(opcode).c_str(), name, opcode);
         return;
@@ -98,10 +98,6 @@ void OpcodeTable::ValidateAndSetServerOpcode(OpcodeServer opcode, char const* na
 /// Correspondence between opcodes and their names
 void OpcodeTable::Initialize()
 {
-
-#define DEFINE_OPCODE_HANDLER_OLD(opcode, status, processing, handler) \
-    ValidateAndSetClientOpcode<WorldPacket, handler>(opcode, #opcode, status, processing);
-
 #define DEFINE_HANDLER(opcode, status, processing, packetclass, handler) \
     ValidateAndSetClientOpcode<packetclass, handler>(opcode, #opcode, status, processing);
 
@@ -354,15 +350,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS,             STATUS_AUTHED,    PROCESS_INPLACE,      WorldPackets::Character::GetUndeleteCharacterCooldownStatus, &WorldSession::HandleGetUndeleteCharacterCooldownStatus);
     DEFINE_HANDLER(CMSG_GET_WEB_TICKET,                                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GM_LAG_REPORT,                                      STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_SURVEY_SUBMIT,                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMSurveySubmit            );
     DEFINE_HANDLER(CMSG_GM_TICKET_ACKNOWLEDGE_SURVEY,                       STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_CREATE,                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketCreateOpcode      );
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_DELETE_TICKET,                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketDeleteOpcode      );
     DEFINE_HANDLER(CMSG_GM_TICKET_GET_CASE_STATUS,                          STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GM_TICKET_GET_SYSTEM_STATUS,                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Ticket::GMTicketGetSystemStatus, &WorldSession::HandleGMTicketGetSystemStatus);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_GET_TICKET,                    STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketGetTicketOpcode   );
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_RESPONSE_RESOLVE,              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMResponseResolve         );
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_GM_TICKET_UPDATE_TEXT,                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleGMTicketUpdateOpcode      );
     DEFINE_HANDLER(CMSG_GOSSIP_SELECT_OPTION,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::NPC::GossipSelectOption, &WorldSession::HandleGossipSelectOption);
     DEFINE_HANDLER(CMSG_GRANT_LEVEL,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::ReferAFriend::GrantLevel, &WorldSession::HandleGrantLevel);
     DEFINE_HANDLER(CMSG_GUILD_ADD_BATTLENET_FRIEND,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);

@@ -1186,14 +1186,7 @@ class WorldSession
         void HandleLogoutInstant(WorldPackets::Character::LogoutInstant& packet);
         void HandleLogoutCancel(WorldPackets::Character::LogoutCancel& packet);
 
-        // GM Ticket opcodes
-        void HandleGMTicketCreateOpcode(WorldPacket& recvPacket);
-        void HandleGMTicketUpdateOpcode(WorldPacket& recvPacket);
-        void HandleGMTicketDeleteOpcode(WorldPacket& recvPacket);
-        void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
         void HandleGMTicketGetSystemStatus(WorldPackets::Ticket::GMTicketGetSystemStatus& packet);
-        void HandleGMSurveySubmit(WorldPacket& recvPacket);
-        void HandleGMResponseResolve(WorldPacket& recvPacket);
 
         void HandleTogglePvP(WorldPackets::Misc::TogglePvP& packet);
         void HandleSetPvP(WorldPackets::Misc::SetPvP& packet);

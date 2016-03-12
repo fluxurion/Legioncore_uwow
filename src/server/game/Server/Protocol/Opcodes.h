@@ -295,15 +295,9 @@ enum OpcodeClient : uint16
     CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS       = 0x36E5,
     CMSG_GET_WEB_TICKET                               = 0xBADD,
     CMSG_GM_LAG_REPORT                                = 0xBADD,
-    CMSG_GM_SURVEY_SUBMIT                             = 0xBADD,
     CMSG_GM_TICKET_ACKNOWLEDGE_SURVEY                 = 0x3698,
-    CMSG_GM_TICKET_CREATE                             = 0xBADD,
-    CMSG_GM_TICKET_DELETE_TICKET                      = 0xBADD,
     CMSG_GM_TICKET_GET_CASE_STATUS                    = 0x3697,
     CMSG_GM_TICKET_GET_SYSTEM_STATUS                  = 0x3696,
-    CMSG_GM_TICKET_GET_TICKET                         = 0xBADD,
-    CMSG_GM_TICKET_RESPONSE_RESOLVE                   = 0xBADD,
-    CMSG_GM_TICKET_UPDATE_TEXT                        = 0xBADD,
     CMSG_GOSSIP_SELECT_OPTION                         = 0x348B,
     CMSG_GRANT_LEVEL                                  = 0x34E6,
     CMSG_GUILD_ADD_BATTLENET_FRIEND                   = 0xBADD,
@@ -1715,8 +1709,8 @@ class OpcodeTable
     public:
         OpcodeTable()
         {
-            memset(_internalTableClient, NULL, sizeof(_internalTableClient));
-            memset(_internalTableServer, NULL, sizeof(_internalTableServer));
+            memset(_internalTableClient, nullptr, sizeof(_internalTableClient));
+            memset(_internalTableServer, nullptr, sizeof(_internalTableServer));
         }
 
         OpcodeTable(OpcodeTable const&) = delete;
