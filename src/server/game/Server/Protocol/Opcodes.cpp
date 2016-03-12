@@ -640,7 +640,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_REQUEST_RAID_INFO,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::RequestRaidInfo, &WorldSession::HandleRequestRaidInfo);
     DEFINE_HANDLER(CMSG_REQUEST_RATED_BATTLEFIELD_INFO,                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Battleground::NullCmsg, &WorldSession::HandleRequestRatedInfo);
     DEFINE_HANDLER(CMSG_REQUEST_RESEARCH_HISTORY,                           STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RequestResearchHistory, &WorldSession::HandleRequestResearchHistory);
-    DEFINE_HANDLER(CMSG_REQUEST_STABLED_PETS,                               STATUS_UNHANDLED  PROCESS_THREADUNSAFE, WorldPackets::NPC::RequestStabledPets, &WorldSession::HandleRequestStabledPets);
+    DEFINE_HANDLER(CMSG_REQUEST_STABLED_PETS,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::RequestStabledPets, &WorldSession::HandleRequestStabledPets);
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_EXIT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehicleExit, &WorldSession::HandleRequestVehicleExit);
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_NEXT_SEAT,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehicleNextSeat, &WorldSession::HandleRequestVehicleNextSeat);
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_PREV_SEAT,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehiclePrevSeat, &WorldSession::HandleRequestVehiclePrevSeat);
