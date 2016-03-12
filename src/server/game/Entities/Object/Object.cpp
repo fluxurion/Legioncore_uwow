@@ -409,22 +409,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         data->WriteBit(0);                                              // RemoteTimeValid
 
         if (!unit->m_movementInfo.transport.guid.IsEmpty())
-        {
-            *data << unit->m_movementInfo.transport.guid;                     // Transport Guid
-            *data << const_cast<Unit*>(unit)->GetTransPosition().PositionXYZOStream();
-
-            *data << int8(unit->m_movementInfo.transport.seat);               // VehicleSeatIndex
-            *data << uint32(unit->m_movementInfo.transport.time);             // MoveTime
-
-            data->WriteBit(unit->m_movementInfo.transport.prevTime != 0);
-            data->WriteBit(unit->m_movementInfo.transport.vehicleId != 0);
-
-            if (unit->m_movementInfo.transport.prevTime)
-                *data << uint32(unit->m_movementInfo.transport.prevTime);     // PrevMoveTime
-
-            if (unit->m_movementInfo.transport.vehicleId)
-                *data << uint32(unit->m_movementInfo.transport.vehicleId);    // VehicleRecID
-        }
+            *data << unit->m_movementInfo.transport;
 
         if (HasFall)
         {
@@ -459,22 +444,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     }
 
     if (HasMovementTransport)
-    {
-        WorldObject const* self = static_cast<WorldObject const*>(this);
-        *data << self->m_movementInfo.transport.guid;                   // Transport Guid
-        *data << const_cast<WorldObject*>(self)->GetTransPosition().PositionXYZOStream();
-        *data << int8(self->m_movementInfo.transport.seat);             // VehicleSeatIndex
-        *data << uint32(self->m_movementInfo.transport.time);           // MoveTime
-
-        data->WriteBit(self->m_movementInfo.transport.prevTime != 0);
-        data->WriteBit(self->m_movementInfo.transport.vehicleId != 0);
-
-        if (self->m_movementInfo.transport.prevTime)
-            *data << uint32(self->m_movementInfo.transport.prevTime);   // PrevMoveTime
-
-        if (self->m_movementInfo.transport.vehicleId)
-            *data << uint32(self->m_movementInfo.transport.vehicleId);  // VehicleRecID
-    }
+        *data << static_cast<WorldObject const*>(this)->m_movementInfo.transport;
 
     if (Stationary)
     {
