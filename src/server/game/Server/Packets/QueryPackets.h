@@ -468,6 +468,14 @@ namespace WorldPackets
 
             uint32 RealmID = 0;
         };
+
+        class QueryTime final : public ClientPacket
+        {
+        public:
+            QueryTime(WorldPacket&& packet) : ClientPacket(CMSG_QUERY_TIME, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 

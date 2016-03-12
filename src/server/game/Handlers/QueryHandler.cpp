@@ -60,7 +60,7 @@ void WorldSession::HandleQueryPlayerName(WorldPackets::Query::QueryPlayerName& p
     SendNameQueryOpcode(packet.Player);
 }
 
-void WorldSession::HandleQueryTimeOpcode(WorldPacket & /*recvData*/)
+void WorldSession::HandleQueryTime(WorldPackets::Query::QueryTime& /*packet*/)
 {
     SendQueryTimeResponse();
 }

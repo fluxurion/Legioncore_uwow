@@ -377,6 +377,7 @@ namespace WorldPackets
         class QueryPetName;
         class QueryQuestCompletionNPCs;
         class QueryRealmName;
+        class QueryTime;
     }
 
     namespace Quest
@@ -1223,7 +1224,7 @@ class WorldSession
 
         void HandleQueryPlayerName(WorldPackets::Query::QueryPlayerName& packet);
 
-        void HandleQueryTimeOpcode(WorldPacket& recvPacket);
+        void HandleQueryTime(WorldPackets::Query::QueryTime& packet);
 
         void HandleCreatureQuery(WorldPackets::Query::QueryCreature& packet);
 
