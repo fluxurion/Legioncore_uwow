@@ -301,6 +301,18 @@ namespace WorldPackets
 
             PetRenameData RenameData;
         };
+
+        class PetSetAction final : public ClientPacket
+        {
+        public:
+            PetSetAction(WorldPacket&& packet) : ClientPacket(CMSG_PET_SET_ACTION, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid PetGUID;
+            uint32 Index = 0;
+            uint32 Action = 0;
+        };
     }
 }
 

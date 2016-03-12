@@ -658,6 +658,7 @@ namespace WorldPackets
         class PetAbandon;
         class PetAction;
         class PetRename;
+        class PetSetAction;
     }
 
     namespace LFG
@@ -1481,7 +1482,7 @@ class WorldSession
         void HandleStopAttack(WorldPackets::PetPackets::StopAttack& packet);
         void HandlePetActionHelper(Unit* pet, ObjectGuid petGuid, uint32 spellid, uint16 flag, ObjectGuid targetGuid, Position pos);
         void HandleQueryPetName(WorldPackets::Query::QueryPetName& packet);
-        void HandlePetSetAction(WorldPacket& recvData);
+        void HandlePetSetAction(WorldPackets::PetPackets::PetSetAction& packet);
         void HandlePetAbandon(WorldPackets::PetPackets::PetAbandon& packet);
         void HandlePetRename(WorldPackets::PetPackets::PetRename& packet);
         void HandlePetCancelAura(WorldPackets::PetPackets::PetCancelAura& packet);

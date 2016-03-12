@@ -235,3 +235,11 @@ void WorldPackets::PetPackets::PetRename::Read()
 
     _worldPacket.ReadString(nameLen, RenameData.NewName);
 }
+
+void WorldPackets::PetPackets::PetSetAction::Read()
+{
+    _worldPacket >> PetGUID;
+    _worldPacket >> Index;
+    _worldPacket >> Action;
+}
+

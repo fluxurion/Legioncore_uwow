@@ -177,22 +177,12 @@ void WorldSession::HandleQueryPetName(WorldPackets::Query::QueryPetName& packet)
     player->GetSession()->SendPacket(response.Write());
 }
 
-//! 6.0.3
-void WorldSession::HandlePetSetAction(WorldPacket & recvData)
+void WorldSession::HandlePetSetAction(WorldPackets::PetPackets::PetSetAction& packet)
 {
-    //sLog->outInfo(LOG_FILTER_NETWORKIO, "HandlePetSetAction. CMSG_PET_SET_ACTION");
-
-    uint32 position;
-    uint32 data;
-    ObjectGuid petguid;
-
-    recvData >> petguid >> position >> data;
-
-    Unit* pet = ObjectAccessor::GetUnit(*_player, petguid);
-
+    Unit* pet = ObjectAccessor::GetUnit(*_player, packet.PetGUID);
     if (!pet || pet != _player->GetFirstControlled())
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetSetAction: Unknown pet (GUID: %u) or pet owner (GUID: %u)", petguid.GetGUIDLow(), _player->GetGUIDLow());
+        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetSetAction: Unknown pet (GUID: %u) or pet owner (GUID: %u)", packet.PetGUID.GetGUIDLow(), _player->GetGUIDLow());
         return;
     }
 
@@ -203,56 +193,44 @@ void WorldSession::HandlePetSetAction(WorldPacket & recvData)
         return;
     }
 
-    bool move_command = false;
+    if (packet.Index >= MAX_UNIT_ACTION_BAR_INDEX)
+        return;
+        
+    uint32 spellID = UNIT_ACTION_BUTTON_ACTION(packet.Action);
+    uint8 actState = UNIT_ACTION_BUTTON_TYPE(packet.Action);
 
-    uint32 spell_id = UNIT_ACTION_BUTTON_ACTION(data);
-    uint8 act_state = UNIT_ACTION_BUTTON_TYPE(data);
-
-    //ignore invalid position
-    if (position >= MAX_UNIT_ACTION_BAR_INDEX)
+    if (actState == ACT_DECIDE && !charmInfo->GetActionBarEntry(packet.Index))
         return;
 
-    // remove batton
-    if (act_state == ACT_DECIDE)
-    {
-        UnitActionBarEntry const* actionEntry = charmInfo->GetActionBarEntry(position);
-        if (!actionEntry)
-            return;
-
-        //charmInfo->RemoveSpellFromActionBar(actionEntry->GetAction());
-        //return;
-    }
-
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "Player %s has changed pet spell action. Position: %u, Spell: %u, State: 0x%X HasSpell %i", _player->GetName(), position, spell_id, uint32(act_state), pet->HasSpell(spell_id));
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "Player %s has changed pet spell action. Position: %u, Spell: %u, State: 0x%X HasSpell %i",
+                  _player->GetName(), packet.Index, spellID, uint32(actState), pet->HasSpell(spellID));
 
     //if it's act for spell (en/disable/cast) and there is a spell given (0 = remove spell) which pet doesn't know, don't add
-    if (!((act_state == ACT_ENABLED || act_state == ACT_DISABLED || act_state == ACT_PASSIVE) && spell_id && !pet->HasSpell(spell_id)))
+    if (!((actState == ACT_ENABLED || actState == ACT_DISABLED || actState == ACT_PASSIVE) && spellID && !pet->HasSpell(spellID)))
     {
-        if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spell_id))
+        if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellID))
         {
-            //sign for autocast
-            if (act_state == ACT_ENABLED)
+            if (actState == ACT_ENABLED)
             {
                 if (pet->GetCharmInfo())
-                    ((Pet*)pet)->ToggleAutocast(spellInfo, true);
+                    static_cast<Pet*>(pet)->ToggleAutocast(spellInfo, true);
                 else
-                    for (Unit::ControlList::iterator itr = GetPlayer()->m_Controlled.begin(); itr != GetPlayer()->m_Controlled.end(); ++itr)
-                        if ((*itr)->GetEntry() == pet->GetEntry())
-                            (*itr)->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, true);
+                    for (Unit::ControlList::const_iterator::value_type const& itr : GetPlayer()->m_Controlled)
+                        if (itr->GetEntry() == pet->GetEntry())
+                            itr->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, true);
             }
-            //sign for no/turn off autocast
-            else if (act_state == ACT_DISABLED)
+            else if (actState == ACT_DISABLED)
             {
                 if (pet->GetCharmInfo())
-                    ((Pet*)pet)->ToggleAutocast(spellInfo, false);
+                    static_cast<Pet*>(pet)->ToggleAutocast(spellInfo, false);
                 else
-                    for (Unit::ControlList::iterator itr = GetPlayer()->m_Controlled.begin(); itr != GetPlayer()->m_Controlled.end(); ++itr)
-                        if ((*itr)->GetEntry() == pet->GetEntry())
-                            (*itr)->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, false);
+                    for (Unit::ControlList::const_iterator::value_type const& itr : GetPlayer()->m_Controlled)
+                        if (itr->GetEntry() == pet->GetEntry())
+                            itr->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, false);
             }
         }
 
-        charmInfo->SetActionBar(position, spell_id, ActiveStates(act_state));
+        charmInfo->SetActionBar(packet.Index, spellID, ActiveStates(actState));
     }
 }
 
