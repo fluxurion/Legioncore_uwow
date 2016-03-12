@@ -376,6 +376,7 @@ namespace WorldPackets
         class ItemTextQuery;
         class QueryPetName;
         class QueryQuestCompletionNPCs;
+        class QueryRealmName;
     }
 
     namespace Quest
@@ -1527,7 +1528,7 @@ class WorldSession
         void HandleSetRaidDifficulty(WorldPackets::Misc::SetRaidDifficulty& packet);
         void HandleMoveSetCanFlyAckOpcode(WorldPacket& recvData);
         void HandleSetTitle(WorldPackets::Character::SetTitle& packet);
-        void HandleRealmQueryNameOpcode(WorldPacket& recvData);
+        void HandleQueryRealmName(WorldPackets::Query::QueryRealmName& packet);
         void HandleTimeSyncResp(WorldPackets::Misc::TimeSyncResponse& packet);
         void HandleWhoisOpcode(WorldPackets::Who::WhoIsRequest& packet);
         void HandleResetInstances(WorldPackets::Instance::ResetInstances& packet);

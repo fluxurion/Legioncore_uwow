@@ -458,6 +458,16 @@ namespace WorldPackets
             bool Valid = false;
             ItemTextCache Item;
         };
+
+        class QueryRealmName final : public ClientPacket
+        {
+        public:
+            QueryRealmName(WorldPacket&& packet) : ClientPacket(CMSG_QUERY_REALM_NAME, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 RealmID = 0;
+        };
     }
 }
 

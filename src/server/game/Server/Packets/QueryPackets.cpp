@@ -490,3 +490,8 @@ WorldPacket const* WorldPackets::Query::QueryItemTextResponse::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Query::QueryRealmName::Read()
+{
+    _worldPacket >> RealmID;
+}

@@ -594,7 +594,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUERY_PLAYER_NAME,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryPlayerName, &WorldSession::HandleQueryPlayerName);
     DEFINE_HANDLER(CMSG_QUERY_QUEST_COMPLETION_NPCS,                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Query::QueryQuestCompletionNPCs, &WorldSession::HandleQueryQuestCompletionNPCs);
     DEFINE_HANDLER(CMSG_QUERY_QUEST_INFO,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QueryQuestInfo, &WorldSession::HandleQueryQuestInfo);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_QUERY_REALM_NAME,                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleRealmQueryNameOpcode      );
+    DEFINE_HANDLER(CMSG_QUERY_REALM_NAME,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryRealmName, &WorldSession::HandleQueryRealmName);
     DEFINE_HANDLER(CMSG_QUERY_SCENARIO_POI,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Scene::QueryScenarioPOI, &WorldSession::HandleQueryScenarioPOI);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_QUERY_TIME,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleQueryTimeOpcode           );    
     DEFINE_HANDLER(CMSG_QUEST_CONFIRM_ACCEPT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QuestConfirmAccept, &WorldSession::HandleQuestConfirmAccept);

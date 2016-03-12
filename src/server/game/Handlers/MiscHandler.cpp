@@ -430,35 +430,6 @@ void WorldSession::HandleCompleteMovie(WorldPackets::Misc::CompleteMovie& /*pack
     player->SetCanDelayTeleport(false);
 }
 
-void WorldSession::HandleRealmQueryNameOpcode(WorldPacket& recvData)
-{
-    uint32 realmId = recvData.read<uint32>();
-
-    WorldPacket data(SMSG_REALM_QUERY_RESPONSE, 10 + 10 + 1 + 1 + 1 + 4);
-    if (realmId != realm.Id.Realm && realmId != GetVirtualRealmAddress())  // Cheater ?
-    {
-        data << uint32(realmId);
-        data << uint8(1);
-        SendPacket(&data);
-        return;
-    }
-
-    std::string realmName = sWorld->GetRealmName();
-    std::string trimmedName = sWorld->GetTrimmedRealmName();
-
-    data << uint32(realmId);
-    data << uint8(0);   // ok, realmId exist server-side
-
-    data.WriteBit(1);   // IsLocal
-    data.WriteBit(0);
-
-    data.WriteBits(realmName.size(), 8);
-    data.WriteBits(trimmedName.size(), 8);
-    data.WriteString(realmName);
-    data.WriteString(trimmedName);
-    SendPacket(&data);
-}
-
 void WorldSession::HandleFarSight(WorldPackets::Misc::FarSight& packet)
 {
     Player* player = GetPlayer();
