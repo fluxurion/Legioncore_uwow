@@ -782,6 +782,14 @@ struct CharacterLoadoutItemEntry
     uint16      ItemID;
 };
 
+struct CharacterLoadoutEntry
+{
+    uint32      ID;
+    uint32      Racemask;
+    uint8       ClassID;
+    uint8       Purpose;
+};
+
 struct CharStartOutfitEntry
 {
     uint32      ID;

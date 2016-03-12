@@ -319,6 +319,8 @@ public:
     typedef std::unordered_map<uint32 /*missionID*/, GarrMissionRewardEntry const*> GarrMissionRewardByMissionIDContainer;
     typedef std::unordered_map<uint32, AchievementEntry const*> AchievementParentContainer;
     typedef std::map<uint32 /*LoadOutID*/, std::vector<uint32>> CharacterLoadoutItemContainer;
+    typedef std::unordered_map<uint32, uint8> CharacterLoadoutDataContainer;
+    typedef std::unordered_map<uint8 /*ClassID*/, CharacterLoadoutDataContainer> CharacterLoadoutContainer;
     typedef std::unordered_map<uint32 /*Parent*/, std::vector<CriteriaTreeEntry const*>> CriteriaTreeContainer;
     typedef std::vector<ItemSetSpellEntry const*> ItemSetSpells;
     typedef std::unordered_map<uint32, ItemSetSpells> ItemSetSpellsContainer;
@@ -399,7 +401,7 @@ public:
     GarrMissionRewardEntry const* GetMissionRewardByRecID(uint32 missionRecID);
     static char const* GetBroadcastTextValue(BroadcastTextEntry const* broadcastText, LocaleConstant locale = DEFAULT_LOCALE, uint8 gender = GENDER_MALE, bool forceGender = false);
     AchievementEntry const* GetsAchievementByTreeList(uint32 criteriaTree);
-    std::vector<uint32> GetItemLoadOutItemsByClassID(uint32 classID);
+    std::array<std::vector<uint32>, 2> GetItemLoadOutItemsByClassID(uint32 classID, uint8 type = 0);
     std::vector<CriteriaTreeEntry const*> const* GetCriteriaTreeList(uint32 parent);
     std::list<uint32> GetItemSpecsList(uint32 itemID);
     std::vector<ModifierTreeEntry const*> const* GetModifierTreeList(uint32 parent);
@@ -481,6 +483,7 @@ private:
     GarrMissionRewardByMissionIDContainer _garrMissionRewardByMissionID;
     AchievementParentContainer _achievementParentList;
     CharacterLoadoutItemContainer _characterLoadoutItem;
+    CharacterLoadoutContainer _characterLoadout;
     CriteriaTreeContainer _criteriaTree;
     ItemSpecsContainer _itemSpec;
     ModifierTreeContainer _modifierTree;

@@ -872,7 +872,10 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
 
     if (createInfo->TemplateSet)
     {
-
+        std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(getClass(), 3);
+        for (uint32 itemID : itemsArray[0])
+            if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))
+                StoreNewItemInBestSlots(itemID, pProto->GetInventoryType() != INVTYPE_BAG  ? 1 : 4);
     }
     else
     {
@@ -940,23 +943,17 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             StoreNewItemInBestSlots(itr.item_id, itr.item_amount);
     }
 
-
-    // bags and main-hand weapon must equipped at this moment
-    // now second pass for not equipped (offhand weapon/shield if it attempt equipped before main-hand weapon)
-    // or ammo not equipped in special bag
-    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
     {
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
             uint16 eDest;
-            // equip offhand weapon/shield if it attempt equipped before main-hand weapon
             InventoryResult msg = CanEquipItem(NULL_SLOT, eDest, pItem, false);
             if (msg == EQUIP_ERR_OK)
             {
                 RemoveItem(INVENTORY_SLOT_BAG_0, i, true);
                 EquipItem(eDest, pItem, true);
             }
-            // move other items to more appropriate slots
             else
             {
                 ItemPosCountVec sDest;
@@ -969,6 +966,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             }
         }
     }
+
     // all item positions resolved
     return true;
 }

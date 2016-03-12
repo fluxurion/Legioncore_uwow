@@ -15,10 +15,9 @@ CREATE TABLE IF NOT EXISTS `character_template_class` (
   PRIMARY KEY (`TemplateID`,`FactionGroup`,`class`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `character_template` VALUES ('37', '', '', '100');
+INSERT INTO `character_template` VALUES ('37', '100 level character', 'Create character with 100 level and 640ilvl items', '100');
 
 INSERT INTO `character_template_class` VALUES ('37', '3', '6');
-INSERT INTO `character_template_class` VALUES ('37', '3', '12');
 INSERT INTO `character_template_class` VALUES ('37', '3', '11');
 INSERT INTO `character_template_class` VALUES ('37', '3', '3');
 INSERT INTO `character_template_class` VALUES ('37', '3', '8');
@@ -30,7 +29,6 @@ INSERT INTO `character_template_class` VALUES ('37', '3', '7');
 INSERT INTO `character_template_class` VALUES ('37', '3', '9');
 INSERT INTO `character_template_class` VALUES ('37', '3', '1');
 INSERT INTO `character_template_class` VALUES ('37', '5', '6');
-INSERT INTO `character_template_class` VALUES ('37', '5', '12');
 INSERT INTO `character_template_class` VALUES ('37', '5', '11');
 INSERT INTO `character_template_class` VALUES ('37', '5', '3');
 INSERT INTO `character_template_class` VALUES ('37', '5', '8');

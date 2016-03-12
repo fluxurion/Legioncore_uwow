@@ -41,6 +41,7 @@ DB2Storage<BattlePetSpeciesXAbilityEntry>   sBattlePetSpeciesXAbilityStore("Batt
 DB2Storage<BattlePetStateEntry>             sBattlePetStateStore("BattlePetState.db2", BattlePetStateFormat, HOTFIX_SEL_BATTLE_PET_STATE);
 DB2Storage<BroadcastTextEntry>              sBroadcastTextStore("BroadcastText.db2", BroadcastTextFormat, HOTFIX_SEL_BROADCAST_TEXT);
 DB2Storage<CharacterLoadoutItemEntry>       sCharacterLoadoutItemStore("CharacterLoadoutItem.db2", CharacterLoadoutItemFormat, HOTFIX_SEL_CHARACTER_LOADOUT_ITEM);
+DB2Storage<CharacterLoadoutEntry>           sCharacterLoadoutStore("CharacterLoadout.db2", CharacterLoadoutFormat, HOTFIX_SEL_CHARACTER_LOADOUT);
 DB2Storage<CharSectionsEntry>               sCharSectionsStore("CharSections.db2", CharSectionsFormat, HOTFIX_SEL_CHAR_SECTIONS);
 DB2Storage<CharStartOutfitEntry>            sCharStartOutfitStore("CharStartOutfit.db2", CharStartOutfitFormat, HOTFIX_SEL_CHAR_START_OUTFIT);
 DB2Storage<CharTitlesEntry>                 sCharTitlesStore("CharTitles.db2", CharTitlesFormat, HOTFIX_SEL_CHAR_TITLES);
@@ -323,6 +324,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBattlePetStateStore);
     LOAD_DB2(sBroadcastTextStore);
     LOAD_DB2(sCharacterLoadoutItemStore);
+    LOAD_DB2(sCharacterLoadoutStore);
     LOAD_DB2(sCharSectionsStore);
     LOAD_DB2(sCharStartOutfitStore);
     LOAD_DB2(sCharTitlesStore);
@@ -718,6 +720,9 @@ void DB2Manager::InitDB2CustomStores()
 
     for (CharacterLoadoutItemEntry const* LoadOutItem : sCharacterLoadoutItemStore)
         _characterLoadoutItem[LoadOutItem->LoadOutID].push_back(LoadOutItem->ItemID);
+
+    for (CharacterLoadoutEntry const* entry : sCharacterLoadoutStore)
+        _characterLoadout[entry->ClassID].insert(CharacterLoadoutDataContainer::value_type(entry->ID, entry->Purpose));
 
     for (CriteriaTreeEntry const* ct : sCriteriaTreeStore)
         if (ct->Parent)
@@ -1292,25 +1297,28 @@ AchievementEntry const* DB2Manager::GetsAchievementByTreeList(uint32 criteriaTre
     return nullptr;
 }
 
-std::vector<uint32> DB2Manager::GetItemLoadOutItemsByClassID(uint32 classID)
+std::array<std::vector<uint32>, 2> DB2Manager::GetItemLoadOutItemsByClassID(uint32 classID, uint8 type /*= 0*/)
 {
-    switch (classID)
-    {
-        case CLASS_WARRIOR: return _characterLoadoutItem[539];
-        case CLASS_PALADIN: return _characterLoadoutItem[524];
-        case CLASS_HUNTER: return _characterLoadoutItem[533];
-        case CLASS_ROGUE: return _characterLoadoutItem[512];
-        case CLASS_PRIEST: return _characterLoadoutItem[536];
-        case CLASS_DEATH_KNIGHT: return _characterLoadoutItem[515];
-        case CLASS_SHAMAN: return _characterLoadoutItem[530];
-        case CLASS_MAGE: return _characterLoadoutItem[545];
-        case CLASS_WARLOCK: return _characterLoadoutItem[542];
-        case CLASS_MONK: return _characterLoadoutItem[527];
-        case CLASS_DRUID: return _characterLoadoutItem[549];
-        case CLASS_DEMON_HUNTER: return _characterLoadoutItem[512]; // update id
-    }
+    std::array<std::vector<uint32>, 2> _array;
 
-    return _characterLoadoutItem[536];
+    auto itr = _characterLoadout.find(classID);
+    if (itr == _characterLoadout.end())
+        return _array;
+
+    for (auto const& v : itr->second)
+        if (v.second == type && type != 4)
+        {
+            auto itr = _characterLoadoutItem.find(v.first);
+            if (itr != _characterLoadoutItem.end())
+                for (uint32 item : itr->second)
+                    _array[0].emplace_back(item);
+        }
+        else if (v.second == type)
+        {
+            //bla bla
+        }
+
+    return _array;
 }
 
 std::vector<CriteriaTreeEntry const*> const* DB2Manager::GetCriteriaTreeList(uint32 parent)

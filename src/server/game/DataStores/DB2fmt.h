@@ -44,6 +44,7 @@ char const BattlePetSpeciesXAbilityFormat[] = "niiii";
 char const BattlePetStateFormat[] = "nisi";
 char const BroadcastTextFormat[] = "nssttttttttbb";
 char const CharacterLoadoutItemFormat[]= "nit";
+char const CharacterLoadoutFormat[]= "nibb";
 char const CharSectionsFormat[] = "niiitbbbbb";
 char const CharStartOutfitFormat[] = "niiiiiiiiiiiiiiiiiiiiiiiiibbbbb";
 char const CharTitlesFormat[] = "nssttb";

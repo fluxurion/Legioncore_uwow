@@ -494,8 +494,8 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
 
     //New equipment
     uint32 bagEntry = 0;
-    std::vector<uint32> items = sDB2Manager.GetItemLoadOutItemsByClassID(pCurrChar->getClass());
-    for (uint32 itemID : items)
+    std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(pCurrChar->getClass(), 3);
+    for (uint32 itemID : itemsArray[0])
     {
         if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))
         {
@@ -562,7 +562,7 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
     tmpPacket << playerGuid;
     size_t wPos = tmpPacket.wpos();
     tmpPacket << uint32(count);
-    for (uint32 itemID : items)
+    for (uint32 itemID : itemsArray[0])
     {
         if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))
         {
