@@ -576,3 +576,8 @@ void WorldPackets::Battleground::ReportPvPPlayerAFK::Read()
 {
     _worldPacket >> Offender;
 }
+
+void WorldPackets::Battleground::SetCemetryPreferrence::Read()
+{
+    _worldPacket >> GraveyardID;
+}

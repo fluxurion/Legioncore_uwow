@@ -479,6 +479,7 @@ namespace WorldPackets
         class JoinRatedBattleground;
         class ReportPvPPlayerAFK;
         class RequestPVPRewards;
+        class SetCemetryPreferrence;
     }
 
     namespace VoidStorage
@@ -1557,7 +1558,7 @@ class WorldSession
         void HandleBfQueueInviteResponse(WorldPackets::Battleground::EntryOrQueueInviteResponse& packet);
         void HandleBfEntryInviteResponse(WorldPackets::Battleground::EntryOrQueueInviteResponse& packet);
         void HandleBfExitQueueRequest(WorldPackets::Battleground::ExitRequest& packet);
-        void HandleBfSetPreferedCemetry(WorldPacket & recvData);
+        void HandleSetCemetryPreferrence(WorldPackets::Battleground::SetCemetryPreferrence& packet);
         void HandleBfExitRequest(WorldPacket &recv_data);
         void HandleBfQueueRequest(WorldPackets::Battleground::QueueRequest& packet);
 

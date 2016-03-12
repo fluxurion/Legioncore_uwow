@@ -695,6 +695,16 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class SetCemetryPreferrence final : public ClientPacket
+        {
+        public:
+            SetCemetryPreferrence(WorldPacket&& packet) : ClientPacket(CMSG_SET_CEMETERY_PREFERRENCE, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 GraveyardID = 0;
+        };
     }
 }
 

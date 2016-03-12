@@ -151,8 +151,4 @@ void WorldSession::HandleReportPvPPlayerAFK(WorldPackets::Battleground::ReportPv
         reportedPlayer->ReportedAfkBy(_player);
 }
 
-void WorldSession::HandleBfSetPreferedCemetry(WorldPacket & recvData)
-{
-    uint32 graveID = 0;
-    recvData >> graveID;
-}
+void WorldSession::HandleSetCemetryPreferrence(WorldPackets::Battleground::SetCemetryPreferrence& /*packet*/) { }
