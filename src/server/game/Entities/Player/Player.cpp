@@ -17635,8 +17635,8 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     // overwrite some data fields
     uint8 classID = fields[4].GetUInt8();
-    SetRace(classID);
-    SetClass(fields[4].GetUInt8());
+    SetRace(fields[3].GetUInt8());
+    SetClass(classID);
     SetGender(Gender);
 
     SetUInt32Value(UNIT_FIELD_LEVEL, fields[6].GetUInt8());
