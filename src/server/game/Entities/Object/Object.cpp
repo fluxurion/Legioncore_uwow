@@ -629,135 +629,21 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 
     //if (SceneObjCreate)
     //{
-    //    packet.ResetBitReader();
-
     //    var CliSceneLocalScriptData = packet.ReadBit("CliSceneLocalScriptData", index);
     //    var PetBattleFullUpdate = packet.ReadBit("PetBattleFullUpdate", index);
 
     //    if (CliSceneLocalScriptData)
     //    {
-    //        packet.ResetBitReader();
     //        var DataLength = packet.ReadBits(7);
     //        packet.ReadWoWString("Data", DataLength, index);
     //    }
 
     //    if (PetBattleFullUpdate)
-    //    {
-    //        for (var i = 0; i < 2; ++i)
-    //        {
-    //            packet.ReadPackedGuid128("CharacterID", index, i);
-
-    //            packet.ReadInt32("TrapAbilityID", index, i);
-    //            packet.ReadInt32("TrapStatus", index, i);
-
-    //            packet.ReadInt16("RoundTimeSecs", index, i);
-
-    //            packet.ReadByte("FrontPet", index, i);
-    //            packet.ReadByte("InputFlags", index, i);
-
-    //            packet.ResetBitReader();
-
-    //            var PetBattlePetUpdateCount = packet.ReadBits("PetBattlePetUpdateCount", 2, index, i);
-
-    //            for (var j = 0; j < PetBattlePetUpdateCount; ++j)
-    //            {
-    //                packet.ReadPackedGuid128("BattlePetGUID", index, i, j);
-
-    //                packet.ReadInt32("SpeciesID", index, i, j);
-    //                packet.ReadInt32("DisplayID", index, i, j);
-    //                packet.ReadInt32("CollarID", index, i, j);
-
-    //                packet.ReadInt16("Level", index, i, j);
-    //                packet.ReadInt16("Xp", index, i, j);
-
-
-    //                packet.ReadInt32("CurHealth", index, i, j);
-    //                packet.ReadInt32("MaxHealth", index, i, j);
-    //                packet.ReadInt32("Power", index, i, j);
-    //                packet.ReadInt32("Speed", index, i, j);
-    //                packet.ReadInt32("NpcTeamMemberID", index, i, j);
-
-    //                packet.ReadInt16("BreedQuality", index, i, j);
-    //                packet.ReadInt16("StatusFlags", index, i, j);
-
-    //                packet.ReadByte("Slot", index, i, j);
-
-    //                var PetBattleActiveAbility = packet.ReadInt32("PetBattleActiveAbility", index, i, j);
-    //                var PetBattleActiveAura = packet.ReadInt32("PetBattleActiveAura", index, i, j);
-    //                var PetBattleActiveState = packet.ReadInt32("PetBattleActiveState", index, i, j);
-
-    //                for (var k = 0; k < PetBattleActiveAbility; ++k)
-    //                {
-    //                    packet.ReadInt32("AbilityID", index, i, j, k);
-    //                    packet.ReadInt16("CooldownRemaining", index, i, j, k);
-    //                    packet.ReadInt16("LockdownRemaining", index, i, j, k);
-    //                    packet.ReadByte("AbilityIndex", index, i, j, k);
-    //                    packet.ReadByte("Pboid", index, i, j, k);
-    //                }
-
-    //                for (var k = 0; k < PetBattleActiveAura; ++k)
-    //                {
-    //                    packet.ReadInt32("AbilityID", index, i, j, k);
-    //                    packet.ReadInt32("InstanceID", index, i, j, k);
-    //                    packet.ReadInt32("RoundsRemaining", index, i, j, k);
-    //                    packet.ReadInt32("CurrentRound", index, i, j, k);
-    //                    packet.ReadByte("CasterPBOID", index, i, j, k);
-    //                }
-
-    //                for (var k = 0; k < PetBattleActiveState; ++k)
-    //                {
-    //                    packet.ReadInt32("StateID", index, i, j, k);
-    //                    packet.ReadInt32("StateValue", index, i, j, k);
-    //                }
-
-    //                packet.ResetBitReader();
-    //                var bits57 = packet.ReadBits(7);
-    //                packet.ReadWoWString("CustomName", bits57, index, i, j);
-    //            }
-    //        }
-
-    //        for (var i = 0; i < 3; ++i)
-    //        {
-    //            var PetBattleActiveAura = packet.ReadInt32("PetBattleActiveAura", index, i);
-    //            var PetBattleActiveState = packet.ReadInt32("PetBattleActiveState", index, i);
-
-    //            for (var j = 0; j < PetBattleActiveAura; ++j)
-    //            {
-    //                packet.ReadInt32("AbilityID", index, i, j);
-    //                packet.ReadInt32("InstanceID", index, i, j);
-    //                packet.ReadInt32("RoundsRemaining", index, i, j);
-    //                packet.ReadInt32("CurrentRound", index, i, j);
-    //                packet.ReadByte("CasterPBOID", index, i, j);
-    //            }
-
-    //            for (var j = 0; j < PetBattleActiveState; ++j)
-    //            {
-    //                packet.ReadInt32("StateID", index, i, j);
-    //                packet.ReadInt32("StateValue", index, i, j);
-    //            }
-    //        }
-
-    //        packet.ReadInt16("WaitingForFrontPetsMaxSecs", index);
-    //        packet.ReadInt16("PvpMaxRoundTime", index);
-
-    //        packet.ReadInt32("CurRound", index);
-    //        packet.ReadInt32("NpcCreatureID", index);
-    //        packet.ReadInt32("NpcDisplayID", index);
-
-    //        packet.ReadByte("CurPetBattleState");
-    //        packet.ReadByte("ForfeitPenalty");
-
-    //        packet.ReadPackedGuid128("InitialWildPetGUID");
-
-    //        packet.ReadBit("IsPVP");
-    //        packet.ReadBit("CanAwardXP");
-    //    }
-    //}
+    //      *data <<(ByteBuffer& data, WorldPackets::BattlePet::PetBattleFullUpdate const& update);
 
     //if (ScenePendingInstances)
     //{
     //    var SceneInstanceIDs = packet.ReadInt32("SceneInstanceIDsCount");
-
     //    for (var i = 0; i < SceneInstanceIDs; ++i)
     //        packet.ReadInt32("SceneInstanceIDs", index, i);
     //}

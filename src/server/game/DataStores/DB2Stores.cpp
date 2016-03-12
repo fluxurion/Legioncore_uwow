@@ -508,7 +508,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sTransportAnimationStore);
     LOAD_DB2(sUnitPowerBarStore);
     //LOAD_DB2(sVehicleSeatStore);
-    //LOAD_DB2(sVehicleStore);
+    LOAD_DB2(sVehicleStore);
     LOAD_DB2(sWMOAreaTableStore);
     LOAD_DB2(sWorldMapAreaStore);
     LOAD_DB2(sWorldMapOverlayStore);

@@ -496,36 +496,36 @@ struct TalentEntry
 
 struct VehicleEntry
 {
-    uint32      ID;                                         // 0 -
-    uint32      Flags;                                      // 1 -
-    uint32      FlagsB;                                     // 2
-    float       TurnSpeed;                                  // 3
-    float       PitchSpeed;                                 // 4
-    float       PitchMin;                                   // 5
-    float       PitchMax;                                   // 6
-    uint32      SeatID[MAX_VEHICLE_SEATS];                  // 7-14 -
-    float       MouseLookOffsetPitch;                       // 15
-    float       CameraFadeDistScalarMin;                    // 16
-    float       CameraFadeDistScalarMax;                    // 17
-    float       CameraPitchOffset;                          // 18
-    float       FacingLimitRight;                           // 19
-    float       FacingLimitLeft;                            // 20
-    float       MsslTrgtTurnLingering;                      // 21
-    float       MsslTrgtPitchLingering;                     // 22
-    float       MsslTrgtMouseLingering;                     // 23
-    float       MsslTrgtEndOpacity;                         // 24
-    float       MsslTrgtArcSpeed;                           // 25
-    float       MsslTrgtArcRepeat;                          // 26
-    float       MsslTrgtArcWidth;                           // 27
-    float       MsslTrgtImpactRadius[2];                    // 28-29
-    //char*     MsslTrgtArcTexture;                         // 30
-    //char*     MsslTrgtImpactTexture;                      // 31
-    //char*     MsslTrgtImpactModel;                        // 32-33
-    float       CameraYawOffset;                            // 34
-    uint32      UILocomotionType;                           // 35
-    float       MsslTrgtImpactTexRadius;                    // 36
-    uint32      VehicleUIIndicatorID;                       // 37
-    uint32      PowerDisplayID[3];                          // 38-40 -
+    uint32      ID;                                         // 0
+    uint32      Flags;                                      // 1
+    float       TurnSpeed;                                  // 2
+    float       PitchSpeed;                                 // 3
+    float       PitchMin;                                   // 4
+    float       PitchMax;                                   // 5
+    float       MouseLookOffsetPitch;                       // 6
+    float       CameraFadeDistScalarMin;                    // 7
+    float       CameraFadeDistScalarMax;                    // 8
+    float       CameraPitchOffset;                          // 9
+    float       FacingLimitRight;                           // 10
+    float       FacingLimitLeft;                            // 11
+    float       MsslTrgtTurnLingering;                      // 12
+    float       MsslTrgtPitchLingering;                     // 13
+    float       MsslTrgtMouseLingering;                     // 14
+    float       MsslTrgtEndOpacity;                         // 15
+    float       MsslTrgtArcSpeed;                           // 16
+    float       MsslTrgtArcRepeat;                          // 17
+    float       MsslTrgtArcWidth;                           // 18
+    float       MsslTrgtImpactRadius[2];                    // 19 - 20
+    LocalizedString* MsslTrgtArcTexture;                    // 21
+    LocalizedString* MsslTrgtImpactTexture;                 // 22
+    LocalizedString* MsslTrgtImpactModel[2];                // 23 - 24
+    float       CameraYawOffset;                            // 25
+    float       MsslTrgtImpactTexRadius;                    // 26
+    uint16      SeatID[MAX_VEHICLE_SEATS];                  // 27 - 34
+    uint16      PowerDisplayID[3];                          // 35 - 37
+    uint16      FlagsB;                                     // 38
+    uint8       UILocomotionType;                           // 39
+    uint8       VehicleUIIndicatorID;                       // 40
 };
 
 struct WMOAreaTableEntry
@@ -2251,7 +2251,7 @@ struct SpellEntry
     LocalizedString* Description;                           // 3
     LocalizedString* AuraDescription;                       // 4
     uint32      SpellMiscDifficultyID;                      // 5
-    uint32      DescriptionVariablesID;                     // 6
+    uint16      DescriptionVariablesID;                     // 6
 
     SpellEffectEntry const* GetSpellEffect(uint32 eff, uint8 diff = 0) const;
 };

@@ -1055,19 +1055,10 @@ DROP TABLE IF EXISTS `vehicle`;
 CREATE TABLE `vehicle` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Flags` int(10) unsigned NOT NULL DEFAULT '0',
-  `FlagsB` int(10) unsigned NOT NULL DEFAULT '0',
   `TurnSpeed` float NOT NULL DEFAULT '0',
   `PitchSpeed` float NOT NULL DEFAULT '0',
   `PitchMin` float NOT NULL DEFAULT '0',
   `PitchMax` float NOT NULL DEFAULT '0',
-  `SeatID1` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID2` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID3` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID4` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID5` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID6` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID7` int(10) unsigned NOT NULL DEFAULT '0',
-  `SeatID8` int(10) unsigned NOT NULL DEFAULT '0',
   `MouseLookOffsetPitch` float NOT NULL DEFAULT '0',
   `CameraFadeDistScalarMin` float NOT NULL DEFAULT '0',
   `CameraFadeDistScalarMax` float NOT NULL DEFAULT '0',
@@ -1083,13 +1074,26 @@ CREATE TABLE `vehicle` (
   `MsslTrgtArcWidth` float NOT NULL DEFAULT '0',
   `MsslTrgtImpactRadius1` float NOT NULL DEFAULT '0',
   `MsslTrgtImpactRadius2` float NOT NULL DEFAULT '0',
+  `MsslTrgtArcTexture` text,
+  `MsslTrgtImpactTexture` text,
+  `MsslTrgtImpactModel1` text,
+  `MsslTrgtImpactModel2` text,
   `CameraYawOffset` float NOT NULL DEFAULT '0',
-  `UILocomotionType` int(10) unsigned NOT NULL DEFAULT '0',
   `MsslTrgtImpactTexRadius` float NOT NULL DEFAULT '0',
-  `VehicleUIIndicatorID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerDisplayID1` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerDisplayID2` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerDisplayID3` int(10) unsigned NOT NULL DEFAULT '0',
+  `SeatID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID5` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID6` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID7` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SeatID8` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerDisplayID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerDisplayID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PowerDisplayID3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `FlagsB` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UILocomotionType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VehicleUIIndicatorID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1102,6 +1106,34 @@ CREATE TABLE `vehicle` (
 LOCK TABLES `vehicle` WRITE;
 /*!40000 ALTER TABLE `vehicle` DISABLE KEYS */;
 /*!40000 ALTER TABLE `vehicle` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vehicle_locale`
+--
+
+DROP TABLE IF EXISTS `vehicle_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vehicle_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `MsslTrgtArcTexture_lang` text,
+  `MsslTrgtImpactTexture_lang` text,
+  `MsslTrgtImpactModel1_lang` text,
+  `MsslTrgtImpactModel2_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vehicle_locale`
+--
+
+LOCK TABLES `vehicle_locale` WRITE;
+/*!40000 ALTER TABLE `vehicle_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vehicle_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -7039,7 +7071,7 @@ CREATE TABLE `spell` (
   `Description` text,
   `AuraDescription` text,
   `SpellMiscDifficultyID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DescriptionVariablesID` int(10) unsigned NOT NULL DEFAULT '0',
+  `DescriptionVariablesID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

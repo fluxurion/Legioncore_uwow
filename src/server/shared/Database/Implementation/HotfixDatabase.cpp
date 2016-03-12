@@ -128,11 +128,14 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TALENT, "SELECT ID, Description_lang FROM talent_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Vehicle.db2
-    PrepareStatement(HOTFIX_SEL_VEHICLE, "SELECT ID, Flags, FlagsB, TurnSpeed, PitchSpeed, PitchMin, PitchMax, SeatID1, SeatID2, SeatID3, SeatID4, "
-        "SeatID5, SeatID6, SeatID7, SeatID8, MouseLookOffsetPitch, CameraFadeDistScalarMin, CameraFadeDistScalarMax, CameraPitchOffset, "
-        "FacingLimitRight, FacingLimitLeft, MsslTrgtTurnLingering, MsslTrgtPitchLingering, MsslTrgtMouseLingering, MsslTrgtEndOpacity, "
-        "MsslTrgtArcSpeed, MsslTrgtArcRepeat, MsslTrgtArcWidth, MsslTrgtImpactRadius1, MsslTrgtImpactRadius2, CameraYawOffset, UILocomotionType, "
-        "MsslTrgtImpactTexRadius, VehicleUIIndicatorID, PowerDisplayID1, PowerDisplayID2, PowerDisplayID3 FROM vehicle ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_VEHICLE, "SELECT ID, Flags, TurnSpeed, PitchSpeed, PitchMin, PitchMax, MouseLookOffsetPitch, CameraFadeDistScalarMin, "
+        "CameraFadeDistScalarMax, CameraPitchOffset, FacingLimitRight, FacingLimitLeft, MsslTrgtTurnLingering, MsslTrgtPitchLingering, "
+        "MsslTrgtMouseLingering, MsslTrgtEndOpacity, MsslTrgtArcSpeed, MsslTrgtArcRepeat, MsslTrgtArcWidth, MsslTrgtImpactRadius1, "
+        "MsslTrgtImpactRadius2, MsslTrgtArcTexture, MsslTrgtImpactTexture, MsslTrgtImpactModel1, MsslTrgtImpactModel2, CameraYawOffset, "
+        "MsslTrgtImpactTexRadius, SeatID1, SeatID2, SeatID3, SeatID4, SeatID5, SeatID6, SeatID7, SeatID8, PowerDisplayID1, PowerDisplayID2, "
+        "PowerDisplayID3, FlagsB, UILocomotionType, VehicleUIIndicatorID FROM vehicle ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_VEHICLE, "SELECT ID, MsslTrgtArcTexture_lang, MsslTrgtImpactTexture_lang, MsslTrgtImpactModel1_lang, "
+        "MsslTrgtImpactModel2_lang FROM vehicle_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // WMOAreaTable.db2
     PrepareStatement(HOTFIX_SEL_W_M_O_AREA_TABLE, "SELECT ID, WMOGroupID, AreaName, WMOID, AmbienceID, ZoneMusic, IntroSound, AreaTableID, "
