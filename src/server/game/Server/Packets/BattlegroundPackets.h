@@ -677,6 +677,16 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class ReportPvPPlayerAFK final : public ClientPacket
+        {
+        public:
+            ReportPvPPlayerAFK(WorldPacket&& packet) : ClientPacket(CMSG_REPORT_PVP_PLAYER_AFK, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Offender;
+        };
     }
 }
 

@@ -571,3 +571,8 @@ void WorldPackets::Battleground::JoinSkirmish::Read()
     _worldPacket >> Roles;
     _worldPacket >> Bracket;
 }
+
+void WorldPackets::Battleground::ReportPvPPlayerAFK::Read()
+{
+    _worldPacket >> Offender;
+}

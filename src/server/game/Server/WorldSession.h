@@ -471,6 +471,7 @@ namespace WorldPackets
         class JoinSkirmish;
         class HearthAndResurrect;
         class JoinRatedBattleground;
+        class ReportPvPPlayerAFK;
     }
 
     namespace VoidStorage
@@ -1515,7 +1516,7 @@ class WorldSession
         void HandleJoinRatedBattleground(WorldPackets::Battleground::JoinRatedBattleground& packet);
         void JoinBracket(uint8 slot);
 
-        void HandleReportPvPAFK(WorldPacket& recvData);
+        void HandleReportPvPPlayerAFK(WorldPackets::Battleground::ReportPvPPlayerAFK& packet);
         void HandleRequestRatedInfo(WorldPackets::Battleground::NullCmsg& packet);
         void HandleRequestPvpOptions(WorldPackets::Battleground::NullCmsg& packet);
         void HandleRequestPvpReward(WorldPacket& recvData);

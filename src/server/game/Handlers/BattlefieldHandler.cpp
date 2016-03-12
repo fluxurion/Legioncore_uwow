@@ -145,12 +145,9 @@ void WorldSession::HandleBfExitRequest(WorldPacket& recv_data)
     bf->KickPlayerFromBattlefield(_player->GetGUID());
 }
 
-void WorldSession::HandleReportPvPAFK(WorldPacket & recvData)
+void WorldSession::HandleReportPvPPlayerAFK(WorldPackets::Battleground::ReportPvPPlayerAFK& packet)
 {
-    ObjectGuid playerGuid;
-    recvData >> playerGuid;
-
-    if (Player* reportedPlayer = ObjectAccessor::FindPlayer(playerGuid))
+    if (Player* reportedPlayer = ObjectAccessor::FindPlayer(packet.Offender))
         reportedPlayer->ReportedAfkBy(_player);
 }
 
