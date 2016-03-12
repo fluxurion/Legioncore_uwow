@@ -504,13 +504,16 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         else
             *data << uint32(1);                                         // Elapsed Time Ms
 
-        *data << t->GetAreaTriggerInfo().RollPitchYaw1X << t->GetAreaTriggerInfo().RollPitchYaw1Y << t->GetAreaTriggerInfo().RollPitchYaw1Z;             //RollPitchYaw1
+        *data << t->GetAreaTriggerInfo().RollPitchYaw1X;
+        *data << t->GetAreaTriggerInfo().RollPitchYaw1Y;
+        *data << t->GetAreaTriggerInfo().RollPitchYaw1Z;
 
         data->WriteBit(t->GetAreaTriggerInfo().HasAbsoluteOrientation); // HasAbsoluteOrientation
         data->WriteBit(t->GetAreaTriggerInfo().HasDynamicShape);        // HasDynamicShape
         data->WriteBit(0/*t->GetAreaTriggerInfo().HasAttached*/);            // HasAttached is have transport, not complete
         data->WriteBit(t->GetAreaTriggerInfo().HasFaceMovementDir);     // HasFaceMovementDir
         data->WriteBit(t->GetAreaTriggerInfo().HasFollowsTerrain);      // HasFollowsTerrain
+        data->WriteBit(false);                                          // unkbit
         data->WriteBit(t->HasTargetRollPitchYaw());                     // HasTargetRollPitchYaw
         data->WriteBit(t->GetAreaTriggerInfo().ScaleCurveID);           // HasScaleCurveID
         data->WriteBit(t->GetAreaTriggerInfo().MorphCurveID);           // HasMorphCurveID
@@ -524,7 +527,11 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         data->WriteBit(false);                                          // byte120
 
         if (t->HasTargetRollPitchYaw())
-            *data << t->GetAreaTriggerInfo().TargetRollPitchYawX << t->GetAreaTriggerInfo().TargetRollPitchYawY << t->GetAreaTriggerInfo().TargetRollPitchYawZ;             //RollPitchYaw1
+        {
+            *data << t->GetAreaTriggerInfo().TargetRollPitchYawX;
+            *data << t->GetAreaTriggerInfo().TargetRollPitchYawY;
+            *data << t->GetAreaTriggerInfo().TargetRollPitchYawZ;
+        }
 
         if (t->GetAreaTriggerInfo().ScaleCurveID)
             *data << uint32(t->GetAreaTriggerInfo().ScaleCurveID);
