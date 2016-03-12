@@ -551,6 +551,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         data->WriteBit(t->isPolygon());                                 // areaTriggerPolygon
         data->WriteBit(t->GetAreaTriggerCylinder());                    // areaTriggerCylinder
         data->WriteBit(t->isMoving());                                  // areaTriggerSpline
+        data->WriteBit(false);                                          // byte120
 
         if (t->HasTargetRollPitchYaw())
             *data << t->GetAreaTriggerInfo().TargetRollPitchYawX << t->GetAreaTriggerInfo().TargetRollPitchYawY << t->GetAreaTriggerInfo().TargetRollPitchYawZ;             //RollPitchYaw1
@@ -616,6 +617,25 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 
         if (t->isMoving())                                              // areaTriggerSpline
             t->PutObjectUpdateMovement(data);                           // Points
+
+        //if (byte120)
+        //{
+        //    var byte10 = packet.ReadBit("byte10", index);
+        //    var byte24 = packet.ReadBit("Has Center Point", index);
+        //    packet.ReadBit("byte44", index);
+        //    packet.ReadBit("byte45", index);
+        //    packet.ReadInt32("dword28", index);
+        //    packet.ReadInt32("dword2C", index);
+        //    packet.ReadInt32("dword30", index);
+        //    packet.ReadSingle("Radius", index);
+        //    packet.ReadSingle("Blend Form Radius", index);
+        //    packet.ReadSingle("Initial Angle", index);
+        //    packet.ReadSingle("Z Offset", index);
+        //    if (byte10)
+        //        packet.ReadPackedGuid128("guid0", index);
+        //    if (byte24)
+        //        packet.ReadVector3("Center Point", index);
+        //}
     }
 
     if (HasGameObject)
