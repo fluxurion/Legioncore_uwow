@@ -120,6 +120,16 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class SetTaxiBenchmarkMode final : public ClientPacket
+        {
+        public:
+            SetTaxiBenchmarkMode(WorldPacket&& packet) : ClientPacket(CMSG_SET_TAXI_BENCHMARK_MODE, std::move(packet)) { }
+
+            void Read() override;
+
+            bool Enable = false;
+        };
     }
 }
 

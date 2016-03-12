@@ -607,14 +607,6 @@ void WorldSession::HandleSetRaidDifficulty(WorldPackets::Misc::SetRaidDifficulty
 
 void WorldSession::HandleRequestPetInfo(WorldPackets::PetPackets::RequestPetInfo& /*packet*/) { }
 
-void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData)
-{
-    uint8 mode;
-    recvData >> mode;
-
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "Client used \"/timetest %d\" command", mode);
-}
-
 void WorldSession::HandleUITimeRequest(WorldPackets::Misc::UITimeRequest& /*request*/)
 {
     WorldPackets::Misc::UITime response;

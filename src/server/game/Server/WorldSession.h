@@ -743,6 +743,7 @@ namespace WorldPackets
         class TaxiQueryAvailableNodes;
         class ActivateTaxi;
         class TaxiRequestEarlyLanding;
+        class SetTaxiBenchmarkMode;
     }
 
     namespace Token
@@ -1605,7 +1606,7 @@ class WorldSession
         void HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packet);
         void HandleVoiceSessionEnable(WorldPackets::Chat::VoiceSessionEnable& packet);
         void HandleSetActiveVoiceChannel(WorldPackets::Chat::SetActiveVoiceChannel& packet);
-        void HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData);
+        void HandleSetTaxiBenchmarkMode(WorldPackets::Taxi::SetTaxiBenchmarkMode& packet);
 
         // Guild Bank
         void HandleGuildPermissions(WorldPackets::Guild::GuildPermissionsQuery& packet);

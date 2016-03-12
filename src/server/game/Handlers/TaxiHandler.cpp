@@ -186,3 +186,8 @@ void WorldSession::HandleTaxiRequestEarlyLanding(WorldPackets::Taxi::TaxiRequest
         }
     }
 }
+
+void WorldSession::HandleSetTaxiBenchmarkMode(WorldPackets::Taxi::SetTaxiBenchmarkMode& packet)
+{
+    _player->ApplyModFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_TAXI_BENCHMARK, packet.Enable);
+}

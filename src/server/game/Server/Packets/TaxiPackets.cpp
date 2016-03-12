@@ -72,3 +72,8 @@ WorldPacket const* WorldPackets::Taxi::ActivateTaxiReply::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Taxi::SetTaxiBenchmarkMode::Read()
+{
+    Enable = _worldPacket.ReadBit();
+}
