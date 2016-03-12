@@ -750,6 +750,17 @@ namespace WorldPackets
 
             uint32 Faction = 0;
         };
+
+        class SetCurrencyFlags final : public ClientPacket
+        {
+        public:
+            SetCurrencyFlags(WorldPacket&& packet) : ClientPacket(CMSG_SET_CURRENCY_FLAGS, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 CurrencyID = 0;
+            uint32 Flags = 0;
+        };
     }
 }
 

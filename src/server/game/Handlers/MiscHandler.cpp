@@ -700,16 +700,6 @@ void WorldSession::HandleNeutralPlayerSelectFaction(WorldPackets::Character::Neu
     _player->SendMovieStart(116);
 }
 
-//! 5.4.1
-void WorldSession::HandleChangeCurrencyFlags(WorldPacket& recvPacket)
-{
-    uint32 currencyId, flags;
-    recvPacket >> currencyId >> flags;
-
-    if (GetPlayer())
-        GetPlayer()->ModifyCurrencyFlag(currencyId, uint8(flags));
-}
-
 void WorldSession::HandleRequestCemeteryList(WorldPackets::Misc::RequestCemeteryList& /*packet*/)
 {
     uint32 team = _player->GetTeam();

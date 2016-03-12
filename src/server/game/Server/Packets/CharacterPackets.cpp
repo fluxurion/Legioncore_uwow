@@ -615,3 +615,9 @@ void WorldPackets::Character::NeutralPlayerSelectFaction::Read()
 {
     _worldPacket >> Faction;
 }
+
+void WorldPackets::Character::SetCurrencyFlags::Read()
+{
+    _worldPacket >> CurrencyID;
+    _worldPacket >> Flags;
+}

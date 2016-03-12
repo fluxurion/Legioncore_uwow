@@ -2338,3 +2338,8 @@ void WorldSession::HandleLogoutRequest(WorldPackets::Character::LogoutRequest& /
 void WorldSession::HandleLogoutInstant(WorldPackets::Character::LogoutInstant& /*packet*/)
 {
 }
+
+void WorldSession::HandleSetCurrencyFlags(WorldPackets::Character::SetCurrencyFlags& packet)
+{
+    GetPlayer()->ModifyCurrencyFlag(packet.CurrencyID, packet.Flags);
+}

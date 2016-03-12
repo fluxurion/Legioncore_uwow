@@ -677,7 +677,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SET_BANK_AUTOSORT_DISABLED,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_BANK_BAG_SLOT_FLAG,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_CONTACT_NOTES,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Social::SetContactNotes, &WorldSession::HandleSetContactNotesOpcode);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_SET_CURRENCY_FLAGS,                      STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleChangeCurrencyFlags       );
+    DEFINE_HANDLER(CMSG_SET_CURRENCY_FLAGS,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Character::SetCurrencyFlags, &WorldSession::HandleSetCurrencyFlags);
     DEFINE_HANDLER(CMSG_SET_DIFFICULTY_ID,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_DUNGEON_DIFFICULTY,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::SetDungeonDifficulty, &WorldSession::HandleSetDungeonDifficulty);
     DEFINE_HANDLER(CMSG_SET_EVERYONE_IS_ASSISTANT,                          STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Party::SetEveryoneIsAssistant, &WorldSession::HandleSetEveryoneIsAssistant);

@@ -127,6 +127,7 @@ namespace WorldPackets
         class CharCustomize;
         class NeutralPlayerSelectFaction;
         class UndeleteCharacter;
+        class SetCurrencyFlags;
 
         enum class LoginFailureReason : uint8;
     }
@@ -1713,7 +1714,7 @@ class WorldSession
         void HandleOpeningCinematic(WorldPackets::Misc::OpeningCinematic& packet);
         void HandleNeutralPlayerSelectFaction(WorldPackets::Character::NeutralPlayerSelectFaction& packet);
         void HandleRequestResearchHistory(WorldPackets::Misc::RequestResearchHistory& packet);
-        void HandleChangeCurrencyFlags(WorldPacket& recvPacket);
+        void HandleSetCurrencyFlags(WorldPackets::Character::SetCurrencyFlags& packet);
         void HandleRequestCategoryCooldowns(WorldPackets::Spells::RequestCategoryCooldowns& packet);
         void HandleClearRaidMarker(WorldPackets::Party::ClearRaidMarker& packet);
         void HandleShowTradeSkill(WorldPackets::Misc::ShowTradeSkill& packet);
