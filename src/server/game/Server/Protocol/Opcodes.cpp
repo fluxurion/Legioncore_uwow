@@ -636,7 +636,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_REQUEST_PARTY_MEMBER_STATS,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::RequestPartyMemberStats, &WorldSession::HandleRequestPartyMemberStats);
     DEFINE_HANDLER(CMSG_REQUEST_PET_INFO,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::RequestPetInfo, &WorldSession::HandleRequestPetInfo);
     DEFINE_HANDLER(CMSG_REQUEST_PLAYED_TIME,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Character::RequestPlayedTime, &WorldSession::HandleRequestPlayedTime);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_REQUEST_PVP_REWARDS,                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleRequestPvpReward          );
+    DEFINE_HANDLER(CMSG_REQUEST_PVP_REWARDS,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Battleground::RequestPVPRewards, &WorldSession::HandleRequestPvpReward);
     DEFINE_HANDLER(CMSG_REQUEST_RAID_INFO,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::RequestRaidInfo, &WorldSession::HandleRequestRaidInfo);
     DEFINE_HANDLER(CMSG_REQUEST_RATED_BATTLEFIELD_INFO,                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Battleground::NullCmsg, &WorldSession::HandleRequestRatedInfo);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_REQUEST_ARTIFACT_COMPLETION_HISTORY,     STATUS_UNHANDLED, PROCESS_INPLACE,      &WorldSession::HandleRequestResearchHistory    );

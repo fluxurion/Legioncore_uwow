@@ -608,11 +608,9 @@ void WorldSession::HandleRequestPvpOptions(WorldPackets::Battleground::NullCmsg&
     SendPacket(options.Write());
 }
 
-void WorldSession::HandleRequestPvpReward(WorldPacket& recvData)
+void WorldSession::HandleRequestPvpReward(WorldPackets::Battleground::RequestPVPRewards& /*packet*/)
 {
-    Player* player = GetPlayer();
-    if (player)
-        player->SendPvpRewards();
+    GetPlayer()->SendPvpRewards();
 }
 
 //! This is const data used for calc some field for SMSG_RATED_BATTLEFIELD_INFO 

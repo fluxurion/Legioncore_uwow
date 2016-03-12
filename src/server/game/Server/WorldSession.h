@@ -472,6 +472,7 @@ namespace WorldPackets
         class HearthAndResurrect;
         class JoinRatedBattleground;
         class ReportPvPPlayerAFK;
+        class RequestPVPRewards;
     }
 
     namespace VoidStorage
@@ -1520,7 +1521,7 @@ class WorldSession
         void HandleReportPvPPlayerAFK(WorldPackets::Battleground::ReportPvPPlayerAFK& packet);
         void HandleRequestRatedInfo(WorldPackets::Battleground::NullCmsg& packet);
         void HandleRequestPvpOptions(WorldPackets::Battleground::NullCmsg& packet);
-        void HandleRequestPvpReward(WorldPacket& recvData);
+        void HandleRequestPvpReward(WorldPackets::Battleground::RequestPVPRewards& packet);
         void HandleRequestRatedBgStats(WorldPacket& recvData);
 
         void HandleWardenData(WorldPackets::Misc::WardenData& packet);
