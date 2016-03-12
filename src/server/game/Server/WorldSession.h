@@ -674,6 +674,7 @@ namespace WorldPackets
         class PetSetAction;
         class PetSpellAutocast;
         class RequestPetInfo;
+        class SetPetSlot;
     }
 
     namespace LFG
@@ -1357,8 +1358,8 @@ class WorldSession
         void HandleQueryNPCText(WorldPackets::Query::QueryNPCText& packet);
         void HandleBinderActivate(WorldPackets::NPC::Hello& packet);
         void HandleRequestStabledPets(WorldPackets::NPC::RequestStabledPets& packet);
-        void HandleStableChangeSlot(WorldPacket& recvPacket);
-        void HandleStableChangeSlotCallback(PreparedQueryResult result, uint8 new_slot);        //void HandleBuyStableSlot(WorldPacket& recvPacket);
+        void HanleSetPetSlot(WorldPackets::PetPackets::SetPetSlot& packet);
+        void HandleStableChangeSlotCallback(PreparedQueryResult result, uint8 new_slot);
         void HandleStableRevivePet(WorldPacket& recvPacket);
         void SendTrainerService(ObjectGuid guid, uint32 spellId, uint32 trainState);
 

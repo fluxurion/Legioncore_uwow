@@ -249,3 +249,10 @@ void WorldPackets::PetPackets::PetSpellAutocast::Read()
     _worldPacket >> SpellID;
     AutocastEnabled = _worldPacket.ReadBit();
 }
+
+void WorldPackets::PetPackets::SetPetSlot::Read()
+{
+    _worldPacket >> PetIndex;
+    _worldPacket >> NewSlot;
+    _worldPacket >> NpcGUID;
+}

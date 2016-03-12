@@ -333,6 +333,18 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        class SetPetSlot final : public ClientPacket
+        {
+        public:
+            SetPetSlot(WorldPacket&& packet) : ClientPacket(CMSG_SET_PET_SLOT, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid NpcGUID;
+            uint32 PetIndex = 0;
+            uint8 NewSlot = 0;
+        };
     }
 }
 

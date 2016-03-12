@@ -1053,7 +1053,7 @@ void WorldSession::ProcessQueryCallbacks()
         _sendStabledPetCallback.FreeResult();
     }
 
-    //- HandleStableChangeSlot
+    //- HanleSetPetSlot
     if (_stableChangeSlotCallback.IsReady())
     {
         uint8 param = _stableChangeSlotCallback.GetParam();

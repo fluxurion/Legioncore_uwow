@@ -512,50 +512,35 @@ void WorldSession::HandleLearnPetSpecializationGroup(WorldPackets::PetPackets::L
     _player->SendTalentsInfoData(true);
 }
 
-//! 6.0.3
-void WorldSession::HandleStableChangeSlot(WorldPacket & recv_data)
+void WorldSession::HanleSetPetSlot(WorldPackets::PetPackets::SetPetSlot& packet)
 {
-    //sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recv CMSG_SET_PET_SLOT.");
-    uint32 pet_number;
-    ObjectGuid npcGUID;
-    uint8 new_slot;
-
-    recv_data >> pet_number >> new_slot >> npcGUID;
-
-    if (!CheckStableMaster(npcGUID))
+    if (!CheckStableMaster(packet.NpcGUID))
     {
         SendStableResult(STABLE_ERR_STABLE);
         return;
     }
 
-    if (new_slot > MAX_PET_STABLES)
+    if (packet.NewSlot > MAX_PET_STABLES)
     {
         SendStableResult(STABLE_ERR_STABLE);
         return;
     }
 
-    // remove fake death
     if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
     Pet* pet = _player->GetPet();
-
-    //If we move the pet already summoned...
-    if (pet && pet->GetCharmInfo() && pet->GetCharmInfo()->GetPetNumber() == pet_number)
+    if (pet && pet->GetCharmInfo() && pet->GetCharmInfo()->GetPetNumber() == packet.PetIndex)
         _player->RemovePet(pet);
 
-    //If we move to the pet already summoned...
     PetSlot curentSlot = GetPlayer()->GetSlotForPetId(GetPlayer()->m_currentPetNumber);
-    if (pet && curentSlot == new_slot)
+    if (pet && curentSlot == packet.NewSlot)
         _player->RemovePet(pet);
-
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_BY_ID);
-
     stmt->setUInt64(0, _player->GetGUIDLow());
-    stmt->setUInt32(1, pet_number);
-
-    _stableChangeSlotCallback.SetParam(new_slot);
+    stmt->setUInt32(1, packet.PetIndex);
+    _stableChangeSlotCallback.SetParam(packet.NewSlot);
     _stableChangeSlotCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }
 
