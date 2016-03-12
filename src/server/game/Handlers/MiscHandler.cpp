@@ -605,7 +605,7 @@ void WorldSession::HandleSetRaidDifficulty(WorldPackets::Misc::SetRaidDifficulty
     }
 }
 
-void WorldSession::HandleRequestPetInfoOpcode(WorldPacket& /*recvData */) { }
+void WorldSession::HandleRequestPetInfo(WorldPackets::PetPackets::RequestPetInfo& /*packet*/) { }
 
 void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData)
 {

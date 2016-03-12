@@ -665,6 +665,7 @@ namespace WorldPackets
         class PetRename;
         class PetSetAction;
         class PetSpellAutocast;
+        class RequestPetInfo;
     }
 
     namespace LFG
@@ -1584,7 +1585,7 @@ class WorldSession
         void HandleCancelGrowthAura(WorldPackets::Spells::CancelGrowthAura& packet);
         void HandleSelfRes(WorldPackets::Spells::SelfRes& packet);
         void HandleComplaint(WorldPackets::Ticket::Complaint& packet);
-        void HandleRequestPetInfoOpcode(WorldPacket& recvData);
+        void HandleRequestPetInfo(WorldPackets::PetPackets::RequestPetInfo& packet);
 
         // Socket gem
         void HandleSocketOpcode(WorldPacket& recvData);

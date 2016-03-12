@@ -325,6 +325,14 @@ namespace WorldPackets
             uint32 SpellID = 0;
             bool AutocastEnabled = false;
         };
+
+        class RequestPetInfo final : public ClientPacket
+        {
+        public:
+            RequestPetInfo(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_PET_INFO, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
