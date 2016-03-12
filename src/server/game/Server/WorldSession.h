@@ -270,6 +270,7 @@ namespace WorldPackets
         class ItemPurchaseRefund;
         class UpgradeItem;
         class ReadItem;
+        class SortBags;
     }
 
     namespace Loot
@@ -1595,7 +1596,7 @@ class WorldSession
         // Socket gem
         void HandleSocketOpcode(WorldPacket& recvData);
 
-        void HandleSortBagsOpcode(WorldPacket& recvData);
+        void HandleSortBags(WorldPackets::Item::SortBags& packet);
 
         void HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelTempEnchantment& packet);
 

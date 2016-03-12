@@ -538,6 +538,14 @@ namespace WorldPackets
             uint8 PackSlot = 0;
             uint8 Slot = 0;
         };
+
+        class SortBags final : public ClientPacket
+        {
+        public:
+            SortBags(WorldPacket&& packet) : ClientPacket(CMSG_SORT_BAGS, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 

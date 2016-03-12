@@ -1382,13 +1382,9 @@ void WorldSession::HandleRepairItem(WorldPackets::Item::RepairItem& packet)
         player->DurabilityRepairAll(true, discountMod, packet.UseGuildBank);
 }
 
-void WorldSession::HandleSortBagsOpcode(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleSortBags(WorldPackets::Item::SortBags& /*packet*/)
 {
-    Player* player = GetPlayer();
-    if (!player)
-        return;
-
-    player->SortBags();
+    GetPlayer()->SortBags();
 }
 
 void WorldSession::HandleUseCritterItem(WorldPackets::Item::UseCritterItem& useCritterItem)
