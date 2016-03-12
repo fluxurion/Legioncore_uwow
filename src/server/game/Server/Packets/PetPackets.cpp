@@ -243,3 +243,9 @@ void WorldPackets::PetPackets::PetSetAction::Read()
     _worldPacket >> Action;
 }
 
+void WorldPackets::PetPackets::PetSpellAutocast::Read()
+{
+    _worldPacket >> PetGUID;
+    _worldPacket >> SpellID;
+    AutocastEnabled = _worldPacket.ReadBit();
+}

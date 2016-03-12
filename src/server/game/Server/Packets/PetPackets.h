@@ -313,6 +313,18 @@ namespace WorldPackets
             uint32 Index = 0;
             uint32 Action = 0;
         };
+
+        class PetSpellAutocast final : public ClientPacket
+        {
+        public:
+            PetSpellAutocast(WorldPacket&& packet) : ClientPacket(CMSG_PET_SPELL_AUTOCAST, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid PetGUID;
+            uint32 SpellID = 0;
+            bool AutocastEnabled = false;
+        };
     }
 }
 

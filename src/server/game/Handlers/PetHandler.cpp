@@ -338,32 +338,23 @@ void WorldSession::HandlePetAbandon(WorldPackets::PetPackets::PetAbandon& packet
     }
 }
 
-//! 6.0.3
-void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket)
+void WorldSession::HandlePetSpellAutocast(WorldPackets::PetPackets::PetSpellAutocast& packet)
 {
-    ObjectGuid guid;
-    uint32 spellid;
-    uint32  state;                                           //1 for on, 0 for off
-    recvPacket >> guid >> spellid;
-    state = recvPacket.ReadBit();
-
     if (!_player->GetGuardianPet() && !_player->GetCharm())
         return;
 
-    if (ObjectAccessor::FindPlayer(guid))
+    if (ObjectAccessor::FindPlayer(packet.PetGUID))
         return;
 
-    Creature* pet=ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, guid);
-
+    Creature* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.PetGUID);
     if (!pet || (pet != _player->GetGuardianPet() && pet != _player->GetCharm()))
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetSpellAutocastOpcode.Pet %u isn't pet of player %s .", uint32(guid.GetGUIDLow()), GetPlayer()->GetName());
+        sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetSpellAutocast.Pet %u isn't pet of player %s .", packet.PetGUID.GetGUIDLow(), GetPlayer()->GetName());
         return;
     }
 
-    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellid);
-    // do not add not learned spells/ passive spells
-    if (!pet->HasSpell(spellid) || spellInfo->IsAutocastable())
+    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(packet.SpellID);
+    if (!pet->HasSpell(packet.SpellID) || spellInfo->IsAutocastable())
         return;
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
@@ -374,11 +365,11 @@ void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket)
     }
 
     if (pet->isPet())
-        ((Pet*)pet)->ToggleAutocast(spellInfo, state);
+        static_cast<Pet*>(pet)->ToggleAutocast(spellInfo, packet.AutocastEnabled);
     else
-        pet->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, state != 0);
+        pet->GetCharmInfo()->ToggleCreatureAutocast(spellInfo, packet.AutocastEnabled);
 
-    charmInfo->SetSpellAutocast(spellInfo, state != 0);
+    charmInfo->SetSpellAutocast(spellInfo, packet.AutocastEnabled);
 }
 
 //! 6.0.3
