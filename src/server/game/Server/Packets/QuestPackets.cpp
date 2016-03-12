@@ -546,3 +546,8 @@ WorldPacket const* WorldPackets::Quest::DailyQuestsReset::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Quest::PushQuestToParty::Read()
+{
+    _worldPacket >> QuestID;
+}
