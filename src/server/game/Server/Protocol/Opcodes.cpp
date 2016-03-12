@@ -564,7 +564,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_PET_BATTLE_SCRIPT_ERROR_NOTIFY,                     STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandlePetBattleScriptErrorNotify);
     DEFINE_HANDLER(CMSG_PET_CANCEL_AURA,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::PetCancelAura, &WorldSession::HandlePetCancelAura);
     DEFINE_HANDLER(CMSG_PET_CAST_SPELL,                                     STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::PetCastSpell, &WorldSession::HandlePetCastSpellOpcode);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_PET_RENAME,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandlePetRename                 );
+    DEFINE_HANDLER(CMSG_PET_RENAME,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::PetRename, &WorldSession::HandlePetRename);
     DEFINE_OPCODE_HANDLER_OLD(CMSG_PET_SET_ACTION,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandlePetSetAction              );
     DEFINE_OPCODE_HANDLER_OLD(CMSG_PET_SPELL_AUTOCAST,                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandlePetSpellAutocastOpcode    );
     DEFINE_HANDLER(CMSG_PET_STOP_ATTACK,                                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::StopAttack, &WorldSession::HandleStopAttack);

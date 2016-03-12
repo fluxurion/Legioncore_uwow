@@ -282,6 +282,25 @@ namespace WorldPackets
             Position ActionPosition;
             uint32 Action = 0;
         };
+
+        struct PetRenameData
+        {
+            ObjectGuid PetGUID;
+            DeclinedName DeclinedNames;
+            int32 PetNumber = 0;
+            std::string NewName;
+            bool HasDeclinedNames = false;
+        };
+
+        class PetRename final : public ClientPacket
+        {
+        public:
+            PetRename(WorldPacket&& packet) : ClientPacket(CMSG_PET_RENAME, std::move(packet)) { }
+
+            void Read() override;
+
+            PetRenameData RenameData;
+        };
     }
 }
 

@@ -213,3 +213,25 @@ void WorldPackets::PetPackets::PetAction::Read()
     _worldPacket >> TargetGUID;
     _worldPacket >> ActionPosition.PositionXYZStream();
 }
+
+void WorldPackets::PetPackets::PetRename::Read()
+{
+    _worldPacket >> RenameData.PetGUID;
+    _worldPacket >> RenameData.PetNumber;
+
+    int8 nameLen = 0;
+    _worldPacket >> nameLen;
+
+    RenameData.HasDeclinedNames = _worldPacket.ReadBit();
+    if (RenameData.HasDeclinedNames)
+    {
+        int32 count[MAX_DECLINED_NAME_CASES] = { };
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+            count[i] = _worldPacket.ReadBits(7);
+
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+            RenameData.DeclinedNames.name[i] = _worldPacket.ReadString(count[i]);
+    }
+
+    _worldPacket.ReadString(nameLen, RenameData.NewName);
+}
