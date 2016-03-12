@@ -549,3 +549,9 @@ void WorldPackets::Item::UpgradeItem::Read()
     _worldPacket >> ContainerSlot;
     _worldPacket >> Slot;
 }
+
+void WorldPackets::Item::ReadItem::Read()
+{
+    _worldPacket >> PackSlot;
+    _worldPacket >> Slot;
+}

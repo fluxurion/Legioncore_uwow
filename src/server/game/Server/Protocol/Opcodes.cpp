@@ -611,7 +611,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUEST_PUSH_RESULT,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QuestPushResult, &WorldSession::HandleQuestPushResult);
     DEFINE_HANDLER(CMSG_QUEUED_MESSAGES_END,                                STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_RANDOM_ROLL,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RandomRollClient, &WorldSession::HandleRandomRollClient);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_READ_ITEM,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleReadItem                  );
+    DEFINE_HANDLER(CMSG_READ_ITEM,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::ReadItem, &WorldSession::HandleReadItem);
     DEFINE_HANDLER(CMSG_READY_CHECK_RESPONSE,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::ReadyCheckResponseClient, &WorldSession::HandleReadyCheckResponse);
     DEFINE_HANDLER(CMSG_RECLAIM_CORPSE,                                     STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::ReclaimCorpse, &WorldSession::HandleReclaimCorpse);
     DEFINE_HANDLER(CMSG_RECRUIT_A_FRIEND,                                   STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);

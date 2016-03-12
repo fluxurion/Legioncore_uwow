@@ -267,6 +267,7 @@ namespace WorldPackets
         class WrapItem;
         class ItemPurchaseRefund;
         class UpgradeItem;
+        class ReadItem;
     }
 
     namespace Loot
@@ -1395,7 +1396,7 @@ class WorldSession
         void HandleBuyItemOpcode(WorldPackets::Item::BuyItem& packet);
         void HandleListInventory(WorldPackets::NPC::Hello& packet);
         void HandleAutoStoreBagItem(WorldPackets::Item::AutoStoreBagItem& packet);
-        void HandleReadItem(WorldPacket& recvPacket);
+        void HandleReadItem(WorldPackets::Item::ReadItem& packet);
         void HandleAutoEquipItemSlotOpcode(WorldPackets::Item::AutoEquipItemSlot& autoEquipItemSlot);
         void HandleSwapItem(WorldPackets::Item::SwapItem& swapItem);
         void HandleBuybackItem(WorldPackets::Item::BuyBackItem& packet);

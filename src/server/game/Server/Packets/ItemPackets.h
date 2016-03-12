@@ -527,6 +527,17 @@ namespace WorldPackets
             int32 UpgradeID = 0;
             int32 Slot = 0;
         };
+
+        class ReadItem final : public ClientPacket
+        {
+        public:
+            ReadItem(WorldPacket&& packet) : ClientPacket(CMSG_READ_ITEM, std::move(packet)) { }
+
+            void Read() override;
+
+            uint8 PackSlot = 0;
+            uint8 Slot = 0;
+        };
     }
 }
 

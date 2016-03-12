@@ -303,14 +303,9 @@ void WorldSession::HandleDestroyItemOpcode(WorldPackets::Item::DestroyItem& dest
         _player->DestroyItem(destroyItem.ContainerId, destroyItem.SlotNum, true);
 }
 
-//! 6.0.3
-void WorldSession::HandleReadItem(WorldPacket& recvData)
+void WorldSession::HandleReadItem(WorldPackets::Item::ReadItem& packet)
 {
-    uint8 bag, slot;
-    recvData  >> bag >> slot;
-
-    Item* item = _player->GetItemByPos(bag, slot);
-
+    Item* item = _player->GetItemByPos(packet.PackSlot, packet.Slot);
     if (item && item->GetTemplate()->PageText)
     {
         InventoryResult msg = _player->CanUseItem(item);
