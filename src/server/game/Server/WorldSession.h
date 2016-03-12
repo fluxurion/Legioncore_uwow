@@ -328,6 +328,7 @@ namespace WorldPackets
         class SaveCUFProfiles;
         class MountSpecialAnim;
         class WardenData;
+        class RequestResearchHistory;
     }
 
     namespace Movement
@@ -1703,7 +1704,7 @@ class WorldSession
         void HandleObjectUpdateRescued(WorldPackets::Misc::ObjectUpdateRescued& packet);
         void HandleOpeningCinematic(WorldPackets::Misc::OpeningCinematic& packet);
         void HandleNeutralPlayerSelectFaction(WorldPackets::Character::NeutralPlayerSelectFaction& packet);
-        void HandleRequestResearchHistory(WorldPacket& recvPacket);
+        void HandleRequestResearchHistory(WorldPackets::Misc::RequestResearchHistory& packet);
         void HandleChangeCurrencyFlags(WorldPacket& recvPacket);
         void HandleRequestCategoryCooldowns(WorldPackets::Spells::RequestCategoryCooldowns& packet);
         void HandleClearRaidMarker(WorldPackets::Party::ClearRaidMarker& packet);

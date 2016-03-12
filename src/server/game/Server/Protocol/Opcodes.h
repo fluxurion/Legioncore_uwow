@@ -580,7 +580,7 @@ enum OpcodeClient : uint16
     CMSG_REQUEST_PVP_REWARDS                          = 0x318F,
     CMSG_REQUEST_RAID_INFO                            = 0x36CB,
     CMSG_REQUEST_RATED_BATTLEFIELD_INFO               = 0x35E3,
-    CMSG_REQUEST_ARTIFACT_COMPLETION_HISTORY          = 0x3167,
+    CMSG_REQUEST_RESEARCH_HISTORY                     = 0x3167,
     CMSG_REQUEST_STABLED_PETS                         = 0xBADD,
     CMSG_REQUEST_VEHICLE_EXIT                         = 0x3218,
     CMSG_REQUEST_VEHICLE_NEXT_SEAT                    = 0x321A,

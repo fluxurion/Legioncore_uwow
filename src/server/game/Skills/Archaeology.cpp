@@ -814,7 +814,7 @@ void Player::SendCompletedProjects()
     SendDirectMessage(&data);
 }
 
-void WorldSession::HandleRequestResearchHistory(WorldPacket& recv_data)
+void WorldSession::HandleRequestResearchHistory(WorldPackets::Misc::RequestResearchHistory& /*packet*/)
 {
     _player->SendCompletedProjects();
 }

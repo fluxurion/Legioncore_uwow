@@ -1028,6 +1028,14 @@ namespace WorldPackets
 
             ByteBuffer Data;
         };
+
+        class RequestResearchHistory final : public ClientPacket
+        {
+        public:
+            RequestResearchHistory(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_RESEARCH_HISTORY, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
