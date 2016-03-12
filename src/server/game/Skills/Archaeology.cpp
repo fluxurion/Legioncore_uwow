@@ -800,23 +800,17 @@ void Player::SendCompletedProjects()
     if (!HasSkill(SKILL_ARCHAEOLOGY))
         return;
 
-    WorldPacket data(SMSG_SETUP_RESEARCH_HISTORY, 3 + _completedProjects.size() * 3 * 4);
-
-    data.WriteBits(_completedProjects.size(), 20);
-
-    for (CompletedProjectList::iterator itr = _completedProjects.begin(); itr != _completedProjects.end(); ++itr)
+    WorldPackets::Misc::SetupResearchHistory packet;
+    for (CompletedProjectList::const_iterator::value_type const& itr : _completedProjects)
     {
-        data << uint32(itr->entry->ID);
-        data << uint32(itr->date);
-        data << uint32(itr->count);
+        WorldPackets::Misc::ResearchHistory data;
+        data.ProjectID = itr.entry->ID;
+        data.FirstCompleted = itr.date;
+        data.CompletionCount = itr.count;
+        packet.History.emplace_back(data);
     }
 
-    SendDirectMessage(&data);
-}
-
-void WorldSession::HandleRequestResearchHistory(WorldPackets::Misc::RequestResearchHistory& /*packet*/)
-{
-    _player->SendCompletedProjects();
+    SendDirectMessage(packet.Write());
 }
 
 void Player::SendSurveyCast(uint32 count, uint32 max, uint32 branchId, bool completed)

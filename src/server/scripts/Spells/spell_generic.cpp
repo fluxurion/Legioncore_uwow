@@ -33,6 +33,7 @@
 #include "InstanceScript.h"
 #include "Group.h"
 #include "LFGMgr.h"
+#include "Packets/NPCPackets.h"
 
 // Position const sumprpos[4] =
 // {
@@ -1582,9 +1583,9 @@ class spell_gen_spirit_healer_res : public SpellScriptLoader
                 Player* originalCaster = GetOriginalCaster()->ToPlayer();
                 if (Unit* target = GetHitUnit())
                 {
-                    WorldPacket data(SMSG_SPIRIT_HEALER_CONFIRM, 8 + 1);
-                    data << target->GetGUID();
-                    originalCaster->GetSession()->SendPacket(&data);
+                    WorldPackets::NPC::SpiritHealerConfirm packet;
+                    packet.Unit = target->GetGUID();
+                    originalCaster->GetSession()->SendPacket(packet.Write());
                 }
             }
 

@@ -789,3 +789,21 @@ void WorldPackets::Misc::WardenData::Read()
         _worldPacket.read(Data.contents(), size);
     }
 }
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Misc::ResearchHistory const& researchHistory)
+{
+    data << researchHistory.ProjectID;
+    data << uint32(researchHistory.FirstCompleted);
+    data << researchHistory.CompletionCount;
+
+    return data;
+}
+
+WorldPacket const* WorldPackets::Misc::SetupResearchHistory::Write()
+{
+    _worldPacket << static_cast<int32>(History.size());
+    for (auto const& history : History)
+        _worldPacket << history;
+
+    return &_worldPacket;
+}

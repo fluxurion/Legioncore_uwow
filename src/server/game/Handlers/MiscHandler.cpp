@@ -808,3 +808,8 @@ void WorldSession::HandleWorldTeleport(WorldPackets::Misc::WorldTeleport& packet
     else
         SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::HandleRequestResearchHistory(WorldPackets::Misc::RequestResearchHistory& /*packet*/)
+{
+    _player->SendCompletedProjects();
+}

@@ -27,8 +27,6 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
-            //WorldPacket data(SMSG_CHALLENGE_UNK);
-            //player->GetSession()->SendPacket(&data);
             instance->StartChallenge();
             //sChallengeMgr->GroupReward(instance->instance, 100, ChallengeMode(1));
         }

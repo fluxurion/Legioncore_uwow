@@ -1036,6 +1036,23 @@ namespace WorldPackets
 
             void Read() override { }
         };
+
+        struct ResearchHistory
+        {
+            int32 ProjectID = 0;
+            int32 CompletionCount = 0;
+            time_t FirstCompleted = time_t(0);
+        };
+
+        class SetupResearchHistory final : public ServerPacket
+        {
+        public:
+            SetupResearchHistory() : ServerPacket(SMSG_SETUP_RESEARCH_HISTORY, 4) { }
+
+            WorldPacket const* Write() override;
+
+            std::vector<ResearchHistory> History;
+        };
     }
 }
 
