@@ -760,6 +760,7 @@ namespace WorldPackets
     {
         class Complaint;
         class SupportTicketSubmitBug;
+        class GMTicketGetSystemStatus;
     }
 
     class Null final : public ClientPacket
@@ -1190,7 +1191,7 @@ class WorldSession
         void HandleGMTicketUpdateOpcode(WorldPacket& recvPacket);
         void HandleGMTicketDeleteOpcode(WorldPacket& recvPacket);
         void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
-        void HandleGMTicketSystemStatusOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketGetSystemStatus(WorldPackets::Ticket::GMTicketGetSystemStatus& packet);
         void HandleGMSurveySubmit(WorldPacket& recvPacket);
         void HandleGMResponseResolve(WorldPacket& recvPacket);
 

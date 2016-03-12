@@ -144,7 +144,7 @@ void WorldSession::HandleGMTicketGetTicketOpcode(WorldPacket & /*recvData*/)
         sTicketMgr->SendTicket(this, NULL);
 }
 
-void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket & /*recvData*/)
+void WorldSession::HandleGMTicketGetSystemStatus(WorldPackets::Ticket::GMTicketGetSystemStatus& /*packet*/)
 {
     // Note: This only disables the ticket UI at client side and is not fully reliable
     WorldPacket data(SMSG_GM_TICKET_SYSTEM_STATUS, 4);

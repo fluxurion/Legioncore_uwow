@@ -89,6 +89,14 @@ namespace WorldPackets
             SupportTicketHeader Header;
             std::string Note;
         };
+
+        class GMTicketGetSystemStatus final : public ClientPacket
+        {
+        public:
+            GMTicketGetSystemStatus(WorldPacket&& packet) : ClientPacket(CMSG_GM_TICKET_GET_SYSTEM_STATUS, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 
