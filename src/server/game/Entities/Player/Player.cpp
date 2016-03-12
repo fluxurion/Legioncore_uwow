@@ -601,7 +601,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     }
 
     for (uint8 i = 0; i < PLAYER_SLOTS_COUNT; i++)
-        m_items[i] = NULL;
+        m_items[i] = nullptr;
 
     Relocate(info->positionX, info->positionY, info->positionZ, info->orientation);
 
@@ -689,8 +689,16 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             break;
     }
 
+    if (CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet))
+        for (CharcterTemplateClass const& v : charTemplate->Classes)
+            if (v.ClassID == createInfo->Class)
+            {
+                startLevel = charTemplate->Level;
+                break;
+            }
+
     if (!AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
-        startLevel = std::max(startLevel, sWorld->getIntConfig(CONFIG_START_GM_LEVEL));
+        startLevel = std::max(startLevel, MAX_LEVEL);
 
     SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
@@ -862,77 +870,76 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     for (PlayerCreateInfoActions::const_iterator action_itr = info->action.begin(); action_itr != info->action.end(); ++action_itr)
         addActionButton(action_itr->button, action_itr->action, action_itr->type);
 
-    //uint32 RaceClassGender = (createInfo->Race) | (createInfo->Class << 8) | (createInfo->Gender << 16);
-
-    // original items
-    CharStartOutfitEntry const* oEntry = NULL;
-    for (CharStartOutfitEntry const* entry : sCharStartOutfitStore)
+    if (createInfo->TemplateSet)
     {
-        if (entry->RaceID == createInfo->Race && entry->ClassID == createInfo->Class && entry->GenderID == createInfo->Sex)
-        {
-            oEntry = entry;
-            break;
-        }
+
     }
-
-    if (oEntry)
+    else
     {
-        for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
-        {
-            if (oEntry->ItemID[j] <= 0 /*|| oEntry->ItemDisplayId[j] <= 0*/)
-                continue;
-
-            uint32 itemId = oEntry->ItemID[j];
-
-            // just skip, reported in ObjectMgr::LoadItemTemplates
-            ItemTemplate const* iProto = sObjectMgr->GetItemTemplate(itemId);
-            if (!iProto)
-                continue;
-
-            // BuyCount by default
-            uint32 count = iProto->BuyCount;
-
-            // special amount for food/drink
-            if (iProto->Class == ITEM_CLASS_CONSUMABLE && iProto->SubClass == ITEM_SUBCLASS_FOOD_DRINK)
+        CharStartOutfitEntry const* oEntry = nullptr;
+        for (CharStartOutfitEntry const* entry : sCharStartOutfitStore)
+            if (entry->RaceID == createInfo->Race && entry->ClassID == createInfo->Class && entry->GenderID == createInfo->Sex)
             {
-                switch (iProto->Effects[0]->Category)
+                oEntry = entry;
+                break;
+            }
+
+        if (oEntry)
+        {
+            for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
+            {
+                if (oEntry->ItemID[j] <= 0 /*|| oEntry->ItemDisplayId[j] <= 0*/)
+                    continue;
+
+                uint32 itemId = oEntry->ItemID[j];
+                ItemTemplate const* iProto = sObjectMgr->GetItemTemplate(itemId);
+                if (!iProto)
+                    continue;
+
+                uint32 count = iProto->BuyCount;
+                if (iProto->Class == ITEM_CLASS_CONSUMABLE && iProto->SubClass == ITEM_SUBCLASS_FOOD_DRINK)
                 {
-                    case SPELL_CATEGORY_FOOD:                                // food
-                        count = getClass() == CLASS_DEATH_KNIGHT ? 10 : 4;
-                        break;
-                    case SPELL_CATEGORY_DRINK:                                // drink
-                        count = 2;
+                    switch (iProto->Effects[0]->Category)
+                    {
+                        case SPELL_CATEGORY_FOOD:
+                            count = getClass() == CLASS_DEATH_KNIGHT ? 10 : 4;
+                            break;
+                        case SPELL_CATEGORY_DRINK:
+                            count = 2;
+                            break;
+                    }
+
+                    if (iProto->GetMaxStackSize() < count)
+                        count = iProto->GetMaxStackSize();
+                }
+
+                switch (itemId)
+                {
+                    // Pandaren start weapons, they are given with the first quest
+                    case 73207:
+                    case 73208:
+                    case 73209:
+                    case 73210:
+                    case 73211:
+                    case 73212:
+                    case 73213:
+                    case 76390:
+                    case 76391:
+                    case 76392:
+                    case 76393:
+                        continue;
+                    default:
                         break;
                 }
-                if (iProto->GetMaxStackSize() < count)
-                    count = iProto->GetMaxStackSize();
-            }
 
-            switch(itemId)
-            {
-                // Pandaren start weapons, they are given with the first quest
-                case 73207:
-                case 73208:
-                case 73209:
-                case 73210:
-                case 73211:
-                case 73212:
-                case 73213:
-                case 76390:
-                case 76391:
-                case 76392:
-                case 76393:
-                    continue;
-                default:
-                    break;
+                StoreNewItemInBestSlots(itemId, count);
             }
-
-            StoreNewItemInBestSlots(itemId, count);
         }
+
+        for (PlayerCreateInfoItems::const_iterator::value_type const& itr : info->item)
+            StoreNewItemInBestSlots(itr.item_id, itr.item_amount);
     }
 
-    for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr)
-        StoreNewItemInBestSlots(item_id_itr->item_id, item_id_itr->item_amount);
 
     // bags and main-hand weapon must equipped at this moment
     // now second pass for not equipped (offhand weapon/shield if it attempt equipped before main-hand weapon)

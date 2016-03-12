@@ -9901,6 +9901,74 @@ void ObjectMgr::LoadRaceAndClassExpansionRequirements()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 class expansion requirements. DB table `class_expansion_requirement` is empty.");
 }
 
+void ObjectMgr::LoadCharacterTemplates()
+{
+    uint32 oldMSTime = getMSTime();
+    _characterTemplateStore.clear();
+
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_CHARACTER_TEMPLATES);
+    PreparedQueryResult templates = WorldDatabase.Query(stmt);
+
+    if (!templates)
+    {
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 character templates. DB table `character_template` is empty.");
+        return;
+    }
+
+    PreparedQueryResult classes;
+    uint32 count[2] = {0, 0};
+
+    do
+    {
+        Field* fields = templates->Fetch();
+
+        uint32 templateSetID = fields[0].GetUInt32();
+
+        stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_CHARACTER_TEMPLATE_CLASSES);
+        stmt->setUInt32(0, templateSetID);
+        classes = WorldDatabase.Query(stmt);
+
+        if (classes)
+        {
+            CharacterTemplate templ;
+            templ.TemplateSetID = templateSetID;
+            templ.Name = fields[1].GetString();
+            templ.Description = fields[2].GetString();
+            templ.Level = fields[3].GetUInt8();
+
+            do
+            {
+                fields = classes->Fetch();
+
+                uint8 factionGroup = fields[0].GetUInt8();
+                if (!((factionGroup & (FACTION_MASK_PLAYER | FACTION_MASK_ALLIANCE)) == (FACTION_MASK_PLAYER | FACTION_MASK_ALLIANCE)) &&
+                    !((factionGroup & (FACTION_MASK_PLAYER | FACTION_MASK_HORDE)) == (FACTION_MASK_PLAYER | FACTION_MASK_HORDE)))
+                    continue;
+
+                uint8 classID = fields[1].GetUInt8();
+                if (!sChrClassesStore.LookupEntry(classID))
+                    continue;
+
+                ++count[1];
+                templ.Classes.emplace_back(factionGroup, classID);
+
+            }
+            while (classes->NextRow());
+
+            if (!templ.Classes.empty())
+            {
+                _characterTemplateStore[templateSetID] = templ;
+                ++count[0];
+            }
+        }
+        else
+            continue;
+    }
+    while (templates->NextRow());
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u character templates with character_template for %u classes in %u ms.", count[0], count[1], GetMSTimeDiffToNow(oldMSTime));
+}
+
 void ObjectMgr::LoadRealmNames()
 {
     uint32 oldMSTime = getMSTime();

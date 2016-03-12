@@ -84,20 +84,6 @@ namespace WorldPackets
                 std::string RealmNameNormalized;
             };
 
-            struct CharacterTemplate
-            {
-                struct TemplateClass
-                {
-                    uint8 Class;
-                    uint8 FactionGroup;
-                };
-
-                uint32 TemplateSetId;
-                std::list<TemplateClass> Classes;
-                std::string Name;
-                std::string Description;
-            };
-
             struct AuthSuccessInfo
             {
                 uint32 TimeRemain = 0;

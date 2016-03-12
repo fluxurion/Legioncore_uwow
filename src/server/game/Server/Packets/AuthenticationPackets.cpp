@@ -99,12 +99,12 @@ WorldPacket const* WorldPackets::Auth::AuthResponse::Write()
 
         for (auto const& templat : SuccessInfo->Templates)
         {
-            _worldPacket << uint32(templat.TemplateSetId);
+            _worldPacket << templat.TemplateSetID;
             _worldPacket << static_cast<uint32>(templat.Classes.size());
-            for (auto const& templateClass : templat.Classes)
+            for (CharcterTemplateClass const& templateClass : templat.Classes)
             {
-                _worldPacket << uint8(templateClass.Class);
-                _worldPacket << uint8(templateClass.FactionGroup);
+                _worldPacket << templateClass.ClassID;
+                _worldPacket << templateClass.FactionGroup;
             }
 
             _worldPacket.WriteBits(templat.Name.length(), 7);

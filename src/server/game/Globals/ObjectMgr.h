@@ -916,6 +916,25 @@ struct ItemSpecStats
     }
 };
 
+struct CharcterTemplateClass
+{
+    CharcterTemplateClass(uint8 factionGroup, uint8 classID) : FactionGroup(factionGroup), ClassID(classID) { }
+
+    uint8 FactionGroup;
+    uint8 ClassID;
+};
+
+struct CharacterTemplate
+{
+    uint32 TemplateSetID;
+    std::vector<CharcterTemplateClass> Classes;
+    std::string Name;
+    std::string Description;
+    uint8 Level;
+};
+
+typedef std::unordered_map<uint32, CharacterTemplate> CharacterTemplateContainer;
+
 class ObjectMgr
 {
     friend class PlayerDumpReader;
@@ -1671,6 +1690,7 @@ class ObjectMgr
         const std::vector<uint32>* GetPossibleBreedsForSpecies(uint32 speciesID) const;
         const std::vector<uint32>* GetBattlePetTeamMembers(uint32 creatureEntry) const;
         void LoadRaceAndClassExpansionRequirements();
+        void LoadCharacterTemplates();
         void LoadRealmNames();
         void LoadBattlePay();
 
@@ -1746,6 +1766,16 @@ class ObjectMgr
 
         WorldPackets::BattlePay::ProductListResponse productList;
         std::map<uint32, WorldPackets::BattlePay::Product> BattlePayProductMap;
+
+        CharacterTemplateContainer const& GetCharacterTemplates() const { return _characterTemplateStore; }
+        CharacterTemplate const* GetCharacterTemplate(uint32 id) const
+        {
+            auto itr = _characterTemplateStore.find(id);
+            if (itr != _characterTemplateStore.end())
+                return &itr->second;
+
+            return nullptr;
+        }
     private:
         // first free id for selected id type
         uint32 _auctionId;
@@ -1917,6 +1947,7 @@ class ObjectMgr
         ExpansionRequirementContainer _raceExpansionRequirementStore;
         ExpansionRequirementContainer _classExpansionRequirementStore;
         RealmNameContainer _realmNameStore;
+        CharacterTemplateContainer _characterTemplateStore;
 
         enum CreatureLinkedRespawnType
         {

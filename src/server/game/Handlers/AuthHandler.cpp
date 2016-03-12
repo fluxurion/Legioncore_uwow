@@ -62,6 +62,9 @@ void WorldSession::SendAuthResponse(uint8 code, bool hasAccountData, bool queued
         response.SuccessInfo->AvailableRaces = &sObjectMgr->GetRaceExpansionRequirements();
         response.SuccessInfo->IsExpansionTrial = false;
         response.SuccessInfo->IsVeteranTrial = false;
+
+        for (CharacterTemplateContainer::const_iterator::value_type const& templ : sObjectMgr->GetCharacterTemplates())
+            response.SuccessInfo->Templates.emplace_back(templ.second);
     }
 
     SendPacket(response.Write());

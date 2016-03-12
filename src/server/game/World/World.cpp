@@ -2133,6 +2133,7 @@ void World::SetInitialWorldSettings()
 
     sLog->outInfo(LOG_FILTER_GENERAL, "Loading race and class expansion requirements...");
     sObjectMgr->LoadRaceAndClassExpansionRequirements();
+    sObjectMgr->LoadCharacterTemplates();
 
     sLog->outInfo(LOG_FILTER_GENERAL, "Loading realm names...");
     sObjectMgr->LoadRealmNames();
