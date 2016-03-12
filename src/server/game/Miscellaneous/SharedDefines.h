@@ -4811,6 +4811,7 @@ enum SpellFamilyNames
     SPELLFAMILY_UNK3        = 50,
     SPELLFAMILY_MONK        = 53,
     SPELLFAMILY_PET_ABILITY = 57,
+    SPELLFAMILY_DEMON_HUNTER = 107,
 };
 
 // stored in character_pet.slot
