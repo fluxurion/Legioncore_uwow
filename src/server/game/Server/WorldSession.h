@@ -643,6 +643,7 @@ namespace WorldPackets
         class ChangeSubGroup;
         class SwapSubGroups;
         class ClearRaidMarker;
+        class SetPartyAssignment;
     }
 
     namespace Petition
@@ -1282,7 +1283,7 @@ class WorldSession
         void HandleSwapSubGroups(WorldPackets::Party::SwapSubGroups& packet);
         void HandleSetAssistantLeader(WorldPackets::Party::SetAssistantLeader& packet);
         void HandleSetEveryoneIsAssistant(WorldPackets::Party::SetEveryoneIsAssistant& packet);
-        void HandlePartyAssignmentOpcode(WorldPacket& recvData);
+        void HandleSetPartyAssignment(WorldPackets::Party::SetPartyAssignment& packet);
         void HandleInitiateRolePoll(WorldPackets::Party::InitiateRolePoll& packet);
 
         void HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet);

@@ -598,6 +598,19 @@ namespace WorldPackets
             ObjectGuid Player;
             ObjectGuid Victim;
         };
+
+        class SetPartyAssignment final : public ClientPacket
+        {
+        public:
+            SetPartyAssignment(WorldPacket&& packet) : ClientPacket(CMSG_SET_PARTY_ASSIGNMENT, std::move(packet)) { }
+        
+            void Read() override;
+            
+            ObjectGuid Target;
+            uint8 Assignment = 0;
+            uint8 PartyIndex = 0;
+            bool Set = false;
+        };
     }
 }
 

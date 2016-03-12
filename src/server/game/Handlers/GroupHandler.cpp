@@ -488,8 +488,7 @@ void WorldSession::HandleSetAssistantLeader(WorldPackets::Party::SetAssistantLea
     group->SendUpdate();
 }
 
-//! 5.4.1
-void WorldSession::HandlePartyAssignmentOpcode(WorldPacket& recvData)
+void WorldSession::HandleSetPartyAssignment(WorldPackets::Party::SetPartyAssignment& packet)
 {
     Group* group = GetPlayer()->GetGroup();
     if (!group)
@@ -499,29 +498,17 @@ void WorldSession::HandlePartyAssignmentOpcode(WorldPacket& recvData)
     if (!group->IsLeader(senderGuid) && !group->IsAssistant(senderGuid) && !(group->GetGroupType() & GROUPTYPE_EVERYONE_IS_ASSISTANT))
         return;
 
-    uint8 assignment;
-    uint8 unk;
-    bool apply;
-    ObjectGuid guid;
-
-    recvData >> unk >> assignment;
-
-    //recvData.ReadGuidMask<3, 5>(guid);
-    apply = recvData.ReadBit();
-    //recvData.ReadGuidMask<0, 7, 2, 6, 4, 1>(guid);
-    //recvData.ReadGuidBytes<4, 1, 0, 6, 5, 3, 7, 2>(guid);
-
-    switch (assignment)
+    switch (packet.Assignment)
     {
-    case GROUP_ASSIGN_MAINASSIST:
-        group->RemoveUniqueGroupMemberFlag(MEMBER_FLAG_MAINASSIST);
-        group->SetGroupMemberFlag(guid, apply, MEMBER_FLAG_MAINASSIST);
-        break;
-    case GROUP_ASSIGN_MAINTANK:
-        group->RemoveUniqueGroupMemberFlag(MEMBER_FLAG_MAINTANK);           // Remove main assist flag from current if any.
-        group->SetGroupMemberFlag(guid, apply, MEMBER_FLAG_MAINTANK);
-    default:
-        break;
+        case GROUP_ASSIGN_MAINASSIST:
+            group->RemoveUniqueGroupMemberFlag(MEMBER_FLAG_MAINASSIST);
+            group->SetGroupMemberFlag(packet.Target, packet.Set, MEMBER_FLAG_MAINASSIST);
+            break;
+        case GROUP_ASSIGN_MAINTANK:
+            group->RemoveUniqueGroupMemberFlag(MEMBER_FLAG_MAINTANK);
+            group->SetGroupMemberFlag(packet.Target, packet.Set, MEMBER_FLAG_MAINTANK);
+        default:
+            break;
     }
 
     group->SendUpdate();

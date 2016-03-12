@@ -715,3 +715,11 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Party::GroupDifficultySet
 
     return data;
 }
+
+void WorldPackets::Party::SetPartyAssignment::Read()
+{
+    _worldPacket >> PartyIndex;
+    _worldPacket >> Assignment;
+    _worldPacket >> Target;
+    Set = _worldPacket.ReadBit();
+}
