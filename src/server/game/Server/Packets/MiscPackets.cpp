@@ -807,3 +807,10 @@ WorldPacket const* WorldPackets::Misc::SetupResearchHistory::Write()
 
     return &_worldPacket;
 }
+
+WorldPacket const* WorldPackets::Misc::ResearchComplete::Write()
+{
+    _worldPacket << Research;
+
+    return &_worldPacket;
+}

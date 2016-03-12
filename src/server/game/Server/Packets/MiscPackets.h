@@ -1053,6 +1053,16 @@ namespace WorldPackets
 
             std::vector<ResearchHistory> History;
         };
+
+        class ResearchComplete final : public ServerPacket
+        {
+        public:
+            ResearchComplete() : ServerPacket(SMSG_RESEARCH_COMPLETE, 12) { }
+
+            WorldPacket const* Write() override;
+
+            ResearchHistory Research;
+        };
     }
 }
 
