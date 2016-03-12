@@ -293,7 +293,8 @@ public:
 
     void LoadFromDB(Field* fields);
     void SaveToDB(ObjectGuid::LowType guildId) const;
-    void ReadPacket(WorldPacket& recv) { recv >> m_color >> m_style >> m_borderColor >> m_borderStyle >> m_backgroundColor; }
+    void ReadPacket(WorldPackets::Guild::SaveGuildEmblem& packet);
+    bool ValidateEmblemColors();
     void WritePacket(WorldPacket& data) const;
 
     uint32 GetStyle() const { return m_style; }

@@ -1229,6 +1229,21 @@ namespace WorldPackets
 
             ObjectGuid RecruitGUID;
         };
+
+        class SaveGuildEmblem final : public ClientPacket
+        {
+        public:
+            SaveGuildEmblem(WorldPacket&& packet) : ClientPacket(CMSG_SAVE_GUILD_EMBLEM, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Vendor;
+            int32 BStyle = 0;
+            int32 EStyle = 0;
+            int32 BColor = 0;
+            int32 EColor = 0;
+            int32 Bg = 0;
+        };
     }
 }
 

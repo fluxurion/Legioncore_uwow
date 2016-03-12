@@ -653,7 +653,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_RIDE_VEHICLE_INTERACT,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RideVehicleInteract, &WorldSession::HandleRideVehicleInteract);
     DEFINE_HANDLER(CMSG_SAVE_CUF_PROFILES,                                  STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Misc::SaveCUFProfiles, &WorldSession::HandleSaveCUFProfiles);
     DEFINE_HANDLER(CMSG_SAVE_EQUIPMENT_SET,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::EquipmentSet::SaveEquipmentSet, &WorldSession::HandleSaveEquipmentSet);
-    DEFINE_OPCODE_HANDLER_OLD(CMSG_SAVE_GUILD_EMBLEM,                       STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::HandleSaveGuildEmblemOpcode     );
+    DEFINE_HANDLER(CMSG_SAVE_GUILD_EMBLEM,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::SaveGuildEmblem, &WorldSession::HandleSaveGuildEmblem);
     DEFINE_HANDLER(CMSG_SCENE_PLAYBACK_CANCELED,                            STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Scene::SceneInstance, &WorldSession::HandleScenePlaybackCanceled);
     DEFINE_HANDLER(CMSG_SCENE_PLAYBACK_COMPLETE,                            STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Scene::SceneInstance, &WorldSession::HandleScenePlaybackComplete);
     DEFINE_HANDLER(CMSG_SCENE_TRIGGER_EVENT,                                STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Scene::SceneTriggerEvent, &WorldSession::HandleSceneTriggerEvent);

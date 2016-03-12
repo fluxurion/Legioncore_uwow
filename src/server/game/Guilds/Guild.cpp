@@ -847,6 +847,22 @@ void EmblemInfo::SaveToDB(ObjectGuid::LowType guildId) const
     CharacterDatabase.Execute(stmt);
 }
 
+void EmblemInfo::ReadPacket(WorldPackets::Guild::SaveGuildEmblem& packet)
+{
+    m_style = packet.EStyle;
+    m_color = packet.EColor;
+    m_borderStyle = packet.BStyle;
+    m_borderColor = packet.BColor;
+    m_backgroundColor = packet.Bg;
+}
+
+bool EmblemInfo::ValidateEmblemColors()
+{
+    return true;
+    //@TODO:Legion
+    //return sGuildColorBackgroundStore.LookupEntry(m_backgroundColor) && sGuildColorBorderStore.LookupEntry(m_borderColor) && sGuildColorEmblemStore.LookupEntry(m_color);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // MoveItemData
 bool Guild::MoveItemData::CheckItem(uint32& splitedAmount)

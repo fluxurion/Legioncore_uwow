@@ -978,3 +978,13 @@ void WorldPackets::Guild::LFGuildDeclineRecruit::Read()
 {
     _worldPacket >> RecruitGUID;
 }
+
+void WorldPackets::Guild::SaveGuildEmblem::Read()
+{
+    _worldPacket >> Vendor;
+    _worldPacket >> EStyle;
+    _worldPacket >> EColor;
+    _worldPacket >> BStyle;
+    _worldPacket >> BColor;
+    _worldPacket >> Bg;
+}

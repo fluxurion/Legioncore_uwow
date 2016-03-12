@@ -189,33 +189,29 @@ void WorldSession::HandleGuildUpdateInfoText(WorldPackets::Guild::GuildUpdateInf
         guild->HandleSetInfo(this, packet.InfoText);
 }
 
-// 6.1.2 TODO: rewrite
-void WorldSession::HandleSaveGuildEmblemOpcode(WorldPacket& recvPacket)
+void WorldSession::HandleSaveGuildEmblem(WorldPackets::Guild::SaveGuildEmblem& packet)
 {
-    ObjectGuid vendorGuid;
     EmblemInfo emblemInfo;
+    emblemInfo.ReadPacket(packet);
 
-    recvPacket >> vendorGuid;
-    emblemInfo.ReadPacket(recvPacket);
-
-    if (GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_TABARDDESIGNER))
+    if (GetPlayer()->GetNPCIfCanInteractWith(packet.Vendor, UNIT_NPC_FLAG_TABARDDESIGNER))
     {
-        // Remove fake death
         if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
             GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
-        if (Guild* guild = _GetPlayerGuild(this))
+        if (!emblemInfo.ValidateEmblemColors())
+        {
+            Guild::SendSaveEmblemResult(this, ERR_GUILDEMBLEM_INVALID_TABARD_COLORS);
+            return;
+        }
+
+        if (Guild* guild = GetPlayer()->GetGuild())
             guild->HandleSetEmblem(this, emblemInfo);
         else
-            // "You are not part of a guild!";
             Guild::SendSaveEmblemResult(this, ERR_GUILDEMBLEM_NOGUILD);
     }
     else
-    {
-        // "That's not an emblem vendor!"
         Guild::SendSaveEmblemResult(this, ERR_GUILDEMBLEM_INVALIDVENDOR);
-        sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: HandleSaveGuildEmblemOpcode - Unit (GUID: %u) not found or you can't interact with him.", vendorGuid.GetGUIDLow());
-    }
 }
 
 void WorldSession::HandleGuildEventLogQuery(WorldPackets::Guild::GuildEventLogQuery& /*packet*/)
