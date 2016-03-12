@@ -1121,7 +1121,7 @@ class WorldSession
         void SendCharFactionChange(ResponseCodes result, WorldPackets::Character::CharRaceOrFactionChangeInfo const* factionChangeInfo);
         void HandleCharRaceOrFactionChange(WorldPackets::Character::CharRaceOrFactionChange& packet);
         void HandleGenerateRandomCharacterName(WorldPackets::Character::GenerateRandomCharacterName& packet);
-        void HandleReorderCharacters(WorldPacket& recvData);
+        void HandleReorderCharacters(WorldPackets::Character::ReorderCharacters& packet);
 
         void SendCharCreate(ResponseCodes result);
         void SendCharDelete(ResponseCodes result);

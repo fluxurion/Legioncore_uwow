@@ -2133,24 +2133,14 @@ void WorldSession::HandleGenerateRandomCharacterName(WorldPackets::Character::Ge
     SendPacket(result.Write());
 }
 
-//! 6.1.2
-void WorldSession::HandleReorderCharacters(WorldPacket& recvData)
+void WorldSession::HandleReorderCharacters(WorldPackets::Character::ReorderCharacters& packet)
 {
-    uint32 charactersCount = recvData.ReadBits(9);
-
-    GuidVector guids(charactersCount);
-    uint8 position;
-
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
-    for (uint8 i = 0; i < charactersCount; ++i)
+    for (auto const& reorderInfo : packet.Entries)
     {
-        recvData >> guids[i];
-        recvData >> position;
-
-        //! WARNING!!!
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_LIST_SLOT);
-        stmt->setUInt8(0, position);
-        stmt->setUInt64(1, guids[i].GetCounter());
+        stmt->setUInt8(0, reorderInfo.NewPosition);
+        stmt->setUInt64(1, reorderInfo.PlayerGUID.GetCounter());
         trans->Append(stmt);
     }
 
