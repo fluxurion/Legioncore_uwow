@@ -678,3 +678,20 @@ void WorldSession::SendListInventory(ObjectGuid const& vendorGuid)
 
     SendPacket(packet.Write());
 }
+
+void WorldSession::HandleRequestStabledPets(WorldPackets::NPC::RequestStabledPets& packet)
+{
+    if (!CheckStableMaster(packet.StableMaster))
+    {
+        SendStableResult(STABLE_ERR_STABLE);
+        return;
+    }
+
+    if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
+        GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
+
+    if (GetPlayer()->IsMounted())
+        GetPlayer()->RemoveAurasByType(SPELL_AURA_MOUNTED);
+
+    SendStablePet(packet.StableMaster);
+}

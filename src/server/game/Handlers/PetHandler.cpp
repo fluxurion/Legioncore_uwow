@@ -36,19 +36,6 @@
 #include "QueryPackets.h"
 #include "PetPackets.h"
 
-enum StableResultCode
-{
-    STABLE_ERR_NONE = 0x00,                         // does nothing, just resets stable states
-    STABLE_ERR_MONEY = 0x01,                         // "you don't have enough money"
-    STABLE_ERR_INVALID_SLOT = 0x03,
-    STABLE_ERR_STABLE = 0x06,                         // currently used in most fail cases
-    STABLE_SUCCESS_STABLE = 0x08,                         // stable success
-    STABLE_SUCCESS_UNSTABLE = 0x09,                         // unstable/swap success
-    STABLE_SUCCESS_BUY_SLOT = 0x0A,                         // buy slot success
-    STABLE_ERR_EXOTIC = 0x0B,                         // "you are unable to control exotic creatures"
-    STABLE_ERR_INTERNAL = 0x0C,
-};
-
 void WorldSession::HandleDismissCritter(WorldPackets::PetPackets::DismissCritter& packet)
 {
     Unit* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.CritterGUID);
@@ -526,31 +513,6 @@ void WorldSession::HandleLearnPetSpecializationGroup(WorldPackets::PetPackets::L
 }
 
 //! 6.0.3
-void WorldSession::HandleListStabledPetsOpcode(WorldPacket & recvData)
-{
-    //sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recv CMSG_REQUEST_STABLED_PETS");
-
-    ObjectGuid npcGUID;
-    recvData >> npcGUID;
-
-    if (!CheckStableMaster(npcGUID))
-    {
-        SendStableResult(STABLE_ERR_STABLE);
-        return;
-    }
-
-    // remove fake death
-    if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
-        GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
-
-    // remove mounts this fix bug where getting pet from stable while mounted deletes pet.
-    if (GetPlayer()->IsMounted())
-        GetPlayer()->RemoveAurasByType(SPELL_AURA_MOUNTED);
-
-    SendStablePet(npcGUID);
-}
-
-//! 6.0.3
 void WorldSession::HandleStableChangeSlot(WorldPacket & recv_data)
 {
     //sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recv CMSG_SET_PET_SLOT.");
@@ -671,7 +633,7 @@ bool WorldSession::CheckStableMaster(ObjectGuid const& guid)
     return true;
 }
 
-void WorldSession::SendStableResult(uint8 res)
+void WorldSession::SendStableResult(StableResultCode res)
 {
     WorldPackets::PetPackets::StableResult stableResult;
     stableResult.Result = res;

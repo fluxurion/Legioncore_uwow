@@ -352,6 +352,7 @@ namespace WorldPackets
         class GossipSelectOption;
         class SpiritHealerActivate;
         class TrainerBuySpell;
+        class RequestStabledPets;
     }
 
     namespace BattlePay
@@ -1024,7 +1025,7 @@ class WorldSession
 
         void SendStablePet(ObjectGuid const& guid = ObjectGuid::Empty);
         void SendStablePetCallback(PreparedQueryResult result, ObjectGuid const& guid);
-        void SendStableResult(uint8 res);
+        void SendStableResult(StableResultCode res);
         bool CheckStableMaster(ObjectGuid const& guid);
 
         // Account Data
@@ -1349,7 +1350,7 @@ class WorldSession
         void HandleSpiritHealerActivate(WorldPackets::NPC::SpiritHealerActivate& packet);
         void HandleQueryNPCText(WorldPackets::Query::QueryNPCText& packet);
         void HandleBinderActivate(WorldPackets::NPC::Hello& packet);
-        void HandleListStabledPetsOpcode(WorldPacket& recvPacket);
+        void HandleRequestStabledPets(WorldPackets::NPC::RequestStabledPets& packet);
         void HandleStableChangeSlot(WorldPacket& recvPacket);
         void HandleStableChangeSlotCallback(PreparedQueryResult result, uint8 new_slot);        //void HandleBuyStableSlot(WorldPacket& recvPacket);
         void HandleStableRevivePet(WorldPacket& recvPacket);
