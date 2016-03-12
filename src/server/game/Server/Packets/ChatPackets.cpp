@@ -255,3 +255,9 @@ void WorldPackets::Chat::VoiceSessionEnable::Read()
     EnableVoiceChat = _worldPacket.ReadBit();
     EnableMicrophone = _worldPacket.ReadBit();
 }
+
+void WorldPackets::Chat::SetActiveVoiceChannel::Read()
+{
+    _worldPacket >> ChannelType;
+    _worldPacket.ReadString(_worldPacket.ReadBits(7), ChannelName);
+}

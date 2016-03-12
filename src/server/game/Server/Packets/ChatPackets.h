@@ -296,6 +296,17 @@ namespace WorldPackets
             bool EnableVoiceChat = false;
             bool EnableMicrophone = false;
         };
+
+        class SetActiveVoiceChannel final : public ClientPacket
+        {
+        public:
+            SetActiveVoiceChannel(WorldPacket&& packet) : ClientPacket(CMSG_SET_ACTIVE_VOICE_CHANNEL, std::move(packet)) { }
+        
+            void Read() override;
+            
+            std::string ChannelName;
+            uint8 ChannelType = 0;
+        };
     }
 }
 

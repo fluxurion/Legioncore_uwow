@@ -21,12 +21,9 @@
 #include "WorldSession.h"
 #include "Opcodes.h"
 #include "Log.h"
+#include "ChatPackets.h"
 
 void WorldSession::HandleVoiceSessionEnable(WorldPackets::Chat::VoiceSessionEnable& /*packet*/) { }
 
-void WorldSession::HandleSetActiveVoiceChannel(WorldPacket& recvData)
-{
-    recvData.read_skip<uint32>();
-    recvData.read_skip<char*>();
-}
+void WorldSession::HandleSetActiveVoiceChannel(WorldPackets::Chat::SetActiveVoiceChannel& /*packet*/) { }
 

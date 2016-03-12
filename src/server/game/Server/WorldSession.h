@@ -160,6 +160,7 @@ namespace WorldPackets
         class ChatUnregisterAllAddonPrefixes;
         class ChatReportIgnored;
         class VoiceSessionEnable;
+        class SetActiveVoiceChannel;
     }
 
     namespace Combat
@@ -1602,7 +1603,7 @@ class WorldSession
         void HandleItemPurchaseRefund(WorldPackets::Item::ItemPurchaseRefund& packet);
         void HandleItemTextQuery(WorldPackets::Query::ItemTextQuery& packet);
         void HandleVoiceSessionEnable(WorldPackets::Chat::VoiceSessionEnable& packet);
-        void HandleSetActiveVoiceChannel(WorldPacket& recvData);
+        void HandleSetActiveVoiceChannel(WorldPackets::Chat::SetActiveVoiceChannel& packet);
         void HandleSetTaxiBenchmarkOpcode(WorldPacket& recvData);
 
         // Guild Bank
