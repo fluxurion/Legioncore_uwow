@@ -484,6 +484,7 @@ void ObjectMgr::LoadWDBCreatureTemplates()
         CreatureTemplate& creatureTemplate = _creatureTemplateStore[entry];
 
         creatureTemplate.Entry = entry;
+
         for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
             creatureTemplate.Name[i] = fields[index++].GetString();
         for (uint8 i = 0; i < MAX_CREATURE_NAMES; ++i)
@@ -523,63 +524,6 @@ void ObjectMgr::CheckCreatureTemplateWDB(CreatureTemplate const* cInfo)
 {
     if (!cInfo)
         return;
-
-    const_cast<CreatureTemplate*>(cInfo)->AIName = "";
-    for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
-        const_cast<CreatureTemplate*>(cInfo)->resistance[i] = 0;
-    for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
-        const_cast<CreatureTemplate*>(cInfo)->spells[i] = 0;
-    const_cast<CreatureTemplate*>(cInfo)->AiID = 0;
-    const_cast<CreatureTemplate*>(cInfo)->attackpower = 0;
-    const_cast<CreatureTemplate*>(cInfo)->baseattacktime = 0;
-    const_cast<CreatureTemplate*>(cInfo)->dmgschool = 0;
-    const_cast<CreatureTemplate*>(cInfo)->dynamicflags = 0;
-    const_cast<CreatureTemplate*>(cInfo)->faction = 0;
-    const_cast<CreatureTemplate*>(cInfo)->flags_extra = 0;
-    const_cast<CreatureTemplate*>(cInfo)->GossipMenuId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->InhabitType = INHABIT_ANYWHERE;
-    const_cast<CreatureTemplate*>(cInfo)->lootid = 0;
-    const_cast<CreatureTemplate*>(cInfo)->maxgold = 0;
-    const_cast<CreatureTemplate*>(cInfo)->MechanicImmuneMask = 0;
-    const_cast<CreatureTemplate*>(cInfo)->MeleeID = 0;
-    const_cast<CreatureTemplate*>(cInfo)->mingold = 0;
-    const_cast<CreatureTemplate*>(cInfo)->MovementIDKit = 0;
-    const_cast<CreatureTemplate*>(cInfo)->MovementType = 0;
-    const_cast<CreatureTemplate*>(cInfo)->npcflag = 0;
-    const_cast<CreatureTemplate*>(cInfo)->npcflag2 = 0;
-    const_cast<CreatureTemplate*>(cInfo)->personalloot = 0;
-    const_cast<CreatureTemplate*>(cInfo)->PetSpellDataId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->pickpocketLootId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->rangeattacktime = 0;
-    const_cast<CreatureTemplate*>(cInfo)->rangedattackpower = 0;
-    const_cast<CreatureTemplate*>(cInfo)->ScriptID = 0;
-    const_cast<CreatureTemplate*>(cInfo)->SkinLootId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->trainer_class = 0;
-    const_cast<CreatureTemplate*>(cInfo)->trainer_race = 0;
-    const_cast<CreatureTemplate*>(cInfo)->trainer_spell = 0;
-    const_cast<CreatureTemplate*>(cInfo)->trainer_type = 0;
-    const_cast<CreatureTemplate*>(cInfo)->unit_class = UNIT_CLASS_WARRIOR;
-    const_cast<CreatureTemplate*>(cInfo)->unit_flags = 0;
-    const_cast<CreatureTemplate*>(cInfo)->unit_flags2 = 0;
-    const_cast<CreatureTemplate*>(cInfo)->unit_flags3 = 0;
-    const_cast<CreatureTemplate*>(cInfo)->VehicleId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->VignetteId = 0;
-    const_cast<CreatureTemplate*>(cInfo)->WorldEffectID = 0;
-    const_cast<CreatureTemplate*>(cInfo)->maxlevel = 1;
-    const_cast<CreatureTemplate*>(cInfo)->minlevel = 1;
-    const_cast<CreatureTemplate*>(cInfo)->dmg_multiplier = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->HoverHeight = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->maxdmg = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->maxrangedmg = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->mindmg = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->minrangedmg = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->ModArmor = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->ModManaExtra = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->scale = 0.0f;
-    const_cast<CreatureTemplate*>(cInfo)->speed_fly = 1.0f;
-    const_cast<CreatureTemplate*>(cInfo)->speed_run = 1.14286f;
-    const_cast<CreatureTemplate*>(cInfo)->speed_walk = 1.0f;
-    const_cast<CreatureTemplate*>(cInfo)->RegenHealth = false;
 
     CreatureDisplayInfoEntry const* displayScaleEntry = nullptr;
     if (cInfo->Modelid[0])

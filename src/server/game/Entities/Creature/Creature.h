@@ -96,6 +96,14 @@ enum CreatureFlagsExtra
 // from `creature_template` table
 struct CreatureTemplate
 {
+    CreatureTemplate()
+    {
+        for (uint8 i = 0; i < MAX_SPELL_SCHOOL; ++i)
+            resistance[i] = 0;
+        for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+            spells[i] = 0;
+    };
+
     uint32 Entry;
     std::string Name[MAX_CREATURE_NAMES];
     std::string NameAlt[MAX_CREATURE_NAMES];
@@ -114,66 +122,66 @@ struct CreatureTemplate
     uint32  RequiredExpansion;
     uint32 TypeFlags[2];                                   // enum CreatureTypeFlags[0] mask values [1] unk for now
     uint32 Type;                                           // enum CreatureType values
-    float HpMulti;
+    float HpMulti = 1.0f;
     float PowerMulti;
-    bool Leader;
+    bool Leader = false;
     
-    std::string AIName;
+    std::string AIName  = "";
     int32 resistance[MAX_SPELL_SCHOOL];
-    uint32 AiID;
-    uint32 attackpower;
-    uint32 baseattacktime;
-    uint32 dmgschool;
-    uint32 dynamicflags;
-    uint32 faction;
-    uint32 flags_extra;
+    uint32 AiID = 0;
+    uint32 attackpower = 0;
+    uint32 baseattacktime = 2000;
+    uint32 dmgschool = 0;
+    uint32 dynamicflags = 0;
+    uint32 faction = 35;
+    uint32 flags_extra = 0;
     uint32 GetFirstValidModelId() const;
     uint32 GetRandomValidModelId() const;
-    uint32 GossipMenuId;
-    uint32 InhabitType;
-    uint32 lootid;
-    uint32 maxgold;
-    uint32 MechanicImmuneMask;
-    uint32 MeleeID;
-    uint32 mingold;
-    uint32 MovementIDKit;
-    uint32 MovementType;
-    uint32 npcflag;
-    uint32 npcflag2;
-    uint32 personalloot;
-    uint32 PetSpellDataId;
-    uint32 pickpocketLootId;
-    uint32 rangeattacktime;
-    uint32 rangedattackpower;
-    uint32 ScriptID;
-    uint32 SkinLootId;
+    uint32 GossipMenuId = 0;
+    uint32 InhabitType = 7/*INHABIT_ANYWHERE*/;
+    uint32 lootid = 0;
+    uint32 maxgold = 0;
+    uint32 MechanicImmuneMask = 0;
+    uint32 MeleeID = 0;
+    uint32 mingold = 0;
+    uint32 MovementIDKit = 0;
+    uint32 MovementType = 0;
+    uint32 npcflag = 0;
+    uint32 npcflag2 = 0;
+    uint32 personalloot = 0;
+    uint32 PetSpellDataId = 0;
+    uint32 pickpocketLootId = 0;
+    uint32 rangeattacktime = 2000;
+    uint32 rangedattackpower = 0;
+    uint32 ScriptID = 0;
+    uint32 SkinLootId = 0;
     uint32 spells[CREATURE_MAX_SPELLS];
-    uint32 trainer_class;
-    uint32 trainer_race;
-    uint32 trainer_spell;
-    uint32 trainer_type;
-    uint32 unit_class;                                     // enum Classes. Note only 4 classes are known for creatures.
-    uint32 unit_flags;                                     // enum UnitFlags mask values
-    uint32 unit_flags2;                                    // enum UnitFlags2 mask values
-    uint32 unit_flags3;                                    // enum UnitFlags3 mask values
-    uint32 VehicleId;
-    uint32 VignetteId;
-    uint32 WorldEffectID;
-    uint8 maxlevel;
-    uint8 minlevel;
-    float dmg_multiplier;
-    float HoverHeight;
-    float maxdmg;
-    float maxrangedmg;
-    float mindmg;
-    float minrangedmg;
-    float ModArmor;
-    float ModManaExtra;                                   // Added in 4.x, this value is usually 2 for a small group of creatures with double mana
-    float scale;
-    float speed_fly;
-    float speed_run;
-    float speed_walk;
-    bool RegenHealth;
+    uint32 trainer_class = 0;
+    uint32 trainer_race = 0;
+    uint32 trainer_spell = 0;
+    uint32 trainer_type = 0;
+    uint32 unit_class = UNIT_CLASS_WARRIOR;                // enum Classes. Note only 4 classes are known for creatures.
+    uint32 unit_flags = 0;                                 // enum UnitFlags mask values
+    uint32 unit_flags2 = 2048;                             // enum UnitFlags2 mask values
+    uint32 unit_flags3 = 0;                                // enum UnitFlags3 mask values
+    uint32 VehicleId = 0;
+    uint32 VignetteId = 0;
+    uint32 WorldEffectID = 0;
+    uint8 maxlevel = 1;
+    uint8 minlevel = 1;
+    float dmg_multiplier = 1.0f;
+    float HoverHeight = 1.0f;
+    float maxdmg = 1.0f;
+    float maxrangedmg = 1.0f;
+    float mindmg = 1.0f;
+    float minrangedmg = 1.0f;
+    float ModArmor = 1.0f;
+    float ModManaExtra = 1.0f;                             // Added in 4.x, this value is usually 2 for a small group of creatures with double mana
+    float scale = 1.0f;
+    float speed_fly = 1.0f;
+    float speed_run = 1.14286f;;
+    float speed_walk = 1.0f;
+    bool RegenHealth = true;
 
     //Get difficulty from spawnmode
     static uint8 GetDiffFromSpawn(uint8 spawnmode)
