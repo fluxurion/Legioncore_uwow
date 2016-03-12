@@ -70,8 +70,13 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
 {
     std::vector<ConversationData> const* conversationData = sObjectMgr->GetConversationData(triggerEntry);
     std::vector<ConversationCreature> const* conversationCreature = sObjectMgr->GetConversationCreature(triggerEntry);
+    std::vector<ConversationActor> const* conversationActor = sObjectMgr->GetConversationActor(triggerEntry);
 
-    if(!conversationData || !conversationCreature || conversationData->empty() || conversationCreature->empty())
+    bool isActor = conversationActor && !conversationActor->empty();
+    bool isCreature = conversationCreature && !conversationCreature->empty();
+    bool hasData = conversationData && !conversationData->empty();
+
+    if(!hasData || (!isActor && !isCreature))
         return false;
 
     SetMap(caster->GetMap());
@@ -81,6 +86,8 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
         sLog->outError(LOG_FILTER_GENERAL, "Conversation (spell %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", info->Id, GetPositionX(), GetPositionY());
         return false;
     }
+    
+    uint32 duration = 30000;
 
     for (uint16 index = 0; index < _dynamicValuesCount; ++index)
     {
@@ -93,22 +100,50 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
             if (index == CONVERSATION_DYNAMIC_FIELD_ACTORS)
             {
                 uint32 count = 0;
-                arrayMask.SetCount(conversationCreature->size());
-                for (std::vector<ConversationCreature>::const_iterator itr = conversationCreature->begin(); itr != conversationCreature->end(); ++itr)
+                if (isActor)
                 {
-                    if (Creature* creature = caster->FindNearestCreature(itr->creatureId, caster->GetVisibilityRange()))
+                    arrayMask.SetCount(conversationActor->size());
+                    for (std::vector<ConversationActor>::const_iterator itr = conversationActor->begin(); itr != conversationActor->end(); ++itr)
                     {
                         arrayMask.SetBit(count++);
-                        buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetLowPart()));
+                        buffer << uint32(itr->actorId);
                         arrayMask.SetBit(count++);
-                        buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetLowPart()));
+                        buffer << uint32(itr->creatureId);
                         arrayMask.SetBit(count++);
-                        buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetHighPart()));
+                        buffer << uint32(itr->displayId);
                         arrayMask.SetBit(count++);
-                        buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetHighPart()));
+                        buffer << uint32(itr->unk1);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk2);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk3);
+                        duration = itr->duration;
                     }
-                    else
-                        return false;
+                }
+                if(isCreature)
+                {
+                    arrayMask.SetCount(conversationCreature->size());
+                    for (std::vector<ConversationCreature>::const_iterator itr = conversationCreature->begin(); itr != conversationCreature->end(); ++itr)
+                    {
+                        if (Creature* creature = caster->FindNearestCreature(itr->creatureId, caster->GetVisibilityRange()))
+                        {
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetLowPart()));
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetLowPart()));
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetHighPart()));
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetHighPart()));
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(itr->unk1);
+                            arrayMask.SetBit(count++);
+                            buffer << uint32(itr->unk2);
+                            duration = itr->duration;
+                        }
+                        else
+                            return false;
+                    }
                 }
             }
             if (index == CONVERSATION_DYNAMIC_FIELD_LINES)
@@ -144,6 +179,7 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
     SetObjectScale(1.0f);
     casterGUID = caster->GetGUID();
     SetDuration(30000);
+    SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
 
     setActive(true);
 

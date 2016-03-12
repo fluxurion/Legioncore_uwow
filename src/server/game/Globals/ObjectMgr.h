@@ -392,12 +392,28 @@ struct ScenarioData
 typedef std::unordered_map<uint32/*ScenarioID*/, ScenarioData> ScenarioDataMap;
 typedef std::unordered_map<uint32/*mapId*/, std::list<ScenarioData* > > ScenarioDataListMap;
 
+struct ConversationActor
+{
+    uint32 entry;
+    uint32 id;
+    uint32 actorId;
+    uint32 creatureId;
+    uint32 displayId;
+    uint32 unk1;
+    uint32 unk2;
+    uint32 unk3;
+    uint32 duration;
+};
+
 struct ConversationCreature
 {
     uint32 entry;
     uint32 id;
     uint32 creatureId;
     uint32 creatureGuid;
+    uint32 unk1;
+    uint32 unk2;
+    uint32 duration;
 };
 
 struct ConversationData
@@ -412,6 +428,7 @@ struct ConversationData
 
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationData> > ConversationDataMap;
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationCreature> > ConversationCreatureMap;
+typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationActor> > ConversationActorMap;
 
 typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
@@ -1550,6 +1567,7 @@ class ObjectMgr
 
         const std::vector<ConversationData>* GetConversationData(uint32 entry) const;
         const std::vector<ConversationCreature>* GetConversationCreature(uint32 entry) const;
+        const std::vector<ConversationActor>* GetConversationActor(uint32 entry) const;
 
         void AddCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid, uint32 instance);
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
@@ -1963,6 +1981,7 @@ class ObjectMgr
 
         ConversationDataMap _conversationDataList;
         ConversationCreatureMap _conversationCreatureList;
+        ConversationActorMap _conversationActorList;
 };
 
 #define sObjectMgr ObjectMgr::instance()

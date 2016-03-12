@@ -9672,6 +9672,7 @@ void ObjectMgr::LoadConversationData()
 {
     _conversationDataList.clear();
     _conversationCreatureList.clear();
+    _conversationActorList.clear();
 
     //                                                  0       1       2       3       4        5
     QueryResult result = WorldDatabase.Query("SELECT `entry`, `id`, `textId`, `unk1`, `unk2`, `flags` FROM `conversation_data` ORDER BY id");
@@ -9700,8 +9701,8 @@ void ObjectMgr::LoadConversationData()
     else
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 conversation data. DB table `conversation_data` is empty.");
 
-    //                                      0      1         2               3
-    result = WorldDatabase.Query("SELECT `entry`, `id`, `creatureId`, `creatureGuid` FROM `conversation_creature` ORDER BY id");
+    //                                      0      1         2               3          4       5         6
+    result = WorldDatabase.Query("SELECT `entry`, `id`, `creatureId`, `creatureGuid`, `unk1`, `unk2`, `duration` FROM `conversation_creature` ORDER BY id");
     if (result)
     {
         uint32 counter = 0;
@@ -9715,6 +9716,9 @@ void ObjectMgr::LoadConversationData()
             data.id = fields[i++].GetUInt32();
             data.creatureId = fields[i++].GetUInt32();
             data.creatureGuid = fields[i++].GetUInt32();
+            data.unk1 = fields[i++].GetUInt32();
+            data.unk2 = fields[i++].GetUInt32();
+            data.duration = fields[i++].GetUInt32();
             _conversationCreatureList[data.entry].push_back(data);
             ++counter;
         }
@@ -9724,6 +9728,37 @@ void ObjectMgr::LoadConversationData()
     }
     else
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 conversation creature data. DB table `conversation_creature` is empty.");
+
+
+    //                                      0      1        2           3             4         5       6       7         8
+    result = WorldDatabase.Query("SELECT `entry`, `id`, `actorId`, `creatureId`, `displayId`, `unk1`, `unk2`, `unk3`, `duration` FROM `conversation_actor` ORDER BY id");
+    if (result)
+    {
+        uint32 counter = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+
+            uint8 i = 0;
+            ConversationActor data;
+            data.entry = fields[i++].GetUInt32();
+            data.id = fields[i++].GetUInt32();
+            data.actorId = fields[i++].GetUInt32();
+            data.creatureId = fields[i++].GetUInt32();
+            data.displayId = fields[i++].GetUInt32();
+            data.unk1 = fields[i++].GetUInt32();
+            data.unk2 = fields[i++].GetUInt32();
+            data.unk3 = fields[i++].GetUInt32();
+            data.duration = fields[i++].GetUInt32();
+            _conversationActorList[data.entry].push_back(data);
+            ++counter;
+        }
+        while (result->NextRow());
+
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u conversation actor data.", counter);
+    }
+    else
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 conversation actor data. DB table `conversation_actor` is empty.");
 }
 
 const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId) const
@@ -9756,6 +9791,12 @@ const std::vector<ConversationCreature>* ObjectMgr::GetConversationCreature(uint
 {
     ConversationCreatureMap::const_iterator itr = _conversationCreatureList.find(entry);
     return itr != _conversationCreatureList.end() ? &(itr->second) : NULL;
+}
+
+const std::vector<ConversationActor>* ObjectMgr::GetConversationActor(uint32 entry) const
+{
+    ConversationActorMap::const_iterator itr = _conversationActorList.find(entry);
+    return itr != _conversationActorList.end() ? &(itr->second) : NULL;
 }
 
 AreaTriggerInfo const* ObjectMgr::GetAreaTriggerInfo(uint32 entry)
