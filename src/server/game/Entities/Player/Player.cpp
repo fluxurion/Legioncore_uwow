@@ -683,17 +683,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, 0);
 
     uint32 startLevel = sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL);
-    switch (getClass())
-    {
-        case CLASS_DEATH_KNIGHT:
-            startLevel = START_DK_LEVEL;
-            break;
-        case CLASS_DEMON_HUNTER:
-            startLevel = START_DH_LEVEL;
-            break;
-        default:
-            break;
-    }
+    if (getClass() == CLASS_DEATH_KNIGHT)
+        startLevel = START_DK_LEVEL;
 
     if (CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet))
         for (CharcterTemplateClass const& v : charTemplate->Classes)
@@ -703,7 +694,10 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
                 break;
             }
 
-    SetUInt32Value(UNIT_FIELD_LEVEL, std::min(startLevel, MAX_LEVEL));
+    if (getClass() == CLASS_DEMON_HUNTER)
+        startLevel = START_DH_LEVEL;
+
+    SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
     InitRunes();
     InitBrackets();
