@@ -236,6 +236,28 @@ void WorldPackets::PetPackets::PetRename::Read()
     _worldPacket.ReadString(nameLen, RenameData.NewName);
 }
 
+WorldPacket const* WorldPackets::PetPackets::PetNameInvalid::Write()
+{
+    _worldPacket << RenameData.PetGUID;
+    _worldPacket << RenameData.PetNumber;
+    _worldPacket << uint8(RenameData.NewName.length());
+    _worldPacket.WriteBit(RenameData.HasDeclinedNames);
+    _worldPacket.FlushBits();
+
+    if (RenameData.HasDeclinedNames)
+    {
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+            _worldPacket.WriteBits(RenameData.DeclinedNames.name[i].length(), 7);
+
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+            _worldPacket << RenameData.DeclinedNames.name[i];
+    }
+
+    _worldPacket.WriteString(RenameData.NewName);
+
+    return &_worldPacket;
+}
+
 void WorldPackets::PetPackets::PetSetAction::Read()
 {
     _worldPacket >> PetGUID;

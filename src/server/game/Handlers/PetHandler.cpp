@@ -891,33 +891,16 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid petGuid, uint32 s
     }
 }
 
-//! 6.0.3
 void WorldSession::SendPetNameInvalid(uint32 error, ObjectGuid const& guid, const std::string& name, DeclinedName *declinedName)
 {
-    WorldPacket data(SMSG_PET_NAME_INVALID, 4 + name.size() + 1 + 1);
-    data << uint8(error);    // unk
+    WorldPackets::PetPackets::PetNameInvalid petNameInvalid;
+    petNameInvalid.Result = error;
+    petNameInvalid.RenameData.NewName = name;
+    petNameInvalid.RenameData.PetGUID = guid;
+    for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+        petNameInvalid.RenameData.DeclinedNames.name[i] = declinedName->name[i];
 
-    data << guid;
-    data << uint32(0);
-    data.WriteBits(name.size(), 8);
-    data.WriteBit(declinedName ? 1 : 0);
-
-    if (declinedName)
-    {
-        for (uint32 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-            data.WriteBits(declinedName->name[i].size(), 7);
-
-        data.FlushBits();
-
-        for (uint32 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-            data.WriteString(declinedName->name[i]);
-    }
-
-    data.FlushBits();
-
-    data.WriteString(name);
-
-    SendPacket(&data);
+    SendPacket(petNameInvalid.Write());
 }
 
 void WorldSession::SendStablePet(ObjectGuid const& guid /*= ObjectGuid::Empty*/)

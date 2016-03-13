@@ -302,6 +302,17 @@ namespace WorldPackets
             PetRenameData RenameData;
         };
 
+        class PetNameInvalid final : public ServerPacket
+        {
+        public:
+            PetNameInvalid() : ServerPacket(SMSG_PET_NAME_INVALID, 18 + 4 + 2 + 1 + 5 * 2 + 2) { }
+
+            WorldPacket const* Write() override;
+
+            PetRenameData RenameData;
+            uint8 Result = 0;
+        };
+
         class PetSetAction final : public ClientPacket
         {
         public:
