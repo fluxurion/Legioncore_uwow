@@ -563,7 +563,7 @@ enum PlayerBytes2Offsets
     PLAYER_BYTES_2_OFFSET_FACIAL_STYLE      = 0,
     PLAYER_BYTES_2_OFFSET_PARTY_TYPE        = 1,
     PLAYER_BYTES_2_OFFSET_BANK_BAG_SLOTS    = 2,
-    //PLAYER_BYTES_2_OFFSET_REST_STATE        = 3 UNK
+    PLAYER_BYTES_2_OFFSET_BLIND_FOLD        = 3
 };
 
 enum PlayerRestStateOffsets
@@ -575,8 +575,11 @@ enum PlayerBytes3Offsets
 {
     PLAYER_BYTES_3_OFFSET_GENDER        = 0,
     PLAYER_BYTES_3_OFFSET_INEBRIATION   = 1,
-    PLAYER_BYTES_3_OFFSET_PVP_TITLE     = 2,
-    PLAYER_BYTES_3_OFFSET_ARENA_FACTION = 3
+    PLAYER_BYTES_3_TATOO                = 2,
+    PLAYER_BYTES_3_HORN                 = 3
+
+    //PLAYER_BYTES_3_OFFSET_PVP_TITLE     = 2,
+    //PLAYER_BYTES_3_OFFSET_ARENA_FACTION = 3
 };
 
 enum PlayerFieldBytesOffsets
@@ -1996,7 +1999,7 @@ class Player : public Unit, public GridObject<Player>
 
         static void SetUInt32ValueInArray(Tokenizer& data, uint16 index, uint32 value);
         static void SetFloatValueInArray(Tokenizer& data, uint16 index, float value);
-        static void Customize(ObjectGuid::LowType guid, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair);
+        static void Customize(ObjectGuid::LowType guid, WorldPackets::Character::CharCustomizeInfo* info);
         static void SavePositionInDB(uint32 mapid, float x, float y, float z, float o, uint32 zone, ObjectGuid guid);
 
         static void DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);

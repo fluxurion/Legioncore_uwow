@@ -78,18 +78,12 @@ namespace WorldPackets
             uint8 Blindfold = 0;
         };
 
-        struct CharRaceOrFactionChangeInfo
+        struct CharRaceOrFactionChangeInfo : public CharCustomizeInfo
         {
-            Optional<uint8> HairColorID;
             uint8 RaceID = RACE_NONE;
-            uint8 SexID = GENDER_NONE;
-            Optional<uint8> SkinID;
-            Optional<uint8> FacialHairStyleID;
             ObjectGuid Guid;
             bool FactionChange = false;
             std::string Name;
-            Optional<uint8> FaceID;
-            Optional<uint8> HairStyleID;
         };
 
         struct CharacterUndeleteInfo

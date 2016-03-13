@@ -1545,10 +1545,10 @@ void WorldSession::HandleCharCustomizeCallback(PreparedQueryResult result, World
     std::string oldName = fields[0].GetString();
     uint8 plrRace = fields[1].GetUInt8();
     uint8 plrClass = fields[2].GetUInt8();
-    uint8 plrGender = fields[3].GetUInt8();
+    uint8 playerBytes3 = fields[3].GetUInt32();
     uint16 atLoginFlags = fields[4].GetUInt16();
 
-    if (!Player::ValidateAppearance(plrRace, plrClass, plrGender, customizeInfo->HairStyleID, customizeInfo->HairColorID, customizeInfo->FaceID, customizeInfo->FacialHairStyleID, customizeInfo->SkinID, true))
+    if (!Player::ValidateAppearance(plrRace, plrClass, customizeInfo->SexID, customizeInfo->HairStyleID, customizeInfo->HairColorID, customizeInfo->FaceID, customizeInfo->FacialHairStyleID, customizeInfo->SkinID, true))
     {
         SendCharCustomize(CHAR_CREATE_ERROR, customizeInfo);
         return;
@@ -1589,7 +1589,7 @@ void WorldSession::HandleCharCustomizeCallback(PreparedQueryResult result, World
         }
 
     ObjectGuid::LowType lowGuid = customizeInfo->CharGUID.GetCounter();
-    Player::Customize(lowGuid, customizeInfo->SexID, customizeInfo->SkinID, customizeInfo->FaceID, customizeInfo->HairStyleID, customizeInfo->HairColorID, customizeInfo->FacialHairStyleID);
+    Player::Customize(lowGuid, customizeInfo);
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHARACTER_NAME);
     stmt->setUInt64(0, lowGuid);
@@ -1626,11 +1626,11 @@ void WorldSession::SendCharFactionChange(ResponseCodes result, WorldPackets::Cha
         packet.Display = boost::in_place();
         packet.Display->Name = factionChangeInfo->Name;
         packet.Display->SexID = factionChangeInfo->SexID;
-        packet.Display->SkinID = *factionChangeInfo->SkinID;
-        packet.Display->HairColorID = *factionChangeInfo->HairColorID;
-        packet.Display->HairStyleID = *factionChangeInfo->HairStyleID;
-        packet.Display->FacialHairStyleID = *factionChangeInfo->FacialHairStyleID;
-        packet.Display->FaceID = *factionChangeInfo->FaceID;
+        packet.Display->SkinID = factionChangeInfo->SkinID;
+        packet.Display->HairColorID = factionChangeInfo->HairColorID;
+        packet.Display->HairStyleID = factionChangeInfo->HairStyleID;
+        packet.Display->FacialHairStyleID = factionChangeInfo->FacialHairStyleID;
+        packet.Display->FaceID = factionChangeInfo->FaceID;
         packet.Display->RaceID = factionChangeInfo->RaceID;
     }
 
@@ -1738,7 +1738,7 @@ void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRa
         }
 
     CharacterDatabase.EscapeString(info->Name);
-    Player::Customize(lowGuid, info->SexID, *info->SkinID, *info->FaceID, *info->FacialHairStyleID, *info->HairColorID, *info->HairStyleID);
+    Player::Customize(lowGuid, info);
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_FACTION_OR_RACE);

@@ -658,9 +658,15 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_STYLE_ID, createInfo->HairStyle);
     SetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_COLOR_ID, createInfo->HairColor);
     SetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_FACIAL_STYLE, createInfo->FacialHairStyle);
-    SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, (GetSession()->IsARecruiter() || GetSession()->GetRecruiterId() != 0) ? REST_STATE_RAF_LINKED : REST_STATE_NOT_RAF_LINKED);
+    SetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_BLIND_FOLD, createInfo->Blindfold);
     SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER, createInfo->Sex);
-    SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_ARENA_FACTION, 0);           // BattlefieldArenaFaction (0 or 1)
+    SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_TATOO, createInfo->Tattoo);
+    SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_HORN, createInfo->Horn);
+    SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, (GetSession()->IsARecruiter() || GetSession()->GetRecruiterId() != 0) ? REST_STATE_RAF_LINKED : REST_STATE_NOT_RAF_LINKED);
+
+    //! 7.0.1
+    //! ToDo: find how is now.
+    //SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_ARENA_FACTION, 0);           // BattlefieldArenaFaction (0 or 1)
                 
     SetGuidValue(OBJECT_FIELD_DATA, ObjectGuid::Empty);
     SetUInt32Value(PLAYER_FIELD_GUILD_RANK_ID, 0);
@@ -17572,18 +17578,16 @@ float Player::GetFloatValueFromArray(Tokenizer const& data, uint16 index)
 
 bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 {
-    ////                                                     0     1        2     3     4        5      6    7      8     9           10              11
-    //QueryResult* result = CharacterDatabase.PQuery("SELECT guid, account, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags, "
-     // 12          13          14          15   16           17        18        19         20         21          22           23                 24
-    //"position_x, position_y, position_z, map, orientation, taximask, cinematic, totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost, "
-    // 25                 26          27       28       29       30       31         32           33               34     35      36         37              38               39
-    //"resettalents_time, talentTree, trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, online, death_expire_time, taxi_path, dungeonDifficulty, "
-    //    40           41          42              43           44           45
-    //"totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, "
-    // 46      47      48      49      50      51      52           53         54          55               56             57              58           59
-    //"health, power1, power2, power3, power4, power5, power6, instance_id, speccount, activespec, specialization1, specialization2, exploredZones, equipmentCache, "
-    // 60           61                  62          63             64              65                              66           67                      68              69
-    //"knownTitles, actionBars, currentpetnumber, petslot, grantableLevels, resetspecialization_cost, resetspecialization_time, lfgBonusFaction, raidDifficulty, legacyRaidDifficulty  FROM characters WHERE guid = '%u'", guid);
+    enum fieldIDX
+    {
+        f_guid, f_account, f_name, f_race, f_class, f_level, f_xp, f_money, f_playerBytes, f_playerBytes2, f_playerBytes3, f_playerFlags,
+        f_position_x, f_position_y, f_position_z, f_map, f_orientation, f_taximask, f_cinematic, f_totaltime, f_leveltime, f_rest_bonus, f_logout_time, f_is_logout_resting, f_resettalents_cost,
+        f_resettalents_time, f_talentTree, f_trans_x, f_trans_y, f_trans_z, f_trans_o, f_transguid, f_extra_flags, f_stable_slots, f_at_login, f_zone, f_online, f_death_expire_time, f_taxi_path, f_dungeonDifficulty,
+        f_totalKills, f_todayKills, f_yesterdayKills, f_chosenTitle, f_watchedFaction,
+        f_health, f_power1, f_power2, f_power3, f_power4, f_power5, f_power6, f_instance_id, f_speccount, f_activespec, f_specialization1, f_specialization2, f_exploredZones, f_equipmentCache, f_knownTitles, f_actionBars,
+        f_currentpetnumber, f_petslot, f_grantableLevels, f_resetspecialization_cost, f_resetspecialization_time, f_lfgBonusFaction, f_raidDifficulty, f_legacyRaidDifficulty
+    };
+
     PreparedQueryResult result = holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
     if (!result)
@@ -17594,7 +17598,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     Field* fields = result->Fetch();
 
-    uint32 dbAccountId = fields[1].GetUInt32();
+    uint32 dbAccountId = fields[f_account].GetUInt32();
 
     // check if the character's account in the db and the logged in account match.
     // player should be able to load/delete character only with correct account!
@@ -17612,7 +17616,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     Object::_Create(guid);
 
-    m_name = fields[2].GetString();
+    m_name = fields[f_name].GetString();
 
     // check name limitations
     if (ObjectMgr::CheckPlayerName(m_name, GetSession()->GetSessionDbcLocale()) != CHAR_NAME_SUCCESS ||
@@ -17631,7 +17635,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // overwrite possible wrong/corrupted guid
     SetGuidValue(OBJECT_FIELD_GUID, guid);
 
-    uint8 Gender = fields[5].GetUInt8();
+    uint8 Gender = fields[f_playerBytes3].GetUInt32() & 0xFF;
     if (!IsValidGender(Gender))
     {
         sLog->outError(LOG_FILTER_PLAYER, "Player (GUID: %u) has wrong gender (%hu), can't be loaded.", guid, Gender);
@@ -17639,16 +17643,16 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     }
 
     // overwrite some data fields
-    uint8 classID = fields[4].GetUInt8();
-    SetRace(fields[3].GetUInt8());
+    uint8 classID = fields[f_class].GetUInt8();
+    SetRace(fields[f_race].GetUInt8());
     SetClass(classID);
     SetGender(Gender);
 
-    SetUInt32Value(UNIT_FIELD_LEVEL, fields[6].GetUInt8());
-    SetUInt32Value(PLAYER_FIELD_XP, fields[7].GetUInt32());
+    SetUInt32Value(UNIT_FIELD_LEVEL, fields[f_level].GetUInt8());
+    SetUInt32Value(PLAYER_FIELD_XP, fields[f_xp].GetUInt32());
 
-    _LoadIntoDataField(fields[58].GetCString(), PLAYER_FIELD_EXPLORED_ZONES, PLAYER_EXPLORED_ZONES_SIZE);
-    _LoadIntoDataField(fields[60].GetCString(), PLAYER_FIELD_KNOWN_TITLES, KNOWN_TITLES_SIZE*2);
+    _LoadIntoDataField(fields[f_exploredZones].GetCString(), PLAYER_FIELD_EXPLORED_ZONES, PLAYER_EXPLORED_ZONES_SIZE);
+    _LoadIntoDataField(fields[f_knownTitles].GetCString(), PLAYER_FIELD_KNOWN_TITLES, KNOWN_TITLES_SIZE * 2);
 
     SetFloatValue(UNIT_FIELD_BOUNDING_RADIUS, DEFAULT_WORLD_OBJECT_SIZE);
     SetFloatValue(UNIT_FIELD_COMBAT_REACH, 1.5f);
@@ -17660,24 +17664,24 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
                                 holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADACCOUNTACHIEVEMENTS),
                                 holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADACCOUNTCRITERIAPROGRESS));
 
-    uint64 money = fields[8].GetUInt64();
+    uint64 money = fields[f_money].GetUInt64();
     if (money > MAX_MONEY_AMOUNT)
         money = MAX_MONEY_AMOUNT;
     SetMoney(money);
 
-    SetUInt32Value(PLAYER_BYTES, fields[9].GetUInt32());
-    SetUInt32Value(PLAYER_BYTES_2, fields[10].GetUInt32());
-    SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER, fields[5].GetUInt8());
-    SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_INEBRIATION, fields[45].GetUInt8());
-    SetUInt32Value(PLAYER_FIELD_PLAYER_FLAGS, fields[11].GetUInt32());
-    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[44].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES, fields[f_playerBytes].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES_2, fields[f_playerBytes2].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES_3, fields[f_playerBytes3].GetUInt32());
+
+    SetUInt32Value(PLAYER_FIELD_PLAYER_FLAGS, fields[f_playerFlags].GetUInt32());
+    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[f_watchedFaction].GetUInt32());
 
     // set which actionbars the client has active - DO NOT REMOVE EVER AGAIN (can be changed though, if it does change fieldwise)
 
-    SetByteValue(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTES_OFFSET_ACTION_BAR_TOGGLES, fields[61].GetUInt8());
+    SetByteValue(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTES_OFFSET_ACTION_BAR_TOGGLES, fields[f_actionBars].GetUInt8());
 
-    m_currentPetNumber = fields[62].GetInt32();
-    LoadPetSlot(fields[63].GetCString());
+    m_currentPetNumber = fields[f_currentpetnumber].GetInt32();
+    LoadPetSlot(fields[f_petslot].GetCString());
 
     InitDisplayIds();
 
@@ -17705,16 +17709,16 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     InitPrimaryProfessions();                               // to max set before any spell loaded
 
     // init saved position, and fix it later if problematic
-    ObjectGuid::LowType transGUID = uint32(fields[31].GetUInt64());
+    ObjectGuid::LowType transGUID = uint32(fields[f_transguid].GetUInt64());
 
-    Relocate(fields[12].GetFloat(), fields[13].GetFloat(), fields[14].GetFloat(), fields[16].GetFloat());
+    Relocate(fields[f_position_x].GetFloat(), fields[f_position_y].GetFloat(), fields[f_position_z].GetFloat(), fields[f_orientation].GetFloat());
 
-    uint32 mapId = fields[15].GetUInt16();
-    uint32 instanceId = fields[53].GetUInt32();
+    uint32 mapId = fields[f_map].GetUInt16();
+    uint32 instanceId = fields[f_instance_id].GetUInt32();
 
-    SetDungeonDifficultyID(CheckLoadedDungeonDifficultyID(Difficulty(fields[39].GetUInt8())));
-    SetRaidDifficultyID(CheckLoadedRaidDifficultyID(Difficulty(fields[68].GetUInt8())));
-    SetLegacyRaidDifficultyID(CheckLoadedLegacyRaidDifficultyID(Difficulty(fields[69].GetUInt8())));
+    SetDungeonDifficultyID(CheckLoadedDungeonDifficultyID(Difficulty(fields[f_dungeonDifficulty].GetUInt8())));
+    SetRaidDifficultyID(CheckLoadedRaidDifficultyID(Difficulty(fields[f_raidDifficulty].GetUInt8())));
+    SetLegacyRaidDifficultyID(CheckLoadedLegacyRaidDifficultyID(Difficulty(fields[f_legacyRaidDifficulty].GetUInt8())));
 
     std::unique_ptr<Garrison> garrison = Trinity::make_unique<Garrison>(this);
     if (garrison->LoadFromDB(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_GARRISON),
@@ -17725,7 +17729,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_GARRISON_MISSIONS)))
         _garrison = std::move(garrison);
 
-    std::string taxi_nodes = fields[38].GetString();
+    std::string taxi_nodes = fields[f_taxi_path].GetString();
 
 #define RelocateToHomebind(){ mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); }
 
@@ -17736,9 +17740,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     InitBrackets();
 
-    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[40].GetUInt32());
-    SetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 0, fields[41].GetUInt16());
-    SetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 1, fields[42].GetUInt16());
+    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[f_totalKills].GetUInt32());
+    SetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 0, fields[f_todayKills].GetUInt16());
+    SetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 1, fields[f_yesterdayKills].GetUInt16());
 
     _LoadBoundInstances(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
     _LoadInstanceTimeRestrictions(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADINSTANCELOCKTIMES));
@@ -17747,7 +17751,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     GetSession()->SetPlayer(this);
     MapEntry const* mapEntry = sMapStore.LookupEntry(mapId);
 
-    m_atLoginFlags = fields[34].GetUInt16();
+    m_atLoginFlags = fields[f_at_login].GetUInt16();
     bool mustResurrectFromUnlock = false;
 
     if(m_atLoginFlags & AT_LOGIN_UNLOCK)
@@ -17835,7 +17839,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     else if (transGUID)
     {
         m_movementInfo.transport.guid = ObjectGuid::Create<HighGuid::Transport>(transGUID);
-        m_movementInfo.transport.pos.Relocate(fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), fields[30].GetFloat());
+        m_movementInfo.transport.pos.Relocate(fields[f_trans_x].GetFloat(), fields[f_trans_y].GetFloat(), fields[f_trans_z].GetFloat(), fields[f_trans_o].GetFloat());
 
         if (!Trinity::IsValidMapCoord(
             GetPositionX()+m_movementInfo.transport.pos.m_positionX, GetPositionY()+m_movementInfo.transport.pos.m_positionY,
@@ -18003,7 +18007,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SaveRecallPosition();
 
     time_t now = time(NULL);
-    time_t logoutTime = time_t(fields[22].GetUInt32());
+    time_t logoutTime = time_t(fields[f_logout_time].GetUInt32());
 
     // since last logout (in seconds)
     uint32 time_diff = uint32(now - logoutTime); //uint64 is excessive for a time_diff in seconds.. uint32 allows for 136~ year difference.
@@ -18016,21 +18020,21 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     SetDrunkValue(newDrunkValue);
 
-    m_cinematic = fields[18].GetUInt8();
-    m_Played_time[PLAYED_TIME_TOTAL]= fields[19].GetUInt32();
-    m_Played_time[PLAYED_TIME_LEVEL]= fields[20].GetUInt32();
+    m_cinematic = fields[f_cinematic].GetUInt8();
+    m_Played_time[PLAYED_TIME_TOTAL] = fields[f_totaltime].GetUInt32();
+    m_Played_time[PLAYED_TIME_LEVEL] = fields[f_leveltime].GetUInt32();
 
-    SetTalentResetCost(fields[24].GetUInt32());
-    SetTalentResetTime(time_t(fields[25].GetUInt32()));
+    SetTalentResetCost(fields[f_resettalents_cost].GetUInt32());
+    SetTalentResetTime(time_t(fields[f_resettalents_time].GetUInt32()));
 
-    SetSpecializationResetCost(fields[65].GetUInt32());
-    SetSpecializationResetTime(time_t(fields[66].GetUInt32()));
+    SetSpecializationResetCost(fields[f_resetspecialization_cost].GetUInt32());
+    SetSpecializationResetTime(time_t(fields[f_resetspecialization_time].GetUInt32()));
 
-    m_taxi.LoadTaxiMask(fields[17].GetCString());            // must be before InitTaxiNodesForLevel
+    m_taxi.LoadTaxiMask(fields[f_taximask].GetCString());            // must be before InitTaxiNodesForLevel
 
-    uint32 extraflags = fields[32].GetUInt16();
+    uint32 extraflags = fields[f_extra_flags].GetUInt16();
 
-    m_stableSlots = fields[33].GetUInt8();
+    m_stableSlots = fields[f_stable_slots].GetUInt8();
     if (m_stableSlots > MAX_PET_STABLES)
     {
         sLog->outError(LOG_FILTER_PLAYER, "Player can have not more %u stable slots, but have in DB %u", MAX_PET_STABLES, uint32(m_stableSlots));
@@ -18042,7 +18046,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     m_lastHonorUpdateTime = logoutTime;
     UpdateHonorFields();
 
-    m_deathExpireTime = time_t(fields[37].GetUInt32());
+    m_deathExpireTime = time_t(fields[f_death_expire_time].GetUInt32());
     if (m_deathExpireTime > now+MAX_DEATH_COUNT*DEATH_EXPIRE_STEP)
         m_deathExpireTime = now+MAX_DEATH_COUNT*DEATH_EXPIRE_STEP-1;
 
@@ -18078,7 +18082,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     InitRunes();
 
     // rest bonus can only be calculated after InitStatsForLevel()
-    m_rest_bonus = fields[21].GetFloat();
+    m_rest_bonus = fields[f_rest_bonus].GetFloat();
 
     if (time_diff > 0)
     {
@@ -18086,7 +18090,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         float bubble0 = 0.031f;
         //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
         float bubble1 = 0.125f;
-        float bubble = fields[23].GetUInt8() > 0
+        float bubble = fields[f_is_logout_resting].GetUInt8() > 0
             ? bubble1*sWorld->getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
             : bubble0*sWorld->getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
         bubble *= GetTotalAuraMultiplier(SPELL_AURA_MOD_REST_GAINED);
@@ -18109,16 +18113,16 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     //mails are loaded only when needed ;-) - when player in game click on mailbox.
     //_LoadMail();
 
-    uint8 specCount = fields[54].GetUInt8();
+    uint8 specCount = fields[f_speccount].GetUInt8();
     SetSpecsCount(specCount == 0 ? 1 : specCount);
-    SetActiveSpec(specCount > 1 ? fields[55].GetUInt8() : 0);
+    SetActiveSpec(specCount > 1 ? fields[f_activespec].GetUInt8() : 0);
 
-    uint32 specID = fields[56].GetUInt32();
+    uint32 specID = fields[f_specialization1].GetUInt32();
     if (!specID)
         if (ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(classID))
             specID = cEntry->DefaultSpec;
     SetSpecializationId(0, specID);
-    SetSpecializationId(1, fields[57].GetUInt32());
+    SetSpecializationId(1, fields[f_specialization2].GetUInt32());
             
     // sanity check
     if (GetSpecsCount() > MAX_TALENT_SPECS || GetActiveSpec() > MAX_TALENT_SPEC || GetSpecsCount() < MIN_TALENT_SPECS)
@@ -18173,7 +18177,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     // check PLAYER_FIELD_PLAYER_TITLE compatibility with PLAYER_FIELD_KNOWN_TITLES
     // note: PLAYER_FIELD_KNOWN_TITLES updated at quest status loaded
-    uint32 curTitle = fields[43].GetUInt32();
+    uint32 curTitle = fields[f_chosenTitle].GetUInt32();
     if (curTitle && !HasTitle(curTitle))
         curTitle = 0;
 
@@ -18199,14 +18203,14 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     UpdateAllStats();
 
     // restore remembered power/health values (but not more max values)
-    uint32 savedHealth = fields[46].GetUInt32();
+    uint32 savedHealth = fields[f_health].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
 
     if (GetPowerIndex(POWER_MANA) != MAX_POWERS)
-        SetPower(POWER_MANA, std::min(fields[47].GetUInt32(), GetUInt32Value(UNIT_FIELD_MAX_POWER + 0)));
+        SetPower(POWER_MANA, std::min(fields[f_power1].GetUInt32(), GetUInt32Value(UNIT_FIELD_MAX_POWER + 0)));
 
     // must be after loading spells and talents
-    Tokenizer talentTrees(fields[26].GetString(), ' ', MAX_TALENT_SPECS);
+    Tokenizer talentTrees(fields[f_talentTree].GetString(), ' ', MAX_TALENT_SPECS);
 
     sLog->outDebug(LOG_FILTER_PLAYER_LOADING, "The value of player %s after load item and aura is: ", m_name.c_str());
     outDebugValues();
@@ -18260,7 +18264,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     }
 
     // RaF stuff.
-    m_grantableLevels = fields[64].GetUInt8();
+    m_grantableLevels = fields[f_grantableLevels].GetUInt8();
 
     if (GetSession()->IsARecruiter() || (GetSession()->GetRecruiterId() != 0))
         SetFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
@@ -18276,7 +18280,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     _LoadCUFProfiles(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_CUF_PROFILES));
 
-    SetLfgBonusFaction(fields[67].GetUInt32());
+    SetLfgBonusFaction(fields[f_lfgBonusFaction].GetUInt32());
 
     if(PreparedQueryResult PersonnalRateResult = holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_PERSONAL_RATE))
         m_PersonnalXpRate = (PersonnalRateResult->Fetch())[0].GetFloat();
@@ -20093,12 +20097,12 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setString(index++, GetName());
         stmt->setUInt8(index++, getRace());
         stmt->setUInt8(index++, getClass());
-        stmt->setUInt8(index++, getGender());
         stmt->setUInt8(index++, getLevel());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_XP));
         stmt->setUInt64(index++, GetMoney());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES_2));
+        stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES_3));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_PLAYER_FLAGS));
         stmt->setUInt16(index++, (uint16)GetMapId());
         stmt->setUInt32(index++, (uint32)GetInstanceId());
@@ -20143,7 +20147,6 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setUInt16(index++, GetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 1));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX));
-        stmt->setUInt8(index++, GetDrunkValue());
         stmt->setUInt32(index++, GetHealth());
 
         uint32 storedPowers = 0;
@@ -20215,12 +20218,12 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setString(index++, GetName());
         stmt->setUInt8(index++, getRace());
         stmt->setUInt8(index++, getClass());
-        stmt->setUInt8(index++, getGender());
         stmt->setUInt8(index++, getLevel());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_XP));
         stmt->setUInt64(index++, GetMoney());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES_2));
+        stmt->setUInt32(index++, GetUInt32Value(PLAYER_BYTES_3));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_PLAYER_FLAGS));
 
         if (!IsBeingTeleported())
@@ -20281,7 +20284,6 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setUInt16(index++, GetUInt16Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 1));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_PLAYER_TITLE));
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX));
-        stmt->setUInt8(index++, GetDrunkValue());
         stmt->setUInt32(index++, GetHealth());
 
         uint32 storedPowers = 0;
@@ -21457,8 +21459,9 @@ void Player::SetUInt32ValueInArray(Tokenizer& tokens, uint16 index, uint32 value
     tokens[index] = buf;
 }
 
-void Player::Customize(ObjectGuid::LowType guid, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair)
+void Player::Customize(ObjectGuid::LowType guid, WorldPackets::Character::CharCustomizeInfo* info)
 {
+    //uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_PLAYERBYTES2);
     stmt->setUInt64(0, guid);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
@@ -21470,13 +21473,12 @@ void Player::Customize(ObjectGuid::LowType guid, uint8 gender, uint8 skin, uint8
 
     uint32 playerBytes2 = fields[0].GetUInt32();
     playerBytes2 &= ~0xFF;
-    playerBytes2 |= facialHair;
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GENDER_PLAYERBYTES);
 
-    stmt->setUInt8(0, gender);
-    stmt->setUInt32(1, skin | (face << 8) | (hairStyle << 16) | (hairColor << 24));
-    stmt->setUInt32(2, playerBytes2);
+    stmt->setUInt32(0, info->SkinID | (info->FaceID << 8) | (info->HairStyleID << 16) | (info->HairColorID << 24));
+    stmt->setUInt32(1, playerBytes2 | (info->FacialHairStyleID) |(info->Blindfold << 24));
+    stmt->setUInt32(2, info->SexID | (info->Tattoo << 16) | (info->Horn << 24));
     stmt->setUInt64(3, guid);
 
     CharacterDatabase.Execute(stmt);

@@ -146,7 +146,9 @@ void Arena::AddPlayer(Player* player)
         player->ResetAllPowers(true);
     }
 
-    player->SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_ARENA_FACTION, team == HORDE ? 0 : 1);
+    //! 7.0.1
+    //! ToDo: Find how it work now.
+    //player->SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_ARENA_FACTION, team == HORDE ? 0 : 1);
 
     SendOpponentSpecialization(team);
     SendOpponentSpecialization(GetOtherTeam(team));

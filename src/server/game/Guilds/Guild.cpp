@@ -2703,7 +2703,7 @@ bool Guild::AddMember(ObjectGuid guid, uint8 rankId)
                 fields[3].GetUInt16(),
                 fields[4].GetUInt32(),
                 fields[5].GetUInt32(),
-                fields[6].GetUInt8(),
+                fields[6].GetUInt32() & 0xFF,
                 0, 0, 0, 0, "", 0, 0, 0, "");     // ach points and professions set on first login
 
             ok = member->CheckStats();
