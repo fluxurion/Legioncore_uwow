@@ -413,7 +413,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     for (WorldPackets::Spells::TargetLocation const& targetLoc : spellCastData.TargetPoints)
         data << targetLoc;
 
-    data.WriteBits(spellCastData.CastFlagsEx, 16);
+    data.WriteBits(spellCastData.CastFlagsEx, 22);
     data.WriteBit(spellCastData.RemainingRunes.is_initialized());
     data.FlushBits();
 
@@ -616,8 +616,15 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellHistoryEntry
         data << int32(historyEntry.RecoveryTime);
         data << int32(0);
     }
+    data.WriteBit(historyEntry.unused622_1.is_initialized());
+    data.WriteBit(historyEntry.unused622_2.is_initialized());
     data.WriteBit(historyEntry.OnHold);
     data.FlushBits();
+
+    if (historyEntry.unused622_1)
+        data << *historyEntry.unused622_1;
+    if (historyEntry.unused622_2)
+        data << *historyEntry.unused622_2;
 
     return data;
 }

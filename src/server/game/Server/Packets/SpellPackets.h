@@ -348,7 +348,7 @@ namespace WorldPackets
             uint32 CastFlags = 0;
             uint32 CastFlagsEx = 0;
             uint32 CastTime = 0;
-            GuidVector HitTargets;
+            Array<ObjectGuid, 255> HitTargets;
             GuidVector MissTargets;
             std::vector<SpellMissStatus> MissStatus;
             SpellTargetData Target;
@@ -554,6 +554,8 @@ namespace WorldPackets
 
         struct SpellHistoryEntry
         {
+            Optional<uint32> unused622_1;
+            Optional<uint32> unused622_2;
             uint32 SpellID = 0;
             uint32 ItemID = 0;
             uint32 Category = 0;

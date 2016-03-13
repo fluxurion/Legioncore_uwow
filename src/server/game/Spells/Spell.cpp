@@ -2383,6 +2383,43 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
     }
 }
 
+void Spell::UpdateSpellCastDataTargets(WorldPackets::Spells::SpellCastData& data)
+{
+    for (TargetInfo& targetInfo : m_UniqueTargetInfo)
+    {
+        if (!targetInfo.effectMask)
+            targetInfo.missCondition = SPELL_MISS_IMMUNE2;
+
+        if (targetInfo.missCondition == SPELL_MISS_NONE)
+        {
+            data.HitTargets.push_back(targetInfo.targetGUID);
+            m_channelTargetEffectMask |= targetInfo.effectMask;
+        }
+        else
+        {
+            data.MissTargets.push_back(targetInfo.targetGUID);
+
+            WorldPackets::Spells::SpellMissStatus missStatus;
+            missStatus.Reason = targetInfo.missCondition;
+            if (targetInfo.missCondition == SPELL_MISS_REFLECT)
+                missStatus.ReflectStatus = targetInfo.reflectResult;
+            data.MissStatus.push_back(missStatus);
+        }
+    }
+
+    for (TargetInfo const& targetInfo : m_VisualHitTargetInfo)
+        data.HitTargets.push_back(targetInfo.targetGUID);
+
+    for (GOTargetInfo const& targetInfo : m_UniqueGOTargetInfo)
+        data.HitTargets.push_back(targetInfo.targetGUID);
+
+    for (ItemTargetInfo const& targetInfo : m_UniqueItemInfo)
+        data.HitTargets.push_back(targetInfo.item->GetGUID());
+
+    if (!m_spellInfo->IsChanneled())
+        m_channelTargetEffectMask = 0;
+}
+
 void Spell::prepareDataForTriggerSystem(AuraEffect const* /*triggeredByAura**/)
 {
     //==========================================================================================
@@ -4936,12 +4973,6 @@ void Spell::SendSpellStart()
         castData.HitTargets.push_back(ighit->targetGUID);
     */
 
-    if(m_caster->GetTypeId() == TYPEID_UNIT && m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON && m_spellInfo->EquippedItemSubClassMask & 0x0004000C)//BOW, GUN, CROSSBOW
-    {
-        castFlags |= CAST_FLAG_PROJECTILE;
-        //WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
-    }
-
     m_targets.Write(castData.Target);
 
     if (castFlags & CAST_FLAG_POWER_LEFT_SELF)
@@ -5067,10 +5098,6 @@ void Spell::SendSpellGo()
     if (!m_spellInfo->Cooldowns.StartRecoveryTime)
         castFlags |= CAST_FLAG_NO_GCD;
 
-    // Reset m_needAliveTargetMask for non channeled spell
-    if (!m_spellInfo->IsChanneled())
-        m_channelTargetEffectMask = 0;
-
     WorldPackets::Spells::SpellGo packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
@@ -5085,47 +5112,7 @@ void Spell::SendSpellGo()
     castData.CastFlagsEx = m_castFlagsEx;
     castData.CastTime = getMSTime();
 
-    uint32 hit = 0;
-
-    for (std::list<TargetInfo>::iterator ihit = m_VisualHitTargetInfo.begin(); ihit != m_VisualHitTargetInfo.end() && ++hit <= 255; ++ihit)
-        castData.HitTargets.push_back(ihit->targetGUID);
-
-    for (std::list<GOTargetInfo>::const_iterator ighit = m_UniqueGOTargetInfo.begin(); ighit != m_UniqueGOTargetInfo.end() && ++hit <= 255; ++ighit)
-        castData.HitTargets.push_back(ighit->targetGUID);
-
-    for (std::list<ItemTargetInfo>::const_iterator ighit = m_UniqueItemInfo.begin(); ighit != m_UniqueItemInfo.end() && ++hit <= 255; ++ighit)
-        castData.HitTargets.push_back(ighit->item->GetGUID());
-
-    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end() && ++hit <= 255; ++ihit)
-    {
-        if (ihit->effectMask == 0)                      // No effect apply - all immuned add state
-            ihit->missCondition = SPELL_MISS_IMMUNE2;
-
-        if (ihit->missCondition == SPELL_MISS_NONE)
-        {
-            m_channelTargetEffectMask |= ihit->effectMask;
-            castData.HitTargets.push_back(ihit->targetGUID);
-        }
-        else
-        {
-            castData.MissTargets.push_back(ihit->targetGUID);
-
-            WorldPackets::Spells::SpellMissStatus status;
-            status.Reason = ihit->missCondition;
-            status.ReflectStatus = ihit->reflectResult;
-            castData.MissStatus.push_back(status);
-        }
-    }
-
-    ///// @todo implement multiple targets
-    //if (m_targets.GetUnitTarget())
-    //    castData.HitTargets.push_back(m_targets.GetUnitTargetGUID());
-
-    if(m_caster->GetTypeId() == TYPEID_UNIT && m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON && m_spellInfo->EquippedItemSubClassMask & 0x0004000C/*BOW, GUN, CROSSBOW*/)
-    {
-        castFlags |= CAST_FLAG_PROJECTILE;
-        //WriteProjectile(castData.Ammo.InventoryType, castData.Ammo.DisplayID);
-    }
+    UpdateSpellCastDataTargets(castData);
 
     m_targets.Write(castData.Target);
 
@@ -5178,7 +5165,6 @@ void Spell::SendSpellGo()
     }
 
     m_caster->SendMessageToSet(packet.Write(), true);
-
 }
 
 void Spell::SendSpellExecuteLog()
@@ -9700,45 +9686,6 @@ void Spell::LoadAttrDummy()
             }
             if(check && itr->removeAura)
                 _caster->RemoveAurasDueToSpell(itr->removeAura);
-        }
-    }
-}
-
-// was WriteAmmoToPacket. Not used only for creature range casts.
-// ToDo: create new field on creature_equip_template and get data from it, as arrows are different.
-void Spell::WriteProjectile(int8 &ammoInventoryType, int32 &ammoDisplayID)
-{
-    ASSERT(m_caster->GetTypeId() != TYPEID_PLAYER);
-
-    for (uint8 i = 0; i < 3; ++i)
-    {
-        if (uint32 item_id = m_caster->GetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + i))
-       {
-            if (ItemEntry const* itemEntry = sItemStore.LookupEntry(item_id))
-            {
-                if (itemEntry->Class == ITEM_CLASS_WEAPON)
-                {
-                    switch (itemEntry->SubClass)
-                    {
-                        case ITEM_SUBCLASS_WEAPON_THROWN:
-                            ammoDisplayID = sDB2Manager.GetItemDisplayId(itemEntry->ID, 0);
-                            ammoInventoryType = itemEntry->InventoryType;
-                            break;
-                        case ITEM_SUBCLASS_WEAPON_BOW:
-                        case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-                            ammoDisplayID = 5996;       // is this need fixing?
-                            ammoInventoryType = INVTYPE_AMMO;
-                            break;
-                        case ITEM_SUBCLASS_WEAPON_GUN:
-                            ammoDisplayID = 5998;       // is this need fixing?
-                            ammoInventoryType = INVTYPE_AMMO;
-                            break;
-                    }
-
-                    if (ammoDisplayID)
-                        break;
-                }
-            }
         }
     }
 }

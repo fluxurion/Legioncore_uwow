@@ -39,6 +39,7 @@ namespace WorldPackets
     {
         struct SpellCastRequest;
         struct SpellTargetData;
+        struct SpellCastData;
     }
 }
 
@@ -698,7 +699,6 @@ class Spell
         void SetSpellValue(SpellValueMod mod, int32 value, bool lockValue = false);
         uint32 GetCountDispel() const { return m_count_dispeling; }
         bool GetInterupted() const { return m_interupted; }
-        void WriteProjectile(int8 &ammoInventoryType, int32 &ammoDisplayID);
 
         void SetSpellDynamicObject(ObjectGuid const& dynObj) { m_spellDynObjGuid = dynObj;}
         ObjectGuid const& GetSpellDynamicObject() const { return m_spellDynObjGuid; }
@@ -721,6 +721,8 @@ class Spell
         int32 GetDamage() const { return m_damage; }
 
         void AddDst(Position const* pos) { _positions.push_back(*pos); }
+
+        void UpdateSpellCastDataTargets(WorldPackets::Spells::SpellCastData& data);
     protected:
         bool HasGlobalCooldown();
         void TriggerGlobalCooldown();
