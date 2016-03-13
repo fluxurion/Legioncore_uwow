@@ -139,7 +139,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_BATTLE_PAY_CONFIRM_PURCHASE_RESPONSE,               STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::BattlePay::ConfirmPurchaseResponse, &WorldSession::HandleBattlePayConfirmPurchase);
     DEFINE_HANDLER(CMSG_BATTLE_PAY_DISTRIBUTION_ASSIGN_TO_TARGET,           STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::BattlePay::DistributionAssignToTarget, &WorldSession::HandleBattlePayDistributionAssign);
     DEFINE_HANDLER(CMSG_BATTLE_PAY_GET_PRODUCT_LIST,                        STATUS_AUTHED,    PROCESS_INPLACE,      WorldPackets::BattlePay::GetProductList, &WorldSession::HandleGetProductList);
-    DEFINE_HANDLER(CMSG_UPDATE_VAS_PURCHASE_STATES,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_BATTLE_PAY_GET_PURCHASE_LIST,                       STATUS_AUTHED,    PROCESS_INPLACE,      WorldPackets::BattlePay::GetPurchaseListQuery, &WorldSession::HandleGetPurchaseListQuery);
     DEFINE_HANDLER(CMSG_BATTLE_PAY_START_PURCHASE,                          STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::BattlePay::StartPurchase, &WorldSession::HandleBattlePayStartPurchase);
     DEFINE_HANDLER(CMSG_BATTLE_PET_DELETE_PET,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::BattlePetGuidRead, &WorldSession::HandleBattlePetDelete);
@@ -203,11 +202,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_CANCEL_MOUNT_AURA,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::CancelMountAura, &WorldSession::HandleCancelMountAura);
     DEFINE_HANDLER(CMSG_CANCEL_QUEUED_SPELL,                                STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_CANCEL_TEMP_ENCHANTMENT,                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::CancelTempEnchantment, &WorldSession::HandleCancelTempEnchantmentOpcode);
-    DEFINE_HANDLER(CMSG_CAST_SPELL,                                         STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Spells::CastSpell, &WorldSession::HandleCastSpellOpcode);
     DEFINE_HANDLER(CMSG_CANCEL_TRADE,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Trade::NullCmsg, &WorldSession::HandleCancelTrade);
-    DEFINE_HANDLER(CMSG_REQUEST_CHALLENGE_MODE_LEADERS,                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::RequestLeaders, &WorldSession::HandleRequestLeaders);
+    DEFINE_HANDLER(CMSG_CAST_SPELL,                                         STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Spells::CastSpell, &WorldSession::HandleCastSpellOpcode);
     DEFINE_HANDLER(CMSG_CHALLENGE_MODE_REQUEST_MAP_STATS,                   STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::Misc, &WorldSession::HandleChallengeModeRequestMapStats);
-    DEFINE_HANDLER(CMSG_SET_BAG_SLOT_FLAG,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_CHANGE_MONUMENT_APPEARANCE,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Garrison::TrophyData, &WorldSession::HandleTrophyData);
     DEFINE_HANDLER(CMSG_CHANGE_SUB_GROUP,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::ChangeSubGroup, &WorldSession::HandleChangeSubGroup);
     DEFINE_HANDLER(CMSG_CHAR_CUSTOMIZE,                                     STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Character::CharCustomize, &WorldSession::HandleCharCustomize);
@@ -340,7 +337,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_GARRISON_START_MISSION,                             STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Garrison::GarrisonStartMission, &WorldSession::HandleGarrisonStartMission);
     DEFINE_HANDLER(CMSG_GARRISON_SWAP_BUILDINGS,                            STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_GENERATE_RANDOM_CHARACTER_NAME,                     STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Character::GenerateRandomCharacterName, &WorldSession::HandleGenerateRandomCharacterName);
-    DEFINE_HANDLER(CMSG_REQUEST_CHALLENGE_MODE_REWARDS,                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::Misc, &WorldSession::HandleGetChallengeModeRewards);
     DEFINE_HANDLER(CMSG_GET_GARRISON_INFO,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Garrison::GetGarrisonInfo, &WorldSession::HandleGetGarrisonInfo);
     DEFINE_HANDLER(CMSG_GET_ITEM_PURCHASE_DATA,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Item::ItemRefundInfo, &WorldSession::HandleGetItemPurchaseData);
     DEFINE_HANDLER(CMSG_GET_MIRROR_IMAGE_DATA,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::GetMirrorImageData, &WorldSession::HandleGetMirrorImageData);
@@ -451,7 +447,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_LOOT_ROLL,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::LootRoll, &WorldSession::HandleLootRoll);
     DEFINE_HANDLER(CMSG_LOOT_UNIT,                                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Loot::LootUnit, &WorldSession::HandleLootUnit);
     DEFINE_HANDLER(CMSG_LOW_LEVEL_RAID1,                                    STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_SET_ALLOW_LOW_LEVEL_RAID,                           STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_MAIL_CREATE_TEXT_ITEM,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Mail::MailCreateTextItem, &WorldSession::HandleMailCreateTextItem);
     DEFINE_HANDLER(CMSG_MAIL_DELETE,                                        STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Mail::MailDelete, &WorldSession::HandleMailDelete);
     DEFINE_HANDLER(CMSG_MAIL_GET_LIST,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Mail::MailGetList, &WorldSession::HandleGetMailList);
@@ -515,6 +510,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_START_SWIM,                                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_START_TURN_LEFT,                               STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_START_TURN_RIGHT,                              STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
+    DEFINE_HANDLER(CMSG_MOVE_STATUS_UNK,                                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_STOP,                                          STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_STOP_ASCEND,                                   STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_STOP_PITCH,                                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
@@ -526,7 +522,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_TIME_SKIPPED,                                  STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Movement::MoveTimeSkipped, &WorldSession::HandleMoveTimeSkipped);
     DEFINE_HANDLER(CMSG_MOVE_TOGGLE_COLLISION_CHEAT,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_MOVE_WATER_WALK_ACK,                                STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
-    DEFINE_HANDLER(CMSG_MOVE_STATUS_UNK,                                    STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_NEUTRAL_PLAYER_SELECT_FACTION,                      STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Character::NeutralPlayerSelectFaction, &WorldSession::HandleNeutralPlayerSelectFaction);
     DEFINE_HANDLER(CMSG_NEXT_CINEMATIC_CAMERA,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::NextCinematicCamera, &WorldSession::HandleNextCinematicCamera);
     DEFINE_HANDLER(CMSG_OBJECT_UPDATE_FAILED,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::ObjectUpdateFailed, &WorldSession::HandleObjectUpdateFailed);
@@ -570,7 +565,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUERY_BATTLE_PET_NAME,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::Query, &WorldSession::HandleBattlePetNameQuery);
     DEFINE_HANDLER(CMSG_QUERY_CORPSE_LOCATION_FROM_CLIENT,                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Query::QueryCorpseLocationFromClient, &WorldSession::HandleQueryCorpseLocation);
     DEFINE_HANDLER(CMSG_QUERY_CORPSE_TRANSPORT,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryCorpseTransport, &WorldSession::HandleQueryCorpseTransport);
-    DEFINE_HANDLER(CMSG_QUERY_WORLD_COUNTDOWN_TIMER,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_QUERY_CREATURE,                                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Query::QueryCreature, &WorldSession::HandleCreatureQuery);
     DEFINE_HANDLER(CMSG_QUERY_GAME_OBJECT,                                  STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Query::QueryGameObject, &WorldSession::HandleQueryGameObject);
     DEFINE_HANDLER(CMSG_QUERY_GARRISON_CREATURE_NAME,                       STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -586,7 +580,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUERY_QUEST_INFO,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QueryQuestInfo, &WorldSession::HandleQueryQuestInfo);
     DEFINE_HANDLER(CMSG_QUERY_REALM_NAME,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryRealmName, &WorldSession::HandleQueryRealmName);
     DEFINE_HANDLER(CMSG_QUERY_SCENARIO_POI,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Scene::QueryScenarioPOI, &WorldSession::HandleQueryScenarioPOI);
-    DEFINE_HANDLER(CMSG_QUERY_TIME,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryTime, &WorldSession::HandleQueryTime);    
+    DEFINE_HANDLER(CMSG_QUERY_TIME,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryTime, &WorldSession::HandleQueryTime);
+    DEFINE_HANDLER(CMSG_QUERY_VOID_STORAGE,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::QueryVoidStorage, &WorldSession::HandleVoidStorageQuery);
+    DEFINE_HANDLER(CMSG_QUERY_WORLD_COUNTDOWN_TIMER,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_QUEST_CONFIRM_ACCEPT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QuestConfirmAccept, &WorldSession::HandleQuestConfirmAccept);
     DEFINE_HANDLER(CMSG_QUEST_GIVER_ACCEPT_QUEST,                           STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QuestGiverAcceptQuest, &WorldSession::HandleQuestGiverAcceptQuest);
     DEFINE_HANDLER(CMSG_QUEST_GIVER_CHOOSE_REWARD,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QuestGiverChooseReward, &WorldSession::HandleQuestGiverChooseReward);
@@ -613,9 +609,12 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_REPOP_REQUEST,                                      STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RepopRequest, &WorldSession::HandleRepopRequest);
     DEFINE_HANDLER(CMSG_REPORT_PVP_PLAYER_AFK,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Battleground::ReportPvPPlayerAFK, &WorldSession::HandleReportPvPPlayerAFK);
     DEFINE_HANDLER(CMSG_REQUEST_ACCOUNT_DATA,                               STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::ClientConfig::RequestAccountData, &WorldSession::HandleRequestAccountData);
+    DEFINE_HANDLER(CMSG_REQUEST_ARTIFACT_COMPLETION_HISTORY,                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RequestResearchHistory, &WorldSession::HandleRequestResearchHistory);
     DEFINE_HANDLER(CMSG_REQUEST_BATTLEFIELD_STATUS,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Battleground::NullCmsg, &WorldSession::HandleBattlefieldStatus);
     DEFINE_HANDLER(CMSG_REQUEST_CATEGORY_COOLDOWNS,                         STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Spells::RequestCategoryCooldowns, &WorldSession::HandleRequestCategoryCooldowns);
     DEFINE_HANDLER(CMSG_REQUEST_CEMETERY_LIST,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RequestCemeteryList, &WorldSession::HandleRequestCemeteryList);
+    DEFINE_HANDLER(CMSG_REQUEST_CHALLENGE_MODE_LEADERS,                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::RequestLeaders, &WorldSession::HandleRequestLeaders);
+    DEFINE_HANDLER(CMSG_REQUEST_CHALLENGE_MODE_REWARDS,                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::ChallengeMode::Misc, &WorldSession::HandleGetChallengeModeRewards);
     DEFINE_HANDLER(CMSG_REQUEST_CONQUEST_FORMULA_CONSTANTS,                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Battleground::NullCmsg, &WorldSession::HandlePersonalRatedInfoRequest);
     DEFINE_HANDLER(CMSG_REQUEST_FORCED_REACTIONS,                           STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Reputation::RequestForcedReactions, &WorldSession::HandleForcedReactions);
     DEFINE_HANDLER(CMSG_REQUEST_GUILD_PARTY_STATE,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Guild::RequestGuildPartyState, &WorldSession::HandleGuildRequestPartyState);
@@ -629,7 +628,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_REQUEST_PVP_REWARDS,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Battleground::RequestPVPRewards, &WorldSession::HandleRequestPvpReward);
     DEFINE_HANDLER(CMSG_REQUEST_RAID_INFO,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::RequestRaidInfo, &WorldSession::HandleRequestRaidInfo);
     DEFINE_HANDLER(CMSG_REQUEST_RATED_BATTLEFIELD_INFO,                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Battleground::NullCmsg, &WorldSession::HandleRequestRatedInfo);
-    DEFINE_HANDLER(CMSG_REQUEST_ARTIFACT_COMPLETION_HISTORY,                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::RequestResearchHistory, &WorldSession::HandleRequestResearchHistory);
     DEFINE_HANDLER(CMSG_REQUEST_STABLED_PETS,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::NPC::RequestStabledPets, &WorldSession::HandleRequestStabledPets);
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_EXIT,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehicleExit, &WorldSession::HandleRequestVehicleExit);
     DEFINE_HANDLER(CMSG_REQUEST_VEHICLE_NEXT_SEAT,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::RequestVehicleNextSeat, &WorldSession::HandleRequestVehicleNextSeat);
@@ -662,10 +660,13 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SET_ACTIVE_MOVER,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Movement::SetActiveMover, &WorldSession::HandleSetActiveMover);
     DEFINE_HANDLER(CMSG_SET_ACTIVE_VOICE_CHANNEL,                           STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::Chat::SetActiveVoiceChannel, &WorldSession::HandleSetActiveVoiceChannel);
     DEFINE_HANDLER(CMSG_SET_ADVANCED_COMBAT_LOGGING,                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::ClientConfig::SetAdvancedCombatLogging, &WorldSession::HandleSetAdvancedCombatLogging);
+    DEFINE_HANDLER(CMSG_SET_ALLOW_LOW_LEVEL_RAID,                           STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_ASSISTANT_LEADER,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::SetAssistantLeader, &WorldSession::HandleSetAssistantLeader);
     DEFINE_HANDLER(CMSG_SET_BACKPACK_AUTOSORT_DISABLED,                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_SET_BAG_SLOT_FLAG,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_BANK_AUTOSORT_DISABLED,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_BANK_BAG_SLOT_FLAG,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_SET_CEMETERY_PREFERRENCE,                           STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Battleground::SetCemetryPreferrence, &WorldSession::HandleSetCemetryPreferrence);
     DEFINE_HANDLER(CMSG_SET_CONTACT_NOTES,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Social::SetContactNotes, &WorldSession::HandleSetContactNotesOpcode);
     DEFINE_HANDLER(CMSG_SET_CURRENCY_FLAGS,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Character::SetCurrencyFlags, &WorldSession::HandleSetCurrencyFlags);
     DEFINE_HANDLER(CMSG_SET_DIFFICULTY_ID,                                  STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -682,7 +683,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_SET_PARTY_LEADER,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::SetPartyLeader, &WorldSession::HandleSetPartyLeader);
     DEFINE_HANDLER(CMSG_SET_PET_SLOT,                                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::PetPackets::SetPetSlot, &WorldSession::HanleSetPetSlot);
     DEFINE_HANDLER(CMSG_SET_PLAYER_DECLINED_NAMES,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Character::SetPlayerDeclinedNames, &WorldSession::HandleSetPlayerDeclinedNames);
-    DEFINE_HANDLER(CMSG_SET_CEMETERY_PREFERRENCE,                           STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Battleground::SetCemetryPreferrence, &WorldSession::HandleSetCemetryPreferrence);
     DEFINE_HANDLER(CMSG_SET_PVP,                                            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::SetPvP, &WorldSession::HandleSetPvP);
     DEFINE_HANDLER(CMSG_SET_RAID_DIFFICULTY,                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::SetRaidDifficulty, &WorldSession::HandleSetRaidDifficulty);
     DEFINE_HANDLER(CMSG_SET_ROLE,                                           STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Party::SetRole, &WorldSession::HandleSetRole);
@@ -754,8 +754,9 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_UNLOCK_VOID_STORAGE,                                STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::UnlockVoidStorage, &WorldSession::HandleVoidStorageUnlock);
     DEFINE_HANDLER(CMSG_UPDATE_ACCOUNT_DATA,                                STATUS_AUTHED,    PROCESS_THREADUNSAFE, WorldPackets::ClientConfig::UserClientUpdateAccountData, &WorldSession::HandleUpdateAccountData);
     DEFINE_HANDLER(CMSG_UPDATE_CLIENT_SETTINGS,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_UPDATE_RAID_TARGET,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::UpdateRaidTarget, &WorldSession::HandleUpdateRaidTarget);
     DEFINE_HANDLER(CMSG_UPDATE_MISSILE_TRAJECTORY,                          STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Spells::UpdateMissileTrajectory, &WorldSession::HandleUpdateMissileTrajectory);
+    DEFINE_HANDLER(CMSG_UPDATE_RAID_TARGET,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::UpdateRaidTarget, &WorldSession::HandleUpdateRaidTarget);
+    DEFINE_HANDLER(CMSG_UPDATE_VAS_PURCHASE_STATES,                         STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST,                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Token::UpdateListedAuctionableTokens, &WorldSession::HandleUpdateListedAuctionableTokens);
     DEFINE_HANDLER(CMSG_UPDATE_WOW_TOKEN_COUNT,                             STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_UPGRADE_GARRISON,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Garrison::UpgradeGarrison, &WorldSession::HandleUpgradeGarrison);
@@ -769,7 +770,6 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_VOICE_ADD_IGNORE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Social::VoiceAddIgnore, &WorldSession::HandleVoiceAddIgnore);
     DEFINE_HANDLER(CMSG_VOICE_DEL_IGNORE,                                   STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Social::VoiceDelIgnore, &WorldSession::HandleVoiceDelIgnore);
     DEFINE_HANDLER(CMSG_VOICE_SESSION_ENABLE,                               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::VoiceSessionEnable, &WorldSession::HandleVoiceSessionEnable);
-    DEFINE_HANDLER(CMSG_QUERY_VOID_STORAGE,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::QueryVoidStorage, &WorldSession::HandleVoidStorageQuery);
     DEFINE_HANDLER(CMSG_VOID_STORAGE_TRANSFER,                              STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::VoidStorageTransfer, &WorldSession::HandleVoidStorageTransfer);
     DEFINE_HANDLER(CMSG_WARDEN_DATA,                                        STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Misc::WardenData, &WorldSession::HandleWardenData);
     DEFINE_HANDLER(CMSG_WHO,                                                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Who::WhoRequestPkt, &WorldSession::HandleWhoOpcode);
@@ -784,7 +784,6 @@ void OpcodeTable::Initialize()
     static_assert(status == STATUS_NEVER || status == STATUS_UNHANDLED || (opcode == NULL_OPCODE && status != STATUS_UNHANDLED) , "Invalid status for server opcode"); \
     ValidateAndSetServerOpcode(opcode, #opcode, status)
 
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNK_AUTH_1,                              STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ABORT_NEW_WORLD,                         STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ACCOUNT_CRITERIA_UPDATE,                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ACCOUNT_DATA_TIMES,                      STATUS_NEVER);
@@ -866,6 +865,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEFIELD_STATUS_NONE,                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEFIELD_STATUS_QUEUED,               STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEFIELD_STATUS_WAIT_FOR_GROUPS,      STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEGROUND_CAPTURE_POINT_INFO,         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEGROUND_INFO_THROTTLED,             STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEGROUND_INIT,                       STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEGROUND_PLAYER_JOINED,              STATUS_NEVER);
@@ -1076,6 +1076,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_LIST_FOLLOWERS_CHEAT_RESULT,    STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_LIST_MISSIONS_CHEAT_RESULT,     STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_MISSION_BONUS_ROLL_RESULT,      STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_MISSION_LIST_UPDATE,            STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_NUM_FOLLOWER_ACTIVATIONS_REMAINING, STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_OPEN_ARCHITECT,                 STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_OPEN_MISSION_NPC,               STATUS_UNHANDLED);
@@ -1094,7 +1095,6 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_START_MISSION_RESULT,           STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_UNLEARN_BLUEPRINT_RESULT,       STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_UPGRADE_RESULT,                 STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GARRISON_MISSION_LIST_UPDATE,            STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GENERATE_RANDOM_CHARACTER_NAME_RESULT,   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GET_ACCOUNT_CHARACTER_LIST_RESULT,       STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GET_DISPLAYED_TROPHY_LIST_RESPONSE,      STATUS_UNHANDLED);
@@ -1131,33 +1131,33 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_CHALLENGE_COMPLETED,               STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_CHALLENGE_UPDATE,                  STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_CHANGE_NAME_RESULT,                STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_COMMAND_RESULT,                    STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_COMMAND_RESULT,                    STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_CRITERIA_DELETED,                  STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_CRITERIA_UPDATE,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_BANK_CONTENTS_CHANGED,       STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_BANK_MONEY_CHANGED,          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_DISBANDED,                   STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_LOG_QUERY_RESULTS,           STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_LOG_QUERY_RESULTS,           STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_MOTD,                        STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_NEW_LEADER,                  STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_PLAYER_JOINED,               STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_PLAYER_LEFT,                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_PRESENCE_CHANGE,             STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_RANK_CHANGED,                STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_RANKS_UPDATED,               STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_RANK_CHANGED,                STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_RANKS_UPDATED,               STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_TAB_ADDED,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_TAB_DELETED,                 STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_TAB_MODIFIED,                STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_TAB_MODIFIED,                STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_EVENT_TAB_TEXT_CHANGED,            STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_FLAGGED_FOR_RENAME,                STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_INVITE,                            STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_INVITE_DECLINED,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_INVITE_EXPIRED,                    STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_KNOWN_RECIPES,                     STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_KNOWN_RECIPES,                     STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBER_DAILY_RESET,                STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBER_RECIPES,                    STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBER_RECIPES,                    STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBER_UPDATE_NOTE,                STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBERS_WITH_RECIPE,               STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MEMBERS_WITH_RECIPE,               STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MOVE_STARTING,                     STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_MOVED,                             STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_NAME_CHANGED,                      STATUS_UNHANDLED);
@@ -1168,10 +1168,10 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_RANKS,                             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_REPUTATION_REACTION_CHANGED,       STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_RESET,                             STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_REWARD_LIST,                       STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_REWARD_LIST,                       STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_ROSTER,                            STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_ROSTER_UPDATE,                     STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_SEND_RANK_CHANGE,                  STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_GUILD_SEND_RANK_CHANGE,                  STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_HEALTH_UPDATE,                           STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_HIGHEST_THREAT_UPDATE,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_HOTFIX_NOTIFY,                           STATUS_NEVER);
@@ -1273,7 +1273,6 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MAIL_QUERY_NEXT_TIME_RESULT,             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MAP_OBJ_EVENTS,                          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MAP_OBJECTIVES_INIT,                     STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_BATTLEGROUND_CAPTURE_POINT_INFO,         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MASTER_LOOT_CANDIDATE_LIST,              STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MESSAGE_BOX,                             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_MINIMAP_PING,                            STATUS_UNHANDLED);
@@ -1511,7 +1510,6 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_REPORT_PVP_PLAYER_AFK_RESULT,            STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_REQUEST_CEMETERY_LIST_RESPONSE,          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_REQUEST_PVP_REWARDS_RESPONSE,            STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_WOW_TOKEN_MARKET_PRICE_RESPONSE,         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_RESEARCH_COMPLETE,                       STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_RESET_COMPRESSION_CONTEXT,               STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_RESET_FAILED_NOTIFY,                     STATUS_NEVER);
@@ -1591,6 +1589,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SOCKET_GEMS,                             STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SOR_START_EXPERIENCE_INCOMPLETE,         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPECIAL_MOUNT_ANIM,                      STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_CAST_GUIDS,                        STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_CHANNEL_START,                     STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_CHANNEL_UPDATE,                    STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_COOLDOWN,                          STATUS_NEVER);
@@ -1610,7 +1609,6 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_OR_DAMAGE_IMMUNE,                  STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_PERIODIC_AURA_LOG,                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_START,                             STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_CAST_GUIDS,                        STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPELL_UPDATE_CHAIN_TARGETS,              STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SPIRIT_HEALER_CONFIRM,                   STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_STAND_STATE_UPDATE,                      STATUS_NEVER);
@@ -1657,6 +1655,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UI_TIME,                                 STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNDELETE_CHARACTER_RESPONSE,             STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNDELETE_COOLDOWN_STATUS_RESPONSE,       STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNK_AUTH_1,                              STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNLEARNED_SPELLS,                        STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UNSET_MOVEFLAG2_0x1000,                  STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UPDATE_ACCOUNT_DATA,                     STATUS_NEVER);
@@ -1671,7 +1670,6 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UPDATE_TASK_PROGRESS,                    STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UPDATE_WEEKLY_SPELL_USAGE,               STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_UPDATE_WORLD_STATE,                      STATUS_NEVER);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_WOW_TOKEN_UPDATE_AUCTIONABLE_LIST_RESPONSE, STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_USE_EQUIPMENT_SET_RESULT,                STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_USERLIST_ADD,                            STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_USERLIST_REMOVE,                         STATUS_NEVER);
@@ -1697,6 +1695,8 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_WHO_IS,                                  STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_WORLD_SERVER_INFO,                       STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_WORLD_TEXT,                              STATUS_NEVER);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_WOW_TOKEN_MARKET_PRICE_RESPONSE,         STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_WOW_TOKEN_UPDATE_AUCTIONABLE_LIST_RESPONSE, STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_XP_GAIN_ABORTED,                         STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_XP_GAIN_ENABLED,                         STATUS_UNHANDLED);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_ZONE_UNDER_ATTACK,                       STATUS_NEVER);

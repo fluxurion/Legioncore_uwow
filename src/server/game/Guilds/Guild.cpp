@@ -133,15 +133,11 @@ void Guild::EventLogEntry::SaveToDB(SQLTransaction& trans) const
     CharacterDatabase.ExecuteOrAppend(trans, stmt);
 }
 
-// part structure of SMSG_GUILD_EVENT_LOG_QUERY_RESULTS
 void Guild::EventLogEntry::WritePacket(WorldPackets::Guild::GuildEventLogQueryResults& packet) const
 {
-    ObjectGuid playerGUID = ObjectGuid::Create<HighGuid::Player>(m_playerGuid1);
-    ObjectGuid otherGUID = ObjectGuid::Create<HighGuid::Player>(m_playerGuid2);
-
     WorldPackets::Guild::GuildEventEntry eventEntry;
-    eventEntry.PlayerGUID = playerGUID;
-    eventEntry.OtherGUID = otherGUID;
+    eventEntry.PlayerGUID = ObjectGuid::Create<HighGuid::Player>(m_playerGuid1);
+    eventEntry.OtherGUID = ObjectGuid::Create<HighGuid::Player>(m_playerGuid2);
     eventEntry.TransactionType = uint8(m_eventType);
     eventEntry.TransactionDate = uint32(::time(nullptr) - m_timestamp);
     eventEntry.RankID = uint8(m_newRank);
