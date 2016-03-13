@@ -704,7 +704,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             }
 
     if (!AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
-        startLevel = std::max(startLevel, MAX_LEVEL);
+        startLevel = std::min(startLevel, MAX_LEVEL);
 
     SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
