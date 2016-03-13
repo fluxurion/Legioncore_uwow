@@ -598,6 +598,10 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
     if (action.action->targetFlags & AT_TARGET_FLAG_TARGET_IS_CASTER)
         unit = _caster;
 
+    if (action.action->targetFlags & AT_TARGET_FLAG_AURA_TARGET)
+        if(Unit* target = ObjectAccessor::GetUnit(*this, GetTargetGuid()))
+            unit = target;
+
     if (action.action->targetFlags & AT_TARGET_FLAT_IN_FRONT)
         if (!HasInArc(static_cast<float>(M_PI), unit))
             return;
