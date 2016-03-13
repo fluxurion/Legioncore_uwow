@@ -32,7 +32,7 @@ Conversation::Conversation() : WorldObject(false), _caster(NULL), _duration(0), 
     m_valuesCount = CONVERSATION_END;
     _dynamicValuesCount = CONVERSATION_DYNAMIC_END;
 
-    _fieldNotifyFlags = UF_FLAG_PUBLIC | UF_FLAG_UNK0X100;
+    _fieldNotifyFlags = UF_FLAG_PUBLIC | UF_FLAG_DYNAMIC | UF_FLAG_UNK0X100;
     updateMask.SetCount(_dynamicValuesCount);
 }
 
@@ -160,12 +160,10 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                     buffer << uint32(itr->unk1);
                     arrayMask.SetBit(count++);
                     buffer << uint32(itr->unk2);
-                    arrayMask.SetBit(count++);
-                    buffer << uint32(itr->flags);
                 }
             }
 
-            fieldBuffer << uint8(arrayMask.GetBlockCount());
+            fieldBuffer << uint16(arrayMask.GetBlockCount());
             arrayMask.AppendToPacket(&fieldBuffer);
             fieldBuffer.append(buffer);
         }

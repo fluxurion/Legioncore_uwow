@@ -9674,8 +9674,8 @@ void ObjectMgr::LoadConversationData()
     _conversationCreatureList.clear();
     _conversationActorList.clear();
 
-    //                                                  0       1       2       3       4        5
-    QueryResult result = WorldDatabase.Query("SELECT `entry`, `id`, `textId`, `unk1`, `unk2`, `flags` FROM `conversation_data` ORDER BY id");
+    //                                                  0       1       2       3       4
+    QueryResult result = WorldDatabase.Query("SELECT `entry`, `id`, `textId`, `unk1`, `unk2` FROM `conversation_data` ORDER BY id");
     if (result)
     {
         uint32 counter = 0;
@@ -9690,7 +9690,6 @@ void ObjectMgr::LoadConversationData()
             data.textId = fields[i++].GetUInt32();
             data.unk1 = fields[i++].GetUInt32();
             data.unk2 = fields[i++].GetUInt32();
-            data.flags = fields[i++].GetUInt32();
             _conversationDataList[data.entry].push_back(data);
             ++counter;
         }

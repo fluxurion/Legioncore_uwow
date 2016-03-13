@@ -15,3 +15,6 @@ ALTER TABLE `conversation_creature`
   `duration` INT(11) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`id`)
 ) ENGINE=MYISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `conversation_data`   
+  DROP COLUMN `flags`;

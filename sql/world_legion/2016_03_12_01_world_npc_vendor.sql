@@ -1,0 +1,4 @@
+ALTER TABLE `npc_vendor`   
+  ADD COLUMN `PlayerConditionID` INT(11) UNSIGNED DEFAULT 0  NOT NULL AFTER `type`,
+  ADD COLUMN `IgnoreFiltering` INT(11) UNSIGNED DEFAULT 0  NOT NULL AFTER `PlayerConditionID`,
+  ADD COLUMN `VerifiedBuild` INT(11) UNSIGNED DEFAULT 21021  NOT NULL AFTER `IgnoreFiltering`;

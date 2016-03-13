@@ -423,7 +423,6 @@ struct ConversationData
     uint32 textId;
     uint32 unk1;
     uint32 unk2;
-    uint32 flags;
 };
 
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationData> > ConversationDataMap;
