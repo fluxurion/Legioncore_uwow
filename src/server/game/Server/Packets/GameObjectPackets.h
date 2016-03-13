@@ -139,6 +139,22 @@ namespace WorldPackets
             Position Pos;
             uint32 SoundId = 0;
         };
+
+        class FishNotHooked final : public ServerPacket
+        {
+        public:
+            FishNotHooked() : ServerPacket(SMSG_FISH_NOT_HOOKED, 0) { }
+
+            WorldPacket const* Write() override { return &_worldPacket; }
+        };
+
+        class FishEscaped final : public ServerPacket
+        {
+        public:
+            FishEscaped() : ServerPacket(SMSG_FISH_ESCAPED, 0) { }
+
+            WorldPacket const* Write() override { return &_worldPacket; }
+        };
     }
 }
 #endif // GOPackets_h__

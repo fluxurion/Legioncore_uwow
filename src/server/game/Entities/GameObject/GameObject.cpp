@@ -382,9 +382,7 @@ void GameObject::Update(uint32 diff)
                             if (caster && caster->GetTypeId() == TYPEID_PLAYER)
                             {
                                 caster->FinishSpell(CURRENT_CHANNELED_SPELL);
-
-                                WorldPacket data(SMSG_FISH_ESCAPED, 0);
-                                caster->ToPlayer()->GetSession()->SendPacket(&data);
+                                caster->ToPlayer()->GetSession()->SendPacket(WorldPackets::GameObject::FishNotHooked().Write());
                             }
                             // can be delete
                             m_lootState = GO_JUST_DEACTIVATED;
@@ -1463,9 +1461,7 @@ void GameObject::Use(Unit* user)
                 default:
                 {
                     SetLootState(GO_JUST_DEACTIVATED);
-
-                    WorldPacket data(SMSG_FISH_NOT_HOOKED, 0);
-                    player->GetSession()->SendPacket(&data);
+                    player->GetSession()->SendPacket(WorldPackets::GameObject::FishNotHooked().Write());
                     break;
                 }
             }
