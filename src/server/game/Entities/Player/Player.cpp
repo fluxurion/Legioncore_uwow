@@ -697,6 +697,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     if (getClass() == CLASS_DEMON_HUNTER)
         startLevel = START_DH_LEVEL;
 
+    //enable change stat at apply aura spell or item mods.
+    SetCanModifyStats(true);
     SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
 
     InitRunes();
@@ -766,10 +768,6 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     InitGlyphsForLevel();
     InitTalentForLevel();
     InitPrimaryProfessions();                               // to max set before any spell added
-
-    // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
-    UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
-    SetFullHealth();
 
     switch (getPowerType())
     {
@@ -965,6 +963,11 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     }
 
     // all item positions resolved
+
+    //! Important. Should be after apply equipment.
+    // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
+    UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
+    SetFullHealth();
     return true;
 }
 
@@ -24764,7 +24767,7 @@ void Player::LearnDefaultSkill(SkillRaceClassInfoEntry const* rcInfo)
             uint16 maxValue = GetMaxSkillValueForLevel();
             if (rcInfo->Flags & SKILL_FLAG_ALWAYS_MAX_VALUE)
                 skillValue = maxValue;
-            else if (getClass() == CLASS_DEATH_KNIGHT)
+            else if (getClass() == CLASS_DEATH_KNIGHT || getClass() == CLASS_DEMON_HUNTER)
                 skillValue = std::min(std::max<uint16>({ 1, uint16((getLevel() - 1) * 5) }), maxValue);
             else if (skillId == SKILL_FIST_WEAPONS)
                 skillValue = std::max<uint16>(1, GetSkillValue(SKILL_UNARMED));
