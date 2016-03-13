@@ -394,9 +394,15 @@ void WorldSession::HandleQueryQuestCompletionNPCs(WorldPackets::Query::QueryQues
 
         WorldPackets::Query::QuestCompletionNPC questCompletionNPC;
         questCompletionNPC.QuestID = questID;
+
         auto creatures = sObjectMgr->GetCreatureQuestInvolvedRelationBounds(questID);
         for (auto it = creatures.first; it != creatures.second; ++it)
             questCompletionNPC.NPCs.push_back(it->second);
+
+        auto gos = sObjectMgr->GetGOQuestInvolvedRelationBounds(questID);
+        for (auto it = gos.first; it != gos.second; ++it)
+            questCompletionNPC.NPCs.push_back(it->second | 0x80000000); // GO mask
+
         response.QuestCompletionNPCs.push_back(questCompletionNPC);
     }
 
