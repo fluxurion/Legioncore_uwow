@@ -1032,7 +1032,7 @@ namespace WorldPackets
         class RequestResearchHistory final : public ClientPacket
         {
         public:
-            RequestResearchHistory(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_RESEARCH_HISTORY, std::move(packet)) { }
+            RequestResearchHistory(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_ARTIFACT_COMPLETION_HISTORY, std::move(packet)) { }
 
             void Read() override { }
         };

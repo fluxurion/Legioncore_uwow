@@ -537,6 +537,16 @@ namespace WorldPackets
 
             int32 Slot = 0;
         };
+
+        class LFGOfferContinue final : public ServerPacket
+        {
+        public:
+            LFGOfferContinue(uint32 slot) : ServerPacket(SMSG_LFG_OFFER_CONTINUE, 4), Slot(slot) { }
+
+            WorldPacket const* Write() override;
+
+            uint32 Slot = 0;
+        };
     }
 }
 

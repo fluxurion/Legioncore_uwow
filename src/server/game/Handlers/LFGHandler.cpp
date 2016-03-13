@@ -407,13 +407,9 @@ void WorldSession::SendLfgDisabled()
     SendPacket(WorldPackets::LFG::NullSmsg(SMSG_LFG_DISABLED).Write());
 }
 
-void WorldSession::SendLfgOfferContinue(uint32 dungeonEntry)
+void WorldSession::SendLfgOfferContinue(uint32 slot)
 {
-    sLog->outDebug(LOG_FILTER_LFG, "SMSG_LFG_OFFER_CONTINUE %s dungeon entry: %u",
-        GetPlayerName().c_str(), dungeonEntry);
-    WorldPacket data(SMSG_LFG_OFFER_CONTINUE, 4);
-    data << uint32(dungeonEntry);
-    SendPacket(&data);
+    SendPacket(WorldPackets::LFG::LFGOfferContinue(slot).Write());
 }
 
 void WorldSession::SendLfgTeleportError(uint8 err)

@@ -564,3 +564,10 @@ void WorldPackets::LFG::DFSearchLeave::Read()
 {
     _worldPacket >> Slot;
 }
+
+WorldPacket const* WorldPackets::LFG::LFGOfferContinue::Write()
+{
+    _worldPacket << Slot;
+
+    return &_worldPacket;
+}

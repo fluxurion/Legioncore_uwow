@@ -1582,7 +1582,7 @@ class WorldSession
         void SendLfgBootProposalUpdate(lfg::LfgPlayerBoot const& boot);
         void SendLfgUpdateProposal(lfg::LfgProposal const& proposal);
         void SendLfgDisabled();
-        void SendLfgOfferContinue(uint32 dungeonEntry);
+        void SendLfgOfferContinue(uint32 slot);
         void SendLfgTeleportError(uint8 err);
 
         void HandleAreaSpiritHealerQuery(WorldPackets::Battleground::AreaSpiritHealerQuery& packet);
