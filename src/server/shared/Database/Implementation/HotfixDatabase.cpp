@@ -945,14 +945,14 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_SUMMON_PROPERTIES, "SELECT ID, Category, Faction, Type, Slot, Flags FROM summon_properties ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // VehicleSeat.db2
-    PrepareStatement(HOTFIX_SEL_VEHICLE_SEAT, "SELECT ID, Flags, AttachmentID, AttachmentOffsetX, AttachmentOffsetY, AttachmentOffsetZ, "
-        "EnterPreDelay, EnterSpeed, EnterGravity, EnterMinDuration, EnterMaxDuration, EnterMinArcHeight, EnterMaxArcHeight, EnterAnimStart, "
-        "EnterAnimLoop, RideAnimStart, RideAnimLoop, RideUpperAnimStart, RideUpperAnimLoop, ExitPreDelay, ExitSpeed, ExitGravity, ExitMinDuration, "
-        "ExitMaxDuration, ExitMinArcHeight, ExitMaxArcHeight, ExitAnimStart, ExitAnimLoop, ExitAnimEnd, PassengerYaw, PassengerPitch, PassengerRoll, "
-        "PassengerAttachmentID, VehicleEnterAnim, VehicleExitAnim, VehicleRideAnimLoop, VehicleEnterAnimBone, VehicleExitAnimBone, "
-        "VehicleRideAnimLoopBone, VehicleEnterAnimDelay, VehicleExitAnimDelay, VehicleAbilityDisplay, EnterUISoundID, ExitUISoundID, FlagsB, "
-        "CameraEnteringDelay, CameraEnteringDuration, CameraExitingDelay, CameraExitingDuration, CameraOffsetX, CameraOffsetY, CameraOffsetZ, "
-        "CameraPosChaseRate, CameraFacingChaseRate, CameraEnteringZoom, CameraSeatZoomMin, CameraSeatZoomMax, EnterAnimKitID, RideAnimKitID, "
-        "ExitAnimKitID, VehicleEnterAnimKitID, VehicleRideAnimKitID, VehicleExitAnimKitID, CameraModeID, FlagsC, UISkinFileDataID FROM vehicle_seat"
-        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_VEHICLE_SEAT, "SELECT ID, Flags, FlagsB, FlagsC, AttachmentOffsetX, AttachmentOffsetY, AttachmentOffsetZ, "
+        "EnterPreDelay, EnterSpeed, EnterGravity, EnterMinDuration, EnterMaxDuration, EnterMinArcHeight, EnterMaxArcHeight, ExitPreDelay, ExitSpeed, "
+        "ExitGravity, ExitMinDuration, ExitMaxDuration, ExitMinArcHeight, ExitMaxArcHeight, PassengerYaw, PassengerPitch, PassengerRoll, "
+        "VehicleEnterAnimDelay, VehicleExitAnimDelay, CameraEnteringDelay, CameraEnteringDuration, CameraExitingDelay, CameraExitingDuration, "
+        "CameraOffsetX, CameraOffsetY, CameraOffsetZ, CameraPosChaseRate, CameraFacingChaseRate, CameraEnteringZoom, CameraSeatZoomMin, "
+        "CameraSeatZoomMax, UISkinFileDataID, EnterAnimStart, EnterAnimLoop, RideAnimStart, RideAnimLoop, RideUpperAnimStart, RideUpperAnimLoop, "
+        "ExitAnimStart, ExitAnimLoop, ExitAnimEnd, VehicleEnterAnim, VehicleExitAnim, VehicleRideAnimLoop, EnterUISoundID, ExitUISoundID, "
+        "EnterAnimKitID, RideAnimKitID, ExitAnimKitID, VehicleEnterAnimBone, VehicleExitAnimBone, VehicleRideAnimLoopBone, CameraModeID, "
+        "AttachmentID, PassengerAttachmentID, VehicleAbilityDisplay, VehicleEnterAnimKitID, VehicleRideAnimKitID, VehicleExitAnimKitID"
+        " FROM vehicle_seat ORDER BY ID DESC", CONNECTION_SYNCH);
 }

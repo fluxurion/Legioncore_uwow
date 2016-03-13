@@ -904,7 +904,7 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
 
     //Passenger->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
     VehicleSeatEntry const* veSeat = Seat->second.SeatInfo;
-    Passenger->m_movementInfo.transport.pos.Relocate(veSeat->AttachmentOffset.X, veSeat->AttachmentOffset.Y, veSeat->AttachmentOffset.Z);
+    Passenger->m_movementInfo.transport.pos.SetPosition(veSeat->AttachmentOffset);
     Passenger->m_movementInfo.transport.time = 0; // 1 for player
     Passenger->m_movementInfo.transport.seat = Seat->first;
     Passenger->m_movementInfo.transport.guid = Target->GetBase()->GetGUID();
