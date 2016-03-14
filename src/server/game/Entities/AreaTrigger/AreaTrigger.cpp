@@ -598,7 +598,11 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
     if (action.action->targetFlags & AT_TARGET_FLAG_TARGET_IS_CASTER)
         unit = _caster;
 
-    if (action.action->targetFlags & AT_TARGET_FLAG_AURA_TARGET)
+    if (action.action->targetFlags & AT_TARGET_FLAG_NOT_AURA_TARGET)
+        if(GetTargetGuid() && GetTargetGuid() == unit->GetGUID())
+            return;
+
+    if (action.action->targetFlags & AT_TARGET_FLAG_CAST_AURA_TARGET)
         if(Unit* target = ObjectAccessor::GetUnit(*this, GetTargetGuid()))
             unit = target;
 

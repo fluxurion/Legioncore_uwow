@@ -71,7 +71,8 @@ enum AreaTriggerTargetFlags
     AT_TARGET_FLAG_GROUP_OR_RAID     = 0x0800,             // casted on targets that in group to areatrigger owner
     AT_TARGET_FLAG_HOSTILE           = 0x1000,             // casted on targets that are hostile to areatrigger owner
     AT_TARGET_FLAG_TARGET_IS_CASTER  = 0x2000,             // casted on areatrigger target is caster
-    AT_TARGET_FLAG_AURA_TARGET       = 0x4000,             // casted on aura target
+    AT_TARGET_FLAG_CAST_AURA_TARGET  = 0x4000,             // casted on aura target
+    AT_TARGET_FLAG_NOT_AURA_TARGET   = 0x4000,             // casted on target is not aura target
 
     AT_TARGET_MASK_REQUIRE_TARGET = 
         AT_TARGET_FLAG_FRIENDLY | AT_TARGET_FLAG_HOSTILE | AT_TARGET_FLAG_OWNER | AT_TARGET_FLAG_PLAYER |
