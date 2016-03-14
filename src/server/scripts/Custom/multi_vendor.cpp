@@ -275,13 +275,13 @@ public:
                 uint8 playerClass = 0;
                 uint8 level = 1;
 
-                QueryResult result = CharacterDatabase.PQuery("SELECT deleteInfos_Account, guid, deleteInfos_Name, gender, race, class, level FROM `characters` WHERE guid = '%u'", action);
+                QueryResult result = CharacterDatabase.PQuery("SELECT deleteInfos_Account, guid, deleteInfos_Name, playerBytes3, race, class, level FROM `characters` WHERE guid = '%u'", action);
                 if (result)
                 {
                     Field* fields = result->Fetch();
                     uint32 account = fields[0].GetUInt32();
                     name = fields[2].GetString();
-                    gender = fields[3].GetUInt8();
+                    gender = fields[3].GetUInt32() & 0xFF;
                     race = fields[4].GetUInt8();
                     playerClass = fields[5].GetUInt8();
                     level = fields[6].GetUInt8();
