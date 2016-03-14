@@ -4947,7 +4947,7 @@ void Spell::SendSpellStart()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellMissStatus(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
         else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
@@ -5080,7 +5080,7 @@ void Spell::SendSpellGo()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellMissStatus(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
         else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
