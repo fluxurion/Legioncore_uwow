@@ -10,7 +10,8 @@
 DoorData const doorData[] =
 {
     //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
-    {0,                   0,                  DOOR_TYPE_ROOM,       BOUNDARY_NONE}, // END
+    {GO_GLAIDALIS_FIRE_DOOR,     DATA_GLAIDALIS,       DOOR_TYPE_ROOM,       BOUNDARY_NONE},
+    {GO_GLAIDALIS_INVIS_DOOR,    DATA_GLAIDALIS,       DOOR_TYPE_ROOM,       BOUNDARY_NONE},
 };
 
 class instance_darkheart_thicket : public InstanceMapScript
@@ -30,9 +31,15 @@ public:
             SetBossNumber(MAX_ENCOUNTER);
         }
 
+        ObjectGuid MalfurionGUID;
+        ObjectGuid MalfurionCageGUID;
+
         void Initialize()
         {
             LoadDoorData(doorData);
+
+            MalfurionGUID.Clear();
+            MalfurionCageGUID.Clear();
         }
 
         bool SetBossState(uint32 type, EncounterState state)
@@ -43,26 +50,32 @@ public:
             return true;
         }
 
+        void OnCreatureCreate(Creature* creature)
+        {
+            switch (creature->GetEntry())
+            {
+                case NPC_MALFURION_STORMRAGE:    
+                    MalfurionGUID = creature->GetGUID();
+                    break;
+                case NPC_NIGHTMARE_BINDINGS:
+                    MalfurionCageGUID = creature->GetGUID();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         void OnGameObjectCreate(GameObject* go)
         {
-            /* switch (go->GetEntry())
+            switch (go->GetEntry())
             {
-                case GO_DOOR:
+                case GO_GLAIDALIS_FIRE_DOOR:
+                case GO_GLAIDALIS_INVIS_DOOR:
                     AddDoor(go, true);
                     break;
                 default:
                     break;
-            } */
-        }
-
-        void OnCreatureCreate(Creature* creature)
-        {
-            /* switch (creature->GetEntry())
-            {
-                case NPC_:    
-                    GUID = creature->GetGUID(); 
-                    break;
-            } */
+            }
         }
 
         void SetData(uint32 type, uint32 data)
@@ -74,15 +87,17 @@ public:
             }*/
         }
 
-        /* ObjectGuid GetGuidData(uint32 type) const
+        ObjectGuid GetGuidData(uint32 type) const
         {
             switch (type)
             {
-                case NPC_:   
-                    return GUID;
+                case NPC_MALFURION_STORMRAGE:   
+                    return MalfurionGUID;
+                case NPC_NIGHTMARE_BINDINGS:
+                    return MalfurionCageGUID;
             }
             return ObjectGuid::Empty;
-        } */
+        }
 
         uint32 GetData(uint32 type) const
         {

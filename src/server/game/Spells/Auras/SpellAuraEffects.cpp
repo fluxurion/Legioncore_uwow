@@ -7251,6 +7251,22 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster, SpellEf
         case SPELLFAMILY_GENERIC:
             switch (GetId())
             {
+                case 199837: // Shade of Xavius - Drain Essence
+                {
+                    if (caster)
+                        caster->CastSpell(caster, 204502, true);
+                    break;
+                }
+                case 200050: // Shade of Xavius - Apocolyptic Nightmare
+                {
+                    if (caster)
+                    {
+                        Position pos;
+                        caster->GetRandomNearPosition(pos, 30.0f);
+                        caster->CastSpell(pos, 200067, true);
+                    }
+                    break;
+                }
                 case 146310: // Restless Agility
                 case 146317: // Restless Spirit
                 {

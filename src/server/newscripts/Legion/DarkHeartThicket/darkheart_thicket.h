@@ -15,14 +15,17 @@ enum eData
     MAX_ENCOUNTER,
 };
 
-/* enum eCreatures
+enum eCreatures
 {
-    NPC_ = ,
+    //Xavius summons
+    NPC_NIGHTMARE_BINDINGS      = 101329, //Malfurion cage
+    NPC_MALFURION_STORMRAGE     = 100652,
 };
 
 enum eGameObjects
 {
-    GO_ = ,
-}; */
+    GO_GLAIDALIS_FIRE_DOOR      = 246910,
+    GO_GLAIDALIS_INVIS_DOOR     = 246905,
+};
 
 #endif

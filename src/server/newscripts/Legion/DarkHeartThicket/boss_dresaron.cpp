@@ -12,7 +12,6 @@
 {
     SAY_AGGRO           = ,
     SAY_DEATH           = ,
-    SAY_EVADE           = ,
 }; */
 
 /* enum Spells
@@ -30,8 +29,8 @@
     EVENT_    = 3,
     EVENT_    = 4,
     EVENT_    = 5,
-}; */
-
+};
+ */
 class boss_dresaron : public CreatureScript
 {
 public:
@@ -55,7 +54,6 @@ public:
 
         void EnterEvadeMode()
         {
-            //Talk(SAY_EVADE);
             BossAI::EnterEvadeMode();
         }
 
@@ -71,6 +69,9 @@ public:
                 return;
 
             events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
 
             while (uint32 eventId = events.ExecuteEvent())
             {
