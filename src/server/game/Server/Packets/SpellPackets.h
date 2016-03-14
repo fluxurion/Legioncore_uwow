@@ -343,6 +343,16 @@ namespace WorldPackets
 
         struct SpellCastData
         {
+            Array<ObjectGuid, 255> HitTargets;
+            Array<SpellMissStatus, 255> MissStatus;
+            Array<ObjectGuid, 255> MissTargets;
+            std::vector<SpellPowerData> RemainingPower;
+            std::vector<TargetLocation> TargetPoints;
+            MissileTrajectoryResult MissileTrajectory;
+            CreatureImmunities Immunities;
+            SpellHealPrediction Predict;
+            SpellTargetData Target;
+            Optional<RuneData> RemainingRunes;
             ObjectGuid CasterGUID;
             ObjectGuid CasterUnit;
             ObjectGuid CastGuid;
@@ -352,17 +362,7 @@ namespace WorldPackets
             uint32 CastFlags = 0;
             uint32 CastFlagsEx = 0;
             uint32 CastTime = 0;
-            Array<ObjectGuid, 255> HitTargets;
-            GuidVector MissTargets;
-            std::vector<SpellMissStatus> MissStatus;
-            SpellTargetData Target;
-            std::vector<SpellPowerData> RemainingPower;
-            Optional<RuneData> RemainingRunes;
-            MissileTrajectoryResult MissileTrajectory;
             uint8 DestLocSpellCastIndex = 0;
-            std::vector<TargetLocation> TargetPoints;
-            CreatureImmunities Immunities;
-            SpellHealPrediction Predict;
         };
 
         class SpellGo final : public ServerPacket

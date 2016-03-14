@@ -167,8 +167,8 @@ struct TargetInfo
 {
     ObjectGuid targetGUID;
     uint64 timeDelay;
-    SpellMissInfo missCondition:8;
-    SpellMissInfo reflectResult:8;
+    SpellMissInfo missCondition;
+    SpellMissInfo reflectResult;
     uint32  effectMask:32;
     bool   processed:1;
     bool   alive:1;

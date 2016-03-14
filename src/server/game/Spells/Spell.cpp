@@ -2397,8 +2397,8 @@ void Spell::UpdateSpellCastDataTargets(WorldPackets::Spells::SpellCastData& data
         }
         else
         {
-            data.MissTargets.push_back(targetInfo.targetGUID);
-            data.MissStatus.emplace_back(WorldPackets::Spells::SpellMissStatus(targetInfo.missCondition, targetInfo.reflectResult));
+            //data.MissTargets.push_back(targetInfo.targetGUID);
+            //data.MissStatus.push_back(WorldPackets::Spells::SpellMissStatus(targetInfo.missCondition, targetInfo.reflectResult));
         }
     }
 

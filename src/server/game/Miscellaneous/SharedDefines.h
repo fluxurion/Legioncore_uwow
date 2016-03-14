@@ -2175,7 +2175,7 @@ enum Targets
     TOTAL_SPELL_TARGETS
 };
 
-enum SpellMissInfo
+enum SpellMissInfo : uint8
 {
     SPELL_MISS_NONE                    = 0,  // hitmask = 1
     SPELL_MISS_MISS                    = 1,  // hitmask = 2
