@@ -411,8 +411,8 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
 
     Spell* spell = new Spell(caster, spellInfo, TriggerCastFlags(triggeredCastFlags));
     spell->m_targets = targets;
-    spell->m_misc.Raw.Data[0] = cast.Cast.Misc[0];
-    spell->m_misc.Raw.Data[1] = cast.Cast.Misc[1];
+    spell->m_miscData[0] = cast.Cast.Misc[0];
+    spell->m_miscData[1] = cast.Cast.Misc[1];
 
     // TODO: need to check victim?
     SpellCastResult result;

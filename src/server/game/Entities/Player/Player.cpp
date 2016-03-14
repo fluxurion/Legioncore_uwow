@@ -868,6 +868,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     if (createInfo->TemplateSet)
     {
         std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(getClass(), 3);
+        sLog->outError(LOG_FILTER_GENERAL, "itemsArray[0] %u", itemsArray[0].size());
+
         for (uint32 itemID : itemsArray[0])
             if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))
                 StoreNewItemInBestSlots(itemID, pProto->GetInventoryType() != INVTYPE_BAG  ? 1 : 4);
@@ -9458,8 +9460,8 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
 
         Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
         spell->m_CastItem = item;
-        spell->m_misc.Raw.Data[0] = misc[0];
-        spell->m_misc.Raw.Data[1] = misc[1];
+        spell->m_miscData[0] = misc[0];
+        spell->m_miscData[1] = misc[1];
         spell->prepare(&targets);
 
         ++count;
@@ -9486,8 +9488,8 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
 
             Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
             spell->m_CastItem = item;
-            spell->m_misc.Raw.Data[0] = misc[0];
-            spell->m_misc.Raw.Data[1] = misc[1];
+            spell->m_miscData[0] = misc[0];
+            spell->m_miscData[1] = misc[1];
             spell->prepare(&targets);
             ++count;
         }

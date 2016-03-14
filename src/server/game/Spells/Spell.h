@@ -617,15 +617,8 @@ class Spell
         Item* m_CastItem;
         ObjectGuid m_castItemGUID;
         uint32 m_castItemEntry;
-        uint32 m_castFlagsEx;
-
-        union
-        {
-            struct
-            {
-                uint32 Data[2];
-            } Raw;
-        } m_misc;
+        uint32 m_castFlags[2];
+        uint32 m_miscData[2];
 
         ObjectGuid m_spellGuid;
         ObjectGuid m_castGuid[2];

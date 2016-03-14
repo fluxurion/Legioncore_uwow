@@ -483,13 +483,13 @@ SpellValue::SpellValue(SpellInfo const* proto, uint8 diff)
 Spell::Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID, bool skipCheck, bool replaced) :
 m_spellInfo(info),
 m_caster((info->HasAttribute(SPELL_ATTR6_CAST_BY_CHARMER) && caster->GetCharmerOrOwner()) ? caster->GetCharmerOrOwner() : caster),
-m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(0), m_selfContainer(NULL), m_spellDynObjGuid(),
-m_referencedFromCurrentSpell(false), m_executedCurrently(false), m_needComboPoints(info->NeedsComboPoints()), hasPredictedDispel(NULL),
+m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(0), m_selfContainer(NULL),
+m_referencedFromCurrentSpell(false), m_executedCurrently(false), m_needComboPoints(info->NeedsComboPoints()), hasPredictedDispel(0),
 m_comboPointGain(0), m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
-m_CastItem(NULL), m_castItemGUID(), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
+m_CastItem(NULL), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
 m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
 m_runesState(0), m_powerCost(0), m_casttime(0), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
-m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NULL), m_replaced(replaced), m_triggeredByAura(NULL), m_originalTargetGUID()
+m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced), m_triggeredByAura(NULL)
 {
     m_diffMode = m_caster->GetMap() ? m_caster->GetMap()->GetSpawnMode() : 0;
     m_spellValue = new SpellValue(m_spellInfo, m_diffMode);
@@ -576,16 +576,16 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_effect_targets(NU
     m_addpower = 0;
     m_addptype = -1;
     m_castItemEntry = 0;
-    m_castFlagsEx = 0;
 
     m_caster->GetPosition(&visualPos);
 
-    memset(m_misc.Raw.Data, 0, sizeof(m_misc.Raw.Data));
+    memset(m_miscData, 0, sizeof(m_miscData));
+    memset(m_castFlags, 0, sizeof(m_castFlags));
+
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 
     m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
     m_castGuid[1] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
-    m_spellGuid = ObjectGuid::Empty;
 }
 
 Spell::~Spell()
@@ -2398,12 +2398,7 @@ void Spell::UpdateSpellCastDataTargets(WorldPackets::Spells::SpellCastData& data
         else
         {
             data.MissTargets.push_back(targetInfo.targetGUID);
-
-            WorldPackets::Spells::SpellMissStatus missStatus;
-            missStatus.Reason = targetInfo.missCondition;
-            if (targetInfo.missCondition == SPELL_MISS_REFLECT)
-                missStatus.ReflectStatus = targetInfo.reflectResult;
-            data.MissStatus.push_back(missStatus);
+            data.MissStatus.emplace_back(WorldPackets::Spells::SpellMissStatus(targetInfo.missCondition, targetInfo.reflectResult));
         }
     }
 
@@ -4756,7 +4751,7 @@ void Spell::SendCastResult(SpellCastResult result)
     if (m_caster->ToPlayer()->GetSession()->PlayerLoading())  // don't send cast results at loading time
         return;
 
-    SendCastResult(m_caster->ToPlayer(), m_spellInfo, result, m_customError, m_misc.Raw.Data);
+    SendCastResult(m_caster->ToPlayer(), m_spellInfo, result, m_customError, m_miscData);
 }
 
 void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCastResult result, SpellCustomErrors customError /*= SPELL_CUSTOM_ERROR_NONE*/, uint32* misc /*= nullptr*/, bool pet /*=false*/)
@@ -4943,35 +4938,8 @@ void Spell::SendSpellStart()
     castData.SpellID = m_spellInfo->Id;
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.CastFlags = castFlags;
-    castData.CastFlagsEx = m_castFlagsEx;
+    castData.CastFlagsEx = m_castFlags[1];
     castData.CastTime = m_casttime;
-
-    //Is it need on cast?
-    /*uint32 hit = 0;
-    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end() && hit <= 255; ++ihit)
-    {
-        if (ihit->effectMask == 0)                      // No effect apply - all immuned add state
-            ihit->missCondition = SPELL_MISS_IMMUNE2;
-
-        if (ihit->missCondition == SPELL_MISS_NONE)
-        {
-            m_channelTargetEffectMask |= ihit->effectMask;
-            castData.HitTargets.push_back(ihit->targetGUID);
-        }
-        else
-        {
-            castData.MissTargets.push_back(ihit->targetGUID);
-
-            WorldPackets::Spells::SpellMissStatus status;
-            status.Reason = ihit->missCondition;
-            status.ReflectStatus = ihit->reflectResult;
-            castData.MissStatus.push_back(status);
-        }
-    }
-
-    for (std::list<GOTargetInfo>::const_iterator ighit = m_UniqueGOTargetInfo.begin(); ighit != m_UniqueGOTargetInfo.end() && hit <= 255; ++ighit)
-        castData.HitTargets.push_back(ighit->targetGUID);
-    */
 
     m_targets.Write(castData.Target);
 
@@ -4979,15 +4947,7 @@ void Spell::SendSpellStart()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-        {
-            Powers powerType = Powers(power.PowerType);
-
-            /// @todo Implement multiple power types
-            WorldPackets::Spells::SpellPowerData powerData;
-            powerData.Type = powerType;
-            powerData.Cost = m_caster->GetPower(powerType);
-            castData.RemainingPower.push_back(powerData);
-        }
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellMissStatus(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
         else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
@@ -5109,7 +5069,7 @@ void Spell::SendSpellGo()
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
-    castData.CastFlagsEx = m_castFlagsEx;
+    castData.CastFlagsEx = m_castFlags[1];
     castData.CastTime = getMSTime();
 
     UpdateSpellCastDataTargets(castData);
@@ -5120,15 +5080,8 @@ void Spell::SendSpellGo()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-        {
-            Powers powerType = Powers(power.PowerType);
-
-            /// @todo Implement multiple power types
-            WorldPackets::Spells::SpellPowerData powerData;
-            powerData.Type = powerType;
-            powerData.Cost = m_caster->GetPower(powerType);
-            castData.RemainingPower.push_back(powerData);
-        }else
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellMissStatus(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
+        else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
 
@@ -6141,7 +6094,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!spell)
                     continue;
 
-                if (spell->talentId != m_misc.Raw.Data[0])
+                if (spell->talentId != m_miscData[0])
                     continue;
 
                 if (plr->HasSpellCooldown(spell->Id))
@@ -7061,7 +7014,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             case SPELL_EFFECT_UNLEARN_TALENT:
                 if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     return SPELL_FAILED_BAD_TARGETS;
-                if (TalentEntry const* talent = sTalentStore.LookupEntry(m_misc.Raw.Data[0]))
+                if (TalentEntry const* talent = sTalentStore.LookupEntry(m_miscData[0]))
                 {
                     if (m_caster->ToPlayer()->HasSpellCooldown(talent->SpellID))
                         return SPELL_FAILED_CANT_UNTALENT;

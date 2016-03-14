@@ -295,12 +295,16 @@ namespace WorldPackets
 
         struct SpellMissStatus
         {
+            SpellMissStatus(uint8 reason, uint8 status) : Reason(reason), ReflectStatus(status) { }
+
             uint8 Reason = 0;
             uint8 ReflectStatus = 0;
         };
 
         struct SpellPowerData
         {
+            SpellPowerData(uint8 cost, uint8 type) : Cost(cost), Type(type) { }
+
             int32 Cost = 0;
             int8 Type = 0;
         };

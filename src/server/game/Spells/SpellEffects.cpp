@@ -5810,14 +5810,14 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
         return;
 
-    if (m_caster->GetTypeId() != TYPEID_PLAYER || m_misc.Raw.Data[0] >= MAX_GLYPH_SLOT_INDEX)
+    if (m_caster->GetTypeId() != TYPEID_PLAYER || m_miscData[0] >= MAX_GLYPH_SLOT_INDEX)
         return;
 
     Player* player = (Player*)m_caster;
 
     // glyph sockets level requirement
     uint8 minLevel = 0;
-    switch (m_misc.Raw.Data[0])
+    switch (m_miscData[0])
     {
         case 0:
         case 1:
@@ -5841,7 +5841,7 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
     {
         if (GlyphPropertiesEntry const* gp = sGlyphPropertiesStore.LookupEntry(glyph))
         {
-            if (GlyphSlotEntry const* gs = sGlyphSlotStore.LookupEntry(player->GetGlyphSlot(m_misc.Raw.Data[0])))
+            if (GlyphSlotEntry const* gs = sGlyphSlotStore.LookupEntry(player->GetGlyphSlot(m_miscData[0])))
             {
                 if (gp->TypeFlags != gs->TypeFlags)
                 {
@@ -5851,32 +5851,32 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
             }
 
             // remove old glyph
-            if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_misc.Raw.Data[0]))
+            if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_miscData[0]))
             {
                 if (GlyphPropertiesEntry const* old_gp = sGlyphPropertiesStore.LookupEntry(oldglyph))
                 {
                     player->removeSpell(old_gp->SpellId);
                     //player->RemoveAurasDueToSpell(old_gp->SpellId);
-                    player->SetGlyph(m_misc.Raw.Data[0], 0);
+                    player->SetGlyph(m_miscData[0], 0);
                 }
             }
 
             player->learnSpell(gp->SpellId, false);
             //player->CastSpell(m_caster, gp->SpellId, true);
-            player->SetGlyph(m_misc.Raw.Data[0], glyph);
+            player->SetGlyph(m_miscData[0], glyph);
             player->SendTalentsInfoData(false);
         }
     }
     else
     {
         // remove old glyph
-        if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_misc.Raw.Data[0]))
+        if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_miscData[0]))
         {
             if (GlyphPropertiesEntry const* old_gp = sGlyphPropertiesStore.LookupEntry(oldglyph))
             {
                 player->removeSpell(old_gp->SpellId);
                 //player->RemoveAurasDueToSpell(old_gp->SpellId);
-                player->SetGlyph(m_misc.Raw.Data[0], 0);
+                player->SetGlyph(m_miscData[0], 0);
                 player->SendTalentsInfoData(false);
             }
         }
@@ -7692,7 +7692,7 @@ void Spell::EffectUnlearnTalent(SpellEffIndex effIndex)
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
         return;
 
-    TalentEntry const* talent = sTalentStore.LookupEntry(m_misc.Raw.Data[0]);
+    TalentEntry const* talent = sTalentStore.LookupEntry(m_miscData[0]);
     if (!talent)
         return;
 
@@ -8189,10 +8189,10 @@ void Spell::EffectCreateHeirloomItem(SpellEffIndex effIndex)
         return;
 
     std::vector<int32> bonusList;
-    bonusList.push_back(collectionMgr->GetHeirloomBonus(m_misc.Raw.Data[0]));
+    bonusList.push_back(collectionMgr->GetHeirloomBonus(m_miscData[0]));
 
-    DoCreateItem(effIndex, m_misc.Raw.Data[0], bonusList);
-    ExecuteLogEffectCreateItem(effIndex, m_misc.Raw.Data[0]);
+    DoCreateItem(effIndex, m_miscData[0], bonusList);
+    ExecuteLogEffectCreateItem(effIndex, m_miscData[0]);
 }
 
 void Spell::EffectUpgradeHeirloom(SpellEffIndex /*effIndex*/)
@@ -8202,7 +8202,7 @@ void Spell::EffectUpgradeHeirloom(SpellEffIndex /*effIndex*/)
 
     CollectionMgr* collectionMgr = m_caster->ToPlayer()->GetCollectionMgr();
     if (collectionMgr)
-        collectionMgr->UpgradeHeirloom(m_misc.Raw.Data[0], m_castItemEntry);
+        collectionMgr->UpgradeHeirloom(m_miscData[0], m_castItemEntry);
 }
 
 void Spell::EffectGieveExperience(SpellEffIndex effIndex)
@@ -8242,7 +8242,7 @@ void Spell::EffectIncreaseFollowerItemLevel(SpellEffIndex effIndex)
     if (!garrison)
         return;
 
-    if (Garrison::Follower* follower = garrison->GetFollowerByID(m_misc.Raw.Data[0]))
+    if (Garrison::Follower* follower = garrison->GetFollowerByID(m_miscData[0]))
         follower->IncreaseFollowerItemLevel(m_spellInfo, player);
 }
 
@@ -8257,5 +8257,5 @@ void Spell::EffectReTrainFollower(SpellEffIndex effIndex)
 
     Garrison* garrison = player->GetGarrison();
     if (garrison)
-        garrison->ReTrainFollower(m_spellInfo, m_misc.Raw.Data[0]);
+        garrison->ReTrainFollower(m_spellInfo, m_miscData[0]);
 }
