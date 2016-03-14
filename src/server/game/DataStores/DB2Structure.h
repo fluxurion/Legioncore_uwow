@@ -1431,11 +1431,11 @@ struct ItemSparseEntry
     int8        Material;                                           // 93
     uint8       Sheath;                                             // 94
     uint8       TotemCategory;                                      // 95
-    uint8       SocketColor[MAX_ITEM_PROTO_SOCKETS];                // 96
-    uint8       CurrencySubstitutionID;                             // 97
-    uint8       CurrencySubstitutionCount;                          // 98
-    uint8       UnkLegion;                                          // 99
-    uint8       UnkLegion2;                                         // 100
+    uint8       SocketColor[MAX_ITEM_PROTO_SOCKETS];                // 96 - 98
+    uint8       CurrencySubstitutionID;                             // 99
+    uint8       CurrencySubstitutionCount;                          // 100
+    uint8       UnkLegion;                                          // 101
+    uint8       UnkLegion2;                                         // 102
 };
 
 struct ItemExtendedCostEntry

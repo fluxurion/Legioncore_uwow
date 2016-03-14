@@ -490,8 +490,8 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
             {
                 if (!_spellInfo->HasAttribute(SPELL_ATTR11_SEND_ITEM_LEVEL))
                 {
-                    if (GtSpellScalingEntry const* gtScaling = sGtSpellScalingStore.EvaluateTable(level - 1, (_spellInfo->Scaling.Class > 0 ? _spellInfo->Scaling.Class : ((MAX_CLASSES - 1 /*last class*/) - _spellInfo->Scaling.Class)) - 1))
-                        value = gtScaling->value;
+                    if (GameTableEntry const* gtScaling = sGtSpellScalingStore.EvaluateTable(level - 1, (_spellInfo->Scaling.Class > 0 ? _spellInfo->Scaling.Class : ((MAX_CLASSES - 1 /*last class*/) - _spellInfo->Scaling.Class)) - 1))
+                        value = gtScaling->Value;
                 }
                 else if (m_castItem)
                         value = GetRandomPropertyPoints(m_castItem->GetItemLevel(), ITEM_QUALITY_RARE, INVTYPE_CHEST, 0);
@@ -603,10 +603,10 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
 
             if (canEffectScale)
             {
-                GtNPCManaCostScalerEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(_spellInfo->SpellLevel - 1, 0);
-                GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
+                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(_spellInfo->SpellLevel - 1, 0);
+                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
                 if (spellScaler && casterScaler)
-                    value *= casterScaler->ratio / spellScaler->ratio;
+                    value *= casterScaler->Value / spellScaler->Value;
             }
         }
 
@@ -2883,10 +2883,10 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
         {
             if (HasAttribute(SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION))
             {
-                GtNPCManaCostScalerEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1, 0);
-                GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
+                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1, 0);
+                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
                 if (spellScaler && casterScaler)
-                    powerCost *= casterScaler->ratio / spellScaler->ratio;
+                    powerCost *= casterScaler->Value / spellScaler->Value;
             }
         }
 

@@ -2093,8 +2093,8 @@ uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage, SpellInfo
     if (armor < 0.0f)
         armor = 0.0f;
 
-    GtArmorMitigationByLvlEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevel() - 1, 0);
-    float percReduced = 0.1f;/*armor / (armor + gtArmorMitigation->Armor);*/
+    GameTableEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevel() - 1, 0);
+    float percReduced = 0.1f;/*armor / (armor + gtArmorMitigation->Value);*/
 
     if (percReduced < 0.0f)
         percReduced = 0.0f;
@@ -16223,52 +16223,28 @@ void Unit::SetMaxPower(Powers power, int32 val)
 
 float Unit::OCTRegenMPPerSpirit()
 {
-    uint8 level = getLevel();
-    uint32 pclass = getClass();
+    if (GameTableEntry  const* moreRatio = sGtRegenMPPerSptStore.EvaluateTable(getLevel() - 1, getClass() - 1))
+        return GetStat(STAT_SPIRIT) * moreRatio->Value;
 
-    if (level >= sGtRegenMPPerSptStore.GetTableRowCount())
-        level = sGtRegenMPPerSptStore.GetTableRowCount() - 1;
-
-    GtRegenMPPerSptEntry  const* moreRatio = sGtRegenMPPerSptStore.EvaluateTable(level - 1, pclass - 1);
-    if (!moreRatio)
-        return 0.0f;
-
-    // Formula get from PaperDollFrame script
-    return GetStat(STAT_SPIRIT) * moreRatio->ratio;
+    return 0.0f;
 }
 
 float Unit::GetBaseSpellCritChance()
 {
-    uint8 level = getLevel();
-    uint32 pclass = getClass();
+    GameTableEntry const* critBase = sGtChanceToSpellCritBaseStore.EvaluateTable(getClass() - 1, 0);
+    GameTableEntry const* critRatio = sGtChanceToSpellCritStore.EvaluateTable(getLevel() - 1, getClass() - 1);
+    if (critBase && critRatio)
+       return critBase->Value * critRatio->Value * 100.0f;
 
-    if (level >= sGtChanceToSpellCritStore.GetTableRowCount())
-        level = sGtChanceToSpellCritStore.GetTableRowCount() - 1;
-
-    GtChanceToSpellCritBaseEntry const* critBase = sGtChanceToSpellCritBaseStore.EvaluateTable(pclass - 1, 0);
-    GtChanceToSpellCritEntry const* critRatio = sGtChanceToSpellCritStore.EvaluateTable(level - 1, pclass - 1);
-    if (critBase == nullptr || critRatio == nullptr)
-        return 0.0f;
-
-    return critBase->base * critRatio->ratio * 100.0f;
+    return 0.0f;
 }
 
 float Unit::GetRatingMultiplier(CombatRating cr) const
 {
-    uint8 level = getLevel();
-
-    if (level >= sGtCombatRatingsStore.GetTableRowCount())
-        level = sGtCombatRatingsStore.GetTableRowCount() - 1;
-
-    GtCombatRatingsEntry const* Rating = sGtCombatRatingsStore.EvaluateTable(level - 1, cr);
-
-    if (!Rating || !Rating->ratio)
-        return 1.0f;                                        // By default use minimum coefficient (not must be called)
-
-    if (cr == CR_RESILIENCE_PLAYER_DAMAGE_TAKEN)
-        return Rating->ratio;
-
-    return 1.0f / Rating->ratio;
+    if (GameTableEntry const* Rating = sGtCombatRatingsStore.EvaluateTable(getLevel() - 1, cr))
+        return 1.0f / Rating->Value;
+        
+    return 1.0f; 
 }
 
 void Unit::AddToWorld()

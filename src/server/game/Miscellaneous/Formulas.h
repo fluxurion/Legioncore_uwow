@@ -118,28 +118,19 @@ namespace Trinity
         {
             uint32 baseGain;
 
-            GtOCTLevelExperienceEntry const* BaseExpPlayer = sGtOCTLevelExperienceStore.EvaluateTable(pl_level - 1, 1);
-            GtOCTLevelExperienceEntry const* BaseExpMob = sGtOCTLevelExperienceStore.EvaluateTable(mob_level - 1, 1);
+            GameTableEntry const* BaseExpPlayer = sGtOCTLevelExperienceStore.EvaluateTable(pl_level - 1, 1);
+            GameTableEntry const* BaseExpMob = sGtOCTLevelExperienceStore.EvaluateTable(mob_level - 1, 1);
 
-            GtOCTLevelExperienceEntry const* CoefPlayer = sGtOCTLevelExperienceStore.EvaluateTable(pl_level - 1, 4);
-            GtOCTLevelExperienceEntry const* CoefMob = sGtOCTLevelExperienceStore.EvaluateTable(mob_level - 1, 4);
+            GameTableEntry const* CoefPlayer = sGtOCTLevelExperienceStore.EvaluateTable(pl_level - 1, 4);
+            GameTableEntry const* CoefMob = sGtOCTLevelExperienceStore.EvaluateTable(mob_level - 1, 4);
 
             if (mob_level >= pl_level)
-            {
-                uint8 nLevelDiff = mob_level - pl_level;
-                if (nLevelDiff > 4)
-                    nLevelDiff = 4;
-
-                baseGain = round(BaseExpPlayer->Data * (1 + 0.05f * nLevelDiff));
-            }
+                baseGain = round(BaseExpPlayer->Value * (1 + 0.05f * std::min(mob_level - pl_level, 4)));
             else
             {
                 uint8 gray_level = GetGrayLevel(pl_level);
                 if (mob_level > gray_level)
-                {
-                    uint8 ZD = GetZeroDifference(pl_level);
-                    baseGain = round(BaseExpMob->Data * ((1 - ((pl_level - mob_level) / float(ZD))) * (CoefMob->Data / CoefPlayer->Data)));
-                }
+                    baseGain = round(BaseExpMob->Value * ((1 - ((pl_level - mob_level) / float(GetZeroDifference(pl_level)))) * (CoefMob->Value / CoefPlayer->Value)));
                 else
                     baseGain = 0;
             }

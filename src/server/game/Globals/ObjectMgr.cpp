@@ -3380,7 +3380,7 @@ void ObjectMgr::LoadPlayerInfo()
 
         _playerXPperLevel.resize(sGtOCTLevelExperienceStore.GetTableRowCount() + 1, 0);
         for (uint32 level = 0; level < sGtOCTLevelExperienceStore.GetTableRowCount(); ++level)
-            _playerXPperLevel[level + 1] = sGtOCTLevelExperienceStore.EvaluateTable(level, 0)->Data;
+            _playerXPperLevel[level + 1] = sGtOCTLevelExperienceStore.EvaluateTable(level, 0)->Value;
 
         //                                                 0        1
         QueryResult result  = WorldDatabase.Query("SELECT Level, Experience FROM player_xp_for_level");
@@ -3431,20 +3431,18 @@ void ObjectMgr::GetPlayerClassLevelInfo(uint32 class_, uint8 level, uint32& base
     if (level < 1 || class_ >= MAX_CLASSES)
         return;
 
-    if (level > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
-        level = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
+    level = std::min(level, MAX_LEVEL);
 
-    GtOCTBaseHPByClassEntry const* hp = sGtOCTBaseHPByClassStore.EvaluateTable(level - 1, class_ - 1);
-    GtOCTBaseMPByClassEntry const* mp = sGtOCTBaseMPByClassStore.EvaluateTable(level - 1, class_ - 1);
-
+    GameTableEntry const* hp = sGtOCTBaseHPByClassStore.EvaluateTable(level - 1, class_ - 1);
+    GameTableEntry const* mp = sGtOCTBaseMPByClassStore.EvaluateTable(level - 1, class_ - 1);
     if (!hp || !mp)
     {
         sLog->outError(LOG_FILTER_GENERAL, "Tried to get non-existant Class-Level combination data for base hp/mp. Class %u Level %u", class_, level);
         return;
     }
 
-    baseHP = uint32(hp->ratio);
-    baseMana = uint32(mp->ratio);
+    baseHP = uint32(hp->Value);
+    baseMana = uint32(mp->Value);
 }
 
 void ObjectMgr::GetPlayerLevelInfo(uint32 race, uint32 class_, uint8 level, PlayerLevelInfo* info) const
@@ -8662,13 +8660,13 @@ void ObjectMgr::LoadCreatureClassLevelStats()
         uint8 Level = fields[0].GetUInt8();
         uint8 Class = fields[1].GetUInt8();
 
-        GameTable<GtNpcTotalHpEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, &sGtNpcTotalHpExp6Store, nullptr };
-        GameTable<GtNpcDamageByClassEntry>* dmgTables[] = { &sGtNpcDamageByClassStore, &sGtNpcDamageByClassStoreExp1, &sGtNpcDamageByClassStoreExp2, &sGtNpcDamageByClassStoreExp3, &sGtNpcDamageByClassStoreExp4, &sGtNpcDamageByClassStoreExp5, &sGtNpcDamageByClassStoreExp6, nullptr };
-        GtArmorMitigationByLvlEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1, 0);
+        GameTable<GameTableEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, &sGtNpcTotalHpExp6Store, nullptr };
+        GameTable<GameTableEntry>* dmgTables[] = { &sGtNpcDamageByClassStore, &sGtNpcDamageByClassStoreExp1, &sGtNpcDamageByClassStoreExp2, &sGtNpcDamageByClassStoreExp3, &sGtNpcDamageByClassStoreExp4, &sGtNpcDamageByClassStoreExp5, &sGtNpcDamageByClassStoreExp6, nullptr };
+        GameTableEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1, 0);
 
         CreatureBaseStats stats;
         stats.BaseMana = fields[2].GetUInt32();
-        stats.BaseArmor = armor ? armor->Armor : 1; //@TODO:Legion - recheck
+        stats.BaseArmor = armor ? uint32(armor->Value) : 1; //@TODO:Legion - recheck
         stats.AttackPower = fields[3].GetUInt16();
         stats.RangedAttackPower = fields[4].GetUInt16();
 
@@ -8677,7 +8675,7 @@ void ObjectMgr::LoadCreatureClassLevelStats()
 
         for (uint8 i = 0; hpTables[i]; ++i)
             if (hpTables[i]->HasEntry(Level - 1, Class - 1))
-                stats.BaseHealth[i] = hpTables[i]->EvaluateTable(Level - 1, Class - 1)->HP;
+                stats.BaseHealth[i] = hpTables[i]->EvaluateTable(Level - 1, Class - 1)->Value;
 
         for (uint8 i = 0; dmgTables[i]; ++i)
             if (dmgTables[i]->HasEntry(Level - 1, Class - 1))

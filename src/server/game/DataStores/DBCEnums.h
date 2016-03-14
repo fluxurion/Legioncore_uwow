@@ -55,7 +55,7 @@ enum LevelLimit
 #define STRONG_MAX_LEVEL 255
 };
 
-static uint32 const MAX_LEVEL = 110; // client supported max level for player/pets/etc. Avoid overflow or client stability affected. also see GT_MAX_LEVEL define
+static uint8 const MAX_LEVEL = 110; // client supported max level for player/pets/etc. Avoid overflow or client stability affected. also see GT_MAX_LEVEL define
 
 enum BattlegroundBracketId                                  // bracketId for level ranges
 {

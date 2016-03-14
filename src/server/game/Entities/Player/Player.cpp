@@ -6269,19 +6269,12 @@ float Player::GetTotalBaseModValue(BaseModGroup modGroup) const
 
 float Player::GetMeleeCritFromAgility()
 {
-    uint8 level = getLevel();
-    uint32 pclass = getClass();
+    GameTableEntry const* critBase = sGtChanceToMeleeCritBaseStore.EvaluateTable(getClass() - 1, 0);
+    GameTableEntry const* critRatio = sGtChanceToMeleeCritStore.EvaluateTable(getLevel() - 1, getClass() - 1);
+    if (critBase && critRatio)
+        return critBase->Value + GetStat(STAT_AGILITY) * critRatio->Value * 100.0f;
 
-    if (level >= sGtChanceToMeleeCritStore.GetTableRowCount())
-        level = sGtChanceToMeleeCritStore.GetTableRowCount() - 1;
-
-    GtChanceToMeleeCritBaseEntry const* critBase = sGtChanceToMeleeCritBaseStore.EvaluateTable(pclass - 1, 0);
-    GtChanceToMeleeCritEntry     const* critRatio = sGtChanceToMeleeCritStore.EvaluateTable(level - 1, pclass - 1);
-    if (critBase == NULL || critRatio == NULL)
-        return 0.0f;
-
-    float crit = critBase->base + GetStat(STAT_AGILITY)*critRatio->ratio;
-    return crit*100.0f;
+    return 0.0f;
 }
 
 void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
@@ -6319,15 +6312,9 @@ void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
          2.00f/1.15f,    // DemonHunter
     };
 
-    uint8 level = getLevel();
     uint32 pclass = getClass();
-
-    if (level >= sGtChanceToMeleeCritStore.GetTableRowCount())
-        level = sGtChanceToMeleeCritStore.GetTableRowCount() - 1;
-
-    GtChanceToMeleeCritEntry  const* dodgeRatio = sGtChanceToMeleeCritStore.EvaluateTable(level - 1, pclass - 1);
-    GtChanceToMeleeCritEntry  const* critBase = sGtChanceToMeleeCritStore.EvaluateTable(level - 1, 0);
-    if (dodgeRatio == nullptr || pclass > MAX_CLASSES)
+    GameTableEntry  const* dodgeRatio = sGtChanceToMeleeCritStore.EvaluateTable(getLevel() - 1, pclass - 1);
+    if (!dodgeRatio || pclass > MAX_CLASSES)
         return;
 
     // TODO: research if talents/effects that increase total agility by x% should increase non-diminishing part
@@ -6335,8 +6322,8 @@ void Player::GetDodgeFromAgility(float &diminishing, float &nondiminishing)
     float bonus_agility = GetTotalStatValue(STAT_AGILITY) - base_agility;
 
     // calculate diminishing (green in char screen) and non-diminishing (white) contribution
-    diminishing = 100.0f * bonus_agility * dodgeRatio->ratio * crit_to_dodge[pclass-1];
-    nondiminishing = 100.0f * (dodge_base[pclass-1] + base_agility * dodgeRatio->ratio * crit_to_dodge[pclass-1]);
+    diminishing = 100.0f * bonus_agility * dodgeRatio->Value * crit_to_dodge[pclass-1];
+    nondiminishing = 100.0f * (dodge_base[pclass-1] + base_agility * dodgeRatio->Value * crit_to_dodge[pclass-1]);
 }
 
 float Player::GetRatingBonusValue(CombatRating cr) const
@@ -26140,11 +26127,6 @@ bool Player::CanCaptureTowerPoint()
 
 uint32 Player::GetBarberShopCost(uint8 newhairstyle, uint8 newhaircolor, uint8 newfacialhair, BarberShopStyleEntry const* newSkin)
 {
-    uint8 level = getLevel();
-
-    if (level >= sGtBarberShopCostBaseStore.GetTableRowCount())
-        level = sGtBarberShopCostBaseStore.GetTableRowCount() - 1;
-
     uint8 hairstyle = GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_STYLE_ID);
     uint8 haircolor = GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_COLOR_ID);
     uint8 facialhair = GetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_FACIAL_STYLE);
@@ -26153,24 +26135,23 @@ uint32 Player::GetBarberShopCost(uint8 newhairstyle, uint8 newhaircolor, uint8 n
     if ((hairstyle == newhairstyle) && (haircolor == newhaircolor) && (facialhair == newfacialhair) && (!newSkin || (newSkin->HairID == skincolor)))
         return 0;
 
-    GtBarberShopCostBaseEntry const* bsc = sGtBarberShopCostBaseStore.EvaluateTable(level - 1, 0);
-
-    if (!bsc)                                                // shouldn't happen
+    GameTableEntry const* bsc = sGtBarberShopCostBaseStore.EvaluateTable(getLevel() - 1, 0);
+    if (!bsc)
         return 0xFFFFFFFF;
 
     float cost = 0;
 
     if (hairstyle != newhairstyle)
-        cost += bsc->cost;                                  // full price
+        cost += bsc->Value;                                  // full price
 
     if ((haircolor != newhaircolor) && (hairstyle == newhairstyle))
-        cost += bsc->cost * 0.5f;                           // +1/2 of price
+        cost += bsc->Value * 0.5f;                           // +1/2 of price
 
     if (facialhair != newfacialhair)
-        cost += bsc->cost * 0.75f;                          // +3/4 of price
+        cost += bsc->Value * 0.75f;                          // +3/4 of price
 
     if (newSkin && skincolor != newSkin->HairID)
-        cost += bsc->cost * 0.75f;                          // +5/6 of price
+        cost += bsc->Value * 0.75f;                          // +5/6 of price
 
     return uint32(cost);
 }

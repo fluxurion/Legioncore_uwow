@@ -291,12 +291,10 @@ float Player::GetHealthBonusFromStamina()
 {
     // Taken from PaperDollFrame.lua - 6.0.3.19085
     float ratio = 10.0f;
-    if (GtOCTHpPerStaminaEntry const* hpBase = sGtOCTHpPerStaminaStore.EvaluateTable(getLevel() - 1, 0))
-        ratio = hpBase->ratio;
+    if (GameTableEntry const* hpBase = sGtOCTHpPerStaminaStore.EvaluateTable(getLevel() - 1, 0))
+        ratio = hpBase->Value;
 
-    float stamina = GetStat(STAT_STAMINA);
-
-    return stamina * ratio;
+    return GetStat(STAT_STAMINA) * ratio;
 }
 
 void Player::UpdateMaxHealth()

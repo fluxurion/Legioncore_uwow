@@ -26,37 +26,40 @@
 #include <iostream>
 #include <fstream>
 
-GameTable<GtArmorMitigationByLvlEntry>      sGtArmorMitigationByLvlStore(GameTablefmt);
-GameTable<GtBarberShopCostBaseEntry>        sGtBarberShopCostBaseStore(GameTablefmt);
-GameTable<GtBattlePetTypeDamageModEntry>    sGtBattlePetTypeDamageModStore(GameTablefmt);
-GameTable<GtChanceToMeleeCritBaseEntry>     sGtChanceToMeleeCritBaseStore(GameTablefmt);
-GameTable<GtChanceToMeleeCritEntry>         sGtChanceToMeleeCritStore(GameTablefmt);
-GameTable<GtChanceToSpellCritBaseEntry>     sGtChanceToSpellCritBaseStore(GameTablefmt);
-GameTable<GtChanceToSpellCritEntry>         sGtChanceToSpellCritStore(GameTablefmt);
-GameTable<GtCombatRatingsEntry>             sGtCombatRatingsStore(GameTablefmt);
-GameTable<GtItemSocketCostPerLevelEntry>    sGtItemSocketCostPerLevelStore(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStore(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp1(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp2(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp3(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp4(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp5(GameTablefmt);
-GameTable<GtNpcDamageByClassEntry>          sGtNpcDamageByClassStoreExp6(GameTablefmt);
-GameTable<GtNPCManaCostScalerEntry>         sGtNPCManaCostScalerStore(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp1Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp2Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp3Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp4Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp5Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpExp6Store(GameTablefmt);
-GameTable<GtNpcTotalHpEntry>                sGtNpcTotalHpStore(GameTablefmt);
-GameTable<GtOCTBaseHPByClassEntry>          sGtOCTBaseHPByClassStore(GameTablefmt);
-GameTable<GtOCTBaseMPByClassEntry>          sGtOCTBaseMPByClassStore(GameTablefmt);
-GameTable<GtOCTHpPerStaminaEntry>           sGtOCTHpPerStaminaStore(GameTablefmt);
-GameTable<GtOCTLevelExperienceEntry>        sGtOCTLevelExperienceStore(GameTablefmt);
-GameTable<GtOCTRegenHPEntry>                sGtOCTRegenHPStore(GameTablefmt);
-GameTable<GtRegenMPPerSptEntry>             sGtRegenMPPerSptStore(GameTablefmt);
-GameTable<GtSpellScalingEntry>              sGtSpellScalingStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtArmorMitigationByLvlStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtArtifactLevelXPStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtBarberShopCostBaseStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtBattlePetTypeDamageModStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtChanceToMeleeCritBaseStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtChanceToMeleeCritStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtChanceToSpellCritBaseStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtChanceToSpellCritStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtCombatRatingsMultByILvlStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtCombatRatingsStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtHonorLevelStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtItemSocketCostPerLevelStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp1(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp2(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp3(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp4(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp5(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcDamageByClassStoreExp6(GameTablefmt);
+GameTable<GameTableEntry>   sGtNPCManaCostScalerStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp1Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp2Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp3Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp4Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp5Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpExp6Store(GameTablefmt);
+GameTable<GameTableEntry>   sGtNpcTotalHpStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtOCTBaseHPByClassStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtOCTBaseMPByClassStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtOCTHpPerStaminaStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtOCTLevelExperienceStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtOCTRegenHPStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtRegenMPPerSptStore(GameTablefmt);
+GameTable<GameTableEntry>   sGtSpellScalingStore(GameTablefmt);
 
 typedef std::list<std::string> StoreProblemList;
 
@@ -129,13 +132,8 @@ inline void LoadGameTable(StoreProblemList& errors, std::string const& tableName
     if (storage.Load(dbcFilename.c_str()))
     {
         bool found = false;
-        // Find table definition in GameTables.db2
-        for (uint32 i = 0; i < sGameTablesStore.GetNumRows(); ++i)
+        for (GameTablesEntry const* gt : sGameTablesStore)
         {
-            GameTablesEntry const* gt = sGameTablesStore.LookupEntry(i);
-            if (!gt)
-                continue;
-
             for (uint32 l = 0; l < MAX_LOCALES; ++l)
             {
                 if (l != LOCALE_none && tableName == gt->Name->Str[l])
@@ -186,6 +184,7 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     LOAD_GT("ChanceToSpellCrit",       sGtChanceToSpellCritStore,       "gtChanceToSpellCrit.dbc");
     LOAD_GT("ChanceToSpellCritBase",   sGtChanceToSpellCritBaseStore,   "gtChanceToSpellCritBase.dbc");
     LOAD_GT("CombatRatings",           sGtCombatRatingsStore,           "gtCombatRatings.dbc");
+    LOAD_GT("HonorLevel",              sGtHonorLevelStore,              "gtHonorLevel.dbc");
     LOAD_GT("ItemSocketCostPerLevel",  sGtItemSocketCostPerLevelStore,  "gtItemSocketCostPerLevel.dbc");
     LOAD_GT("NpcDamageByClass",        sGtNpcDamageByClassStore,        "gtNpcDamageByClass.dbc");
     LOAD_GT("NpcDamageByClassExp1",    sGtNpcDamageByClassStoreExp1,    "gtNpcDamageByClassExp1.dbc");
@@ -208,18 +207,18 @@ void LoadGameTables(std::string const& dataPath, uint32 defaultLocale)
     LOAD_GT("OCTLevelExperience",      sGtOCTLevelExperienceStore,      "gtOCTLevelExperience.dbc");
     LOAD_GT("RegenMPPerSpt",           sGtRegenMPPerSptStore,           "gtRegenMPPerSpt.dbc");
     LOAD_GT("SpellScaling",            sGtSpellScalingStore,            "gtSpellScaling.dbc");
-
+    LOAD_GT("ArtifactLevelXP",         sGtArtifactLevelXPStore,         "gtArtifactLevelXP.dbc");
+    LOAD_GT("CombatRatingsMultByILvl", sGtCombatRatingsMultByILvlStore, "gtCombatRatingsMultByILvl.dbc");
     /*
         exist but'til unused
-        gtArtifactLevelXP
+
         gtBattlePetXP
         gtChallengeModeDamage
         gtChallengeModeHealth
-        gtCombatRatingsMultByILvl
-        gtHonorLevel
         gtSandboxScaling
 
         this was deleted in 21154.... use them from old builds atm
+
         gtChanceToMeleeCrit
         gtChanceToMeleeCritBase
         gtChanceToSpellCrit

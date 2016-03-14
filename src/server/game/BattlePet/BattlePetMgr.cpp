@@ -2058,8 +2058,8 @@ uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 t
 
 float PetBattle::RoundResults::Effect::GetAttackModifier(uint8 attackType, uint8 defenseType)
 {
-    if (GtBattlePetTypeDamageModEntry const* gt = sGtBattlePetTypeDamageModStore.EvaluateTable(defenseType - 1, attackType - 1))
-        return gt->value;
+    if (GameTableEntry const* gt = sGtBattlePetTypeDamageModStore.EvaluateTable(defenseType - 1, attackType - 1))
+        return gt->Value;
 
     return 1.0f;
 }

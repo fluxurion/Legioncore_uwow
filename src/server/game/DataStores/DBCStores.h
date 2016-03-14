@@ -46,10 +46,11 @@ public:
 
     T const* EvaluateTable(uint32 row, uint32 column) const
     {
-        //ASSERT(row < _gtEntry->NumRows, "Requested row %u from GameTable %s but there are only %u rows!", row, _gtEntry->Name->Str[0], _gtEntry->NumRows);
-        //ASSERT(column < _gtEntry->NumColumns, "Requested column %u from GameTable %s but there are only %u columns!", column, _gtEntry->Name->Str[0], _gtEntry->NumColumns);
         if (row > _gtEntry->NumRows || column > _gtEntry->NumColumns)
+        {
+            sLog->outError(LOG_FILTER_UNITS, "GameTable::EvaluateTable Requested wrong row %u or column %u in GameTable: %s", _gtEntry->NumRows, _gtEntry->NumColumns _gtEntry->Name->Str[LOCALE_enUS])
             return nullptr;
+        }
 
         return _storage.LookupEntry(_gtEntry->NumRows * column + row);
     }
@@ -68,36 +69,39 @@ private:
     GameTablesEntry const* _gtEntry;
 };
 
-extern GameTable<GtArmorMitigationByLvlEntry>   sGtArmorMitigationByLvlStore;
-extern GameTable<GtBarberShopCostBaseEntry>     sGtBarberShopCostBaseStore;
-extern GameTable<GtBattlePetTypeDamageModEntry> sGtBattlePetTypeDamageModStore;
-extern GameTable<GtChanceToMeleeCritBaseEntry>  sGtChanceToMeleeCritBaseStore;
-extern GameTable<GtChanceToMeleeCritEntry>      sGtChanceToMeleeCritStore;
-extern GameTable<GtChanceToSpellCritBaseEntry>  sGtChanceToSpellCritBaseStore;
-extern GameTable<GtChanceToSpellCritEntry>      sGtChanceToSpellCritStore;
-extern GameTable<GtCombatRatingsEntry>          sGtCombatRatingsStore;
-extern GameTable<GtItemSocketCostPerLevelEntry> sGtItemSocketCostPerLevelStore;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStore;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp1;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp2;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp3;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp4;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp5;
-extern GameTable<GtNpcDamageByClassEntry>       sGtNpcDamageByClassStoreExp6;
-extern GameTable<GtNPCManaCostScalerEntry>      sGtNPCManaCostScalerStore;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp1Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp2Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp3Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp4Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp5Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpExp6Store;
-extern GameTable<GtNpcTotalHpEntry>             sGtNpcTotalHpStore;
-extern GameTable<GtOCTBaseHPByClassEntry>       sGtOCTBaseHPByClassStore;
-extern GameTable<GtOCTBaseMPByClassEntry>       sGtOCTBaseMPByClassStore;
-extern GameTable<GtOCTHpPerStaminaEntry>        sGtOCTHpPerStaminaStore;
-extern GameTable<GtOCTLevelExperienceEntry>     sGtOCTLevelExperienceStore;
-extern GameTable<GtRegenMPPerSptEntry>          sGtRegenMPPerSptStore;
-extern GameTable<GtSpellScalingEntry>           sGtSpellScalingStore;
+extern GameTable<GameTableEntry>    sGtArmorMitigationByLvlStore;
+extern GameTable<GameTableEntry>    sGtArtifactLevelXPStore;
+extern GameTable<GameTableEntry>    sGtBarberShopCostBaseStore;
+extern GameTable<GameTableEntry>    sGtBattlePetTypeDamageModStore;
+extern GameTable<GameTableEntry>    sGtChanceToMeleeCritBaseStore;
+extern GameTable<GameTableEntry>    sGtChanceToMeleeCritStore;
+extern GameTable<GameTableEntry>    sGtChanceToSpellCritBaseStore;
+extern GameTable<GameTableEntry>    sGtChanceToSpellCritStore;
+extern GameTable<GameTableEntry>    sGtCombatRatingsMultByILvlStore;
+extern GameTable<GameTableEntry>    sGtCombatRatingsStore;
+extern GameTable<GameTableEntry>    sGtHonorLevelStore;
+extern GameTable<GameTableEntry>    sGtItemSocketCostPerLevelStore;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStore;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp1;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp2;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp3;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp4;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp5;
+extern GameTable<GameTableEntry>    sGtNpcDamageByClassStoreExp6;
+extern GameTable<GameTableEntry>    sGtNPCManaCostScalerStore;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp1Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp2Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp3Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp4Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp5Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpExp6Store;
+extern GameTable<GameTableEntry>    sGtNpcTotalHpStore;
+extern GameTable<GameTableEntry>    sGtOCTBaseHPByClassStore;
+extern GameTable<GameTableEntry>    sGtOCTBaseMPByClassStore;
+extern GameTable<GameTableEntry>    sGtOCTHpPerStaminaStore;
+extern GameTable<GameTableEntry>    sGtOCTLevelExperienceStore;
+extern GameTable<GameTableEntry>    sGtRegenMPPerSptStore;
+extern GameTable<GameTableEntry>    sGtSpellScalingStore;
 
 void LoadGameTables(std::string const& dataPath, uint32 defaultLocale);
 bool IsValidDifficulty(uint32 diff, bool isRaid);
