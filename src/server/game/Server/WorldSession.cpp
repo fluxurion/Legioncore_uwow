@@ -450,11 +450,6 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                     break;
             }
         }
-        catch (WorldPackets::PacketArrayMaxCapacityException const& pamce)
-        {
-            sLog->outError(LOG_FILTER_NETWORKIO, "PacketArrayMaxCapacityException: %s while parsing %s from %s.",
-                pamce.what(), GetOpcodeNameForLogging(static_cast<OpcodeClient>(packet->GetOpcode())).c_str(), GetPlayerName(false).c_str());
-        }
         catch(ByteBufferException &)
         {
             sLog->outError(LOG_FILTER_NETWORKIO, "WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i. Skipped packet.",

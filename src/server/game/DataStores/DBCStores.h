@@ -48,7 +48,7 @@ public:
     {
         if (row > _gtEntry->NumRows || column > _gtEntry->NumColumns)
         {
-            sLog->outError(LOG_FILTER_UNITS, "GameTable::EvaluateTable Requested wrong row %u or column %u in GameTable: %s", _gtEntry->NumRows, _gtEntry->NumColumns _gtEntry->Name->Str[LOCALE_enUS])
+            sLog->outError(LOG_FILTER_UNITS, "GameTable::EvaluateTable Requested wrong row %u or column %u in GameTable: %s", _gtEntry->NumRows, _gtEntry->NumColumns, _gtEntry->Name->Str[LOCALE_enUS]);
             return nullptr;
         }
 
