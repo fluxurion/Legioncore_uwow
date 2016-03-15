@@ -9916,7 +9916,6 @@ void ObjectMgr::LoadCharacterTemplates()
             templ.TemplateSetID = templateSetID;
             templ.Name = fields[1].GetString();
             templ.Description = fields[2].GetString();
-            templ.Level = fields[3].GetUInt8();
 
             do
             {
@@ -9933,7 +9932,13 @@ void ObjectMgr::LoadCharacterTemplates()
 
                 ++count[1];
                 templ.Classes.emplace_back(factionGroup, classID);
-
+                templ.Level = fields[2].GetUInt8();
+                templ.X = fields[3].GetFloat();
+                templ.Y = fields[4].GetFloat();
+                templ.Z = fields[5].GetFloat();
+                templ.O = fields[6].GetFloat();
+                templ.MapID = fields[7].GetUInt16();
+                templ.Money = fields[8].GetUInt32();
             }
             while (classes->NextRow());
 

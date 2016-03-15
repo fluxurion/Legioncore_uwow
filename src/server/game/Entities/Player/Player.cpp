@@ -603,7 +603,39 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     for (uint8 i = 0; i < PLAYER_SLOTS_COUNT; i++)
         m_items[i] = nullptr;
 
-    Relocate(info->positionX, info->positionY, info->positionZ, info->orientation);
+    uint32 startLevel = sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL);
+    uint64 money = sWorld->getIntConfig(CONFIG_START_PLAYER_MONEY) * 10000;
+    switch (createInfo->Class)
+    {
+        case CLASS_DEATH_KNIGHT:
+            startLevel = START_DK_LEVEL;
+            break;
+        case CLASS_DEMON_HUNTER:
+            startLevel = START_DH_LEVEL;
+            break;
+    }
+
+    WorldLocation loc(info->mapId, info->positionX, info->positionY, info->positionZ, info->orientation);
+
+    bool loadoutItem = false;
+    if (CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet))
+        for (CharcterTemplateClass const& v : charTemplate->Classes)
+            if (v.ClassID == createInfo->Class)
+            {
+                startLevel = charTemplate->Level;
+                Relocate(charTemplate->X, charTemplate->Y, charTemplate->Z, charTemplate->O);
+                loc.m_mapId       = charTemplate->MapID;
+                loc.m_positionX   = charTemplate->X;
+                loc.m_positionY   = charTemplate->Y;
+                loc.m_positionZ   = charTemplate->Z;
+                loc.SetOrientation(charTemplate->O);
+                money = charTemplate->Money * 10000;
+                loadoutItem = true;
+                break;
+            }
+
+    Relocate(loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation());
+    SetHomebind(loc, 0);
 
     ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(createInfo->Class);
     if (!cEntry)
@@ -615,7 +647,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
 
     SetSpecializationId(0, cEntry->DefaultSpec, true);
 
-    SetMap(sMapMgr->CreateMap(info->mapId, this));
+    SetMap(sMapMgr->CreateMap(loc.GetMapId(), this));
 
     uint8 powertype = cEntry->PowerType;
 
@@ -682,21 +714,6 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 0);
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, 0);
 
-    uint32 startLevel = sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL);
-    if (getClass() == CLASS_DEATH_KNIGHT)
-        startLevel = START_DK_LEVEL;
-
-    if (CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet))
-        for (CharcterTemplateClass const& v : charTemplate->Classes)
-            if (v.ClassID == createInfo->Class)
-            {
-                startLevel = charTemplate->Level;
-                break;
-            }
-
-    if (getClass() == CLASS_DEMON_HUNTER)
-        startLevel = START_DH_LEVEL;
-
     //enable change stat at apply aura spell or item mods.
     SetCanModifyStats(true);
     SetUInt32Value(UNIT_FIELD_LEVEL, startLevel);
@@ -704,7 +721,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     InitRunes();
     InitBrackets();
 
-    SetUInt32Value(PLAYER_FIELD_COINAGE, sWorld->getIntConfig(CONFIG_START_PLAYER_MONEY));
+    SetUInt32Value(PLAYER_FIELD_COINAGE, money);
     SetCurrency(CURRENCY_TYPE_HONOR_POINTS, sWorld->getIntConfig(CONFIG_CURRENCY_START_HONOR_POINTS));
     SetCurrency(CURRENCY_TYPE_APEXIS_CRYSTAL, sWorld->getIntConfig(CONFIG_CURRENCY_START_APEXIS_CRYSTALS));
     SetCurrency(CURRENCY_TYPE_CONQUEST_POINTS, sWorld->getIntConfig(CONFIG_CURRENCY_START_CONQUEST_POINTS));
@@ -865,11 +882,9 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     for (PlayerCreateInfoActions::const_iterator action_itr = info->action.begin(); action_itr != info->action.end(); ++action_itr)
         addActionButton(action_itr->button, action_itr->action, action_itr->type);
 
-    if (createInfo->TemplateSet)
+    if (loadoutItem)
     {
-        std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(getClass(), 3);
-        sLog->outError(LOG_FILTER_GENERAL, "itemsArray[0] %u", itemsArray[0].size());
-
+        std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(getClass(), 4);
         for (uint32 itemID : itemsArray[0])
             if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemID))
                 StoreNewItemInBestSlots(itemID, pProto->GetInventoryType() != INVTYPE_BAG  ? 1 : 4);
@@ -970,6 +985,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
     UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
     SetFullHealth();
+
     return true;
 }
 

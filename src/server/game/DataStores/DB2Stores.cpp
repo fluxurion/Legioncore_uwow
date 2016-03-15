@@ -1306,16 +1306,12 @@ std::array<std::vector<uint32>, 2> DB2Manager::GetItemLoadOutItemsByClassID(uint
         return _array;
 
     for (auto const& v : itr->second)
-        if (v.second == type && type != 4)
+        if (v.second == type)
         {
             auto itr = _characterLoadoutItem.find(v.first);
             if (itr != _characterLoadoutItem.end())
                 for (uint32 item : itr->second)
                     _array[0].emplace_back(item);
-        }
-        else if (v.second == type)
-        {
-            //bla bla
         }
 
     return _array;

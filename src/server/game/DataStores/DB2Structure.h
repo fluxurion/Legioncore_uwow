@@ -778,8 +778,8 @@ struct CriteriaTreeEntry
 struct CharacterLoadoutItemEntry
 {
     uint32      ID;
-    uint32      LoadOutID;
-    uint16      ItemID;
+    uint32      ItemID;
+    uint16      LoadOutID;
 };
 
 struct CharacterLoadoutEntry

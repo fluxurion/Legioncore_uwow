@@ -947,6 +947,12 @@ struct CharacterTemplate
     std::string Name;
     std::string Description;
     uint8 Level;
+    float X;
+    float Y;
+    float Z;
+    float O;
+    uint16 MapID;
+    uint32 Money;
 };
 
 typedef std::unordered_map<uint32, CharacterTemplate> CharacterTemplateContainer;
