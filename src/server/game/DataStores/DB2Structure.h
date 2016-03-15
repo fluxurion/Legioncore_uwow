@@ -72,9 +72,9 @@ struct AreaTableEntry
     uint8       FactionGroupMask;                           // 21
     uint8       MountFlags;                                 // 22
     uint8       UWIntroMusic;                               // 23
-    uint8       WildBattlePetLevelMin;                      // 24
-    uint8       WildBattlePetLevelMax;                      // 25
-    uint8       WindSettingsID;                             // 26
+    uint8       WindSettingsID;                             // 24
+    uint8       WildBattlePetLevelMin;                      // 25
+    uint8       WildBattlePetLevelMax;                      // 26
 
     bool IsSanctuary() const
     {

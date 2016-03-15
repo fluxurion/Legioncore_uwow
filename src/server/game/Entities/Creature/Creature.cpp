@@ -1294,7 +1294,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     if (cinfo->Type == CREATURE_TYPE_WILD_PET)
     {
         // random level depends on zone data
-        /*if (AreaTableEntry const * aEntry = sAreaTableStore.LookupEntry(GetZoneId()))
+        if (AreaTableEntry const * aEntry = sAreaTableStore.LookupEntry(GetZoneId()))
         {
             uint8 level_ = urand(aEntry->WildBattlePetLevelMin, aEntry->WildBattlePetLevelMax);
             if (!level_)
@@ -1303,7 +1303,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
             SetUInt32Value(UNIT_FIELD_WILD_BATTLE_PET_LEVEL, level_);
         }
         else
-            */SetUInt32Value(UNIT_FIELD_WILD_BATTLE_PET_LEVEL, level);
+            SetUInt32Value(UNIT_FIELD_WILD_BATTLE_PET_LEVEL, level);
     }
 
     CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(level, cinfo->unit_class);
