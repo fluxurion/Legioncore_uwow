@@ -325,8 +325,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellMissStatus c
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellPowerData const& spellPowerData)
 {
-    data << spellPowerData.Cost;
     data << spellPowerData.Type;
+    data << spellPowerData.Cost;
 
     return data;
 }
