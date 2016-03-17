@@ -985,8 +985,10 @@ void ObjectMgr::CheckCreatureTemplate(CreatureTemplate const* cInfo)
 
     if (cInfo->RequiredExpansion == -1)
     {
-        const_cast<CreatureTemplate*>(cInfo)->minlevel = (MAX_LEVEL + cInfo->minlevel);
-        const_cast<CreatureTemplate*>(cInfo)->maxlevel = (MAX_LEVEL + cInfo->maxlevel);
+        if (MAX_LEVEL > cInfo->minlevel)
+            const_cast<CreatureTemplate*>(cInfo)->minlevel = MAX_LEVEL;
+        if (MAX_LEVEL > cInfo->maxlevel)
+            const_cast<CreatureTemplate*>(cInfo)->maxlevel = MAX_LEVEL;
         const_cast<CreatureTemplate*>(cInfo)->RequiredExpansion = CURRENT_EXPANSION;
     }
 }
