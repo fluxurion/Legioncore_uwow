@@ -291,7 +291,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 {
     bool NoBirthAnim = false;
     bool EnablePortals = false;
-    bool PlayHoverAnim = false;
+    bool PlayHoverAnim = false/*(GetByteValue(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_ANIM_TIER) & UNIT_BYTE1_FLAG_HOVER)*/;
     bool IsSuppressingGreetings = false;
     bool HasMovementUpdate = (flags & UPDATEFLAG_LIVING) != 0;
     bool HasMovementTransport = (flags & UPDATEFLAG_GO_TRANSPORT_POSITION) != 0;

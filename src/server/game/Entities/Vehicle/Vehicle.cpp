@@ -950,7 +950,8 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
     
     Movement::MoveSplineInit init(*Passenger);
     init.DisableTransportPathTransformations();
-    init.MoveTo(veSeat->AttachmentOffset.X, veSeat->AttachmentOffset.Y, veSeat->AttachmentOffset.Z, false, true);
+    if(veSeat->AttachmentOffset.X > 0 && veSeat->AttachmentOffset.Y > 0)
+        init.MoveTo(veSeat->AttachmentOffset.X, veSeat->AttachmentOffset.Y, veSeat->AttachmentOffset.Z, false, true);
     init.SetFacing(0.0f);
     init.SetTransportEnter();
     init.Launch();

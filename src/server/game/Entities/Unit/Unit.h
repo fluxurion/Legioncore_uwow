@@ -181,7 +181,7 @@ enum SpellFacingFlags
 #define BASE_MAXDAMAGE 2.0f
 #define BASE_ATTACK_TIME 2000
 
-// byte value (UNIT_FIELD_BYTES_1, 0)
+// byte value (UNIT_FIELD_BYTES_1, 0) (cainfo->bytes1 & 0xFF)
 enum UnitStandStateType
 {
     UNIT_STAND_STATE_STAND             = 0,
@@ -196,7 +196,7 @@ enum UnitStandStateType
     UNIT_STAND_STATE_SUBMERGED         = 9
 };
 
-// byte flag value (UNIT_FIELD_BYTES_1, 2)
+// byte flag value (UNIT_FIELD_BYTES_1, 2) ((cainfo->bytes1 >> 16) & 0xFF)
 enum UnitStandFlags
 {
     UNIT_STAND_FLAGS_UNK1         = 0x01,
@@ -207,7 +207,7 @@ enum UnitStandFlags
     UNIT_STAND_FLAGS_ALL          = 0xFF
 };
 
-// byte flags value (UNIT_FIELD_BYTES_1, 3)
+// byte flags value (UNIT_FIELD_BYTES_1, 3) ((cainfo->bytes1 >> 24) & 0xFF)
 enum UnitBytes1_Flags
 {
     UNIT_BYTE1_FLAG_ALWAYS_STAND    = 0x01,
