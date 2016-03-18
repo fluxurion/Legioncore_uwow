@@ -303,10 +303,10 @@ namespace WorldPackets
 
         struct SpellPowerData
         {
-            SpellPowerData(uint8 cost, uint8 type) : Cost(cost), Type(type) { }
+            SpellPowerData(int32 cost, uint8 type) : Cost(cost), Type(type) { }
 
             int32 Cost = 0;
-            int8 Type = 0;
+            uint8 Type = 0;
         };
 
         struct RuneData

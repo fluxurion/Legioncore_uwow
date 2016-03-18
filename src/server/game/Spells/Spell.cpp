@@ -4947,7 +4947,7 @@ void Spell::SendSpellStart()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerCost, m_caster->GetPower(Powers(power.PowerType))));
         else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
@@ -5080,19 +5080,18 @@ void Spell::SendSpellGo()
     {
         SpellPowerEntry power;
         if (GetSpellInfo()->GetSpellPowerByCasterPower(m_caster, power))
-            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerType, m_caster->GetPower(Powers(power.PowerType))));
+            castData.RemainingPower.emplace_back(WorldPackets::Spells::SpellPowerData(power.PowerCost, m_caster->GetPower(Powers(power.PowerType))));
         else
             castData.CastFlags &= ~CAST_FLAG_POWER_LEFT_SELF;
     }
 
     if (castFlags & CAST_FLAG_RUNE_LIST) // rune cooldowns list
     {
-        castData.RemainingRunes = boost::in_place();
-
         //TODO: There is a crash caused by a spell with CAST_FLAG_RUNE_LIST casted by a creature
         //The creature is the mover of a player, so HandleCastSpellOpcode uses it as the caster
         if (Player* player = m_caster->ToPlayer())
         {
+            castData.RemainingRunes = boost::in_place();
             castData.RemainingRunes->Start = m_runesState; // runes state before
             castData.RemainingRunes->Count = player->GetRunesState(); // runes state after
             for (uint8 i = 0; i < MAX_RUNES; ++i)
@@ -5103,12 +5102,7 @@ void Spell::SendSpellGo()
             }
         }
         else
-        {
-            castData.RemainingRunes->Start = 0;
-            castData.RemainingRunes->Count = 0;
-            for (uint8 i = 0; i < MAX_RUNES; ++i)
-                castData.RemainingRunes->Cooldowns.push_back(0);
-        }
+            castData.CastFlags &= ~CAST_FLAG_RUNE_LIST;
     }
 
     if (castFlags & CAST_FLAG_ADJUST_MISSILE)
