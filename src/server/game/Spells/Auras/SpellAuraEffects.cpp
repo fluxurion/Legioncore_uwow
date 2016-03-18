@@ -3302,7 +3302,10 @@ void AuraEffect::HandleAuraModScale(AuraApplication const* aurApp, uint8 mode, b
 
     Unit* target = aurApp->GetTarget();
 
-    target->ApplyPercentModFloatValue(OBJECT_FIELD_SCALE, (float)GetAmount(), apply);
+    if(GetAmount() > 0)
+        target->ApplyPercentModFloatValue(OBJECT_FIELD_SCALE, (float)GetAmount(), apply);
+    else
+        target->ApplyPercentModFloatValue(OBJECT_FIELD_SCALE, -(float)GetAmount(), !apply);
 }
 
 void AuraEffect::HandleAuraCloneCaster(AuraApplication const* aurApp, uint8 mode, bool apply) const
