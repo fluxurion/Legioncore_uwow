@@ -31,7 +31,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_AREA_TABLE, "SELECT ID, Flags1, Flags2, ZoneName, AmbientMultiplier, AreaName, MapID, ParentAreaID, AreaBit, "
         "AmbienceID, ZoneMusic, IntroSound, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, LiquidTypeID4, UWZoneMusic, WorldPvPID, "
         "PvPCombastWorldStateID, SoundProviderPref, SoundProviderPrefUnderwater, ExplorationLevel, FactionGroupMask, MountFlags, UWIntroMusic, "
-        "WildBattlePetLevelMin, WildBattlePetLevelMax, WindSettingsID FROM area_table ORDER BY ID DESC", CONNECTION_SYNCH);
+        "WindSettingsID, WildBattlePetLevelMin, WildBattlePetLevelMax FROM area_table ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_AREA_TABLE, "SELECT ID, ZoneName_lang, AreaName_lang FROM area_table_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // AreaTrigger.db2
@@ -214,7 +214,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Description_lang FROM criteria_tree_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CharacterLoadoutItem.db2
-    PrepareStatement(HOTFIX_SEL_CHARACTER_LOADOUT_ITEM, "SELECT ID, LoadOutID, ItemID FROM character_loadout_item ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_CHARACTER_LOADOUT_ITEM, "SELECT ID, ItemID, LoadOutID FROM character_loadout_item ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // CharacterLoadout.db2
     PrepareStatement(HOTFIX_SEL_CHARACTER_LOADOUT, "SELECT ID, Racemask, ClassID, Purpose FROM character_loadout ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -338,8 +338,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_GUILD_PERK_SPELLS, "SELECT ID, SpellId, Level FROM guild_perk_spells ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Heirloom.db2
-    PrepareStatement(HOTFIX_SEL_HEIRLOOM, "SELECT ID, ItemID, Flags, SourceText, Source, OldItem1, OldItem2, NextDifficultyItemID, UpgradeItemID1, "
-        "UpgradeItemID2, ItemBonusListID1, ItemBonusListID2 FROM heirloom ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_HEIRLOOM, "SELECT ID, ItemID, SourceText, OldItem1, OldItem2, NextDifficultyItemID, UpgradeItemID1, UpgradeItemID2, "
+        "ItemBonusListID1, ItemBonusListID2, Flags, Source FROM heirloom ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_HEIRLOOM, "SELECT ID, SourceText_lang FROM heirloom_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Holidays.db2
@@ -688,7 +688,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_SPELL_REAGENTS_CURRENCY, "SELECT ID, SpellID, CurrencyID, CurrencyCount FROM spell_reagents_currency ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Toy.db2
-    PrepareStatement(HOTFIX_SEL_TOY, "SELECT ID, ItemID, Flags, Description, CategoryFilter FROM toy ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TOY, "SELECT ID, ItemID, Description, Flags, CategoryFilter FROM toy ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TOY, "SELECT ID, Description_lang FROM toy_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // PvpItem.db2

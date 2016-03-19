@@ -304,7 +304,7 @@ public:
     typedef std::unordered_map<uint32, MapChallengeModeEntry const*> MapChallengeModeEntryContainer;
     typedef std::unordered_map<uint32, ItemUpgradeData> ItemUpgradeDataContainer;
     typedef std::unordered_map<uint32, std::vector<QuestPackageItemEntry const*>> QuestPackageItemContainer;
-    typedef std::vector<uint32> ToyItemIdsContainer;
+    typedef std::unordered_set<uint32> ToyItemIdsContainer;
     typedef std::unordered_map<uint32, HeirloomEntry const*> HeirloomItemsContainer;
     typedef std::map<uint32, BattlePetSpeciesEntry const*> BattlePetSpeciesBySpellIdContainer;
     typedef std::multimap<uint32, std::pair<uint32, uint8>> BattlePetTurnByAbilityIdContainer;
@@ -390,7 +390,7 @@ public:
     std::set<uint32> GetItemBonusTree(uint32 itemId, uint32 itemBonusTreeMod) const;
     std::set<uint32> GetFindBonusTree(uint32 BonusTreeID, uint32 itemBonusTreeMod) const;
     HeirloomEntry const* GetHeirloomByItemId(uint32 itemId) const;
-    HeirloomEntry const* GetHeirloomByOldItem(uint32 itemId) const;
+    bool IsToyItem(uint32 toy) const;
     uint8 GetBattlePetSpeciesBySpellID(uint32 entry) const;
     float CalcBattlePetQualityMuliplier(uint8 quality, uint8 level);
     uint32 GetBattlePetTurnByAbility(uint32 abilityID, uint8 turnIndex = 1);

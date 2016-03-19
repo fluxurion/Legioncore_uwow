@@ -55,7 +55,8 @@ bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult hei
             bool isFavourite = fields[1].GetBool();
 
             _toys[itemId] = isFavourite;
-        } while (toys->NextRow());
+        }
+        while (toys->NextRow());
     }
 
     if (heirlooms)
@@ -71,16 +72,16 @@ bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult hei
                 continue;
 
             uint32 bonusId = 0;
-
             if (flags & HEIRLOOM_FLAG_BONUS_LEVEL_90)
                 bonusId = heirloom->ItemBonusListID[0];
             if (flags & HEIRLOOM_FLAG_BONUS_LEVEL_100)
                 bonusId = heirloom->ItemBonusListID[1];
 
             _heirlooms[itemId] = HeirloomData(flags, bonusId);
-        } while (heirlooms->NextRow());
+        }
+        while (heirlooms->NextRow());
     }
-    
+
     for (auto const& t : _toys)
         _owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_TOYS, t.first);
 
@@ -186,73 +187,51 @@ void CollectionMgr::CheckHeirloomUpgrades(Item* item)
     if (!player)
         return;
 
-    if (HeirloomEntry const* heirloom = sDB2Manager.GetHeirloomByOldItem(item->GetEntry()))
+    HeirloomEntry const* heirloom = sDB2Manager.GetHeirloomByItemId(item->GetEntry());
+    if (!heirloom)
+        return;
+
+    HeirloomContainer::iterator v = _heirlooms.find(item->GetEntry());
+    if (v == _heirlooms.end())
+        return;
+
+    uint32 heirloomItemId = heirloom->NextDifficultyItemID;
+    uint32 newItemId = 0;
+    while (HeirloomEntry const* heirloomDiff = sDB2Manager.GetHeirloomByItemId(heirloomItemId))
     {
-        player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
+        if (player->GetItemByEntry(heirloomDiff->ItemID))
+            newItemId = heirloomDiff->ItemID;
 
-        ItemPosCountVec dest;
-        InventoryResult msg = player->CanStoreNewItem(item->GetBagSlot(), item->GetSlot(), dest, heirloom->ItemID, 1);
-        if (msg == EQUIP_ERR_OK)
+        if (HeirloomEntry const* heirloomSub = sDB2Manager.GetHeirloomByItemId(heirloomDiff->NextDifficultyItemID))
         {
-            Item* newItem = player->StoreNewItem(dest, heirloom->ItemID, true);
-
-            std::vector<uint32> const& fields = newItem->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
-
-            uint32 bonusId = GetHeirloomBonus(heirloom->ItemID);
-            if (std::find(fields.begin(), fields.end(), bonusId) == fields.end())
-                newItem->AddBonuses(bonusId);
-
-            player->SendNewItem(newItem, 1, false, false);
+            heirloomItemId = heirloomSub->ItemID;
+            continue;
         }
+
+        break;
+    }
+
+    if (newItemId)
+    {
+        std::vector<uint32> const& fields = player->GetDynamicValues(PLAYER_DYNAMIC_FIELD_HEIRLOOMS);
+        uint8 offset = std::find(fields.begin(), fields.end(), v->first) - fields.begin();
+
+        player->SetDynamicUInt32Value(PLAYER_DYNAMIC_FIELD_HEIRLOOMS, offset, newItemId);
+        player->SetDynamicUInt32Value(PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS, offset, 0);
+
+        _heirlooms.erase(v);
+        _heirlooms[newItemId] = 0;
 
         return;
     }
 
-    if (HeirloomEntry const* heirloom = sDB2Manager.GetHeirloomByItemId(item->GetEntry()))
-    {
-        HeirloomContainer::iterator v = _heirlooms.find(item->GetEntry());
-        if (v == _heirlooms.end())
-            return;
+    std::vector<uint32> const& fields = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
+    for (uint32 bonusId : fields)
+        if (bonusId != v->second.bonusId)
+            item->ClearDynamicValue(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
 
-        uint32 heirloomItemId = heirloom->NextDifficultyItemID;
-        uint32 newItemId = 0;
-        while (HeirloomEntry const* heirloomDiff = sDB2Manager.GetHeirloomByItemId(heirloomItemId))
-        {
-            if (player->GetItemByEntry(heirloomDiff->ItemID))
-                newItemId = heirloomDiff->ItemID;
-
-            if (HeirloomEntry const* heirloomSub = sDB2Manager.GetHeirloomByItemId(heirloomDiff->NextDifficultyItemID))
-            {
-                heirloomItemId = heirloomSub->ItemID;
-                continue;
-            }
-
-            break;
-        }
-
-        if (newItemId)
-        {
-            std::vector<uint32> const& fields = player->GetDynamicValues(PLAYER_DYNAMIC_FIELD_HEIRLOOMS);
-            uint8 offset = std::find(fields.begin(), fields.end(), v->first) - fields.begin();
-
-            player->SetDynamicUInt32Value(PLAYER_DYNAMIC_FIELD_HEIRLOOMS, offset, newItemId);
-            player->SetDynamicUInt32Value(PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS, offset, 0);
-
-            _heirlooms.erase(v);
-            _heirlooms[newItemId] = 0;
-
-            return;
-        }
-
-        std::vector<uint32> const& fields = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
-
-        for (uint32 bonusId : fields)
-            if (bonusId != v->second.bonusId)
-                item->ClearDynamicValue(ITEM_DYNAMIC_FIELD_BONUS_LIST_IDS);
-
-        if (std::find(fields.begin(), fields.end(), v->second.bonusId) == fields.end())
-            item->AddBonuses(v->second.bonusId);
-    }
+    if (std::find(fields.begin(), fields.end(), v->second.bonusId) == fields.end())
+        item->AddBonuses(v->second.bonusId);
 }
 
 bool CollectionMgr::CanApplyHeirloomXpBonus(uint32 itemId, uint32 level)
@@ -263,6 +242,7 @@ bool CollectionMgr::CanApplyHeirloomXpBonus(uint32 itemId, uint32 level)
         if (b == _heirlooms.end())
             return false;
 
+        // HEIRLOOM_FLAG_BONUS_LEVEL_110
         if (b->second.flags & HEIRLOOM_FLAG_BONUS_LEVEL_100)
             return level <= 100;
         else if (b->second.flags & HEIRLOOM_FLAG_BONUS_LEVEL_90)

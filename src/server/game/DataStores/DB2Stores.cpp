@@ -379,7 +379,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sGlyphPropertiesStore);
     //LOAD_DB2(sGlyphSlotStore);
     LOAD_DB2(sGuildPerkSpellsStore);
-    //LOAD_DB2(sHeirloomStore);
+    LOAD_DB2(sHeirloomStore);
     //LOAD_DB2(sHolidaysStore);
     LOAD_DB2(sImportPriceArmorStore);
     LOAD_DB2(sImportPriceQualityStore);
@@ -504,7 +504,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sTaxiPathNodeStore);
     //LOAD_DB2(sTaxiPathStore);
     LOAD_DB2(sTotemCategoryStore);
-    //LOAD_DB2(sToyStore);
+    LOAD_DB2(sToyStore);
     LOAD_DB2(sTransportAnimationStore);
     LOAD_DB2(sUnitPowerBarStore);
     LOAD_DB2(sVehicleSeatStore);
@@ -577,7 +577,7 @@ void DB2Manager::InitDB2CustomStores()
         _languageWordsMap[entry->Lang][strlen(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()])].push_back(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()]);
 
     for (ToyEntry const* toy : sToyStore)
-        _toys.push_back(toy->ItemID);
+        _toys.insert(toy->ItemID);
 
     for (HeirloomEntry const* heirloom : sHeirloomStore)
         _heirlooms[heirloom->ItemID] = heirloom;
@@ -1158,13 +1158,9 @@ HeirloomEntry const* DB2Manager::GetHeirloomByItemId(uint32 itemId) const
     return nullptr;
 }
 
-HeirloomEntry const* DB2Manager::GetHeirloomByOldItem(uint32 itemId) const
+bool DB2Manager::IsToyItem(uint32 toy) const
 {
-    for (HeirloomEntry const* heirloom : sHeirloomStore)
-        if (heirloom->OldItem[0] == itemId || heirloom->OldItem[1] == itemId)
-            return heirloom;
-
-    return nullptr;
+    return _toys.count(toy) > 0;
 }
 
 bool DB2Manager::MountTypeXCapabilityEntryComparator::Compare(MountTypeXCapabilityEntry const* left, MountTypeXCapabilityEntry const* right)
