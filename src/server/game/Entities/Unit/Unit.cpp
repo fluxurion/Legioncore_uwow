@@ -5424,7 +5424,7 @@ float Unit::GetTotalAuraMultiplierByMiscMask(AuraType auratype, uint32 misc_mask
     std::map<SpellGroup, int32> SameEffectSpellGroup;
     float multiplier = 1.0f;
 
-    AuraEffectList const& mTotalAuraList = GetAuraEffectsByType(auratype);
+    AuraEffectList const mTotalAuraList = GetAuraEffectsByType(auratype);
     for (AuraEffectList::const_iterator i = mTotalAuraList.begin(), next; i != mTotalAuraList.end(); i = next)
     {
         next = i;
