@@ -1393,7 +1393,7 @@ void Battleground::BuildPvPLogDataPacket(WorldPackets::Battleground::PVPLogData&
         if (Player* player = ObjectAccessor::FindPlayer(playerData.PlayerGUID))
         {
             playerData.IsInWorld = true;
-            playerData.PrimaryTalentTree = player->GetSpecializationId(player->GetActiveSpec());
+            playerData.PrimaryTalentTree = player->GetSpecializationId();
 
             if (isRated())
             {

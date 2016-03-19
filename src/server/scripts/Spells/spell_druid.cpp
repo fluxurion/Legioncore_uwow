@@ -553,7 +553,7 @@ class spell_dru_ferocious_bite : public SpellScriptLoader
                 SetHitDamage(int32(damageN * perc));
 
                 // Soul of the Forest
-                if (player->HasAura(114107) && player->GetSpecializationId(player->GetActiveSpec()) == SPEC_DRUID_CAT)
+                if (player->HasAura(114107) && player->GetSpecializationId() == SPEC_DRUID_CAT)
                 {
                     // energize
                     if (SpellInfo const* info = sSpellMgr->GetSpellInfo(114113))
@@ -620,7 +620,7 @@ class spell_dru_rip : public SpellScriptLoader
                     cenarius->DropCharge();
 
                 // Soul of the Forest
-                if (player->HasAura(114107) && player->GetSpecializationId(player->GetActiveSpec()) == SPEC_DRUID_CAT)
+                if (player->HasAura(114107) && player->GetSpecializationId() == SPEC_DRUID_CAT)
                 {
                     // energize
                     if (SpellInfo const* info = sSpellMgr->GetSpellInfo(114113))
@@ -1533,7 +1533,7 @@ class spell_dru_eclipse : public SpellScriptLoader
                 {
                     if (Unit* target = GetHitUnit())
                     {
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_DRUID_BALANCE)
+                        if (_player->GetSpecializationId() == SPEC_DRUID_BALANCE)
                         {
                             if (GetSpell()->IsCritForTarget(target))
                             {
@@ -1559,7 +1559,7 @@ class spell_dru_eclipse : public SpellScriptLoader
                                 }
                             }
                         }
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_DRUID_RESTORATION && GetSpellInfo()->Id == SPELL_DRUID_WRATH)
+                        if (_player->GetSpecializationId() == SPEC_DRUID_RESTORATION && GetSpellInfo()->Id == SPELL_DRUID_WRATH)
                         {
                             if (_player->HasAura(108373))
                                 SetHitDamage(int32(GetHitDamage() * 1.2f));
@@ -1903,7 +1903,7 @@ class spell_druid_rejuvenation : public SpellScriptLoader
                 Player* _player = caster->ToPlayer();
                 if(!_player)
                     return;
-                if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_DRUID_RESTORATION)
+                if (_player->GetSpecializationId() == SPEC_DRUID_RESTORATION)
                 {
                     Creature* summon = _player->GetMap()->GetCreature(_player->m_SummonSlot[SUMMON_SLOT_TOTEM]);
                     int32 maxhealth = caster->GetMaxHealth();
@@ -2426,7 +2426,7 @@ class spell_dru_healing_ouch : public SpellScriptLoader
 
                 if(caster->HasAura(145162))
                 {
-                    if (player->GetSpecializationId(player->GetActiveSpec()) == SPEC_DRUID_BEAR)
+                    if (player->GetSpecializationId() == SPEC_DRUID_BEAR)
                     {
                         int32 _heal = irand(18460, 21800) + int32(player->GetTotalAttackPowerValue(BASE_ATTACK) * 1.86);
                         SetHitHeal(_heal);

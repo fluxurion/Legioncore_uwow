@@ -129,7 +129,7 @@ void WorldSession::SendTrainerList(ObjectGuid const& guid, const std::string& st
         return;
     }
 
-    uint32 specializationId = _player->GetSpecializationId(_player->GetActiveSpec());
+    uint32 specializationId = _player->GetSpecializationId();
 
     WorldPackets::NPC::TrainerList packet;
     packet.TrainerGUID = guid;

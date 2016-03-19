@@ -51,9 +51,13 @@ void WorldSession::HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet)
     if (packet.Talents.size() > player->CalculateTalentsPoints())
         return;
 
+    bool send = false;
     for (uint32 const& talentId : packet.Talents)
         if (player->LearnTalent(talentId))
-            player->SendTalentsInfoData(false);
+            send = true;
+
+    if (send)
+        player->SendTalentsInfoData(false);
 }
 
 void WorldSession::HandleConfirmRespecWipe(WorldPackets::Misc::ConfirmRespecWipe& packet)
@@ -75,8 +79,8 @@ void WorldSession::HandleConfirmRespecWipe(WorldPackets::Misc::ConfirmRespecWipe
             if (!player->ResetTalents())
                 player->SendTalentWipeConfirm(packet.RespecMaster, RESPEC_TYPE_TALENTS);
             break;
-        case RESPEC_TYPE_SPEC:
-            player->ResetSpec();
+        case RESPEC_TYPE_SPEC: // Not use from legion
+            //player->ResetSpec();
             break;
         case RESPEC_TYPE_GLYPH:
             break;

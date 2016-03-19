@@ -1433,7 +1433,7 @@ void WorldSession::HandleRemoveGlyph(WorldPacket & recvData)
         return;
     }
 
-    if (uint32 glyph = _player->GetGlyph(_player->GetActiveSpec(), slot))
+    if (uint32 glyph = _player->GetGlyph(_player->GetSpecIndex(), slot))
     {
         if (GlyphPropertiesEntry const* gp = sGlyphPropertiesStore.LookupEntry(glyph))
         {

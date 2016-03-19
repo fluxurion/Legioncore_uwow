@@ -6116,7 +6116,7 @@ bool Unit::HandleProcTriggerSpellCopy(Unit* victim, DamageInfo* dmgInfoProc, Aur
 
     if (plr)
     {
-        switch (plr->GetSpecializationId(plr->GetActiveSpec()))
+        switch (plr->GetSpecializationId())
         {
             case SPEC_SHAMAN_ELEMENTAL:
             case SPEC_SHAMAN_RESTORATION:
@@ -6368,7 +6368,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                         
                     if (Player* _player = ToPlayer())
                     {
-                        uint32 spec = _player->GetSpecializationId(_player->GetActiveSpec());
+                        uint32 spec = _player->GetSpecializationId();
 
                         switch (_player->getClass())
                         {
@@ -6447,7 +6447,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                         
                     if (Player* _player = ToPlayer())
                     {
-                        uint32 spec = _player->GetSpecializationId(_player->GetActiveSpec());
+                        uint32 spec = _player->GetSpecializationId();
 
                         switch (_player->getClass())
                         {
@@ -7520,7 +7520,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                         if (Aura * aura = GetAura(triggered_spell_id))
                             hasabsorb = aura->GetEffect(EFFECT_0)->GetAmount();
 
-                        if (warlock->GetSpecializationId(warlock->GetActiveSpec()) == SPEC_WARLOCK_AFFLICTION)
+                        if (warlock->GetSpecializationId() == SPEC_WARLOCK_AFFLICTION)
                             triggerAmount *= 2;
 
                         basepoints0 = CalculatePct(damage, triggerAmount) + hasabsorb;
@@ -9676,7 +9676,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
             if (!player)
                 return false;
 
-            if (player->GetSpecializationId(player->GetActiveSpec()) != SPEC_MAGE_ARCANE)
+            if (player->GetSpecializationId() != SPEC_MAGE_ARCANE)
                 return false;
 
             if (!procSpell)
@@ -9921,7 +9921,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
             if (!procSpell || (procSpell->Id != 17962 && procSpell->Id != 108685))
                 return false;
 
-            if (GetTypeId() != TYPEID_PLAYER || getClass() != CLASS_WARLOCK || ToPlayer()->GetSpecializationId(ToPlayer()->GetActiveSpec()) != SPEC_WARLOCK_DESTRUCTION)
+            if (GetTypeId() != TYPEID_PLAYER || getClass() != CLASS_WARLOCK || ToPlayer()->GetSpecializationId() != SPEC_WARLOCK_DESTRUCTION)
                 return false;
 
             break;
@@ -12054,7 +12054,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
 
         // 76613 - Mastery: Frostburn
         if (GetTypeId() == TYPEID_PLAYER && spellProto->ClassOptions.SpellClassSet == SPELLFAMILY_MAGE &&
-            getLevel() >= 80 && ToPlayer()->GetSpecializationId(ToPlayer()->GetActiveSpec()) == SPEC_MAGE_FROST)
+            getLevel() >= 80 && ToPlayer()->GetSpecializationId() == SPEC_MAGE_FROST)
         {
             if (AuraEffect const* aurEff = GetAuraEffect(76613, EFFECT_0))
                 if (victim->isFrozen() && aurEff->IsAffectingSpell(spellProto))
@@ -12891,7 +12891,7 @@ float Unit::CalcVersalityBonusDone(Unit* target, float amount)
         float value = float(GetUInt32Value(PLAYER_FIELD_VERSATILITY)) * GetRatingMultiplier(CR_VERSATILITY_DAMAGE_DONE);
         value += GetFloatValue(PLAYER_FIELD_VERSATILITY_BONUS);
 
-        switch (plr->GetSpecializationId(plr->GetActiveSpec()))
+        switch (plr->GetSpecializationId())
         {
             case SPEC_MAGE_ARCANE:
             case SPEC_MAGE_FIRE:
@@ -12961,7 +12961,7 @@ float Unit::CalcVersalityBonusTaken(float amount)
         float versalityBonusTaken = GetFloatValue(PLAYER_FIELD_VERSATILITY_BONUS) * 0.5f;
         value += versalityBonusTaken;
 
-        switch (plr->GetSpecializationId(plr->GetActiveSpec()))
+        switch (plr->GetSpecializationId())
         {
         case SPEC_MAGE_ARCANE:
         case SPEC_MAGE_FIRE:
@@ -14440,7 +14440,7 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
         }
     }
 
-    uint32 specId = player->GetSpecializationId(player->GetActiveSpec());
+    uint32 specId = player->GetSpecializationId();
 
     switch(power)
     {
@@ -19343,7 +19343,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
     uint32 SpellTypeMask = procSpell ? procSpell->GetSpellTypeMask() : 1;
     uint32 NeedsComboPoints = procSpell ? procSpell->NeedsComboPoints() : 0;
     int32 duration = procSpell ? procSpell->GetDuration() : 0;
-    int32 specCheckid = ToPlayer() ? ToPlayer()->GetSpecializationId(ToPlayer()->GetActiveSpec()) : 0;
+    int32 specCheckid = ToPlayer() ? ToPlayer()->GetSpecializationId() : 0;
     int32 deathstateMask = victim ? (1 << victim->getDeathState()) : 0;
 
     sLog->outDebug(LOG_FILTER_PROC, "SpellProcCheck: spellProto->Id %i, effect %i, spellProcId %i, procPowerType %i, procDmgClass %i, AllEffectsMechanicMask %i, specCheckid %i, SpellTypeMask %i duration %i",
@@ -20170,7 +20170,7 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* victim, SpellInfo const* spellProto
 
             if (Player* player = ToPlayer())
             {
-                uint32 specId = player->GetSpecializationId(player->GetActiveSpec());
+                uint32 specId = player->GetSpecializationId();
                 if (std::list<uint32> const* modList = sDB2Manager.GetSpellProcsPerMinuteModList(spellProto->AuraOptions.SpellProcsPerMinuteID))
                     for (std::list<uint32>::const_iterator itr = modList->begin(); itr != modList->end(); ++itr)
                     {
@@ -24478,9 +24478,9 @@ bool Unit::HasAuraLinkedSpell(Unit* caster, Unit* target, uint8 type, int32 hast
             if (!_player)
                 return true;
             if(hastalent > 0)
-                return _player->GetSpecializationId(_player->GetActiveSpec()) != hastalent;
+                return _player->GetSpecializationId() != hastalent;
             else if(hastalent < 0)
-                return _player->GetSpecializationId(_player->GetActiveSpec()) == hastalent;
+                return _player->GetSpecializationId() == hastalent;
         }
     }
     return true;

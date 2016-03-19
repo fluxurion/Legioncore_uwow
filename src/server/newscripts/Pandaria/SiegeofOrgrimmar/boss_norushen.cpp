@@ -659,7 +659,7 @@ public:
             if (!p)
                 return;
 
-            uint8 role = p->GetRoleForGroup(p->GetSpecializationId(p->GetActiveSpec()));
+            uint8 role = p->GetRoleForGroup(p->GetSpecializationId());
             switch(role)
             {
                 case ROLES_TANK:

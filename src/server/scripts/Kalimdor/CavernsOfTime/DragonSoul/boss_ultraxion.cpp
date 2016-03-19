@@ -802,7 +802,7 @@ class spell_ultraxion_fading_light : public SpellScriptLoader
                         if (unit->GetTypeId() != TYPEID_PLAYER)
                             return true;
 
-                        switch (unit->ToPlayer()->GetActiveSpec())
+                        switch (unit->ToPlayer()->GetSpecializationId())
                         {
                             case SPEC_WARRIOR_PROTECTION:
                             case SPEC_PALADIN_HOLY:
@@ -864,7 +864,7 @@ class spell_ultraxion_last_defender_of_azeroth : public SpellScriptLoader
                         if (unit->GetTypeId() != TYPEID_PLAYER)
                             return true;
 
-                        switch (unit->ToPlayer()->GetActiveSpec())
+                        switch (unit->ToPlayer()->GetSpecializationId())
                         {
                             case SPEC_WARRIOR_PROTECTION:
                             case SPEC_PALADIN_PROTECTION:
@@ -904,7 +904,7 @@ class spell_ultraxion_last_defender_of_azeroth_dummy : public SpellScriptLoader
                 if (GetHitUnit()->GetTypeId() != TYPEID_PLAYER)
                     return;
 
-                switch (GetHitUnit()->ToPlayer()->GetActiveSpec())
+                switch (GetHitUnit()->ToPlayer()->GetSpecializationId())
                 {
                     case SPEC_WARRIOR_PROTECTION:
                         GetHitUnit()->CastSpell(GetHitUnit(), SPELL_LAST_DEFENDER_OF_AZEROTH_WARRIOR, true);

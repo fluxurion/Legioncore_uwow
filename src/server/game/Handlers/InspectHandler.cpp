@@ -31,7 +31,7 @@ void WorldSession::HandleInspect(WorldPackets::Inspect::Inspect& packet)
         return;
     }
 
-    uint8 activeSpec = player->GetActiveSpec();
+    uint8 index = player->GetSpecIndex();
     Guild* guild = sGuildMgr->GetGuildById(player->GetGuildId());
 
     if (GetPlayer()->IsValidAttackTarget(player))
@@ -50,7 +50,7 @@ void WorldSession::HandleInspect(WorldPackets::Inspect::Inspect& packet)
 
     if (sWorld->getBoolConfig(CONFIG_TALENTS_INSPECTING) || GetPlayer()->isGameMaster())
     {
-        PlayerTalentMap const* talents = player->GetTalentMap(activeSpec);
+        PlayerTalentMap const* talents = player->GetTalentMap(index);
         for (PlayerTalentMap::value_type const& v : *talents)
         {
             SpellInfo const* spell = sSpellMgr->GetSpellInfo(v.first);
@@ -60,7 +60,7 @@ void WorldSession::HandleInspect(WorldPackets::Inspect::Inspect& packet)
 
         for (uint8 i = 0; i < MAX_GLYPH_SLOT_INDEX; ++i)
         {
-            uint32 glyph = player->GetGlyph(activeSpec, i);
+            uint32 glyph = player->GetGlyph(index, i);
             if (!glyph)
                 continue;
             
@@ -77,7 +77,7 @@ void WorldSession::HandleInspect(WorldPackets::Inspect::Inspect& packet)
     }
 
     inspectResult.InspecteeGUID = packet.Target;
-    inspectResult.SpecializationID = player->GetSpecializationId(activeSpec);
+    inspectResult.SpecializationID = player->GetSpecializationId();
 
     SendPacket(inspectResult.Write());
 }

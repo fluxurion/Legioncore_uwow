@@ -6050,7 +6050,7 @@ SpellCastResult Spell::CheckCast(bool strict)
     if (m_spellInfo->Effects[EFFECT_0].Effect == SPELL_EFFECT_UNLEARN_TALENT)
         if (Player* plr = m_caster->ToPlayer())
         {
-            PlayerTalentMap* Talents = plr->GetTalentMap(plr->GetActiveSpec());
+            PlayerTalentMap* Talents = plr->GetTalentMap(plr->GetSpecIndex());
             for (PlayerTalentMap::iterator itr = Talents->begin(); itr != Talents->end(); ++itr)
             {
                 SpellInfo const* spell = sSpellMgr->GetSpellInfo(itr->first);
@@ -6156,7 +6156,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             {
                 if (Player* player = m_caster->ToPlayer())
                     // only Guardian spec is allowed to cast Rejuvenation in any form
-                    if (player->GetSpecializationId(player->GetActiveSpec()) != SPEC_DRUID_BEAR)
+                    if (player->GetSpecializationId() != SPEC_DRUID_BEAR)
                         checkForm = true;
             }
             break;
@@ -6565,7 +6565,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     case 104316: // Glyph of Imp Swarm
                     {
                         if (Player* plr = m_caster->ToPlayer())
-                            if (plr->GetSpecializationId(plr->GetActiveSpec()) != SPEC_WARLOCK_DEMONOLOGY)
+                            if (plr->GetSpecializationId() != SPEC_WARLOCK_DEMONOLOGY)
                                 return SPELL_FAILED_NO_SPEC;
                         break;
                     }
@@ -6673,7 +6673,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     case 56292: // Glyph of Imp Swarm
                     {
                         if (Player* plr = m_caster->ToPlayer())
-                            if (plr->GetSpecializationId(plr->GetActiveSpec()) != SPEC_WARLOCK_DEMONOLOGY)
+                            if (plr->GetSpecializationId() != SPEC_WARLOCK_DEMONOLOGY)
                                 return SPELL_FAILED_NO_SPEC;
                         break;
                     }

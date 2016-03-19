@@ -674,7 +674,7 @@ class spell_dk_plague_leech : public SpellScriptLoader
 
             RuneType GetRuneBan(Player* plr)
             {
-                switch (plr->GetSpecializationId(plr->GetActiveSpec()))
+                switch (plr->GetSpecializationId())
                 {
                     case SPEC_DK_BLOOD:
                     case SPEC_DK_FROST:  return RUNE_BLOOD;
@@ -1670,7 +1670,7 @@ class spell_dk_death_shroud : public SpellScriptLoader
                 {
                     if (_player->HasSpell(63560))
                         duration = 15000;
-                    else if(_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_DK_FROST)
+                    else if(_player->GetSpecializationId() == SPEC_DK_FROST)
                         duration = 4000 + (_player->IsTwoHandUsed() ? 4000 : 2000);
                 }
             }
@@ -1869,7 +1869,7 @@ class spell_dk_defile : public SpellScriptLoader
 
                 if (Player* _player = caster->ToPlayer())
                 {
-                    if(_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_DK_BLOOD)
+                    if(_player->GetSpecializationId() == SPEC_DK_BLOOD)
                         absorbAmount = CalculatePct(dmgInfo.GetDamage(), absorbPct);
                 }
             }

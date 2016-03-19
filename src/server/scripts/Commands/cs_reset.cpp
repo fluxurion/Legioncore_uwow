@@ -213,7 +213,7 @@ public:
         if (!handler->extractPlayerTarget((char*)args, &target))
             return false;
 
-        target->ResetSpec(false);
+        target->ResetSpec();
 
         return true;
     }

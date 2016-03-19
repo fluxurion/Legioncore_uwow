@@ -83,7 +83,7 @@ void AddItemsSetItem(Player* player, Item* item)
             continue;
 
         eff->SetBonuses.insert(itemSetSpell);
-        if (!itemSetSpell->ChrSpecID || itemSetSpell->ChrSpecID == player->GetSpecializationId(player->GetActiveSpec()))
+        if (!itemSetSpell->ChrSpecID || itemSetSpell->ChrSpecID == player->GetSpecializationId())
             player->ApplyEquipSpell(spellInfo, nullptr, true);
     }
 }

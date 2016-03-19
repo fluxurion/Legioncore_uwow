@@ -478,19 +478,7 @@ void BattlePayMgr::HandlePlayerLevelUp(LoginQueryHolder * holder)
     pCurrChar->SetLocationMapId(0);
     pCurrChar->Relocate(-11840.64f, -3215.719f, -29.41927f, 2.84771f);
 
-    //
-    if (pCurrChar->GetSpecializationId(2) == _store[PurchaseID].specID)
-    {
-        pCurrChar->SetActiveSpec(2);
-    }
-    else
-    {
-        if (pCurrChar->GetActiveSpec() == 2)
-            pCurrChar->SetActiveSpec(1);
-
-        pCurrChar->ResetSpec(false);
-        pCurrChar->SetSpecializationId(pCurrChar->GetActiveSpec(), _store[PurchaseID].specID);
-    }
+    pCurrChar->ActivateSpecialization(_store[PurchaseID].specID, specialization->OrderIndex);
 
     //New equipment
     uint32 bagEntry = 0;

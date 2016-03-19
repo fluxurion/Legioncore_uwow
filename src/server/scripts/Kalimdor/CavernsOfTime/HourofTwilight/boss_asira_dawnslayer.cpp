@@ -284,11 +284,11 @@ class spell_asira_dawnslayer_mark_of_silence : public SpellScriptLoader
                             case CLASS_HUNTER:
                                 return true;
                             case CLASS_DRUID:
-                                if (unit->ToPlayer()->GetActiveSpec() == SPEC_DRUID_BEAR)
+                                if (unit->ToPlayer()->GetSpecializationId() == SPEC_DRUID_BEAR)
                                     return true;
                                 return false;
                             case CLASS_PALADIN:
-                                if (unit->ToPlayer()->GetActiveSpec() == SPEC_PALADIN_HOLY)
+                                if (unit->ToPlayer()->GetSpecializationId() == SPEC_PALADIN_HOLY)
                                     return false;
                                 return true;
                             default:

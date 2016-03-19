@@ -173,7 +173,7 @@ void ChallengeMgr::GroupReward(Map *instance, uint32 recordTime, ChallengeMode m
         {
             ChallengeMember member;
             member.guid = player->GetGUID();
-            member.specId = player->GetActiveSpec();
+            member.specId = player->GetSpecializationId();
 
             if (player->GetGuildId())
                 guildCounter[player->GetGuildId()] += 1;

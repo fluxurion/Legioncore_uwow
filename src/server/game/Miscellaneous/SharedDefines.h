@@ -952,9 +952,7 @@ enum SpellAttr13
     SPELL_ATTR13_UNK23                            = 0x00800000  // 23
 };
 
-#define MAX_TALENT_SPEC         1
-#define MIN_TALENT_SPECS        1
-#define MAX_TALENT_SPECS        2
+#define MAX_TALENT_SPECS        4
 #define MAX_GLYPH_SLOT_INDEX    6
 
 // Custom values

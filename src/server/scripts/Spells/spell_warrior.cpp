@@ -438,7 +438,7 @@ class spell_warr_raging_blow : public SpellScriptLoader
             void HandleOnHit()
             {
                 if (Player* _player = GetCaster()->ToPlayer())
-                    if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_WARRIOR_FURY && _player->getLevel() >= 30)
+                    if (_player->GetSpecializationId() == SPEC_WARRIOR_FURY && _player->getLevel() >= 30)
                         _player->CastSpell(_player, WARRIOR_SPELL_ALLOW_RAGING_BLOW, true);
             }
 
@@ -796,7 +796,7 @@ class spell_warr_deep_wounds : public SpellScriptLoader
             {
                 if (Player* plr = GetCaster()->ToPlayer())
                 {
-                    if (plr->GetSpecializationId(plr->GetActiveSpec()) == SPEC_WARRIOR_PROTECTION)
+                    if (plr->GetSpecializationId() == SPEC_WARRIOR_PROTECTION)
                         if (Unit* target = GetHitUnit())
                             plr->CastSpell(target, WARRIOR_SPELL_DEEP_WOUNDS, true);
                 }

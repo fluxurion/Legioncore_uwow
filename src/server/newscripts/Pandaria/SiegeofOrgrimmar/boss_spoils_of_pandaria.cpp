@@ -438,7 +438,7 @@ public:
                 if (!pllist.empty())
                 {
                     for (std::list<Player*>::const_iterator itr = pllist.begin(); itr != pllist.end(); itr++)
-                        if ((*itr)->GetRoleForGroup((*itr)->GetSpecializationId((*itr)->GetActiveSpec())) == type)
+                        if ((*itr)->GetRoleForGroup((*itr)->GetSpecializationId()) == type)
                             (*itr)->CastSpell(*itr, spellbuff[type-1], true);
                 }
                 break;

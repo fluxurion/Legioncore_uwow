@@ -1334,13 +1334,12 @@ struct PlayerTalentInfo
     PlayerTalentInfo() :
         QuestRewardedTalentCount(0),
         ResetTalentsCost(0), ResetTalentsTime(0), ResetSpecializationCost(0),
-        ActiveSpec(0), SpecsCount(1), ResetSpecializationTime(0)
+        SpecIndex(0), ResetSpecializationTime(0), SpecializationId(0)
     {
         for (uint8 i = 0; i < MAX_TALENT_SPECS; ++i)
         {
             SpecInfo[i].Talents = new PlayerTalentMap();
             memset(SpecInfo[i].Glyphs, 0, MAX_GLYPH_SLOT_INDEX * sizeof(uint32));
-            SpecInfo[i].SpecializationId = 0;
         }
     }
 
@@ -1354,7 +1353,6 @@ struct PlayerTalentInfo
     {
         PlayerTalentMap* Talents;
         uint32 Glyphs[MAX_GLYPH_SLOT_INDEX];
-        uint32 SpecializationId;
     } SpecInfo[MAX_TALENT_SPECS];
 
     uint32 QuestRewardedTalentCount;
@@ -1362,8 +1360,8 @@ struct PlayerTalentInfo
     time_t ResetTalentsTime;
     uint32 ResetSpecializationCost;
     time_t ResetSpecializationTime;
-    uint8 ActiveSpec;
-    uint8 SpecsCount;
+    uint8 SpecIndex;
+    uint32 SpecializationId;
 
 private:
     PlayerTalentInfo(PlayerTalentInfo const&);
@@ -2153,12 +2151,10 @@ class Player : public Unit, public GridObject<Player>
         void SetSpecializationResetTime(time_t time_) { _talentMgr->ResetSpecializationTime = time_; }
         uint32 GetTalentResetTime() const { return _talentMgr->ResetTalentsTime; }
         void SetTalentResetTime(time_t time_)  { _talentMgr->ResetTalentsTime = time_; }
-        uint8 GetActiveSpec() const { return _talentMgr->ActiveSpec; }
-        void SetActiveSpec(uint8 spec){ _talentMgr->ActiveSpec = spec; }
-        uint8 GetSpecsCount() const { return _talentMgr->SpecsCount; }
-        void SetSpecsCount(uint8 count) { _talentMgr->SpecsCount = count; }
-        void SetSpecializationId(uint8 spec, uint32 id, bool initial = false);
-        uint32 GetSpecializationId(uint8 spec) const { return _talentMgr->SpecInfo[spec].SpecializationId; }
+        uint8 GetSpecIndex() const { return _talentMgr->SpecIndex; }
+        void SetSpecIndex(uint8 index){ _talentMgr->SpecIndex = index; }
+        void SetSpecializationId(uint32 id, bool initial = false);
+        uint32 GetSpecializationId() const { return _talentMgr->SpecializationId; }
         uint32 GetRoleForGroup(uint32 specializationId);
         bool isInTankSpec();
         uint32 GetDefaultSpecId() const 
@@ -2175,31 +2171,28 @@ class Player : public Unit, public GridObject<Player>
         void InitTalentForLevel();
         void SendTalentsInfoData(bool pet);
         bool LearnTalent(uint32 talentId);
-        bool AddTalent(TalentEntry const* talent, uint8 spec, bool learning, bool sendMessage = true);
-        bool HasTalent(uint32 spell_id, uint8 spec) const;
+        bool AddTalent(TalentEntry const* talent, uint8 index, bool learning, bool sendMessage = true);
+        bool HasTalent(uint32 spell_id, uint8 index) const;
         void RemoveTalent(TalentEntry const* talent, bool sendMessage = true);
         uint32 CalculateTalentsPoints() const;
         void LearnTalentSpecialization(uint32 talentSpec);
         void ResetTalentSpecialization();
 
-        void ResetSpec(bool takeMoney = true);
-
-        // Dual Spec
-        void UpdateSpecCount(uint8 count);
-        void ActivateSpec(uint8 spec);
+        void ResetSpec();
+        void ActivateSpecialization(uint32 specId, uint8 index);
 
         void InitGlyphsForLevel();
         void SetGlyphSlot(uint8 slot, uint32 slottype) { /*SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot, slottype)*/; }
         uint32 GetGlyphSlot(uint8 slot) const { return 0/*GetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS + slot)*/; }
         void SetGlyph(uint8 slot, uint32 glyph)
         {
-            _talentMgr->SpecInfo[GetActiveSpec()].Glyphs[slot] = glyph;
+            _talentMgr->SpecInfo[GetSpecIndex()].Glyphs[slot] = glyph;
             //SetUInt32Value(PLAYER_FIELD_GLYPHS + slot, glyph);
         }
-        uint32 GetGlyph(uint8 spec, uint8 slot) const { return _talentMgr->SpecInfo[spec].Glyphs[slot]; }
+        uint32 GetGlyph(uint8 index, uint8 slot) const { return _talentMgr->SpecInfo[index].Glyphs[slot]; }
 
-        PlayerTalentMap const* GetTalentMap(uint8 spec) const { return _talentMgr->SpecInfo[spec].Talents; }
-        PlayerTalentMap* GetTalentMap(uint8 spec) { return _talentMgr->SpecInfo[spec].Talents; }
+        PlayerTalentMap const* GetTalentMap(uint8 index) const { return _talentMgr->SpecInfo[index].Talents; }
+        PlayerTalentMap* GetTalentMap(uint8 index) { return _talentMgr->SpecInfo[index].Talents; }
         ActionButtonList const& GetActionButtons() const { return m_actionButtons; }
 
         uint32 GetFreePrimaryProfessionPoints() const { return GetUInt32Value(PLAYER_FIELD_CHARACTER_POINTS); }
@@ -2500,8 +2493,8 @@ class Player : public Unit, public GridObject<Player>
         {
             if (GetFieldLootSpecID() > 0)
                 return GetFieldLootSpecID();
-            if (GetSpecializationId(GetActiveSpec()) > 0)
-                return GetSpecializationId(GetActiveSpec());
+            if (GetSpecializationId() > 0)
+                return GetSpecializationId();
 
             return GetDefaultLootSpecID();
         }

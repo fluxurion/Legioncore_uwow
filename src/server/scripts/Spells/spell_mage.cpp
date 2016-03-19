@@ -348,7 +348,7 @@ class spell_mage_arcane_explosion : public SpellScriptLoader
                 if (!player)
                     return;
 
-                if (player->GetSpecializationId(player->GetActiveSpec()) != SPEC_MAGE_ARCANE)
+                if (player->GetSpecializationId() != SPEC_MAGE_ARCANE)
                     return;
 
                 int32 chance = GetSpellInfo()->Effects[EFFECT_1].BasePoints;

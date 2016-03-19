@@ -379,7 +379,7 @@ void Arena::SendOpponentSpecialization(uint32 team)
         if (Player* opponent = GetPlayerForTeam(team, itr, "SendOponentSpecialization"))
         {
             data.Guid = opponent->GetGUID();
-            data.SpecializationID = opponent->GetSpecializationId(opponent->GetActiveSpec());
+            data.SpecializationID = opponent->GetSpecializationId();
         }
     }
 

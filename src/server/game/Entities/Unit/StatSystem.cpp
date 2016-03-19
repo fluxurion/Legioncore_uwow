@@ -1864,7 +1864,7 @@ void Player::UpdateMasteryAuras()
     SetFloatValue(PLAYER_FIELD_MASTERY, masteryValue);
 
     // TODO: rewrite 115556 Master Demonologist
-    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(GetSpecializationId(GetActiveSpec()));
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(GetSpecializationId());
     if (!specialization)
         return;
 
@@ -1893,7 +1893,7 @@ void Player::UpdateMasteryAuras()
 void Player::UpdateVersality(CombatRating cr)
 {
     // need some informations about calc this for different specs
-    //switch (GetSpecializationId(GetActiveSpec()))
+    //switch (GetSpecializationId())
     //{
     //    case SPEC_MAGE_ARCANE:
     //    case SPEC_MAGE_FIRE:

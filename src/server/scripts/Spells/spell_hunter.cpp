@@ -1766,7 +1766,7 @@ class spell_hun_t16_2p_bonus : public SpellScriptLoader
                 {
                     if (caster->HasAura(HUNTER_SPELL_T16_2P_BONUS))
                     {
-                        if (caster->GetSpecializationId(caster->GetActiveSpec()) == SPEC_HUNTER_SURVIVAL)
+                        if (caster->GetSpecializationId() == SPEC_HUNTER_SURVIVAL)
                             caster->ModifySpellCooldown(HUNTER_SPELL_RAPID_FIRE, - 8 * IN_MILLISECONDS);
                         else
                             caster->ModifySpellCooldown(HUNTER_SPELL_RAPID_FIRE, - 4 * IN_MILLISECONDS);

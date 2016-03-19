@@ -318,10 +318,10 @@ class spell_sha_mail_specialization : public SpellScriptLoader
 
                 if (Player* _player = GetCaster()->ToPlayer())
                 {
-                    if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_SHAMAN_ELEMENTAL
-                            || _player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_SHAMAN_RESTORATION)
+                    if (_player->GetSpecializationId() == SPEC_SHAMAN_ELEMENTAL
+                            || _player->GetSpecializationId() == SPEC_SHAMAN_RESTORATION)
                         _player->CastSpell(_player, SPELL_SHA_MAIL_SPECIALISATION_INT, true);
-                    else if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_SHAMAN_ENHANCEMENT)
+                    else if (_player->GetSpecializationId() == SPEC_SHAMAN_ENHANCEMENT)
                         _player->CastSpell(_player, SPELL_SHA_MAIL_SPECIALIZATION_AGI, true);
                 }
             }
@@ -704,7 +704,7 @@ class spell_sha_ascendance : public SpellScriptLoader
             {
                 if (Player* _player = GetCaster()->ToPlayer())
                 {
-                    if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_NONE)
+                    if (_player->GetSpecializationId() == SPEC_NONE)
                     {
                         SetCustomCastResultMessage(SPELL_CUSTOM_ERROR_MUST_SELECT_TALENT_SPECIAL);
                         return SPELL_FAILED_CUSTOM_ERROR;
@@ -720,7 +720,7 @@ class spell_sha_ascendance : public SpellScriptLoader
             {
                 if (Player* _player = GetCaster()->ToPlayer())
                 {
-                    switch(_player->GetSpecializationId(_player->GetActiveSpec()))
+                    switch(_player->GetSpecializationId())
                     {
                         case SPEC_SHAMAN_ELEMENTAL:
                             _player->CastSpell(_player, SPELL_SHA_ASCENDANCE_ELEMENTAL, true);

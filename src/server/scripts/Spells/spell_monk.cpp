@@ -1631,7 +1631,7 @@ class spell_monk_blackout_kick : public SpellScriptLoader
                 if (Unit* caster = GetCaster())
                 {
                     // Brewmaster : Training - you gain Shuffle, increasing parry chance and stagger amount by 20%
-                    if (caster->GetTypeId() == TYPEID_PLAYER && caster->ToPlayer()->GetSpecializationId(caster->ToPlayer()->GetActiveSpec()) == SPEC_MONK_BREWMASTER)
+                    if (caster->GetTypeId() == TYPEID_PLAYER && caster->ToPlayer()->GetSpecializationId() == SPEC_MONK_BREWMASTER)
                     {
                         if (Aura* aura = caster->GetAura(SPELL_MONK_SHUFFLE))
                         {

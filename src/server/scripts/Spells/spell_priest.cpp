@@ -449,7 +449,7 @@ class spell_pri_divine_insight_holy : public SpellScriptLoader
             {
                 if (Player* _player = GetCaster()->ToPlayer())
                     if (_player->HasAura(PRIEST_SPELL_DIVINE_INSIGHT_TALENT))
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_HOLY)
+                        if (_player->GetSpecializationId() == SPEC_PRIEST_HOLY)
                             if (roll_chance_i(40))
                                 _player->CastSpell(_player, PRIEST_SPELL_DIVINE_INSIGHT_HOLY, true);
             }
@@ -779,7 +779,7 @@ class spell_pri_devouring_plague : public SpellScriptLoader
                 {
                     if (Unit* target = GetHitUnit())
                     {
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
+                        if (_player->GetSpecializationId() == SPEC_PRIEST_SHADOW)
                         {
                             int32 currentPower = _player->GetPower(POWER_INSANITY) + 1; // Don't forget PowerCost
 
@@ -1334,7 +1334,7 @@ public:
                     if (Unit* caster = GetCaster())
                         if (Player* plr = caster->ToPlayer())
                         {
-                            if (plr->GetSpecializationId(plr->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
+                            if (plr->GetSpecializationId() == SPEC_PRIEST_SHADOW)
                             {
                                 caster->CastSpell(caster, 125927, true);
                                 isSP = true;
@@ -1401,7 +1401,7 @@ class spell_pri_shadow_orb : public SpellScriptLoader
                 if(Unit* caster = GetCaster())
                     if (Unit* target = GetHitUnit())
                         if (Player* plr = caster->ToPlayer())
-                            if (plr->GetSpecializationId(plr->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
+                            if (plr->GetSpecializationId() == SPEC_PRIEST_SHADOW)
                             {
                                 if (!caster->HasAura(95652))
                                 {
@@ -1447,7 +1447,7 @@ class spell_pri_psychic_horror : public SpellScriptLoader
                     if (Unit* target = GetHitUnit())
                     {
                         Player* _player = caster->ToPlayer();
-                        if (_player && _player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_SHADOW)
+                        if (_player && _player->GetSpecializationId() == SPEC_PRIEST_SHADOW)
                         {
                             int32 currentPower = caster->GetPower(POWER_INSANITY) + 1;
                             caster->ModifyPower(POWER_INSANITY, -currentPower, true);
@@ -1585,7 +1585,7 @@ class spell_pri_penance : public SpellScriptLoader
                             _player->CastSpell(unitTarget, sSpellMgr->GetSpellWithRank(PRIEST_SPELL_PENANCE_DAMAGE, rank), false, 0);
 
                         // Divine Insight (Discipline)
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_PRIEST_DISCIPLINE)
+                        if (_player->GetSpecializationId() == SPEC_PRIEST_DISCIPLINE)
                             if (_player->HasAura(PRIEST_SPELL_DIVINE_INSIGHT_TALENT))
                                 _player->CastSpell(_player, PRIEST_SPELL_DIVINE_INSIGHT_DISCIPLINE, true);
                     }

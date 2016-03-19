@@ -149,7 +149,7 @@ bool ItemTemplate::CanWinForPlayer(Player const* player) const
     if (specs.empty())
         return true;
 
-    uint32 spec = player->GetSpecializationId(player->GetActiveSpec());
+    uint32 spec = player->GetSpecializationId();
     if (!spec)
         spec = player->GetDefaultSpecId();
 

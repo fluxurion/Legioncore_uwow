@@ -1625,8 +1625,8 @@ class npc_rogue_trainer : public CreatureScript
             if (creature->isCanTrainingAndResetTalentsOf(player))
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_HELLO_ROGUE4, GOSSIP_SENDER_MAIN, GOSSIP_OPTION_UNLEARNSPECIALIZATION);
 
-            if (player->GetSpecsCount() == 1 && creature->isCanTrainingAndResetTalentsOf(player) && player->getLevel() >= sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL))
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_HELLO_ROGUE3, GOSSIP_SENDER_MAIN, GOSSIP_OPTION_LEARNDUALSPEC);
+            // if (player->GetSpecsCount() == 1 && creature->isCanTrainingAndResetTalentsOf(player) && player->getLevel() >= sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL))
+                // player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_HELLO_ROGUE3, GOSSIP_SENDER_MAIN, GOSSIP_OPTION_LEARNDUALSPEC);
 
             if (player->getClass() == CLASS_ROGUE && player->getLevel() >= 24 && !player->HasItemCount(17126) && !player->GetQuestRewardStatus(6681))
             {
@@ -1659,27 +1659,6 @@ class npc_rogue_trainer : public CreatureScript
                     player->SendTalentWipeConfirm(creature->GetGUID(), RESPEC_TYPE_SPEC);
                     break;
                 case GOSSIP_OPTION_LEARNDUALSPEC:
-                    if (player->GetSpecsCount() == 1 && !(player->getLevel() < sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL)))
-                    {
-                        if (!player->HasEnoughMoney(uint64(10000000)))
-                        {
-                            player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
-                            player->PlayerTalkClass->SendCloseGossip();
-                            break;
-                        }
-                        else
-                        {
-                            player->ModifyMoney(int64(-10000000));
-
-                            // Cast spells that teach dual spec
-                            // Both are also ImplicitTarget self and must be cast by player
-                            player->CastSpell(player, 63680, true, NULL, NULL, player->GetGUID());
-                            player->CastSpell(player, 63624, true, NULL, NULL, player->GetGUID());
-
-                            // Should show another Gossip text with "Congratulations..."
-                            player->PlayerTalkClass->SendCloseGossip();
-                        }
-                    }
                     break;
             }
             return true;

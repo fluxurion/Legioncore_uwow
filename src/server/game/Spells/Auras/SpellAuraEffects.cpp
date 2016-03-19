@@ -779,7 +779,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 {
                     if (Player* paladin = caster->ToPlayer())
                     {
-                        if (paladin->GetSpecializationId(paladin->GetActiveSpec()) != SPEC_PALADIN_PROTECTION)
+                        if (paladin->GetSpecializationId() != SPEC_PALADIN_PROTECTION)
                             amount = 0;
                     }
                     break;
@@ -812,7 +812,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 {
                     if (Player* paladin = caster->ToPlayer())
                     {
-                        if (paladin->GetSpecializationId(paladin->GetActiveSpec()) != SPEC_PALADIN_HOLY)
+                        if (paladin->GetSpecializationId() != SPEC_PALADIN_HOLY)
                             amount = 0;
                     }
                     break;
@@ -906,7 +906,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                 {
                     if (Player* paladin = caster->ToPlayer())
                     {
-                        switch (paladin->GetSpecializationId(paladin->GetActiveSpec()))
+                        switch (paladin->GetSpecializationId())
                         {
                             case SPEC_PALADIN_HOLY:        if (m_effIndex != 0) amount = 0; break;
                             case SPEC_PALADIN_PROTECTION:  if (m_effIndex != 1) amount = 0; break;
@@ -2438,7 +2438,7 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
             // Also do it for Glyphs
             for (uint32 i = 0; i < MAX_GLYPH_SLOT_INDEX; ++i)
             {
-                if (uint32 glyphId = plrTarget->GetGlyph(plrTarget->GetActiveSpec(), i))
+                if (uint32 glyphId = plrTarget->GetGlyph(plrTarget->GetSpecIndex(), i))
                 {
                     if (GlyphPropertiesEntry const* glyph = sGlyphPropertiesStore.LookupEntry(glyphId))
                     {

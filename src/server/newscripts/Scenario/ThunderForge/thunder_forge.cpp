@@ -3218,7 +3218,7 @@ public:
                 return;
 
             if (InstanceScript* instance = player->GetInstanceScript())
-                instance->SetData(DATA_PLAYER_ROLE, player->GetRoleForGroup(player->GetActiveSpec()));
+                instance->SetData(DATA_PLAYER_ROLE, player->GetRoleForGroup(player->GetSpecializationId()));
         }
 
         void Register()

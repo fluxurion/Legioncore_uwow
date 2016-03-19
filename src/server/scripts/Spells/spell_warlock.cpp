@@ -162,17 +162,17 @@ class spell_warl_grimoire_of_sacrifice : public SpellScriptLoader
                         case EFFECT_7:
                         case EFFECT_8:
                         {
-                            amount = player->GetSpecializationId(player->GetActiveSpec()) == SPEC_WARLOCK_AFFLICTION ? amount : 0;
+                            amount = player->GetSpecializationId() == SPEC_WARLOCK_AFFLICTION ? amount : 0;
                             break;
                         }
                         case EFFECT_3:
                         {
-                            amount = player->GetSpecializationId(player->GetActiveSpec()) == SPEC_WARLOCK_DEMONOLOGY ? amount : 0;
+                            amount = player->GetSpecializationId() == SPEC_WARLOCK_DEMONOLOGY ? amount : 0;
                             break;
                         }
                         case EFFECT_4:
                         {
-                            amount = player->GetSpecializationId(player->GetActiveSpec()) == SPEC_WARLOCK_DESTRUCTION ? amount : 0;
+                            amount = player->GetSpecializationId() == SPEC_WARLOCK_DESTRUCTION ? amount : 0;
                             break;
                         }
                         case EFFECT_9:
@@ -182,7 +182,7 @@ class spell_warl_grimoire_of_sacrifice : public SpellScriptLoader
                             break;
                         }
                         case EFFECT_6:
-                        switch (player->GetSpecializationId(player->GetActiveSpec()))
+                        switch (player->GetSpecializationId())
                         {
                             case SPEC_NONE:
                                 amount = 0;
@@ -1172,7 +1172,7 @@ class spell_warl_fel_flame : public SpellScriptLoader
                     if (Unit* target = GetHitUnit())
                     {
                         // Increases the duration of Immolate by 6s
-                        if (_player->GetSpecializationId(_player->GetActiveSpec()) == SPEC_WARLOCK_DESTRUCTION)
+                        if (_player->GetSpecializationId() == SPEC_WARLOCK_DESTRUCTION)
                         {
                             if (GetSpell()->IsCritForTarget(target))
                                 _player->ModifyPower(POWER_OBSOLETE, 2);

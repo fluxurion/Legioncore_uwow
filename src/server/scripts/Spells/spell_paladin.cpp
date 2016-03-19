@@ -194,7 +194,7 @@ class spell_pal_sacred_shield : public SpellScriptLoader
                         if (Unit* target = GetTarget())
                        {
                             int32 amount = 0;
-                            switch(_player->GetSpecializationId(_player->GetActiveSpec()))
+                            switch(_player->GetSpecializationId())
                             {
                                 case SPEC_PALADIN_PROTECTION:
                                 case SPEC_PALADIN_RETRIBUTION:

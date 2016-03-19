@@ -2364,12 +2364,12 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
                     if (!player)
                         break;
 
-                    if (player->GetSpecializationId(player->GetActiveSpec()) != SPEC_PALADIN_HOLY)
+                    if (player->GetSpecializationId() != SPEC_PALADIN_HOLY)
                     {
                         if (AuraEffect* eff = selflessHealer->GetEffect(EFFECT_1))
                             perc = eff->GetAmount();
                     }
-                    else if (player->GetSpecializationId(player->GetActiveSpec()) == SPEC_PALADIN_HOLY)
+                    else if (player->GetSpecializationId() == SPEC_PALADIN_HOLY)
                     {
                         if (AuraEffect* eff = selflessHealer->GetEffect(EFFECT_3))
                             perc = eff->GetAmount();
@@ -2406,7 +2406,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
         if (caster->HasAura(116161) || unitTarget->HasAura(116161)) // SPELL_CROSSED_OVER
         {
             // http://fr.wowhead.com/spell=117549#english-comments
-            // uint32 targetSpec = unitTarget->ToPlayer()->GetSpecializationId(unitTarget->ToPlayer()->GetActiveSpec());
+            // uint32 targetSpec = unitTarget->ToPlayer()->GetSpecializationId();
             uint32 innervationId = 0;
 
             if (unitTarget == caster)
@@ -2901,7 +2901,7 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
             if (Player* player = m_caster->ToPlayer())
             {
                 // check Soul of the Forest for guardian druids
-                if (player->GetSpecializationId(player->GetActiveSpec()) == SPEC_DRUID_BEAR)
+                if (player->GetSpecializationId() == SPEC_DRUID_BEAR)
                     if (AuraEffect const* aura = player->GetAuraEffect(114107, EFFECT_2))
                         damage += aura->GetAmount() * 10;
             }
@@ -5851,7 +5851,7 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
             }
 
             // remove old glyph
-            if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_miscData[0]))
+            if (uint32 oldglyph = player->GetGlyph(player->GetSpecIndex(), m_miscData[0]))
             {
                 if (GlyphPropertiesEntry const* old_gp = sGlyphPropertiesStore.LookupEntry(oldglyph))
                 {
@@ -5870,7 +5870,7 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
     else
     {
         // remove old glyph
-        if (uint32 oldglyph = player->GetGlyph(player->GetActiveSpec(), m_miscData[0]))
+        if (uint32 oldglyph = player->GetGlyph(player->GetSpecIndex(), m_miscData[0]))
         {
             if (GlyphPropertiesEntry const* old_gp = sGlyphPropertiesStore.LookupEntry(oldglyph))
             {
@@ -7486,7 +7486,7 @@ void Spell::EffectSpecCount(SpellEffIndex /*effIndex*/)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    unitTarget->ToPlayer()->UpdateSpecCount(damage);
+    //unitTarget->ToPlayer()->UpdateSpecCount(damage);
 }
 
 void Spell::EffectActivateSpec(SpellEffIndex /*effIndex*/)
@@ -7497,7 +7497,8 @@ void Spell::EffectActivateSpec(SpellEffIndex /*effIndex*/)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    unitTarget->ToPlayer()->ActivateSpec(damage - 1);  // damage is 1 or 2, spec is 0 or 1
+    ChrSpecializationEntry const* specialization = sChrSpecializationStore.LookupEntry(m_miscData[0]);
+    unitTarget->ToPlayer()->ActivateSpecialization(m_miscData[0], specialization->OrderIndex);
 }
 
 void Spell::EffectPlaySound(SpellEffIndex effIndex)

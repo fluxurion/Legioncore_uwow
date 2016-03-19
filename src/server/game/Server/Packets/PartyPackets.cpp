@@ -450,7 +450,7 @@ void WorldPackets::Party::PartyMemberStats::Initialize(Player* player)
     MemberStats.Unk704[1] = 0;          // Always 0
     MemberStats.Unk200000 = 0;          // Always 0
 
-    MemberStats.SpecializationID = player->GetSpecializationId(player->GetActiveSpec());
+    MemberStats.SpecializationID = player->GetSpecializationId();
     MemberStats.Unk4000000 = 0;
 
     // Vehicle
