@@ -708,24 +708,6 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
             }
             break;
         }
-        case SPELL_AURA_MOD_BASE_RESISTANCE_PCT:
-        {
-            if (!caster)
-                break;
-
-            switch (m_spellInfo->Id)
-            {
-                case 5487: // Bear Form
-                {
-                    if (Aura* aur = caster->GetAura(16931)) // Thick Hide
-                        amount = aur->GetEffect(EFFECT_1)->GetAmount();
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
         case SPELL_AURA_SCHOOL_ABSORB:
         {
             m_canBeRecalculated = false;
