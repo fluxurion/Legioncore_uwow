@@ -348,7 +348,7 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
                     }*/
                     return true;
                 }
-                else if (mapEntry->InstanceType == MAP_COMMON)
+                else if (mapEntry->IsWorldMap())
                     return true;
             }
             return false;
