@@ -46,13 +46,14 @@ ByteBuffer& operator<<(ByteBuffer& data, MovementInfo& movementInfo)
     }*/
 
     data.WriteBits(movementInfo.flags, 30);
-    data.WriteBits(movementInfo.flags2, 15);
+    data.WriteBits(movementInfo.flags2, 18);
 
     data.WriteBit(hasTransportData);
     data.WriteBit(hasFallData);
 
     data.WriteBit(0); // HeightChangeFailed
     data.WriteBit(0); // RemoteTimeValid
+    data.WriteBit(0); // unk
 
     data.FlushBits();
 
