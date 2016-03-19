@@ -5983,7 +5983,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
             else if (ditemProto->Class == ITEM_CLASS_ARMOR)
                 dmultiplier = dcost->ArmorSubstructCost[ditemProto->SubClass];
 
-            uint32 costs = uint32(LostDurability * dmultiplier * double(dQualitymodEntry->Data)) * discountMod * sWorld->getRate(RATE_REPAIRCOST);
+            uint32 costs = uint32(LostDurability * dmultiplier * double(dQualitymodEntry->Data) * item->GetRepairCostMultiplier()) * discountMod * sWorld->getRate(RATE_REPAIRCOST);
             if (costs == 0)                                   //fix for ITEM_QUALITY_ARTIFACT
                 costs = 1;
 
@@ -11974,8 +11974,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16 &dest, Item* pItem, bool
                     return EQUIP_ERR_CLIENT_LOCKED_OUT;
             }
 
-            ScalingStatDistributionEntry const* ssd = pProto->ScalingStatDistribution ? sScalingStatDistributionStore.LookupEntry(pProto->ScalingStatDistribution) : 0;
-            // check allowed level (extend range to upper values if MaxLevel more or equal max player level, this let GM set high level with 1...max range items)
+            ScalingStatDistributionEntry const* ssd = pItem->GetScalingStatDistribution() ? sScalingStatDistributionStore.LookupEntry(pItem->GetScalingStatDistribution()) : 0;
             if (ssd && ssd->MaxLevel < DEFAULT_MAX_LEVEL && ssd->MaxLevel < getLevel() && !sDB2Manager.GetHeirloomByItemId(pProto->ItemId))
                 return EQUIP_ERR_NOT_EQUIPPABLE;
 

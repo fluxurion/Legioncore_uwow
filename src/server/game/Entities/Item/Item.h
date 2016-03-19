@@ -39,8 +39,8 @@ namespace WorldPackets
     namespace Item
     {
         struct ItemInstance;
-    };
-};
+    }
+}
 
 struct ItemSetEffect
 {
@@ -134,6 +134,7 @@ enum InventoryResult
     EQUIP_ERR_CANT_EQUIP_RATING                            = 80, // You don't have the personal, team, or battleground rating required to buy that item
     EQUIP_ERR_EVENT_AUTOEQUIP_BIND_CONFIRM                 = 81,
     EQUIP_ERR_NOT_SAME_ACCOUNT                             = 82, // Account-bound items can only be given to your own characters.
+    EQUIP_ERR_NO_OUTPUT                                    = 83,
     EQUIP_ERR_ITEM_MAX_LIMIT_CATEGORY_COUNT_EXCEEDED_IS    = 84, // You can only carry %d %s
     EQUIP_ERR_ITEM_MAX_LIMIT_CATEGORY_SOCKETED_EXCEEDED_IS = 85, // You can only equip %d |4item:items in the %s category
     EQUIP_ERR_SCALING_STAT_ITEM_LEVEL_EXCEEDED             = 86, // Your level is too high to use that item
@@ -257,10 +258,9 @@ struct BonusData
     float ItemStatSocketCostMultiplier[MAX_ITEM_PROTO_STATS];
     uint32 SocketColor[MAX_ITEM_PROTO_SOCKETS];
     uint32 AppearanceModID;
-    uint32 UnkField234;
-    uint32 UnkField240;
-    float StatScalingMod;
-    uint32 UnkField248;
+    float RepairCostMultiplier;
+    uint32 ScalingStatDistribution;
+    uint32 DisplayToastMethod[2];
 
     void Initialize(ItemTemplate const* proto, Player const* owner);
     void Initialize(WorldPackets::Item::ItemInstance const& itemInstance);
@@ -362,6 +362,8 @@ class Item : public Object
         std::string const& GetText() const { return m_text; }
         void SetText(std::string const& text) { m_text = text; }
 
+        void SendUpdateSockets();
+
         void SendTimeUpdate(Player* owner);
         void UpdateDuration(Player* owner, uint32 diff);
 
@@ -403,6 +405,8 @@ class Item : public Object
         uint32 GetArmor() const { return GetTemplate()->GetArmor(GetItemLevel()); }
         void GetDamage(float& minDamage, float& maxDamage) const { GetTemplate()->GetDamage(GetItemLevel(), minDamage, maxDamage); }
         uint32 GetDisplayId() const;
+        float GetRepairCostMultiplier() const { return _bonusData.RepairCostMultiplier; }
+        uint32 GetScalingStatDistribution() const { return _bonusData.ScalingStatDistribution; }
 
         // Item Refund system
         void SetNotRefundable(Player* owner, bool changestate = true, SQLTransaction* trans = NULL);

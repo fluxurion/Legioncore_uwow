@@ -709,8 +709,6 @@ void Item::AddToUpdateQueueOf(Player* player)
     if (IsInUpdateQueue())
         return;
 
-    //ASSERT(player != NULL);
-    // this come whet we levelup chaar from battlepay
     if (!player)
         return;
 
@@ -1773,11 +1771,9 @@ void BonusData::Initialize(ItemTemplate const* proto, Player const* owner)
 
     // scaling ilvl for heilrooms
     if (owner)
-    {
         if (ScalingStatDistributionEntry const* ssd = sScalingStatDistributionStore.LookupEntry(proto->GetScalingStatDistribution()))
             if (uint32 HeilroomItemLevel = sDB2Manager.GetHeirloomItemLevel(ssd->ItemLevelCurveID, owner->getLevel()))
                 ItemLevel = HeilroomItemLevel;
-    }
 
     Quality = proto->GetQuality();
     RequiredLevel = proto->GetBaseRequiredLevel();
@@ -1798,7 +1794,9 @@ void BonusData::Initialize(ItemTemplate const* proto, Player const* owner)
         SocketColor[i] = proto->GetSocketColor(i);
 
     AppearanceModID = 0;
-    StatScalingMod = proto->StatScalingFactor;
+    RepairCostMultiplier = 1.0f;
+    ScalingStatDistribution = proto->GetScalingStatDistribution();
+    memset(DisplayToastMethod, 0, sizeof(DisplayToastMethod));
 }
 
 void BonusData::Initialize(WorldPackets::Item::ItemInstance const& itemInstance)
@@ -1845,13 +1843,11 @@ void BonusData::AddBonus(uint32 type, int32 const (&values)[2])
         {
             uint32 socketCount = values[0];
             for (uint32 i = 0; i < MAX_ITEM_PROTO_SOCKETS && socketCount; ++i)
-            {
                 if (!SocketColor[i])
                 {
                     SocketColor[i] = values[1];
                     --socketCount;
                 }
-            }
             break;
         }
         case ITEM_BONUS_APPEARANCE:
@@ -1861,21 +1857,21 @@ void BonusData::AddBonus(uint32 type, int32 const (&values)[2])
         case ITEM_BONUS_REQUIRED_LEVEL:
             RequiredLevel += values[0];
             break;
-        case ITEM_BONUS_UNK:
+        case ITEM_BONUS_REPAIR_COST_MULTIPLIER:
+            RepairCostMultiplier *= static_cast<float>(values[0]) * 0.01f;
+            break;
+        case ITEM_BONUS_SCALING_STAT_DISTRIBUTION:
+            ScalingStatDistribution = static_cast<uint32>(values[0]);
+            break;
+        case ITEM_BONUS_DISPLAY_TOAST_METHOD:
             if (values[0] < 0xB)
-            {
-                if (static_cast<uint32>(values[1]) < UnkField240)
+                if (static_cast<uint32>(values[1]) < DisplayToastMethod[1])
                 {
-                    UnkField234 = static_cast<uint32>(values[0]);
-                    UnkField240 = static_cast<uint32>(values[1]);
+                    DisplayToastMethod[0] = static_cast<uint32>(values[0]);
+                    DisplayToastMethod[1] = static_cast<uint32>(values[1]);
                 }
-            }
-            break;
-        case ITEM_BONUS_STAT_SCALING_MOD:
-            StatScalingMod *= values[0] * 0.0099999998f;
-            break;
-        case ITEM_BONUS_UNK2:
-            UnkField248 = static_cast<uint32>(values[0]);
+            break;  
+        default:
             break;
     }
 }
