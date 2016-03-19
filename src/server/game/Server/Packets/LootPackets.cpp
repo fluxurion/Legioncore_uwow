@@ -82,7 +82,7 @@ WorldPacket const* WorldPackets::Loot::LootResponse::Write()
 void WorldPackets::Loot::AutoStoreLootItem::Read()
 {
     Loot.resize(_worldPacket.read<uint32>());
-    for (auto loot : Loot)
+    for (auto& loot : Loot)
         _worldPacket >> loot;
 }
 
@@ -254,6 +254,6 @@ void WorldPackets::Loot::MasterLootItem::Read()
 {
     Loot.resize(_worldPacket.read<uint32>());
     _worldPacket >> Target;
-    for (auto loot : Loot)
+    for (auto& loot : Loot)
         _worldPacket >> loot;
 }
