@@ -149,8 +149,8 @@ WorldPacket const* WorldPackets::CombatLog::SpellPeriodicAuraLog::Write()
         *this << effect.Effect;
         *this << int32(effect.Amount);
         *this << int32(effect.OverHealOrKill);
-        *this << int32(effect.SchoolMaskOrPower);
         *this << int32(effect.AbsorbedOrAmplitude);
+        *this << int32(effect.SchoolMaskOrPower);
         *this << int32(effect.Resisted);
         WriteBit(effect.Crit);
         WriteBit(effect.DebugInfo.is_initialized());
