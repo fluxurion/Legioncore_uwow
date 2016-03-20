@@ -370,8 +370,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountCapability.db2
-    PrepareStatement(HOTFIX_SEL_MOUNT_CAPABILITY, "SELECT ID, SpeedModSpell, RequiredSpell, RequiredAura, RequiredRidingSkill, RequiredArea, "
-        "RequiredMap, Flags, Unknown7 FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_MOUNT_CAPABILITY, "SELECT ID, RequiredSpell, SpeedModSpell, RequiredRidingSkill, RequiredArea, "
+        "RequiredMap, Flags, RequiredAura FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // MountType.db2
     PrepareStatement(HOTFIX_SEL_MOUNT_TYPE, "SELECT ID FROM mount_type ORDER BY ID DESC", CONNECTION_SYNCH);

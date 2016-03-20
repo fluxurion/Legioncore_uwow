@@ -1155,14 +1155,13 @@ struct ModifierTreeEntry
 struct MountCapabilityEntry
 {
     uint32      ID;
-    uint32      SpeedModSpell;
     uint32      RequiredSpell;
-    uint32      RequiredAura;
+    uint32      SpeedModSpell;
     uint16      RequiredRidingSkill;
     uint16      RequiredArea;
-    uint16      RequiredMap;
+    int16      RequiredMap;
     uint8       Flags;
-    uint8       Unknown7;
+    uint8       RequiredAura;
 };
 
 struct MountTypeEntry

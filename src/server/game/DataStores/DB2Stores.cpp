@@ -427,7 +427,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sMapStore);
     //LOAD_DB2(sMinorTalentStore); // Spell in DB2 not exist Oo
     LOAD_DB2(sModifierTreeStore);
-    //LOAD_DB2(sMountCapabilityStore);
+    LOAD_DB2(sMountCapabilityStore);
     LOAD_DB2(sMountStore);
     LOAD_DB2(sMountTypeStore);
     LOAD_DB2(sMountTypeXCapabilityStore);

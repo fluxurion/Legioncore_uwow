@@ -41,3 +41,8 @@ ALTER TABLE `taxi_path_node`
   CHANGE `DepartureEventID` `DepartureEventID` SMALLINT(6) UNSIGNED DEFAULT 0  NOT NULL,
   CHANGE `NodeIndex` `NodeIndex` TINYINT(3) UNSIGNED DEFAULT 0  NOT NULL,
   CHANGE `Flags` `Flags` TINYINT(3) DEFAULT 0  NOT NULL;
+
+ALTER TABLE `mount_capability`   
+  DROP COLUMN `RequiredAura`, 
+  CHANGE `RequiredSpell` `RequiredSpell` INT(10) UNSIGNED DEFAULT 0  NOT NULL  AFTER `ID`,
+  CHANGE `Unknown7` `RequiredAura` TINYINT(3) UNSIGNED DEFAULT 0  NOT NULL;
