@@ -1441,7 +1441,10 @@ bool Aura::CanBeSentToClient() const
     || HasEffectType(SPELL_AURA_CHARGE_RECOVERY_MULTIPLIER)
     || HasEffectType(SPELL_AURA_OVERRIDE_ACTIONBAR_SPELLS)
     || HasEffectType(SPELL_AURA_OVERRIDE_ACTIONBAR_SPELLS_2)
-    || HasEffectType(SPELL_AURA_MOD_SPELL_VISUAL);
+    || HasEffectType(SPELL_AURA_MOD_SPELL_VISUAL)
+    || HasEffectType(SPELL_AURA_OVERRIDE_CLIENT_CONTROLS)
+    || HasEffectType(SPELL_AURA_DUMMY)
+    ;
 }
 
 bool Aura::IsSingleTargetWith(Aura const* aura) const
