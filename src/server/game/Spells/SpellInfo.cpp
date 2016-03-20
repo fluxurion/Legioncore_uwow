@@ -3637,6 +3637,10 @@ bool SpellInfo::CanNonFacing(Unit const * caster) const
 
 uint32 SpellInfo::GetSpellXSpellVisualId(Difficulty difficulty) const
 {
+    //! TMP! HACK! WHEN FIX CORRECT VISUAL GETTING REMOVE IT.
+    if (Id == 131347)
+        return 93754;
+
     DifficultyEntry const* difficultyEntry = sDifficultyStore.LookupEntry(difficulty);
     while (difficultyEntry)
     {

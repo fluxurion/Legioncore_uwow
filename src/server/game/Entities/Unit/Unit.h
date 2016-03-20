@@ -1836,6 +1836,7 @@ class Unit : public WorldObject
         bool SetWaterWalking(bool enable, bool packetOnly = false);
         bool SetFeatherFall(bool enable, bool packetOnly = false);
         bool SetHover(bool enable, bool packetOnly = false);
+        void SetCompboundState(uint32 count, ...);
 
         void SetInFront(Unit const* target);
         void SetFacingTo(float ori);

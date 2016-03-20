@@ -651,6 +651,10 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
         {
             mover->ClearUnitState(UNIT_STATE_JUMPING);
             mover->m_TempSpeed = 0.0f;
+            //! HACK
+            //! ToDo: should be interrupt flag for DH glide - 131347
+            //mover->RemoveAurasWithInterruptFlags(/*glide*/);
+            mover->RemoveAurasDueToSpell(131347);
         }
 
         if (mover->GetVehicle())

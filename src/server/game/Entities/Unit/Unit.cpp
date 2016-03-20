@@ -23226,6 +23226,29 @@ bool Unit::SetHover(bool enable, bool packetOnly /*= false*/)
     return true;
 }
 
+//! Writen just for send messages.
+void Unit::SetCompboundState(uint32 count, ...)
+{
+    //! SMSG_MOVE_SET_COMPOUND_STATE
+    WorldPackets::Movement::MoveSetCompoundState packet;
+
+    uint32 MessageID = 0;
+    va_list vl;
+    va_start(vl, count);
+
+    packet.MoverGUID = GetGUID();
+    for (uint32 i = 0; i < count; ++i)
+    {
+        WorldPackets::Movement::MoveStateChange state;
+        MessageID = va_arg(vl, uint32);
+        state.MessageID = MessageID;
+        state.SequenceIndex = m_movementCounter++;
+        packet.Changes.push_back(state);
+    }
+    va_end(vl);
+    SendMessageToSet(packet.Write(), true);
+}
+
 void Unit::FocusTarget(Spell const* focusSpell, ObjectGuid target)
 {
 

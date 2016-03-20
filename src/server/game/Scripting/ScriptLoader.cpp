@@ -36,6 +36,7 @@ void AddSC_npc_beastmaster();
 void AddSC_npc_teleguy();
 
 // spells
+void AddSC_demonhunter_spell_scripts();
 void AddSC_deathknight_spell_scripts();
 void AddSC_druid_spell_scripts();
 void AddSC_generic_spell_scripts();
@@ -98,6 +99,8 @@ void AddSC_garrison_general();
 void AddSC_garrison_instance();
 
 //legion
+void AddSC_Mardum();
+
 void AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
 void AddSC_boss_the_amalgam_of_souls();
 void AddSC_boss_illysanna_ravencrest();
@@ -1082,6 +1085,7 @@ void AddExampleScripts()
 
 void AddSpellScripts()
 {
+    AddSC_demonhunter_spell_scripts();
     AddSC_deathknight_spell_scripts();
     AddSC_druid_spell_scripts();
     AddSC_generic_spell_scripts();
@@ -1160,6 +1164,8 @@ void AddWorldScripts()
 void AddLegionScripts()
 {
 #ifdef SCRIPTS
+    AddSC_Mardum();
+
     AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
     AddSC_boss_the_amalgam_of_souls();
     AddSC_boss_illysanna_ravencrest();
