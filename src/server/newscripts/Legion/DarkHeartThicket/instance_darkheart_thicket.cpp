@@ -11,7 +11,7 @@ DoorData const doorData[] =
 {
     //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
     {GO_GLAIDALIS_FIRE_DOOR,     DATA_GLAIDALIS,       DOOR_TYPE_ROOM,       BOUNDARY_NONE},
-    {GO_GLAIDALIS_INVIS_DOOR,    DATA_GLAIDALIS,       DOOR_TYPE_ROOM,       BOUNDARY_NONE},
+    //{GO_GLAIDALIS_INVIS_DOOR,    DATA_GLAIDALIS_EVENT,       DOOR_TYPE_PASSAGE,       BOUNDARY_NONE},
 };
 
 class instance_darkheart_thicket : public InstanceMapScript
@@ -33,6 +33,7 @@ public:
 
         ObjectGuid MalfurionGUID;
         ObjectGuid MalfurionCageGUID;
+        ObjectGuid InvisDoorGUID;
 
         void Initialize()
         {
@@ -70,9 +71,11 @@ public:
             switch (go->GetEntry())
             {
                 case GO_GLAIDALIS_FIRE_DOOR:
-                case GO_GLAIDALIS_INVIS_DOOR:
                     AddDoor(go, true);
                     break;
+                case GO_GLAIDALIS_INVIS_DOOR:
+                    InvisDoorGUID = go->GetGUID();
+                   break;
                 default:
                     break;
             }
@@ -95,6 +98,8 @@ public:
                     return MalfurionGUID;
                 case NPC_NIGHTMARE_BINDINGS:
                     return MalfurionCageGUID;
+                case GO_GLAIDALIS_INVIS_DOOR:
+                    return InvisDoorGUID;
             }
             return ObjectGuid::Empty;
         }
