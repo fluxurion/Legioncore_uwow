@@ -7686,7 +7686,7 @@ SpellCastResult Spell::CheckItems()
             return SPELL_FAILED_ITEM_NOT_READY;
 
         for (ItemEffectEntry const* effectData : proto->Effects)
-            if (effectData->Charges)
+            if (effectData->Charges > 0)
                 if (m_CastItem->GetSpellCharges(effectData->ID) == 0)
                     return SPELL_FAILED_NO_CHARGES_REMAIN;
 
