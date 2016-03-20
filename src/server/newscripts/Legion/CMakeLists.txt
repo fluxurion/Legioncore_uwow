@@ -10,6 +10,8 @@
 
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
+  Legion/mardum.cpp
+  
   Legion/BlackRookHoldDungeon/instance_black_rook_hold_dungeon.cpp
   Legion/BlackRookHoldDungeon/boss_the_amalgam_of_souls.cpp
   Legion/BlackRookHoldDungeon/boss_illysanna_ravencrest.cpp

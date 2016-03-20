@@ -83,7 +83,7 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
     Relocate(pos);
     if (!IsPositionValid())
     {
-        sLog->outError(LOG_FILTER_GENERAL, "Conversation (spell %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", info->Id, GetPositionX(), GetPositionY());
+        sLog->outError(LOG_FILTER_GENERAL, "Conversation (spell %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", info ? info->Id : 0, GetPositionX(), GetPositionY());
         return false;
     }
     
