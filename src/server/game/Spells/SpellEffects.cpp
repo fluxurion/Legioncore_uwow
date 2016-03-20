@@ -6539,7 +6539,7 @@ void Spell::EffectKnockBack(SpellEffIndex effIndex)
     if (m_spellInfo->Id == 126408)
         unitTarget->JumpTo(-speedxy, speedz);
     else
-        unitTarget->KnockbackFrom(x, y, speedxy, speedz);
+        unitTarget->KnockbackFrom(x, y, std::abs(speedxy), speedz);
 
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
         unitTarget->ToPlayer()->SetKnockBackTime(getMSTime());
