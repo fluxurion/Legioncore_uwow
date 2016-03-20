@@ -2655,10 +2655,10 @@ struct ItemSetEntry
 struct LockEntry
 {
     uint32      ID;                                         // 0
-    uint32      Type[MAX_LOCK_CASE];                        // 1-8
-    uint32      Index[MAX_LOCK_CASE];                       // 9-16
-    uint32      Skill[MAX_LOCK_CASE];                       // 17-24
-    uint32      Action[MAX_LOCK_CASE];                      // 25-32
+    uint32      Index[MAX_LOCK_CASE];                       // 1-8
+    uint16      Skill[MAX_LOCK_CASE];                       // 9-16
+    uint8       Type[MAX_LOCK_CASE];                        // 17-24
+    uint8       Action[MAX_LOCK_CASE];                      // 25-32
 };
 
 struct MovieEntry

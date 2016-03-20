@@ -927,8 +927,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SET, "SELECT ID, Name_lang FROM item_set_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Lock.db2
-    PrepareStatement(HOTFIX_SEL_LOCK, "SELECT ID, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Index1, Index2, Index3, Index4, Index5, "
-        "Index6, Index7, Index8, Skill1, Skill2, Skill3, Skill4, Skill5, Skill6, Skill7, Skill8, Action1, Action2, Action3, Action4, Action5, "
+    PrepareStatement(HOTFIX_SEL_LOCK, "SELECT ID, Index1, Index2, Index3, Index4, Index5, Index6, Index7, Index8, Skill1, Skill2, Skill3, Skill4, Skill5, Skill6, Skill7, Skill8, "
+        "Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Action1, Action2, Action3, Action4, Action5, "
         "Action6, Action7, Action8 FROM `lock` ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Movie.db2
