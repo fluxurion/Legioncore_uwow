@@ -4901,8 +4901,8 @@ enum ActivateTaxiReply
 enum TaxiNodeStatus
 {
     TAXISTATUS_NOT_ELIGIBLE     = 0,
-    TAXISTATUS_UNLEARNED        = 1,
-    TAXISTATUS_LEARNED          = 2,
+    TAXISTATUS_LEARNED          = 1,
+    TAXISTATUS_UNLEARNED        = 2,
     TAXISTATUS_NONE             = 3
 };
 

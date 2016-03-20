@@ -702,19 +702,19 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "DifficultyID, Flags FROM spell_x_spell_visual ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TaxiNodes.db2
-    PrepareStatement(HOTFIX_SEL_TAXI_NODES, "SELECT ID, MapID, PosX, PosY, PosZ, Name, MountCreatureID, ConditionID, LearnableIndex, Flags, "
-        "MapOffset FROM taxi_nodes ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TAXI_NODES, "SELECT ID, PosX, PosY, PosZ, Name, MountCreatureID1, MountCreatureID2, MapOffset1, MapOffset2, MapID, ConditionID, LearnableIndex, Flags "
+        " FROM taxi_nodes ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TAXI_NODES, "SELECT ID, Name_lang FROM taxi_nodes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // TaxiPath.db2
     PrepareStatement(HOTFIX_SEL_TAXI_PATH, "SELECT ID, `From`, `To`, Cost FROM taxi_path ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TaxiPathNode.db2
-    PrepareStatement(HOTFIX_SEL_TAXI_PATH_NODE, "SELECT ID, PathID, NodeIndex, MapID, LocX, LocY, LocZ, Flags, Delay, ArrivalEventID, "
-        "DepartureEventID FROM taxi_path_node ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TAXI_PATH_NODE, "SELECT ID, LocX, LocY, LocZ, Delay, PathID, MapID, ArrivalEventID, "
+        "DepartureEventID, NodeIndex, Flags FROM taxi_path_node ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemUpgrade.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_UPGRADE, "SELECT id, itemUpgradePathId, levelBonus, prevUpgradeId, currencyReqId, currencyReqAmt"
+    PrepareStatement(HOTFIX_SEL_ITEM_UPGRADE, "SELECT id, currencyReqAmt, prevUpgradeId, currencyReqId, itemUpgradePathId, levelBonus"
         " FROM item_upgrade ORDER BY id DESC", CONNECTION_SYNCH);
 
     // RuleSetItemUpgrade.db2

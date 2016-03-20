@@ -413,7 +413,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemSpecStore);
     LOAD_DB2(sItemStore);
     //LOAD_DB2(sItemToBattlePetSpeciesStore);
-    //LOAD_DB2(sItemUpgradeStore);
+    LOAD_DB2(sItemUpgradeStore);
     LOAD_DB2(sItemXBonusTreeStore);
     LOAD_DB2(sKeyChainStore);
     LOAD_DB2(sLanguageWordsStore);
@@ -425,7 +425,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sMapChallengeModeStore);
     LOAD_DB2(sMapDifficultyStore);
     LOAD_DB2(sMapStore);
-    //LOAD_DB2(sMinorTalentStore);
+    //LOAD_DB2(sMinorTalentStore); // Spell in DB2 not exist Oo
     LOAD_DB2(sModifierTreeStore);
     //LOAD_DB2(sMountCapabilityStore);
     LOAD_DB2(sMountStore);
@@ -500,9 +500,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellXSpellVisualStore);
     LOAD_DB2(sSummonPropertiesStore);
     LOAD_DB2(sTalentStore);
-    //LOAD_DB2(sTaxiNodesStore);
-    //LOAD_DB2(sTaxiPathNodeStore);
-    //LOAD_DB2(sTaxiPathStore);
+    LOAD_DB2(sTaxiNodesStore);
+    LOAD_DB2(sTaxiPathNodeStore);
+    LOAD_DB2(sTaxiPathStore);
     LOAD_DB2(sTotemCategoryStore);
     LOAD_DB2(sToyStore);
     LOAD_DB2(sTransportAnimationStore);
@@ -683,9 +683,10 @@ void DB2Manager::InitDB2CustomStores()
     {
         if (sTaxiNodesStore.GetNumRows())
         {
-            ASSERT(TaxiMaskSize >= ((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1,
-                   "TaxiMaskSize is not large enough to contain all taxi nodes! (current value %d, required %d)",
-                   TaxiMaskSize, (((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1));
+            // Temporary disable, on 21021 max 225 node, on 21154 227, client crashed, remove a new version
+            // ASSERT(TaxiMaskSize >= ((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1,
+                   // "TaxiMaskSize is not large enough to contain all taxi nodes! (current value %d, required %d)",
+                   // TaxiMaskSize, (((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1));
         }
 
         sTaxiNodesMask.fill(0);
@@ -695,6 +696,9 @@ void DB2Manager::InitDB2CustomStores()
         for (TaxiNodesEntry const* node : sTaxiNodesStore)
         {
             if (!(node->Flags & (TAXI_NODE_FLAG_ALLIANCE | TAXI_NODE_FLAG_HORDE)))
+                continue;
+
+            if (node->ID > 1803) //Temporary hack fix crash client, remove a new version
                 continue;
 
             // valid taxi network node

@@ -2042,45 +2042,45 @@ struct SpellXSpellVisualEntry
 struct TaxiNodesEntry
 {
     uint32          ID;                                     // 0
-    uint32          MapID;                                  // 1
-    DBCPosition3D   Pos;                                    // 2-4
+    DBCPosition3D   Pos;                                    // 1-4
     LocalizedString* Name_lang;                             // 5
     uint32          MountCreatureID[MAX_TEAMS];           // 6-7
-    uint32          ConditionID;                            // 8
-    uint32          LearnableIndex;                         // 9 - some kind of index only for learnable nodes
-    uint32          Flags;                                  // 10
-    float           MapOffset[MAX_TEAMS];                 // 11-12
+    float           MapOffset[MAX_TEAMS];                 // 8-9
+    uint16          MapID;                                  // 10
+    uint16          ConditionID;                            // 11
+    uint16          LearnableIndex;                         // 12 - some kind of index only for learnable nodes
+    uint8          Flags;                                  // 13
 };
 
 struct TaxiPathEntry
 {
     uint32          ID;                                     // 0
-    uint32          From;                                   // 1
-    uint32          To;                                     // 2
-    uint32          Cost;                                   // 3
+    uint16          From;                                   // 1
+    uint16          To;                                     // 2
+    uint16          Cost;                                   // 3
 };
 
 struct TaxiPathNodeEntry
 {
     uint32          ID;                                     // 0
-    uint32          PathID;                                 // 1
-    uint32          NodeIndex;                              // 2
-    uint32          MapID;                                  // 3
-    DBCPosition3D   Loc;                                    // 4-6
-    uint32          Flags;                                  // 7
-    uint32          Delay;                                  // 8
-    uint32          ArrivalEventID;                         // 9
-    uint32          DepartureEventID;                       // 10
+    DBCPosition3D   Loc;                                    // 1-3
+    uint32          Delay;                                  // 4
+    uint16          PathID;                                 // 5
+    uint16          MapID;                                  // 6
+    uint16          ArrivalEventID;                         // 7
+    uint16          DepartureEventID;                       // 8
+    uint8           NodeIndex;                              // 9
+    uint8           Flags;                                  // 10
 };
 
 struct ItemUpgradeEntry
 {
-    uint32 id;                  // 0 rules id from RuleSetItemUpgradeEntry startUpgrade
-    uint32 itemUpgradePathId;   // 1 extended-cost entry id
-    uint32 levelBonus;          // 2 total level bonus related to non-upgraded item
-    uint32 prevUpgradeId;       // 3
-    uint32 currencyReqId;       // 4 currency Id
-    uint32 currencyReqAmt;      // 5 currency count
+    uint32 id;                  // 1 rules id from RuleSetItemUpgradeEntry startUpgrade
+    uint32 currencyReqAmt;      // 2 currency count
+    uint16 prevUpgradeId;       // 3
+    uint16 currencyReqId;       // 4 currency Id
+    uint8  itemUpgradePathId;   // 5 extended-cost entry id
+    uint8  levelBonus;          // 6 total level bonus related to non-upgraded item
 };
 
 struct RuleSetItemUpgradeEntry
@@ -2792,7 +2792,7 @@ typedef std::map<uint32, TaxiPathSetForSource> TaxiPathSetBySource;
 typedef std::vector<TaxiPathNodeEntry const*> TaxiPathNodeList;
 typedef std::vector<TaxiPathNodeList> TaxiPathNodesByPath;
 
-#define TaxiMaskSize 217
+#define TaxiMaskSize 226
 typedef std::array<uint8, TaxiMaskSize> TaxiMask;
 
 #endif
