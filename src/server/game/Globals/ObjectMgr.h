@@ -1325,7 +1325,6 @@ class ObjectMgr
         void LoadInstanceEncounters();
         void LoadMailLevelRewards();
         void LoadVehicleTemplateAccessories();
-        void LoadVehicleAccessories();
         void LoadPersonalLootTemplate();
 
         void LoadNPCText();

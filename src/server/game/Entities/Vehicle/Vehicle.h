@@ -42,7 +42,7 @@ class Vehicle : public TransportBase
         void Reset(bool evading = false);
         void InstallAllAccessories(bool evading);
         void ApplyAllImmunities();
-        void InstallAccessory(uint32 entry, int8 seatId, bool minion, uint8 type, uint32 summonTime);   //! May be called from scripts
+        void InstallAccessory(VehicleAccessory const* accessory);   //! May be called from scripts
 
         Unit* GetBase() const { return _me; }
         VehicleEntry const* GetVehicleInfo() const { return _vehicleInfo; }

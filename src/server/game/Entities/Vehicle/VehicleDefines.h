@@ -48,13 +48,18 @@ struct VehicleSeat
 
 struct VehicleAccessory
 {
-    VehicleAccessory(uint32 entry, int8 seatId, bool isMinion, uint8 summonType, uint32 summonTime) :
-        AccessoryEntry(entry), IsMinion(isMinion), SummonTime(summonTime), SeatId(seatId), SummonedType(summonType) {}
+    VehicleAccessory(uint32 entry, int8 seatId, bool isMinion, uint8 summonType, uint32 summonTime, float _offsetX, float _offsetY, float _offsetZ, float _offsetO) :
+        AccessoryEntry(entry), IsMinion(isMinion), SummonTime(summonTime), SeatId(seatId), SummonedType(summonType),
+        offsetX(_offsetX), offsetY(_offsetY), offsetZ(_offsetZ), offsetO(_offsetO) {}
     uint32 AccessoryEntry;
     bool IsMinion;
     uint32 SummonTime;
     int8 SeatId;
     uint8 SummonedType;
+    float offsetX;
+    float offsetY;
+    float offsetZ;
+    float offsetO;
 };
 
 typedef std::vector<VehicleAccessory> VehicleAccessoryList;

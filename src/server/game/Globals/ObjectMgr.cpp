@@ -2864,8 +2864,8 @@ void ObjectMgr::LoadVehicleTemplateAccessories()
 
     uint32 count = 0;
 
-    //                                                     0              1              2          3           4             5
-    QueryResult result = WorldDatabase.Query("SELECT `EntryOrAura`, `accessory_entry`, `seat_id`, `minion`, `summontype`, `summontimer` FROM `vehicle_template_accessory`");
+    //                                                     0              1              2          3           4             5              6          7          8          9
+    QueryResult result = WorldDatabase.Query("SELECT `EntryOrAura`, `accessory_entry`, `seat_id`, `minion`, `summontype`, `summontimer`, `offsetX`, `offsetY`, `offsetZ`, `offsetO` FROM `vehicle_template_accessory`");
 
     if (!result)
     {
@@ -2884,6 +2884,10 @@ void ObjectMgr::LoadVehicleTemplateAccessories()
         bool   bMinion      = fields[3].GetBool();
         uint8  uiSummonType = fields[4].GetUInt8();
         uint32 uiSummonTimer= fields[5].GetUInt32();
+        float offsetX       = fields[6].GetFloat();
+        float offsetY       = fields[7].GetFloat();
+        float offsetZ       = fields[8].GetFloat();
+        float offsetO       = fields[9].GetFloat();
 
         if (uiEntryOrAura > 0 && !sObjectMgr->GetCreatureTemplate(uiEntryOrAura))
         {
@@ -2909,56 +2913,13 @@ void ObjectMgr::LoadVehicleTemplateAccessories()
             continue;
         }
 
-        _vehicleTemplateAccessoryStore[uiEntryOrAura].push_back(VehicleAccessory(uiAccessory, uiSeat, bMinion, uiSummonType, uiSummonTimer));
+        _vehicleTemplateAccessoryStore[uiEntryOrAura].push_back(VehicleAccessory(uiAccessory, uiSeat, bMinion, uiSummonType, uiSummonTimer, offsetX, offsetY, offsetZ, offsetO));
 
         ++count;
     }
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u Vehicle Template Accessories in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-}
-
-void ObjectMgr::LoadVehicleAccessories()
-{
-    uint32 oldMSTime = getMSTime();
-
-    _vehicleAccessoryStore.clear();                           // needed for reload case
-
-    uint32 count = 0;
-
-    //                                                  0             1             2          3           4             5
-    QueryResult result = WorldDatabase.Query("SELECT `guid`, `accessory_entry`, `seat_id`, `minion`, `summontype`, `summontimer` FROM `vehicle_accessory`");
-
-    if (!result)
-    {
-        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 Vehicle Accessories in %u ms", GetMSTimeDiffToNow(oldMSTime));
-        return;
-    }
-
-    do
-    {
-        Field* fields = result->Fetch();
-
-        ObjectGuid::LowType uiGUID = fields[0].GetUInt64();
-        uint32 uiAccessory  = fields[1].GetUInt32();
-        int8   uiSeat       = int8(fields[2].GetInt16());
-        bool   bMinion      = fields[3].GetBool();
-        uint8  uiSummonType = fields[4].GetUInt8();
-        uint32 uiSummonTimer= fields[5].GetUInt32();
-
-        if (!sObjectMgr->GetCreatureTemplate(uiAccessory))
-        {
-            sLog->outError(LOG_FILTER_SQL, "Table `vehicle_accessory`: Accessory %u does not exist.", uiAccessory);
-            continue;
-        }
-
-        _vehicleAccessoryStore[uiGUID].push_back(VehicleAccessory(uiAccessory, uiSeat, bMinion, uiSummonType, uiSummonTimer));
-
-        ++count;
-    }
-    while (result->NextRow());
-
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u Vehicle Accessories in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
 
 void ObjectMgr::LoadPetStats()

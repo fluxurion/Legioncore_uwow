@@ -125,7 +125,7 @@ void Vehicle::InstallAllAccessories(bool evading)
 
     for (VehicleAccessoryList::const_iterator itr = accessories->begin(); itr != accessories->end(); ++itr)
         if (!evading || itr->IsMinion)  // only install minions on evade mode
-            InstallAccessory(itr->AccessoryEntry, itr->SeatId, itr->IsMinion, itr->SummonedType, itr->SummonTime);
+            InstallAccessory(&(*itr));
 }
 
 /**
@@ -407,41 +407,46 @@ SeatMap::const_iterator Vehicle::GetNextEmptySeat(int8 seatId, bool next) const
  * @param summonTime Time after which the minion is despawned in case of a timed despawn @type specified.
  */
 
-void Vehicle::InstallAccessory(uint32 entry, int8 seatId, bool minion, uint8 type, uint32 summonTime)
+void Vehicle::InstallAccessory(VehicleAccessory const* as)
 {
     /// @Prevent adding accessories when vehicle is uninstalling. (Bad script in OnUninstall/OnRemovePassenger/PassengerBoarded hook.)
     if (_status == STATUS_UNINSTALLING)
     {
         sLog->outError(LOG_FILTER_VEHICLES, "Vehicle (GuidLow: %u, DB GUID: %u, Entry: %u) attempts to install accessory (Entry: %u) on seat %d with STATUS_UNINSTALLING! "
             "Check Uninstall/PassengerBoarded script hooks for errors.", _me->GetGUIDLow(),
-            (_me->GetTypeId() == TYPEID_UNIT ? _me->ToCreature()->GetDBTableGUIDLow() : _me->GetGUIDLow()), GetCreatureEntry(), entry, (int32)seatId);
+            (_me->GetTypeId() == TYPEID_UNIT ? _me->ToCreature()->GetDBTableGUIDLow() : _me->GetGUIDLow()), GetCreatureEntry(), as->AccessoryEntry, as->SeatId);
         return;
     }
 
     sLog->outDebug(LOG_FILTER_VEHICLES, "Vehicle (GuidLow: %u, DB Guid: %u, Entry %u): installing accessory (Entry: %u) on seat: %d",
         _me->GetGUIDLow(), (_me->GetTypeId() == TYPEID_UNIT ? _me->ToCreature()->GetDBTableGUIDLow() : _me->GetGUIDLow()), GetCreatureEntry(),
-        entry, (int32)seatId);
+        as->AccessoryEntry, as->SeatId);
 
     Map* map = _me->FindMap();
     if (!map)
         return;
 
     // For correct initialization accessory should set owner 
-    TempSummon* accessory = map->SummonCreature(entry, *_me, NULL, summonTime, _me, ObjectGuid::Empty, 0, GetRecAura() ? 0 : -1);
+    TempSummon* accessory = map->SummonCreature(as->AccessoryEntry, *_me, NULL, as->SummonTime, _me, ObjectGuid::Empty, 0, GetRecAura() ? 0 : -1);
 
     //ASSERT(accessory);
     if(!accessory)
         return;
 
-    accessory->SetTempSummonType(TempSummonType(type));
-    if (minion)
+    accessory->SetTempSummonType(TempSummonType(as->SummonedType));
+    if (as->IsMinion)
         accessory->AddUnitTypeMask(UNIT_MASK_ACCESSORY);
+
+    accessory->m_movementInfo.transport.pos.m_positionX = as->offsetX;
+    accessory->m_movementInfo.transport.pos.m_positionY = as->offsetY;
+    accessory->m_movementInfo.transport.pos.m_positionZ = as->offsetZ;
+    accessory->m_movementInfo.transport.pos.m_orientation = as->offsetO;
 
     // Force enter for force vehicle aura - 296
     if (GetRecAura())
         accessory->EnterVehicle(_me, -1);
     else
-    (void)_me->HandleSpellClick(accessory, seatId);
+    (void)_me->HandleSpellClick(accessory, as->SeatId);
 
     /// If for some reason adding accessory to vehicle fails it will unsummon in
     /// @VehicleJoinEvent::Abort
@@ -865,6 +870,10 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
     Target->RemovePendingEventsForSeat(Seat->first);
     Target->RemovePendingEventsForPassenger(Passenger);
 
+    bool newTPos = true;
+    if (Passenger->m_movementInfo.transport.pos.m_positionX != 0.0f || Passenger->m_movementInfo.transport.pos.m_positionY != 0.0f || Passenger->m_movementInfo.transport.pos.m_positionZ != 0.0f || Passenger->m_movementInfo.transport.pos.m_orientation != 0.0f)
+        newTPos = false;
+
     Passenger->m_vehicle = Target;
 
     Seat->second.Passenger = Passenger->GetGUID();
@@ -904,7 +913,8 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
 
     //Passenger->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
     VehicleSeatEntry const* veSeat = Seat->second.SeatInfo;
-    Passenger->m_movementInfo.transport.pos.SetPosition(veSeat->AttachmentOffset);
+    if (newTPos)
+        Passenger->m_movementInfo.transport.pos.SetPosition(veSeat->AttachmentOffset);
     Passenger->m_movementInfo.transport.time = 0; // 1 for player
     Passenger->m_movementInfo.transport.seat = Seat->first;
     Passenger->m_movementInfo.transport.guid = Target->GetBase()->GetGUID();

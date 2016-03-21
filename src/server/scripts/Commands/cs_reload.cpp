@@ -160,7 +160,6 @@ public:
             { "warden_action",                SEC_ADMINISTRATOR, true,  &HandleReloadWardenactionCommand,               "", NULL },
             { "waypoint_scripts",             SEC_ADMINISTRATOR, true,  &HandleReloadWpScriptsCommand,                  "", NULL },
             { "waypoint_data",                SEC_ADMINISTRATOR, true,  &HandleReloadWpCommand,                         "", NULL },
-            { "vehicle_accessory",            SEC_ADMINISTRATOR, true,  &HandleReloadVehicleAccessoryCommand,           "", NULL },
             { "vehicle_template_accessory",   SEC_ADMINISTRATOR, true,  &HandleReloadVehicleTemplateAccessoryCommand,   "", NULL },
             { "world_visible_distance",       SEC_ADMINISTRATOR, true,  &HandleReloadWorldVisibleDistanceCommand,       "", NULL },
             { "creature_summon_groups",       SEC_ADMINISTRATOR, true,  &HandleReloadSummonGroups,                      "", NULL },
@@ -203,7 +202,6 @@ public:
         HandleReloadTrinityStringCommand(handler, "");
         HandleReloadGameTeleCommand(handler, "");
 
-        HandleReloadVehicleAccessoryCommand(handler, "");
         HandleReloadVehicleTemplateAccessoryCommand(handler, "");
 
         HandleReloadAutobroadcastCommand(handler, "");
@@ -1228,14 +1226,6 @@ public:
         sLog->outInfo(LOG_FILTER_GENERAL, "Re-Loading Smart Scripts...");
         sSmartScriptMgr->LoadSmartAIFromDB();
         handler->SendGlobalGMSysMessage("Smart Scripts reloaded.");
-        return true;
-    }
-
-    static bool HandleReloadVehicleAccessoryCommand(ChatHandler* handler, const char* /*args*/)
-    {
-        sLog->outInfo(LOG_FILTER_GENERAL, "Reloading vehicle_accessory table...");
-        sObjectMgr->LoadVehicleAccessories();
-        handler->SendGlobalGMSysMessage("Vehicle accessories reloaded.");
         return true;
     }
 
