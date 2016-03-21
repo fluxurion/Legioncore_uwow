@@ -9,8 +9,7 @@
 
 DoorData const doorData[] =
 {
-    //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
-    {0,                   0,                  DOOR_TYPE_ROOM,       BOUNDARY_NONE}, // END
+    {GO_HARBARON_DOOR,      DATA_HARBARON,       DOOR_TYPE_PASSAGE,       BOUNDARY_NONE},
 };
 
 class instance_maw_of_souls : public InstanceMapScript
@@ -30,39 +29,69 @@ public:
             SetBossNumber(MAX_ENCOUNTER);
         }
 
+        ObjectGuid YmironGornGUID;
+        ObjectGuid helyaGUID;
+        ObjectGuid shipGUID;
+        ObjectGuid helyaChestGUID;
+
         void Initialize()
         {
             LoadDoorData(doorData);
+
+            YmironGornGUID.Clear();
+            helyaGUID.Clear();
+            shipGUID.Clear();
+            helyaChestGUID.Clear();
+        }
+
+        void OnCreatureCreate(Creature* creature)
+        {
+            switch (creature->GetEntry())
+            {
+                case NPC_HELYA:    
+                    helyaGUID = creature->GetGUID(); 
+                    break;
+            }
+        }
+
+        void OnGameObjectCreate(GameObject* go)
+        {
+            switch (go->GetEntry())
+            {
+                case GO_YMIRON_GORN:
+                    YmironGornGUID = go->GetGUID();
+                    break;
+                case GO_SHIP:
+                    shipGUID = go->GetGUID();
+                    break;
+                case GO_HELYA_CHEST:
+                    helyaChestGUID = go->GetGUID();
+                case GO_HARBARON_DOOR:
+                    AddDoor(go, true);
+                    break;
+                default:
+                    break;
+            }
         }
 
         bool SetBossState(uint32 type, EncounterState state)
         {
             if (!InstanceScript::SetBossState(type, state))
                 return false;
-            
-            return true;
-        }
 
-        void OnGameObjectCreate(GameObject* go)
-        {
-            /* switch (go->GetEntry())
+            switch (type)
             {
-                case GO_DOOR:
-                    AddDoor(go, true);
+                case DATA_HELYA:
+                {
+                    if (state == DONE)
+                        if (GameObject* chest = instance->GetGameObject(helyaChestGUID))
+                            chest->SetRespawnTime(86400);
                     break;
+                }
                 default:
                     break;
-            } */
-        }
-
-        void OnCreatureCreate(Creature* creature)
-        {
-            /* switch (creature->GetEntry())
-            {
-                case NPC_:    
-                    GUID = creature->GetGUID(); 
-                    break;
-            } */
+            }
+            return true;
         }
 
         void SetData(uint32 type, uint32 data)
@@ -74,15 +103,19 @@ public:
             }*/
         }
 
-        /* ObjectGuid GetGuidData(uint32 type) const
+        ObjectGuid GetGuidData(uint32 type) const
         {
             switch (type)
             {
-                case NPC_:   
-                    return GUID;
+                case DATA_YMIRON_GORN:   
+                    return YmironGornGUID;
+                case DATA_HELYA:
+                    return helyaGUID;
+                case DATA_SHIP:
+                    return shipGUID;
             }
             return ObjectGuid::Empty;
-        } */
+        }
 
         uint32 GetData(uint32 type) const
         {
