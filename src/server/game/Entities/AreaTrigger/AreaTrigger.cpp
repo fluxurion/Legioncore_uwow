@@ -104,12 +104,12 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
             _actionInfo[itr->id] = ActionInfo(&*itr);
     }
 
-    Object::_Create(ObjectGuid::Create<HighGuid::AreaTrigger>(caster->GetMapId(), 0, guidlow));
+    Object::_Create(ObjectGuid::Create<HighGuid::AreaTrigger>(caster->GetMapId(), atInfo.customEntry, guidlow));
     SetPhaseMask(caster->GetPhaseMask(), false);
     SetPhaseId(caster->GetPhases(), false);
 
     _realEntry = triggerEntry;
-    SetEntry(_realEntry);
+    SetEntry(atInfo.customEntry);
     uint32 duration = info->GetDuration();
 
     Player* modOwner = caster->GetSpellModOwner();

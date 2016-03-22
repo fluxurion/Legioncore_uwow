@@ -166,8 +166,8 @@ void Player::UpdateSpellDamageAndHealingBonus()
             SetStatInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS+i, SpellBaseDamageBonusDone(SpellSchoolMask(1 << i)));
     }
 
-    if (HasAuraType(SPELL_AURA_OVERRIDE_AP_BY_SPELL_POWER_PCT))
-        UpdateAttackPowerAndDamage();
+    // if (HasAuraType(SPELL_AURA_OVERRIDE_AP_BY_SPELL_POWER_PCT))
+        // UpdateAttackPowerAndDamage();
 }
 
 bool Player::UpdateAllStats()
