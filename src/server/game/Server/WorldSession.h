@@ -1515,6 +1515,7 @@ class WorldSession
         void HandleBattlemasterHello(WorldPackets::NPC::Hello& packet);
         void HandleBattlemasterJoin(WorldPackets::Battleground::Join& packet);
         void HandlePVPLogData(WorldPackets::Battleground::NullCmsg& packet);
+        void HandleUpdatePrestigeLevel(WorldPackets::Battleground::NullCmsg& packet);
         void HandleBattleFieldPort(WorldPackets::Battleground::Port& packet);
         void HandleBattlefieldList(WorldPackets::Battleground::ListClient& packet);
         void HandleLeaveBattlefield(WorldPackets::Battleground::NullCmsg& packet);

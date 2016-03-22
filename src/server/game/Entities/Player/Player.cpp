@@ -7574,7 +7574,7 @@ void Player::UpdateHonorFields(bool loading /*= false*/)
         {
             if (honorInfo.CurrentHonorAtLevel >= data->Value)
             {
-                honorInfo.CurrentHonorAtLevel = 0;
+                honorInfo.CurrentHonorAtLevel -= data->Value;
                 honorInfo.HonorLevel = std::min(honorInfo.HonorLevel += 1, HonorInfo::MaxHonorLevel);
 
                 if (GameTableEntry const* data2 = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
@@ -8075,7 +8075,7 @@ void Player::ModifyCurrency(uint32 id, int32 count, bool printLog/* = true*/, bo
         {
             if (honorInfo.CurrentHonorAtLevel >= data->Value)
             {
-                honorInfo.CurrentHonorAtLevel = 0;
+                honorInfo.CurrentHonorAtLevel -= data->Value;
                 honorInfo.HonorLevel = std::min(honorInfo.HonorLevel += 1, HonorInfo::MaxHonorLevel);
 
                 if (GameTableEntry const* data2 = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))

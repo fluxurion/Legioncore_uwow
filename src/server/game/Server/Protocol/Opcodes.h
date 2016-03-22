@@ -701,6 +701,7 @@ enum OpcodeClient : uint16
     CMSG_UPDATE_CLIENT_SETTINGS                       = 0x34FA,
     CMSG_UPDATE_LISTED_AUCTIONABLE_TOKENS             = 0x36F5,
     CMSG_UPDATE_MISSILE_TRAJECTORY                    = 0xBADD,
+    CMSG_UPDATE_PRESTIGE_LEVEL                        = 0x330E,
     CMSG_UPDATE_RAID_TARGET                           = 0x3651,
     CMSG_UPDATE_VAS_PURCHASE_STATES                   = 0x36F9,
     CMSG_UPDATE_WOW_TOKEN_AUCTIONABLE_LIST            = 0x36EB,

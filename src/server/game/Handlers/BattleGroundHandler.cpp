@@ -797,3 +797,22 @@ void WorldSession::HandleHearthAndResurrect(WorldPackets::Battleground::HearthAn
     _player->ResurrectPlayer(100);
     _player->TeleportTo(_player->m_homebindMapId, _player->m_homebindX, _player->m_homebindY, _player->m_homebindZ, _player->GetOrientation());
 }
+
+void WorldSession::HandleUpdatePrestigeLevel(WorldPackets::Battleground::NullCmsg& /*packet*/)
+{
+    Player* player = GetPlayer();
+
+    HonorInfo &honorInfo = player->m_honorInfo[player->GetGUIDLow()];
+    honorInfo.CurrentHonorAtLevel = 0;
+    honorInfo.HonorLevel = 1;
+    honorInfo.PrestigeLevel = std::min(honorInfo.PrestigeLevel += 1, HonorInfo::MaxPrestigeLevel);
+
+    if (GameTableEntry const* data = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
+        player->SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data->Value);
+
+    player->SetUInt32Value(PLAYER_FIELD_HONOR, honorInfo.CurrentHonorAtLevel);
+    player->SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, honorInfo.HonorLevel);
+    player->SetUInt32Value(PLAYER_FIELD_PRESTIGE, honorInfo.PrestigeLevel);
+
+    //@TODO implent pvp talents reset ( after implenting pvp talents at least )
+}
