@@ -1973,7 +1973,7 @@ struct SpellPowerEntry
 {
     uint32      ID;
     uint32      SpellID;                                    // 0
-    uint32      PowerCost;                                  // 1
+    int32       PowerCost;                                  // 1
     float       PowerCostPercentage;                        // 2
     float       PowerCostPercentagePerSecond;               // 3
     uint32      RequiredAura;                               // 4

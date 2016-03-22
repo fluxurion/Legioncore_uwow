@@ -63,6 +63,9 @@ void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 chrClass, uint8 level
             break;
     }
 
+    //Temporary add for alfa test legion, when not ready artefact
+    SetTaximaskNode(1673);   // Val'sharah, start quest location
+
     // new continent starting masks (It will be accessible only at new map)
     switch (Player::TeamForRace(race))
     {
