@@ -651,12 +651,10 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_ADD_ITEM_DONATE, "REPLACE INTO character_donate (`owner_guid`, `itemguid`, `itemEntry`, `efircount`, `count`, `state`) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
     PrepareStatement(CHAR_ITEM_DONATE_SET_STATE, "UPDATE character_donate SET state = ?, deletedate = ? WHERE itemguid = ?", CONNECTION_ASYNC);
 
-    PrepareStatement(CHAR_SEL_PLAYER_KILL, "SELECT VictimGuid, Count, PrestigeLevel, CurrentLevelHonor, HonorLevel FROM character_honor WHERE Guid = ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_DEL_PLAYER_KILL, "DELETE FROM character_honor WHERE Guid = ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_REP_PLAYER_KILL, "REPLACE INTO character_honor (Guid, VictimGuid, Count, PrestigeLevel, CurrentLevelHonor, HonorLevel) VALUES (?, ?, ? ,?, ?, ?)", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_UPD_PLAYER_KILL, "UPDATE character_honor SET Count = ?, CurrentLevelHonor = ? WHERE Guid = ? AND VictimGuid = ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_UPD_PLAYER_PRESTIGE_LEVEL, "UPDATE character_honor SET PrestigeLevel = ? WHERE Guid = ?", CONNECTION_ASYNC);
-    PrepareStatement(CHAR_UPD_PLAYER_HONOR_LEVEL, "UPDATE character_honor SET HonorLevel = ?, CurrentLevelHonor = 0 WHERE Guid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_PLAYER_KILL, "SELECT victim_guid, count FROM character_kill WHERE guid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_DEL_PLAYER_KILL, "DELETE FROM character_kill WHERE guid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_REP_PLAYER_KILL, "REPLACE INTO character_kill (guid, victim_guid, count) VALUES (?, ? ,?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_UPD_PLAYER_KILL, "UPDATE character_kill SET count=? WHERE guid = ? AND victim_guid = ?", CONNECTION_ASYNC);
 
     //Loot cooldown system
     PrepareStatement(CHAR_SEL_PLAYER_LOOTCOOLDOWN,       "SELECT entry, type, difficultyMask, respawnTime FROM character_loot_cooldown WHERE guid = ?",  CONNECTION_ASYNC);

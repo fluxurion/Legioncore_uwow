@@ -866,18 +866,14 @@ enum KillStates
     // no removed state, all kills are flushed at midnight
 };
 
-struct HonorInfo
+struct KillInfo
 {
-    HonorInfo() : State(KILL_NEW), Count(0), CurrentLevelHonor(0), PrestigeLevel(0), HonorLevel(0) { }
-    
-    KillStates State;
-    uint32 Count;
-    uint16 CurrentLevelHonor;
-    uint8 PrestigeLevel;
-    uint8 HonorLevel;
+    uint32 count;
+    KillStates state;
+    KillInfo() : count(0), state(KILL_NEW) {}
 };
 
-typedef std::map<uint64, HonorInfo> KillInfoMap;
+typedef std::map<uint64, KillInfo> KillInfoMap;
 
 enum RestType
 {
@@ -2643,7 +2639,7 @@ class Player : public Unit, public GridObject<Player>
         /***                  PVP SYSTEM                       ***/
         /*********************************************************/
         // TODO: Properly implement correncies as of Cataclysm
-        void UpdateHonorFields(bool loading = false);
+        void UpdateHonorFields();
         bool RewardHonor(Unit* victim, uint32 groupsize, int32 honor = -1, bool pvptoken = false);
         uint32 GetMaxPersonalArenaRatingRequirement(BracketType minarenaslot) const;
         uint32 GetMaxMMR() const;
@@ -3580,7 +3576,7 @@ class Player : public Unit, public GridObject<Player>
         bool m_PvPCombat;
 
         //kill honor sistem
-        KillInfoMap m_honorInfo;
+        KillInfoMap m_killsPerPlayer;
         bool m_flushKills;
         bool m_saveKills;
 
