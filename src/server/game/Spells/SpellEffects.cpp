@@ -317,7 +317,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //237 SPELL_EFFECT_GIVE_RESTED_EXPERIENCE_BONUS
     &Spell::EffectNULL,                                     //238 SPELL_EFFECT_INCREASE_SKILL
     &Spell::EffectNULL,                                     //239 SPELL_EFFECT_END_GARRISON_BUILDING_CONSTRUCTION
-    &Spell::EffectNULL,                                     //240 SPELL_EFFECT_240
+    &Spell::EffectArtifactPower,                            //240 SPELL_EFFECT_ARTIFACT_POWER
     &Spell::EffectNULL,                                     //241 SPELL_EFFECT_241
     &Spell::EffectNULL,                                     //242 SPELL_EFFECT_242
     &Spell::EffectNULL,                                     //243 SPELL_EFFECT_APPLY_ENCHANT_ILLUSION
@@ -326,12 +326,12 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //246 SPELL_EFFECT_FINISH_GARRISON_MISSION
     &Spell::EffectAddGarrisonMission,                       //247 SPELL_EFFECT_ADD_GARRISON_MISSION2
     &Spell::EffectNULL,                                     //248 SPELL_EFFECT_FINISH_SHIPMENT
-    &Spell::EffectNULL,                                     //249 SPELL_EFFECT_249
+    &Spell::EffectCreateArtifactItem,                       //249 SPELL_EFFECT_CREATE_ARTIFACT_ITEM
     &Spell::EffectNULL,                                     //250 SPELL_EFFECT_TAKE_SCREENSHOT
     &Spell::EffectNULL,                                     //251 SPELL_EFFECT_251
-    &Spell::EffectNULL,                                     //252 SPELL_EFFECT_252
+    &Spell::EffectTeleportUnits,                            //252 SPELL_EFFECT_TELEPORT_L
     &Spell::EffectNULL,                                     //253 SPELL_EFFECT_253
-    &Spell::EffectNULL,                                     //254 SPELL_EFFECT_254
+    &Spell::EffectJumpDest,                                 //254 SPELL_EFFECT_SMASH_DEST
 };
 
 void Spell::EffectNULL(SpellEffIndex /*effIndex*/)
@@ -8259,4 +8259,88 @@ void Spell::EffectReTrainFollower(SpellEffIndex effIndex)
     Garrison* garrison = player->GetGarrison();
     if (garrison)
         garrison->ReTrainFollower(m_spellInfo, m_miscData[0]);
+}
+
+void Spell::EffectCreateArtifactItem(SpellEffIndex effIndex)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    Player* player = m_caster->ToPlayer();
+    if (!player)
+        return;
+
+    // if(uint32 ItemID = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue)
+    // {
+        // ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ItemID);
+        // if (!pProto)
+        // {
+            // player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
+            // return;
+        // }
+
+        // uint16 dst = ((INVENTORY_SLOT_BAG_0 << 8) | EQUIPMENT_SLOT_MAINHAND);
+
+        // Item* item = Item::CreateItem(ItemID, 1, player);
+        // ItemPosCountVec dest;
+        // InventoryResult msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, true);
+        // if (msg == EQUIP_ERR_OK)
+        // {
+            // player->StoreItem(dest, item, true);
+            // player->SwapItem(item->GetPos(), dst);
+        // }
+        // else
+        // {
+            // SQLTransaction trans = CharacterDatabase.BeginTransaction();
+            // std::string subject = player->GetSession()->GetTrinityString(LANG_NOT_EQUIPPED_ITEM);
+            // MailDraft(subject, "There were problems with equipping one or several items").AddItem(item).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+            // CharacterDatabase.CommitTransaction(trans);
+        // }
+    // }
+    // if(uint32 ItemID = m_spellInfo->GetEffect(effIndex, m_diffMode)->ItemType)
+    // {
+        // ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ItemID);
+        // if (!pProto)
+        // {
+            // player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
+            // return;
+        // }
+
+        // if (Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
+        // {
+            // ItemPosCountVec dest;
+            // InventoryResult msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, true);
+            // if (msg == EQUIP_ERR_OK)
+            // {
+                // player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND, true);
+                // player->StoreItem(dest, item, true);
+            // }
+            // else
+            // {
+                // player->MoveItemFromInventory(item, true);
+                // SQLTransaction trans = CharacterDatabase.BeginTransaction();
+                // std::string subject = player->GetSession()->GetTrinityString(LANG_NOT_EQUIPPED_ITEM);
+                // MailDraft(subject, "There were problems with equipping one or several items").AddItem(item).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+                // CharacterDatabase.CommitTransaction(trans);
+            // }
+        // }
+        // player->SetVirtualItem(ItemID, uint32(EQUIPMENT_SLOT_OFFHAND));
+    // }
+}
+
+
+void Spell::EffectArtifactPower(SpellEffIndex /*effIndex*/)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    Player* player = m_caster->ToPlayer();
+    if (!player || !m_CastItem)
+        return;
+
+    // if (Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+    // {
+        // uint32 power = m_CastItem->GetCount() * damage;
+        // item->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, power);
+    // }
 }

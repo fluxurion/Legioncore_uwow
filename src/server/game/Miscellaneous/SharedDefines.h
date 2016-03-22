@@ -1353,7 +1353,7 @@ enum SpellEffects
     SPELL_EFFECT_GIVE_RESTED_EXPERIENCE_BONUS       = 237,
     SPELL_EFFECT_INCREASE_SKILL                     = 238,
     SPELL_EFFECT_END_GARRISON_BUILDING_CONSTRUCTION = 239, // Instantly finishes building construction
-    SPELL_EFFECT_240                                = 240,
+    SPELL_EFFECT_ARTIFACT_POWER                     = 240,
     SPELL_EFFECT_241                                = 241,
     SPELL_EFFECT_242                                = 242,
     SPELL_EFFECT_APPLY_ENCHANT_ILLUSION             = 243,
@@ -1362,12 +1362,12 @@ enum SpellEffects
     SPELL_EFFECT_FINISH_GARRISON_MISSION            = 246,
     SPELL_EFFECT_ADD_GARRISON_MISSION2              = 247,
     SPELL_EFFECT_FINISH_SHIPMENT                    = 248,
-    SPELL_EFFECT_249                                = 249,
+    SPELL_EFFECT_CREATE_ARTIFACT_ITEM               = 249,
     SPELL_EFFECT_TAKE_SCREENSHOT                    = 250,
     SPELL_EFFECT_251                                = 251,
-    SPELL_EFFECT_252                                = 252,
+    SPELL_EFFECT_TELEPORT_L                         = 252,
     SPELL_EFFECT_253                                = 253,
-    SPELL_EFFECT_254                                = 254,
+    SPELL_EFFECT_SMASH_DEST                         = 254,
 
     TOTAL_SPELL_EFFECTS
 };

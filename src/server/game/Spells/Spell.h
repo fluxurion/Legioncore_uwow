@@ -504,6 +504,8 @@ class Spell
         void EffectRemovePhase(SpellEffIndex effIndex);
         void EffectIncreaseFollowerItemLevel(SpellEffIndex effIndex);
         void EffectReTrainFollower(SpellEffIndex effIndex);
+        void EffectCreateArtifactItem(SpellEffIndex effIndex);
+        void EffectArtifactPower(SpellEffIndex effIndex);
         typedef std::set<Aura*> UsedSpellMods;
 
         Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID = ObjectGuid::Empty, bool skipCheck = false, bool replaced = false);
