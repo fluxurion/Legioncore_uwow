@@ -54,9 +54,14 @@ struct Position
 //public:
 
     void operator += (Position pos) {m_positionX += pos.m_positionX; m_positionY += pos.m_positionY; m_positionZ += pos.m_positionZ; m_orientation += pos.m_orientation; }
+    
+    void Clear() { m_positionX = 0.0f; m_positionY = 0.0f; m_positionZ = 0.0f; SetOrientation(0.0f); }
+    
     void Relocate(float x, float y) { m_positionX = x; m_positionY = y;}
     void Relocate(float x, float y, float z) { m_positionX = x; m_positionY = y; m_positionZ = z; }
-    void Relocate(float x, float y, float z, float orientation) {  m_positionX = x; m_positionY = y; m_positionZ = z; SetOrientation(orientation); }void Relocate(Position const& pos) {  m_positionX = pos.m_positionX; m_positionY = pos.m_positionY; m_positionZ = pos.m_positionZ; SetOrientation(pos.m_orientation); }
+    void Relocate(float x, float y, float z, float orientation) {  m_positionX = x; m_positionY = y; m_positionZ = z; SetOrientation(orientation); }
+    
+    void Relocate(Position const& pos) {  m_positionX = pos.m_positionX; m_positionY = pos.m_positionY; m_positionZ = pos.m_positionZ; SetOrientation(pos.m_orientation); }
     void Relocate(Position const* pos) { m_positionX = pos->m_positionX; m_positionY = pos->m_positionY; m_positionZ = pos->m_positionZ; SetOrientation(pos->m_orientation); }
 
     void SetPosition(DBCPosition2D pos) { m_positionX = pos.X; m_positionY = pos.Y; }
