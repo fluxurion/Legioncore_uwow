@@ -510,7 +510,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
 
         data->WriteBit(t->GetAreaTriggerInfo().HasAbsoluteOrientation); // HasAbsoluteOrientation
         data->WriteBit(t->GetAreaTriggerInfo().HasDynamicShape);        // HasDynamicShape
-        data->WriteBit(0/*t->GetAreaTriggerInfo().HasAttached*/);            // HasAttached is have transport, not complete
+        data->WriteBit(0/*t->GetAreaTriggerInfo().HasAttached*/);       // HasAttached is have transport, not complete
         data->WriteBit(t->GetAreaTriggerInfo().HasFaceMovementDir);     // HasFaceMovementDir
         data->WriteBit(t->GetAreaTriggerInfo().HasFollowsTerrain);      // HasFollowsTerrain
         data->WriteBit(false);                                          // unkbit
@@ -523,7 +523,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         data->WriteBit(t->GetAreaTriggerInfo().hasAreaTriggerBox);      // HasAreaTriggerBox
         data->WriteBit(t->isPolygon());                                 // areaTriggerPolygon
         data->WriteBit(t->GetAreaTriggerCylinder());                    // areaTriggerCylinder
-        data->WriteBit(t->isMoving());                                  // areaTriggerSpline
+        data->WriteBit(t->GetObjectMovementParts() > 0);                // areaTriggerSpline
         data->WriteBit(false);                                          // byte120
 
         if (t->HasTargetRollPitchYaw())
@@ -592,7 +592,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
             *data << t->GetAreaTriggerInfo().Float5;                    // Float5
         }
 
-        if (t->isMoving())                                              // areaTriggerSpline
+        if (t->GetObjectMovementParts() > 0)                                              // areaTriggerSpline
             t->PutObjectUpdateMovement(data);                           // Points
 
         //if (byte120)
