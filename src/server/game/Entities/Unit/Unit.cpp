@@ -23177,9 +23177,15 @@ bool Unit::SetHover(bool enable, bool packetOnly /*= false*/)
         if (GetTypeId() != TYPEID_PLAYER)
         {
             if (enable)
+            {
+                m_updateFlag |= UPDATEFLAG_PLAY_HOVER_ANIM;
                 SetMiscStandFlags(UNIT_BYTE1_FLAG_HOVER);
+            }
             else
+            {
+                m_updateFlag |= ~UPDATEFLAG_PLAY_HOVER_ANIM;
                 RemoveMiscStandFlags(UNIT_BYTE1_FLAG_HOVER);
+            }
         }
 
         if (enable)
