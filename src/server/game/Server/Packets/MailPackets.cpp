@@ -45,19 +45,28 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailAttachedItem co
     data << uint32(att.AttachID);
     data << att.Item;
 
-    for (auto const& en : att.Enchants)
-    {
-        data << int32(en.Enchant);
-        data << int32(en.Duration);
-        data << int32(en.Charges);
-    }
-
     data << int32(att.Count);
     data << int32(att.Charges);
     data << int32(att.MaxDurability);
     data << int32(att.Durability);
     data.WriteBit(att.Unlocked);
+    data.WriteBits(att.Enchants.size(), 4);
+    data.WriteBits(att.UnkDatas.size(), 2);
     data.FlushBits();
+
+    for (auto const& en : att.Enchants)
+    {
+        data << int32(en.Enchant);
+        data << int32(en.Duration);
+        data << int32(en.Charges);
+        data << en.UnkByte;
+    }
+
+    for (auto const& v : att.UnkDatas)
+    {
+        data << v.UnkByte;
+        data << v.Item;
+    }
 
     return data;
 }
@@ -115,7 +124,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailListEntry const
 
     data << int64(entry.Cod);
     data << int32(entry.PackageID);
-    data << int32(entry.StationeryID);
+    //data << int32(entry.StationeryID);
     data << int64(entry.SentMoney);
     data << int32(entry.Flags);
     data << float(entry.DaysLeft);
