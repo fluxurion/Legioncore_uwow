@@ -92,16 +92,26 @@ WorldPackets::Mail::MailListEntry::MailListEntry(::Mail const* mail, ::Player* p
     Body = mail->body;
 
     for (size_t i = 0; i < mail->items.size(); i++)
-    {
         if (::Item* item = player->GetMItem(mail->items[i].item_guid))
             Attachments.emplace_back(item, i);
-    }
+
+    NativeRealmAddress = GetVirtualRealmAddress();
+    VirtualRealmAddress = GetVirtualRealmAddress();
 }
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailListEntry const& entry)
 {
     data << int32(entry.MailID);
     data << int8(entry.SenderType);
+
+    data.WriteBit(entry.VirtualRealmAddress.is_initialized());
+    data.WriteBit(entry.NativeRealmAddress.is_initialized());
+
+    if (entry.VirtualRealmAddress.is_initialized())
+        data << *entry.VirtualRealmAddress;
+
+    if (entry.VirtualRealmAddress.is_initialized())
+        data << *entry.NativeRealmAddress;
 
     data << int64(entry.Cod);
     data << int32(entry.PackageID);

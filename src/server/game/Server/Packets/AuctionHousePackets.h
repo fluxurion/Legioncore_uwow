@@ -40,25 +40,32 @@ namespace WorldPackets
                 uint8 Slot = 0;
             };
 
-            Item::ItemInstance Item;
-            int32 Count = 0;
-            int32 Charges = 0;
+            struct UnkData
+            {
+                Item::ItemInstance Item;
+                uint8 UnkByte = 0;
+            };
+            
             std::vector<AuctionItemEnchant> Enchantments;
-            int32 Flags = 0;
-            int32 AuctionItemID = 0;
+            std::vector<UnkData> UnkDatas;
+            Item::ItemInstance Item;
             ObjectGuid Owner;
+            ObjectGuid ItemGuid;
+            ObjectGuid OwnerAccountID;
+            ObjectGuid Bidder;
             uint64 MinBid = 0;
             uint64 MinIncrement = 0;
             uint64 BuyoutPrice = 0;
+            uint64 BidAmount = 0;
+            uint32 EndTime = 0;
+            uint32 Flags = 0;
+            int32 Count = 0;
+            int32 Charges = 0;
+            int32 AuctionItemID = 0;
             int32 DurationLeft = 0;
             uint8 DeleteReason = 0;
             bool CensorServerSideInfo = false;
             bool CensorBidInfo = false;
-            ObjectGuid ItemGuid;
-            ObjectGuid OwnerAccountID;
-            uint32 EndTime = 0;
-            ObjectGuid Bidder;
-            uint64 BidAmount = 0;
         };
 
         struct AuctionOwnerNotification
@@ -102,19 +109,19 @@ namespace WorldPackets
         class AuctionCommandResult final : public ServerPacket
         {
         public:
-            AuctionCommandResult();
+            AuctionCommandResult() : ServerPacket(SMSG_AUCTION_COMMAND_RESULT, 32 + 16 + 16) { }
 
             void InitializeAuction(::AuctionEntry* auction);
 
             WorldPacket const* Write() override;
-
+            
+            ObjectGuid Guid;
+            uint64 MinIncrement = 0;
+            uint64 Money = 0;
             uint32 AuctionItemID = 0;
             uint32 Command = 0;
             int32 ErrorCode = 0;
-            uint64 Money = 0;
             int32 BagResult = 0;
-            ObjectGuid Guid;
-            uint64 MinIncrement = 0;
         };
 
         class AuctionSellItem final : public ClientPacket
@@ -245,29 +252,29 @@ namespace WorldPackets
         class AuctionListItems final : public ClientPacket
         {
         public:
+            AuctionListItems(WorldPacket&& packet) : ClientPacket(CMSG_AUCTION_LIST_ITEMS, std::move(packet)) { }
+
+            void Read() override;
+            
             struct Sort
             {
                 uint8 UnkByte1 = 0;
                 uint8 UnkByte2 = 0;
             };
 
-            AuctionListItems(WorldPacket&& packet) : ClientPacket(CMSG_AUCTION_LIST_ITEMS, std::move(packet)) { }
-
-            void Read() override;
-
+            std::vector<Sort> DataSort;
             ObjectGuid Auctioneer;
-            uint8 SortCount = 0;
-            uint8 MaxLevel = 100;
             uint32 Offset = 0;
             int32 ItemClass = 0;
-            uint8 MinLevel = 1;
             int32 InvType = 0;
             int32 Quality = 0;
             int32 ItemSubclass = 0;
-            bool ExactMatch = true;
             std::string Name;
+            uint8 MinLevel = 1;
+            uint8 SortCount = 0;
+            uint8 MaxLevel = 100;
+            bool ExactMatch = true;
             bool OnlyUsable = false;
-            std::vector<Sort> DataSort;
         };
 
         class AuctionListPendingSalesResult final : public ServerPacket

@@ -614,24 +614,23 @@ void AuctionEntry::BuildAuctionInfo(std::vector<WorldPackets::AuctionHouse::Auct
     auctionItem.Charges = item->GetSpellCharges();
     auctionItem.Count = item->GetCount();
     auctionItem.DeleteReason = 0; // Always 0 ?
-    auctionItem.DurationLeft = (expire_time - time(NULL)) * IN_MILLISECONDS;
+    auctionItem.DurationLeft = (expire_time - time(nullptr)) * IN_MILLISECONDS;
     auctionItem.EndTime = expire_time;
     auctionItem.Flags = 0; // todo
     auctionItem.ItemGuid = item->GetGUID();
     auctionItem.MinBid = startbid;
     auctionItem.Owner = ObjectGuid::Create<HighGuid::Player>(owner);
     auctionItem.OwnerAccountID = ObjectGuid::Create<HighGuid::WowAccount>(ObjectMgr::GetPlayerAccountIdByGUID(auctionItem.Owner));
-    auctionItem.MinIncrement = bidder ? GetAuctionOutBid() : 0;
-    auctionItem.Bidder = bidder ? ObjectGuid::Create<HighGuid::Player>(bidder) : ObjectGuid::Empty;
-    auctionItem.BidAmount = bidder ? bid : 0;
+    if (bidder)
+    {
+        auctionItem.MinIncrement = GetAuctionOutBid();
+        auctionItem.Bidder = ObjectGuid::Create<HighGuid::Player>(bidder);
+        auctionItem.BidAmount = bid;
+    }
 
     for (uint8 i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; i++)
-    {
-        if (!item->GetEnchantmentId((EnchantmentSlot) i))
-            continue;
-
-        auctionItem.Enchantments.emplace_back(item->GetEnchantmentId((EnchantmentSlot) i), item->GetEnchantmentDuration((EnchantmentSlot) i), item->GetEnchantmentCharges((EnchantmentSlot) i), i);
-    }
+        if (uint32 enchantmentID = item->GetEnchantmentId(EnchantmentSlot(i)))
+            auctionItem.Enchantments.emplace_back(enchantmentID, item->GetEnchantmentDuration(EnchantmentSlot(i)), item->GetEnchantmentCharges(EnchantmentSlot(i)), i);
 
     items.emplace_back(auctionItem);
 }

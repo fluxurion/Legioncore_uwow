@@ -54,21 +54,23 @@ namespace WorldPackets
         struct MailListEntry
         {
             MailListEntry(::Mail const* mail, ::Player* player);
-
-            int32 MailID = 0;
-            uint8 SenderType = 0;
+            
+            std::vector<MailAttachedItem> Attachments;
             Optional<ObjectGuid> SenderCharacter;
             Optional<uint32> AltSenderID;
+            Optional<uint32> VirtualRealmAddress;
+            Optional<uint32> NativeRealmAddress;
             int64 Cod = 0;
+            int64 SentMoney = 0;
+            int32 MailID = 0;
             int32 PackageID = 0;
             int32 StationeryID = 0;
-            int64 SentMoney = 0;
             int32 Flags = 0;
-            float DaysLeft = 0.0f;
             int32 MailTemplateID = 0;
+            float DaysLeft = 0.0f;
             std::string Subject;
             std::string Body;
-            std::vector<MailAttachedItem> Attachments;
+            uint8 SenderType = 0;
         };
 
         class MailGetList final : public ClientPacket

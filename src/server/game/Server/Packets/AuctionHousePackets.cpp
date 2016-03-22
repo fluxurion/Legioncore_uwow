@@ -24,8 +24,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::AuctionHouse::AuctionItem
     data << auctionItem.Item;
     data << int32(auctionItem.Count);
     data << int32(auctionItem.Charges);
-    data << static_cast<int32>(auctionItem.Enchantments.size());
-    data << int32(auctionItem.Flags);
+    data << auctionItem.Flags;
     data << int32(auctionItem.AuctionItemID);
     data << auctionItem.Owner;
     data << uint64(auctionItem.MinBid);
@@ -33,6 +32,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::AuctionHouse::AuctionItem
     data << uint64(auctionItem.BuyoutPrice);
     data << int32(auctionItem.DurationLeft);
     data << uint8(auctionItem.DeleteReason);
+    data.WriteBits(auctionItem.Enchantments.size(), 4);
+    data.WriteBits(auctionItem.UnkDatas.size(), 2);
 
     for (auto const& enchant : auctionItem.Enchantments)
     {
@@ -40,6 +41,12 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::AuctionHouse::AuctionItem
         data << uint32(enchant.Expiration);
         data << int32(enchant.Charges);
         data << uint8(enchant.Slot);
+    }
+
+    for (auto const& v : auctionItem.UnkDatas)
+    {
+        data << v.UnkByte;
+        data << v.Item;
     }
 
     data.FlushBits();
@@ -51,13 +58,13 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::AuctionHouse::AuctionItem
     {
         data << auctionItem.ItemGuid;
         data << auctionItem.OwnerAccountID;
-        data << int32(auctionItem.EndTime);
+        data << auctionItem.EndTime;
     }
 
     if (censorBidInfo)
     {
         data << auctionItem.Bidder;
-        data << uint64(auctionItem.BidAmount);
+        data << auctionItem.BidAmount;
     }
 
     return data;
@@ -109,19 +116,15 @@ WorldPacket const* WorldPackets::AuctionHouse::AuctionHelloResponse::Write()
     return &_worldPacket;
 }
 
-WorldPackets::AuctionHouse::AuctionCommandResult::AuctionCommandResult()
-    : ServerPacket(SMSG_AUCTION_COMMAND_RESULT, 4 + 4 + 4 + 8 + 4 + 8 + 8 + 8)
-{ }
-
 void WorldPackets::AuctionHouse::AuctionCommandResult::InitializeAuction(::AuctionEntry* auction)
 {
-    if (auction)
-    {
-        AuctionItemID = auction->Id;
-        Money = auction->bid == auction->buyout ? 0 : auction->bid;
-        MinIncrement = auction->bid == auction->buyout ? 0 : auction->GetAuctionOutBid();
-        Guid = ObjectGuid::Create<HighGuid::Player>(auction->bidder);
-    }
+    if (!auction)
+        return;
+
+    AuctionItemID = auction->Id;
+    Money = auction->bid == auction->buyout ? 0 : auction->bid;
+    MinIncrement = auction->bid == auction->buyout ? 0 : auction->GetAuctionOutBid();
+    Guid = ObjectGuid::Create<HighGuid::Player>(auction->bidder);
 }
 
 WorldPacket const* WorldPackets::AuctionHouse::AuctionCommandResult::Write()
