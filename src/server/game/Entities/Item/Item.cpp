@@ -1716,7 +1716,7 @@ int32 Item::GetItemStatValue(uint32 index) const
     if (uint32 randomPropPoints = GetRandomPropertyPoints(GetItemLevel(), GetQuality(), GetTemplate()->GetInventoryType(), GetTemplate()->GetSubClass()))
     {
         float statValue = _bonusData.ItemStatAllocation[index] * randomPropPoints * 0.0001f;
-        if (GameTableEntry const* gtCost = sGtItemSocketCostPerLevelStore.EvaluateTable(GetItemLevel() - 1, 0))
+        if (GameTableEntry const* gtCost = sGtItemSocketCostPerLevelStore.EvaluateTable(GetItemLevel() - 1))
             statValue -= float(int32(_bonusData.ItemStatSocketCostMultiplier[index] * gtCost->Value));
 
         return int32(std::floor(statValue + 0.5f));

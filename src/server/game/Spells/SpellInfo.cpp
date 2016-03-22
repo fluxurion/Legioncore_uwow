@@ -603,8 +603,8 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
 
             if (canEffectScale)
             {
-                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(_spellInfo->SpellLevel - 1, 0);
-                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
+                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(_spellInfo->SpellLevel - 1);
+                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1);
                 if (spellScaler && casterScaler)
                     value *= casterScaler->Value / spellScaler->Value;
             }
@@ -2883,8 +2883,8 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
         {
             if (HasAttribute(SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION))
             {
-                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1, 0);
-                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1, 0);
+                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1);
+                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1);
                 if (spellScaler && casterScaler)
                     powerCost *= casterScaler->Value / spellScaler->Value;
             }

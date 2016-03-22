@@ -6258,7 +6258,7 @@ float Player::GetTotalBaseModValue(BaseModGroup modGroup) const
 
 float Player::GetMeleeCritFromAgility()
 {
-    GameTableEntry const* critBase = sGtChanceToMeleeCritBaseStore.EvaluateTable(getClass() - 1, 0);
+    GameTableEntry const* critBase = sGtChanceToMeleeCritBaseStore.EvaluateTable(getClass() - 1);
     GameTableEntry const* critRatio = sGtChanceToMeleeCritStore.EvaluateTable(getLevel() - 1, getClass() - 1);
     if (critBase && critRatio)
         return critBase->Value + GetStat(STAT_AGILITY) * critRatio->Value * 100.0f;
@@ -26101,7 +26101,7 @@ uint32 Player::GetBarberShopCost(uint8 newhairstyle, uint8 newhaircolor, uint8 n
     if ((hairstyle == newhairstyle) && (haircolor == newhaircolor) && (facialhair == newfacialhair) && (!newSkin || (newSkin->HairID == skincolor)))
         return 0;
 
-    GameTableEntry const* bsc = sGtBarberShopCostBaseStore.EvaluateTable(getLevel() - 1, 0);
+    GameTableEntry const* bsc = sGtBarberShopCostBaseStore.EvaluateTable(getLevel() - 1);
     if (!bsc)
         return 0xFFFFFFFF;
 

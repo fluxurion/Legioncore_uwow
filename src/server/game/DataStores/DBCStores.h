@@ -44,7 +44,7 @@ public:
 
     void SetGameTableEntry(GameTablesEntry const* gtEntry) { _gtEntry = gtEntry; }
 
-    T const* EvaluateTable(uint32 row, uint32 column) const
+    T const* EvaluateTable(uint32 row, uint32 column = 0) const
     {
         if (row > _gtEntry->NumRows || column > _gtEntry->NumColumns)
         {

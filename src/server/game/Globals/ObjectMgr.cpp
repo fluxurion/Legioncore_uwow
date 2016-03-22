@@ -3343,7 +3343,7 @@ void ObjectMgr::LoadPlayerInfo()
 
         _playerXPperLevel.resize(sGtOCTLevelExperienceStore.GetTableRowCount() + 1, 0);
         for (uint32 level = 0; level < sGtOCTLevelExperienceStore.GetTableRowCount(); ++level)
-            _playerXPperLevel[level + 1] = sGtOCTLevelExperienceStore.EvaluateTable(level, 0)->Value;
+            _playerXPperLevel[level + 1] = sGtOCTLevelExperienceStore.EvaluateTable(level)->Value;
 
         //                                                 0        1
         QueryResult result  = WorldDatabase.Query("SELECT Level, Experience FROM player_xp_for_level");
@@ -8625,7 +8625,7 @@ void ObjectMgr::LoadCreatureClassLevelStats()
 
         GameTable<GameTableEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, &sGtNpcTotalHpExp6Store, nullptr };
         GameTable<GameTableEntry>* dmgTables[] = { &sGtNpcDamageByClassStore, &sGtNpcDamageByClassStoreExp1, &sGtNpcDamageByClassStoreExp2, &sGtNpcDamageByClassStoreExp3, &sGtNpcDamageByClassStoreExp4, &sGtNpcDamageByClassStoreExp5, &sGtNpcDamageByClassStoreExp6, nullptr };
-        GameTableEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1, 0);
+        GameTableEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1);
 
         CreatureBaseStats stats;
         stats.BaseMana = fields[2].GetUInt32();

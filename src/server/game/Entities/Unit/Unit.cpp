@@ -2093,7 +2093,7 @@ uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage, SpellInfo
     if (armor < 0.0f)
         armor = 0.0f;
 
-    GameTableEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevel() - 1, 0);
+    GameTableEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevel() - 1);
     float percReduced = 0.1f;/*armor / (armor + gtArmorMitigation->Value);*/
 
     if (percReduced < 0.0f)
@@ -16231,7 +16231,7 @@ float Unit::OCTRegenMPPerSpirit()
 
 float Unit::GetBaseSpellCritChance()
 {
-    GameTableEntry const* critBase = sGtChanceToSpellCritBaseStore.EvaluateTable(getClass() - 1, 0);
+    GameTableEntry const* critBase = sGtChanceToSpellCritBaseStore.EvaluateTable(getClass() - 1);
     GameTableEntry const* critRatio = sGtChanceToSpellCritStore.EvaluateTable(getLevel() - 1, getClass() - 1);
     if (critBase && critRatio)
        return critBase->Value * critRatio->Value * 100.0f;
