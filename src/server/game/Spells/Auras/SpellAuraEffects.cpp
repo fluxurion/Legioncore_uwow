@@ -5862,8 +5862,9 @@ void AuraEffect::HandleOverrideAttackPowerBySpellPower(AuraApplication const* au
     Unit* target = aurApp->GetTarget();
 
     // Recalculate bonus
-    if (target->GetTypeId() == TYPEID_PLAYER)
-        target->ToPlayer()->UpdateAttackPowerAndDamage(false);
+    // temporary disable, crash on activeted spec on spell 137029 http://pastebin.com/nqGeZDqQ
+    // if (target->GetTypeId() == TYPEID_PLAYER)
+        // target->ToPlayer()->UpdateAttackPowerAndDamage(false);
 }
 
 void AuraEffect::HandleOverrideSpellPowerByAttackPower(AuraApplication const* aurApp, uint8 mode, bool apply) const
