@@ -44,7 +44,7 @@ DB2FileLoader::DB2FileLoader()
     _hasIndex = false;
 }
 
-bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name)
+bool DB2FileLoader::Load(char const* filename, char const* fmt)
 {
     if (recordTable)
     {
@@ -55,7 +55,7 @@ bool DB2FileLoader::Load(char const* filename, char const* fmt, std::string name
     FILE* f = fopen(filename, "rb");
     if (!f)
     {
-        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u, File: %s", __FUNCTION__, __LINE__, name.c_str());
+        sLog->outError(LOG_FILTER_GENERAL, "Function: %s, Line: %u, Error: %s, filename %s", __FUNCTION__, __LINE__, strerror(errno), filename);
         return false;
     }
 

@@ -43,7 +43,7 @@ class DB2FileLoader
     DB2FileLoader();
     ~DB2FileLoader();
 
-    bool Load(const char *filename, const char *fmt, std::string name);
+    bool Load(char const* filename, char const* fmt);
 
     class Record
     {

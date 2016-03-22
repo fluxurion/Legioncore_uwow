@@ -129,8 +129,7 @@ public:
     bool Load(std::string const& path, uint32 locale)
     {
         DB2FileLoader db2;
-        // Check if load was successful, only then continue
-        if (!db2.Load((path + _fileName).c_str(), _format, _fileName))
+        if (!db2.Load((path + _fileName).c_str(), _format))
             return false;
 
         _fieldCount = db2.GetCols();
@@ -156,19 +155,17 @@ public:
 
     bool LoadStringsFrom(std::string const& path, uint32 locale)
     {
-        // DB2 must be already loaded using Load
         if (!_indexTable.AsT)
             return false;
 
         DB2FileLoader db2;
-        // Check if load was successful, only then continue
-        if (!db2.Load((path + _fileName).c_str(), _format, _fileName))
+        if (!db2.Load((path + _fileName).c_str(), _format))
             return false;
 
-        // load strings from another locale db2 data
         if (DB2FileLoader::GetFormatLocalizedStringFieldCount(_format))
             if (char* stringBlock = db2.AutoProduceStrings(_format, (char*)_dataTable, locale))
                 _stringPoolList.push_back(stringBlock);
+
         return true;
     }
 
