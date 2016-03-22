@@ -134,9 +134,9 @@ struct AuctionHouseEntry
 {
     uint32      ID;
     LocalizedString* Name;                                  // 0
-    uint32      FactionID;                                  // 1
-    uint32      DepositRate;                                // 2
-    uint32      ConsignmentRate;                            // 3
+    uint16      FactionID;                                  // 1
+    uint8       DepositRate;                                // 2
+    uint8       ConsignmentRate;                            // 3
 };
 
 struct ArmorLocationEntry
