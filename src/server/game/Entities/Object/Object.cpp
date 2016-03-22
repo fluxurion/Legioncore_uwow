@@ -1106,7 +1106,7 @@ void Object::BuildDynamicValuesUpdate(uint8 updateType, ByteBuffer *data, Player
 void Object::ClearUpdateMask(bool remove)
 {
     _dynamicChangesMask.Clear();
-    for (uint32 i = 0; i < _dynamicValuesCount; ++i)
+    for (uint16 i = 0; i < _dynamicValuesCount; ++i)
         _dynamicChangesArrayMask[i].Clear();
 
     memset(_changedFields, 0, m_valuesCount*sizeof(bool));

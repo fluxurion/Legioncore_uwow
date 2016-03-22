@@ -7565,30 +7565,24 @@ void Player::RewardGuildReputation(Quest const* quest)
         //GetReputationMgr().ModifyReputation(factionEntry, rep);
 }
 
-void Player::UpdateHonorFields()
+void Player::UpdateHonorFields(bool loading /*= false*/)
 {
-    /// called when rewarding honor and at each save
-    time_t now = time_t(time(NULL));
-    time_t today = time_t(time(NULL) / DAY) * DAY;
+    if (loading)
+    {
+        HonorInfo info = m_honorInfo[GetGUIDLow()];
+        SetUInt32Value(PLAYER_FIELD_HONOR, info.CurrentHonorAtLevel);
+        SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, info.HonorLevel);
+        GameTableEntry const* data = sGtHonorLevelStore.EvaluateTable(info.HonorLevel);
+        SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data ? data->Value: 0);
+        SetUInt32Value(PLAYER_FIELD_PRESTIGE, info.PrestigeLevel);
+    }
 
+    time_t now = time_t(time(nullptr));
+    time_t today = time_t(time(nullptr) / DAY) * DAY;
     if (m_lastHonorUpdateTime < today)
     {
-        time_t yesterday = today - DAY;
+        SetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, m_lastHonorUpdateTime >= time_t(today - DAY) ? MAKE_PAIR32(0, PAIR32_LOPART(GetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS))) : 0);
 
-        uint16 kills_today = PAIR32_LOPART(GetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS));
-
-        // update yesterday's contribution
-        if (m_lastHonorUpdateTime >= yesterday)
-        {
-            // this is the first update today, reset today's contribution
-            SetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, MAKE_PAIR32(0, kills_today));
-        }
-        else
-        {
-            // no honor/kills yesterday or today, reset
-            SetUInt32Value(PLAYER_FIELD_YESTERDAY_HONORABLE_KILLS, 0);
-        }
-        // clear all of today's kills, they will be flushed from the DB on next save
         m_killsPerPlayer.clear();
         m_flushKills = true;
     }
@@ -8059,6 +8053,13 @@ void Player::ModifyCurrency(uint32 id, int32 count, bool printLog/* = true*/, bo
             ModifyCurrency(CURRENCY_TYPE_CONQUEST_POINTS, count, printLog);
             return;
         }
+    }
+
+    if (id == CURRENCY_TYPE_HONOR_POINTS)
+    {
+        HonorInfo &honorInfo = m_honorInfo[GetGUIDLow()];
+        honorInfo.CurrentHonorAtLevel += count;
+        SetUInt32Value(PLAYER_FIELD_HONOR, honorInfo.CurrentHonorAtLevel);
     }
 }
 
@@ -17987,7 +17988,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // Honor system
     // Update Honor kills data
     m_lastHonorUpdateTime = logoutTime;
-    UpdateHonorFields();
+    UpdateHonorFields(true);
 
     m_deathExpireTime = time_t(fields[f_death_expire_time].GetUInt32());
     if (m_deathExpireTime > now+MAX_DEATH_COUNT*DEATH_EXPIRE_STEP)
@@ -18120,7 +18121,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     SetFallInformation(0, GetPositionZ());
 
     _LoadSpellCooldowns(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS));
-    _LoadHonor(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_HONOR));
+    _LoadHonor(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_HONOR), holder->GetPreparedResult(PLAYER_LOGIN_QUERY_HONOR_INFO));
 
     // Spell code allow apply any auras to dead character in load time in aura/spell/item loading
     // Do now before stats re-calculation cleanup for ghost state unexpected auras
@@ -28298,70 +28299,94 @@ void Player::SendSoundToAll(uint32 soundId, ObjectGuid source)
     }
 }
 
-void Player::_LoadHonor(PreparedQueryResult result)
+void Player::_LoadHonor(PreparedQueryResult result, PreparedQueryResult result2)
 {
-    // kills in the DB are for one day always
-    // so if the last was today then they all were
-    //QueryResult result = CharacterDatabase.PQuery("SELECT victim_guid, count FROM character_kill WHERE guid='%u'", GetGUIDLow());
     if (result)
     {
         do
         {
-            Field *fields  = result->Fetch();
-            uint64 victim_guid = fields[0].GetUInt64();
-            uint32 count = fields[1].GetUInt32();
-
-            KillInfo &info = m_killsPerPlayer[victim_guid];
+            Field* fields = result->Fetch();
+            KillInfo &info = m_killsPerPlayer[fields[0].GetUInt64()];
             info.state = KILL_UNCHANGED;
-            info.count = count;
+            info.count = fields[1].GetUInt32();
         }
-        while( result->NextRow() );
+        while (result->NextRow());
+    }
+
+    if (result2)
+    {
+        do
+        {
+            Field* fields = result2->Fetch();
+            HonorInfo &info = m_honorInfo[GetGUIDLow()];
+            info.CurrentHonorAtLevel = fields[0].GetUInt16();
+            info.HonorLevel = fields[1].GetUInt8();
+            info.PrestigeLevel = fields[2].GetUInt8();
+        }
+        while (result2->NextRow());
     }
 }
 
 void Player::_SaveHonor()
 {
-    // the character_kill tables are not used if the config is set to 0
-//    if(!sWorld.getConfig(CONFIG_HONOR_KILL_LIMIT))
-//        return;
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
+    PreparedStatement* stmt = nullptr;
+    ObjectGuid::LowType lowGuid = GetGUIDLow();
 
-    PreparedStatement* stmt;
-    // flush all kills from the DB at midnight
-    if(m_flushKills)
+    if (m_flushKills)
     {
         stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PLAYER_KILL);
-        stmt->setUInt64(0, GetGUIDLow());
-        CharacterDatabase.Execute(stmt);
+        stmt->setUInt64(0, lowGuid);
+        trans->Append(stmt);
 
         m_flushKills = false;
     }
 
-    // only if there's something to save
-    if(m_saveKills)
+    if (m_saveKills)
     {
-        for(KillInfoMap::iterator itr = m_killsPerPlayer.begin(); itr != m_killsPerPlayer.end(); ++itr)
+        for (KillInfoMap::iterator itr = m_killsPerPlayer.begin(); itr != m_killsPerPlayer.end(); ++itr)
         {
-            switch(itr->second.state)
+            switch (itr->second.state)
             {
                 case KILL_NEW:
                     stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_PLAYER_KILL);
-                    stmt->setUInt64(0, GetGUIDLow());
+                    stmt->setUInt64(0, lowGuid);
                     stmt->setUInt64(1, itr->first);
                     stmt->setUInt32(2, itr->second.count);
-                    CharacterDatabase.Execute(stmt);
+                    trans->Append(stmt);
                     break;
                 case KILL_CHANGED:
                     stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_PLAYER_KILL);
                     stmt->setUInt32(0, itr->second.count);
-                    stmt->setUInt64(1, GetGUIDLow());
+                    stmt->setUInt64(1, lowGuid);
                     stmt->setUInt64(2, itr->first);
-                    CharacterDatabase.Execute(stmt);
+                    trans->Append(stmt);
                     break;
             }
             itr->second.state = KILL_UNCHANGED;
         }
         m_saveKills = false;
     }
+
+    for (HonorInfoContainer::const_iterator::value_type const v : m_honorInfo)
+    {
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_HONOR_INFO_HONOR);
+        stmt->setUInt16(0, v.second.CurrentHonorAtLevel);
+        stmt->setUInt64(1, lowGuid);
+        trans->Append(stmt);
+        
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_HONOR_INFO_HONOR_LEVEL);
+        stmt->setUInt8(0, v.second.HonorLevel);
+        stmt->setUInt64(1, lowGuid);
+        trans->Append(stmt);
+        
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_HONOR_INFO_PRESTIGE_LEVEL);
+        stmt->setUInt8(0, v.second.PrestigeLevel);
+        stmt->setUInt64(1, lowGuid);
+        trans->Append(stmt);
+    }
+
+    CharacterDatabase.CommitTransaction(trans);
 }
 
 void Player::SendCategoryCooldownMods()

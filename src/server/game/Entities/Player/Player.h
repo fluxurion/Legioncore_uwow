@@ -875,6 +875,17 @@ struct KillInfo
 
 typedef std::map<uint64, KillInfo> KillInfoMap;
 
+struct HonorInfo
+{
+    HonorInfo() : CurrentHonorAtLevel(0), PrestigeLevel(0), HonorLevel(0) { }
+
+    uint16 CurrentHonorAtLevel;
+    uint8 PrestigeLevel;
+    uint8 HonorLevel;
+};
+
+typedef std::map<ObjectGuid::LowType, HonorInfo> HonorInfoContainer;
+
 enum RestType
 {
     REST_TYPE_NO        = 0,
@@ -995,6 +1006,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOAD_GARRISON_MISSIONS,
     PLAYER_LOGIN_QUERY_LOAD_TOYS,
     PLAYER_LOGIN_QUERY_LOAD_HEIRLOOMS,
+    PLAYER_LOGIN_QUERY_HONOR_INFO,
 
     MAX_PLAYER_LOGIN_QUERY
 };
@@ -2638,8 +2650,7 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
         /***                  PVP SYSTEM                       ***/
         /*********************************************************/
-        // TODO: Properly implement correncies as of Cataclysm
-        void UpdateHonorFields();
+        void UpdateHonorFields(bool loading = false);
         bool RewardHonor(Unit* victim, uint32 groupsize, int32 honor = -1, bool pvptoken = false);
         uint32 GetMaxPersonalArenaRatingRequirement(BracketType minarenaslot) const;
         uint32 GetMaxMMR() const;
@@ -3365,7 +3376,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadCurrency(PreparedQueryResult result);
         void _LoadArchaelogy(PreparedQueryResult result);
         void _LoadCUFProfiles(PreparedQueryResult result);
-        void _LoadHonor(PreparedQueryResult resultUnread);
+        void _LoadHonor(PreparedQueryResult result, PreparedQueryResult result2);
         void _LoadLootCooldown(PreparedQueryResult result);
 
         /*********************************************************/
@@ -3579,6 +3590,8 @@ class Player : public Unit, public GridObject<Player>
         KillInfoMap m_killsPerPlayer;
         bool m_flushKills;
         bool m_saveKills;
+
+        HonorInfoContainer m_honorInfo;
 
         //WorldFilter
         std::string m_sentMsgCache;
