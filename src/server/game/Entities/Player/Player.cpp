@@ -7569,12 +7569,24 @@ void Player::UpdateHonorFields(bool loading /*= false*/)
 {
     if (loading)
     {
-        HonorInfo info = m_honorInfo[GetGUIDLow()];
-        SetUInt32Value(PLAYER_FIELD_HONOR, info.CurrentHonorAtLevel);
-        SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, info.HonorLevel);
-        GameTableEntry const* data = sGtHonorLevelStore.EvaluateTable(info.HonorLevel);
-        SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data ? data->Value: 0);
-        SetUInt32Value(PLAYER_FIELD_PRESTIGE, info.PrestigeLevel);
+        HonorInfo &honorInfo = m_honorInfo[GetGUIDLow()];
+        if (GameTableEntry const* data = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
+        {
+            if (honorInfo.CurrentHonorAtLevel >= data->Value)
+            {
+                honorInfo.CurrentHonorAtLevel = 0;
+                honorInfo.HonorLevel = std::min(honorInfo.HonorLevel += 1, HonorInfo::MaxHonorLevel);
+
+                if (GameTableEntry const* data2 = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
+                    SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data2->Value);
+            }
+            else
+                SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data->Value);
+        }
+
+        SetUInt32Value(PLAYER_FIELD_HONOR, honorInfo.CurrentHonorAtLevel);
+        SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, honorInfo.HonorLevel);
+        SetUInt32Value(PLAYER_FIELD_PRESTIGE, honorInfo.PrestigeLevel);
     }
 
     time_t now = time_t(time(nullptr));
@@ -8058,7 +8070,22 @@ void Player::ModifyCurrency(uint32 id, int32 count, bool printLog/* = true*/, bo
     if (id == CURRENCY_TYPE_HONOR_POINTS)
     {
         HonorInfo &honorInfo = m_honorInfo[GetGUIDLow()];
-        honorInfo.CurrentHonorAtLevel += count;
+        honorInfo.CurrentHonorAtLevel += count / GetCurrencyPrecision(id);
+        if (GameTableEntry const* data = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
+        {
+            if (honorInfo.CurrentHonorAtLevel >= data->Value)
+            {
+                honorInfo.CurrentHonorAtLevel = 0;
+                honorInfo.HonorLevel = std::min(honorInfo.HonorLevel += 1, HonorInfo::MaxHonorLevel);
+
+                if (GameTableEntry const* data2 = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
+                    SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data2->Value);
+            }
+            else
+                SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data->Value);
+        }
+
+        SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, honorInfo.HonorLevel);
         SetUInt32Value(PLAYER_FIELD_HONOR, honorInfo.CurrentHonorAtLevel);
     }
 }

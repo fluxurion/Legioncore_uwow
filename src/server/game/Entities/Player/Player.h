@@ -882,6 +882,8 @@ struct HonorInfo
     uint16 CurrentHonorAtLevel;
     uint8 PrestigeLevel;
     uint8 HonorLevel;
+
+    static uint8 const MaxHonorLevel = 50;
 };
 
 typedef std::map<ObjectGuid::LowType, HonorInfo> HonorInfoContainer;
