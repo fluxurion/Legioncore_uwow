@@ -185,7 +185,7 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
         }
     }
 
-    Object::_Create(ObjectGuid::Create<HighGuid::Conversation>(GetMapId(), 0, guidlow));
+    Object::_Create(ObjectGuid::Create<HighGuid::Conversation>(GetMapId(), triggerEntry, guidlow));
     SetPhaseMask(caster->GetPhaseMask(), false);
     SetPhaseId(caster->GetPhases(), false);
 

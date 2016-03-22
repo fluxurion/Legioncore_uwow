@@ -519,7 +519,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         data->WriteBit(t->GetAreaTriggerInfo().MorphCurveID);           // HasMorphCurveID
         data->WriteBit(t->GetAreaTriggerInfo().FacingCurveID);          // HasFacingCurveID
         data->WriteBit(t->GetAreaTriggerInfo().MoveCurveID);            // hasMoveCurveID
-        data->WriteBit(t->GetVisualScale());                            // HasAreaTriggerSphere
+        data->WriteBit(t->GetVisualScale() != 0.0f);                            // HasAreaTriggerSphere
         data->WriteBit(t->GetAreaTriggerInfo().hasAreaTriggerBox);      // HasAreaTriggerBox
         data->WriteBit(t->isPolygon());                                 // areaTriggerPolygon
         data->WriteBit(t->GetAreaTriggerCylinder());                    // areaTriggerCylinder
@@ -545,7 +545,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         if (t->GetAreaTriggerInfo().MoveCurveID)
             *data << uint32(t->GetAreaTriggerInfo().MoveCurveID);
 
-        if (t->GetVisualScale())                                        // areaTriggerSphere
+        if (t->GetVisualScale() != 0.0f)                                        // areaTriggerSphere
         {
             *data << t->GetVisualScale(true);                           // Radius
             *data << t->GetVisualScale();                               // RadiusTarget

@@ -26,7 +26,7 @@
 
 AreaTrigger::AreaTrigger() : WorldObject(false), _duration(0), _activationDelay(0), _updateDelay(0), _on_unload(false), _caster(NULL),
     _radius(1.0f), atInfo(), _on_despawn(false), m_spellInfo(NULL), _moveSpeed(0.0f), _moveTime(0), _realEntry(0), _hitCount(1), _areaTriggerCylinder(false),
-    _on_remove(false), _waitTime(0)
+    _on_remove(false), _waitTime(0), _nextMoveTime(0)
 {
     m_objectType |= TYPEMASK_AREATRIGGER;
     m_objectTypeId = TYPEID_AREATRIGGER;
@@ -157,6 +157,8 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
     SetFloatValue(AREATRIGGER_FIELD_BOUNDS_RADIUS_2_D, 1.0);
     SetTargetGuid(targetGuid);
 
+    float range = GetSpellInfo()->GetMaxRange() < _radius ? _radius : GetSpellInfo()->GetMaxRange(); //If spline not set client crash, set default to 15m
+
     // culculate destination point
     if (isMoving())
     {
@@ -165,19 +167,22 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
         if (atInfo.speed)
             _moveSpeed = atInfo.speed;
         else
-            _moveSpeed = (GetSpellInfo()->GetMaxRange() / duration) * 1000.0f;
+            _moveSpeed = (range / duration) * 1000.0f;
 
         switch (atInfo.moveType)
         {
             case AT_MOVE_TYPE_DEFAULT: // 0
             {
-                Vector3 curPos, nextPos;
-                pos.PositionToVector(curPos);
-                m_movePath.push_back(curPos);
-                m_movePath.push_back(curPos);
-                pos.SimplePosXYRelocationByAngle(nextPos.x, nextPos.y, nextPos.z, GetSpellInfo()->GetMaxRange(), 0.0f);
-                m_movePath.push_back(nextPos);
-                m_movePath.push_back(nextPos);
+                if (range != 0.0f)
+                {
+                    Vector3 curPos, nextPos;
+                    pos.PositionToVector(curPos);
+                    m_movePath.push_back(curPos);
+                    m_movePath.push_back(curPos);
+                    pos.SimplePosXYRelocationByAngle(nextPos.x, nextPos.y, nextPos.z, range, 0.0f);
+                    m_movePath.push_back(nextPos);
+                    m_movePath.push_back(nextPos);
+                }
                 break;
             }
             case AT_MOVE_TYPE_LIMIT: // 1
@@ -292,6 +297,7 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
     #ifdef WIN32
     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AreaTrigger::Create AreaTrigger caster %s spellID %u spell rage %f dist %f dest - X:%f,Y:%f,Z:%f _nextMoveTime %i _moveSpeed %f duration %i", 
     caster->GetGUID().ToString().c_str(), info->Id, _radius, GetSpellInfo()->GetMaxRange(), m_movePath.empty() ? 0.0f : m_movePath[m_currentNode].x, m_movePath.empty() ? 0.0f : m_movePath[m_currentNode].y, m_movePath.empty() ? 0.0f : m_movePath[m_currentNode].z, _nextMoveTime, _moveSpeed, duration);
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AreaTrigger::Create isMoving %i range %f m_movePath %i moveType %i", isMoving(), range, m_movePath.size(), atInfo.moveType);
     #endif
 
     if (atInfo.maxCount)
@@ -857,7 +863,7 @@ void AreaTrigger::Despawn()
 float AreaTrigger::GetVisualScale(bool target /*=false*/) const
 {
     if(_areaTriggerCylinder) // Send only for sphere
-        return false;
+        return 0.0f;
 
     if (target) return atInfo.RadiusTarget;
     return atInfo.Radius;
