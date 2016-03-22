@@ -882,6 +882,7 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
     //! Need to be called after LoadCreaturesAddon - MOVEMENTFLAG_HOVER is set there
     if (HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
     {
+        m_updateFlag |= UPDATEFLAG_PLAY_HOVER_ANIM;
         z += GetFloatValue(UNIT_FIELD_HOVER_HEIGHT);
 
         //! Relocate again with updated Z coord
@@ -2445,7 +2446,10 @@ bool Creature::LoadCreaturesAddon(bool reload)
         //! If no inhabittype_fly (if no MovementFlag_DisableGravity flag found in sniffs)
         //! Set MovementFlag_Hover. Otherwise do nothing.
         if (GetMiscStandValue() & UNIT_BYTE1_FLAG_HOVER && !IsLevitating())
+        {
+            m_updateFlag |= UPDATEFLAG_PLAY_HOVER_ANIM;
             AddUnitMovementFlag(MOVEMENTFLAG_HOVER);
+        }
     }
 
     if (cainfo->bytes2 != 0)
