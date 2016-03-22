@@ -111,14 +111,14 @@ struct AchievementEntry
     LocalizedString* Description;                           // 2
     uint32      Flags;                                      // 3
     LocalizedString* Reward;                                // 4
-    uint16      MapID;                                      // 5
+    int16       MapID;                                      // 5
     uint16      ParentAchievement;                          // 6    
     uint16      CategoryID;                                 // 7
     uint16      OrderInCategory;                            // 8
     uint16      IconID;                                     // 9
     uint16      RefAchievement;                             // 10
     uint16      CriteriaTree;                               // 11
-    uint8       FactionFlag;                                // 12
+    int8        FactionFlag;                                // 12
     uint8       RewardPoints;                               // 13
     uint8       Amount;                                     // 14
 };
