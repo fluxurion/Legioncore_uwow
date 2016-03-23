@@ -285,9 +285,18 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
+            enum class DisplayType : uint16
+            {   
+                NONE            = 0,
+                ENCOUNTER_LOOT  = 1,
+                NORMAL          = 2,
+                HIDDEN          = 3
+            };
+
             ItemInstance Item;
             ObjectGuid PlayerGUID;
             ObjectGuid ItemGUID;
+            uint32 DungeonEncounterID = 0;
             int32 SlotInBag = 0;
             uint32 QuestLogItemID = 0;
             int32 Quantity = 0;
@@ -296,7 +305,7 @@ namespace WorldPackets
             uint32 BattlePetBreedQuality = 0;
             int32 BattlePetSpeciesID = 0;
             int32 BattlePetLevel = 0;
-            uint16 DisplayText = 0;
+            DisplayType DisplayText = DisplayType::NONE;
             uint8 Slot = 0;
             bool Pushed = false;
             bool Created = false;

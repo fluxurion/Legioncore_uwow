@@ -365,6 +365,7 @@ WorldPacket const* WorldPackets::Item::ItemPushResult::Write()
     _worldPacket << uint32(QuestLogItemID);
     _worldPacket << int32(Quantity);
     _worldPacket << int32(QuantityInInventory);
+    _worldPacket << uint32(DungeonEncounterID);
     _worldPacket << int32(BattlePetBreedID);
     _worldPacket << int32(BattlePetBreedQuality);
     _worldPacket << int32(BattlePetSpeciesID);

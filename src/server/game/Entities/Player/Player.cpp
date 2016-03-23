@@ -14754,7 +14754,7 @@ void Player::SendItemDurations()
         (*itr)->SendTimeUpdate(this);
 }
 
-void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast, BattlePetMgr::BattlePet* petInfo /*= nullptr*/, bool bonusRoll)
+void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast, BattlePetMgr::BattlePet* petInfo /*= nullptr*/)
 {
     if (!item)                                               // prevent crash
         return;
@@ -14768,7 +14768,9 @@ void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, 
     packet.Item.Initialize(item);
 
     packet.QuestLogItemID = 0;
+    packet.DungeonEncounterID = 0;
     packet.Quantity = count;
+    packet.DisplayText = WorldPackets::Item::ItemPushResult::DisplayType::NORMAL;
     packet.QuantityInInventory = GetItemCount(item->GetEntry());
     if (petInfo)
     {
