@@ -3115,7 +3115,7 @@ class npc_experience : public CreatureScript
             if (doSwitch)
             {
                 if (!player->HasEnoughMoney(uint64(EXP_COST)))
-                    player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
+                    player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY);
                 else if (noXPGain)
                 {
                     player->ModifyMoney(-int64(EXP_COST));

@@ -109,9 +109,7 @@ class custum_trainer : public CreatureScript
                         player->learnSpell(41234, false);
                     }
                     else
-                    {
-                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
-                    }
+                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY);
                     player->CLOSE_GOSSIP_MENU();
                     break;
                 case 73324:
@@ -121,9 +119,7 @@ class custum_trainer : public CreatureScript
                         player->learnSpell(73324, false);
                     }
                     else
-                    {
-                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
-                    }
+                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY);
                     player->CLOSE_GOSSIP_MENU();
                     break;
                 case 57676:
@@ -133,9 +129,7 @@ class custum_trainer : public CreatureScript
                         player->learnSpell(57676, false);
                     }
                     else
-                    {
-                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
-                    }
+                        player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY);
                     player->CLOSE_GOSSIP_MENU();
                     break;
                 case 11:
