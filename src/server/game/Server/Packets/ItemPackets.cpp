@@ -375,7 +375,7 @@ WorldPacket const* WorldPackets::Item::ItemPushResult::Write()
 
     _worldPacket.WriteBit(Pushed);
     _worldPacket.WriteBit(Created);
-    _worldPacket.WriteBits(DisplayText, 2);
+    _worldPacket.WriteBits(static_cast<uint16>(DisplayText), 2);
     _worldPacket.WriteBit(IsBonusRoll);
     _worldPacket.WriteBit(IsEncounterLoot);
 
