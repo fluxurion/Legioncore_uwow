@@ -33,9 +33,12 @@ WorldPackets::Mail::MailAttachedItem::MailAttachedItem(::Item const* item, uint8
 
     for (uint8 j = 0; j < MAX_INSPECTED_ENCHANTMENT_SLOT; j++)
     {
-        Enchants[j].Enchant = item->GetEnchantmentId((EnchantmentSlot)j);
-        Enchants[j].Duration = item->GetEnchantmentDuration((EnchantmentSlot)j);
-        Enchants[j].Charges = item->GetEnchantmentCharges((EnchantmentSlot)j);
+        MailAttachedItemEnchant Enchant;
+        Enchant.Enchant = item->GetEnchantmentId((EnchantmentSlot)j);
+        Enchant.Duration = item->GetEnchantmentDuration((EnchantmentSlot)j);
+        Enchant.Charges = item->GetEnchantmentCharges((EnchantmentSlot)j);
+
+        Enchants[j] = Enchant;
     }
 }
 
