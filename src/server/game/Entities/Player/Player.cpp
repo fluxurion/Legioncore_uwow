@@ -3265,41 +3265,41 @@ void Player::LearnSpecializationSpells()
         }
     }
 
-    if(level < 91)
-        return;
+    // if(level < 91)
+        // return;
 
-    uint8 currentIndex = 1;
-    switch (level)
-    {
-        case 95:
-        case 96:
-        case 97:
-            currentIndex = 2;
-            break;
-        case 98:
-        case 99:
-            currentIndex = 3;
-            break;
-        case 100:
-            currentIndex = 4;
-            break;
-    }
+    // uint8 currentIndex = 1;
+    // switch (level)
+    // {
+        // case 95:
+        // case 96:
+        // case 97:
+            // currentIndex = 2;
+            // break;
+        // case 98:
+        // case 99:
+            // currentIndex = 3;
+            // break;
+        // case 100:
+            // currentIndex = 4;
+            // break;
+    // }
 
-    bool add = true;
-    if (currentIndex < 4)
-        add = urand(0, 1);
+    // bool add = true;
+    // if (currentIndex < 4)
+        // add = urand(0, 1);
 
-    if(add)
-    {
-        for (uint8 i = 0; i < currentIndex; i++)
-        {
-            if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specializationId, i))
-            {
-                if (!HasSpell(minor->SpellID))
-                    learnSpell(minor->SpellID, false);
-            }
-        }
-    }
+    // if(add)
+    // {
+        // for (uint8 i = 0; i < currentIndex; i++)
+        // {
+            // if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specializationId, i))
+            // {
+                // if (!HasSpell(minor->SpellID))
+                    // learnSpell(minor->SpellID, false);
+            // }
+        // }
+    // }
 }
 
 void Player::RemoveSpecializationSpells()
