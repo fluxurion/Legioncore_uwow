@@ -86,8 +86,17 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
         sLog->outError(LOG_FILTER_GENERAL, "Conversation (spell %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", info ? info->Id : 0, GetPositionX(), GetPositionY());
         return false;
     }
-    
+
     uint32 duration = 30000;
+
+    Object::_Create(ObjectGuid::Create<HighGuid::Conversation>(GetMapId(), triggerEntry, guidlow));
+    SetPhaseMask(caster->GetPhaseMask(), false);
+    SetPhaseId(caster->GetPhases(), false);
+
+    SetEntry(triggerEntry);
+    SetObjectScale(1.0f);
+    SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
+    casterGUID = caster->GetGUID();
 
     for (uint16 index = 0; index < _dynamicValuesCount; ++index)
     {
@@ -102,7 +111,7 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                 uint32 count = 0;
                 if (isActor)
                 {
-                    arrayMask.SetCount(conversationActor->size());
+                    arrayMask.SetCount(conversationActor->size() * 6);
                     for (std::vector<ConversationActor>::const_iterator itr = conversationActor->begin(); itr != conversationActor->end(); ++itr)
                     {
                         arrayMask.SetBit(count++);
@@ -117,12 +126,14 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                         buffer << uint32(itr->unk2);
                         arrayMask.SetBit(count++);
                         buffer << uint32(itr->unk3);
-                        duration = itr->duration;
+
+                        if (itr->duration)
+                            duration = itr->duration;
                     }
                 }
                 if(isCreature)
                 {
-                    arrayMask.SetCount(conversationCreature->size());
+                    arrayMask.SetCount(conversationCreature->size() * 6);
                     for (std::vector<ConversationCreature>::const_iterator itr = conversationCreature->begin(); itr != conversationCreature->end(); ++itr)
                     {
                         if (!itr->creatureId)
@@ -139,7 +150,9 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                             buffer << uint32(itr->unk1);
                             arrayMask.SetBit(count++);
                             buffer << uint32(itr->unk2);
-                            duration = itr->duration;
+
+                            if (itr->duration)
+                                duration = itr->duration;
                         }
                         else if (Creature* creature = caster->FindNearestCreature(itr->creatureId, caster->GetVisibilityRange()))
                         {
@@ -155,7 +168,9 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                             buffer << uint32(itr->unk1);
                             arrayMask.SetBit(count++);
                             buffer << uint32(itr->unk2);
-                            duration = itr->duration;
+
+                            if (itr->duration)
+                                duration = itr->duration;
                         }
                         else
                             return false;
@@ -165,7 +180,7 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
             if (index == CONVERSATION_DYNAMIC_FIELD_LINES)
             {
                 uint32 count = 0;
-                arrayMask.SetCount(conversationData->size());
+                arrayMask.SetCount(conversationData->size() * 4);
                 for (std::vector<ConversationData>::const_iterator itr = conversationData->begin(); itr != conversationData->end(); ++itr)
                 {
                     arrayMask.SetBit(count++);
@@ -185,16 +200,8 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
         }
     }
 
-    Object::_Create(ObjectGuid::Create<HighGuid::Conversation>(GetMapId(), triggerEntry, guidlow));
-    SetPhaseMask(caster->GetPhaseMask(), false);
-    SetPhaseId(caster->GetPhases(), false);
-
-    SetEntry(triggerEntry);
-    SetObjectScale(1.0f);
-    casterGUID = caster->GetGUID();
-    SetDuration(30000);
     SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
-
+    SetDuration(duration);
     setActive(true);
 
     if (!GetMap()->AddToMap(this))

@@ -9636,7 +9636,7 @@ void ObjectMgr::LoadConversationData()
     _conversationActorList.clear();
 
     //                                                  0       1       2       3       4
-    QueryResult result = WorldDatabase.Query("SELECT `entry`, `id`, `textId`, `unk1`, `unk2` FROM `conversation_data` ORDER BY id");
+    QueryResult result = WorldDatabase.Query("SELECT `entry`, `id`, `textId`, `unk1`, `unk2` FROM `conversation_data` ORDER BY idx");
     if (result)
     {
         uint32 counter = 0;

@@ -18,3 +18,6 @@ ALTER TABLE `conversation_creature`
 
 ALTER TABLE `conversation_data`   
   DROP COLUMN `flags`;
+
+ALTER TABLE `conversation_data`   
+  ADD COLUMN `idx` INT(11) DEFAULT 0  NOT NULL AFTER `id`;
