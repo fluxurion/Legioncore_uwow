@@ -34,6 +34,7 @@ class Quest;
 class Player;
 class WorldSession;
 class CreatureGroup;
+struct CreatureActionData;
 
 enum CreatureFlagsExtra
 {
@@ -56,7 +57,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_ALL_DIMINISH                    = 0x00100000,       // Creature is subject to all diminishing returns as player are
     CREATURE_FLAG_EXTRA_DUNGEON_BOSS                    = 0x10000000,       // creature is a dungeon boss (SET DYNAMICALLY, DO NOT ADD IN DB)
     CREATURE_FLAG_EXTRA_VEHICLE_ATTACKABLE_PASSENGERS   = 0x20000000,       // creature is vehicle, UNIT_STATE_ONVEHICLE will not add to passengers
-    CREATURE_FLAG_EXTRA_HP_80_PERC                      = 0x80000000,       // No damage if HP < 80% for target mob
+    CREATURE_FLAG_EXTRA_HP_85_PERC                      = 0x80000000,       // No damage if HP < 85% for target mob
 };
 
 #define CREATURE_FLAG_EXTRA_DB_ALLOWED (CREATURE_FLAG_EXTRA_INSTANCE_BIND | CREATURE_FLAG_EXTRA_CIVILIAN | \
@@ -64,7 +65,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_NO_CRUSH | CREATURE_FLAG_EXTRA_NO_XP_AT_KILL | CREATURE_FLAG_EXTRA_TRIGGER | \
     CREATURE_FLAG_EXTRA_NO_TAUNT | CREATURE_FLAG_EXTRA_WORLDEVENT | CREATURE_FLAG_EXTRA_NO_CRIT | \
     CREATURE_FLAG_EXTRA_NO_SKILLGAIN | CREATURE_FLAG_EXTRA_TAUNT_DIMINISH | CREATURE_FLAG_EXTRA_ALL_DIMINISH | \
-    CREATURE_FLAG_EXTRA_GUARD | CREATURE_FLAG_EXTRA_HP_80_PERC | CREATURE_FLAG_EXTRA_VEHICLE_ATTACKABLE_PASSENGERS | \
+    CREATURE_FLAG_EXTRA_GUARD | CREATURE_FLAG_EXTRA_HP_85_PERC | CREATURE_FLAG_EXTRA_VEHICLE_ATTACKABLE_PASSENGERS | \
     CREATURE_FLAG_EXTRA_PERSONAL_LOOT | CREATURE_FLAG_EXTRA_AUTO_LOOT)
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push, N), also any gcc version not support it at some platform
@@ -965,6 +966,8 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         AutoSpellList   m_castspells;
         PetSpellMap     m_spells;
 
+        std::vector<CreatureActionData> const* m_actionData[2];
+
         bool onVehicleAccessoryInit() const { return m_onVehicleAccessory; }
         void SetVehicleAccessoryInit(bool r) { m_onVehicleAccessory = r; }
 
@@ -977,6 +980,8 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         bool IsDespawn() const { return m_despan; }
 
         CreatureEvadeWmoData const* GetEvadeWmoData() { return m_evadeWmoData; }
+
+        bool IsNoDamage() const;
 
     protected:
         bool m_onVehicleAccessory;

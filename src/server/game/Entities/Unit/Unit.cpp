@@ -694,7 +694,7 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
         pet->AI()->OwnerDamagedBy(this);
     }
 
-    if (victim->GetTypeId() != TYPEID_PLAYER && GetTypeId() != TYPEID_PLAYER && !victim->ToCreature()->isPet() && (victim->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_HP_80_PERC) && victim->HealthBelowPct(80))
+    if (victim->GetTypeId() != TYPEID_PLAYER && GetTypeId() != TYPEID_PLAYER && !victim->ToCreature()->isPet() && victim->ToCreature()->IsNoDamage() && victim->HealthBelowPct(85))
         damage = 0;
 
     if (damagetype != NODAMAGE)

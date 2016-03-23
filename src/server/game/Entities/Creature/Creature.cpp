@@ -369,6 +369,9 @@ bool Creature::InitEntry(uint32 entry, uint32 /*team*/, const CreatureData* data
     for (uint8 i=0; i < CREATURE_MAX_SPELLS; ++i)
         m_temlate_spells[i] = GetCreatureTemplate()->spells[i];
 
+    m_actionData[0] = sObjectMgr->GetCreatureActionData(entry);
+    m_actionData[1] = sObjectMgr->GetCreatureActionData(entry, 0, 1);
+
     return true;
 }
 
@@ -2851,5 +2854,10 @@ void Creature::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs
         if ((idSchoolMask & spellInfo->GetSchoolMask()) && _GetSpellCooldownDelay(spellID) < unTimeMs)
             _AddCreatureSpellCooldown(spellID, time(NULL) + unTimeMs/IN_MILLISECONDS);
     }
+}
+
+bool Creature::IsNoDamage() const
+{
+    return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_HP_85_PERC) || (m_actionData[0] && !m_actionData[0]->empty());
 }
 

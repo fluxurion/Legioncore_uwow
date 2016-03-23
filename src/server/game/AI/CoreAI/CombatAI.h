@@ -32,6 +32,7 @@ class AggressorAI : public CreatureAI
 
         void UpdateAI(uint32);
         static int Permissible(const Creature*);
+        uint32 m_checkTimer;
 };
 
 class AnyPetAI : public CreatureAI

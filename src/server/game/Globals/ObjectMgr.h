@@ -425,9 +425,19 @@ struct ConversationData
     uint32 unk2;
 };
 
+struct CreatureActionData
+{
+    uint32 entry;
+    uint32 target;
+    uint8 type;
+    uint32 spellId;
+    uint8 action;
+};
+
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationData> > ConversationDataMap;
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationCreature> > ConversationCreatureMap;
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationActor> > ConversationActorMap;
+typedef std::unordered_map<uint32/*entry*/, std::vector<CreatureActionData> > CreatureActionDataMap;
 
 typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
@@ -1305,6 +1315,7 @@ class ObjectMgr
         void LoadTempSummons();
         void LoadCreatures();
         void LoadCreatureAIInstance();
+        void LoadCreatureActionData();
         void LoadLinkedRespawn();
         bool SetCreatureLinkedRespawn(ObjectGuid::LowType const& guid, ObjectGuid::LowType const& linkedGuid);
         void LoadCreatureAddons();
@@ -1572,6 +1583,7 @@ class ObjectMgr
         const std::vector<ConversationData>* GetConversationData(uint32 entry) const;
         const std::vector<ConversationCreature>* GetConversationCreature(uint32 entry) const;
         const std::vector<ConversationActor>* GetConversationActor(uint32 entry) const;
+        const std::vector<CreatureActionData>* GetCreatureActionData(uint32 entry, uint8 type = 0, uint8 action = 0) const;
 
         void AddCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid, uint32 instance);
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
@@ -1986,6 +1998,7 @@ class ObjectMgr
         ConversationDataMap _conversationDataList;
         ConversationCreatureMap _conversationCreatureList;
         ConversationActorMap _conversationActorList;
+        CreatureActionDataMap _creatureActionDataList[2][2];
 };
 
 #define sObjectMgr ObjectMgr::instance()

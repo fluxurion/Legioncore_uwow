@@ -33,10 +33,43 @@ int AggressorAI::Permissible(const Creature* creature)
     return PERMIT_BASE_NO;
 }
 
-void AggressorAI::UpdateAI(uint32 /*diff*/)
+void AggressorAI::UpdateAI(uint32 diff)
 {
     if (!UpdateVictim())
+    {
+        if (m_checkTimer <= diff)
+        {
+            if (me->HasUnitState(UNIT_STATE_CASTING) || !me->isAlive())
+            {
+                m_checkTimer = 1000;
+                return;
+            }
+
+            //Test code, searching target, info get from sniff
+            if (me->m_actionData[0] && !me->m_actionData[0]->empty())
+            {
+                for (std::vector<CreatureActionData>::const_iterator itr = me->m_actionData[0]->begin(); itr != me->m_actionData[0]->end(); ++itr)
+                {
+                    if (Creature* target = me->FindNearestCreature(itr->target, 7.0f))
+                        if (target->isAlive())
+                            AttackStart(target);
+                }
+            }
+            else if (me->m_actionData[1] && !me->m_actionData[1]->empty())
+            {
+                for (std::vector<CreatureActionData>::const_iterator itr = me->m_actionData[1]->begin(); itr != me->m_actionData[1]->end(); ++itr)
+                {
+                    if (Creature* target = me->FindNearestCreature(itr->target, 7.0f))
+                        if (target->isAlive())
+                            me->CastSpell(target, itr->spellId, false);
+                }
+            }
+            m_checkTimer = 1000;
+        }
+        else
+            m_checkTimer -= diff;
         return;
+    }
 
     DoMeleeAttackIfReady();
 }

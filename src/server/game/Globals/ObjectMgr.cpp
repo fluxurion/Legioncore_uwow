@@ -9721,6 +9721,40 @@ void ObjectMgr::LoadConversationData()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 conversation actor data. DB table `conversation_actor` is empty.");
 }
 
+
+void ObjectMgr::LoadCreatureActionData()
+{
+    for (uint8 i = 0; i < 2; ++i)
+        for (uint8 j = 0; j < 2; ++j)
+            _creatureActionDataList[i][j].clear();
+
+    //                                                  0         1        2        3         4
+    QueryResult result = WorldDatabase.Query("SELECT `entry`, `target`, `type`, `spellId`, `action` FROM `creature_action`");
+    if (result)
+    {
+        uint32 counter = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+
+            uint8 i = 0;
+            CreatureActionData data;
+            data.entry = fields[i++].GetUInt32();
+            data.target = fields[i++].GetUInt32();
+            data.type = fields[i++].GetUInt32();
+            data.spellId = fields[i++].GetUInt32();
+            data.action = fields[i++].GetUInt32();
+            _creatureActionDataList[data.type][data.action][data.entry].push_back(data);
+            ++counter;
+        }
+        while (result->NextRow());
+
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u creature_action data.", counter);
+    }
+    else
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creature_action data. DB table `creature_action` is empty.");
+}
+
 const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId) const
 {
     ScenarioDataListMap::const_iterator itr = _scenarioDataList.find(mapId);
@@ -9757,6 +9791,12 @@ const std::vector<ConversationActor>* ObjectMgr::GetConversationActor(uint32 ent
 {
     ConversationActorMap::const_iterator itr = _conversationActorList.find(entry);
     return itr != _conversationActorList.end() ? &(itr->second) : NULL;
+}
+
+const std::vector<CreatureActionData>* ObjectMgr::GetCreatureActionData(uint32 entry, uint8 type, uint8 action) const
+{
+    CreatureActionDataMap::const_iterator itr = _creatureActionDataList[type][action].find(entry);
+    return itr != _creatureActionDataList[type][action].end() ? &(itr->second) : NULL;
 }
 
 AreaTriggerInfo const* ObjectMgr::GetAreaTriggerInfo(uint32 entry)

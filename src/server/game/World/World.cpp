@@ -1703,6 +1703,7 @@ void World::SetInitialWorldSettings()
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Creature Addon Data...");
     sObjectMgr->LoadCreatureAddons();                            // must be after LoadCreatureTemplates() and LoadCreatures()
+    sObjectMgr->LoadCreatureActionData();
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Treasure Data...");
     sObjectMgr->LoadPersonalLootTemplate();
