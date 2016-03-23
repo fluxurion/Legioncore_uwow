@@ -22,6 +22,7 @@
 
 WorldPackets::Mail::MailAttachedItem::MailAttachedItem(::Item const* item, uint8 pos)
 {
+    Enchants.resize(MAX_INSPECTED_ENCHANTMENT_SLOT);
     Position = pos;
     AttachID = item->GetGUIDLow();
     Item.Initialize(item);
