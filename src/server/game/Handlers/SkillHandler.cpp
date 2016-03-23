@@ -45,19 +45,9 @@ void WorldSession::HandleSetSpecialization(WorldPackets::Talent::SetSpecializati
 void WorldSession::HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet)
 {
     Player* player = GetPlayer();
-    if (!player)
-        return;
-
-    if (packet.Talents.size() > player->CalculateTalentsPoints())
-        return;
-
-    bool send = false;
     for (uint32 const& talentId : packet.Talents)
         if (player->LearnTalent(talentId))
-            send = true;
-
-    if (send)
-        player->SendTalentsInfoData(false);
+            player->SendTalentsInfoData(false);
 }
 
 void WorldSession::HandleLearnPvpTalents(WorldPackets::Talent::LearnPvpTalents& packet)

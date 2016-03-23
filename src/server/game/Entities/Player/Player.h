@@ -1340,9 +1340,9 @@ struct ResurrectionData
     uint32 Aura;
 };
 
-static uint32 const DefaultTalentRowLevels[MAX_TALENT_TIERS] = { 15, 30, 45, 60, 75, 90, 100, 110 };
-static uint32 const DKTalentRowLevels[MAX_TALENT_TIERS] = { 56, 57, 58, 60, 75, 90, 100, 110 };
-static uint32 const DHTalentRowLevels[MAX_TALENT_TIERS] = { 99, 100, 102, 104, 106, 108, 110 };
+static uint8 const DefaultTalentRowLevels[MAX_TALENT_TIERS] = { 15, 30, 45, 60, 75, 90, 100 };
+static uint8 const DKTalentRowLevels[MAX_TALENT_TIERS] = { 56, 57, 58, 60, 75, 90, 100 };
+static uint8 const DHTalentRowLevels[MAX_TALENT_TIERS] = { 99, 100, 102, 104, 106, 108, 110 };
 
 struct PlayerTalentInfo
 {
@@ -2190,7 +2190,7 @@ class Player : public Unit, public GridObject<Player>
         bool AddTalent(TalentEntry const* talent, uint8 index, bool learning, bool sendMessage = true);
         bool HasTalent(uint32 spell_id, uint8 index) const;
         void RemoveTalent(TalentEntry const* talent, bool sendMessage = true);
-        uint32 CalculateTalentsPoints() const;
+        uint8 CalculateTalentsPoints() const;
         void LearnTalentSpecialization(uint32 talentSpec);
         void ResetTalentSpecialization();
 
@@ -3643,9 +3643,6 @@ class Player : public Unit, public GridObject<Player>
         void SendRefundInfo(Item* item);
         void RefundItem(Item* item);
         void SendItemRefundResult(Item* item, ItemExtendedCostEntry const* iece, uint8 error);
-
-        // know currencies are not removed at any point (0 displayed)
-        void AddKnownCurrency(uint32 itemId);
 
         int32 CalculateReputationGain(uint32 creatureOrQuestLevel, int32 rep, int32 faction, bool for_quest, bool noQuestBonus = false);
         void AdjustQuestReqItemCount(Quest const* quest);

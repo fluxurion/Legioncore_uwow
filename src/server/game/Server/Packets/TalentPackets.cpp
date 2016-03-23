@@ -23,7 +23,7 @@ WorldPacket const* WorldPackets::Talent::UpdateTalentData::Write()
     _worldPacket << Info.ActiveSpecID;
     _worldPacket << static_cast<uint32>(Info.TalentGroups.size());
 
-    for (auto& talentGroupInfo : Info.TalentGroups)
+    for (auto const& talentGroupInfo : Info.TalentGroups)
     {
         _worldPacket << talentGroupInfo.SpecID;
 
@@ -47,15 +47,9 @@ void WorldPackets::Talent::SetSpecialization::Read()
 
 void WorldPackets::Talent::LearnTalent::Read()
 {
-    uint32 count;
-    _worldPacket >> count;
-
-    for (uint32 i = 0; i < count; ++i)
-    {
-        uint16 talent;
+    Talents.resize(_worldPacket.read<uint32>());
+    for (uint16& talent : Talents)
         _worldPacket >> talent;
-        Talents.push_back(talent);
-    }
 }
 
 void WorldPackets::Talent::LearnPvpTalents::Read()

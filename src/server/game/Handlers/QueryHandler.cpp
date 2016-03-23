@@ -414,27 +414,16 @@ void WorldSession::HandleQueryQuestCompletionNPCs(WorldPackets::Query::QueryQues
 
 void WorldSession::HandleQueryRealmName(WorldPackets::Query::QueryRealmName& packet)
 {
-    WorldPacket data(SMSG_REALM_QUERY_RESPONSE, 10 + 10 + 1 + 1 + 1 + 4);
+    WorldPackets::Query::RealmQueryResponse response;
+    response.VirtualRealmAddress = packet.RealmID;
     if (packet.RealmID != realm.Id.Realm && packet.RealmID != GetVirtualRealmAddress())  // Cheater ?
     {
-        data << uint32(packet.RealmID);
-        data << uint8(1);
-        SendPacket(&data);
-        return;
+        response.LookupState = 1;
+        SendPacket(response.Write());
     }
 
-    std::string realmName = sWorld->GetRealmName();
-    std::string trimmedName = sWorld->GetTrimmedRealmName();
-
-    data << uint32(packet.RealmID);
-    data << uint8(0);   // ok, realmId exist server-side
-
-    data.WriteBit(1);   // IsLocal
-    data.WriteBit(0);
-
-    data.WriteBits(realmName.size(), 8);
-    data.WriteBits(trimmedName.size(), 8);
-    data.WriteString(realmName);
-    data.WriteString(trimmedName);
-    SendPacket(&data);
+    response.NameInfo.IsLocal = true;
+    response.NameInfo.RealmNameActual = sWorld->GetRealmName();
+    response.NameInfo.RealmNameNormalized = sWorld->GetTrimmedRealmName();
+    SendPacket(response.Write());
 }

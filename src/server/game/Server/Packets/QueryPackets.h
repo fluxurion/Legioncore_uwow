@@ -468,6 +468,26 @@ namespace WorldPackets
 
             uint32 RealmID = 0;
         };
+
+        struct VirtualRealmNameInfo
+        {
+            std::string RealmNameActual;
+            std::string RealmNameNormalized;
+            bool IsLocal = false;
+            bool UnkBit = false;
+        };
+
+        class RealmQueryResponse final : public ServerPacket
+        {
+        public:
+            RealmQueryResponse() : ServerPacket(SMSG_REALM_QUERY_RESPONSE, 11) { }
+
+            WorldPacket const* Write() override;
+           
+            VirtualRealmNameInfo NameInfo;
+            uint32 VirtualRealmAddress = 0;
+            uint8 LookupState = 0;
+        };
     }
 }
 

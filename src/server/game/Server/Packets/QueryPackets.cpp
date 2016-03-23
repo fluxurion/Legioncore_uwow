@@ -495,3 +495,20 @@ void WorldPackets::Query::QueryRealmName::Read()
 {
     _worldPacket >> RealmID;
 }
+
+WorldPacket const* WorldPackets::Query::RealmQueryResponse::Write()
+{
+    _worldPacket << VirtualRealmAddress;
+    _worldPacket << LookupState;
+    if (!LookupState)
+    {
+        _worldPacket.WriteBit(NameInfo.IsLocal);
+        _worldPacket.WriteBit(NameInfo.UnkBit);
+        _worldPacket.WriteBits(NameInfo.RealmNameActual.length(), 8);
+        _worldPacket.WriteBits(NameInfo.RealmNameNormalized.length(), 8);
+        _worldPacket.WriteString(NameInfo.RealmNameActual);
+        _worldPacket.WriteString(NameInfo.RealmNameNormalized);
+    }
+
+    return &_worldPacket;
+}

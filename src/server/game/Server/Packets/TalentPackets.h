@@ -62,13 +62,11 @@ namespace WorldPackets
         class LearnTalent final : public ClientPacket
         {
         public:
-            LearnTalent(WorldPacket&& packet) : ClientPacket(std::move(packet))
-            {
-                ASSERT(packet.GetOpcode() == CMSG_LEARN_TALENTS);
-            }
+            LearnTalent(WorldPacket&& packet) : ClientPacket(CMSG_LEARN_TALENTS, std::move(packet)) { }
 
             void Read() override;
-            std::vector<uint16> Talents;
+
+            Array<uint16, MAX_TALENT_TIERS> Talents;
         };
 
         class LearnPvpTalents final : public ClientPacket

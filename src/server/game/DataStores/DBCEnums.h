@@ -952,7 +952,7 @@ enum CharSectionType
     SECTION_TYPE_UNDERWEAR      = 4
 };
 
-static uint8 const MAX_TALENT_TIERS = 8;
+static uint8 const MAX_TALENT_TIERS = 7;
 static uint8 const MAX_TALENT_COLUMNS = 3;
 
 enum class DB2Hashes : uint32

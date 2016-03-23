@@ -3099,7 +3099,7 @@ void Player::GiveLevel(uint8 level)
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         packet.StatDelta[i] = int32(info.stats[i]) - GetCreateStat(Stats(i));
 
-    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
+    uint8 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
     packet.Cp = std::find(rowLevels, rowLevels + MAX_TALENT_TIERS, level) != (rowLevels + MAX_TALENT_TIERS);
 
     GetSession()->SendPacket(packet.Write());
@@ -3179,14 +3179,14 @@ void Player::InitTalentForLevel()
     if (level < 10)
         ResetTalentSpecialization();
 
-    uint32 talentPointsForLevel = CalculateTalentsPoints();
+    uint8 talentPointsForLevel = CalculateTalentsPoints();
 
     if (level < 15)
         ResetTalents(true);
     else
     {
-        for (uint32 t = talentPointsForLevel; t < 7; ++t)
-            for (uint32 c = 0; c < 3; ++c)
+        for (uint8 t = talentPointsForLevel; t < MAX_TALENT_TIERS; ++t)
+            for (uint8 c = 0; c < MAX_TALENT_COLUMNS; ++c)
                 for (TalentEntry const* talent : sDB2Manager._talentByPos[getClass()][t][c])
                     RemoveTalent(talent);
     }
@@ -26677,10 +26677,10 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
         SendEquipError(msg, NULL, NULL, item->item.ItemID);
 }
 
-uint32 Player::CalculateTalentsPoints() const
+uint8 Player::CalculateTalentsPoints() const
 {
-    uint32 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
-    for (uint32 i = MAX_TALENT_TIERS; i; --i)
+    uint8 const* rowLevels = (getClass() != CLASS_DEATH_KNIGHT) ? (getClass() == CLASS_DEMON_HUNTER ? DHTalentRowLevels : DefaultTalentRowLevels) : DKTalentRowLevels;
+    for (uint8 i = MAX_TALENT_TIERS; i; --i)
         if (getLevel() >= rowLevels[i - 1])
             return i;
 
@@ -27088,7 +27088,7 @@ bool Player::LearnPvpTalent(uint16 talentID)
     if (!unlockInfo)
         return false;
 
-    if (talentInfo->Row != unlockInfo->Row || talentInfo->Column != unlockInfo->Column)
+    if (talentInfo->Row > unlockInfo->Row || talentInfo->Column > unlockInfo->Column)
         return false;
 
     //@TODO add pvpTalent container... code below just like PH
@@ -27105,8 +27105,8 @@ void Player::LearnTalentSpecialization(uint32 talentSpec)
 
     // Reset only talents that have different spells for each spec
     uint32 class_ = getClass();
-    for (uint32 t = 0; t < 7; ++t)
-        for (uint32 c = 0; c < 3; ++c)
+    for (uint8 t = 0; t < MAX_TALENT_TIERS; ++t)
+        for (uint8 c = 0; c < MAX_TALENT_COLUMNS; ++c)
             if (sDB2Manager._talentByPos[class_][t][c].size() > 1)
                 for (TalentEntry const* talent : sDB2Manager._talentByPos[class_][t][c])
                     RemoveTalent(talent);
@@ -27128,8 +27128,8 @@ void Player::ResetTalentSpecialization()
     SetSpecializationId(cEntry->DefaultSpec);
     SetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID, 0);
 
-    for (uint32 t = 0; t < 7; ++t)
-        for (uint32 c = 0; c < 3; ++c)
+    for (uint8 t = 0; t < MAX_TALENT_TIERS; ++t)
+        for (uint8 c = 0; c < MAX_TALENT_COLUMNS; ++c)
             if (sDB2Manager._talentByPos[class_][t][c].size() > 1)
                 for (TalentEntry const* talent : sDB2Manager._talentByPos[class_][t][c])
                     RemoveTalent(talent);
@@ -27139,12 +27139,6 @@ void Player::ResetTalentSpecialization()
     SendTalentsInfoData(false);
     InitialPowers();
     _ApplyOrRemoveItemEquipDependentAuras(ObjectGuid::Empty, false);
-}
-
-void Player::AddKnownCurrency(uint32 itemId)
-{
-    if (CurrencyTypesEntry const* ctEntry = sCurrencyTypesStore.LookupEntry(itemId))
-        SetFlag64(0, (1LL << (ctEntry->ID-1)));
 }
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)
