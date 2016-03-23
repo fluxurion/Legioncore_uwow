@@ -1821,7 +1821,7 @@ class Player : public Unit, public GridObject<Player>
 
             return mainItem && ((mainItem->GetTemplate()->GetInventoryType() == INVTYPE_2HWEAPON && !CanTitanGrip()) || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_RANGED || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_THROWN || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_RANGEDRIGHT);
         }
-        void SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast = false, BattlePetMgr::BattlePet* petInfo = nullptr, bool bonusRoll = false);
+        void SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast = false, BattlePetMgr::BattlePet* petInfo = nullptr);
         bool BuyItemFromVendorSlot(ObjectGuid vendorguid, uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot);
         bool BuyCurrencyFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorSlot, uint32 currency, uint32 count);
         bool _StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, int64 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore);
@@ -2408,7 +2408,7 @@ class Player : public Unit, public GridObject<Player>
         static ObjectGuid::LowType GetGuildIdFromDB(ObjectGuid guid);
         static uint8 GetRankFromDB(ObjectGuid guid);
         int GetGuildIdInvited() { return m_GuildIdInvited; }
-        static void RemovePetitionsAndSigns(ObjectGuid guid, uint32 type);
+        static void RemovePetitionsAndSigns(ObjectGuid guid);
 
 
         // Bracket System

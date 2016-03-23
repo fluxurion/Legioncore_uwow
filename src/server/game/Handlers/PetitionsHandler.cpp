@@ -51,16 +51,12 @@ void WorldSession::HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet
         player->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
     uint32 charterid = 0;
-    uint32 cost = 0;
-    uint32 type = 0;
     if (creature->isTabardDesigner())
     {
         if (player->GetGuildId())
             return;
 
         charterid = GUILD_CHARTER;
-        cost = GUILD_CHARTER_COST;
-        type = GUILD_CHARTER_TYPE;
     }
 
     if (sGuildMgr->GetGuildByName(packet.Title))
@@ -83,7 +79,7 @@ void WorldSession::HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet
         return;
     }
 
-    if (!player->HasEnoughMoney(uint64(cost)))
+    if (!player->HasEnoughMoney(uint64(GUILD_CHARTER_COST)))
     {
         player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, creature, charterid);
         return;
@@ -97,7 +93,7 @@ void WorldSession::HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet
         return;
     }
 
-    player->ModifyMoney(-(int32)cost);
+    player->ModifyMoney(-GUILD_CHARTER_COST);
     Item* charter = player->StoreNewItem(dest, charterid, true);
     if (!charter)
         return;
@@ -109,7 +105,6 @@ void WorldSession::HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_BY_OWNER);
     stmt->setUInt64(0, player->GetGUIDLow());
-    stmt->setUInt8(1, type);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
     std::ostringstream ssInvalidPetitionGUIDs;
@@ -136,7 +131,6 @@ void WorldSession::HandlePetitionBuy(WorldPackets::Petition::PetitionBuy& packet
     stmt->setUInt64(0, player->GetGUIDLow());
     stmt->setUInt64(1, charter->GetGUIDLow());
     stmt->setString(2, packet.Title);
-    stmt->setUInt8(3, uint8(type));
     trans->Append(stmt);
 
     CharacterDatabase.CommitTransaction(trans);
@@ -214,12 +208,8 @@ void WorldSession::SendPetitionQueryOpcode(ObjectGuid petitionguid)
     responsePacket.PetitionID = uint32(petitionguid.GetCounter());
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION);
-
     stmt->setUInt64(0, petitionguid.GetCounter());
-
-    PreparedQueryResult result = CharacterDatabase.Query(stmt);
-
-    if (result)
+    if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
     {
         Field* fields = result->Fetch();
         ownerguid = ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64());
@@ -268,12 +258,12 @@ void WorldSession::HandlePetitionRenameGuild(WorldPackets::Petition::PetitionRen
         Guild::SendCommandResult(this, GUILD_CREATE_S, ERR_GUILD_NAME_INVALID, packet.NewGuildName);
         return;
     }
-    
+
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_PETITION_NAME);
     stmt->setString(0, packet.NewGuildName);
     stmt->setUInt64(1, packet.PetitionGuid.GetCounter());
     CharacterDatabase.Execute(stmt);
-    
+
     WorldPackets::Petition::PetitionRenameGuildResponse renameResponse;
     renameResponse.PetitionGuid = packet.PetitionGuid;
     renameResponse.NewGuildName = packet.NewGuildName;
@@ -298,11 +288,6 @@ void WorldSession::HandleSignPetition(WorldPackets::Petition::SignPetition& pack
     Field* fields = result->Fetch();
     ObjectGuid ownerGuid = ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64());
     uint64 signs = fields[1].GetUInt64();
-    uint8 type = fields[2].GetUInt8();
-
-    if (type != GUILD_CHARTER_TYPE)
-        return;
-
     if (playerGUID == ownerGuid)
         return;
 
@@ -323,9 +308,6 @@ void WorldSession::HandleSignPetition(WorldPackets::Petition::SignPetition& pack
         Guild::SendCommandResult(this, GUILD_INVITE_S, ERR_ALREADY_INVITED_TO_GUILD_S, player->GetName());
         return;
     }
-
-    if (++signs > type)
-        return;
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIG_BY_ACCOUNT);
     stmt->setUInt32(0, GetAccountId());
@@ -461,9 +443,9 @@ void WorldSession::SendPetitionShowList(ObjectGuid guid)
         return;
 
     if (!creature->isTabardDesigner())
-    
+
         return;
-    
+
     WorldPackets::Petition::ServerPetitionShowList packet;
     packet.Unit = guid;
     packet.Price = GUILD_CHARTER_COST;
@@ -481,7 +463,6 @@ void WorldSession::HandleTurnInPetition(WorldPackets::Petition::TurnInPetition& 
         return;
 
     ObjectGuid::LowType ownerguidlo;
-    uint32 type;
     std::string name;
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION);
@@ -492,7 +473,6 @@ void WorldSession::HandleTurnInPetition(WorldPackets::Petition::TurnInPetition& 
         Field* fields = result->Fetch();
         ownerguidlo = fields[0].GetUInt64();
         name = fields[1].GetString();
-        type = fields[2].GetUInt8();
     }
     else
         return;
@@ -502,9 +482,7 @@ void WorldSession::HandleTurnInPetition(WorldPackets::Petition::TurnInPetition& 
 
     if (player->GetGuildId())
     {
-        WorldPackets::Petition::TurnInPetitionResult resultPacket;
-        resultPacket.Result = int32(PETITION_TURN_ALREADY_IN_GUILD);
-        player->GetSession()->SendPacket(resultPacket.Write());
+        player->GetSession()->SendPacket(WorldPackets::Petition::TurnInPetitionResult(int32(PETITION_TURN_ALREADY_IN_GUILD)).Write());
         return;
     }
 
@@ -518,15 +496,12 @@ void WorldSession::HandleTurnInPetition(WorldPackets::Petition::TurnInPetition& 
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIGNATURE);
     stmt->setUInt64(0, packet.Item.GetCounter());
-    result = CharacterDatabase.Query(stmt);
-    if (result)
+    if (result = CharacterDatabase.Query(stmt))
         signatures = uint8(result->GetRowCount());
 
     if (signatures < sWorld->getIntConfig(CONFIG_MIN_PETITION_SIGNS))
     {
-        WorldPackets::Petition::TurnInPetitionResult resultPacket;
-        resultPacket.Result = int32(PETITION_TURN_NEED_MORE_SIGNATURES);
-        SendPacket(resultPacket.Write());
+        SendPacket(WorldPackets::Petition::TurnInPetitionResult(int32(PETITION_TURN_NEED_MORE_SIGNATURES)).Write());
         return;
     }
 
@@ -560,7 +535,5 @@ void WorldSession::HandleTurnInPetition(WorldPackets::Petition::TurnInPetition& 
 
     CharacterDatabase.CommitTransaction(trans);
 
-    WorldPackets::Petition::TurnInPetitionResult resultPacket;
-    resultPacket.Result = int32(PETITION_TURN_OK);
-    SendPacket(resultPacket.Write());
+    SendPacket(WorldPackets::Petition::TurnInPetitionResult(int32(PETITION_TURN_OK)).Write());
 }

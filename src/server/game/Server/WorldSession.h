@@ -880,11 +880,6 @@ enum ChatRestrictionType
     ERR_YELL_RESTRICTED = 3
 };
 
-enum CharterTypes
-{
-    GUILD_CHARTER_TYPE                            = 4,
-};
-
 enum DeclinedNameResult
 {
     DECLINED_NAMES_RESULT_SUCCESS   = 0,

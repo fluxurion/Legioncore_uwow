@@ -189,7 +189,7 @@ namespace WorldPackets
         class TurnInPetitionResult final : public ServerPacket
         {
         public:
-            TurnInPetitionResult() : ServerPacket(SMSG_TURN_IN_PETITION_RESULT, 4) { }
+            TurnInPetitionResult(int32 result) : ServerPacket(SMSG_TURN_IN_PETITION_RESULT, 4), Result(result) { }
 
             WorldPacket const* Write() override;
 

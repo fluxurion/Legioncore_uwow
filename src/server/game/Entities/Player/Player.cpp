@@ -5182,8 +5182,7 @@ void Player::DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRe
         if (Group* group = sGroupMgr->GetGroupByDbStoreId((*resultGroup)[0].GetUInt32()))
             RemoveFromGroup(group, playerguid);
 
-    // Remove signs from petitions (also remove petitions if owner);
-    RemovePetitionsAndSigns(playerguid, 10);
+    RemovePetitionsAndSigns(playerguid);
 
     switch (charDelete_method)
     {
@@ -22326,77 +22325,35 @@ void Player::SendProficiency(ItemClass itemClass, uint32 itemSubclassMask)
     SendDirectMessage(packet.Write());
 }
 
-void Player::RemovePetitionsAndSigns(ObjectGuid guid, uint32 type)
+void Player::RemovePetitionsAndSigns(ObjectGuid guid)
 {
-    PreparedStatement* stmt;
-
-    if (type == 10)
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIG_BY_GUID);
-    else
-    {
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIG_BY_GUID_TYPE);
-        stmt->setUInt8(1, uint8(type));
-    }
-
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIG_BY_GUID);
     stmt->setUInt64(0, guid.GetCounter());
-    PreparedQueryResult result = CharacterDatabase.Query(stmt);
-
-    if (result)
+    if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
     {
-        do                                                  // this part effectively does nothing, since the deletion / modification only takes place _after_ the PetitionQuery. Though I don't know if the result remains intact if I execute the delete query beforehand.
-        {                                                   // and SendPetitionQueryOpcode reads data from the DB
+        do
+        {
             Field* fields = result->Fetch();
-            ObjectGuid ownerguid = ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64());
-            ObjectGuid petitionguid = ObjectGuid::Create<HighGuid::Item>(fields[1].GetUInt64());
-
-            // send update if charter owner in game
-            Player* owner = ObjectAccessor::FindPlayer(ownerguid);
-            if (owner)
-                owner->GetSession()->SendPetitionQueryOpcode(petitionguid);
-        } while (result->NextRow());
-
-        if (type == 10)
-        {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ALL_PETITION_SIGNATURES);
-
-            stmt->setUInt64(0, guid.GetCounter());
-
-            CharacterDatabase.Execute(stmt);
+            if (Player* owner = ObjectAccessor::FindPlayer(ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64())))
+                owner->GetSession()->SendPetitionQueryOpcode(ObjectGuid::Create<HighGuid::Item>(fields[1].GetUInt64()));
         }
-        else
-        {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_SIGNATURE);
+        while (result->NextRow());
 
-            stmt->setUInt64(0, guid.GetCounter());
-            stmt->setUInt8(1, uint8(type));
-
-            CharacterDatabase.Execute(stmt);
-        }
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ALL_PETITION_SIGNATURES);
+        stmt->setUInt64(0, guid.GetCounter());
+        CharacterDatabase.Execute(stmt);
     }
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
-    if (type == 10)
-    {
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_BY_OWNER);
-        stmt->setUInt64(0, guid.GetCounter());
-        trans->Append(stmt);
 
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_SIGNATURE_BY_OWNER);
-        stmt->setUInt64(0, guid.GetCounter());
-        trans->Append(stmt);
-    }
-    else
-    {
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_BY_OWNER_AND_TYPE);
-        stmt->setUInt64(0, guid.GetCounter());
-        stmt->setUInt8(1, uint8(type));
-        trans->Append(stmt);
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_BY_OWNER);
+    stmt->setUInt64(0, guid.GetCounter());
+    trans->Append(stmt);
 
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_SIGNATURE_BY_OWNER_AND_TYPE);
-        stmt->setUInt64(0, guid.GetCounter());
-        stmt->setUInt8(1, uint8(type));
-        trans->Append(stmt);
-    }
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_SIGNATURE_BY_OWNER);
+    stmt->setUInt64(0, guid.GetCounter());
+    trans->Append(stmt);
+
     CharacterDatabase.CommitTransaction(trans);
 }
 
