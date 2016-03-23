@@ -60,6 +60,14 @@ void WorldSession::HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet)
         player->SendTalentsInfoData(false);
 }
 
+void WorldSession::HandleLearnPvpTalents(WorldPackets::Talent::LearnPvpTalents& packet)
+{
+    Player* player = GetPlayer();
+    for (uint32 const& talentID : packet.TalentIDs)
+        if (player->LearnPvpTalent(talentID))
+            player->SendTalentsInfoData(false);
+}
+
 void WorldSession::HandleConfirmRespecWipe(WorldPackets::Misc::ConfirmRespecWipe& packet)
 {
     Player* player = GetPlayer();

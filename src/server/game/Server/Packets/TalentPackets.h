@@ -70,6 +70,16 @@ namespace WorldPackets
             void Read() override;
             std::vector<uint16> Talents;
         };
+
+        class LearnPvpTalents final : public ClientPacket
+        {
+        public:
+            LearnPvpTalents(WorldPacket&& packet) : ClientPacket(CMSG_LEARN_PVP_TALENTS, std::move(packet)) { }
+
+            void Read() override;
+
+            Array<uint16, MAX_PVP_TALENTS> TalentIDs;
+        };
     }
 }
 

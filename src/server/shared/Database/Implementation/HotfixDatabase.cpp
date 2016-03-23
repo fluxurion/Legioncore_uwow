@@ -694,6 +694,14 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // PvpItem.db2
     PrepareStatement(HOTFIX_SEL_PVP_ITEM, "SELECT ID, ItemID, BonusIlvl FROM pvp_item ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // PvpTalentUnlock.db2
+    PrepareStatement(HOTFIX_SEL_PVP_TALENT_UNLOCK, "SELECT ID, `Row`, `Column`, HonorLevel FROM pvp_talent_unlock ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // PvpTalent.db2
+    PrepareStatement(HOTFIX_SEL_PVP_TALENT, "SELECT ID, `Row`, `Column`, SpellID, Unknown4, ClassID, SpecializationID, Flags, OverrideSpellID, `Desc`"
+        " FROM pvp_talent ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_PVP_TALENT, "SELECT ID, Desc_lang FROM pvp_talent_locale WHERE locale = ?", CONNECTION_SYNCH);
+
     // SpellTotems.db2
     PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, SpellID, TotemCategory1, TotemCategory2, Totem1, Totem2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
 

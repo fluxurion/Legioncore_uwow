@@ -8081,8 +8081,10 @@ void Player::ModifyCurrency(uint32 id, int32 count, bool printLog/* = true*/, bo
                 if (GameTableEntry const* data2 = sGtHonorLevelStore.EvaluateTable(honorInfo.HonorLevel))
                     SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data2->Value);
             }
-            else
-                SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data->Value);
+            else if (honorInfo.HonorLevel >= HonorInfo::MaxHonorLevel)
+                return;
+
+            SetUInt32Value(PLAYER_FIELD_HONOR_NEXT_LEVEL, data->Value);
         }
 
         SetUInt32Value(PLAYER_FIELD_HONOR_LEVEL, honorInfo.HonorLevel);
@@ -27066,6 +27068,32 @@ bool Player::LearnTalent(uint32 talentId)
 
     sLog->outInfo(LOG_FILTER_GENERAL, "TalentID: %u Spell: %u Spec: %u\n", talentId, talentInfo->SpellID, GetSpecIndex());
     return true;
+}
+
+bool Player::LearnPvpTalent(uint16 talentID)
+{
+    PvpTalentEntry const* talentInfo = sPvpTalentStore.LookupEntry(talentID);
+    if (!talentInfo)
+        return false;
+
+    if (talentInfo->SpecializationID && talentInfo->SpecializationID != GetSpecializationId())
+        return false;
+
+    if (talentInfo->ClassID != getClass())
+        return false;
+
+    HonorInfo &honorInfo = m_honorInfo[GetGUIDLow()];
+
+    PvpTalentUnlockEntry const* unlockInfo = sDB2Manager.GetTalentUnlockForHonorLevel(honorInfo.HonorLevel);
+    if (!unlockInfo)
+        return false;
+
+    if (talentInfo->Row != unlockInfo->Row || talentInfo->Column != unlockInfo->Column)
+        return false;
+
+    //@TODO add pvpTalent container... code below just like PH
+
+    learnSpell(talentInfo->SpellID, false);
 }
 
 void Player::LearnTalentSpecialization(uint32 talentSpec)

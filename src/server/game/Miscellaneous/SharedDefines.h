@@ -5092,4 +5092,6 @@ enum StableResultCode : uint8
     STABLE_ERR_INTERNAL             = 0x0C
 };
 
+static uint8 const MAX_PVP_TALENTS = 6;
+
 #endif

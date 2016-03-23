@@ -158,6 +158,8 @@ DB2Storage<PhaseEntry>                      sPhaseStores("Phase.db2", PhaseForma
 DB2Storage<PowerDisplayEntry>               sPowerDisplayStore("PowerDisplay.db2", PowerDisplayFormat, HOTFIX_SEL_POWER_DISPLAY);
 DB2Storage<PvPDifficultyEntry>              sPvPDifficultyStore("PvpDifficulty.db2", PvPDifficultyFormat, HOTFIX_SEL_PVP_DIFFICULTY);
 DB2Storage<PvpItemEntry>                    sPvpItemStore("PvpItem.db2", PvpItemFormat, HOTFIX_SEL_PVP_ITEM);
+DB2Storage<PvpTalentUnlockEntry>            sPvpTalentUnlockStore("PvpTalentUnlock.db2", PvpTalentUnlockFormat, HOTFIX_SEL_PVP_TALENT_UNLOCK);
+DB2Storage<PvpTalentEntry>                  sPvpTalentStore("PvpTalent.db2", PvpTalentFormat, HOTFIX_SEL_PVP_TALENT);
 DB2Storage<QuestFactionRewEntry>            sQuestFactionRewardStore("QuestFactionReward.db2", QuestFactionRewardFormat, HOTFIX_SEL_QUEST_FACTION_REW);
 DB2Storage<QuestLineEntry>                  sQuestLineStore("QuestLine.db2", QuestLineFormat, HOTFIX_SEL_QUEST_LINE);
 DB2Storage<QuestLineXQuestEntry>            sQuestLineXQuestStore("QuestLineXQuest.db2", QuestLineXQuestFormat, HOTFIX_SEL_QUEST_LINE_X_QUEST);
@@ -441,6 +443,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sPowerDisplayStore);
     LOAD_DB2(sPvPDifficultyStore);
     LOAD_DB2(sPvpItemStore);
+    LOAD_DB2(sPvpTalentUnlockStore);
+    LOAD_DB2(sPvpTalentStore);
     LOAD_DB2(sQuestFactionRewardStore);
     LOAD_DB2(sQuestLineStore);
     LOAD_DB2(sQuestLineXQuestStore);
@@ -944,6 +948,9 @@ void DB2Manager::InitDB2CustomStores()
 
     for (WMOAreaTableEntry const* wmoAreaTableEntry : sWMOAreaTableStore)
         _WMOAreaInfoByTripple.insert(WMOAreaInfoByTrippleContainer::value_type(WMOAreaTableTripple(wmoAreaTableEntry->WMOID, wmoAreaTableEntry->NameSet, wmoAreaTableEntry->WMOGroupID), wmoAreaTableEntry));
+
+    for (PvpTalentUnlockEntry const* entry : sPvpTalentUnlockStore)
+        _talentUnlock[entry->HonorLevel] = entry;
 }
 
 DB2StorageBase const* DB2Manager::GetStorage(uint32 type) const
@@ -1805,4 +1812,13 @@ uint32 DB2Manager::GetDefaultMapLight(uint32 mapID)
             return light->ID;
 
     return 0;
+}
+
+PvpTalentUnlockEntry const* DB2Manager::GetTalentUnlockForHonorLevel(uint8 honorLevel)
+{
+    auto data = _talentUnlock.find(honorLevel);
+    if (data != _talentUnlock.end())
+        return data->second;
+
+    return nullptr;
 }

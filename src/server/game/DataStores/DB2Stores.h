@@ -141,6 +141,7 @@ extern DB2Storage<OverrideSpellDataEntry>           sOverrideSpellDataStore;
 extern DB2Storage<PhaseEntry>                       sPhaseStores;
 extern DB2Storage<PowerDisplayEntry>                sPowerDisplayStore;
 extern DB2Storage<PvpItemEntry>                     sPvpItemStore;
+extern DB2Storage<PvpTalentEntry>                   sPvpTalentStore;
 extern DB2Storage<QuestFactionRewEntry>             sQuestFactionRewardStore;
 extern DB2Storage<QuestLineEntry>                   sQuestLineStore;
 extern DB2Storage<QuestLineXQuestEntry>             sQuestLineXQuestStore;
@@ -360,6 +361,7 @@ public:
     typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const*> WMOAreaInfoByTrippleContainer;
     typedef std::vector<TalentEntry const*> TalentsByPositionContainer[MAX_CLASSES][MAX_TALENT_TIERS][MAX_TALENT_COLUMNS];
     typedef std::unordered_map<uint32, uint32> SpellEffectScallingByEffectIDContainer;
+    typedef std::map<uint8 /*HonorLevel*/, PvpTalentUnlockEntry const*> TalentUnlockContainer;
 
     static DB2Manager& Instance()
     {
@@ -442,6 +444,7 @@ public:
     uint32 GetLiquidFlags(uint32 liquidType);
     SpellEffectScalingEntry const* GetSpellEffectScaling(uint32 effectID);
     uint32 GetDefaultMapLight(uint32 mapID);
+    PvpTalentUnlockEntry const* GetTalentUnlockForHonorLevel(uint8 honorLevel);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -509,6 +512,7 @@ private:
     FactionTeamContainer _factionTeam;
     WMOAreaInfoByTrippleContainer _WMOAreaInfoByTripple;
     SpellEffectScallingByEffectIDContainer _spellEffectScaling;
+    TalentUnlockContainer _talentUnlock;
 };
 
 #define sDB2Manager DB2Manager::Instance()

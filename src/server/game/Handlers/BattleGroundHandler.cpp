@@ -803,6 +803,9 @@ void WorldSession::HandleUpdatePrestigeLevel(WorldPackets::Battleground::NullCms
     Player* player = GetPlayer();
 
     HonorInfo &honorInfo = player->m_honorInfo[player->GetGUIDLow()];
+    if (honorInfo.HonorLevel != HonorInfo::MaxHonorLevel || honorInfo.PrestigeLevel == HonorInfo::MaxPrestigeLevel)
+        return;
+
     honorInfo.CurrentHonorAtLevel = 0;
     honorInfo.HonorLevel = 1;
     honorInfo.PrestigeLevel = std::min(honorInfo.PrestigeLevel += 1, HonorInfo::MaxPrestigeLevel);

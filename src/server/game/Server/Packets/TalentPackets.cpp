@@ -57,3 +57,10 @@ void WorldPackets::Talent::LearnTalent::Read()
         Talents.push_back(talent);
     }
 }
+
+void WorldPackets::Talent::LearnPvpTalents::Read()
+{
+    TalentIDs.resize(_worldPacket.read<uint32>());
+    for (uint16& talent : TalentIDs)
+        _worldPacket >> talent;
+}

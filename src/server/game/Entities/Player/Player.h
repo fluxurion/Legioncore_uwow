@@ -2186,6 +2186,7 @@ class Player : public Unit, public GridObject<Player>
         void InitTalentForLevel();
         void SendTalentsInfoData(bool pet);
         bool LearnTalent(uint32 talentId);
+        bool LearnPvpTalent(uint16 talentID);
         bool AddTalent(TalentEntry const* talent, uint8 index, bool learning, bool sendMessage = true);
         bool HasTalent(uint32 spell_id, uint8 index) const;
         void RemoveTalent(TalentEntry const* talent, bool sendMessage = true);

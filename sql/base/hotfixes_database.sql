@@ -6417,6 +6417,89 @@ LOCK TABLES `pvp_item` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pvp_talent_unlock`
+--
+
+DROP TABLE IF EXISTS `pvp_talent_unlock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pvp_talent_unlock` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Row` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Column` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `HonorLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pvp_talent_unlock`
+--
+
+LOCK TABLES `pvp_talent_unlock` WRITE;
+/*!40000 ALTER TABLE `pvp_talent_unlock` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pvp_talent_unlock` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pvp_talent`
+--
+
+DROP TABLE IF EXISTS `pvp_talent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pvp_talent` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Row` int(10) unsigned NOT NULL DEFAULT '0',
+  `Column` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unknown4` int(10) unsigned NOT NULL DEFAULT '0',
+  `ClassID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpecializationID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `OverrideSpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Desc` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pvp_talent`
+--
+
+LOCK TABLES `pvp_talent` WRITE;
+/*!40000 ALTER TABLE `pvp_talent` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pvp_talent` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pvp_talent_locale`
+--
+
+DROP TABLE IF EXISTS `pvp_talent_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pvp_talent_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Desc_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pvp_talent_locale`
+--
+
+LOCK TABLES `pvp_talent_locale` WRITE;
+/*!40000 ALTER TABLE `pvp_talent_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pvp_talent_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `spell_totems`
 --
 

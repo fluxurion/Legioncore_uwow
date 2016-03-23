@@ -2019,6 +2019,28 @@ struct PvpItemEntry
     uint8       BonusIlvl;                                  // 1
 };
 
+struct PvpTalentUnlockEntry
+{
+    uint32      ID;
+    uint8       Row;                                        // 0
+    uint8       Column;                                     // 1
+    uint8       HonorLevel;                                 // 2
+};
+
+struct PvpTalentEntry
+{
+    uint32      ID;                                         // 0
+    uint32      Row;                                        // 1
+    uint32      Column;                                     // 2
+    uint32      SpellID;                                    // 3
+    uint32      Unknown4;                                   // 4
+    uint32      ClassID;                                    // 5
+    uint32      SpecializationID;                           // 6
+    uint32      Flags;                                      // 7
+    uint32      OverrideSpellID;                            // 8
+    LocalizedString* Desc;                                  // 9
+};
+
 struct SpellTotemsEntry
 {
     uint32      ID;

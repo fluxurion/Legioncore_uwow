@@ -443,6 +443,7 @@ namespace WorldPackets
     {
         class SetSpecialization;
         class LearnTalent;
+        class LearnPvpTalents;
     }
 
     namespace Trade
@@ -1428,6 +1429,7 @@ class WorldSession
         void HandleUnlearnSkill(WorldPackets::Spells::UnlearnSkill& packet);
         void HandleSetSpecialization(WorldPackets::Talent::SetSpecialization& packet);
         void HandleLearnTalent(WorldPackets::Talent::LearnTalent& packet);
+        void HandleLearnPvpTalents(WorldPackets::Talent::LearnPvpTalents& packet);
 
         void HandleQuestGiverStatusQuery(WorldPackets::Quest::QuestGiverStatusQuery& packet);
         void HandleQuestgiverStatusMultipleQuery(WorldPackets::Quest::QuestGiverStatusMultipleQuery& packet);
