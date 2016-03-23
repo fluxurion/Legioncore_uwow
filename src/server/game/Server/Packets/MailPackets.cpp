@@ -53,9 +53,9 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailAttachedItem co
     data << int32(att.Charges);
     data << int32(att.MaxDurability);
     data << int32(att.Durability);
-    data.WriteBit(att.Unlocked);
     data.WriteBits(att.Enchants.size(), 4);
     data.WriteBits(att.UnkDatas.size(), 2);
+    data.WriteBit(att.Unlocked);
     data.FlushBits();
 
     for (auto const& en : att.Enchants)
@@ -95,7 +95,6 @@ WorldPackets::Mail::MailListEntry::MailListEntry(::Mail const* mail, ::Player* p
     }
 
     Cod = mail->COD;
-    PackageID = 0;
     StationeryID = mail->stationery;
     SentMoney = mail->money;
     Flags = mail->checked;
@@ -107,9 +106,6 @@ WorldPackets::Mail::MailListEntry::MailListEntry(::Mail const* mail, ::Player* p
     for (size_t i = 0; i < mail->items.size(); i++)
         if (::Item* item = player->GetMItem(mail->items[i].item_guid))
             Attachments.emplace_back(item, i);
-
-    NativeRealmAddress = GetVirtualRealmAddress();
-    VirtualRealmAddress = GetVirtualRealmAddress();
 }
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailListEntry const& entry)
@@ -117,18 +113,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Mail::MailListEntry const
     data << int32(entry.MailID);
     data << int8(entry.SenderType);
 
-    data.WriteBit(entry.VirtualRealmAddress.is_initialized());
-    data.WriteBit(entry.NativeRealmAddress.is_initialized());
-
-    if (entry.VirtualRealmAddress.is_initialized())
-        data << *entry.VirtualRealmAddress;
-
-    if (entry.VirtualRealmAddress.is_initialized())
-        data << *entry.NativeRealmAddress;
-
     data << int64(entry.Cod);
-    data << int32(entry.PackageID);
-    //data << int32(entry.StationeryID);
+    data << int32(entry.StationeryID);
     data << int64(entry.SentMoney);
     data << int32(entry.Flags);
     data << float(entry.DaysLeft);
@@ -188,7 +174,6 @@ void WorldPackets::Mail::SendMail::Read()
 {
     _worldPacket >> Info.Mailbox;
     _worldPacket >> Info.StationeryID;
-    _worldPacket >> Info.PackageID;
     _worldPacket >> Info.SendMoney;
     _worldPacket >> Info.Cod;
 
