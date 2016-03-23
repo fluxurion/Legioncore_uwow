@@ -27094,6 +27094,8 @@ bool Player::LearnPvpTalent(uint16 talentID)
     //@TODO add pvpTalent container... code below just like PH
 
     learnSpell(talentInfo->SpellID, false);
+
+    return true;
 }
 
 void Player::LearnTalentSpecialization(uint32 talentSpec)

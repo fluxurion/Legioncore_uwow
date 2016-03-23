@@ -348,7 +348,10 @@ void WorldSession::HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet)
 {
     DB2StorageBase const* store = sDB2Manager.GetStorage(packet.TableHash);
     if (!store)
+    {
+        sLog->outError(LOG_FILTER_GENERAL, "DBQueryBulk:: client requested unused db2 storage: %u; can by finded in DB2Hashes", packet.TableHash);
         return;
+    }
 
     for (WorldPackets::Query::DBQueryBulk::DBQueryRecord const& rec : packet.Queries)
     {
