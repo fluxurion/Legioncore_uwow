@@ -26628,7 +26628,7 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
                 SendDisplayToast(item->item.ItemID, 1, 0/*loot->bonusLoot*/, item->count, 2, newitem);
         }
 
-        SendNewItem(newitem, uint32(item->count), false, false, true, NULL, loot->bonusLoot);
+        SendNewItem(newitem, uint32(item->count), false, false, true);
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM, item->item.ItemID, item->count);
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE, loot->loot_type, item->count);
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_EPIC_ITEM, item->item.ItemID, item->count);
