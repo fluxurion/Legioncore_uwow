@@ -23289,7 +23289,7 @@ Unit* Unit::GetTargetUnit() const
 
 bool Unit::IsSplineEnabled() const
 {
-    return !movespline->Finalized();
+    return !movespline->Finalized() && movespline->Duration();
 }
 
 void Unit::SendSetVehicleRecId(uint32 vehicleID)
