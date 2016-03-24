@@ -3264,42 +3264,6 @@ void Player::LearnSpecializationSpells()
                 AddOverrideSpell(specSpell->OverridesSpellID, specSpell->SpellID);
         }
     }
-
-    // if(level < 91)
-        // return;
-
-    // uint8 currentIndex = 1;
-    // switch (level)
-    // {
-        // case 95:
-        // case 96:
-        // case 97:
-            // currentIndex = 2;
-            // break;
-        // case 98:
-        // case 99:
-            // currentIndex = 3;
-            // break;
-        // case 100:
-            // currentIndex = 4;
-            // break;
-    // }
-
-    // bool add = true;
-    // if (currentIndex < 4)
-        // add = urand(0, 1);
-
-    // if(add)
-    // {
-        // for (uint8 i = 0; i < currentIndex; i++)
-        // {
-            // if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specializationId, i))
-            // {
-                // if (!HasSpell(minor->SpellID))
-                    // learnSpell(minor->SpellID, false);
-            // }
-        // }
-    // }
 }
 
 void Player::RemoveSpecializationSpells()
@@ -3322,10 +3286,6 @@ void Player::RemoveSpecializationSpells()
             for (uint32 j = 0; j < MAX_MASTERY_SPELLS; ++j)
                 if (uint32 mastery = specialization->MasterySpellID[j])
                     RemoveAurasDueToSpell(mastery);
-
-            for (uint32 j = 0; j < MAX_PERKS_COUNT; ++j)
-                if (MinorTalentEntry const* minor = sDB2Manager.GetMinorTalentBySpecAndPerkID(specialization->ID, j))
-                    removeSpell(minor->SpellID, true, true, false);
         }
     }
 }
