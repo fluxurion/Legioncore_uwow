@@ -578,6 +578,9 @@ void PathGenerator::BuildPointPath(const float *startPoint, const float *endPoin
 
 void PathGenerator::NormalizePath()
 {
+    //Test fix dublicate points in patch(client crashed if (_pathPoints[i] - _pathPoints[1+1]).length() == 0.0f)
+    _pathPoints.resize(std::unique(_pathPoints.begin(),_pathPoints.end())-_pathPoints.begin());
+
     for (size_t i = 0; i < _pathPoints.size(); ++i)
         _sourceUnit->UpdateAllowedPositionZ(_pathPoints[i].x, _pathPoints[i].y, _pathPoints[i].z);
 }
