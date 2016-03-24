@@ -117,7 +117,8 @@ public:
             { "update",         SEC_ADMINISTRATOR,  false, &HandleDebugUpdateCommand,          "", NULL },
             { "updatecriteria", SEC_ADMINISTRATOR,  false, &HandleDebugUpdateCriteriaCommand,  "", NULL },
             { "uws",            SEC_ADMINISTRATOR,  false, &HandleDebugUpdateWorldStateCommand, "", NULL },
-            { "streamingmovies",SEC_ADMINISTRATOR,  false, &HandleDebugStreamingMoviesCommand, "", NULL },
+            { "streamingmovies",SEC_ADMINISTRATOR,  false, &HandleDebugStreamingMoviesCommand,  "", NULL },
+            { "movementinfo",   SEC_ADMINISTRATOR,  false, &HandleDebugMovementInfo,            "", nullptr },
             { NULL,             SEC_PLAYER,         false, NULL,                               "", NULL }
         };
         static ChatCommand commandTable[] =
@@ -1595,6 +1596,17 @@ public:
         target->SetUInt32Value(opcode,  value);
 
         handler->PSendSysMessage(LANG_SET_32BIT_FIELD, opcode, value);
+        return true;
+    }
+
+    static bool HandleDebugMovementInfo(ChatHandler* handler, char const* /*args*/)
+    {
+        Unit* target = handler->getSelectedUnit();
+        if (!target)
+            target = handler->GetSession()->GetPlayer();
+
+        target->m_movementInfo.OutDebug();
+
         return true;
     }
 

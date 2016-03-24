@@ -345,6 +345,18 @@ class ByteBuffer
             return ((_curbitval >> (7-_bitpos)) & 1) != 0;
         }
 
+        void ReadBit(bool& val)
+        {
+            ++_bitpos;
+            if (_bitpos > 7)
+            {
+                _curbitval = read<uint8>();
+                _bitpos = 0;
+            }
+
+            val = ((_curbitval >> (7-_bitpos)) & 1) != 0;
+        }
+
         template <typename T> void WriteBits(T value, size_t bits)
         {
             for (int32 i = bits-1; i >= 0; --i)
