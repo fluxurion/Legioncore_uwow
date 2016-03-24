@@ -8,11 +8,15 @@
 #include "ScriptedCreature.h"
 #include "darkheart_thicket.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO               = 0,
+    SAY_NIGHTMARE           = 1,
+    SAY_CRUSHING            = 2,
+    SAY_ROOTS               = 3,
+    SAY_EARTH               = 4,
+    SAY_DEATH               = 5,
+};
 
 enum Spells
 {
@@ -22,6 +26,8 @@ enum Spells
     SPELL_STRANGLING_ROOTS_AT   = 199067,
     SPELL_NIGHTMARE_BREATH      = 204667,
     SPELL_CRUSHING_GRIP         = 204611,
+    //end
+    SPELL_TALK                  = 202883,
 };
 
 enum eEvents
@@ -53,7 +59,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //43:30
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
             events.ScheduleEvent(EVENT_SHATTERED_EARTH, 6000);      //43:37, 44:17
             events.ScheduleEvent(EVENT_STRANGLING_ROOTS, 14000);    //43:44, 44:07
@@ -68,8 +74,9 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
+            DoCast(SPELL_TALK);
         }
 
         void PassengerBoarded(Unit* who, int8 /*seatId*/, bool apply)
@@ -97,6 +104,8 @@ public:
                     }
                     else
                         passenger->CastSpell(passenger, 204651);
+                     
+                    Talk(SAY_CRUSHING);
                 }
             }
         }
@@ -117,15 +126,18 @@ public:
                 {
                     case EVENT_SHATTERED_EARTH:
                         DoCast(SPELL_SHATTERED_EARTH);
+                        Talk(SAY_EARTH);
                         events.ScheduleEvent(EVENT_SHATTERED_EARTH, 40000);
                         break;
                     case EVENT_STRANGLING_ROOTS:
                         DoCast(SPELL_STRANGLING_ROOTS);
+                        Talk(SAY_ROOTS);
                         events.ScheduleEvent(EVENT_STRANGLING_ROOTS, 22000);
                         break;
                     case EVENT_NIGHTMARE_BREATH:
                         if (me->getVictim())
                             DoCast(me->getVictim(), SPELL_NIGHTMARE_BREATH);
+                        Talk(SAY_NIGHTMARE);
                         events.ScheduleEvent(EVENT_NIGHTMARE_BREATH, 32000);
                         break;
                     case EVENT_CRUSHING_GRIP:

@@ -33,6 +33,8 @@ enum Spells
     SPELL_NIGHTFALL             = 198400,
     //pre-event
     SPELL_VISUAL                = 197642,
+    //end
+    SPELL_TALK                  = 202882,
 };
 
 enum eEvents
@@ -85,6 +87,7 @@ public:
             Talk(SAY_DEATH);
             _JustDied();
             instance->DoRemoveAurasDueToSpellOnPlayers(198408); //from nightfall dot
+            DoCast(SPELL_TALK);
         }
 
         void MovementInform(uint32 type, uint32 id)
@@ -285,9 +288,41 @@ public:
     }
 };
 
+//200684 trash
+class spell_nightmare_toxin : public SpellScriptLoader
+{
+    public:
+        spell_nightmare_toxin() : SpellScriptLoader("spell_nightmare_toxin") { }
+
+        class spell_nightmare_toxin_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_nightmare_toxin_AuraScript);
+
+            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                Unit* target = GetTarget();
+                if (Creature* spider = target->FindNearestCreature(101679, 40.0f, true))
+                  {
+                      spider->CastSpell(target, 200686, true);
+                  }
+            }
+
+            void Register()
+            {
+                OnEffectRemove += AuraEffectRemoveFn(spell_nightmare_toxin_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_PERIODIC_DAMAGE, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_nightmare_toxin_AuraScript();
+        }
+};
+
 void AddSC_boss_arch_druid_glaidalis()
 {
     new boss_arch_druid_glaidalis();
     new spell_glaidalis_grievous_leap();
     new spell_glaidalis_grievous_tear();
+    new spell_nightmare_toxin();
 }
