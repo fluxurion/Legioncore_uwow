@@ -8,11 +8,12 @@
 #include "ScriptedCreature.h"
 #include "darkheart_thicket.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_DEATH           = 1,
+    SAY_END             = 0,
+};
 
 enum Spells
 {
@@ -69,7 +70,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //49:53
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
             events.ScheduleEvent(EVENT_FESTERING_RIP,    3000);  //49:56, 50:13
             events.ScheduleEvent(EVENT_NIGHTMARE_BOLT,   9000);  //50:02, 50:19
@@ -84,12 +85,12 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
             summons.DespawnAll();
             if (Creature* malfurion = instance->instance->GetCreature(instance->GetGuidData(NPC_MALFURION_STORMRAGE)))
             {
-                //malfurion->AI()->Talk();
+                malfurion->AI()->Talk(SAY_END);
                 malfurion->InterruptNonMeleeSpells(false, SPELL_NATURE_DOMINANCE);
             }
         }
