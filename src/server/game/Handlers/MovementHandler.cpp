@@ -520,7 +520,7 @@ void WorldSession::HandleMoveRemoveMovementForceAck(WorldPackets::Movement::Move
 //    remove.movementInfo = &player->m_movementInfo;
 //    remove.TriggerGUID = packet.TriggerGUID;
 //    player->SendMessageToSet(remove.Write(), player);
-//}
+}
 
 void WorldSession::HandleMoveApplyMovementForceAck(WorldPackets::Movement::MoveApplyMovementForceAck& packet)
 {
