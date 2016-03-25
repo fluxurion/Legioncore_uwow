@@ -34,27 +34,23 @@
 #include "CellImpl.h"
 #include "MailPackets.h"
 
-//! 6.0.3
 void WorldSession::HandleSendMail(WorldPackets::Mail::SendMail& packet)
 {
-    if (packet.Info.Attachments.size() > MAX_MAIL_ITEMS)        // client limit
+    Player* player = _player;
+    if (packet.Info.Attachments.size() > MAX_MAIL_ITEMS)
     {
-        GetPlayer()->SendMailResult(0, MAIL_SEND, MAIL_ERR_TOO_MANY_ATTACHMENTS);
+        player->SendMailResult(0, MAIL_SEND, MAIL_ERR_TOO_MANY_ATTACHMENTS);
         return;
     }
 
     sLog->outInfo(LOG_FILTER_NETWORKIO, "Player %u includes %u items, " UI64FMTD " copper and " UI64FMTD " COD copper with stationery = %u",
-    _player->GetGUIDLow(), packet.Info.Attachments.size(), packet.Info.SendMoney, packet.Info.Cod, packet.Info.StationeryID);
+    player->GetGUIDLow(), packet.Info.Attachments.size(), packet.Info.SendMoney, packet.Info.Cod, packet.Info.StationeryID);
 
-    // packet read complete, now do check
-
-    if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Info.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
+    if (!player->GetGameObjectIfCanInteractWith(packet.Info.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
     if (packet.Info.Target.empty())
         return;
-
-    Player* player = _player;
 
     if (player->getLevel() < sWorld->getIntConfig(CONFIG_MAIL_LEVEL_REQ))
     {
@@ -298,16 +294,13 @@ void WorldSession::HandleSendMail(WorldPackets::Mail::SendMail& packet)
     CharacterDatabase.CommitTransaction(trans);
 }
 
-//! 6.0.3
-// Called when mail is read
 void WorldSession::HandleMailMarkAsRead(WorldPackets::Mail::MailMarkAsRead& packet)
 {
-    if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
+    Player* player = _player;
+    if (!player->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player* player = _player;
-    Mail* m = player->GetMail(packet.MailID);
-    if (m)
+    if (Mail* m = player->GetMail(packet.MailID))
     {
         if (player->unReadMails)
             --player->unReadMails;
@@ -317,8 +310,6 @@ void WorldSession::HandleMailMarkAsRead(WorldPackets::Mail::MailMarkAsRead& pack
     }
 }
 
-//! 6.0.3
-// Called when client deletes mail
 void WorldSession::HandleMailDelete(WorldPackets::Mail::MailDelete& packet)
 {
     //if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
@@ -341,7 +332,6 @@ void WorldSession::HandleMailDelete(WorldPackets::Mail::MailDelete& packet)
     player->SendMailResult(packet.MailID, MAIL_DELETED, MAIL_OK);
 }
 
-//! 6.0.3
 void WorldSession::HandleMailReturnToSender(WorldPackets::Mail::MailReturnToSender& packet)
 {
     //if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
@@ -349,7 +339,7 @@ void WorldSession::HandleMailReturnToSender(WorldPackets::Mail::MailReturnToSend
 
     Player* player = _player;
     Mail* m = player->GetMail(packet.MailID);
-    if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL) || m->sender != packet.SenderGUID.GetCounter())
+    if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(nullptr) || m->sender != packet.SenderGUID.GetCounter())
     {
         player->SendMailResult(packet.MailID, MAIL_RETURNED_TO_SENDER, MAIL_ERR_INTERNAL_ERROR);
         return;
@@ -394,17 +384,13 @@ void WorldSession::HandleMailReturnToSender(WorldPackets::Mail::MailReturnToSend
     player->SendMailResult(packet.MailID, MAIL_RETURNED_TO_SENDER, MAIL_OK);
 }
 
-//! 6.0.3
-//called when player takes item attached in mail
 void WorldSession::HandleMailTakeItem(WorldPackets::Mail::MailTakeItem& packet)
 {
-    uint32 AttachID = packet.AttachID;
-
-    if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
+    Player* player = _player;
+    if (!player->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player* player = _player;
-
+    uint32 AttachID = packet.AttachID;
     Mail* m = player->GetMail(packet.MailID);
     if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
     {
@@ -500,17 +486,14 @@ void WorldSession::HandleMailTakeItem(WorldPackets::Mail::MailTakeItem& packet)
         player->SendMailResult(packet.MailID, MAIL_ITEM_TAKEN, MAIL_ERR_EQUIP_ERROR, msg);
 }
 
-//! 6.0.3
 void WorldSession::HandleMailTakeMoney(WorldPackets::Mail::MailTakeMoney& packet)
 {
-    if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
+    Player* player = _player;
+    if (!player->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
 
-    Player* player = _player;
-
     Mail* m = player->GetMail(packet.MailID);
-    if ((!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL)) ||
-        (packet.Money > 0 && m->money != packet.Money))
+    if ((!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(nullptr)) || (packet.Money > 0 && m->money != packet.Money))
     {
         player->SendMailResult(packet.MailID, MAIL_MONEY_TAKEN, MAIL_ERR_INTERNAL_ERROR);
         return;
@@ -535,8 +518,6 @@ void WorldSession::HandleMailTakeMoney(WorldPackets::Mail::MailTakeMoney& packet
     CharacterDatabase.CommitTransaction(trans);
 }
 
-//! 6.0.3
-//called when player lists his received mails
 void WorldSession::HandleGetMailList(WorldPackets::Mail::MailGetList& packet)
 {
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))
@@ -581,8 +562,6 @@ void WorldSession::HandleGetMailList(WorldPackets::Mail::MailGetList& packet)
     _player->UpdateNextMailTimeAndUnreads();
 }
 
-//! 6.0.3
-//used when player copies mail body to his inventory
 void WorldSession::HandleMailCreateTextItem(WorldPackets::Mail::MailCreateTextItem& packet)
 {
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(packet.Mailbox, GAMEOBJECT_TYPE_MAILBOX))

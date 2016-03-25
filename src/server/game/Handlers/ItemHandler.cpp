@@ -1033,7 +1033,6 @@ void WorldSession::HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelT
     item->ClearEnchantment(TEMP_ENCHANTMENT_SLOT);
 }
 
-//! 6.0.3
 void WorldSession::HandleGetItemPurchaseData(WorldPackets::Item::ItemRefundInfo& packet)
 {
     Item* item = _player->GetItemByGuid(packet.ItemGUID);

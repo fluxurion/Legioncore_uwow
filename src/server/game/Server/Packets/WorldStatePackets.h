@@ -27,37 +27,34 @@ namespace WorldPackets
         class InitWorldStates final : public ServerPacket
         {
         public:
+            InitWorldStates() : ServerPacket(SMSG_INIT_WORLD_STATES, 12) { }
+            
+            WorldPacket const* Write() override;
+
             struct WorldStateInfo
             {
-                WorldStateInfo(WorldStates variableID, int32 value)
-                    : VariableID(variableID), Value(value)
-                { }
+                WorldStateInfo(WorldStates variableID, int32 value) : VariableID(variableID), Value(value) { }
 
                 WorldStates VariableID;
                 int32 Value;
             };
-
-            InitWorldStates();
-
-            WorldPacket const* Write() override;
-
+            
+            std::list<WorldStateInfo> Worldstates;
             uint32 AreaID = 0;
             uint32 SubareaID = 0;
             uint32 MapID = 0;
-
-            std::list<WorldStateInfo> Worldstates;
         };
 
         class UpdateWorldState final : public ServerPacket
         {
         public:
-            UpdateWorldState();
+            UpdateWorldState() : ServerPacket(SMSG_UPDATE_WORLD_STATE, 9) { }
 
             WorldPacket const* Write() override;
 
             int32 Value = 0;
-            bool Hidden = false;
             WorldStates VariableID = WorldStates::WS_NONE;
+            bool Hidden = false;
         };
     }
 }

@@ -197,7 +197,7 @@ namespace WorldPackets
 
             ObjectGuid Mailbox;
             int32 MailID = 0;
-            int32 AttachID = 0;
+            uint32 AttachID = 0;
         };
 
         class MailTakeMoney final : public ClientPacket

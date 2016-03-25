@@ -591,13 +591,6 @@ void WorldSession::HandleRequestRaidInfo(WorldPackets::Party::RequestRaidInfo& /
 
 void WorldSession::HandleOptOutOfLoot(WorldPackets::Party::OptOutOfLoot& packet)
 {
-    if (!GetPlayer())
-    {
-        if (packet.PassOnLoot)
-            sLog->outError(LOG_FILTER_NETWORKIO, "CMSG_OPT_OUT_OF_LOOT value<>0 for not-loaded character!");
-        return;
-    }
-
     GetPlayer()->SetPassOnGroupLoot(packet.PassOnLoot);
 }
 

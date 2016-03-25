@@ -39,7 +39,6 @@
 #include "WorldSession.h"
 #include "GameObjectPackets.h"
 
-//! 6.0.3
 void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
 {
     // TODO: add targets.read() check

@@ -445,7 +445,6 @@ void WorldSession::HandleFarSight(WorldPackets::Misc::FarSight& packet)
     player->UpdateVisibilityForPlayer();
 }
 
-//! 6.0.3
 void WorldSession::HandleTimeSyncResp(WorldPackets::Misc::TimeSyncResponse& packet)
 {
     // Prevent crashing server if queue is empty

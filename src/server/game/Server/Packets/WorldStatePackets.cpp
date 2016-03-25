@@ -17,10 +17,6 @@
 
 #include "WorldStatePackets.h"
 
-WorldPackets::WorldState::InitWorldStates::InitWorldStates()
-    : ServerPacket(SMSG_INIT_WORLD_STATES, 16)
-{ }
-
 WorldPacket const* WorldPackets::WorldState::InitWorldStates::Write()
 {
     _worldPacket.reserve(16 + Worldstates.size() * 8);
@@ -38,10 +34,6 @@ WorldPacket const* WorldPackets::WorldState::InitWorldStates::Write()
 
     return &_worldPacket;
 }
-
-WorldPackets::WorldState::UpdateWorldState::UpdateWorldState()
-    : ServerPacket(SMSG_UPDATE_WORLD_STATE, 9)
-{ }
 
 WorldPacket const* WorldPackets::WorldState::UpdateWorldState::Write()
 {

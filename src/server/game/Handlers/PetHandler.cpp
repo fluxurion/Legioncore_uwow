@@ -359,7 +359,6 @@ void WorldSession::HandlePetSpellAutocast(WorldPackets::PetPackets::PetSpellAuto
     charmInfo->SetSpellAutocast(spellInfo, packet.AutocastEnabled);
 }
 
-//! 6.0.3
 void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& cast)
 {
     if (!_player->GetGuardianPet() && !_player->GetCharm())

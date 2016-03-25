@@ -346,13 +346,11 @@ void PhaseData::SendPhaseshiftToPlayer()
     uint32 zoneid, areaid;
     player->GetZoneAndAreaId(zoneid, areaid);
 
-    //! 6.0.3
-    WorldPacket data(SMSG_INIT_WORLD_STATES, (15));
-    data << uint32(player->GetMapId());                     // mapid
-    data << uint32(zoneid);                                 // zone id
-    data << uint32(areaid);                                 // area id, new 2.1.0
-    data << uint32(0);
-    player->GetSession()->SendPacket(&data);
+    WorldPackets::WorldState::InitWorldStates packet;
+    packet.MapID = player->GetMapId();
+    packet.AreaID = areaid;
+    packet.SubareaID = zoneid;
+    player->GetSession()->SendPacket(packet.Write());
 }
 
 void PhaseData::AddPhaseDefinition(PhaseDefinition const* phaseDefinition)

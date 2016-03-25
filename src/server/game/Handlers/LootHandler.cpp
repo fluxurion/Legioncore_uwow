@@ -32,7 +32,6 @@
 #include "GuildMgr.h"
 #include "LootPackets.h"
 
-//! 6.0.3
 void WorldSession::HandleAutostoreLootItemOpcode(WorldPackets::Loot::AutoStoreLootItem& packet)
 {
     Player* player = GetPlayer();
@@ -46,7 +45,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPackets::Loot::AutoStoreLo
         {
             GameObject* go = player->GetMap()->GetGameObject(lguid);
             // not check distance for GO in case owned GO (fishing bobber case, for example) or Fishing hole GO
-            if (!go || ((go->GetOwnerGUID() != _player->GetGUID() && go->GetGoType() != GAMEOBJECT_TYPE_FISHINGHOLE) && !go->IsWithinDistInMap(_player, INTERACTION_DISTANCE)))
+            if (!go || ((go->GetOwnerGUID() != player->GetGUID() && go->GetGoType() != GAMEOBJECT_TYPE_FISHINGHOLE) && !go->IsWithinDistInMap(player, INTERACTION_DISTANCE)))
             {
                 player->SendLootRelease(lguid);
                 return;
@@ -97,7 +96,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPackets::Loot::AutoStoreLo
         }
         else
         {
-            Creature* creature = GetPlayer()->GetMap()->GetCreature(lguid);
+            Creature* creature = player->GetMap()->GetCreature(lguid);
 
             bool lootAllowed = creature && creature->isAlive() == (player->getClass() == CLASS_ROGUE && creature->lootForPickPocketed);
 
@@ -158,7 +157,7 @@ void WorldSession::HandleLootMoney(WorldPackets::Loot::LootMoney& /*packet*/)
         {
             case HighGuid::GameObject:
             {
-                GameObject* go = GetPlayer()->GetMap()->GetGameObject(lootguid);
+                GameObject* go = player->GetMap()->GetGameObject(lootguid);
 
                 // do not check distance for GO if player is the owner of it (ex. fishing bobber)
                 if (go && ((go->GetOwnerGUID() == player->GetGUID() || go->IsWithinDistInMap(player, INTERACTION_DISTANCE))))
@@ -265,7 +264,6 @@ void WorldSession::HandleLootMoney(WorldPackets::Loot::LootMoney& /*packet*/)
     }
 }
 
-//! 6.0.3
 void WorldSession::HandleLootUnit(WorldPackets::Loot::LootUnit& packet)
 {
     if (!GetPlayer()->isAlive() || !packet.Unit.IsCreatureOrVehicle())
