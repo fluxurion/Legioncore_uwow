@@ -722,7 +722,7 @@ void DB2DatabaseLoader::LoadStrings(const char* format, HotfixDatabaseStatements
                     case FT_STRING:
                     {
                         // fill only not filled entries
-                        LocalizedString* db2str = *(LocalizedString**)(&dataValue[offset]);
+                        LocalizedString* db2str = *(LocalizedString**)(&dataValue[offset]); //Crashed if ID locale > ID in table
                         if (db2str->Str[locale] == nullStr)
                             if (char* str = AddString(&db2str->Str[locale], fields[1 + stringFieldNumInRecord].GetString()))
                                 stringPool.push_back(str);
