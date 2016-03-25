@@ -136,7 +136,7 @@ enum OpcodeClient : uint16
     CMSG_CALENDAR_REMOVE_EVENT                        = 0x367D,
     CMSG_CALENDAR_REMOVE_INVITE                       = 0x3679,
     CMSG_CALENDAR_UPDATE_EVENT                        = 0x3684,
-    CMSG_CAN_DUEL                                     = 0xBADD,
+    CMSG_CAN_DUEL                                     = 0x3668,
     CMSG_CANCEL_AURA                                  = 0x31A9,
     CMSG_CANCEL_AUTO_REPEAT_SPELL                     = 0x34D4,
     CMSG_CANCEL_CAST                                  = 0x3275,
