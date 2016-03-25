@@ -797,7 +797,7 @@ WorldPacket const* WorldPackets::Movement::MoveKnockBack::Write()
 {
     _worldPacket << MoverGUID;
     _worldPacket << SequenceIndex;
-    _worldPacket << Direction.PositionXYStream();
+    _worldPacket << Direction;
     _worldPacket << HorzSpeed;
     _worldPacket << VertSpeed;
 

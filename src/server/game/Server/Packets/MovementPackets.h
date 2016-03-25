@@ -557,7 +557,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
             
             ObjectGuid MoverGUID;
-            Position Direction;
+            G3D::Vector2 Direction;
             int32 SequenceIndex = 0;
             float HorzSpeed = 0.0f;
             float VertSpeed = 0.0f;

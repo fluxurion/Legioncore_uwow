@@ -21633,8 +21633,8 @@ void Unit::SendMoveKnockBack(Player* player, float speedXY, float speedZ, float 
 
     WorldPackets::Movement::MoveKnockBack knockBack;
     knockBack.MoverGUID = GetGUID();
-    knockBack.Direction.m_positionX = vcos;
-    knockBack.Direction.m_positionX = vsin;
+    knockBack.Direction.x = vcos;
+    knockBack.Direction.y = vsin;
     knockBack.SequenceIndex = m_movementCounter++;
     knockBack.HorzSpeed = speedXY;
     knockBack.VertSpeed = speedZ;
@@ -22296,11 +22296,7 @@ void Unit::JumpTo(float speedXY, float speedZ, bool forward)
     if (GetTypeId() == TYPEID_UNIT)
         GetMotionMaster()->MoveJumpTo(angle, speedXY, speedZ);
     else
-    {
-        float vcos = std::cos(angle+GetOrientation());
-        float vsin = std::sin(angle+GetOrientation());
-        SendMoveKnockBack(ToPlayer(), speedXY, -speedZ, vcos, vsin);
-    }
+        SendMoveKnockBack(ToPlayer(), speedXY, -speedZ, std::cos(angle + GetOrientation()), std::sin(angle + GetOrientation()));
 }
 
 void Unit::JumpTo(WorldObject* obj, float speedZ)
@@ -23376,8 +23372,7 @@ void Unit::SendTeleportPacket(Position &destPos)
     {
         WorldPackets::Movement::MoveTeleport selfPacket;
         selfPacket.MoverGUID = GetGUID();
-        ObjectGuid transGuid = GetTransGUID();
-        if (!transGuid.IsEmpty())
+        if (ObjectGuid transGuid = GetTransGUID())
             selfPacket.TransportGUID = transGuid;
         selfPacket.Pos.Relocate(destPos);
         selfPacket.Facing = destPos.GetOrientation();

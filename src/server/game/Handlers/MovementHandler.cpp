@@ -93,7 +93,7 @@ void WorldSession::HandleWorldPortAck()
 
         WorldPackets::Movement::NewWorld packet;
         packet.MapID = loc.GetMapId();
-        packet.Pos = static_cast<Position>(loc);
+        packet.Pos = loc;
         packet.Reason = WorldPackets::Movement::NewWorldReason::SEAMLESS;
         player->SendDirectMessage(packet.Write());
         player->SendSavedInstances();
@@ -166,16 +166,10 @@ void WorldSession::HandleWorldPortAck()
     {
         Difficulty diff = player->GetDifficultyID(mEntry);
         if (MapDifficultyEntry const* mapDiff = sDB2Manager.GetMapDifficultyData(mEntry->ID, diff))
-        {
             if (mapDiff->RaidDuration)
-            {
                 if (time_t timeReset = sWorld->getInstanceResetTime(mapDiff->RaidDuration))
-                {
-                    uint32 timeleft = uint32(timeReset - time(NULL));
-                    player->SendInstanceResetWarning(mEntry->ID, diff, timeleft);
-                }
-            }
-        }
+                    player->SendInstanceResetWarning(mEntry->ID, diff, uint32(timeReset - time(nullptr)));
+
         allowMount = mInstance->AllowMount;
     }
 
