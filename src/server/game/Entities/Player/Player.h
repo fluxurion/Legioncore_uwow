@@ -3555,29 +3555,6 @@ class Player : public Unit, public GridObject<Player>
         PlayerPetSlotList m_PetSlots;
         ////////////////////Rest System/////////////////////
     public:
-         // movement anticheat
-        time_t m_anti_LastClientTime;         // last movement client time
-        time_t m_anti_LastServerTime;         // last movement server time
-        time_t m_anti_DeltaClientTime;        // client side session time
-        time_t m_anti_DeltaServerTime;        // server side session time
-        uint32 m_anti_MistimingCount;         // mistiming count
-        uint32 m_anti_MistiCount;             // mistiming count
-        time_t m_anti_LastSpeedChangeTime;    // last speed change time
-
-        float m_anti_Last_HSpeed;             // horizontal speed, default RUN speed
-        float m_anti_Last_VSpeed;             // vertical speed, default max jump height
-
-        uint32 m_anti_TeleToPlane_Count;      // Teleport To Plane alarm counter
-
-        uint64 m_anti_AlarmCount;             // alarm counter
-
-        uint16 m_anti_WEHCount;               // Check WEH DEC INC count
-        uint16 m_anti_JumpCount;              // Jump already began, anti air jump check
-        float m_anti_JumpBaseZ;               // Z coord before jump
-        float m_anti_Gravity;                 // AntiGravity chech
-        uint32 m_anti_GravityCount;           // AntiGravity chech count
-         // end movement anticheat
-
         uint32 GetTimeSync() const { return m_timeSyncServer; }
 
         void SetInPvPCombat(bool set);

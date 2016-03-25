@@ -1798,10 +1798,10 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap /*= true*/, float
     return mapHeight;                               // explicitly use map data
 }
 
-float Map::GetMinHeight(float x, float y) const
+float Map::GetMinHeight(Position pos) const
  {
-     if (GridMap const* grid = const_cast<Map*>(this)->GetGrid(x, y))
-         return grid->getMinHeight(x, y);
+     if (GridMap const* grid = const_cast<Map*>(this)->GetGrid(pos.GetPositionX(), pos.GetPositionY()))
+         return grid->getMinHeight(pos.GetPositionX(), pos.GetPositionY());
  
      return -500.0f;
  }
@@ -2097,13 +2097,12 @@ bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
     return false;
 }
 
-bool Map::IsUnderWater(float x, float y, float z) const
+bool Map::IsUnderWater(Position pos) const
 {
-    if (const_cast<Map*>(this)->GetGrid(x, y))
-    {
-        if (getLiquidStatus(x, y, z, MAP_LIQUID_TYPE_WATER|MAP_LIQUID_TYPE_OCEAN)&LIQUID_MAP_UNDER_WATER)
+    if (const_cast<Map*>(this)->GetGrid(pos.GetPositionX(), pos.GetPositionY()))
+        if (getLiquidStatus(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN) & LIQUID_MAP_UNDER_WATER)
             return true;
-    }
+
     return false;
 }
 

@@ -390,30 +390,6 @@ Player::Player(WorldSession* session): Unit(true),
     rest_type=REST_TYPE_NO;
     ////////////////////Rest System/////////////////////
 
-    // movement anticheat
-    m_anti_LastClientTime  = 0;          // last movement client time
-    m_anti_LastServerTime  = 0;          // last movement server time
-    m_anti_DeltaClientTime = 0;          // client side session time
-    m_anti_DeltaServerTime = 0;          // server side session time
-    m_anti_MistimingCount  = 0;          // mistiming count
-    m_anti_MistiCount  = 0;              // mistiming count
-
-    m_anti_LastSpeedChangeTime = 0;      // last speed change time
-
-    m_anti_Last_HSpeed =  7.0f;          // horizontal speed, default RUN speed
-    m_anti_Last_VSpeed = -2.3f;          // vertical speed, default max jump height
-
-    m_anti_TeleToPlane_Count = 0;        // Teleport To Plane alarm counter
-
-    m_anti_AlarmCount = 0;               // alarm counter
-
-    m_anti_JumpCount = 0;                // Jump already began, anti air jump check
-    m_anti_JumpBaseZ = 0;                // Z coord before jump (AntiGrav)
-    m_anti_Gravity = 0;                  // AntiGravity chech
-    m_anti_GravityCount = 0;             // AntiGravity chech count
-    m_anti_WEHCount = 0;                 // Check WEH DEC INC count
-    // end movement anticheat
-
     //kill honor sistem
     m_flushKills = false;
     m_saveKills = false;
@@ -1880,7 +1856,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         {
             m_transport->RemovePassenger(this);
             m_transport = NULL;
-            m_movementInfo.ResetTransport();
+            m_movementInfo.transport.Reset();
             RepopAtGraveyard();                             // teleport to near graveyard if on transport, looks blizz like :)
         }
 
@@ -1924,7 +1900,6 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     if (GetMapId() == mapid/* || mEntry->ParentMapID == GetMapId()*/)
     {
         //options |= TELE_TO_SEAMLESS;
-        m_anti_JumpBaseZ = 0;
         //lets reset far teleport flag if it wasn't reset during chained teleports
         SetSemaphoreTeleportFar(false);
         //setup delayed teleport flag
@@ -1953,7 +1928,6 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         // this will be used instead of the current location in SaveToDB
         m_teleport_dest = WorldLocation(mapid, x, y, z, orientation);
         SetFallInformation(0, z);
-        m_anti_JumpBaseZ = 0;
 
         // code for finish transfer called in WorldSession::HandleMovementOpcodes()
         // at client packet CMSG_MOVE_TELEPORT_ACK
@@ -5964,7 +5938,7 @@ void Player::RepopAtGraveyard()
     AreaTableEntry const* zone = sAreaTableStore.LookupEntry(GetAreaId());
 
     // Such zones are considered unreachable as a ghost and the player must be automatically revived
-    if ((!isAlive() && zone && zone->Flags[0] & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < GetMap()->GetMinHeight(GetPositionX(), GetPositionY()))
+    if ((!isAlive() && zone && zone->Flags[0] & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < GetMap()->GetMinHeight(GetPosition()))
     {
         ResurrectPlayer(0.5f);
         SpawnCorpseBones();
@@ -6017,7 +5991,7 @@ void Player::RepopAtGraveyard()
             GetSession()->SendPacket(packet.Write());
         }
     }
-    else if (GetPositionZ() < GetMap()->GetMinHeight(GetPositionX(), GetPositionY()))
+    else if (GetPositionZ() < GetMap()->GetMinHeight(GetPosition()))
         TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation());
 
     RemoveFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_IS_OUT_OF_BOUNDS);

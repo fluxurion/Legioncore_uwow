@@ -19,7 +19,8 @@
 #include "MoveSpline.h"
 #include "Log.h"
 
-namespace Movement{
+namespace Movement
+{
 
 extern float computeFallTime(float path_length, bool isSafeFall);
 extern float computeFallElevation(float time_passed, bool isSafeFall, float start_velocy);

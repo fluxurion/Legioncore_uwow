@@ -184,7 +184,6 @@ SpellNonMeleeDamage::SpellNonMeleeDamage(Unit* _attacker, Unit* _target, uint32 
 Unit::Unit(bool isWorldObject): WorldObject(isWorldObject)
     , m_movedPlayer(NULL)
     , m_lastSanctuaryTime(0)
-    , m_TempSpeed(0.0f)
     , IsAIEnabled(false)
     , NeedChangeAI(false)
     , m_ControlledByPlayer(false)
@@ -290,8 +289,6 @@ Unit::Unit(bool isWorldObject): WorldObject(isWorldObject)
 
     m_expertise = 0.0f;
     m_baseSpellCritChance = 5;
-    m_anti_JupmTime = 0;                // Jump Time
-    m_anti_FlightTime = 0;                // Jump Time
 
     m_CombatTimer = 0;
 
@@ -14917,9 +14914,6 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
     if (speed <= 0) //crash client
         speed = 0.01f;
 
-    if(old_speed > speed)
-        m_anti_JupmTime = 2000;
-
     SetSpeed(mtype, speed, forced);
 }
 
@@ -21629,7 +21623,6 @@ void Unit::UpdateObjectVisibility(bool forced)
 void Unit::SendMoveKnockBack(Player* player, float speedXY, float speedZ, float vcos, float vsin)
 {
     AddUnitState(UNIT_STATE_JUMPING);
-    m_TempSpeed = fabs(speedZ * 10.0f);
 
     WorldPackets::Movement::MoveKnockBack knockBack;
     knockBack.MoverGUID = GetGUID();
@@ -22543,10 +22536,7 @@ void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool cas
 {
     DisableSpline();
     if (GetTypeId() == TYPEID_PLAYER)
-    {
-        m_anti_JupmTime = sWorld->GetUpdateTime() * 5;
         ToPlayer()->TeleportTo(GetMapId(), x, y, z, orientation, TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (casting ? TELE_TO_SPELL : 0));
-    }
     else
     {
         Position pos = {x, y, z, orientation};

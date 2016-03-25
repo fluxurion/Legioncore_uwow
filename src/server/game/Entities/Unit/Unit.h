@@ -2375,9 +2375,6 @@ class Unit : public WorldObject
         float GetSpeed(UnitMoveType mtype) const;
         float GetSpeedRate(UnitMoveType mtype) const { return m_speed_rate[mtype]; }
         void SetSpeed(UnitMoveType mtype, float rate, bool forced = false);
-        float m_TempSpeed;
-        uint32 m_anti_JupmTime;
-        uint32 m_anti_FlightTime;
 
         bool isHover() const { return HasAuraType(SPELL_AURA_HOVER); }
         bool isCamouflaged() const { return HasAuraType(SPELL_AURA_MOD_CAMOUFLAGE); }
@@ -2607,8 +2604,6 @@ class Unit : public WorldObject
         void SetVirtualItem(uint32 slot, uint32 itemID, uint16 appearanceModID = 0);
     protected:
         explicit Unit (bool isWorldObject);
-
-        GameObject * m_temp_transport;
         UnitAI* i_AI, *i_disabledAI;
 
         void _UpdateSpells(uint32 time);

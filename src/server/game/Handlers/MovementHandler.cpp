@@ -208,10 +208,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPackets::Movement::MoveTeleportAck
     plMover->SetSemaphoreTeleportNear(false);
 
     uint32 old_zone = plMover->GetZoneId();
-
-    WorldLocation const& dest = plMover->GetTeleportDest();
-
-    plMover->UpdatePosition(dest, true);
+    plMover->UpdatePosition(plMover->GetTeleportDest(), true);
 
     uint32 newzone, newarea;
     plMover->GetZoneAndAreaId(newzone, newarea);
@@ -232,9 +229,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPackets::Movement::MoveTeleportAck
     if (Unit* mover = _player->m_mover)
     {
         mover->m_movementInfo.time = getMSTime();
-        mover->m_movementInfo.pos.m_positionX = mover->GetPositionX();
-        mover->m_movementInfo.pos.m_positionY = mover->GetPositionY();
-        mover->m_movementInfo.pos.m_positionZ = mover->GetPositionZ();
+        mover->m_movementInfo.pos = mover->GetPosition();
 
         WorldPackets::Movement::MoveUpdate playerMovement;
         playerMovement.movementInfo = &mover->m_movementInfo;
@@ -246,59 +241,36 @@ void WorldSession::HandleMoveTeleportAck(WorldPackets::Movement::MoveTeleportAck
 
 void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMovement& packet)
 {
-    OpcodeClient opcode = packet.GetOpcode();
-
-    uint32 diff = sWorld->GetUpdateTime();
     Unit* mover = _player->m_mover;
-
-    if (!mover || mover == NULL)
+    if (!mover)
         return;
 
     Player* plrMover = mover->ToPlayer();
-
-    Vehicle *vehMover = mover->GetVehicleKit();
-    if (vehMover)
+    if (Vehicle const* vehMover = mover->GetVehicleKit())
         if (mover->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED))
-            if (Unit *charmer = mover->GetCharmer())
+            if (Unit* charmer = mover->GetCharmer())
                 if (charmer->GetTypeId() == TYPEID_PLAYER)
-                    plrMover = (Player*)charmer;
-
-    uint8 forvehunit = 0;
-    if (plrMover && plrMover->GetTypeId() == TYPEID_PLAYER && plrMover->GetVehicle())
-        if (Unit* VehUnit = plrMover->GetVehicle()->GetBase())
-            if (VehUnit->HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY) || VehUnit->HasUnitMovementFlag(MOVEMENTFLAG_FLYING))
-                forvehunit = 1;
+                    plrMover = static_cast<Player*>(charmer);
 
     if (plrMover && plrMover->IsBeingTeleported())
+        return;
+
+    GetPlayer()->ValidateMovementInfo(&packet.movementInfo);
+
+    MovementInfo& movementInfo = packet.movementInfo;
+    if (movementInfo.guid != mover->GetGUID() || !movementInfo.pos.IsPositionValid())
         return;
 
     if (plrMover && (plrMover->GetUInt32Value(UNIT_NPC_EMOTESTATE) != 0))
         plrMover->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
 
-    MovementInfo& movementInfo = packet.movementInfo;
-    GetPlayer()->ValidateMovementInfo(&movementInfo);
-
-    if (movementInfo.guid != mover->GetGUID() || !mover->IsInWorld())
-        return;
-
-    if (!movementInfo.pos.IsPositionValid())
-    {
-        sLog->outError(LOG_FILTER_NETWORKIO, "HandleMovementOpcodes: Invalid Position");
-        return;
-    }
-
     if (mover->HasAuraType(SPELL_AURA_MOD_POSSESS) || (plrMover && plrMover->HasAuraType(SPELL_AURA_MOD_POSSESS)))
-    {
         if (movementInfo.flags & MOVEMENTFLAG_WALKING)
             movementInfo.flags &= ~MOVEMENTFLAG_WALKING;
-    }
 
-    if (movementInfo.transport.guid)
+    if (!movementInfo.transport.guid.IsEmpty())
     {
-        if (World::GetEnableMvAnticheatDebug())
-            sLog->outError(LOG_FILTER_NETWORKIO, "HandleMovementOpcodes t_guid %s, opcode[%s]", movementInfo.transport.guid.ToString().c_str(), GetOpcodeNameForLogging(opcode).c_str());
-
-        if (movementInfo.transport.pos.GetPositionX() > 50 || movementInfo.transport.pos.GetPositionY() > 50 || movementInfo.transport.pos.GetPositionZ() > 50)
+        if (movementInfo.transport.pos.GetPositionX() > 50.0f || movementInfo.transport.pos.GetPositionY() > 50.0f || movementInfo.transport.pos.GetPositionZ() > 50.0f)
             return;
 
         if (!Trinity::IsValidMapCoord(movementInfo.pos.GetPositionX() + movementInfo.transport.pos.GetPositionX(), movementInfo.pos.GetPositionY() + movementInfo.transport.pos.GetPositionY(),
@@ -309,410 +281,106 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
         {
             if (!plrMover->GetTransport())
             {
-                for (MapManager::TransportSet::const_iterator iter = sMapMgr->m_Transports.begin(); iter != sMapMgr->m_Transports.end(); ++iter)
-                {
-                    if ((*iter)->GetGUID() == movementInfo.transport.guid)
+                for (auto const& iter : sMapMgr->m_Transports)
+                    if (iter->GetGUID() == movementInfo.transport.guid)
                     {
-                        plrMover->m_transport = *iter;
-                        (*iter)->AddPassenger(plrMover);
+                        plrMover->m_transport = iter;
+                        iter->AddPassenger(plrMover);
                         break;
                     }
-                }
-
-                if (!plrMover->m_transport)
-                    if (Map *tempMap = mover->GetMap())
-                        if (GameObject *tempTransport = tempMap->GetGameObject(movementInfo.transport.guid))
-                            if (tempTransport->IsTransport())
-                                plrMover->m_temp_transport = tempTransport;
             }
             else if (plrMover->GetTransport()->GetGUID() != movementInfo.transport.guid)
             {
                 bool foundNewTransport = false;
                 plrMover->m_transport->RemovePassenger(plrMover);
-                for (MapManager::TransportSet::const_iterator iter = sMapMgr->m_Transports.begin(); iter != sMapMgr->m_Transports.end(); ++iter)
-                {
-                    if ((*iter)->GetGUID() == movementInfo.transport.guid)
+                for (auto const& iter : sMapMgr->m_Transports)
+                    if (iter->GetGUID() == movementInfo.transport.guid)
                     {
                         foundNewTransport = true;
-                        plrMover->m_transport = *iter;
-                        (*iter)->AddPassenger(plrMover);
+                        plrMover->m_transport = iter;
+                        iter->AddPassenger(plrMover);
                         break;
                     }
-                }
 
                 if (!foundNewTransport)
                 {
-                    plrMover->m_transport = NULL;
-                    plrMover->m_movementInfo.ResetTransport();
+                    plrMover->m_transport = nullptr;
+                    plrMover->m_movementInfo.transport.Reset();
                 }
             }
         }
 
         if (!mover->GetTransport() && !mover->GetVehicle())
-        {
-            GameObject* go = mover->GetMap()->GetGameObject(movementInfo.transport.guid);
-            if (!go || go->GetGoType() != GAMEOBJECT_TYPE_TRANSPORT)
-                movementInfo.transport.guid.Clear();
-        }
+            if (GameObject* go = mover->GetMap()->GetGameObject(movementInfo.transport.guid))
+                if (go->GetGoType() != GAMEOBJECT_TYPE_TRANSPORT)
+                    movementInfo.transport.Reset();
     }
-    else if (plrMover && (plrMover->m_transport || plrMover->m_temp_transport))
-    {
-        if (plrMover->m_transport)
-        {
-            plrMover->m_transport->RemovePassenger(plrMover);
-            plrMover->m_transport = NULL;
-        }
-        plrMover->m_temp_transport = NULL;
-        movementInfo.ResetTransport();
-    }
-
-    if (plrMover && plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && plrMover && !plrMover->isInFlight())
-    {
-        plrMover->m_anti_JumpCount = 0;
-        plrMover->m_anti_JumpBaseZ = 0;
-        if (!plrMover->Zliquid_status)
-            plrMover->HandleFall(movementInfo);
-    }
+    else if (plrMover && plrMover->GetTransport())
+        plrMover->m_transport->RemovePassenger(plrMover);
+        
+    OpcodeClient opcode = packet.GetOpcode();
+    if (opcode == CMSG_MOVE_FALL_LAND && plrMover && !plrMover->isInFlight())
+        plrMover->HandleFall(movementInfo);
 
     if (plrMover && ((movementInfo.flags & MOVEMENTFLAG_SWIMMING) != 0) != plrMover->IsInWater())
-        plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), movementInfo.pos.GetPositionZ()));
+        plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(movementInfo.pos));
 
     if (plrMover && mover)
+        if (Vehicle const* veh = mover->GetVehicleKit())
+            if (Unit* base = veh->GetBase())
+                if (Creature* vehCreature = base->ToCreature())
+                    if (!vehCreature->isInAccessiblePlaceFor(vehCreature))
+                        plrMover->ExitVehicle();
+
+    if (m_clientTimeDelay == 0)
+        m_clientTimeDelay = getMSTime() - movementInfo.time;
+
+    movementInfo.time = movementInfo.time + m_clientTimeDelay + MOVEMENT_PACKET_TIME_DELAY;
+
+    movementInfo.guid = mover->GetGUID();
+    mover->m_movementInfo = movementInfo;
+
+    if (Vehicle* vehicle = mover->GetVehicle())
     {
-        Vehicle *veh = mover->GetVehicleKit();
-        if (veh && veh->GetBase())
-        {
-            if (Creature * vehCreature = veh->GetBase()->ToCreature())
-            {
-                if (!vehCreature->isInAccessiblePlaceFor(vehCreature))
-                    plrMover->ExitVehicle();
-            }
-        }
+        if (VehicleSeatEntry const* seat = vehicle->GetSeatForPassenger(mover))
+            if (seat->Flags & VEHICLE_SEAT_FLAG_ALLOW_TURNING)
+                if (movementInfo.pos.GetOrientation() != mover->GetOrientation())
+                {
+                    mover->SetOrientation(movementInfo.pos.GetOrientation());
+                    mover->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TURNING);
+                }
+
+        return;
     }
 
-    /*----------------------*/
-    // begin anti cheat
-    bool check_passed = true;
-    if (World::GetEnableMvAnticheatDebug())
+    mover->UpdatePosition(movementInfo.pos);
+
+    WorldPackets::Movement::MoveUpdate moveUpdate;
+    moveUpdate.movementInfo = &mover->m_movementInfo;
+    mover->SendMessageToSet(moveUpdate.Write(), _player);
+
+    if (plrMover)
     {
-        sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s > time: %d fall-time: %d | xyzo: %f, %f, %fo(%f) flags[%X] flags2[%X] UnitState[%X] opcode[%s] | mover (xyzo): %f, %f, %fo(%f)",
-            plrMover->GetName(), movementInfo.time, movementInfo.fallTime, movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), movementInfo.pos.GetPositionZ(), movementInfo.pos.GetOrientation(),
-            movementInfo.flags, movementInfo.flags2, mover->GetUnitState(), GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str(), mover->GetPositionX(), mover->GetPositionY(), mover->GetPositionZ(), mover->GetOrientation());
-    }
+        if (plrMover->IsSitState() && (movementInfo.HasMovementFlag(MOVEMENTFLAG_MASK_MOVING | MOVEMENTFLAG_MASK_TURNING)))
+            plrMover->SetStandState(UNIT_STAND_STATE_STAND);
 
-    if (plrMover && plrMover->GetTypeId() == TYPEID_PLAYER && !plrMover->HasUnitState(UNIT_STATE_LOST_CONTROL) &&
-        !plrMover->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_TAXI_FLIGHT) &&
-        mover->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE &&
-        !(plrMover->m_transport || plrMover->m_temp_transport) && (plrMover->GetMapId() != 578 || plrMover->GetMapId() != 603))
-    {
-        float speed_plus = 1.5f;
-        bool m_anty_check = true;
-        bool m_anty_vechicle = plrMover->GetCharmerOrOwnerPlayerOrPlayerItself()->GetVehicle();
-        bool m_anty_possess = plrMover->HasAuraType(SPELL_AURA_MOD_POSSESS);
-        float delta_check_plus = 0.0f;
-        if (m_anty_vechicle || m_anty_possess)
-            delta_check_plus = 200.0f;
+        plrMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
-        if (World::GetEnableMvAnticheat() && plrMover->GetCharmerOrOwnerPlayerOrPlayerItself()->GetSession()->GetSecurity() < SEC_GAMEMASTER)
-        {
-            //check CX walkmode + time sinc
-            if (movementInfo.flags & MOVEMENTFLAG_WALKING && _player->m_anti_MistiCount == 1)
-            {
-                plrMover->m_anti_MistiCount = 0;
-                check_passed = false;
-            }
-            //end
-
-            // calc time deltas
-            int32 cClientTimeDelta = 1500;
-            if (plrMover->m_anti_LastClientTime != 0)
-            {
-                cClientTimeDelta = movementInfo.time - plrMover->m_anti_LastClientTime;
-                plrMover->m_anti_DeltaClientTime += cClientTimeDelta;
-                plrMover->m_anti_LastClientTime = movementInfo.time;
-            }
-            else
-                plrMover->m_anti_LastClientTime = movementInfo.time;
-
-            const uint64 cServerTime = getMSTime();
-            uint32 cServerTimeDelta = 1500;
-            if (plrMover->m_anti_LastServerTime != 0)
-            {
-                cServerTimeDelta = cServerTime - plrMover->m_anti_LastServerTime;
-                plrMover->m_anti_DeltaServerTime += cServerTimeDelta;
-                plrMover->m_anti_LastServerTime = cServerTime;
-            }
-            else
-                plrMover->m_anti_LastServerTime = cServerTime;
-
-            // resync times on client login (first 15 sec for heavy areas)
-            if (plrMover->m_anti_DeltaServerTime < 15000 && plrMover->m_anti_DeltaClientTime < 15000)
-                plrMover->m_anti_DeltaClientTime = plrMover->m_anti_DeltaServerTime;
-
-            const int32 sync_time = plrMover->m_anti_DeltaClientTime - plrMover->m_anti_DeltaServerTime;
-
-            if (World::GetEnableMvAnticheatDebug())
-                sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s Time > cClientTimeDelta: %d, cServerTime: %d | deltaC: %d - deltaS: %d | SyncTime: %d, opcode[%s]",
-                plrMover->GetName(), cClientTimeDelta, cServerTime, plrMover->m_anti_DeltaClientTime, plrMover->m_anti_DeltaServerTime, sync_time, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-            // mistiming checks
-            const int32 GetMistimingDelta = abs(int32(World::GetMistimingDelta()));
-            if (sync_time > GetMistimingDelta)
-            {
-                cClientTimeDelta = cServerTimeDelta;
-                ++(plrMover->m_anti_MistimingCount);
-
-                const bool bMistimingModulo = plrMover->m_anti_MistimingCount % 50 == 0;
-
-                if (bMistimingModulo)
+        if (movementInfo.pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.pos))
+            if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))
+                if (plrMover->isAlive())
                 {
-                    if (World::GetEnableMvAnticheatDebug())
-                        sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, mistiming exception #%d, mistiming: %dms, opcode[%s]", plrMover->GetName(), plrMover->m_anti_MistimingCount, sync_time, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                    check_passed = false;
+                    plrMover->SetFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_IS_OUT_OF_BOUNDS);
+                    plrMover->EnvironmentalDamage(DAMAGE_FALL_TO_VOID, GetPlayer()->GetMaxHealth());
+                    if (!plrMover->isAlive())
+                        plrMover->KillPlayer();
                 }
-            }
-            // end mistiming checks
-
-            const uint32 curDest = plrMover->m_taxi.GetTaxiDestination(); // check taxi flight
-            if (!curDest)
-            {
-                // calculating section
-                // current speed
-                if (plrMover->HasAuraType(SPELL_AURA_FEATHER_FALL))
-                    speed_plus = 7.0f;
-                if (plrMover->HasAura(19503))
-                    speed_plus = 15.0f;
-                if (plrMover->HasAura(2983) || plrMover->HasAura(48594) || plrMover->HasAura(56354) || plrMover->HasAura(32720) || plrMover->HasAura(3714))
-                    speed_plus = 4.0f;
-
-                float current_speed = mover->GetSpeed(MOVE_RUN) > mover->GetSpeed(MOVE_FLIGHT) ? mover->GetSpeed(MOVE_RUN) : mover->GetSpeed(MOVE_FLIGHT);
-                if (current_speed < mover->GetSpeed(MOVE_SWIM))
-                    current_speed = mover->GetSpeed(MOVE_SWIM);
-                current_speed *= speed_plus + mover->m_TempSpeed;
-                bool speed_check = true;
-
-                if (mover->m_anti_JupmTime && mover->m_anti_JupmTime > 0)
-                {
-                    plrMover->m_anti_LastSpeedChangeTime = movementInfo.time + mover->m_anti_JupmTime;
-                    speed_check = false;
-
-                    if (mover->m_anti_JupmTime <= diff)
-                    {
-                        mover->m_anti_JupmTime = 0;
-                        speed_check = true;
-                    }
-                    else
-                        mover->m_anti_JupmTime -= diff;
-                }
-                // end current speed
-
-                // movement distance
-                const float delta_x = (plrMover->m_transport || plrMover->m_temp_transport) ? 0 : mover->GetPositionX() - movementInfo.pos.GetPositionX();
-                const float delta_y = (plrMover->m_transport || plrMover->m_temp_transport) ? 0 : mover->GetPositionY() - movementInfo.pos.GetPositionY();
-                const float delta_z = (plrMover->m_transport || plrMover->m_temp_transport) ? 0 : mover->GetPositionZ() - movementInfo.pos.GetPositionZ();
-                const float real_delta = (plrMover->m_transport || plrMover->m_temp_transport) ? 0 : (pow(delta_x, 2) + pow(delta_y, 2));
-                // end movement distance
-
-                const bool fly_auras = (plrMover->HasAuraType(SPELL_AURA_FLY) || plrMover->HasAuraType(SPELL_AURA_MOD_INCREASE_VEHICLE_FLIGHT_SPEED)
-                    || plrMover->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) || plrMover->HasAuraType(SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED)
-                    || plrMover->HasAuraType(SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_ALWAYS));
-                const bool fly_flags = (movementInfo.flags & (MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING | MOVEMENTFLAG_DISABLE_GRAVITY | MOVEMENTFLAG_ASCENDING));
-                bool exeption_fly = true;
-
-                if (mover->m_anti_FlightTime && mover->m_anti_FlightTime > 0)
-                {
-                    if (!fly_auras && fly_flags)
-                        exeption_fly = false;
-
-                    if (mover->m_anti_FlightTime <= diff)
-                    {
-                        mover->m_anti_FlightTime = 0;
-                        exeption_fly = true;
-                    }
-                    else
-                        mover->m_anti_FlightTime -= diff;
-                }
-
-                float _vmapHeight = 0.0f;
-                float _Height = 0.0f;
-                //if in fly crash on check VmapHeight
-                if (!fly_auras)
-                {
-                    _vmapHeight = plrMover->GetMap()->GetVmapHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), movementInfo.pos.GetPositionZ());
-                    _Height = plrMover->GetMap()->GetHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), movementInfo.pos.GetPositionZ());
-                }
-                const float ground_Z = movementInfo.pos.GetPositionZ() - _vmapHeight;
-
-                if (cClientTimeDelta == 0)
-                    cClientTimeDelta = 1500;
-                if (cClientTimeDelta < 0)
-                    cClientTimeDelta = 0;
-                const float time_delta = cClientTimeDelta < 1500 ? float(cClientTimeDelta) / 1000.0f : 1.5f; // normalize time - 1.5 second allowed for heavy loaded server
-
-                const float tg_z = (real_delta != 0 && !fly_auras && !plrMover->Zliquid_status) ? (pow(delta_z, 2) / real_delta) : -99999; // movement distance tangents
-
-                if (current_speed < plrMover->m_anti_Last_HSpeed && plrMover->m_anti_LastSpeedChangeTime == 0)
-                    plrMover->m_anti_LastSpeedChangeTime = movementInfo.time + uint32(floor(((plrMover->m_anti_Last_HSpeed / current_speed) * 1500)) + 100); // 100ms above for random fluctuation
-
-                const float allowed_delta = (plrMover->m_transport || plrMover->m_temp_transport) ? 2 : // movement distance allowed delta
-                    pow(std::max(current_speed, plrMover->m_anti_Last_HSpeed) * time_delta, 2)
-                    + 2                                                                             // minimum allowed delta
-                    + (tg_z > 2.2 ? pow(delta_z, 2) / 2.37f : 0);                                      // mountain fall allowed delta
-
-                if (World::GetEnableMvAnticheatDebug())
-                    sLog->outError(LOG_FILTER_NETWORKIO, "AC444 out m_anti_JupmTime %u current_speed %f allowed_delta %f real_delta %f fly_auras %u fly_flags %u _vmapHeight %f, _Height %f, ZLiquidStatus %u, opcode[%s]",
-                    mover->m_anti_JupmTime, current_speed, allowed_delta, real_delta, fly_auras, fly_flags, _vmapHeight, _Height, plrMover->Zliquid_status, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                if (movementInfo.time > plrMover->m_anti_LastSpeedChangeTime)
-                {
-                    plrMover->m_anti_Last_HSpeed = current_speed;                                    // store current speed
-                    plrMover->m_anti_Last_VSpeed = -2.3f;
-                    plrMover->m_anti_LastSpeedChangeTime = 0;
-                }
-                // end calculating section
-
-                // speed and teleport hack checks
-                if (real_delta > (allowed_delta + delta_check_plus))
-                {
-                    if (World::GetEnableMvAnticheatDebug())
-                        if (real_delta < 4900.0f)
-                            sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, speed exception | cDelta=%f aDelta=%f | cSpeed=%f lSpeed=%f deltaTime=%f, opcode[%s]", plrMover->GetName(), real_delta, allowed_delta, current_speed, plrMover->m_anti_Last_HSpeed, time_delta, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-                        else
-                            sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, teleport exception | cDelta=%f aDelta=%f | cSpeed=%f lSpeed=%f deltaTime=%f, opcode[%s]", plrMover->GetName(), real_delta, allowed_delta, current_speed, plrMover->m_anti_Last_HSpeed, time_delta, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                    if (speed_check || real_delta > 4900.0f)
-                        check_passed = false;
-
-                    plrMover->FallGroundAnt();
-                }
-
-                // Fly hack checks
-                if (!fly_auras && (fly_flags || ground_Z > 2.3f) && !forvehunit && exeption_fly && !plrMover->Zliquid_status)
-                {
-                    if (World::GetEnableMvAnticheatDebug())
-                        sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, flight exception. {SPELL_AURA_FLY=[%X]} {SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED=[%X]} {SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED=[%X]} {SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_ALWAYS=[%X]} {SPELL_AURA_MOD_FLIGHT_SPEED_NOT_STACK=[%X]} {plrMover->GetVehicle()=[%X]} forvehunit=[%X], opcode[%s]",
-                        plrMover->GetName(),
-                        plrMover->HasAuraType(SPELL_AURA_FLY), plrMover->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED),
-                        plrMover->HasAuraType(SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED), plrMover->HasAuraType(SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_ALWAYS),
-                        plrMover->HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_NOT_STACK), plrMover->GetVehicle(), forvehunit, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                    //check_passed = false;
-                    plrMover->SetCanFly(true);
-                    plrMover->SetCanFly(false);
-                    //plrMover->FallGroundAnt();
-                }
-
-                // Teleport To Plane checks
-                if (!plrMover->Zliquid_status && movementInfo.pos.GetPositionZ() < 0.0001f && movementInfo.pos.GetPositionZ() > -0.0001f)
-                {
-                    if (const Map *map = plrMover->GetMap())
-                    {
-                        float plane_z = map->GetHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), MAX_HEIGHT) - movementInfo.pos.GetPositionZ();
-                        plane_z = (plane_z < -500.0f) ? 0.0f : plane_z; // check holes in height map
-                        if (plane_z > 0.1f || plane_z < -0.1f)
-                        {
-                            if (World::GetEnableMvAnticheatDebug())
-                                sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, teleport to plane exception. plane_z: %f, opcode[%s]", plrMover->GetName(), plane_z, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                            if (World::GetEnableMvAnticheatDebug())
-                                if (plrMover->m_anti_TeleToPlane_Count > World::GetTeleportToPlaneAlarms())
-                                    sLog->outError(LOG_FILTER_NETWORKIO, "AC2-%s, teleport to plane exception. Exception count: %d, opcode[%s]", plrMover->GetName(), plrMover->m_anti_TeleToPlane_Count, GetOpcodeNameForLogging(static_cast<OpcodeClient>(opcode)).c_str());
-
-                            ++(plrMover->m_anti_TeleToPlane_Count);
-                            check_passed = false;
-                        }
-                    }
-                }
-                else
-                    plrMover->m_anti_TeleToPlane_Count = 0;
-            }
-        }
-    }
-
-    if (check_passed)
-    {
-        movementInfo.time = movementInfo.time + m_clientTimeDelay + MOVEMENT_PACKET_TIME_DELAY;
-
-        movementInfo.guid = mover->GetGUID();
-        mover->m_movementInfo = movementInfo;
-
-        WorldPackets::Movement::MoveUpdate playerMovement;
-        playerMovement.movementInfo = &mover->m_movementInfo;
-        mover->SendMessageToSet(const_cast<WorldPacket*>(playerMovement.Write()), _player);
-
-        if (opcode == CMSG_MOVE_FALL_LAND)
-        {
-            mover->ClearUnitState(UNIT_STATE_JUMPING);
-            mover->m_TempSpeed = 0.0f;
-            //! HACK
-            //! ToDo: should be interrupt flag for DH glide - 131347
-            //mover->RemoveAurasWithInterruptFlags(/*glide*/);
-            mover->RemoveAurasDueToSpell(131347);
-        }
-
-        if (mover->GetVehicle())
-        {
-            mover->SetOrientation(movementInfo.pos.GetOrientation());
-            return;
-        }
-
-        mover->UpdatePosition(movementInfo.pos);
-
-        if (plrMover)                                            // nothing is charmed, or player charmed
-        {
-            plrMover->UpdateFallInformationIfNeed(movementInfo, opcode);
-
-            if (plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING_FAR))
-            {
-                if (movementInfo.pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY()))
-                    if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))
-                    {
-                        // by CyberBrest: Nice! Best regards. Just kill man,  maybe return them to the grave??? 
-                        // move to grave, and then kill.
-                        plrMover->RepopAtGraveyard();
-
-                        // NOTE: this is actually called many times while falling
-                        // even after the player has been teleported away
-                        // TODO: discard movement packets after the player is rooted
-                        if (plrMover->isAlive())
-                        {
-                            plrMover->SetFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_IS_OUT_OF_BOUNDS);
-                            plrMover->EnvironmentalDamage(DAMAGE_FALL_TO_VOID, GetPlayer()->GetMaxHealth());
-                            if (!plrMover->isAlive())
-                                plrMover->KillPlayer();
-                        }
-                    }
-            }
-        }
-    }
-    else if (plrMover)
-    {
-        if (plrMover->m_transport)
-        {
-            plrMover->m_transport->RemovePassenger(plrMover);
-            plrMover->m_transport = NULL;
-        }
-        plrMover->m_temp_transport = NULL;
-        ++(plrMover->m_anti_AlarmCount);
-        plrMover->SetUnitMovementFlags(0);
-
-        WorldPackets::Movement::MoveUpdate playerMovement;
-        playerMovement.movementInfo = &plrMover->m_movementInfo;
-        plrMover->SendMessageToSet(playerMovement.Write(), true);
-
-        plrMover->SetCanFly(true);
-        plrMover->SetCanFly(false);
-        plrMover->FallGroundAnt();
     }
 }
 
 void WorldSession::HandleForceSpeedChangeAck(WorldPackets::Movement::MovementSpeedAck& packet)
 {
     Player* player = GetPlayer();
-    if (!player)
-        return;
-
     player->ValidateMovementInfo(&packet.Ack.movementInfo);
 
     if (player->GetGUID() != packet.Ack.movementInfo.guid)
@@ -755,9 +423,6 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPackets::Movement::MovementSpe
 void WorldSession::HandleMoveKnockBackAck(WorldPackets::Movement::MovementAckMessage& packet)
 {
     Player* player = GetPlayer();
-    if (!player)
-        return;
-
     player->ValidateMovementInfo(&packet.Ack.movementInfo);
 
     if (player->m_mover->GetGUID() != packet.Ack.movementInfo.guid)
@@ -793,9 +458,6 @@ void WorldSession::HandleSetActiveMover(WorldPackets::Movement::SetActiveMover& 
 
 void WorldSession::HandleMoveTimeSkipped(WorldPackets::Movement::MoveTimeSkipped& /*packet*/)
 {
-    if (Player* player = GetPlayer())
-        if (player->m_mover->m_movementInfo.flags & MOVEMENTFLAG_WALKING)
-            player->m_anti_MistiCount = 1;
 }
 
 void WorldSession::HandleMoveSplineDone(WorldPackets::Movement::MoveSplineDone& packet)

@@ -952,8 +952,7 @@ void AreaTrigger::UpdateMovement(uint32 diff)
     }
 
     Position tempPos;
-    tempPos.VectorToPosition(m_movePath[m_currentNode]);
-    float angle = tempPos.GetAngle(m_movePath[m_currentNode + 1].x, m_movePath[m_currentNode + 1].y);
+    float angle = tempPos.VectorToPosition(m_movePath[m_currentNode]).VectorToPosition(m_movePath[m_currentNode]).GetAngle(m_movePath[m_currentNode + 1].x, m_movePath[m_currentNode + 1].y);
 
     //float speed = getMoveSpeed() / (((m_movePath.size() - 1) / 4) * m_currentNode);
     float speed = getMoveSpeed();

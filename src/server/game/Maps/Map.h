@@ -334,7 +334,7 @@ class Map : public GridRefManager<NGridType>
         // some calls like isInWater should not use vmaps due to processor power
         // can return INVALID_HEIGHT if under z+2 z coord not found height
         float GetHeight(float x, float y, float z, bool checkVMap = true, float maxSearchDist = DEFAULT_HEIGHT_SEARCH) const;
-        float GetMinHeight(float x, float y) const;
+        float GetMinHeight(Position pos) const;
         float GetVmapHeight(float x, float y, float z) const;
         float GetGridMapHeigh(float x, float y) const;
 
@@ -351,7 +351,7 @@ class Map : public GridRefManager<NGridType>
         uint8 GetTerrainType(float x, float y) const;
         float GetWaterLevel(float x, float y) const;
         bool IsInWater(float x, float y, float z, LiquidData* data = 0) const;
-        bool IsUnderWater(float x, float y, float z) const;
+        bool IsUnderWater(Position pos) const;
 
         void MoveAllCreaturesInMoveList();
         void RemoveAllObjectsInRemoveList();

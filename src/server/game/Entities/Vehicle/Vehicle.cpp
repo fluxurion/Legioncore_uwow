@@ -592,7 +592,7 @@ void Vehicle::RemovePassenger(Unit* unit)
     }
 
     if (_me->IsInWorld())
-        unit->m_movementInfo.ResetTransport();
+        unit->m_movementInfo.transport.Reset();
 
     // only for flyable vehicles
     if (unit->IsFlying())
@@ -909,7 +909,6 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
     if (Seat->second.SeatInfo->Flags & VEHICLE_SEAT_FLAG_HIDE_PASSENGER)
         Passenger->AddUnitState(UNIT_STATE_ONVEHICLE);
 
-    //Passenger->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
     if (newTPos)
         Passenger->m_movementInfo.transport.pos.SetPosition(veSeat->AttachmentOffset);
     Passenger->m_movementInfo.transport.time = 0; // 1 for player

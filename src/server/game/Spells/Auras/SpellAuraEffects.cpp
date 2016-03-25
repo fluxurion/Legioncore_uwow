@@ -3863,17 +3863,11 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
         target->m_movementInfo.SetFallTime(0);
         target->RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING_FLY);
         target->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
-    }else
+    }
+    else
         target->RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
     target->SetCanFly(apply);
-
-    Player* player = target->ToPlayer();
-    if (!player)
-        player = target->m_movedPlayer;
-
-    if (player)
-        target->m_anti_FlightTime = 1000;
 
     //! We still need to initiate a server-side MoveFall here,
     //! which requires MSG_MOVE_FALL_LAND on landing.

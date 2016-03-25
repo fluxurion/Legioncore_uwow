@@ -82,7 +82,7 @@ struct Position
     void GetPosition(float &x, float &y, float &z, float &o) const { x = m_positionX; y = m_positionY; z = m_positionZ; o = m_orientation; }
     void GetPosition(Position* pos) const { if (pos) pos->Relocate(m_positionX, m_positionY, m_positionZ, m_orientation); }
     void PositionToVector(G3D::Vector3& pos) const {  pos.x = m_positionX; pos.y = m_positionY; pos.z = m_positionZ; }
-    void VectorToPosition(G3D::Vector3 pos) {  m_positionX = pos.x; m_positionY = pos.y; m_positionZ = pos.z; }
+    Position VectorToPosition(G3D::Vector3 pos) {  return Position{pos.x, pos.y, pos.z}; }
 
     Position::PositionXYStreamer PositionXYStream() { return PositionXYStreamer(*this); }
     Position::PositionXYZStreamer PositionXYZStream() { return PositionXYZStreamer(*this); }

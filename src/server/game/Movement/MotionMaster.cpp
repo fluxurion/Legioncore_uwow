@@ -429,8 +429,6 @@ void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float spee
 
     //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "MoveJump (GUID: %u) jump to (X: %f Y: %f Z: %f, max_height: %f speedXY %f)", _owner->GetGUIDLow(), x, y, z, max_height, speedXY);
 
-    if (_owner->GetTypeId() == TYPEID_PLAYER)
-        _owner->m_anti_JupmTime = time + sWorld->GetUpdateTime() * 3;
     //if (!o)
         //o = _owner->GetOrientation();
 
@@ -489,7 +487,6 @@ void MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id,
 
     if (_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        _owner->m_anti_JupmTime = 50 + sWorld->GetUpdateTime() * 3;
         sLog->outDebug(LOG_FILTER_GENERAL, "Player (GUID: %u) charge point (X: %f Y: %f Z: %f)", _owner->GetGUIDLow(), x, y, z);
         Mutate(new PointMovementGenerator<Player>(id, x, y, z, generatePath, speed), MOTION_SLOT_CONTROLLED);
     }
@@ -508,8 +505,6 @@ bool MotionMaster::SpellMoveCharge(float x, float y, float z, float speed, uint3
 
     if (!_owner->IsWithinLOS(x, y, z))
         return false;
-
-    _owner->m_anti_JupmTime = 50 + sWorld->GetUpdateTime() * 3;
 
     sLog->outDebug(LOG_FILTER_GENERAL, "Player (GUID: %u) charge point (X: %f Y: %f Z: %f)", _owner->GetGUIDLow(), x, y, z);
 
