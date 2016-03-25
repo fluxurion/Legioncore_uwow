@@ -459,7 +459,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MISSILE_TRAJECTORY_COLLISION,                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Spells::MissileTrajectoryCollision, &WorldSession::HandleMissileTrajectoryCollision);
     DEFINE_HANDLER(CMSG_MOUNT_SET_FAVORITE,                                 STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_MOUNT_SPECIAL_ANIM,                                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::MountSpecialAnim, &WorldSession::HandleMountSpecialAnim);
-    DEFINE_HANDLER(CMSG_MOVE_APPLY_MOVEMENT_FORCE_ACK,                      STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_MOVE_APPLY_MOVEMENT_FORCE_ACK,                      STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MoveApplyMovementForceAck, &WorldSession::HandleMoveApplyMovementForceAck);
     DEFINE_HANDLER(CMSG_MOVE_CHANGE_TRANSPORT,                              STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_CHANGE_VEHICLE_SEATS,                          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Vehicle::MoveChangeVehicleSeats, &WorldSession::HandleMoveChangeVehicleSeats);
     DEFINE_HANDLER(CMSG_MOVE_CHARM_TELEPORT_CHEAT,                          STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -485,8 +485,8 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_MOVE_HOVER_ACK,                                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_JUMP,                                          STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_KNOCK_BACK_ACK,                                STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMoveKnockBackAck);
-    DEFINE_HANDLER(CMSG_MOVE_REMOVE_MOVEMENT_FORCE_ACK,                     STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_MOVE_REMOVE_MOVEMENT_FORCES,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_MOVE_REMOVE_MOVEMENT_FORCE_ACK,                     STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MoveRemoveMovementForceAck, &WorldSession::HandleMoveRemoveMovementForceAck);
+    DEFINE_HANDLER(CMSG_MOVE_REMOVE_MOVEMENT_FORCES,                        STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::ClientPlayerMovement, &WorldSession::HandleMovementOpcodes);
     DEFINE_HANDLER(CMSG_MOVE_SET_CAN_FLY_ACK,                               STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_SET_CAN_TURN_WHILE_FALLING_ACK,                STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MovementAckMessage, &WorldSession::HandleMovementAckMessage);
     DEFINE_HANDLER(CMSG_MOVE_SET_COLLISION_HEIGHT_ACK,                      STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   WorldPackets::Movement::MoveSetCollisionHeightAck, &WorldSession::HandleSetCollisionHeightAck);

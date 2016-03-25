@@ -437,7 +437,8 @@ void Vehicle::InstallAccessory(VehicleAccessory const* as)
     if (as->IsMinion)
         accessory->AddUnitTypeMask(UNIT_MASK_ACCESSORY);
 
-    accessory->m_movementInfo.transport.pos = as->Pos;
+    accessory->m_movementInfo.Transport = boost::in_place();
+    accessory->m_movementInfo.Transport->Pos = as->Pos;
 
     // Force enter for force vehicle aura - 296
     if (GetRecAura())
@@ -592,7 +593,7 @@ void Vehicle::RemovePassenger(Unit* unit)
     }
 
     if (_me->IsInWorld())
-        unit->m_movementInfo.transport.Reset();
+        unit->m_movementInfo.Transport = boost::none;
 
     // only for flyable vehicles
     if (unit->IsFlying())
@@ -626,7 +627,7 @@ void Vehicle::RelocatePassengers()
             ASSERT(passenger->IsInWorld());
 
             float px, py, pz, po;
-            passenger->m_movementInfo.transport.pos.GetPosition(px, py, pz, po);
+            passenger->m_movementInfo.Transport->Pos.GetPosition(px, py, pz, po);
             CalculatePassengerPosition(px, py, pz, po);
             passenger->UpdatePosition(px, py, pz, po);
             //if (passenger->GetTypeId() == TYPEID_PLAYER)
@@ -868,7 +869,7 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
     Target->RemovePendingEventsForPassenger(Passenger);
 
     bool newTPos = true;
-    if (Passenger->m_movementInfo.transport.pos.m_positionX != 0.0f || Passenger->m_movementInfo.transport.pos.m_positionY != 0.0f || Passenger->m_movementInfo.transport.pos.m_positionZ != 0.0f || Passenger->m_movementInfo.transport.pos.m_orientation != 0.0f)
+    if (Passenger->m_movementInfo.Transport->Pos.m_positionX != 0.0f || Passenger->m_movementInfo.Transport->Pos.m_positionY != 0.0f || Passenger->m_movementInfo.Transport->Pos.m_positionZ != 0.0f || Passenger->m_movementInfo.Transport->Pos.m_orientation != 0.0f)
         newTPos = false;
 
     Passenger->m_vehicle = Target;
@@ -910,19 +911,19 @@ bool VehicleJoinEvent::Execute(uint64, uint32)
         Passenger->AddUnitState(UNIT_STATE_ONVEHICLE);
 
     if (newTPos)
-        Passenger->m_movementInfo.transport.pos.SetPosition(veSeat->AttachmentOffset);
-    Passenger->m_movementInfo.transport.time = 0; // 1 for player
-    Passenger->m_movementInfo.transport.seat = Seat->first;
-    Passenger->m_movementInfo.transport.guid = Target->GetBase()->GetGUID();
-    Passenger->m_movementInfo.transport.vehicleId = Target->GetVehicleInfo()->ID;
+        Passenger->m_movementInfo.Transport->Pos.SetPosition(veSeat->AttachmentOffset);
+    Passenger->m_movementInfo.Transport->MoveTime = 0; // 1 for player
+    Passenger->m_movementInfo.Transport->VehicleSeatIndex = Seat->first;
+    Passenger->m_movementInfo.Transport->Guid = Target->GetBase()->GetGUID();
+    Passenger->m_movementInfo.Transport->VehicleRecID = Target->GetVehicleInfo()->ID;
 
     // Hackfix
     switch (veSeat->ID)
     {
         case 10882:
-            Passenger->m_movementInfo.transport.pos.m_positionX = 15.0f;
-            Passenger->m_movementInfo.transport.pos.m_positionY = 0.0f;
-            Passenger->m_movementInfo.transport.pos.m_positionZ = 30.0f;
+            Passenger->m_movementInfo.Transport->Pos.m_positionX = 15.0f;
+            Passenger->m_movementInfo.Transport->Pos.m_positionY = 0.0f;
+            Passenger->m_movementInfo.Transport->Pos.m_positionZ = 30.0f;
             break;
         default:
             break;

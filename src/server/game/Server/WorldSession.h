@@ -349,6 +349,8 @@ namespace WorldPackets
         class MoveTimeSkipped;
         class SetActiveMover;
         class MoveSplineDone;
+        class MoveRemoveMovementForceAck;
+        class MoveApplyMovementForceAck;
     }
 
     namespace NPC
@@ -1167,6 +1169,8 @@ class WorldSession
         void HandleMoveKnockBackAck(WorldPackets::Movement::MovementAckMessage& packet);
         void HandleMovementAckMessage(WorldPackets::Movement::MovementAckMessage& packet);
         void HandleSetCollisionHeightAck(WorldPackets::Movement::MoveSetCollisionHeightAck& packet);
+        void HandleMoveRemoveMovementForceAck(WorldPackets::Movement::MoveRemoveMovementForceAck& packet);
+        void HandleMoveApplyMovementForceAck(WorldPackets::Movement::MoveApplyMovementForceAck& packet);
 
         void HandlePingOpcode(WorldPacket& recvPacket);
         void HandleAuthSessionOpcode(WorldPacket& recvPacket);

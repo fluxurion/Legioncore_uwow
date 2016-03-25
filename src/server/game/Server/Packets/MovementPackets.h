@@ -54,8 +54,8 @@ namespace WorldPackets
 
         struct MonsterSplineFilterKey
         {
-            int16 Idx = 0;
-            int16 Speed = 0;
+            float In = 0.0f;
+            float Out = 0.0f;
         };
 
         struct MonsterSplineFilter
@@ -115,7 +115,7 @@ namespace WorldPackets
 
             MovementMonsterSpline SplineData;
             ObjectGuid MoverGUID;
-            G3D::Vector3 Pos;
+            Position Pos;
         };
 
         class MoveSplineSetSpeed : public ServerPacket
@@ -297,7 +297,7 @@ namespace WorldPackets
             Position Direction;
             Position TransportPosition;
             uint32 TransportID = 0;
-            float Magnitude = 0;
+            float Magnitude = 0.0f;
             uint8 Type = 0;
         };
 
@@ -358,6 +358,28 @@ namespace WorldPackets
 
             MovementAck Ack;
             float Speed = 0.0f;
+        };
+
+        class MoveRemoveMovementForceAck final : public ClientPacket
+        {
+        public:
+            MoveRemoveMovementForceAck(WorldPacket&& packet) : ClientPacket(CMSG_MOVE_REMOVE_MOVEMENT_FORCE_ACK, std::move(packet)) { }
+
+            void Read() override;
+
+            MovementAck Ack;
+            ObjectGuid TriggerGUID;
+        };
+
+        class MoveApplyMovementForceAck final : public ClientPacket
+        {
+        public:
+            MoveApplyMovementForceAck(WorldPacket&& packet) : ClientPacket(CMSG_MOVE_APPLY_MOVEMENT_FORCE_ACK, std::move(packet)) { }
+
+            void Read() override;
+
+            MovementAck Ack;
+            MovementForce MovementForceData;
         };
 
         class SetActiveMover final : public ClientPacket
@@ -576,6 +598,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFi
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementSpline const& movementSpline);
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementMonsterSpline const& movementMonsterSpline);
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Movement::MovementAck& movementAck);
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce);
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce const& movementForce);
 
 #endif // MovementPackets_h__

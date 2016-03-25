@@ -64,7 +64,7 @@ namespace Movement
         Location real_position(unit.GetPositionX(), unit.GetPositionY(), unit.GetPositionZMinusOffset(), unit.GetOrientation());
         // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
         //if (unit.GetTransGUID())
-        if (unit.m_movementInfo.transport.guid) //for vehicle too
+        if (unit.m_movementInfo.Transport->Guid) //for vehicle too
             real_position = unit.GetTransPosition();
 
         // there is a big chance that current position is unknown if current state is not finalized, need compute it
@@ -104,7 +104,7 @@ namespace Movement
 
         WorldPackets::Movement::MonsterMove packet;
         packet.MoverGUID = unit.GetGUID();
-        packet.Pos = real_position;
+        packet.Pos.Relocate(real_position.x, real_position.y, real_position.z, real_position.orientation);
         packet.InitializeSplineData(move_spline);
         if (transport)
         {
@@ -145,7 +145,7 @@ namespace Movement
 
         WorldPackets::Movement::MonsterMove packet;
         packet.MoverGUID = unit.GetGUID();
-        packet.Pos = loc;
+        packet.Pos.Relocate(loc.x, loc.y, loc.z, loc.orientation);
         packet.SplineData.ID = move_spline.GetId();
         if (!unit.GetTransGUID().IsEmpty())
         {

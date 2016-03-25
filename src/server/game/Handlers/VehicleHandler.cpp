@@ -86,7 +86,7 @@ void WorldSession::HandleMoveChangeVehicleSeats(WorldPackets::Vehicle::MoveChang
 
     player->ValidateMovementInfo(&packet.Status);
 
-    if (vehicle_base->GetGUID() != packet.Status.guid)
+    if (vehicle_base->GetGUID() != packet.Status.MoverGUID)
         return;
 
     vehicle_base->m_movementInfo = packet.Status;
