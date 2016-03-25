@@ -437,10 +437,7 @@ void Vehicle::InstallAccessory(VehicleAccessory const* as)
     if (as->IsMinion)
         accessory->AddUnitTypeMask(UNIT_MASK_ACCESSORY);
 
-    accessory->m_movementInfo.transport.pos.m_positionX = as->offsetX;
-    accessory->m_movementInfo.transport.pos.m_positionY = as->offsetY;
-    accessory->m_movementInfo.transport.pos.m_positionZ = as->offsetZ;
-    accessory->m_movementInfo.transport.pos.m_orientation = as->offsetO;
+    accessory->m_movementInfo.transport.pos = as->Pos;
 
     // Force enter for force vehicle aura - 296
     if (GetRecAura())
