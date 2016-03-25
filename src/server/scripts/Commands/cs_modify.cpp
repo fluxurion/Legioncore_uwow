@@ -1421,6 +1421,7 @@ public:
 
         return true;
     }
+
     static bool HandleModifyCurrencyCommand(ChatHandler* handler, const char* args)
     {
         if (!*args)
@@ -1435,21 +1436,22 @@ public:
         }
 
         char* scurrencyId = strtok((char*)args, " ");
-        if(!scurrencyId)
+        if (!scurrencyId)
             return false;
-        uint32 currencyId = atoi(scurrencyId);
-        const CurrencyTypesEntry* currencyType = sCurrencyTypesStore.LookupEntry(currencyId);
+
+        CurrencyTypesEntry const* currencyType = sCurrencyTypesStore.LookupEntry(atoi(scurrencyId));
         if (!currencyType)
             return false;
 
-        char* samount = strtok(NULL, " ");
-        if(!samount)
+        char* samount = strtok(nullptr, " ");
+        if (!samount)
             return false;
+
         int32 amount = atoi(samount);
         if (!amount)
             return false;
 
-        target->ModifyCurrency(currencyId, amount, true, true, false, false);
+        target->ModifyCurrency(currencyType->ID, amount * GetCurrencyPrecision(currencyType->ID), true, true, false, false);
 
         return true;
     }
