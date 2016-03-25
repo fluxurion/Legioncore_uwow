@@ -5548,6 +5548,8 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     WorldPackets::Misc::DeathReleaseLoc packet;
     packet.MapID = -1;
     GetSession()->SendPacket(packet.Write());
+    
+    RemoveFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_IS_OUT_OF_BOUNDS);
 
     // speed change, land walk
 
@@ -6017,6 +6019,8 @@ void Player::RepopAtGraveyard()
     }
     else if (GetPositionZ() < GetMap()->GetMinHeight(GetPositionX(), GetPositionY()))
         TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation());
+
+    RemoveFlag(PLAYER_FIELD_PLAYER_FLAGS, PLAYER_FLAGS_IS_OUT_OF_BOUNDS);
 }
 
 bool Player::CanJoinConstantChannelInZone(ChatChannelsEntry const* channel, AreaTableEntry const* zone)
