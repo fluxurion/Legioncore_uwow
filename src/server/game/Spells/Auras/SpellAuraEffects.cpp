@@ -3860,7 +3860,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     //! Not entirely sure if this should be sent for creatures as well, but I don't think so.
     if (!apply)
     {
-        target->m_movementInfo.Fall->Time = 0;
+        target->m_movementInfo.SetFallTime(0);
         target->RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING_FLY);
         target->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
     }

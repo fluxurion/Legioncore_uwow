@@ -1489,7 +1489,7 @@ bool Creature::CreateFromProto(ObjectGuid::LowType guidlow, uint32 entry, int32 
     else
         Object::_Create(ObjectGuid::Create<HighGuid::Creature>(GetMapId(), entry, guidlow));
 
-    m_movementInfo.MoverGUID = GetGUID();
+    m_movementInfo.guid = GetGUID();
 
     if (!UpdateEntry(entry, team, data))
         return false;

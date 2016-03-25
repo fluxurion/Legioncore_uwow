@@ -115,7 +115,7 @@ namespace WorldPackets
 
             MovementMonsterSpline SplineData;
             ObjectGuid MoverGUID;
-            Position Pos;
+            G3D::Vector3 Pos;
         };
 
         class MoveSplineSetSpeed : public ServerPacket
@@ -598,6 +598,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFi
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementSpline const& movementSpline);
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementMonsterSpline const& movementMonsterSpline);
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Movement::MovementAck& movementAck);
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce const& movementForce);
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce);
 
 #endif // MovementPackets_h__

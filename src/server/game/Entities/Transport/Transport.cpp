@@ -668,9 +668,8 @@ Creature * Transport::AddNPCPassengerCreature(ObjectGuid::LowType tguid, uint32 
 
     pCreature->SetTransport(this);
     pCreature->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-    pCreature->m_movementInfo.MoverGUID = GetGUID();
-    pCreature->m_movementInfo.Transport = boost::in_place();
-    pCreature->m_movementInfo.Transport->Pos.Relocate(x, y, z, o);
+    pCreature->m_movementInfo.guid = GetGUID();
+    pCreature->m_movementInfo.transport.pos.Relocate(x, y, z, o);
 
     if (anim)
         pCreature->SetUInt32Value(UNIT_NPC_EMOTESTATE, anim);
@@ -720,9 +719,8 @@ ObjectGuid::LowType Transport::AddNPCPassenger(ObjectGuid::LowType tguid, uint32
 
     creature->SetTransport(this);
     creature->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-    creature->m_movementInfo.Transport = boost::in_place();
-    creature->m_movementInfo.Transport->Guid = GetGUID();
-    creature->m_movementInfo.Transport->Pos.Relocate(x, y, z, o);
+    creature->m_movementInfo.transport.guid = GetGUID();
+    creature->m_movementInfo.transport.pos.Relocate(x, y, z, o);
 
     if (anim)
         creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, anim);
@@ -734,7 +732,7 @@ ObjectGuid::LowType Transport::AddNPCPassenger(ObjectGuid::LowType tguid, uint32
         o + GetOrientation());
 
     creature->SetHomePosition(creature->GetPositionX(), creature->GetPositionY(), creature->GetPositionZ(), creature->GetOrientation());
-    creature->SetTransportHomePosition(creature->m_movementInfo.Transport->Pos);
+    creature->SetTransportHomePosition(creature->m_movementInfo.transport.pos);
 
     if (!creature->IsPositionValid())
     {
@@ -761,10 +759,10 @@ ObjectGuid::LowType Transport::AddNPCPassenger(ObjectGuid::LowType tguid, uint32
 
 void Transport::UpdatePosition(MovementInfo* mi)
 {
-    float transport_o = mi->Pos.GetOrientation() - mi->Transport->Pos.GetOrientation();
-    float transport_x = mi->Pos.m_positionX - (mi->Transport->Pos.m_positionX * std::cos(transport_o) - mi->Transport->Pos.m_positionY* std::sin(transport_o));
-    float transport_y = mi->Pos.m_positionY - (mi->Transport->Pos.m_positionY * std::cos(transport_o) + mi->Transport->Pos.m_positionX* std::sin(transport_o));
-    float transport_z = mi->Pos.m_positionZ - mi->Transport->Pos.m_positionZ;
+    float transport_o = mi->pos.GetOrientation() - mi->transport.pos.GetOrientation();
+    float transport_x = mi->pos.m_positionX - (mi->transport.pos.m_positionX * std::cos(transport_o) - mi->transport.pos.m_positionY* std::sin(transport_o));
+    float transport_y = mi->pos.m_positionY - (mi->transport.pos.m_positionY * std::cos(transport_o) + mi->transport.pos.m_positionX* std::sin(transport_o));
+    float transport_z = mi->pos.m_positionZ - mi->transport.pos.m_positionZ;
 
     Relocate(transport_x, transport_y, transport_z, transport_o);
     UpdateNPCPositions();
@@ -777,7 +775,7 @@ void Transport::UpdateNPCPositions()
         Creature* npc = *itr;
 
         float x, y, z, o;
-        npc->m_movementInfo.Transport->Pos.GetPosition(x, y, z, o);
+        npc->m_movementInfo.transport.pos.GetPosition(x, y, z, o);
         CalculatePassengerPosition(x, y, z, o);
         GetMap()->CreatureRelocation(npc, x, y, z, o, false);
         npc->GetTransportHomePosition(x, y, z, o);
