@@ -69,9 +69,9 @@ struct AreaTableEntry
     uint8       SoundProviderPref;                          // 18
     uint8       SoundProviderPrefUnderwater;                // 19
     int8        ExplorationLevel;                           // 20
-    uint8       FactionGroupMask;                           // 21
+    uint8       UWIntroMusic;                               // 21
     uint8       MountFlags;                                 // 22
-    uint8       UWIntroMusic;                               // 23
+    uint8       FactionGroupMask;                           // 23
     uint8       WindSettingsID;                             // 24
     uint8       WildBattlePetLevelMin;                      // 25
     uint8       WildBattlePetLevelMax;                      // 26
