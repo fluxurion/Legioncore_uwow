@@ -50,6 +50,7 @@ DB2Storage<ChrClassesEntry>                 sChrClassesStore("ChrClasses.db2", C
 DB2Storage<ChrClassesXPowerTypesEntry>      sChrClassesXPowerTypesStore("ChrClassesXPowerTypes.db2", ChrClassesXPowerTypesFormat, HOTFIX_SEL_CHR_CLASSES_X_POWER_TYPES);
 DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRacesFormat, HOTFIX_SEL_CHR_RACES);
 DB2Storage<ChrSpecializationEntry>          sChrSpecializationStore("ChrSpecialization.db2", ChrSpecializationFormat, HOTFIX_SEL_CHR_SPECIALIZATION);
+DB2Storage<ConversationLineEntry>           sConversationLineStore("ConversationLine.db2", ConversationLineFormat, HOTFIX_SEL_CONVERSATION_LINE);
 DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDifficulty.db2", CreatureDifficultyFormat, HOTFIX_SEL_CREATURE_DIFFICULTY);
 DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, HOTFIX_SEL_CREATURE_DISPLAY_INFO);
 DB2Storage<CreatureFamilyEntry>             sCreatureFamilyStore("CreatureFamily.db2", CreatureFamilyFormat, HOTFIX_SEL_CREATURE_FAMILY);
@@ -335,6 +336,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sChrClassesXPowerTypesStore);
     LOAD_DB2(sChrRacesStore);
     LOAD_DB2(sChrSpecializationStore);
+    LOAD_DB2(sConversationLineStore);
     LOAD_DB2(sCreatureDifficultyStore);
     LOAD_DB2(sCreatureDisplayInfoStore);
     LOAD_DB2(sCreatureFamilyStore);

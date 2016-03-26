@@ -916,6 +916,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CHR_SPECIALIZATION, "SELECT ID, Name_lang, Name2_lang, Description_lang, BackgroundFile_lang"
         " FROM chr_specialization_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // ConversationLine.db2
+    PrepareStatement(HOTFIX_SEL_CONVERSATION_LINE, "SELECT ID, tesxID, duration, unk, nextID, unk1, unk2, unk3, unk4 FROM conversationline ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // Emotes.db2
     PrepareStatement(HOTFIX_SEL_EMOTES, "SELECT ID, EmoteSlashCommand, EmoteFlags, SpellVisualKitID, UnkLegion, UnkLegion2, AnimID, EmoteSoundID, "
         "EmoteSpecProc, EmoteSpecProcParam FROM emotes ORDER BY ID DESC", CONNECTION_SYNCH);

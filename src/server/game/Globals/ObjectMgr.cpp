@@ -1127,8 +1127,8 @@ void ObjectMgr::LoadEquipmentTemplates()
 {
     uint32 oldMSTime = getMSTime();
 
-    //                                                 0     1       2           3           4
-    QueryResult result = WorldDatabase.Query("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3 FROM creature_equip_template");
+    //                                                 0     1       2           3        4        5        6        7
+    QueryResult result = WorldDatabase.Query("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3, ItemID4, ItemID5, ItemID6 FROM creature_equip_template");
 
     if (!result)
     {
@@ -1149,6 +1149,9 @@ void ObjectMgr::LoadEquipmentTemplates()
         equipmentInfo.ItemEntry[0] = fields[2].GetUInt32();
         equipmentInfo.ItemEntry[1] = fields[3].GetUInt32();
         equipmentInfo.ItemEntry[2] = fields[4].GetUInt32();
+        equipmentInfo.ItemEntry[3] = fields[5].GetUInt32();
+        equipmentInfo.ItemEntry[4] = fields[6].GetUInt32();
+        equipmentInfo.ItemEntry[5] = fields[7].GetUInt32();
 
         for (uint8 i = 0; i < MAX_EQUIPMENT_ITEMS; ++i)
         {

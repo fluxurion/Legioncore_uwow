@@ -53,6 +53,7 @@ char const ChrClassesFormat[] = "nsssssiiitttbbbbbbb";
 char const ChrClassesXPowerTypesFormat[] = "ibb";
 char const ChrRacesFormat[] = "nissssssssiiffffffittttttttttttbbbbbbbbbb";
 char const ChrSpecializationFormat[] = "niiiisssstbbbbb";
+char const ConversationLineFormat[] = "nitttbbbb";
 char const CreatureDifficultyFormat[] = "niiiiiiiitbbb";
 char const CreatureDisplayInfoFormat[] = "niffiiisiiifttttttbbbbbb";
 char const CreatureFamilyFormat[] = "nffsstttbbbb";

@@ -325,7 +325,7 @@ struct PointOfInterestLocale
 
 struct EquipmentInfo
 {
-    uint32  ItemEntry[MAX_EQUIPMENT_ITEMS];
+    uint32  ItemEntry[MAX_EQUIPMENT_ITEMS*2];
 };
 
 // Benchmarked: Faster than std::map (insert/find)

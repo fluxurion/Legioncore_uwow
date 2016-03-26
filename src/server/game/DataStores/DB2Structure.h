@@ -244,6 +244,19 @@ struct CreatureModelDataEntry
     uint8       DeathThudShakeSize;                         // 35
 };
 
+struct ConversationLineEntry
+{
+    uint32      ID;
+    uint32      tesxID;
+    uint16      duration;
+    int16       unk;
+    uint16      nextID;
+    uint8       unk1;
+    uint8       unk2;
+    uint8       unk3;
+    uint8       unk4;
+};
+
 struct FactionEntry
 {
     uint32      ID;                                         // 0
