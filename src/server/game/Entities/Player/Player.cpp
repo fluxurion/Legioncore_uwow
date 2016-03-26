@@ -28899,6 +28899,16 @@ void Player::SceneCompleted(uint32 instance)
 
     m_sceneStatus[data->second] = SCENE_COMPLETE;
     phaseMgr.RemoveUpdateFlag(PHASE_UPDATE_FLAG_ZONE_UPDATE);
+
+    AuraEffectList const& periodicAuras = GetAuraEffectsByType(SPELL_AURA_ACTIVATE_SCENE);
+    for (AuraEffectList::const_iterator i = periodicAuras.begin(); i != periodicAuras.end(); ++i)
+    {
+        if ((*i)->GetMiscValue() == data->second)
+        {
+            RemoveAurasDueToSpell((*i)->GetId());
+            break;
+        }
+    }
 }
 
 //! If check SCENE_LAUNCH return true if SCENE_COMPLETE too
