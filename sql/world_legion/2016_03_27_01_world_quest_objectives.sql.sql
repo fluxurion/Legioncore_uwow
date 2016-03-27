@@ -1,0 +1,1 @@
+ALTER TABLE `quest_objectives` CHANGE `UnkFloat` `TaskStep` FLOAT NOT NULL DEFAULT '0';

@@ -148,7 +148,7 @@ WorldPacket const* WorldPackets::Quest::QueryQuestInfoResponse::Write()
             _worldPacket << questObjective.ObjectID;
             _worldPacket << questObjective.Amount;
             _worldPacket << questObjective.Flags;
-            _worldPacket << questObjective.UnkFloat;
+            _worldPacket << questObjective.TaskStep;
 
             _worldPacket << static_cast<int32>(questObjective.VisualEffects.size());
             for (int32 visualEffect : questObjective.VisualEffects)

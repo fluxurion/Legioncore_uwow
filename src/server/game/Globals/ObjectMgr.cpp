@@ -3654,7 +3654,7 @@ void ObjectMgr::LoadQuests()
 
     // Load `quest_objectives` order by descending storage index to reduce resizes
     //                                   0   1        2     3             4         5       6      7         8
-    result = WorldDatabase.Query("SELECT ID, QuestID, Type, StorageIndex, ObjectID, Amount, Flags, UnkFloat, Description FROM quest_objectives ORDER BY StorageIndex ASC");
+    result = WorldDatabase.Query("SELECT ID, QuestID, Type, StorageIndex, ObjectID, Amount, Flags, TaskStep, Description FROM quest_objectives ORDER BY StorageIndex ASC");
 
     if (!result)
     {
@@ -3966,7 +3966,7 @@ void ObjectMgr::LoadQuests()
                     if (!sCriteriaStore.LookupEntry(obj.ObjectID))
                         sLog->outError(LOG_FILTER_SQL, "Quest %u has not exist CriteriaTreeID: %u in ObjectID field ", qinfo->GetQuestId(), obj.ObjectID);
                     break;
-                case QUEST_OBJECTIVE_EXCELLENCE_IN_ZONE:
+                case QUEST_OBJECTIVE_TASK_IN_ZONE:
                     break;
                 default:
                     sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has unhandled type %u", qinfo->GetQuestId(), obj.ID, obj.Type);
