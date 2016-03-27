@@ -347,8 +347,6 @@ class SpellInfo
 public:
     uint32 Id;
     uint32 AttributesCu;
-    uint32 Stances;
-    uint32 StancesNot;
     uint32 GeneralTargets;      //old Targets.
     uint32 GeneralTargetCreatureType;  //old TargetCreatureType
     uint32 InterruptFlags;
@@ -497,6 +495,12 @@ public:
         uint8 PowerType;
         uint8 PowerCostPerLevel;
     } Power;
+
+    struct SpellShapeshifts
+    {
+        uint64 ShapeshiftMask;
+        uint64 ShapeshiftExclude;
+    } Shapeshift;
 
     SpellEffectInfo Effects[MAX_SPELL_EFFECTS];
     SpellEffectInfoMap EffectsMap;

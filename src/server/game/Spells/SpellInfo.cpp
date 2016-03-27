@@ -1116,8 +1116,8 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     Reagents.CurrencyCount = reagentsCurrencyStore ? reagentsCurrencyStore->CurrencyCount : 0;
 
     SpellShapeshiftEntry const* _shapeshift = sSpellShapeshiftStore.LookupEntry(Id);
-    Stances = _shapeshift ? _shapeshift->ShapeshiftMask[0] : 0;
-    StancesNot = _shapeshift ? _shapeshift->ShapeshiftExclude[0] : 0;
+    Shapeshift.ShapeshiftMask = _shapeshift ? MAKE_PAIR64(_shapeshift->ShapeshiftMask[0], _shapeshift->ShapeshiftMask[1]) : 0;
+    Shapeshift.ShapeshiftExclude = _shapeshift ? MAKE_PAIR64(_shapeshift->ShapeshiftExclude[0], _shapeshift->ShapeshiftExclude[1]) : 0;
 
     CustomMaxAffectedTargets = 0; // Now it just custom case if not target restrictions on dbc.
     GeneralTargets = 0;
@@ -1873,12 +1873,12 @@ SpellCastResult SpellInfo::CheckShapeshift(uint32 form) const
     if (Effects[0].Effect == SPELL_EFFECT_LEARN_SPELL || Effects[1].Effect == SPELL_EFFECT_LEARN_SPELL || Effects[2].Effect == SPELL_EFFECT_LEARN_SPELL)
         return SPELL_CAST_OK;
 
-    uint32 stanceMask = (form ? 1 << (form - 1) : 0);
+    uint64 stanceMask = (form ? UI64LIT(1) << (form - 1) : 0);
 
-    if (stanceMask & StancesNot)                 // can explicitly not be casted in this stance
+    if (stanceMask & Shapeshift.ShapeshiftExclude) // can explicitly not be casted in this stance
         return SPELL_FAILED_NOT_SHAPESHIFT;
 
-    if (stanceMask & Stances)                    // can explicitly be casted in this stance
+    if (stanceMask & Shapeshift.ShapeshiftMask) // can explicitly be casted in this stance
         return SPELL_CAST_OK;
 
     bool actAsShifted = false;
@@ -1894,19 +1894,19 @@ SpellCastResult SpellInfo::CheckShapeshift(uint32 form) const
         actAsShifted = !(shapeInfo->Flags & 1);            // shapeshift acts as normal form for spells
     }
 
-    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CheckShapeshift Id %i form %u stanceMask %i StancesNot %u Stances %u actAsShifted %u flags1 %u", Id, form, stanceMask, StancesNot, Stances, actAsShifted, shapeInfo->flags1);
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CheckShapeshift Id %i form %u stanceMask %i Shapeshift.ShapeshiftExclude %u Shapeshift.ShapeshiftMask %u actAsShifted %u flags1 %u", Id, form, stanceMask, Shapeshift.ShapeshiftExclude, Shapeshift.ShapeshiftMask, actAsShifted, shapeInfo->flags1);
 
     if (actAsShifted)
     {
         if (HasAttribute(SPELL_ATTR0_NOT_SHAPESHIFT)) // not while shapeshifted
             return SPELL_FAILED_NOT_SHAPESHIFT;
-        else if (Stances != 0)                   // needs other shapeshift
+        else if (Shapeshift.ShapeshiftMask != 0)                   // needs other shapeshift
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
     else
     {
         // needs shapeshift
-        if (!(HasAttribute(SPELL_ATTR2_NOT_NEED_SHAPESHIFT)) && Stances != 0)
+        if (!(HasAttribute(SPELL_ATTR2_NOT_NEED_SHAPESHIFT)) && Shapeshift.ShapeshiftMask != 0)
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
 
@@ -1915,7 +1915,7 @@ SpellCastResult SpellInfo::CheckShapeshift(uint32 form) const
     // TODO: Find a way to disable use of these spells clientside
     if (shapeInfo && shapeInfo->Flags & 0x400)
     {
-        if (!(stanceMask & Stances))
+        if (!(stanceMask & Shapeshift.ShapeshiftMask))
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
 
