@@ -147,7 +147,7 @@ void WorldSession::HandleSetVehicleRecId(WorldPackets::Vehicle::MoveSetVehicleRe
 
     WorldPackets::Vehicle::MoveSetVehicleRecID moveSetVehicleRec;
     moveSetVehicleRec.MoverGUID = player->GetGUID();
-    moveSetVehicleRec.SequenceIndex = player->m_movementCounter++;
+    moveSetVehicleRec.SequenceIndex = player->m_sequenceIndex++;
     moveSetVehicleRec.VehicleRecID = vehicleId;
     SendPacket(moveSetVehicleRec.Write());
 }

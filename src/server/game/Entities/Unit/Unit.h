@@ -2733,7 +2733,7 @@ class Unit : public WorldObject
         void SetStunned(bool apply);
         void SetRooted(bool apply, bool packetOnly = false);
 
-        uint32 m_movementCounter;       ///< Incrementing counter used in movement packets
+        uint32 m_sequenceIndex;
     private:
 
         class AINotifyTask;

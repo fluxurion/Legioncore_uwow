@@ -518,10 +518,10 @@ void WorldSession::HandleMoveRemoveMovementForceAck(WorldPackets::Movement::Move
     if (it != player->m_movementInfo.Forces.end())
         player->m_movementInfo.Forces.erase(it);
 
-    WorldPackets::Movement::MoveUpdateRemoveMovementForce remove;
-    remove.movementInfo = &player->m_movementInfo;
-    remove.TriggerGUID = packet.TriggerGUID;
-    player->SendMessageToSet(remove.Write(), player);
+    //WorldPackets::Movement::MoveUpdateRemoveMovementForce remove;
+    //remove.movementInfo = &player->m_movementInfo;
+    //remove.TriggerGUID = packet.TriggerGUID;
+    //player->SendMessageToSet(remove.Write(), player);
 }
 
 void WorldSession::HandleMoveApplyMovementForceAck(WorldPackets::Movement::MoveApplyMovementForceAck& packet)
@@ -534,8 +534,8 @@ void WorldSession::HandleMoveApplyMovementForceAck(WorldPackets::Movement::MoveA
     player->m_movementInfo = packet.Ack.movementInfo;
     player->m_movementInfo.Forces[packet.MovementForceData.ID] = packet.MovementForceData;
 
-    WorldPackets::Movement::MoveUpdateApplyMovementForce apply;
-    apply.movementInfo = &player->m_movementInfo;
-    apply.MovementForceData = packet.MovementForceData;
-    player->SendMessageToSet(apply.Write(), player);
+    //WorldPackets::Movement::MoveUpdateApplyMovementForce apply;
+    //apply.movementInfo = &player->m_movementInfo;
+    //apply.MovementForceData = packet.MovementForceData;
+    //player->SendMessageToSet(apply.Write(), player);
 }

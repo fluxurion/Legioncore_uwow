@@ -27562,7 +27562,7 @@ void Player::ResetTimeSync()
 
 void Player::SendTimeSync()
 {
-    m_timeSyncQueue.push(m_movementCounter++);
+    m_timeSyncQueue.push(m_sequenceIndex++);
 
     WorldPackets::Misc::TimeSyncRequest packet;
     packet.SequenceIndex = m_timeSyncQueue.back();
@@ -28098,7 +28098,7 @@ void Player::SendMovementSetCanTransitionBetweenSwimAndFly(bool apply)
 {
     WorldPackets::Movement::MoveSetFlag packet(apply ? SMSG_MOVE_ENABLE_TRANSITION_BETWEEN_SWIM_AND_FLY : SMSG_MOVE_DISABLE_TRANSITION_BETWEEN_SWIM_AND_FLY);
     packet.MoverGUID = GetGUID();
-    packet.SequenceIndex = m_movementCounter++;
+    packet.SequenceIndex = m_sequenceIndex++;
     SendDirectMessage(packet.Write());
 }
 
@@ -28106,7 +28106,7 @@ void Player::SendMovementSetCollisionHeight(float height)
 {
     WorldPackets::Movement::MoveSetCollisionHeight setCollisionHeight;
     setCollisionHeight.MoverGUID = GetGUID();
-    setCollisionHeight.SequenceIndex = m_movementCounter++;
+    setCollisionHeight.SequenceIndex = m_sequenceIndex++;
     setCollisionHeight.MsgData.Height = height;
     setCollisionHeight.MsgData.Scale = GetFloatValue(OBJECT_FIELD_SCALE);
     setCollisionHeight.MountDisplayID = GetUInt32Value(UNIT_FIELD_MOUNT_DISPLAY_ID);
