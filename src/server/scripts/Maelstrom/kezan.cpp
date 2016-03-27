@@ -462,7 +462,7 @@ class npc_roling_friends_guard : public CreatureScript
             me->SetReactState(REACT_AGGRESSIVE);
 
             Player* player = summoner->ToPlayer();
-            if(!player || !player->m_movementInfo.transport.guid)
+            if(!player || !player->m_movementInfo.Transport->Guid)
                 return;
 
             player->KilledMonsterCredit(me->GetEntry(), ObjectGuid::Empty);

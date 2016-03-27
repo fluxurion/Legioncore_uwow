@@ -519,21 +519,18 @@ void Unit::UpdateSplinePosition(bool stop/* = false*/)
     Movement::Location loc = movespline->ComputePosition();
     if (GetTransGUID())
     {
-        Position& pos = m_movementInfo.transport.pos;
-        pos.m_positionX = loc.x;
-        pos.m_positionY = loc.y;
-        pos.m_positionZ = loc.z;
-        pos.SetOrientation(loc.orientation);
-        if (Unit* vehicle = GetVehicleBase())
-        if (TransportBase* transport = GetDirectTransport())
-            transport->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
+        m_movementInfo.Transport = boost::in_place();
+        m_movementInfo.Transport->Pos.Relocate(loc.x, loc.y, loc.z, NormalizeOrientation(loc.orientation));
+        if (GetVehicleBase())
+            if (TransportBase* transport = GetDirectTransport())
+                transport->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
     }
 
     if (HasUnitState(UNIT_STATE_CANNOT_TURN))
         loc.orientation = GetOrientation();
 
     //if (GetTypeId() == TYPEID_PLAYER)
-        //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "UpdateSplinePosition loc(%f %f %f)", loc.x, loc.y, loc.z);
+        //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "UpdateSplinePosition pos(%f %f %f)", pos.x, pos.y, pos.z);
 
     UpdatePosition(loc.x, loc.y, loc.z, loc.orientation, false, stop);
 }
@@ -13808,7 +13805,7 @@ void Unit::UpdateMount() //@TODO:Legion - is this really needed?
             if (reqFlags & MOUNT_CAPABILITY_FLAG_CAN_SWIM && !(currentMountFlags & 8))
                 continue;
 
-            if (m_movementInfo.hasPitch)
+            if (m_movementInfo.Pitch)
                 if (!(reqFlags & MOUNT_CAPABILITY_FLAG_CAN_PITCH))
                     continue;
 
@@ -23005,7 +23002,7 @@ bool Unit::SetFall(bool enable)
     if (enable)
     {
         AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
-        m_movementInfo.SetFallTime(0);
+        m_movementInfo.Fall = boost::none;
     }
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR);
@@ -23356,7 +23353,9 @@ void Unit::SendTeleportPacket(Position &destPos)
 {
     WorldPackets::Movement::MoveUpdateTeleport packet;
     packet.movementInfo = &m_movementInfo;
-    packet.movementInfo->pos = destPos;
+    packet.movementInfo->Pos = destPos;
+    for (auto const& force : m_movementInfo.Forces)
+        packet.MovementForces.emplace_back(force.second);
 
     if (GetTypeId() == TYPEID_PLAYER)
     {

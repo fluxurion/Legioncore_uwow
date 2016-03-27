@@ -1581,7 +1581,7 @@ bool Pet::Create(ObjectGuid::LowType const& guidlow, Map* map, uint32 phaseMask,
     SetPhaseMask(phaseMask, false);
     Object::_Create(ObjectGuid::Create<HighGuid::Pet>(map->GetId(), Entry, guidlow));
 
-    m_movementInfo.guid = GetGUID();
+    m_movementInfo.MoverGUID = GetGUID();
 
     m_DBTableGuid = guidlow;
     m_originalEntry = Entry;

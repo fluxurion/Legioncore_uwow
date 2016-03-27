@@ -64,7 +64,7 @@ namespace Movement
         Location real_position(unit.GetPositionX(), unit.GetPositionY(), unit.GetPositionZMinusOffset(), unit.GetOrientation());
         // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
         //if (unit.GetTransGUID())
-        if (unit.m_movementInfo.transport.guid) //for vehicle too
+        if (unit.m_movementInfo.Transport.is_initialized() && !unit.m_movementInfo.Transport->Guid.IsEmpty()) //for vehicle too
             real_position = unit.GetTransPosition();
 
         // there is a big chance that current position is unknown if current state is not finalized, need compute it

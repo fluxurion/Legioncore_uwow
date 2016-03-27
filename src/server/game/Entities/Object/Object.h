@@ -36,6 +36,14 @@
 using G3D::Vector3;
 using G3D::LineSegment2D;
 
+namespace  WorldPackets
+{
+    namespace  Movement
+    {
+        struct MovementForce;
+    }
+}
+
 #define CONTACT_DISTANCE            0.5f
 #define INTERACTION_DISTANCE        5.0f
 #define ATTACK_DISTANCE             5.0f
@@ -439,105 +447,76 @@ class Object
 
 struct MovementInfo
 {
-    // common
-    ObjectGuid guid;
-    uint32 flags;
-    uint16 flags2;
-    Position pos;
-    uint32 time;
+    struct MovementFallOrLand
+    {
+        struct MovementFallVelocity
+        {
+            G3D::Vector2 Direction;
+            float Speed = 0.0f;
+        };
 
-    // transport
+        Optional<MovementFallVelocity> Velocity;
+        uint32 Time = 0;
+        float JumpVelocity = 0.0f;
+    };
+    
     struct TransportInfo
     {
-        void Reset()
-        {
-            guid.Clear();
-            pos.Relocate(0.0f, 0.0f, 0.0f, 0.0f);
-            seat = -1;
-            time = 0;
-            prevTime = 0;
-            vehicleId = 0;
-            hasTrevTime = false;
-            hasVehicleId = false;
-        }
-
-        ObjectGuid guid;
-        Position pos;
-        int8 seat;
-        uint32 time;
-        bool hasTrevTime;
-        uint32 prevTime;
-        bool hasVehicleId;
-        uint32 vehicleId;
-    } transport;
-
-    // swimming/flying
-    float pitch;
-    bool hasPitch;
-
-    // falling
-    uint32 fallTime;
-
-    // jumping
-    struct JumpInfo
-    {
-        void Reset()
-        {
-            zspeed = sinAngle = cosAngle = xyspeed = 0.0f;
-        }
-
-        float zspeed, sinAngle, cosAngle, xyspeed;
-
-    } jump;
-
-    // spline
-    bool hasSplineElevation;
-    float splineElevation;
-    // BitClientData
-    bool hasFallData;
-    bool hasFallDirection;
-    bool hasSpline;
-    bool byte95;
-    bool byteAC;
-    bool hasUnkInt32;
-    uint32 unkInt32;
-    std::vector<uint32> unkCounter;
+        ObjectGuid Guid;
+        Position Pos;
+        Optional<uint32> PrevMoveTime;
+        Optional<int32> VehicleRecID;
+        uint32 MoveTime = 0;
+        float Facing = 0.0f;
+        uint8 VehicleSeatIndex = 0;
+    };
 
     MovementInfo()
     {
-        pos.Relocate(0, 0, 0, 0);
-        transport.Reset();
-        jump.Reset();
-        guid.Clear();
-        flags = 0;
-        flags2 = 0;
-        time = fallTime = 0;
-        splineElevation = 0;
-        hasSplineElevation = false;
-        hasPitch = false;
-        pitch = 0.0f;
-        hasFallData = false;
-        hasFallDirection = false;
-        hasSpline = false;
-        byte95 = false;
-        byteAC = false;
-        hasUnkInt32 = false;
-        unkInt32 = 0;
+        RemoveForcesIDs.clear();
+        Forces.clear();
+        Pos.Clear();
+        Fall = boost::none;
+        Transport = boost::none;
+        memset(MoveFlags, 0, sizeof(MoveFlags));
+        MoveIndex = 0;
+        MoveTime = 0;
+        UnkINT = 0;
+        Facing = 0.0f;
+        Pitch = 0.0f;
+        StepUpStartElevation = 0.0f;
+        HasSpline = false;
+        HeightChangeFailed = false;
+        RemoteTimeValid = false;
     }
 
-    uint32 GetMovementFlags() const { return flags; }
-    void SetMovementFlags(uint32 flag) { flags = flag; }
-    void AddMovementFlag(uint32 flag) { flags |= flag; }
-    void RemoveMovementFlag(uint32 flag) { flags &= ~flag; }
-    bool HasMovementFlag(uint32 flag) const { return (flags & flag) != 0; }
+    Optional<MovementFallOrLand> Fall;
+    Optional<TransportInfo> Transport;
+    GuidVector RemoveForcesIDs;
+    std::map<ObjectGuid, WorldPackets::Movement::MovementForce> Forces;
+    Position Pos;
+    ObjectGuid MoverGUID;
+    uint32 MoveFlags[2];
+    uint32 MoveIndex;
+    uint32 MoveTime;
+    uint32 UnkINT;
+    float Facing;
+    float Pitch;
+    float StepUpStartElevation;
+    bool HasSpline;
+    bool HeightChangeFailed;
+    bool RemoteTimeValid;
 
-    uint16 GetExtraMovementFlags() const { return flags2; }
-    void SetExtraMovementFlags(uint32 flag) { flags2 = flag; }
-    void AddExtraMovementFlag(uint16 flag) { flags2 |= flag; }
-    bool HasExtraMovementFlag(uint16 flag) const { return (flags2 & flag) != 0; }
+    uint32 GetMovementFlags() const { return MoveFlags[0]; }
+    void SetMovementFlags(uint32 flag) { MoveFlags[0] = flag; }
+    void AddMovementFlag(uint32 flag) { MoveFlags[0] |= flag; }
+    void RemoveMovementFlag(uint32 flag) { MoveFlags[0] &= ~flag; }
+    bool HasMovementFlag(uint32 flag) const { return (MoveFlags[0] & flag) != 0; }
 
-    void SetFallTime(uint32 time) { fallTime = time; }
-
+    uint32 GetExtraMovementFlags() const { return MoveFlags[1]; }
+    void SetExtraMovementFlags(uint32 flag) { MoveFlags[1] = flag; }
+    void AddExtraMovementFlag(uint32 flag) { MoveFlags[1] |= flag; }
+    bool HasExtraMovementFlag(uint32 flag) const { return (MoveFlags[1] & flag) != 0; }
     void OutDebug();
 };
 

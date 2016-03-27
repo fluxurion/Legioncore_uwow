@@ -201,7 +201,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
 
     if (!(flags & UPDATEFLAG_LIVING))
         if (WorldObject const* worldObject = dynamic_cast<WorldObject const*>(this))
-            if (!worldObject->m_movementInfo.transport.guid.IsEmpty())
+            if (!worldObject->m_movementInfo.Transport->Guid.IsEmpty())
                 flags |= UPDATEFLAG_GO_TRANSPORT_POSITION;
 
     if (flags & UPDATEFLAG_STATIONARY_POSITION)
@@ -354,7 +354,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     {
         Unit const* unit = ToUnit();
         uint32 movementFlags = unit->m_movementInfo.GetMovementFlags();
-        uint16 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
+        uint32 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
         if (GetTypeId() == TYPEID_UNIT)
             movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
         // these break update packet
@@ -370,57 +370,41 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
             }
         }
 
-        bool HasFallDirection = unit->HasUnitMovementFlag(MOVEMENTFLAG_FALLING);
-        bool HasFall = HasFallDirection || movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING;
-        bool HasSpline = unit->IsSplineEnabled();
-
         *data << GetGUID();                                             // MoverGUID
-        *data << uint32(unit->m_movementInfo.time);                     // MoveIndex
+        *data << unit->m_movementInfo.MoveIndex;
         *data << float(unit->GetPositionX());
         *data << float(unit->GetPositionY());
         *data << float(unit->GetPositionZ());
         *data << float(G3D::fuzzyEq(unit->GetOrientation(), 0.0f) ? 0.0f : Position::NormalizeOrientation(unit->GetOrientation()));
+        *data << Position::NormalizePitch(unit->m_movementInfo.Pitch);
+        *data << unit->m_movementInfo.StepUpStartElevation;
 
-                                                                        // Pitch
-        if ((movementFlags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING)) ||
-            (movementFlagsExtra & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING))
-            *data << float(Position::NormalizePitch(unit->m_movementInfo.pitch));
-        else
-            *data << float(0.0f);
+        *data << static_cast<uint32>(unit->m_movementInfo.RemoveForcesIDs.size());
+        *data << unit->m_movementInfo.UnkINT;
 
-        if (movementFlags & MOVEMENTFLAG_SPLINE_ELEVATION)              // StepUpStartElevation
-            *data << float(unit->m_movementInfo.splineElevation);
-        else
-            *data << float(0.0f);
-
-        uint32 removeMovementForcesCount = 0;
-        *data << uint32(removeMovementForcesCount);                     // Count of RemoveForcesIDs
-        *data << uint32(0);                                             // Int168
-
-        //for (uint32 i = 0; i < removeMovementForcesCount; ++i)
-        //    *data << ObjectGuid(RemoveForcesIDs);
+        for (ObjectGuid const& force : unit->m_movementInfo.RemoveForcesIDs)
+            *data << force;
 
         data->WriteBits(movementFlags, 30);
         data->WriteBits(movementFlagsExtra, 18);
-        data->WriteBit(!unit->m_movementInfo.transport.guid.IsEmpty()); // HasTransport
-        data->WriteBit(HasFall);                                        // HasFall
-        data->WriteBit(HasSpline);                                      // HasSpline - marks that the unit uses spline movement
-        data->WriteBit(0);                                              // HeightChangeFailed
-        data->WriteBit(0);                                              // RemoteTimeValid
+        data->WriteBit(unit->m_movementInfo.Transport.is_initialized());
+        data->WriteBit(unit->m_movementInfo.Fall.is_initialized());
+        data->WriteBit(unit->IsSplineEnabled());
+        data->WriteBit(unit->m_movementInfo.HeightChangeFailed);
+        data->WriteBit(unit->m_movementInfo.RemoteTimeValid);
 
-        if (!unit->m_movementInfo.transport.guid.IsEmpty())
-            *data << unit->m_movementInfo.transport;
+        if (unit->m_movementInfo.Transport.is_initialized())
+            *data << *unit->m_movementInfo.Transport;
 
-        if (HasFall)
+        if (unit->m_movementInfo.Fall.is_initialized())
         {
-            *data << uint32(unit->m_movementInfo.fallTime);                   // Time
-            *data << float(unit->m_movementInfo.jump.zspeed);                 // JumpVelocity
+            *data << unit->m_movementInfo.Fall->Time;
+            *data << unit->m_movementInfo.Fall->JumpVelocity;
 
-            if (data->WriteBit(HasFallDirection))
+            if (data->WriteBit(unit->m_movementInfo.Fall->Velocity.is_initialized()))
             {
-                *data << float(unit->m_movementInfo.jump.sinAngle);           // Direction
-                *data << float(unit->m_movementInfo.jump.cosAngle);
-                *data << float(unit->m_movementInfo.jump.xyspeed);            // Speed
+                *data << unit->m_movementInfo.Fall->Velocity->Direction;
+                *data << unit->m_movementInfo.Fall->Velocity->Speed;
             }
         }
 
@@ -434,22 +418,20 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         *data << float(unit->GetSpeed(MOVE_TURN_RATE));
         *data << float(unit->GetSpeed(MOVE_PITCH_RATE));
 
-        uint32 MovementForceCount = 0;
-        *data << uint32(MovementForceCount);
-        //for (uint32 i = 0; i < MovementForceCount; ++i)
-        //    WorldPackets::Movement::MovementForce(*data);
+        *data << static_cast<uint32>(unit->m_movementInfo.Forces.size());
+        for (auto const& force : unit->m_movementInfo.Forces)
+            *data << force.second;
 
-        if (data->WriteBit(HasSpline))
+        if (data->WriteBit(unit->IsSplineEnabled()))
             WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(*unit->movespline, *data);
     }
 
     if (HasMovementTransport)
-        *data << static_cast<WorldObject const*>(this)->m_movementInfo.transport;
+        *data << *static_cast<WorldObject const*>(this)->m_movementInfo.Transport;
 
     if (Stationary)
     {
         WorldObject const* self = static_cast<WorldObject const*>(this);
-
         *data << float(self->GetPositionX());
         *data << float(self->GetPositionY());
         if (Unit const* unit = ToUnit())
@@ -1678,31 +1660,38 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 void MovementInfo::OutDebug()
 {
     sLog->outInfo(LOG_FILTER_NETWORKIO, "MOVEMENT INFO");
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "guid " UI64FMTD, guid);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "flags %u", flags);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "flags2 %u", flags2);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "time %u current time " UI64FMTD "", flags2, uint64(::time(NULL)));
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", pos.ToString().c_str());
-    if (transport.guid)
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoverGUID: %s", MoverGUID.ToString().c_str());
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveFlags[0] %u, MoveFlags[1] %u", MoveFlags[0], MoveFlags[1]);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveIndex %u current time " UI64FMTD "", MoveIndex, uint64(::time(nullptr)));
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "Position: %s", Pos.ToString().c_str());
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "RemoveForcesIDs size: %u", static_cast<uint32>(RemoveForcesIDs.size()));
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "Forces size: %u", static_cast<uint32>(Forces.size()));
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveTime: %u", MoveTime);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "UnkINT: %u", UnkINT);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "StepUpStartElevation: %f, Facing: %f, Pitch: %f", StepUpStartElevation, Facing, Pitch);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "HasSpline: %u, HeightChangeFailed: %u, RemoteTimeValid: %u", HasSpline, HeightChangeFailed, RemoteTimeValid);
+
+    if (Transport.is_initialized())
     {
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "TRANSPORT:");
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "guid: " UI64FMTD, transport.guid);
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", transport.pos.ToString().c_str());
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "seat: %i", transport.seat);
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "time: %u", transport.time);
-        if (flags2 & MOVEMENTFLAG2_INTERPOLATED_MOVEMENT)
-            sLog->outInfo(LOG_FILTER_NETWORKIO, "time2: %u", transport.prevTime);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->Guid: %s", Transport->Guid.ToString().c_str());
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->Pos: %s", Transport->Pos.ToString().c_str());
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->VehicleSeatIndex: %i", Transport->VehicleSeatIndex);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->MoveTime: %u", Transport->MoveTime);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->Facing: %f", Transport->Facing);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->PrevMoveTime: %u", *Transport->PrevMoveTime);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Transport->VehicleRecID: %u", *Transport->VehicleRecID);
     }
 
-    if ((flags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING)) || (flags2 & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING))
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "pitch: %f", pitch);
-
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "fallTime: %u", fallTime);
-    if (flags & MOVEMENTFLAG_FALLING)
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "jump.zspeed: %f jump.sinAngle: %f jump.cosAngle: %f jump.xyspeed: %f", jump.zspeed, jump.sinAngle, jump.cosAngle, jump.xyspeed);
-
-    if (flags & MOVEMENTFLAG_SPLINE_ELEVATION)
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "splineElevation: %f", splineElevation);
+    if (Fall.is_initialized())
+    {
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Fall->JumpVelocity: %f", Fall->JumpVelocity);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Fall->Time: %u", Fall->Time);
+        if (Fall->Velocity.is_initialized())
+        {
+            sLog->outInfo(LOG_FILTER_NETWORKIO, "Fall->Speed: %f", Fall->Velocity->Speed);
+            sLog->outInfo(LOG_FILTER_NETWORKIO, "Fall->Direction.X: %f, Fall->Direction.X: %Y", Fall->Velocity->Direction.x, Fall->Velocity->Direction.y);
+        }
+    }
 }
 
 WorldObject::WorldObject(bool isWorldObject): WorldLocation(),
@@ -1815,14 +1804,14 @@ bool WorldObject::_IsWithinDist(WorldObject const* obj, float dist2compare, bool
     float sizefactor = GetObjectSize() + obj->GetObjectSize();
     float maxdist = dist2compare + sizefactor;
 
-    if (m_transport && obj->GetTransport() &&  obj->GetTransport()->GetGUIDLow() == m_transport->GetGUIDLow())
+    if (m_movementInfo.Transport.is_initialized() && m_transport && obj->GetTransport() && obj->GetTransport()->GetGUIDLow() == m_transport->GetGUIDLow())
     {
-        float dtx = m_movementInfo.transport.pos.m_positionX - obj->m_movementInfo.transport.pos.m_positionX;
-        float dty = m_movementInfo.transport.pos.m_positionY - obj->m_movementInfo.transport.pos.m_positionY;
+        float dtx = m_movementInfo.Transport->Pos.m_positionX - obj->m_movementInfo.Transport->Pos.m_positionX;
+        float dty = m_movementInfo.Transport->Pos.m_positionY - obj->m_movementInfo.Transport->Pos.m_positionY;
         float disttsq = dtx * dtx + dty * dty;
         if (is3D)
         {
-            float dtz = m_movementInfo.transport.pos.m_positionZ - obj->m_movementInfo.transport.pos.m_positionZ;
+            float dtz = m_movementInfo.Transport->Pos.m_positionZ - obj->m_movementInfo.Transport->Pos.m_positionZ;
             disttsq += dtz * dtz;
         }
         return disttsq < (maxdist * maxdist);
