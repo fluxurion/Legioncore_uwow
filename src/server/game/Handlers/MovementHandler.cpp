@@ -455,8 +455,11 @@ void WorldSession::HandleSetActiveMover(WorldPackets::Movement::SetActiveMover& 
         }
 }
 
-void WorldSession::HandleMoveTimeSkipped(WorldPackets::Movement::MoveTimeSkipped& /*packet*/)
+void WorldSession::HandleMoveTimeSkipped(WorldPackets::Movement::MoveTimeSkipped& packet)
 {
+    Player* player = GetPlayer();
+    if (player->m_mover->GetGUID() == packet.MoverGUID)
+        player->m_movementInfo.MoveIndex += packet.TimeSkipped;
 }
 
 void WorldSession::HandleMoveSplineDone(WorldPackets::Movement::MoveSplineDone& packet)
