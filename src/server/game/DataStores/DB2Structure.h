@@ -783,9 +783,9 @@ struct CriteriaTreeEntry
     LocalizedString* Description;                           // 1
     uint16      CriteriaID;                                 // 2
     uint16      Parent;                                     // 3
-    int16       Flags;                                      // 4
+    int16       Operator;                                   // 4
     int16       OrderIndex;                                 // 5
-    int8        Operator;                                   // 6
+    int8        Flags;                                      // 6
 };
 
 struct CharacterLoadoutItemEntry
