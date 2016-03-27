@@ -294,8 +294,8 @@ namespace WorldPackets
         struct MovementForce
         {
             ObjectGuid ID;
-            Position Direction;
-            Position TransportPosition;
+            G3D::Vector3 Direction;
+            G3D::Vector3 TransportPosition;
             uint32 TransportID = 0;
             float Magnitude = 0.0f;
             uint8 Type = 0;
@@ -583,6 +583,30 @@ namespace WorldPackets
             int32 SequenceIndex = 0;
             float HorzSpeed = 0.0f;
             float VertSpeed = 0.0f;
+        };
+
+        class MoveApplyMovementForce final : public ServerPacket
+        {
+        public:
+            MoveApplyMovementForce() : ServerPacket(SMSG_MOVE_APPLY_MOVEMENT_FORCE, 67) { }
+
+            WorldPacket const* Write() override;
+            
+            MovementForce Force;
+            ObjectGuid MoverGUID;
+            uint32 SequenceIndex = 0;
+        };
+
+        class MoveRemoveMovementForce final : public ServerPacket
+        {
+        public:
+            MoveRemoveMovementForce() : ServerPacket(SMSG_MOVE_REMOVE_MOVEMENT_FORCE, 36) { }
+
+            WorldPacket const* Write() override;
+            
+            ObjectGuid MoverGUID;
+            ObjectGuid TriggerGUID;
+            uint32 SequenceIndex = 0;
         };
     }
 }

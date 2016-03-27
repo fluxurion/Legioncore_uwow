@@ -28094,6 +28094,42 @@ void Player::ValidateMovementInfo(MovementInfo* mi)
     #undef REMOVE_VIOLATING_FLAGS
 }
 
+void Player::SendMovementForce(AreaTrigger const* at, float x /*= 0.0f*/, float y /*= 0.0f*/, float z /*= 0.0f*/, float magnitude /*= 0.0f*/, uint32 type /*= 0*/, bool apply /*= false*/)
+{
+    ObjectGuid triggerGuid = at->GetGUID();
+
+    if (apply)
+    {
+        SetForceGUID(triggerGuid);
+
+        WorldPackets::Movement::MoveApplyMovementForce packet;
+        packet.MoverGUID = GetGUID();
+        packet.SequenceIndex = m_sequenceIndex++;
+        packet.Force.ID = triggerGuid;
+        packet.Force.Direction = G3D::Vector3(at->GetPositionX(), at->GetPositionY(), at->GetPositionZ());
+        packet.Force.TransportPosition = G3D::Vector3(x, y, z);
+        packet.Force.TransportID = 0;
+        packet.Force.Magnitude = magnitude;
+        packet.Force.Type = type;
+        GetSession()->SendPacket(packet.Write());
+
+        m_movementInfo.Forces[triggerGuid] = packet.Force;
+    }
+    else
+    {
+        SetForceGUID(ObjectGuid::Empty);
+
+        WorldPackets::Movement::MoveRemoveMovementForce packet;
+        packet.MoverGUID = GetGUID();
+        packet.TriggerGUID = triggerGuid;
+        packet.SequenceIndex = m_sequenceIndex++;
+        GetSession()->SendPacket(packet.Write());
+
+        m_movementInfo.Forces.erase(triggerGuid);
+        m_movementInfo.RemoveForcesIDs.emplace_back(triggerGuid);
+    }
+}
+
 void Player::SendMovementSetCanTransitionBetweenSwimAndFly(bool apply)
 {
     WorldPackets::Movement::MoveSetFlag packet(apply ? SMSG_MOVE_ENABLE_TRANSITION_BETWEEN_SWIM_AND_FLY : SMSG_MOVE_DISABLE_TRANSITION_BETWEEN_SWIM_AND_FLY);

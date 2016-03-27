@@ -355,19 +355,15 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         Unit const* unit = ToUnit();
         uint32 movementFlags = unit->m_movementInfo.GetMovementFlags();
         uint32 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
+        // these break update packet
         if (GetTypeId() == TYPEID_UNIT)
             movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
-        // these break update packet
+        else
         {
-            if (GetTypeId() == TYPEID_UNIT)
-                movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
-            else
-            {
-                if (movementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_CAN_FLY))
-                    movementFlags &= ~(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR | MOVEMENTFLAG_FALLING_SLOW);
-                if ((movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING) == 0)
-                    movementFlags &= ~MOVEMENTFLAG_FALLING;
-            }
+            if (movementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_CAN_FLY))
+                movementFlags &= ~(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR | MOVEMENTFLAG_FALLING_SLOW);
+            if ((movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING) == 0)
+                movementFlags &= ~MOVEMENTFLAG_FALLING;
         }
 
         *data << GetGUID();                                             // MoverGUID

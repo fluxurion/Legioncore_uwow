@@ -24172,46 +24172,6 @@ void Unit::GeneratePersonalLoot(Creature* creature, Player* anyLooter)
     }
 }
 
-//! 6.1.2
-void Unit::SendMovementForce(WorldObject* at, float windX, float windY, float windZ, float windSpeed, uint32 windType, bool apply)
-{
-    if (GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Unit::SendMovementForce x %f, y %f, z %f o %f apply %i", windX, windY, windZ, windSpeed, apply);
-
-    if(apply)
-    {
-        SetForceGUID(at->GetGUID());
-
-        WorldPacket data(SMSG_MOVE_APPLY_MOVEMENT_FORCE);
-        data << GetGUID();
-        data << uint32(m_sequenceIndex++); // SequenceIndex
-        data << at->GetGUID(); //guid AT
-        data << float(at->GetPositionX());
-        data << float(at->GetPositionY());
-        data << float(at->GetPositionZ());
-        data << float(windX);
-        data << float(windY);
-        data << float(windZ);
-        data << uint32(0/*TransportID*/);
-        data << float(windSpeed);
-        data.WriteBits(windType, 2); // Type
-
-        ToPlayer()->GetSession()->SendPacket(&data);
-    }
-    else
-    {
-        SetForceGUID(ObjectGuid::Empty);
-
-        WorldPacket data(SMSG_MOVE_REMOVE_MOVEMENT_FORCE);
-        data << GetGUID();
-        data << uint32(m_sequenceIndex++); // SequenceIndex
-        data << at->GetGUID(); //guid AT
-        ToPlayer()->GetSession()->SendPacket(&data);
-    }
-}
-
 bool Unit::HasSomeCasterAura(ObjectGuid const& guid) const
 {
     for (AuraApplicationMap::const_iterator itr = m_appliedAuras.begin(); itr != m_appliedAuras.end(); ++itr)

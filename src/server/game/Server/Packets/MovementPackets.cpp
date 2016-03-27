@@ -196,12 +196,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFi
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce const& movementForce)
 {
     data << movementForce.ID;
-    data << movementForce.Direction.GetPositionX();
-    data << movementForce.Direction.GetPositionY();
-    data << movementForce.Direction.GetPositionZ();
-    data << movementForce.TransportPosition.GetPositionX();
-    data << movementForce.TransportPosition.GetPositionY();
-    data << movementForce.TransportPosition.GetPositionZ();
+    data << movementForce.Direction;
+    data << movementForce.TransportPosition;
     data << movementForce.TransportID;
     data << movementForce.Magnitude;
     data.WriteBits(movementForce.Type, 2);
@@ -213,8 +209,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce c
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce)
 {
     data >> movementForce.ID;
-    data >> movementForce.Direction.PositionXYZStream();
-    data >> movementForce.TransportPosition.PositionXYZStream();
+    data >> movementForce.Direction;
+    data >> movementForce.TransportPosition;
     data >> movementForce.TransportID;
     data >> movementForce.Magnitude;
     movementForce.Type = data.ReadBits(2);
@@ -812,6 +808,24 @@ WorldPacket const* WorldPackets::Movement::MoveKnockBack::Write()
     _worldPacket << Direction;
     _worldPacket << HorzSpeed;
     _worldPacket << VertSpeed;
+
+    return &_worldPacket;
+}
+
+WorldPacket const* WorldPackets::Movement::MoveApplyMovementForce::Write()
+{
+    _worldPacket << MoverGUID;
+    _worldPacket << SequenceIndex;
+    _worldPacket << Force;
+
+    return &_worldPacket;
+}
+
+WorldPacket const* WorldPackets::Movement::MoveRemoveMovementForce::Write()
+{
+    _worldPacket << MoverGUID;
+    _worldPacket << SequenceIndex;
+    _worldPacket << TriggerGUID;
 
     return &_worldPacket;
 }

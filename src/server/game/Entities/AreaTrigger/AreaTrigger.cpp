@@ -729,17 +729,13 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
             break;
         }
         case AT_ACTION_TYPE_APPLY_MOVEMENT_FORCE:
-        {
-            if(!unit->HasAuraType(SPELL_AURA_DISABLE_MOVEMENT_FORCE))
-                unit->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, true);
+            if (!unit->HasAuraType(SPELL_AURA_DISABLE_MOVEMENT_FORCE))
+                static_cast<Player*>(unit)->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, true);
             break;
-        }
         case AT_ACTION_TYPE_REMOVE_MOVEMENT_FORCE:
-        {
-            if(!unit->GetForceGUID().IsEmpty())
-                unit->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, false);
+            if (!unit->GetForceGUID().IsEmpty())
+                static_cast<Player*>(unit)->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType);
             break;
-        }
         case AT_ACTION_TYPE_CHANGE_DURATION_ANY_AT:
         {
             float searchRange = 0.0f;
