@@ -15331,8 +15331,21 @@ bool Player::CanCompleteQuest(uint32 quest_id)
         {
             for (QuestObjective const& obj : qInfo->GetObjectives())
             {
+                if (obj.Flags & QUEST_OBJECTIVE_FLAG_TASK)
+                    continue;
+
                 switch (obj.Type)
                 {
+                    case QUEST_OBJECTIVE_TASK_IN_ZONE:
+                    {
+                        float scale = 0.0f;
+                        for (QuestObjective const& task : qInfo->GetObjectives())
+                        {
+                            if (obj.Flags & QUEST_OBJECTIVE_FLAG_TASK)
+                                scale += float(GetQuestObjectiveData(qInfo, task.StorageIndex) * task.TaskStep);
+                        }
+                        return scale >= 100.0f;
+                    }
                     case QUEST_OBJECTIVE_MONSTER:
                     case QUEST_OBJECTIVE_ITEM:
                     case QUEST_OBJECTIVE_GAMEOBJECT:
