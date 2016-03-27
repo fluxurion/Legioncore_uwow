@@ -15107,8 +15107,6 @@ void Player::PrepareAreaQuest(uint32 area)
         AddQuest(quest, this);
         if (CanCompleteQuest(quest_id))
             CompleteQuest(quest_id);
-
-        PlayerTalkClass->SendQuestGiverQuestDetails(quest, GetGUID(), false, true);
     }
 }
 
