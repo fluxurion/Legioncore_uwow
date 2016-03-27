@@ -372,8 +372,8 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         *data << float(unit->GetPositionY());
         *data << float(unit->GetPositionZ());
         *data << float(G3D::fuzzyEq(unit->GetOrientation(), 0.0f) ? 0.0f : Position::NormalizeOrientation(unit->GetOrientation()));
-        *data << Position::NormalizePitch(unit->m_movementInfo.Pitch);
-        *data << unit->m_movementInfo.StepUpStartElevation;
+        *data << float(unit->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING) || unit->m_movementInfo.HasExtraMovementFlag(MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING) ? Position::NormalizePitch(unit->m_movementInfo.Pitch) : 0.0f);
+        *data << float(unit->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION) ? unit->m_movementInfo.StepUpStartElevation : 0.0f);
 
         *data << static_cast<uint32>(unit->m_movementInfo.RemoveForcesIDs.size());
         *data << unit->m_movementInfo.UnkINT;
