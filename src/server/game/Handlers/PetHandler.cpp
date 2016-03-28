@@ -404,6 +404,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     spell->m_targets = targets;
     spell->m_miscData[0] = cast.Cast.Misc[0];
     spell->m_miscData[1] = cast.Cast.Misc[1];
+    spell->m_spellGuid = cast.Cast.SpellGuid;
 
     if (spellInfo->Categories.StartRecoveryCategory) // Check if spell is affected by GCD
         if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))

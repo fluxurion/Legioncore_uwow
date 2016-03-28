@@ -9332,7 +9332,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
     }
 }
 
-void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32* misc)
+void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32* misc, ObjectGuid SpellGuid)
 {
     ItemTemplate const* proto = item->GetTemplate();
     // special learning case
@@ -9387,6 +9387,7 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
         spell->m_CastItem = item;
         spell->m_miscData[0] = misc[0];
         spell->m_miscData[1] = misc[1];
+        spell->m_spellGuid = SpellGuid;
         spell->prepare(&targets);
 
         ++count;

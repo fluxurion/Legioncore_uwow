@@ -72,6 +72,7 @@ void WorldSession::HandleUseToy(WorldPackets::Toy::UseToy& packet)
     for (uint8 i = 0; i < 2; ++i)
         spell->m_miscData[i] = packet.Cast.Misc[i];
     spell->m_castFlags[1] |= CAST_FLAG_EX_USE_TOY_SPELL;
+    spell->m_spellGuid = packet.Cast.SpellGuid;
     spell->prepare(&targets);
 }
 

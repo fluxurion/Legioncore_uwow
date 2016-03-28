@@ -136,7 +136,7 @@ void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
     {
         // no script or script not process request by self
         pItem->SetInUse();
-        pUser->CastItemUseSpell(pItem, targets, cast.Cast.Misc);
+        pUser->CastItemUseSpell(pItem, targets, cast.Cast.Misc, cast.Cast.SpellGuid);
     }
 }
 
