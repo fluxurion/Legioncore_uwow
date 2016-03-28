@@ -46,6 +46,18 @@ inline ByteBuffer& operator>>(ByteBuffer& data, G3D::Vector3& v)
     return data;
 }
 
+inline ByteBuffer& operator<<(ByteBuffer& data, G3D::Vector4 const& v)
+{
+    data << v.x << v.y << v.z << v.w;
+    return data;
+}
+
+inline ByteBuffer& operator>>(ByteBuffer& data, G3D::Vector4& v)
+{
+    data >> v.x >> v.y >> v.z >> v.w;
+    return data;
+}
+
 namespace WorldPackets
 {
     template <typename T>

@@ -455,7 +455,7 @@ void WorldPackets::Party::PartyMemberStats::Initialize(Player* player)
 
     // Vehicle
     if (player->GetVehicle() && player->GetVehicle()->GetVehicleInfo())
-        MemberStats.VehicleSeat = player->GetVehicle()->GetVehicleInfo()->SeatID[player->m_movementInfo.transport.seat];
+        MemberStats.VehicleSeat = player->GetVehicle()->GetVehicleInfo()->SeatID[player->m_movementInfo.transport.VehicleSeatIndex];
 
     // Auras
     for (uint8 i = 0; i < MAX_AURAS; ++i)

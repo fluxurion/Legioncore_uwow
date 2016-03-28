@@ -201,7 +201,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
 
     if (!(flags & UPDATEFLAG_LIVING))
         if (WorldObject const* worldObject = dynamic_cast<WorldObject const*>(this))
-            if (!worldObject->m_movementInfo.transport.guid.IsEmpty())
+            if (!worldObject->m_movementInfo.transport.Guid.IsEmpty())
                 flags |= UPDATEFLAG_GO_TRANSPORT_POSITION;
 
     if (flags & UPDATEFLAG_STATIONARY_POSITION)
@@ -354,20 +354,16 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     {
         Unit const* unit = ToUnit();
         uint32 movementFlags = unit->m_movementInfo.GetMovementFlags();
-        uint16 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
+        uint32 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
+        // these break update packet
         if (GetTypeId() == TYPEID_UNIT)
             movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
-        // these break update packet
+        else
         {
-            if (GetTypeId() == TYPEID_UNIT)
-                movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
-            else
-            {
-                if (movementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_CAN_FLY))
-                    movementFlags &= ~(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR | MOVEMENTFLAG_FALLING_SLOW);
-                if ((movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING) == 0)
-                    movementFlags &= ~MOVEMENTFLAG_FALLING;
-            }
+            if (movementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_CAN_FLY))
+                movementFlags &= ~(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR | MOVEMENTFLAG_FALLING_SLOW);
+            if ((movementFlagsExtra & MOVEMENTFLAG2_INTERPOLATED_TURNING) == 0)
+                movementFlags &= ~MOVEMENTFLAG_FALLING;
         }
 
         bool HasFallDirection = unit->HasUnitMovementFlag(MOVEMENTFLAG_FALLING);
@@ -375,40 +371,29 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         bool HasSpline = unit->IsSplineEnabled();
 
         *data << GetGUID();                                             // MoverGUID
-        *data << uint32(unit->m_movementInfo.time);                     // MoveIndex
+        *data << uint32(unit->m_movementInfo.MoveIndex);
         *data << float(unit->GetPositionX());
         *data << float(unit->GetPositionY());
         *data << float(unit->GetPositionZ());
         *data << float(G3D::fuzzyEq(unit->GetOrientation(), 0.0f) ? 0.0f : Position::NormalizeOrientation(unit->GetOrientation()));
-
-                                                                        // Pitch
-        if ((movementFlags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING)) ||
-            (movementFlagsExtra & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING))
-            *data << float(Position::NormalizePitch(unit->m_movementInfo.pitch));
-        else
-            *data << float(0.0f);
-
-        if (movementFlags & MOVEMENTFLAG_SPLINE_ELEVATION)              // StepUpStartElevation
-            *data << float(unit->m_movementInfo.splineElevation);
-        else
-            *data << float(0.0f);
-
-        uint32 removeMovementForcesCount = 0;
-        *data << uint32(removeMovementForcesCount);                     // Count of RemoveForcesIDs
+        *data << float(unit->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING) || unit->m_movementInfo.HasExtraMovementFlag(MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING) ? Position::NormalizePitch(unit->m_movementInfo.pitch) : 0.0f);
+        *data << float(unit->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION) ? unit->m_movementInfo.splineElevation : 0.0f);
+ 
+        *data << uint32(unit->m_movementInfo.RemoveForcesIDs.size());
         *data << uint32(0);                                             // Int168
 
-        //for (uint32 i = 0; i < removeMovementForcesCount; ++i)
-        //    *data << ObjectGuid(RemoveForcesIDs);
+        for (ObjectGuid const& guid : unit->m_movementInfo.RemoveForcesIDs)
+            *data << guid;
 
         data->WriteBits(movementFlags, 30);
         data->WriteBits(movementFlagsExtra, 18);
-        data->WriteBit(!unit->m_movementInfo.transport.guid.IsEmpty()); // HasTransport
+        data->WriteBit(!unit->m_movementInfo.transport.Guid.IsEmpty()); // HasTransport
         data->WriteBit(HasFall);                                        // HasFall
         data->WriteBit(HasSpline);                                      // HasSpline - marks that the unit uses spline movement
-        data->WriteBit(0);                                              // HeightChangeFailed
-        data->WriteBit(0);                                              // RemoteTimeValid
+        data->WriteBit(unit->m_movementInfo.HeightChangeFailed);
+        data->WriteBit(unit->m_movementInfo.RemoteTimeValid);
 
-        if (!unit->m_movementInfo.transport.guid.IsEmpty())
+        if (!unit->m_movementInfo.transport.Guid.IsEmpty())
             *data << unit->m_movementInfo.transport;
 
         if (HasFall)
@@ -434,10 +419,9 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         *data << float(unit->GetSpeed(MOVE_TURN_RATE));
         *data << float(unit->GetSpeed(MOVE_PITCH_RATE));
 
-        uint32 MovementForceCount = 0;
-        *data << uint32(MovementForceCount);
-        //for (uint32 i = 0; i < MovementForceCount; ++i)
-        //    WorldPackets::Movement::MovementForce(*data);
+        *data << static_cast<uint32>(unit->m_movementInfo.Forces.size());
+        for (auto const& force : unit->m_movementInfo.Forces)
+            *data << force.second;
 
         if (data->WriteBit(HasSpline))
             WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(*unit->movespline, *data);
@@ -1654,30 +1638,30 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 void MovementInfo::OutDebug()
 {
     sLog->outInfo(LOG_FILTER_NETWORKIO, "MOVEMENT INFO");
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "guid " UI64FMTD, guid);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "flags %u", flags);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "flags2 %u", flags2);
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "time %u current time " UI64FMTD "", flags2, uint64(::time(NULL)));
-    sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", pos.ToString().c_str());
-    if (transport.guid)
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "Guid " UI64FMTD, Guid);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveFlags[0] %u", MoveFlags[0]);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveFlags[1] %u", MoveFlags[1]);
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "time %u current time " UI64FMTD "", MoveFlags[1], uint64(::time(NULL)));
+    sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", Pos.ToString().c_str());
+    if (transport.Guid)
     {
         sLog->outInfo(LOG_FILTER_NETWORKIO, "TRANSPORT:");
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "guid: " UI64FMTD, transport.guid);
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", transport.pos.ToString().c_str());
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "seat: %i", transport.seat);
-        sLog->outInfo(LOG_FILTER_NETWORKIO, "time: %u", transport.time);
-        if (flags2 & MOVEMENTFLAG2_INTERPOLATED_MOVEMENT)
-            sLog->outInfo(LOG_FILTER_NETWORKIO, "time2: %u", transport.prevTime);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "Guid: " UI64FMTD, transport.Guid);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "position: `%s`", transport.Pos.ToString().c_str());
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "VehicleSeatIndex: %i", transport.VehicleSeatIndex);
+        sLog->outInfo(LOG_FILTER_NETWORKIO, "MoveTime: %u", transport.MoveTime);
+        if (MoveFlags[1] & MOVEMENTFLAG2_INTERPOLATED_MOVEMENT)
+            sLog->outInfo(LOG_FILTER_NETWORKIO, "PrevMoveTime: %u", transport.PrevMoveTime);
     }
 
-    if ((flags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING)) || (flags2 & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING))
+    if ((MoveFlags[0] & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING)) || (MoveFlags[1] & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING))
         sLog->outInfo(LOG_FILTER_NETWORKIO, "pitch: %f", pitch);
 
     sLog->outInfo(LOG_FILTER_NETWORKIO, "fallTime: %u", fallTime);
-    if (flags & MOVEMENTFLAG_FALLING)
+    if (MoveFlags[0] & MOVEMENTFLAG_FALLING)
         sLog->outInfo(LOG_FILTER_NETWORKIO, "jump.zspeed: %f jump.sinAngle: %f jump.cosAngle: %f jump.xyspeed: %f", jump.zspeed, jump.sinAngle, jump.cosAngle, jump.xyspeed);
 
-    if (flags & MOVEMENTFLAG_SPLINE_ELEVATION)
+    if (MoveFlags[0] & MOVEMENTFLAG_SPLINE_ELEVATION)
         sLog->outInfo(LOG_FILTER_NETWORKIO, "splineElevation: %f", splineElevation);
 }
 
@@ -1793,12 +1777,12 @@ bool WorldObject::_IsWithinDist(WorldObject const* obj, float dist2compare, bool
 
     if (m_transport && obj->GetTransport() &&  obj->GetTransport()->GetGUIDLow() == m_transport->GetGUIDLow())
     {
-        float dtx = m_movementInfo.transport.pos.m_positionX - obj->m_movementInfo.transport.pos.m_positionX;
-        float dty = m_movementInfo.transport.pos.m_positionY - obj->m_movementInfo.transport.pos.m_positionY;
+        float dtx = m_movementInfo.transport.Pos.m_positionX - obj->m_movementInfo.transport.Pos.m_positionX;
+        float dty = m_movementInfo.transport.Pos.m_positionY - obj->m_movementInfo.transport.Pos.m_positionY;
         float disttsq = dtx * dtx + dty * dty;
         if (is3D)
         {
-            float dtz = m_movementInfo.transport.pos.m_positionZ - obj->m_movementInfo.transport.pos.m_positionZ;
+            float dtz = m_movementInfo.transport.Pos.m_positionZ - obj->m_movementInfo.transport.Pos.m_positionZ;
             disttsq += dtz * dtz;
         }
         return disttsq < (maxdist * maxdist);

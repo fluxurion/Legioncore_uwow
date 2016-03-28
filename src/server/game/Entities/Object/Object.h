@@ -33,6 +33,14 @@
 #include "G3D/Vector3.h"
 #include "G3D/LineSegment.h"
 
+namespace  WorldPackets
+{
+    namespace  Movement
+    {
+        struct MovementForce;
+    }
+}
+
 using G3D::Vector3;
 using G3D::LineSegment2D;
 
@@ -439,46 +447,26 @@ class Object
 
 struct MovementInfo
 {
-    // common
-    ObjectGuid guid;
-    uint32 flags;
-    uint16 flags2;
-    Position pos;
-    uint32 time;
-
-    // transport
     struct TransportInfo
     {
         void Reset()
         {
-            guid.Clear();
-            pos.Relocate(0.0f, 0.0f, 0.0f, 0.0f);
-            seat = -1;
-            time = 0;
-            prevTime = 0;
-            vehicleId = 0;
-            hasTrevTime = false;
-            hasVehicleId = false;
+            Guid.Clear();
+            Pos.Relocate(0.0f, 0.0f, 0.0f, 0.0f);
+            VehicleSeatIndex = -1;
+            MoveTime = 0;
+            PrevMoveTime = 0;
+            VehicleRecID = 0;
         }
 
-        ObjectGuid guid;
-        Position pos;
-        int8 seat;
-        uint32 time;
-        bool hasTrevTime;
-        uint32 prevTime;
-        bool hasVehicleId;
-        uint32 vehicleId;
+        ObjectGuid Guid;
+        Position Pos;
+        uint32 MoveTime;
+        uint32 PrevMoveTime; //< Optional
+        uint32 VehicleRecID; //< Optional
+        int8 VehicleSeatIndex;
     } transport;
 
-    // swimming/flying
-    float pitch;
-    bool hasPitch;
-
-    // falling
-    uint32 fallTime;
-
-    // jumping
     struct JumpInfo
     {
         void Reset()
@@ -490,51 +478,42 @@ struct MovementInfo
 
     } jump;
 
-    // spline
-    bool hasSplineElevation;
+    GuidVector RemoveForcesIDs;
+    std::map<ObjectGuid, WorldPackets::Movement::MovementForce> Forces;
+    ObjectGuid Guid;
+    Position Pos;
+    uint32 MoveFlags[2];
+    uint32 MoveIndex;   
+    uint32 fallTime; 
     float splineElevation;
-    // BitClientData
-    bool hasFallData;
-    bool hasFallDirection;
-    bool hasSpline;
-    bool byte95;
-    bool byteAC;
-    bool hasUnkInt32;
-    uint32 unkInt32;
-    std::vector<uint32> unkCounter;
+    float pitch;
+    bool HeightChangeFailed;
+    bool RemoteTimeValid;
 
     MovementInfo()
     {
-        pos.Relocate(0, 0, 0, 0);
+        Guid.Clear();
+        Pos.Relocate(0, 0, 0, 0);
+        memset(MoveFlags, 0, sizeof(MoveFlags));
         transport.Reset();
         jump.Reset();
-        guid.Clear();
-        flags = 0;
-        flags2 = 0;
-        time = fallTime = 0;
+        MoveIndex = fallTime = 0;
         splineElevation = 0;
-        hasSplineElevation = false;
-        hasPitch = false;
         pitch = 0.0f;
-        hasFallData = false;
-        hasFallDirection = false;
-        hasSpline = false;
-        byte95 = false;
-        byteAC = false;
-        hasUnkInt32 = false;
-        unkInt32 = 0;
+        HeightChangeFailed = false;
+        RemoteTimeValid = false;
     }
 
-    uint32 GetMovementFlags() const { return flags; }
-    void SetMovementFlags(uint32 flag) { flags = flag; }
-    void AddMovementFlag(uint32 flag) { flags |= flag; }
-    void RemoveMovementFlag(uint32 flag) { flags &= ~flag; }
-    bool HasMovementFlag(uint32 flag) const { return (flags & flag) != 0; }
+    uint32 GetMovementFlags() const { return MoveFlags[0]; }
+    void SetMovementFlags(uint32 flag) { MoveFlags[0] = flag; }
+    void AddMovementFlag(uint32 flag) { MoveFlags[0] |= flag; }
+    void RemoveMovementFlag(uint32 flag) { MoveFlags[0] &= ~flag; }
+    bool HasMovementFlag(uint32 flag) const { return (MoveFlags[0] & flag) != 0; }
 
-    uint16 GetExtraMovementFlags() const { return flags2; }
-    void SetExtraMovementFlags(uint32 flag) { flags2 = flag; }
-    void AddExtraMovementFlag(uint16 flag) { flags2 |= flag; }
-    bool HasExtraMovementFlag(uint16 flag) const { return (flags2 & flag) != 0; }
+    uint32 GetExtraMovementFlags() const { return MoveFlags[1]; }
+    void SetExtraMovementFlags(uint32 flag) { MoveFlags[1] = flag; }
+    void AddExtraMovementFlag(uint32 flag) { MoveFlags[1] |= flag; }
+    bool HasExtraMovementFlag(uint32 flag) const { return (MoveFlags[1] & flag) != 0; }
 
     void SetFallTime(uint32 time) { fallTime = time; }
 

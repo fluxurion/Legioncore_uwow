@@ -9140,14 +9140,16 @@ void AuraEffect::HandleDisableMovementForce(AuraApplication const* aurApp, uint8
     if (!(mode & AURA_EFFECT_HANDLE_REAL))
         return;
 
-    Unit* target = aurApp->GetTarget();
-    if (!target)
-        return;
+    Player* player = nullptr;
+    if (Unit* target = aurApp->GetTarget())
+        if (target->ToPlayer())
+            player = target->ToPlayer();
+        else
+            return;
 
-    ObjectGuid forceGuid = target->GetForceGUID();
-    if(!forceGuid.IsEmpty())
-        if(WorldObject* at = ObjectAccessor::GetWorldObject(*target, forceGuid))
-            target->SendMovementForce(at, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, false);
+    if (ObjectGuid forceGuid = player->GetForceGUID())
+        if (AreaTrigger const* at = ObjectAccessor::GetAreaTrigger(*player, forceGuid))
+            player->SendMovementForce(at);
 }
 
 void AuraEffect::HandleAnimReplacementSet(AuraApplication const* aurApp, uint8 mode, bool apply) const

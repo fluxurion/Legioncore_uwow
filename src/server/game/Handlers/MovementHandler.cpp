@@ -228,8 +228,8 @@ void WorldSession::HandleMoveTeleportAck(WorldPackets::Movement::MoveTeleportAck
 
     if (Unit* mover = _player->m_mover)
     {
-        mover->m_movementInfo.time = getMSTime();
-        mover->m_movementInfo.pos = mover->GetPosition();
+        mover->m_movementInfo.MoveIndex = getMSTime();
+        mover->m_movementInfo.Pos = mover->GetPosition();
 
         WorldPackets::Movement::MoveUpdate playerMovement;
         playerMovement.movementInfo = &mover->m_movementInfo;
@@ -258,23 +258,23 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
     GetPlayer()->ValidateMovementInfo(&packet.movementInfo);
 
     MovementInfo& movementInfo = packet.movementInfo;
-    if (movementInfo.guid != mover->GetGUID() || !movementInfo.pos.IsPositionValid())
+    if (movementInfo.Guid != mover->GetGUID() || !movementInfo.Pos.IsPositionValid())
         return;
 
     if (plrMover && (plrMover->GetUInt32Value(UNIT_NPC_EMOTESTATE) != 0))
         plrMover->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
 
     if (mover->HasAuraType(SPELL_AURA_MOD_POSSESS) || (plrMover && plrMover->HasAuraType(SPELL_AURA_MOD_POSSESS)))
-        if (movementInfo.flags & MOVEMENTFLAG_WALKING)
-            movementInfo.flags &= ~MOVEMENTFLAG_WALKING;
+        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_WALKING))
+            movementInfo.RemoveMovementFlag(MOVEMENTFLAG_WALKING);
 
-    if (!movementInfo.transport.guid.IsEmpty())
+    if (!movementInfo.transport.Guid.IsEmpty())
     {
-        if (movementInfo.transport.pos.GetPositionX() > 50.0f || movementInfo.transport.pos.GetPositionY() > 50.0f || movementInfo.transport.pos.GetPositionZ() > 50.0f)
+        if (movementInfo.transport.Pos.GetPositionX() > 50.0f || movementInfo.transport.Pos.GetPositionY() > 50.0f || movementInfo.transport.Pos.GetPositionZ() > 50.0f)
             return;
 
-        if (!Trinity::IsValidMapCoord(movementInfo.pos.GetPositionX() + movementInfo.transport.pos.GetPositionX(), movementInfo.pos.GetPositionY() + movementInfo.transport.pos.GetPositionY(),
-            movementInfo.pos.GetPositionZ() + movementInfo.transport.pos.GetPositionZ(), movementInfo.pos.GetOrientation() + movementInfo.transport.pos.GetOrientation()))
+        if (!Trinity::IsValidMapCoord(movementInfo.Pos.GetPositionX() + movementInfo.transport.Pos.GetPositionX(), movementInfo.Pos.GetPositionY() + movementInfo.transport.Pos.GetPositionY(),
+            movementInfo.Pos.GetPositionZ() + movementInfo.transport.Pos.GetPositionZ(), movementInfo.Pos.GetOrientation() + movementInfo.transport.Pos.GetOrientation()))
             return;
 
         if (plrMover)
@@ -282,19 +282,19 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
             if (!plrMover->GetTransport())
             {
                 for (auto const& iter : sMapMgr->m_Transports)
-                    if (iter->GetGUID() == movementInfo.transport.guid)
+                    if (iter->GetGUID() == movementInfo.transport.Guid)
                     {
                         plrMover->m_transport = iter;
                         iter->AddPassenger(plrMover);
                         break;
                     }
             }
-            else if (plrMover->GetTransport()->GetGUID() != movementInfo.transport.guid)
+            else if (plrMover->GetTransport()->GetGUID() != movementInfo.transport.Guid)
             {
                 bool foundNewTransport = false;
                 plrMover->m_transport->RemovePassenger(plrMover);
                 for (auto const& iter : sMapMgr->m_Transports)
-                    if (iter->GetGUID() == movementInfo.transport.guid)
+                    if (iter->GetGUID() == movementInfo.transport.Guid)
                     {
                         foundNewTransport = true;
                         plrMover->m_transport = iter;
@@ -311,49 +311,52 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
         }
 
         if (!mover->GetTransport() && !mover->GetVehicle())
-            if (GameObject* go = mover->GetMap()->GetGameObject(movementInfo.transport.guid))
+            if (GameObject* go = mover->GetMap()->GetGameObject(movementInfo.transport.Guid))
                 if (go->GetGoType() != GAMEOBJECT_TYPE_TRANSPORT)
                     movementInfo.transport.Reset();
     }
     else if (plrMover && plrMover->GetTransport())
         plrMover->m_transport->RemovePassenger(plrMover);
-        
+
     OpcodeClient opcode = packet.GetOpcode();
-    if (opcode == CMSG_MOVE_FALL_LAND && plrMover && !plrMover->isInFlight())
-        plrMover->HandleFall(movementInfo);
+    if (plrMover)
+    {
+        if (opcode == CMSG_MOVE_FALL_LAND && !plrMover->isInFlight())
+            plrMover->HandleFall(movementInfo);
 
-    if (plrMover && ((movementInfo.flags & MOVEMENTFLAG_SWIMMING) != 0) != plrMover->IsInWater())
-        plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(movementInfo.pos));
+        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING) != plrMover->IsInWater())
+            plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(movementInfo.Pos));
 
-    if (plrMover && mover)
-        if (Vehicle const* veh = mover->GetVehicleKit())
-            if (Unit* base = veh->GetBase())
-                if (Creature* vehCreature = base->ToCreature())
-                    if (!vehCreature->isInAccessiblePlaceFor(vehCreature))
-                        plrMover->ExitVehicle();
+        if (mover)
+            if (Vehicle const* veh = mover->GetVehicleKit())
+                if (Unit* base = veh->GetBase())
+                    if (Creature* vehCreature = base->ToCreature())
+                        if (!vehCreature->isInAccessiblePlaceFor(vehCreature))
+                            plrMover->ExitVehicle();
+    }
 
     if (m_clientTimeDelay == 0)
-        m_clientTimeDelay = getMSTime() - movementInfo.time;
+        m_clientTimeDelay = getMSTime() - movementInfo.MoveIndex;
 
-    movementInfo.time = movementInfo.time + m_clientTimeDelay + MOVEMENT_PACKET_TIME_DELAY;
+    movementInfo.MoveIndex += m_clientTimeDelay + MOVEMENT_PACKET_TIME_DELAY;
 
-    movementInfo.guid = mover->GetGUID();
+    movementInfo.Guid = mover->GetGUID();
     mover->m_movementInfo = movementInfo;
 
     if (Vehicle* vehicle = mover->GetVehicle())
     {
         if (VehicleSeatEntry const* seat = vehicle->GetSeatForPassenger(mover))
             if (seat->Flags & VEHICLE_SEAT_FLAG_ALLOW_TURNING)
-                if (movementInfo.pos.GetOrientation() != mover->GetOrientation())
+                if (movementInfo.Pos.GetOrientation() != mover->GetOrientation())
                 {
-                    mover->SetOrientation(movementInfo.pos.GetOrientation());
+                    mover->SetOrientation(movementInfo.Pos.GetOrientation());
                     mover->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TURNING);
                 }
 
         return;
     }
 
-    mover->UpdatePosition(movementInfo.pos);
+    mover->UpdatePosition(movementInfo.Pos);
 
     WorldPackets::Movement::MoveUpdate moveUpdate;
     moveUpdate.movementInfo = &mover->m_movementInfo;
@@ -366,7 +369,7 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
 
         plrMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
-        if (movementInfo.pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.pos))
+        if (movementInfo.Pos.GetPositionZ() < plrMover->GetMap()->GetMinHeight(movementInfo.Pos))
             if (!(plrMover->GetBattleground() && plrMover->GetBattleground()->HandlePlayerUnderMap(_player)))
                 if (plrMover->isAlive())
                 {
@@ -383,7 +386,7 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPackets::Movement::MovementSpe
     Player* player = GetPlayer();
     player->ValidateMovementInfo(&packet.Ack.movementInfo);
 
-    if (player->GetGUID() != packet.Ack.movementInfo.guid)
+    if (player->GetGUID() != packet.Ack.movementInfo.Guid)
         return;
 
     UnitMoveType move_type;
@@ -425,7 +428,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPackets::Movement::MovementAckMes
     Player* player = GetPlayer();
     player->ValidateMovementInfo(&packet.Ack.movementInfo);
 
-    if (player->m_mover->GetGUID() != packet.Ack.movementInfo.guid)
+    if (player->m_mover->GetGUID() != packet.Ack.movementInfo.Guid)
         return;
 
     player->m_movementInfo = packet.Ack.movementInfo;
@@ -456,8 +459,11 @@ void WorldSession::HandleSetActiveMover(WorldPackets::Movement::SetActiveMover& 
         }
 }
 
-void WorldSession::HandleMoveTimeSkipped(WorldPackets::Movement::MoveTimeSkipped& /*packet*/)
+void WorldSession::HandleMoveTimeSkipped(WorldPackets::Movement::MoveTimeSkipped& packet)
 {
+    Player* player = GetPlayer();
+    if (player->m_mover->GetGUID() == packet.MoverGUID)
+        player->m_movementInfo.MoveIndex += packet.TimeSkipped;
 }
 
 void WorldSession::HandleMoveSplineDone(WorldPackets::Movement::MoveSplineDone& packet)
@@ -504,36 +510,20 @@ void WorldSession::HandleMoveSplineDone(WorldPackets::Movement::MoveSplineDone& 
 
 void WorldSession::HandleMoveRemoveMovementForceAck(WorldPackets::Movement::MoveRemoveMovementForceAck& packet)
 {
-//    Player* player = GetPlayer();
-//    player->ValidateMovementInfo(&packet.Ack.movementInfo);
-//    if (player->m_mover->GetGUID() != packet.Ack.movementInfo.MoverGUID)
-//        return;
-//
-//    player->m_movementInfo = packet.Ack.movementInfo;
-//    player->m_movementInfo.RemoveForcesIDs.emplace_back(packet.TriggerGUID);
-//
-//    auto it = player->m_movementInfo.Forces.find(packet.TriggerGUID);
-//    if (it != player->m_movementInfo.Forces.end())
-//        player->m_movementInfo.Forces.erase(it);
-//
-//    WorldPackets::Movement::MoveUpdateRemoveMovementForce remove;
-//    remove.movementInfo = &player->m_movementInfo;
-//    remove.TriggerGUID = packet.TriggerGUID;
-//    player->SendMessageToSet(remove.Write(), player);
+    Player* player = GetPlayer();
+    player->ValidateMovementInfo(&packet.Ack.movementInfo);
+    if (player->m_mover->GetGUID() != packet.Ack.movementInfo.Guid)
+        return;
+
+    player->m_movementInfo = packet.Ack.movementInfo;
 }
 
 void WorldSession::HandleMoveApplyMovementForceAck(WorldPackets::Movement::MoveApplyMovementForceAck& packet)
 {
-    //Player* player = GetPlayer();
-    //player->ValidateMovementInfo(&packet.Ack.movementInfo);
-    //if (player->m_mover->GetGUID() != packet.Ack.movementInfo.MoverGUID)
-    //    return;
+    Player* player = GetPlayer();
+    player->ValidateMovementInfo(&packet.Ack.movementInfo);
+    if (player->m_mover->GetGUID() != packet.Ack.movementInfo.Guid)
+        return;
 
-    //player->m_movementInfo = packet.Ack.movementInfo;
-    //player->m_movementInfo.Forces[packet.MovementForceData.ID] = packet.MovementForceData;
-
-    //WorldPackets::Movement::MoveUpdateApplyMovementForce apply;
-    //apply.movementInfo = &player->m_movementInfo;
-    //apply.MovementForceData = packet.MovementForceData;
-    //player->SendMessageToSet(apply.Write(), player);
+    player->m_movementInfo = packet.Ack.movementInfo;
 }

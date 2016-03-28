@@ -24,36 +24,31 @@
 
 ByteBuffer& operator<<(ByteBuffer& data, MovementInfo& movementInfo)
 {
-    bool hasTransportData = !movementInfo.transport.guid.IsEmpty();
+    bool hasTransportData = !movementInfo.transport.Guid.IsEmpty();
     bool hasFallDirection = movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR);
     bool hasFallData = hasFallDirection || movementInfo.fallTime != 0;
 
-    data << movementInfo.guid;
-    data << movementInfo.time;
-    data << movementInfo.pos.PositionXYZOStream();
+    data << movementInfo.Guid;
+    data << movementInfo.MoveIndex;
+    data << movementInfo.Pos.PositionXYZOStream();
     data << movementInfo.pitch;
     data << movementInfo.splineElevation;
 
-    uint32 removeMovementForcesCount = 0;
-    data << removeMovementForcesCount;
-
+    data << static_cast<uint32>(movementInfo.RemoveForcesIDs.size());
     uint32 int168 = 0;
     data << int168;
 
-    /*for (uint32 i = 0; i < removeMovementForcesCount; ++i)
-    {
-        data << ObjectGuid;
-    }*/
+    for (ObjectGuid const& guid : movementInfo.RemoveForcesIDs)
+        data << guid;
 
-    data.WriteBits(movementInfo.flags, 30);
-    data.WriteBits(movementInfo.flags2, 18);
+    data.WriteBits(movementInfo.MoveFlags[0], 30);
+    data.WriteBits(movementInfo.MoveFlags[1], 18);
 
     data.WriteBit(hasTransportData);
     data.WriteBit(hasFallData);
-
-    data.WriteBit(0); // HeightChangeFailed
-    data.WriteBit(0); // RemoteTimeValid
-    data.WriteBit(0); // unk
+    data.WriteBit(0); // HasSpline
+    data.WriteBit(movementInfo.HeightChangeFailed);
+    data.WriteBit(movementInfo.RemoteTimeValid);
 
     data.FlushBits();
 
@@ -65,9 +60,7 @@ ByteBuffer& operator<<(ByteBuffer& data, MovementInfo& movementInfo)
         data << movementInfo.fallTime;
         data << movementInfo.jump.zspeed;
 
-        data.WriteBit(hasFallDirection);
-        data.FlushBits();
-        if (hasFallDirection)
+        if (data.WriteBit(hasFallDirection))
         {
             data << movementInfo.jump.sinAngle;
             data << movementInfo.jump.cosAngle;
@@ -82,9 +75,9 @@ ByteBuffer& operator<<(ByteBuffer& data, MovementInfo& movementInfo)
 
 ByteBuffer& operator>>(ByteBuffer& data, MovementInfo& movementInfo)
 {
-    data >> movementInfo.guid;
-    data >> movementInfo.time;
-    data >> movementInfo.pos.PositionXYZOStream();
+    data >> movementInfo.Guid;
+    data >> movementInfo.MoveIndex;
+    data >> movementInfo.Pos.PositionXYZOStream();
     data >> movementInfo.pitch;
     data >> movementInfo.splineElevation;
 
@@ -102,15 +95,15 @@ ByteBuffer& operator>>(ByteBuffer& data, MovementInfo& movementInfo)
 
     data.ResetBitPos();
 
-    movementInfo.flags = data.ReadBits(30);
-    movementInfo.flags2 = data.ReadBits(18);
+    movementInfo.MoveFlags[0] = data.ReadBits(30);
+    movementInfo.MoveFlags[1] = data.ReadBits(18);
 
     bool hasTransport = data.ReadBit();
     bool hasFall = data.ReadBit();
     bool hasSpline = data.ReadBit();
 
-    data.ReadBit(); // HeightChangeFailed
-    data.ReadBit(); // RemoteTimeValid
+    data.ReadBit(movementInfo.HeightChangeFailed);
+    data.ReadBit(movementInfo.RemoteTimeValid);
 
     if (hasTransport)
         data >> movementInfo.transport;
@@ -122,8 +115,7 @@ ByteBuffer& operator>>(ByteBuffer& data, MovementInfo& movementInfo)
 
         data.ResetBitPos();
 
-        bool hasFallDirection = data.ReadBit();
-        if (hasFallDirection)
+        if (data.ReadBit())
         {
             data >> movementInfo.jump.sinAngle;
             data >> movementInfo.jump.cosAngle;
@@ -136,35 +128,32 @@ ByteBuffer& operator>>(ByteBuffer& data, MovementInfo& movementInfo)
 
 ByteBuffer& operator>>(ByteBuffer& data, MovementInfo::TransportInfo& transportInfo)
 {
-    data >> transportInfo.guid;
-    data >> transportInfo.pos.PositionXYZOStream();
-    data >> transportInfo.seat;
-    data >> transportInfo.time;
+    data >> transportInfo.Guid;
+    data >> transportInfo.Pos.PositionXYZOStream();
+    data >> transportInfo.VehicleSeatIndex;
+    data >> transportInfo.MoveTime;
 
     bool hasPrevTime = data.ReadBit();
     bool hasVehicleId = data.ReadBit();
 
     if (hasPrevTime)
-        data >> transportInfo.prevTime;
+        data >> transportInfo.PrevMoveTime;
 
     if (hasVehicleId)
-        data >> transportInfo.vehicleId;
+        data >> transportInfo.VehicleRecID;
 
     return data;
 }
 
 ByteBuffer& operator<<(ByteBuffer& data, MovementInfo::TransportInfo const& transportInfo)
 {
-    bool hasPrevTime = transportInfo.prevTime != 0;
-    bool hasVehicleId = transportInfo.vehicleId != 0;
+    bool hasPrevTime = transportInfo.PrevMoveTime != 0;
+    bool hasVehicleId = transportInfo.VehicleRecID != 0;
 
-    data << transportInfo.guid;
-    data << transportInfo.pos.GetPositionX();
-    data << transportInfo.pos.GetPositionY();
-    data << transportInfo.pos.GetPositionZ();
-    data << transportInfo.pos.GetOrientation();
-    data << transportInfo.seat;
-    data << transportInfo.time;
+    data << transportInfo.Guid;
+    data << const_cast<MovementInfo::TransportInfo&>(transportInfo).Pos.PositionXYZOStream();
+    data << transportInfo.VehicleSeatIndex;
+    data << transportInfo.MoveTime;
 
     data.WriteBit(hasPrevTime);
     data.WriteBit(hasVehicleId);
@@ -172,10 +161,10 @@ ByteBuffer& operator<<(ByteBuffer& data, MovementInfo::TransportInfo const& tran
     data.FlushBits();
 
     if (hasPrevTime)
-        data << transportInfo.prevTime;
+        data << transportInfo.PrevMoveTime;
 
     if (hasVehicleId)
-        data << transportInfo.vehicleId;
+        data << transportInfo.VehicleRecID;
 
     data.FlushBits();
 
@@ -210,11 +199,11 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFi
     return data;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce)
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce const& movementForce)
 {
     data << movementForce.ID;
-    data << movementForce.Direction.PositionXYZStream();
-    data << movementForce.TransportPosition.PositionXYZStream();
+    data << movementForce.Direction;
+    data << movementForce.TransportPosition;
     data << movementForce.TransportID;
     data << movementForce.Magnitude;
     data.WriteBits(movementForce.Type, 2);
@@ -226,8 +215,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MovementForce& 
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::Movement::MovementForce& movementForce)
 {
     data >> movementForce.ID;
-    data >> movementForce.Direction.PositionXYZStream();
-    data >> movementForce.TransportPosition.PositionXYZStream();
+    data >> movementForce.Direction;
+    data >> movementForce.TransportPosition;
     data >> movementForce.TransportID;
     data >> movementForce.Magnitude;
     movementForce.Type = data.ReadBits(2);
@@ -825,6 +814,24 @@ WorldPacket const* WorldPackets::Movement::MoveKnockBack::Write()
     _worldPacket << Direction;
     _worldPacket << HorzSpeed;
     _worldPacket << VertSpeed;
+
+    return &_worldPacket;
+}
+
+WorldPacket const* WorldPackets::Movement::MoveApplyMovementForce::Write()
+{
+    _worldPacket << MoverGUID;
+    _worldPacket << SequenceIndex;
+    _worldPacket << Force;
+
+    return &_worldPacket;
+}
+
+WorldPacket const* WorldPackets::Movement::MoveRemoveMovementForce::Write()
+{
+    _worldPacket << MoverGUID;
+    _worldPacket << SequenceIndex;
+    _worldPacket << TriggerGUID;
 
     return &_worldPacket;
 }

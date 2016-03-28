@@ -2156,7 +2156,6 @@ class Unit : public WorldObject
         void SendLossOfControl(Unit* caster, uint32 spellId, uint32 duraction, uint32 rmDuraction, Mechanics mechanic, SpellSchoolMask schoolMask, LossOfControlType type, bool apply);
         void SendDisplayToast(uint32 entry, uint8 displayToastMethod, bool isBonusRoll, uint32 count, uint8 type, Item* item = NULL);
         void GeneratePersonalLoot(Creature* creature, Player* anyLooter);
-        void SendMovementForce(WorldObject* at, float x, float y, float z, float o, uint32 windType, bool apply);
 
         bool CheckAndIncreaseCastCounter();
         bool RequiresCurrentSpellsToHolyPower(SpellInfo const* spellProto);
@@ -2398,17 +2397,17 @@ class Unit : public WorldObject
         bool IsStopped() const { return !(HasUnitState(UNIT_STATE_MOVING)); }
         void StopMoving();
 
-        void AddUnitMovementFlag(uint32 f) { m_movementInfo.flags |= f; }
-        void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.flags &= ~f; }
-        bool HasUnitMovementFlag(uint32 f) const { return (m_movementInfo.flags & f) == f; }
-        uint32 GetUnitMovementFlags() const { return m_movementInfo.flags; }
-        void SetUnitMovementFlags(uint32 f) { m_movementInfo.flags = f; }
+        void AddUnitMovementFlag(uint32 f) { m_movementInfo.MoveFlags[0] |= f; }
+        void RemoveUnitMovementFlag(uint32 f) { m_movementInfo.MoveFlags[0] &= ~f; }
+        bool HasUnitMovementFlag(uint32 f) const { return (m_movementInfo.MoveFlags[0] & f) == f; }
+        uint32 GetUnitMovementFlags() const { return m_movementInfo.MoveFlags[0]; }
+        void SetUnitMovementFlags(uint32 f) { m_movementInfo.MoveFlags[0] = f; }
 
-        void AddExtraUnitMovementFlag(uint16 f) { m_movementInfo.flags2 |= f; }
-        void RemoveExtraUnitMovementFlag(uint16 f) { m_movementInfo.flags2 &= ~f; }
-        uint16 HasExtraUnitMovementFlag(uint16 f) const { return m_movementInfo.flags2 & f; }
-        uint16 GetExtraUnitMovementFlags() const { return m_movementInfo.flags2; }
-        void SetExtraUnitMovementFlags(uint16 f) { m_movementInfo.flags2 = f; }
+        void AddExtraUnitMovementFlag(uint16 f) { m_movementInfo.MoveFlags[1] |= f; }
+        void RemoveExtraUnitMovementFlag(uint16 f) { m_movementInfo.MoveFlags[1] &= ~f; }
+        uint16 HasExtraUnitMovementFlag(uint16 f) const { return m_movementInfo.MoveFlags[1] & f; }
+        uint16 GetExtraUnitMovementFlags() const { return m_movementInfo.MoveFlags[1]; }
+        void SetExtraUnitMovementFlags(uint16 f) { m_movementInfo.MoveFlags[1] = f; }
         bool IsSplineEnabled() const;
 
         void SendSetVehicleRecId(uint32 vehicleID);
@@ -2476,13 +2475,13 @@ class Unit : public WorldObject
         bool IsOnVehicle(const Unit* vehicle) const { return m_vehicle && m_vehicle == vehicle->GetVehicleKit(); }
         Unit* GetVehicleBase()  const;
         Creature* GetVehicleCreatureBase() const;
-        float GetTransOffsetX() const { return m_movementInfo.transport.pos.GetPositionX(); }
-        float GetTransOffsetY() const { return m_movementInfo.transport.pos.GetPositionY(); }
-        float GetTransOffsetZ() const { return m_movementInfo.transport.pos.GetPositionZ(); }
-        float GetTransOffsetO() const { return m_movementInfo.transport.pos.GetOrientation(); }
+        float GetTransOffsetX() const { return m_movementInfo.transport.Pos.GetPositionX(); }
+        float GetTransOffsetY() const { return m_movementInfo.transport.Pos.GetPositionY(); }
+        float GetTransOffsetZ() const { return m_movementInfo.transport.Pos.GetPositionZ(); }
+        float GetTransOffsetO() const { return m_movementInfo.transport.Pos.GetOrientation(); }
         Position GetTransPosition() const { return Position{GetTransOffsetX(), GetTransOffsetY(), GetTransOffsetZ(), GetTransOffsetO()}; }
-        uint32 GetTransTime()   const { return m_movementInfo.transport.time; }
-        int8 GetTransSeat()     const { return m_movementInfo.transport.seat; }
+        uint32 GetTransTime()   const { return m_movementInfo.transport.MoveTime; }
+        int8 GetTransSeat()     const { return m_movementInfo.transport.VehicleSeatIndex; }
         ObjectGuid GetTransGUID()   const;
         // Returns the transport this unit is on directly (if on vehicle and transport, return vehicle)
         TransportBase* GetDirectTransport() const;
@@ -2733,7 +2732,7 @@ class Unit : public WorldObject
         void SetStunned(bool apply);
         void SetRooted(bool apply, bool packetOnly = false);
 
-        uint32 m_movementCounter;       ///< Incrementing counter used in movement packets
+        uint32 m_sequenceIndex;
     private:
 
         class AINotifyTask;
