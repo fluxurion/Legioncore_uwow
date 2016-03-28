@@ -1015,12 +1015,13 @@ void AreaTrigger::UpdateMovement(uint32 diff)
 
                         WorldPackets::Spells::AreaTriggerRePath rePath;
                         rePath.TriggerGUID = GetGUID();
-                        rePath.Spline.TimeToTarget = _duration;
-                        rePath.Spline.ElapsedTimeForMovement = 880; // Data from sniff
-                        rePath.Spline.VerticesPoints.push_back(*this);
-                        rePath.Spline.VerticesPoints.push_back(*this);
-                        rePath.Spline.VerticesPoints.push_back(*_caster);
-                        rePath.Spline.VerticesPoints.push_back(*_caster);
+                        rePath.Spline = boost::in_place();
+                        rePath.Spline->TimeToTarget = _duration;
+                        rePath.Spline->ElapsedTimeForMovement = 880; // Data from sniff
+                        rePath.Spline->VerticesPoints.push_back(*this);
+                        rePath.Spline->VerticesPoints.push_back(*this);
+                        rePath.Spline->VerticesPoints.push_back(*_caster);
+                        rePath.Spline->VerticesPoints.push_back(*_caster);
                         _caster->SendMessageToSet(rePath.Write(), true);
                     }
 

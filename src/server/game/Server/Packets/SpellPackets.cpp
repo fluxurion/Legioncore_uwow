@@ -998,13 +998,38 @@ WorldPacket const* WorldPackets::Spells::AuraPointsDepleted::Write()
     return &_worldPacket;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerSpline& spline)
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerSpline const& triggerSplineData)
 {
-    data << spline.TimeToTarget;
-    data << spline.ElapsedTimeForMovement;
-    data << static_cast<uint32>(spline.VerticesPoints.size());
-    for (auto& x : spline.VerticesPoints)
+    data << triggerSplineData.TimeToTarget;
+    data << triggerSplineData.ElapsedTimeForMovement;
+    data << static_cast<uint32>(triggerSplineData.VerticesPoints.size());
+    for (auto& x : const_cast<WorldPackets::Spells::AreaTriggerSpline&>(triggerSplineData).VerticesPoints)
         data << x.PositionXYZStream();
+
+    return data;
+}
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerBYTE120 const& triggerByte120Data)
+{
+    data.WriteBit(triggerByte120Data.PlayerGuid.is_initialized());
+    data.WriteBit(triggerByte120Data.CenterPoint.is_initialized());
+    data.WriteBit(triggerByte120Data.byte44);
+    data.WriteBit(triggerByte120Data.byte45);
+    data.FlushBits();
+
+    data << triggerByte120Data.dword28;
+    data << triggerByte120Data.dword2C;
+    data << triggerByte120Data.dword30;
+    data << triggerByte120Data.Radius;
+    data << triggerByte120Data.BlendFormRadius;
+    data << triggerByte120Data.InitialAngle;
+    data << triggerByte120Data.ZOffset;
+
+    if (triggerByte120Data.PlayerGuid)
+        data << *triggerByte120Data.PlayerGuid;
+
+    if (triggerByte120Data.CenterPoint)
+        data << *triggerByte120Data.CenterPoint;
 
     return data;
 }
@@ -1012,7 +1037,14 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerSpline
 WorldPacket const* WorldPackets::Spells::AreaTriggerRePath::Write()
 {
     _worldPacket << TriggerGUID;
-    _worldPacket << Spline;
+    _worldPacket.WriteBit(Spline.is_initialized());
+    _worldPacket.WriteBit(UnkData.is_initialized());
+
+    if (Spline)
+        _worldPacket << *Spline;
+
+    if (UnkData)
+        _worldPacket << *UnkData;
 
     return &_worldPacket;
 }

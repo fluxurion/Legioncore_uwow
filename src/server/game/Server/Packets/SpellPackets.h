@@ -1031,6 +1031,21 @@ namespace WorldPackets
             std::vector<Position> VerticesPoints;
         };
 
+        struct AreaTriggerBYTE120
+        {
+            Optional<ObjectGuid> PlayerGuid;
+            Optional<G3D::Vector3> CenterPoint;
+            uint32 dword28 = 0;
+            int32 dword2C = 0;
+            uint32 dword30 = 0;
+            float Radius = 0.0f;
+            float BlendFormRadius = 0.0f;
+            float InitialAngle = 0.0f;
+            float ZOffset = 0.0f;
+            bool byte44 = false;
+            bool byte45 = false;
+        };
+
         class AreaTriggerRePath final : public ServerPacket
         {
         public:
@@ -1039,7 +1054,8 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             ObjectGuid TriggerGUID;
-            AreaTriggerSpline Spline;
+            Optional<AreaTriggerSpline> Spline;
+            Optional<AreaTriggerBYTE120> UnkData;
         };
 
         class AreaTriggerDenied final : public ServerPacket
@@ -1160,5 +1176,8 @@ namespace WorldPackets
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastLogData const& spellCastLogData);
 ByteBuffer& operator>>(ByteBuffer& buffer, WorldPackets::Spells::SpellCastRequest& request);
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerSpline const& triggerSplineData);
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AreaTriggerBYTE120 const& triggerByte120Data);
+
 
 #endif // SpellPackets_h__
