@@ -549,8 +549,8 @@ WorldPacket const* WorldPackets::Movement::MoveTeleport::Write()
 {
     _worldPacket << MoverGUID;
     _worldPacket << SequenceIndex;
-    _worldPacket << Pos.PositionXYZStream();
-    _worldPacket << Facing;
+    _worldPacket << Pos;
+    _worldPacket << Reason;
 
     _worldPacket.WriteBit(TransportGUID.is_initialized());
     _worldPacket.WriteBit(Vehicle.is_initialized());

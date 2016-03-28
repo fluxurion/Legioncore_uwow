@@ -279,15 +279,16 @@ namespace WorldPackets
         class MoveTeleport final : public ServerPacket
         {
         public:
-            MoveTeleport() : ServerPacket(SMSG_MOVE_TELEPORT, 12 + 4 + 16 + 16 + 4) { }
+            MoveTeleport() : ServerPacket(SMSG_MOVE_TELEPORT, 12 + 4 + 16 + 16 + 4 + 1) { }
 
             WorldPacket const* Write() override;
 
-            Position Pos;
             Optional<VehicleTeleport> Vehicle;
-            uint32 SequenceIndex = 0;
-            ObjectGuid MoverGUID;
             Optional<ObjectGuid> TransportGUID;
+            G3D::Vector4 Pos;
+            ObjectGuid MoverGUID;
+            uint8 Reason = 0;
+            uint32 SequenceIndex = 0;
             float Facing = 0.0f;
         };
 

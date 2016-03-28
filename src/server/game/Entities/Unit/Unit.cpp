@@ -23363,8 +23363,7 @@ void Unit::SendTeleportPacket(Position &destPos)
         selfPacket.MoverGUID = GetGUID();
         if (ObjectGuid transGuid = GetTransGUID())
             selfPacket.TransportGUID = transGuid;
-        selfPacket.Pos.Relocate(destPos);
-        selfPacket.Facing = destPos.GetOrientation();
+        selfPacket.Pos = G3D::Vector4(destPos.m_positionX, destPos.m_positionY, destPos.m_positionZ, destPos.GetOrientation());
         selfPacket.SequenceIndex = m_sequenceIndex++;
         ToPlayer()->SendDirectMessage(selfPacket.Write());
     }
