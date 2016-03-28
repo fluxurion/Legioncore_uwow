@@ -187,13 +187,11 @@ namespace WorldPackets
             uint32 RequestedRoles = 0;
             uint8 SubType = 0;
             uint8 Reason = 0;
-            uint8 Needs[3] = { };
             bool IsParty = false;
             bool NotifyUI = false;
             bool Joined = false;
             bool LfgJoined = false;
             bool Queued = false;
-            std::string Comment;
         };
 
         class LockInfoRequest final : public ClientPacket

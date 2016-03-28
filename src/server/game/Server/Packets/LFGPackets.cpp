@@ -291,9 +291,6 @@ WorldPacket const* WorldPackets::LFG::QueueStatusUpdate::Write()
     _worldPacket << SubType;
     _worldPacket << Reason;
 
-    for (uint8 const id : {0, 1, 2})
-        _worldPacket << Needs[id];
-
     _worldPacket << static_cast<uint32>(Slots.size());
     _worldPacket << RequestedRoles;
     _worldPacket << static_cast<uint32>(SuspendedPlayers.size());
@@ -309,8 +306,6 @@ WorldPacket const* WorldPackets::LFG::QueueStatusUpdate::Write()
     _worldPacket.WriteBit(Joined);
     _worldPacket.WriteBit(LfgJoined);
     _worldPacket.WriteBit(Queued);
-    _worldPacket.WriteBits(Comment.length(), 8);
-    _worldPacket.WriteString(Comment);
 
     return &_worldPacket;
 }

@@ -1514,7 +1514,6 @@ void LFGMgr::SendUpdateStatus(Player* player, LfgUpdateData const& updateData, b
     update.Ticket.Time = queueData ? queueData->joinTime : time(nullptr);
     update.SubType = queueData ? queueData->subType : LFG_SUBTYPE_DUNGEON;
     update.Reason = updateData.updateType;
-    //update.Needs[3] = { };
     update.RequestedRoles = GetRoles(guid);
     //update.SuspendedPlayers;
     update.IsParty = party;
@@ -1522,7 +1521,6 @@ void LFGMgr::SendUpdateStatus(Player* player, LfgUpdateData const& updateData, b
     update.Joined = join;
     update.LfgJoined = lfgJoined;
     update.Queued = queued;
-    update.Comment = updateData.comment;
 
     for (auto const& id : updateData.dungeons)
         update.Slots.push_back(GetLFGDungeonEntry(id));
