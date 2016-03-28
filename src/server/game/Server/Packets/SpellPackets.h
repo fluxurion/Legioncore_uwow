@@ -167,19 +167,6 @@ namespace WorldPackets
             std::vector<SpellLogPowerData> PowerData;
         };
 
-        struct AuraUpdateUNK
-        {
-            uint16 UnkUint16 = 0;
-            uint16 UnkUint16_4 = 0;
-            uint8 UnkUint8_6 = 0;
-            uint8 UnkUint8_7 = 0;
-            uint8 UnkUint8_8 = 0;
-            uint8 UnkUint8_9 = 0;
-            uint8 UnkUint8_10 = 0;
-            int8 UnkUint8_11 = 0;
-
-        };
-
         struct AuraDataInfo
         {
             ObjectGuid CastGuid;
@@ -194,7 +181,7 @@ namespace WorldPackets
             Optional<ObjectGuid> CastUnit;
             Optional<int32> Duration;
             Optional<int32> Remaining;
-            Optional<AuraUpdateUNK> UnkOptStruct;
+            Optional<PlayerStatsInfo> PlayerStats;
         };
 
         struct AuraInfo

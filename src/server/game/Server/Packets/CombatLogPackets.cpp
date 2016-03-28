@@ -18,6 +18,24 @@
 #include "CombatLogPackets.h"
 #include "SpellPackets.h"
 
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::CombatLog::PlayerStatsInfo const& info)
+{
+    data.WriteBits(info.UnkShort1, 2);
+    data.FlushBits();
+
+    data << info.UnkShort2;
+
+    data << info.UnkByte1;
+    data << info.UnkByte2;
+    data << info.UnkByte3;
+    data << info.UnkByte4;
+    data << info.UnkByte5;
+
+    data << info.UnkSByte;
+
+    return data;
+}
+
 WorldPacket const* WorldPackets::CombatLog::SpellNonMeleeDamageLog::Write()
 {
     *this << Me;
@@ -35,8 +53,13 @@ WorldPacket const* WorldPackets::CombatLog::SpellNonMeleeDamageLog::Write()
     WriteBits(Flags, 7);
     WriteBit(false); // HasDebugInfo
     WriteLogDataBit();
-    WriteBit(false); // UnkLegionData
+    WriteBit(PlayerStats.is_initialized());
+    WriteLogDataBit();
     FlushBits();
+
+    if (PlayerStats)
+        *this << *PlayerStats;
+
     WriteLogData();
 
     return &_worldPacket;
@@ -154,7 +177,7 @@ WorldPacket const* WorldPackets::CombatLog::SpellPeriodicAuraLog::Write()
         *this << int32(effect.Resisted);
         WriteBit(effect.Crit);
         WriteBit(effect.DebugInfo.is_initialized());
-        WriteBit(effect.UnkData.is_initialized());
+        WriteBit(effect.PlayerStats.is_initialized());
 
         if (effect.DebugInfo)
         {
@@ -162,18 +185,8 @@ WorldPacket const* WorldPackets::CombatLog::SpellPeriodicAuraLog::Write()
             *this << float(effect.DebugInfo->CritRollNeeded);
         }
 
-        if (effect.UnkData)
-        {
-            WriteBits(effect.UnkData->UnkShort1, 2);
-            *this << effect.UnkData->UnkShort2;
-            *this << effect.UnkData->UnkByte1;
-            *this << effect.UnkData->UnkByte2;
-            *this << effect.UnkData->UnkByte3;
-            *this << effect.UnkData->UnkByte4;
-            *this << effect.UnkData->UnkByte5;
-            *this << effect.UnkData->UnkSByte;
-            *this << effect.UnkData->UnkSByte2;
-        }
+        if (effect.PlayerStats)
+            *this << *effect.PlayerStats;
 
         FlushBits();
     }

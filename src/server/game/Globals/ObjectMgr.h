@@ -1691,9 +1691,7 @@ class ObjectMgr
         void LoadFactionChangeReputations();
         void LoadFactionChangeTitles();
 
-        ///Temporaire pour la création des Z, a remettre en private après
         GameObjectDataContainer _gameObjectDataStore;
-
         //Get item count from spawnmode
         uint8 GetCountFromSpawn(uint8 spawnmode, uint32 size)
         {
@@ -1957,12 +1955,10 @@ class ObjectMgr
         EquipmentInfoContainer _equipmentInfoStore;
         LinkedRespawnContainer _linkedRespawnStore;
         CreatureLocaleContainer _creatureLocaleStore;
-        //GameObjectDataContainer _gameObjectDataStore;
         GameObjectLocaleContainer _gameObjectLocaleStore;
         GameObjectTemplateContainer _gameObjectTemplateStore;
         PersonalLootContainer _PersonalLootStore[MAX_LOOT_COOLDOWN_TYPE];
         PersonalLootContainer _PersonalLootBySpellStore;
-        /// Stores temp summon data grouped by summoner's entry, summoner's type and group id
         TempSummonDataContainer _tempSummonDataStore;
 
         ItemTemplateContainer _itemTemplateStore;

@@ -281,10 +281,10 @@ enum SheathState
 {
     SHEATH_STATE_UNARMED  = 0,                              // non prepared weapon
     SHEATH_STATE_MELEE    = 1,                              // prepared melee weapon
-    SHEATH_STATE_RANGED   = 2                               // prepared ranged weapon
-};
+    SHEATH_STATE_RANGED   = 2,                              // prepared ranged weapon
 
-#define MAX_SHEATH_STATE    3
+    MAX_SHEATH_STATE
+};
 
 // byte (1 from 0..3) of UNIT_FIELD_BYTES_2
 enum UnitPVPStateFlags
@@ -506,16 +506,17 @@ enum BaseModGroup
     RANGED_CRIT_PERCENTAGE,
     OFFHAND_CRIT_PERCENTAGE,
     SHIELD_BLOCK_VALUE,
+
     BASEMOD_END
 };
 
 enum BaseModType
 {
     FLAT_MOD,
-    PCT_MOD
-};
+    PCT_MOD,
 
-#define MOD_END (PCT_MOD+1)
+    MOD_END
+};
 
 enum DeathState
 {
@@ -1142,11 +1143,12 @@ enum CurrentSpellTypes
     CURRENT_MELEE_SPELL             = 0,
     CURRENT_GENERIC_SPELL           = 1,
     CURRENT_CHANNELED_SPELL         = 2,
-    CURRENT_AUTOREPEAT_SPELL        = 3
+    CURRENT_AUTOREPEAT_SPELL        = 3,
+
+    CURRENT_MAX_SPELL
 };
 
 #define CURRENT_FIRST_NON_MELEE_SPELL 1
-#define CURRENT_MAX_SPELL             4
 
 struct GlobalCooldown
 {

@@ -139,7 +139,7 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
             _worldPacket.WriteBit(data.CastUnit.is_initialized());
             _worldPacket.WriteBit(data.Duration.is_initialized());
             _worldPacket.WriteBit(data.Remaining.is_initialized());
-            _worldPacket.WriteBit(data.UnkOptStruct.is_initialized());
+            _worldPacket.WriteBit(data.PlayerStats.is_initialized());
 
             if (data.CastUnit)
                 _worldPacket << *data.CastUnit;
@@ -150,17 +150,8 @@ WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
             if (data.Remaining)
                 _worldPacket << uint32(*data.Remaining);
 
-            if (data.UnkOptStruct)
-            {
-                _worldPacket.WriteBits(data.UnkOptStruct->UnkUint16, 2);
-                _worldPacket << data.UnkOptStruct->UnkUint16_4;
-                _worldPacket << data.UnkOptStruct->UnkUint8_6;
-                _worldPacket << data.UnkOptStruct->UnkUint8_7;
-                _worldPacket << data.UnkOptStruct->UnkUint8_8;
-                _worldPacket << data.UnkOptStruct->UnkUint8_9;
-                _worldPacket << data.UnkOptStruct->UnkUint8_10;
-                _worldPacket << data.UnkOptStruct->UnkUint8_11;
-            }
+            if (data.PlayerStats)
+                _worldPacket << *data.PlayerStats;
         }
 
         _worldPacket.FlushBits();

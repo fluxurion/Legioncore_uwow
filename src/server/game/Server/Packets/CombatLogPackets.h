@@ -76,6 +76,18 @@ namespace WorldPackets
             WorldPacket _fullLogPacket;
         };
 
+        struct PlayerStatsInfo
+        {
+            uint16 UnkShort1 = 0;
+            uint16 UnkShort2 = 0;
+            uint8 UnkByte1 = 0;
+            uint8 UnkByte2 = 0;
+            uint8 UnkByte3 = 0;
+            uint8 UnkByte4 = 0;
+            uint8 UnkByte5 = 0;
+            int8 UnkSByte = 0;
+        };
+
         class SpellNonMeleeDamageLog final : public CombatLogServerPacket
         {
         public:
@@ -86,6 +98,7 @@ namespace WorldPackets
             ObjectGuid Me;
             ObjectGuid CasterGUID;
             ObjectGuid CastGuid;
+            Optional<PlayerStatsInfo> PlayerStats;
             int32 Absorbed = 0;
             int32 Damage = 0;
             int32 Flags = 0;
@@ -163,19 +176,6 @@ namespace WorldPackets
                 float CritRollNeeded = 0.0f;
             };
 
-            struct UnkDataStruct
-            {
-                uint16 UnkShort1 = 0;
-                uint16 UnkShort2 = 0;
-                uint8 UnkByte1 = 0;
-                uint8 UnkByte2 = 0;
-                uint8 UnkByte3 = 0;
-                uint8 UnkByte4 = 0;
-                uint8 UnkByte5 = 0;
-                int8 UnkSByte = 0;
-                int8 UnkSByte2 = 0;
-            };
-
             struct SpellLogEffect
             {
                 int32 Effect = 0;
@@ -187,7 +187,7 @@ namespace WorldPackets
                 bool Crit = false;
                 bool Unkbit = false;
                 Optional<PeriodicalAuraLogEffectDebugInfo> DebugInfo;
-                Optional<UnkDataStruct> UnkData;
+                Optional<PlayerStatsInfo> PlayerStats;
             };
 
             SpellPeriodicAuraLog() : CombatLogServerPacket(SMSG_SPELL_PERIODIC_AURA_LOG, 16 + 16 + 4 + 4 + 1) { }
@@ -368,5 +368,8 @@ namespace WorldPackets
         };
     }
 }
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::CombatLog::PlayerStatsInfo const& info);
+
 
 #endif // CombatLogPackets_h__
