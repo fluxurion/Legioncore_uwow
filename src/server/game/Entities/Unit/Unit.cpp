@@ -225,7 +225,7 @@ Unit::Unit(bool isWorldObject): WorldObject(isWorldObject)
     countCrit = 0;
     m_canDualWield = false;
 
-    m_sequenceIndex = 0;
+    m_movementCounter = 0;
 
     m_timeForSpline = 0;
 
@@ -519,18 +519,21 @@ void Unit::UpdateSplinePosition(bool stop/* = false*/)
     Movement::Location loc = movespline->ComputePosition();
     if (GetTransGUID())
     {
-        m_movementInfo.Transport = boost::in_place();
-        m_movementInfo.Transport->Pos.Relocate(loc.x, loc.y, loc.z, NormalizeOrientation(loc.orientation));
-        if (GetVehicleBase())
-            if (TransportBase* transport = GetDirectTransport())
-                transport->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
+        Position& pos = m_movementInfo.transport.pos;
+        pos.m_positionX = loc.x;
+        pos.m_positionY = loc.y;
+        pos.m_positionZ = loc.z;
+        pos.SetOrientation(loc.orientation);
+        if (Unit* vehicle = GetVehicleBase())
+        if (TransportBase* transport = GetDirectTransport())
+            transport->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
     }
 
     if (HasUnitState(UNIT_STATE_CANNOT_TURN))
         loc.orientation = GetOrientation();
 
     //if (GetTypeId() == TYPEID_PLAYER)
-        //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "UpdateSplinePosition pos(%f %f %f)", pos.x, pos.y, pos.z);
+        //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "UpdateSplinePosition loc(%f %f %f)", loc.x, loc.y, loc.z);
 
     UpdatePosition(loc.x, loc.y, loc.z, loc.orientation, false, stop);
 }
@@ -13805,7 +13808,7 @@ void Unit::UpdateMount() //@TODO:Legion - is this really needed?
             if (reqFlags & MOUNT_CAPABILITY_FLAG_CAN_SWIM && !(currentMountFlags & 8))
                 continue;
 
-            if (m_movementInfo.Pitch)
+            if (m_movementInfo.hasPitch)
                 if (!(reqFlags & MOUNT_CAPABILITY_FLAG_CAN_PITCH))
                     continue;
 
@@ -14962,7 +14965,7 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
         // Send notification to self
         WorldPackets::Movement::MoveSetSpeed selfpacket(moveTypeToOpcode[mtype][1]);
         selfpacket.MoverGUID = GetGUID();
-        selfpacket.SequenceIndex = m_sequenceIndex++;
+        selfpacket.SequenceIndex = m_movementCounter++;
         selfpacket.Speed = GetSpeed(mtype);
         ToPlayer()->GetSession()->SendPacket(selfpacket.Write());
 
@@ -20741,7 +20744,7 @@ void Unit::SetRooted(bool apply, bool packetOnly /*= false*/)
     {
         WorldPackets::Movement::MoveSetFlag packet(rootOpcodeTable[apply][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -21625,7 +21628,7 @@ void Unit::SendMoveKnockBack(Player* player, float speedXY, float speedZ, float 
     knockBack.MoverGUID = GetGUID();
     knockBack.Direction.x = vcos;
     knockBack.Direction.y = vsin;
-    knockBack.SequenceIndex = m_sequenceIndex++;
+    knockBack.SequenceIndex = m_movementCounter++;
     knockBack.HorzSpeed = speedXY;
     knockBack.VertSpeed = speedZ;
     player->GetSession()->SendPacket(knockBack.Write());
@@ -22981,7 +22984,7 @@ bool Unit::SetDisableGravity(bool disable, bool packetOnly /*= false*/)
     {
         WorldPackets::Movement::MoveSetFlag packet(gravityOpcodeTable[disable][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -23002,7 +23005,7 @@ bool Unit::SetFall(bool enable)
     if (enable)
     {
         AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
-        m_movementInfo.Fall = boost::none;
+        m_movementInfo.SetFallTime(0);
     }
     else
         RemoveUnitMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR);
@@ -23058,7 +23061,7 @@ bool Unit::SetCanFly(bool enable)
     {
         WorldPackets::Movement::MoveSetFlag packet(flyOpcodeTable[enable][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -23096,7 +23099,7 @@ bool Unit::SetWaterWalking(bool enable, bool packetOnly /*= false */)
     {
         WorldPackets::Movement::MoveSetFlag packet(waterWalkingOpcodeTable[enable][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -23134,7 +23137,7 @@ bool Unit::SetFeatherFall(bool enable, bool packetOnly /*= false */)
     {
         WorldPackets::Movement::MoveSetFlag packet(featherFallOpcodeTable[enable][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -23202,7 +23205,7 @@ bool Unit::SetHover(bool enable, bool packetOnly /*= false*/)
     {
         WorldPackets::Movement::MoveSetFlag packet(hoverOpcodeTable[enable][1]);
         packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
+        packet.SequenceIndex = m_movementCounter++;
         SendMessageToSet(packet.Write(), true);
     }
     else
@@ -23231,7 +23234,7 @@ void Unit::SetCompboundState(uint32 count, ...)
         WorldPackets::Movement::MoveStateChange state;
         MessageID = va_arg(vl, uint32);
         state.MessageID = MessageID;
-        state.SequenceIndex = m_sequenceIndex++;
+        state.SequenceIndex = m_movementCounter++;
         packet.Changes.push_back(state);
     }
     va_end(vl);
@@ -23281,7 +23284,7 @@ void Unit::SendSetVehicleRecId(uint32 vehicleID)
     {
         WorldPackets::Vehicle::MoveSetVehicleRecID moveSetVehicleRec;
         moveSetVehicleRec.MoverGUID = GetGUID();
-        moveSetVehicleRec.SequenceIndex = m_sequenceIndex++;
+        moveSetVehicleRec.SequenceIndex = m_movementCounter++;
         moveSetVehicleRec.VehicleRecID = vehicleID;
         player->SendDirectMessage(moveSetVehicleRec.Write());
     }
@@ -23353,9 +23356,7 @@ void Unit::SendTeleportPacket(Position &destPos)
 {
     WorldPackets::Movement::MoveUpdateTeleport packet;
     packet.movementInfo = &m_movementInfo;
-    packet.movementInfo->Pos = destPos;
-    for (auto const& force : m_movementInfo.Forces)
-        packet.MovementForces.emplace_back(force.second);
+    packet.movementInfo->pos = destPos;
 
     if (GetTypeId() == TYPEID_PLAYER)
     {
@@ -23365,7 +23366,7 @@ void Unit::SendTeleportPacket(Position &destPos)
             selfPacket.TransportGUID = transGuid;
         selfPacket.Pos.Relocate(destPos);
         selfPacket.Facing = destPos.GetOrientation();
-        selfPacket.SequenceIndex = m_sequenceIndex++;
+        selfPacket.SequenceIndex = m_movementCounter++;
         ToPlayer()->SendDirectMessage(selfPacket.Write());
     }
 
@@ -24169,6 +24170,46 @@ void Unit::GeneratePersonalLoot(Creature* creature, Player* anyLooter)
 
             //sLog->outDebug(LOG_FILTER_LOOT, "Unit::GeneratePersonalLoot lootGUID %i", loot->GetGUID());
         }
+    }
+}
+
+//! 6.1.2
+void Unit::SendMovementForce(WorldObject* at, float windX, float windY, float windZ, float windSpeed, uint32 windType, bool apply)
+{
+    if (GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Unit::SendMovementForce x %f, y %f, z %f o %f apply %i", windX, windY, windZ, windSpeed, apply);
+
+    if(apply)
+    {
+        SetForceGUID(at->GetGUID());
+
+        WorldPacket data(SMSG_MOVE_APPLY_MOVEMENT_FORCE);
+        data << GetGUID();
+        data << uint32(m_movementCounter++); // SequenceIndex
+        data << at->GetGUID(); //guid AT
+        data << float(at->GetPositionX());
+        data << float(at->GetPositionY());
+        data << float(at->GetPositionZ());
+        data << float(windX);
+        data << float(windY);
+        data << float(windZ);
+        data << uint32(0/*TransportID*/);
+        data << float(windSpeed);
+        data.WriteBits(windType, 2); // Type
+
+        ToPlayer()->GetSession()->SendPacket(&data);
+    }
+    else
+    {
+        SetForceGUID(ObjectGuid::Empty);
+
+        WorldPacket data(SMSG_MOVE_REMOVE_MOVEMENT_FORCE);
+        data << GetGUID();
+        data << uint32(m_movementCounter++); // SequenceIndex
+        data << at->GetGUID(); //guid AT
+        ToPlayer()->GetSession()->SendPacket(&data);
     }
 }
 

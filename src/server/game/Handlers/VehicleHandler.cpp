@@ -86,7 +86,7 @@ void WorldSession::HandleMoveChangeVehicleSeats(WorldPackets::Vehicle::MoveChang
 
     player->ValidateMovementInfo(&packet.Status);
 
-    if (vehicle_base->GetGUID() != packet.Status.MoverGUID)
+    if (vehicle_base->GetGUID() != packet.Status.guid)
         return;
 
     vehicle_base->m_movementInfo = packet.Status;
@@ -147,7 +147,7 @@ void WorldSession::HandleSetVehicleRecId(WorldPackets::Vehicle::MoveSetVehicleRe
 
     WorldPackets::Vehicle::MoveSetVehicleRecID moveSetVehicleRec;
     moveSetVehicleRec.MoverGUID = player->GetGUID();
-    moveSetVehicleRec.SequenceIndex = player->m_sequenceIndex++;
+    moveSetVehicleRec.SequenceIndex = player->m_movementCounter++;
     moveSetVehicleRec.VehicleRecID = vehicleId;
     SendPacket(moveSetVehicleRec.Write());
 }

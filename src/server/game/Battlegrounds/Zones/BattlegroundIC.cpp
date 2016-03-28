@@ -101,9 +101,10 @@ void BattlegroundIC::DoAction(uint32 action, ObjectGuid var)
 
     player->SetTransport(player->GetBGTeamId() == TEAM_ALLIANCE ? gunshipAlliance : gunshipHorde);
 
-    player->m_movementInfo.Transport = boost::in_place();
-    player->m_movementInfo.Transport->Pos = TransportMovementInfo.GetPosition();
-    player->m_movementInfo.Transport->Guid = (player->GetBGTeamId() == TEAM_ALLIANCE ? gunshipAlliance : gunshipHorde)->GetGUID();
+    player->m_movementInfo.transport.pos.m_positionX = TransportMovementInfo.GetPositionX();
+    player->m_movementInfo.transport.pos.m_positionY = TransportMovementInfo.GetPositionY();
+    player->m_movementInfo.transport.pos.m_positionZ = TransportMovementInfo.GetPositionZ();
+    player->m_movementInfo.transport.guid = (player->GetBGTeamId() == TEAM_ALLIANCE ? gunshipAlliance : gunshipHorde)->GetGUID();
 
     player->TeleportTo(GetMapId(), 661.0f, -1244.0f, 288.0f, 0.0f, TELE_TO_NOT_LEAVE_TRANSPORT);
 }

@@ -338,12 +338,11 @@ void AreaTrigger::FillCustomData(Unit* caster)
             break;
         case 166539:    //WOD: Q34392
         {
-            m_movementInfo.Transport = boost::in_place();
-            m_movementInfo.Transport->Pos.Clear();
-            m_movementInfo.Transport->MoveTime = 0;
-            m_movementInfo.Transport->VehicleSeatIndex = 64;
-            m_movementInfo.Transport->Guid = caster->GetGUID();
-            m_movementInfo.Transport->VehicleRecID = 0;
+            m_movementInfo.transport.pos.Relocate(0, 0, 0);
+            m_movementInfo.transport.time = 0;
+            m_movementInfo.transport.seat = 64;
+            m_movementInfo.transport.guid = caster->GetGUID();
+            m_movementInfo.transport.vehicleId = 0;
 
             caster->SetAIAnimKitId(6591);
             break;
@@ -729,13 +728,17 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
             break;
         }
         case AT_ACTION_TYPE_APPLY_MOVEMENT_FORCE:
-            if (!unit->HasAuraType(SPELL_AURA_DISABLE_MOVEMENT_FORCE))
-                static_cast<Player*>(unit)->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, true);
+        {
+            if(!unit->HasAuraType(SPELL_AURA_DISABLE_MOVEMENT_FORCE))
+                unit->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, true);
             break;
+        }
         case AT_ACTION_TYPE_REMOVE_MOVEMENT_FORCE:
-            if (!unit->GetForceGUID().IsEmpty())
-                static_cast<Player*>(unit)->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType);
+        {
+            if(!unit->GetForceGUID().IsEmpty())
+                unit->SendMovementForce(this, atInfo.windX, atInfo.windY, atInfo.windZ, atInfo.windSpeed, atInfo.windType, false);
             break;
+        }
         case AT_ACTION_TYPE_CHANGE_DURATION_ANY_AT:
         {
             float searchRange = 0.0f;

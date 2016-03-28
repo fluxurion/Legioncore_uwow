@@ -3860,7 +3860,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     //! Not entirely sure if this should be sent for creatures as well, but I don't think so.
     if (!apply)
     {
-        target->m_movementInfo.Fall = boost::none;
+        target->m_movementInfo.SetFallTime(0);
         target->RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING_FLY);
         target->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
     }
@@ -9140,16 +9140,14 @@ void AuraEffect::HandleDisableMovementForce(AuraApplication const* aurApp, uint8
     if (!(mode & AURA_EFFECT_HANDLE_REAL))
         return;
 
-    Player* player = nullptr;
-    if (Unit* target = aurApp->GetTarget())
-        if (target->ToPlayer())
-            player = target->ToPlayer();
-        else
-            return;
+    Unit* target = aurApp->GetTarget();
+    if (!target)
+        return;
 
-    if (ObjectGuid forceGuid = player->GetForceGUID())
-        if (AreaTrigger const* at = ObjectAccessor::GetAreaTrigger(*player, forceGuid))
-            player->SendMovementForce(at);
+    ObjectGuid forceGuid = target->GetForceGUID();
+    if(!forceGuid.IsEmpty())
+        if(WorldObject* at = ObjectAccessor::GetWorldObject(*target, forceGuid))
+            target->SendMovementForce(at, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, false);
 }
 
 void AuraEffect::HandleAnimReplacementSet(AuraApplication const* aurApp, uint8 mode, bool apply) const

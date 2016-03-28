@@ -1856,7 +1856,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         {
             m_transport->RemovePassenger(this);
             m_transport = NULL;
-            m_movementInfo.Transport = boost::none;
+            m_movementInfo.transport.Reset();
             RepopAtGraveyard();                             // teleport to near graveyard if on transport, looks blizz like :)
         }
 
@@ -1878,7 +1878,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
     //hack for Stand of Acient for teleportation to the ships.
-    if (m_movementInfo.Transport.is_initialized() || mapid == 607)
+    if (m_movementInfo.transport.guid || mapid == 607)
     {
         if (!(options & TELE_TO_NOT_LEAVE_TRANSPORT))
         {
@@ -1887,8 +1887,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 m_transport->RemovePassenger(this);
                 m_transport = NULL;
             }
-
-            m_movementInfo.Transport = boost::none;
+            m_movementInfo.transport.guid.Clear();
         }
     }
 
@@ -2061,7 +2060,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             // new final coordinates
             Position finalPos = Position{x, y, z, orientation};
-            if (!m_movementInfo.Transport->Guid.IsEmpty())
+            if (m_movementInfo.transport.guid)
                 finalPos += GetTransPosition();
 
             // if the player is saved before worldportack (at logout for example)
@@ -17763,19 +17762,18 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // currently we do not support transport in bg
     else if (transGUID)
     {
-        m_movementInfo.Transport = boost::in_place();
-        m_movementInfo.Transport->Guid = ObjectGuid::Create<HighGuid::Transport>(transGUID);
-        m_movementInfo.Transport->Pos.Relocate(fields[f_trans_x].GetFloat(), fields[f_trans_y].GetFloat(), fields[f_trans_z].GetFloat(), fields[f_trans_o].GetFloat());
+        m_movementInfo.transport.guid = ObjectGuid::Create<HighGuid::Transport>(transGUID);
+        m_movementInfo.transport.pos.Relocate(fields[f_trans_x].GetFloat(), fields[f_trans_y].GetFloat(), fields[f_trans_z].GetFloat(), fields[f_trans_o].GetFloat());
 
         if (!Trinity::IsValidMapCoord(
-            GetPositionX()+m_movementInfo.Transport->Pos.m_positionX, GetPositionY()+m_movementInfo.Transport->Pos.m_positionY,
-            GetPositionZ()+m_movementInfo.Transport->Pos.m_positionZ, GetOrientation()+m_movementInfo.Transport->Pos.GetOrientation()) ||
+            GetPositionX()+m_movementInfo.transport.pos.m_positionX, GetPositionY()+m_movementInfo.transport.pos.m_positionY,
+            GetPositionZ()+m_movementInfo.transport.pos.m_positionZ, GetOrientation()+m_movementInfo.transport.pos.GetOrientation()) ||
             // transport size limited
-            m_movementInfo.Transport->Pos.m_positionX > 250 || m_movementInfo.Transport->Pos.m_positionY > 250 || m_movementInfo.Transport->Pos.m_positionZ > 250)
+            m_movementInfo.transport.pos.m_positionX > 250 || m_movementInfo.transport.pos.m_positionY > 250 || m_movementInfo.transport.pos.m_positionZ > 250)
         {
             sLog->outError(LOG_FILTER_PLAYER, "Player (guidlow %d) have invalid transport coordinates (X: %f Y: %f Z: %f O: %f). Teleport to bind location.",
-                guid, GetPositionX()+m_movementInfo.Transport->Pos.m_positionX, GetPositionY()+m_movementInfo.Transport->Pos.m_positionY,
-                GetPositionZ()+m_movementInfo.Transport->Pos.m_positionZ, GetOrientation()+m_movementInfo.Transport->Pos.GetOrientation());
+                guid, GetPositionX()+m_movementInfo.transport.pos.m_positionX, GetPositionY()+m_movementInfo.transport.pos.m_positionY,
+                GetPositionZ()+m_movementInfo.transport.pos.m_positionZ, GetOrientation()+m_movementInfo.transport.pos.GetOrientation());
 
             RelocateToHomebind();
         }
@@ -26833,7 +26831,7 @@ InventoryResult Player::CanEquipUniqueItem(ItemTemplate const* itemProto, uint8 
 void Player::HandleFall(MovementInfo const& movementInfo)
 {
     // calculate total z distance of the fall
-    float z_diff = m_lastFallZ - movementInfo.Pos.GetPositionZ();
+    float z_diff = m_lastFallZ - movementInfo.pos.GetPositionZ();
     //sLog->outDebug(LOG_FILTER_NETWORKIO, "zDiff = %f", z_diff);
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
@@ -26851,8 +26849,8 @@ void Player::HandleFall(MovementInfo const& movementInfo)
         {
             uint32 damage = (uint32)(damageperc * GetMaxHealth()*sWorld->getRate(RATE_DAMAGE_FALL));
 
-            float height = movementInfo.Pos.m_positionZ;
-            UpdateGroundPositionZ(movementInfo.Pos.m_positionX, movementInfo.Pos.m_positionY, height);
+            float height = movementInfo.pos.m_positionZ;
+            UpdateGroundPositionZ(movementInfo.pos.m_positionX, movementInfo.pos.m_positionY, height);
 
             if (damage > 0)
             {
@@ -26873,8 +26871,7 @@ void Player::HandleFall(MovementInfo const& movementInfo)
             }
 
             //Z given by moveinfo, LastZ, FallTime, WaterZ, MapZ, Damage, Safefall reduction
-            sLog->outDebug(LOG_FILTER_NETWORKIO, "FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d",
-                movementInfo.Pos.GetPositionZ(), height, GetPositionZ(), m_movementInfo.Fall->Time, height, damage, safe_fall);
+            sLog->outDebug(LOG_FILTER_NETWORKIO, "FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d", movementInfo.pos.GetPositionZ(), height, GetPositionZ(), movementInfo.fallTime, height, damage, safe_fall);
         }
     }
     RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_LANDING); // No fly zone - Parachute
@@ -27055,9 +27052,8 @@ void Player::ResetTalentSpecialization()
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)
 {
-    if (minfo.Fall.is_initialized())
-        if (m_lastFallTime >= minfo.Fall->Time || m_lastFallZ <= minfo.Pos.GetPositionZ() || opcode == CMSG_MOVE_FALL_LAND)
-            SetFallInformation(minfo.Fall->Time, minfo.Pos.GetPositionZ());
+    if (m_lastFallTime >= minfo.fallTime || m_lastFallZ <= minfo.pos.GetPositionZ() || opcode == CMSG_MOVE_FALL_LAND)
+        SetFallInformation(minfo.fallTime, minfo.pos.GetPositionZ());
 }
 
 void Player::UnsummonPetTemporaryIfAny()
@@ -27562,7 +27558,7 @@ void Player::ResetTimeSync()
 
 void Player::SendTimeSync()
 {
-    m_timeSyncQueue.push(m_sequenceIndex++);
+    m_timeSyncQueue.push(m_movementCounter++);
 
     WorldPackets::Misc::TimeSyncRequest packet;
     packet.SequenceIndex = m_timeSyncQueue.back();
@@ -28085,56 +28081,20 @@ void Player::ValidateMovementInfo(MovementInfo* mi)
     REMOVE_VIOLATING_FLAGS(mi->HasMovementFlag(MOVEMENTFLAG_DISABLE_GRAVITY | MOVEMENTFLAG_CAN_FLY) && mi->HasMovementFlag(MOVEMENTFLAG_FALLING),
         MOVEMENTFLAG_FALLING);
 
-    REMOVE_VIOLATING_FLAGS(mi->HasMovementFlag(MOVEMENTFLAG_FALLING) && (!mi->Fall.is_initialized() || (mi->Fall->Velocity.get().Direction.x == 0.0f && mi->Fall->Velocity.get().Direction.y == 0.0f)), MOVEMENTFLAG_FALLING);
-    REMOVE_VIOLATING_FLAGS(mi->HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION) && G3D::fuzzyEq(mi->StepUpStartElevation, 0.0f), MOVEMENTFLAG_SPLINE_ELEVATION);
+    REMOVE_VIOLATING_FLAGS(mi->HasMovementFlag(MOVEMENTFLAG_FALLING) && (!mi->hasFallData || !mi->hasFallDirection), MOVEMENTFLAG_FALLING);
+    REMOVE_VIOLATING_FLAGS(mi->HasMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION) && G3D::fuzzyEq(mi->splineElevation, 0.0f), MOVEMENTFLAG_SPLINE_ELEVATION);
 
-    if (G3D::fuzzyNe(mi->StepUpStartElevation, 0.0f))
+    if (G3D::fuzzyNe(mi->splineElevation, 0.0f))
         mi->AddMovementFlag(MOVEMENTFLAG_SPLINE_ELEVATION);
 
     #undef REMOVE_VIOLATING_FLAGS
-}
-
-void Player::SendMovementForce(AreaTrigger const* at, float x /*= 0.0f*/, float y /*= 0.0f*/, float z /*= 0.0f*/, float magnitude /*= 0.0f*/, uint32 type /*= 0*/, bool apply /*= false*/)
-{
-    ObjectGuid triggerGuid = at->GetGUID();
-
-    if (apply)
-    {
-        SetForceGUID(triggerGuid);
-
-        WorldPackets::Movement::MoveApplyMovementForce packet;
-        packet.MoverGUID = GetGUID();
-        packet.SequenceIndex = m_sequenceIndex++;
-        packet.Force.ID = triggerGuid;
-        packet.Force.Direction = G3D::Vector3(at->GetPositionX(), at->GetPositionY(), at->GetPositionZ());
-        packet.Force.TransportPosition = G3D::Vector3(x, y, z);
-        packet.Force.TransportID = 0;
-        packet.Force.Magnitude = magnitude;
-        packet.Force.Type = type;
-        GetSession()->SendPacket(packet.Write());
-
-        m_movementInfo.Forces[triggerGuid] = packet.Force;
-    }
-    else
-    {
-        SetForceGUID(ObjectGuid::Empty);
-
-        WorldPackets::Movement::MoveRemoveMovementForce packet;
-        packet.MoverGUID = GetGUID();
-        packet.TriggerGUID = triggerGuid;
-        packet.SequenceIndex = m_sequenceIndex++;
-        GetSession()->SendPacket(packet.Write());
-
-        m_movementInfo.Forces.erase(triggerGuid);
-        m_movementInfo.RemoveForcesIDs.emplace_back(triggerGuid);
-    }
 }
 
 void Player::SendMovementSetCanTransitionBetweenSwimAndFly(bool apply)
 {
     WorldPackets::Movement::MoveSetFlag packet(apply ? SMSG_MOVE_ENABLE_TRANSITION_BETWEEN_SWIM_AND_FLY : SMSG_MOVE_DISABLE_TRANSITION_BETWEEN_SWIM_AND_FLY);
     packet.MoverGUID = GetGUID();
-    packet.SequenceIndex = m_sequenceIndex++;
+    packet.SequenceIndex = m_movementCounter++;
     SendDirectMessage(packet.Write());
 }
 
@@ -28142,7 +28102,7 @@ void Player::SendMovementSetCollisionHeight(float height)
 {
     WorldPackets::Movement::MoveSetCollisionHeight setCollisionHeight;
     setCollisionHeight.MoverGUID = GetGUID();
-    setCollisionHeight.SequenceIndex = m_sequenceIndex++;
+    setCollisionHeight.SequenceIndex = m_movementCounter++;
     setCollisionHeight.MsgData.Height = height;
     setCollisionHeight.MsgData.Scale = GetFloatValue(OBJECT_FIELD_SCALE);
     setCollisionHeight.MountDisplayID = GetUInt32Value(UNIT_FIELD_MOUNT_DISPLAY_ID);
