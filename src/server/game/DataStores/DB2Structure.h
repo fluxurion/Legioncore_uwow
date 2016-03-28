@@ -63,16 +63,16 @@ struct AreaTableEntry
     uint16      ZoneMusic;                                  // 9
     uint16      IntroSound;                                 // 10
     uint16      LiquidTypeID[4];                            // 11 - 14
-    uint16      UWZoneMusic;                                // 15
-    uint16      WorldPvPID;                                 // 16
-    uint16      PvPCombastWorldStateID;                     // 17
-    uint8       SoundProviderPref;                          // 18
-    uint8       SoundProviderPrefUnderwater;                // 19
-    int8        ExplorationLevel;                           // 20
-    uint8       UWIntroMusic;                               // 21
-    uint8       MountFlags;                                 // 22
+    uint16      UWIntroMusic;                               // 15
+    uint16      UWZoneMusic;                                // 16
+    uint16      UWAmbience;                                 // 17
+    int8        WorldPvPID;                                 // 18
+    int8        WindSettingsID;                             // 19
+    uint8       SoundProviderPref;                          // 20
+    uint8       SoundProviderPrefUnderwater;                // 21
+    int8        ExplorationLevel;                           // 22
     uint8       FactionGroupMask;                           // 23
-    uint8       WindSettingsID;                             // 24
+    uint8       MountFlags;                                 // 24
     uint8       WildBattlePetLevelMin;                      // 25
     uint8       WildBattlePetLevelMax;                      // 26
 

@@ -59,13 +59,16 @@ class icecrown_citadel_teleport : public GameObjectScript
                 if(instance->IsEncounterInProgress())
                     return false;
 
-            SpellInfo const* spell = sSpellMgr->GetSpellInfo(action);
-            if (!spell)
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(action);
+            if (!spellInfo)
                 return false;
 
             if (player->isInCombat())
             {
-                Spell::SendCastResult(player, spell, SPELL_FAILED_AFFECTING_COMBAT);
+                Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                spell->SendCastResult(player, spellInfo, SPELL_FAILED_AFFECTING_COMBAT);
+                spell->finish(false);
+                delete spell;
                 return true;
             }
 
@@ -122,8 +125,13 @@ class at_frozen_throne_teleport : public AreaTriggerScript
         {
             if (player->isInCombat())
             {
-                if (SpellInfo const* spell = sSpellMgr->GetSpellInfo(FROZEN_THRONE_TELEPORT))
-                    Spell::SendCastResult(player, spell, SPELL_FAILED_AFFECTING_COMBAT);
+                if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(FROZEN_THRONE_TELEPORT))
+                {
+                    Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                    spell->SendCastResult(player, spellInfo, SPELL_FAILED_AFFECTING_COMBAT);
+                    spell->finish(false);
+                    delete spell;
+                }
                 return true;
             }
             

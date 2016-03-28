@@ -460,13 +460,13 @@ class spell_dk_blood_tap : public SpellScriptLoader
                     {
                         if (bloodCharges->GetStackAmount() < 5)
                         {
-                            Spell::SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_INSUFFICIENT_BLOOD_CHARGES);
+                            GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_INSUFFICIENT_BLOOD_CHARGES);
                             return SPELL_FAILED_DONT_REPORT;
                         }
                     }
                     else
                     {
-                        Spell::SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_INSUFFICIENT_BLOOD_CHARGES);
+                        GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_INSUFFICIENT_BLOOD_CHARGES);
                         return SPELL_FAILED_DONT_REPORT;
                     }
 
@@ -478,7 +478,7 @@ class spell_dk_blood_tap : public SpellScriptLoader
 
                     if (!cooldown)
                     {
-                        Spell::SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_NO_DEPLETED_RUNES);
+                        GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_NO_DEPLETED_RUNES);
                         return SPELL_FAILED_DONT_REPORT;
                     }
                 }
@@ -700,7 +700,7 @@ class spell_dk_plague_leech : public SpellScriptLoader
 
                         if (!runesUsed)
                         {
-                            Spell::SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_NO_DEPLETED_RUNES);
+                            GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_NO_DEPLETED_RUNES);
                             return SPELL_FAILED_DONT_REPORT;
                         }
 
@@ -708,7 +708,7 @@ class spell_dk_plague_leech : public SpellScriptLoader
                         {
                             if (!target->HasAura(DK_SPELL_BLOOD_PLAGUE, _player->GetGUID()) || !target->HasAura(DK_SPELL_FROST_FEVER, _player->GetGUID()))
                             {
-                                Spell::SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_FEVER_PLAGUE_MUST_BE_PRESENT);
+                                GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_FEVER_PLAGUE_MUST_BE_PRESENT);
                                 return SPELL_FAILED_DONT_REPORT;
                             }
                         }

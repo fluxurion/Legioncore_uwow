@@ -29,9 +29,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
 
     // AreaTable.db2
     PrepareStatement(HOTFIX_SEL_AREA_TABLE, "SELECT ID, Flags1, Flags2, ZoneName, AmbientMultiplier, AreaName, MapID, ParentAreaID, AreaBit, "
-        "AmbienceID, ZoneMusic, IntroSound, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, LiquidTypeID4, UWZoneMusic, WorldPvPID, "
-        "PvPCombastWorldStateID, SoundProviderPref, SoundProviderPrefUnderwater, ExplorationLevel, FactionGroupMask, MountFlags, UWIntroMusic, "
-        "WindSettingsID, WildBattlePetLevelMin, WildBattlePetLevelMax FROM area_table ORDER BY ID DESC", CONNECTION_SYNCH);
+        "AmbienceID, ZoneMusic, IntroSound, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, LiquidTypeID4, UWIntroMusic, UWZoneMusic, "
+        "UWAmbience, WorldPvPID, WindSettingsID, SoundProviderPref, SoundProviderPrefUnderwater, ExplorationLevel, FactionGroupMask, "
+        "MountFlags, WildBattlePetLevelMin, WildBattlePetLevelMax FROM area_table ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_AREA_TABLE, "SELECT ID, ZoneName_lang, AreaName_lang FROM area_table_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // AreaTrigger.db2

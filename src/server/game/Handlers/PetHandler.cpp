@@ -388,14 +388,6 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
             triggered = true;
     }
 
-    if (spellInfo->Categories.StartRecoveryCategory) // Check if spell is affected by GCD
-        if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
-        {
-            sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetCastSpellOpcode: Check if spell is affected by GCD");
-            Spell::SendCastResult(GetPlayer(), spellInfo, SPELL_FAILED_NOT_READY, SPELL_CUSTOM_ERROR_NONE, 0, true);
-            return;
-        }
-
     // do not cast not learned spells
     if (!triggered && (!caster->HasSpell(cast.Cast.SpellID) || spellInfo->IsPassive()))
     {
@@ -412,6 +404,16 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     spell->m_targets = targets;
     spell->m_miscData[0] = cast.Cast.Misc[0];
     spell->m_miscData[1] = cast.Cast.Misc[1];
+
+    if (spellInfo->Categories.StartRecoveryCategory) // Check if spell is affected by GCD
+        if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
+        {
+            sLog->outError(LOG_FILTER_NETWORKIO, "HandlePetCastSpellOpcode: Check if spell is affected by GCD");
+            spell->SendCastResult(GetPlayer(), spellInfo, SPELL_FAILED_NOT_READY, SPELL_CUSTOM_ERROR_NONE, 0, true);
+            spell->finish(false);
+            delete spell;
+            return;
+        }
 
     // TODO: need to check victim?
     SpellCastResult result;
@@ -443,7 +445,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     {
         Creature* pet = caster->ToCreature();
         bool sendPet = !pet || !(pet->isPossessed() || pet->IsVehicle());
-        Spell::SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
+        spell->SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, sendPet);
 
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
@@ -872,7 +874,7 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid petGuid, uint32 s
             }
             else
             {
-                Spell::SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, !(pet->isPossessed() || pet->IsVehicle()));
+                spell->SendCastResult(GetPlayer(), spellInfo, result, SPELL_CUSTOM_ERROR_NONE, 0, !(pet->isPossessed() || pet->IsVehicle()));
                 if (!pet->ToCreature()->HasSpellCooldown(spellid))
                     GetPlayer()->SendClearCooldown(spellid, pet);
 

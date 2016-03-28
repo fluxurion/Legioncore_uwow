@@ -260,12 +260,12 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
                     case SPELL_AURA_ADD_PCT_MODIFIER:
                         nosendEffect = true;
                         break;
+                    case SPELL_AURA_PERIODIC_DAMAGE:
+                    case SPELL_AURA_PERIODIC_HEAL:
+                        sendEffect = true;
+                        break;
                     default:
-                    {
-                        if (effect->GetAmount() != effect->GetBaseSendAmount())
-                            sendEffect = true;
-                    }
-                    break;
+                        break;
                 }
             }
         }

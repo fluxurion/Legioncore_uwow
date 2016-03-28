@@ -435,7 +435,7 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            ObjectGuid CastGuid;
+            ObjectGuid SpellGuid;
             uint32 SpellXSpellVisualID = 0;
             int32 Reason = 0;
             int32 FailedArg1 = -1;

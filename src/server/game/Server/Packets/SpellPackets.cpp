@@ -482,7 +482,7 @@ WorldPacket const* WorldPackets::Spells::SpellFailedOther::Write()
 
 WorldPacket const* WorldPackets::Spells::CastFailed::Write()
 {
-    _worldPacket << CastGuid;
+    _worldPacket << SpellGuid;
     _worldPacket << SpellID;
     _worldPacket << SpellXSpellVisualID;
     _worldPacket << Reason;

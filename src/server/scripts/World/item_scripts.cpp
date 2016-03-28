@@ -66,8 +66,13 @@ public:
                     break;
            case 34475:
                 if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(SPELL_ARCANE_CHARGES))
-                    Spell::SendCastResult(player, spellInfo, SPELL_FAILED_NOT_ON_GROUND);
-                    break;
+                {
+                    Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                    spell->SendCastResult(player, spellInfo, SPELL_FAILED_NOT_ON_GROUND);
+                    spell->finish(false);
+                    delete spell;
+                }
+                break;
         }
 
         // allow use in flight only
@@ -295,7 +300,12 @@ public:
         if (!player->GetTransport() || player->GetAreaId() != AREA_ID_SHATTERED_STRAITS)
         {
             if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(SPELL_PETROV_BOMB))
-                Spell::SendCastResult(player, spellInfo, SPELL_FAILED_NOT_HERE);
+            {
+                Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                spell->SendCastResult(player, spellInfo, SPELL_FAILED_NOT_HERE);
+                spell->finish(false);
+                delete spell;
+            }
 
             return true;
         }
