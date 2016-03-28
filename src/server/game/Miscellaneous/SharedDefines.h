@@ -4737,6 +4737,11 @@ enum BattlegroundTypeId
     BATTLEGROUND_DG                 = 754, // Deepwind Gorge
     BATTLEGROUND_TTP                = 757, // The Tiger's Peak
     BATTLEGROUND_SS_VS_TM           = 789, // Southshore vs. Tarren Mill
+    BATTLEGROUND_SMALL_BATTLEGROUND_D = 803, // Small Battleground D
+    BATTLEGROUND_BLACKROOK_HOLD_ARENA = 808, // Blackrook Hold Arena
+    BATTLEGROUND_NAGRAND_ARENA      = 809, // Nagrand Arena
+    BATTLEGROUND_VALSHARAH_ARENA    = 816, // Val'sharah Arena
+    BATTLEGROUND_WARGAME_TEST       = 837, // War Game Test
 
     MAX_BATTLEGROUND_TYPE_ID
 };
