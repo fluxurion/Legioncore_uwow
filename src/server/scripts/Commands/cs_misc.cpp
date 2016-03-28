@@ -384,8 +384,8 @@ public:
 
         handler->PSendSysMessage("Diffyculty %i spawnmask %i", map->GetDifficultyID(), map->GetSpawnMode());
 
-        if (object->m_movementInfo.transport.Guid)
-            handler->PSendSysMessage("Transport position: %s", object->m_movementInfo.transport.Pos.ToString());
+        //if (object->m_movementInfo.transport.Guid)
+//            handler->PSendSysMessage("Transport position: %s", object->m_movementInfo.transport.Pos.ToString());
 
         LiquidData liquidStatus;
         ZLiquidStatus status = map->getLiquidStatus(object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), MAP_ALL_LIQUIDS, &liquidStatus);
