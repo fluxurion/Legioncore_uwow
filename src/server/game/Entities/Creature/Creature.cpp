@@ -1123,7 +1123,7 @@ void Creature::SetLootRecipient(Unit* unit)
     {
         m_lootRecipient.Clear();
         m_lootRecipientGroup.Clear();
-        RemoveFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE|UNIT_DYNFLAG_TAPPED);
+        RemoveFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
         return;
     }
 
@@ -1137,8 +1137,6 @@ void Creature::SetLootRecipient(Unit* unit)
     m_lootRecipient = player->GetGUID();
     if (Group* group = player->GetGroup())
         m_lootRecipientGroup = group->GetGUID();
-
-    SetFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_TAPPED);
 }
 
 // return true if this creature is tapped by the player or by a member of his group.

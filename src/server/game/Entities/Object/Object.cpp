@@ -847,32 +847,8 @@ void Object::_BuildValuesUpdate(uint8 updateType, ByteBuffer* data, Player* targ
                     uint32 dynamicFlags = m_uint32Values[index];
 
                     if (Creature const* creature = ToCreature())
-                    {
-                        if (creature->hasLootRecipient())
-                        {
-                            if(creature->IsPersonalLoot())
-                            {
-                                dynamicFlags |= (UNIT_DYNFLAG_TAPPED | UNIT_DYNFLAG_TAPPED_BY_PLAYER | UNIT_DYNFLAG_TAPPED_BY_ALL_THREAT_LIST);
-                            }
-                            else if (creature->isTappedBy(target))
-                            {
-                                dynamicFlags |= (UNIT_DYNFLAG_TAPPED | UNIT_DYNFLAG_TAPPED_BY_PLAYER);
-                            }
-                            else
-                            {
-                                dynamicFlags |= UNIT_DYNFLAG_TAPPED;
-                                dynamicFlags &= ~UNIT_DYNFLAG_TAPPED_BY_PLAYER;
-                            }
-                        }
-                        else
-                        {
-                            dynamicFlags &= ~UNIT_DYNFLAG_TAPPED;
-                            dynamicFlags &= ~UNIT_DYNFLAG_TAPPED_BY_PLAYER;
-                        }
-
                         if (!target->isAllowedToLoot(const_cast<Creature*>(creature)))
                             dynamicFlags &= ~UNIT_DYNFLAG_LOOTABLE;
-                    }
 
                     // unit UNIT_DYNFLAG_TRACK_UNIT should only be sent to caster of SPELL_AURA_MOD_STALKED auras
                     if (Unit const* unit = ToUnit())
