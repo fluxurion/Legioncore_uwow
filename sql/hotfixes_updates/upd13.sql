@@ -65,7 +65,7 @@ CREATE TABLE `battlemaster_list_locale` (
   `GametypeLang` TEXT,
   `VerifiedBuild` SMALLINT(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
-) ENGINE=MYISAM DEFAULT CHARSET=utf8
+) ENGINE=MYISAM DEFAULT CHARSET=utf8;
 
 ALTER TABLE `battle_pet_breed_quality`   
   CHANGE `qualityModifier` `qualityModifier` FLOAT DEFAULT 0  NOT NULL  AFTER `ID`,
