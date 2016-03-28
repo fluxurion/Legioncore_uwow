@@ -68,7 +68,7 @@ struct CreateBattlegroundData
     uint32 LevelMax;
     uint32 MapID;
     uint32 scriptId;
-    char* BattlegroundName;
+    char const* BattlegroundName;
     bool IsArena;
     bool IsRbg;
 };

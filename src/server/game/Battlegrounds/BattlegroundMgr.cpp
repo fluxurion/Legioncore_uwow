@@ -613,7 +613,7 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
         data.LevelMax = bl->Maxlevel;
         data.IsArena = (bl->InstanceType == TYPE_ARENA);
         data.IsRbg = bl->Flags == 2;
-        data.BattlegroundName = bl->NameLang;
+        data.BattlegroundName = bl->NameLang->Str[sObjectMgr->GetDBCLocaleIndex()];
         data.MapID = bl->MapID[0];
 
         startId = fields[1].GetUInt32();

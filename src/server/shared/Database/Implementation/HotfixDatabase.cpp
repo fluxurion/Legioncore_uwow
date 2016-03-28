@@ -58,9 +58,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "VersionMD54, LastModified, Flags FROM banned_addons ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlemasterList.db2
-    PrepareStatement(HOTFIX_SEL_BATTLEMASTER_LIST, "SELECT ID, MapID1, MapID2, MapID3, MapID4, MapID5, MapID6, MapID7, MapID8, MapID9, MapID10, "
-        "MapID11, MapID12, MapID13, MapID14, MapID15, MapID16, InstanceType, NameLang, MaxGroupSize, HolidayWorldState, Minlevel, Maxlevel, "
+    PrepareStatement(HOTFIX_SEL_BATTLEMASTER_LIST, "SELECT ID, NameLang, IconFileDataID, GametypeLang, MapID1, MapID2, MapID3, MapID4, MapID5, MapID6, MapID7, MapID8, MapID9, MapID10, "
+        "MapID11, MapID12, MapID13, MapID14, MapID15, MapID16, HolidayWorldState, CritreriaID, InstanceType, GroupsAllowed, MaxGroupSize, Minlevel, Maxlevel, "
         "RatedPlayers, MinPlayers, MaxPlayers, Flags FROM battlemaster_list ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLEMASTER_LIST, "SELECT ID, NameLang, GametypeLang FROM battlemaster_list_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ChrClasses.db2
     PrepareStatement(HOTFIX_SEL_CHR_CLASSES, "SELECT ID, PetNameToken, Name, NameFemale, NameMale, Filename, CreateScreenFileDataID, "
@@ -155,7 +156,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_BANK_BAG_SLOT_PRICES, "SELECT ID, Price FROM bank_bag_slot_prices ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BarberShopStyle.db2
-    PrepareStatement(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Type, Name, Description, CostMultiplier, Race, Gender, HairID, Tato"
+    PrepareStatement(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Name, Description, CostMultiplier, Type, Race, Gender, HairID"
         " FROM barber_shop_style ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Name_lang, Description_lang FROM barber_shop_style_locale WHERE locale = ?", CONNECTION_SYNCH);
 
@@ -503,26 +504,26 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_STATE, "SELECT ID, AbilityID, stateID, unk FROM battle_pet_ability_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetState.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_STATE, "SELECT ID, unk, stateName, flags FROM battle_pet_state ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_STATE, "SELECT ID, stateName, flags, unk FROM battle_pet_state ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_STATE, "SELECT ID, stateName_lang FROM battle_pet_state_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BattlePetSpecies.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES, "SELECT ID, CreatureEntry, IconFileID, spellId, petType, source, flags, SourceText, Description"
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES, "SELECT ID, CreatureEntry, IconFileID, spellId, SourceText, Description, flags, petType, source"
         " FROM battle_pet_species ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_SPECIES, "SELECT ID, SourceText_lang, Description_lang FROM battle_pet_species_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BattlePetSpeciesState.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_STATE, "SELECT ID, SpeciesID, State, Value FROM battle_pet_species_state ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_STATE, "SELECT ID, Value, SpeciesID, State FROM battle_pet_species_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetSpeciesXAbility.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_X_ABILITY, "SELECT ID, speciesID, abilityID, requiredLevel, rank FROM battle_pet_species_x_ability"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetBreedQuality.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_QUALITY, "SELECT ID, quality, qualityModifier FROM battle_pet_breed_quality ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_QUALITY, "SELECT ID, qualityModifier, quality FROM battle_pet_breed_quality ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetBreedState.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_STATE, "SELECT ID, breedID, stateID, stateModifier FROM battle_pet_breed_state ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_STATE, "SELECT ID, stateModifier, breedID, stateID FROM battle_pet_breed_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // GarrAbility.db2
     PrepareStatement(HOTFIX_SEL_GARR_ABILITY, "SELECT ID, Flags, Name, Description, IconFileDataID, OtherFactionGarrAbilityID, GarrAbilityCategoryID"

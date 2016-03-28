@@ -157,21 +157,21 @@ struct BannedAddonsEntry
 struct BattlemasterListEntry
 {
     uint32      ID;
-    int32       MapID[16];
-    uint32      InstanceType;
-    //uint32      GroupsAllowed;
-    char*       NameLang;
-    uint32      MaxGroupSize;
-    uint32      HolidayWorldState;
-    uint32      Minlevel;
-    uint32      Maxlevel;
-    uint32      RatedPlayers;
-    uint32      MinPlayers;
-    uint32      MaxPlayers;
-    uint32      Flags;
-    //uint32      IconFileDataID
-    //char*       GametypeLang
-    //uint32      CritreriaID;
+    LocalizedString* NameLang;
+    uint32      IconFileDataID;
+    LocalizedString* GametypeLang;
+    int16       MapID[16];
+    uint16      HolidayWorldState;
+    uint16      CritreriaID;
+    uint8       InstanceType;
+    uint8       GroupsAllowed;
+    uint8       MaxGroupSize;
+    uint8       Minlevel;
+    uint8       Maxlevel;
+    uint8       RatedPlayers;
+    uint8       MinPlayers;
+    uint8       MaxPlayers;
+    uint8       Flags;
 };
 
 struct ChrClassesEntry
@@ -597,14 +597,13 @@ struct BankBagSlotPricesEntry
 struct BarberShopStyleEntry
 {
     uint32      ID;
-    uint32      Type;                                               // 0
-    LocalizedString* Name;                                          // 1        
-    LocalizedString* Description;                                   // 2        
-    float       CostMultiplier;                                     // 3        
+    LocalizedString* Name;                                          // 0
+    LocalizedString* Description;                                   // 1
+    float       CostMultiplier;                                     // 2
+    uint8       Type;                                               // 3
     uint8       Race;                                               // 4
     uint8       Gender;                                             // 5
     uint8       HairID;                                             // 6
-    uint8       Tato;                                               // 7
 };
 
 struct BroadcastTextEntry
@@ -1531,9 +1530,9 @@ struct BattlePetAbilityStateEntry
 struct BattlePetStateEntry
 {
     uint32 ID;                  // 0
-    uint32 unk;               // 1
-    LocalizedString* stateName;            // 2
-    uint32 flags;               // 3
+    LocalizedString* stateName; // 1
+    uint16 flags;               // 2
+    uint8  unk;                 // 3
 };
 
 struct BattlePetSpeciesEntry
@@ -1542,43 +1541,43 @@ struct BattlePetSpeciesEntry
     uint32 CreatureEntry;       // 1
     uint32 IconFileID;          // 2
     uint32 spellId;             // 3
-    uint32 petType;             // 4
-    int32  source;              // 5
-    uint32 flags;               // 6
-    LocalizedString* SourceText; // 7
-    LocalizedString* Description; // 8
+    LocalizedString* SourceText; // 4
+    LocalizedString* Description; // 5
+    uint16 flags;               // 6
+    uint8 petType;             // 7
+    int8   source;              // 8
 };
 
 struct BattlePetSpeciesStateEntry
 {
     uint32 ID;                                                      // 0
-    uint32 SpeciesID;                                               // 1
-    uint32 State;                                                   // 2
-    int32 Value;                                                    // 3
+    int32 Value;                                                    // 1
+    uint16 SpeciesID;                                               // 2
+    int8 State;                                                     // 3
 };
 
 struct BattlePetSpeciesXAbilityEntry
 {
     uint32 ID;
-    uint32 speciesID;
-    uint32 abilityID;
-    uint32 requiredLevel;
-    uint32 rank;
+    uint16 speciesID;
+    uint16 abilityID;
+    uint8 requiredLevel;
+    uint8 rank;
 };
 
 struct BattlePetBreedQualityEntry
 {
     uint32 ID;
-    uint32 quality;
     float qualityModifier;
+    uint8 quality;
 };
 
 struct BattlePetBreedStateEntry
 {
     uint32 ID;
-    uint32 breedID;
-    uint32 stateID;
-    int32 stateModifier;
+    uint16 stateModifier;
+    uint8 breedID;
+    uint8 stateID;
 };
 
 struct GarrAbilityEntry
