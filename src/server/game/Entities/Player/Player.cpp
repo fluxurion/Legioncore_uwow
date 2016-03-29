@@ -12016,7 +12016,7 @@ InventoryResult Player::CanUnequipItem(uint16 pos, bool swap) const
                 return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
     }
 
-    if (ITEM_CLASS_WEAPON && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED))
+    if (pProto->Class == ITEM_CLASS_WEAPON && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED))
         return EQUIP_ERR_CLIENT_LOCKED_OUT;
 
     if (!swap && pItem->IsNotEmptyBag())
@@ -12533,12 +12533,12 @@ Item* Player::_StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool
         else
             pItem->SetCount(count);
 
+        if (!pItem)
+            return NULL;
+
         if(pItem->GetEntry() == 38186)
             sLog->outDebug(LOG_FILTER_EFIR, "Player::_StoreItem - CloneItem clone %i of item %u; count = %u playerGUID %u, itemGUID %u bag %u slot %u",
                 clone, pItem->GetEntry(), count, GetGUID(), pItem->GetGUID(), bag, slot);
-
-        if (!pItem)
-            return NULL;
 
         if (pItem->GetTemplate()->Bonding == BIND_WHEN_PICKED_UP ||
             pItem->GetTemplate()->Bonding == BIND_QUEST_ITEM ||
