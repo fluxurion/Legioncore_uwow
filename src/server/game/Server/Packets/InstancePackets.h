@@ -150,7 +150,7 @@ namespace WorldPackets
         //< SMSG_INSTANCE_ENCOUNTER_PHASE_SHIFT_CHANGED
         //< SMSG_UPDATE_DUNGEON_ENCOUNTER_FOR_LOOT
         //< SMSG_CLEAR_BOSS_EMOTES
-        class NullSmsg : public ServerPacket
+        class NullSmsg final : public ServerPacket
         {
         public:
             NullSmsg(OpcodeServer opcode) : ServerPacket(opcode, 0) { }

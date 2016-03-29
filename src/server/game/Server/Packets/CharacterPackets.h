@@ -629,7 +629,7 @@ namespace WorldPackets
             uint32 FactionIndex = 0;
         };
 
-        class SetFactionVisible : public ServerPacket
+        class SetFactionVisible final : public ServerPacket
         {
         public:
             SetFactionVisible(bool visible) : ServerPacket(visible ? SMSG_SET_FACTION_VISIBLE : SMSG_SET_FACTION_NOT_VISIBLE, 4) { }

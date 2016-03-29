@@ -204,7 +204,7 @@ namespace WorldPackets
             uint32 Time = 0;
         };
 
-        class TutorialFlags : public ServerPacket
+        class TutorialFlags final : public ServerPacket
         {
         public:
             TutorialFlags() : ServerPacket(SMSG_TUTORIAL_FLAGS, 32)
@@ -298,7 +298,7 @@ namespace WorldPackets
             uint8 Legacy = 0;
         };
 
-        class ArchaeologySurveryCast : public ServerPacket
+        class ArchaeologySurveryCast final : public ServerPacket
         {
         public:
             ArchaeologySurveryCast() : ServerPacket(SMSG_ARCHAEOLOGY_SURVERY_CAST, 13) { }
@@ -311,7 +311,7 @@ namespace WorldPackets
             bool SuccessfulFind = false;
         };
 
-        class CorpseReclaimDelay : public ServerPacket
+        class CorpseReclaimDelay final : public ServerPacket
         {
         public:
             CorpseReclaimDelay() : ServerPacket(SMSG_CORPSE_RECLAIM_DELAY, 4) { }
@@ -321,7 +321,7 @@ namespace WorldPackets
             uint32 Remaining = 0;
         };
 
-        class DeathReleaseLoc : public ServerPacket
+        class DeathReleaseLoc final : public ServerPacket
         {
         public:
             DeathReleaseLoc() : ServerPacket(SMSG_DEATH_RELEASE_LOC, 4 + (3 * 4)) { }
@@ -340,7 +340,7 @@ namespace WorldPackets
             void Read() override { }
         };
 
-        class PreRessurect : public ServerPacket
+        class PreRessurect final : public ServerPacket
         {
         public:
             PreRessurect() : ServerPacket(SMSG_PRE_RESSURECT, 16) { }

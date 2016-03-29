@@ -709,7 +709,7 @@ namespace WorldPackets
             int32 TabId = 0;
         };
 
-        class GuildBankTextQueryResult : public ServerPacket
+        class GuildBankTextQueryResult final : public ServerPacket
         {
         public:
             GuildBankTextQueryResult() : ServerPacket(SMSG_GUILD_BANK_TEXT_QUERY_RESULT, 5) { }

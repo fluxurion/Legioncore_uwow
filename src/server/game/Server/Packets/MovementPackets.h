@@ -118,7 +118,7 @@ namespace WorldPackets
             G3D::Vector3 Pos;
         };
 
-        class MoveSplineSetSpeed : public ServerPacket
+        class MoveSplineSetSpeed final : public ServerPacket
         {
         public:
             MoveSplineSetSpeed(OpcodeServer opcode) : ServerPacket(opcode, 12) { }
@@ -129,7 +129,7 @@ namespace WorldPackets
             float Speed = 1.0f;
         };
 
-        class MoveSetSpeed : public ServerPacket
+        class MoveSetSpeed final : public ServerPacket
         {
         public:
             MoveSetSpeed(OpcodeServer opcode) : ServerPacket(opcode) { }
@@ -141,7 +141,7 @@ namespace WorldPackets
             float Speed = 1.0f;
         };
 
-        class MoveUpdateSpeed : public ServerPacket
+        class MoveUpdateSpeed final : public ServerPacket
         {
         public:
             MoveUpdateSpeed(OpcodeServer opcode) : ServerPacket(opcode) { }
