@@ -178,8 +178,8 @@ void WorldPackets::Movement::ClientPlayerMovement::Read()
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineFilterKey const& monsterSplineFilterKey)
 {
-    data << monsterSplineFilterKey.In;
-    data << monsterSplineFilterKey.Out;
+    data << monsterSplineFilterKey.IDx;
+    data << monsterSplineFilterKey.Speed;
 
     return data;
 }

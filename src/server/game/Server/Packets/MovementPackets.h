@@ -54,8 +54,8 @@ namespace WorldPackets
 
         struct MonsterSplineFilterKey
         {
-            float In = 0.0f;
-            float Out = 0.0f;
+            int16 IDx = 0;
+            uint16 Speed = 0;
         };
 
         struct MonsterSplineFilter
