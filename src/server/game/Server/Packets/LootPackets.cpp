@@ -230,7 +230,7 @@ WorldPacket const* WorldPackets::Loot::LootDisplayToast::Write()
     _worldPacket.WriteBit(Mailed);
     _worldPacket.WriteBits(Type, 2);
 
-    if (Type == 2)
+    if (Type == 0)
     {
         _worldPacket.WriteBit(BonusRoll);
         _worldPacket << Loot;

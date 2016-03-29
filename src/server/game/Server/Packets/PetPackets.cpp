@@ -84,8 +84,11 @@ void WorldPackets::PetPackets::LearnPetSpecializationGroup::Read()
 WorldPacket const* WorldPackets::PetPackets::LearnedRemovedSpells::Write()
 {
     _worldPacket << static_cast<uint32>(SpellIDs.size());
-    for (auto const& map : SpellIDs)
-        _worldPacket << map;
+    for (uint32 const& id : SpellIDs)
+        _worldPacket << id;
+
+    _worldPacket.WriteBit(UnkBit);
+    _worldPacket.FlushBits();
 
     return &_worldPacket;
 }

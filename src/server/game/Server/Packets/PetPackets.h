@@ -105,6 +105,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             std::vector<uint32> SpellIDs;
+            bool UnkBit = false;
         };
 
         class Guids final : public ServerPacket

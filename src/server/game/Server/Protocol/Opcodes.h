@@ -824,7 +824,7 @@ enum OpcodeServer : uint16
     SMSG_BF_MGR_EJECT_PENDING                         = 0xBADD,
     SMSG_BF_MGR_EJECTED                               = 0xBADD,
     SMSG_BF_MGR_ENTERING                              = 0xBADD,
-    SMSG_BF_MGR_ENTRY_INVITE                          = 0x27BB,
+    SMSG_BF_MGR_ENTRY_INVITE                          = 0xBADD,
     SMSG_BF_MGR_QUEUE_INVITE                          = 0xBADD,
     SMSG_BF_MGR_QUEUE_REQUEST_RESPONSE                = 0xBADD,
     SMSG_BF_MGR_QUEUE_STATUS_UPDATE                   = 0xBADD,

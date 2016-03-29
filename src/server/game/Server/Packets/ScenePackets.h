@@ -176,6 +176,16 @@ namespace WorldPackets
                 bool ObjectiveComplete = false;
             };
 
+            struct UnkData
+            {
+                uint32 UnkInt = 0;
+                bool UnkBool = false;
+            };
+            
+            std::vector<BonusObjective> Objectives;
+            std::vector<WorldPackets::Achievement::CriteriaTreeProgress> Progress;
+            std::vector<UnkData> UnkDatas;
+            std::vector<uint32> UnkInts;
             uint32 ScenarioID = 0;
             uint32 CurrentStep = 0;
             uint32 DifficultyID = 0;
@@ -183,8 +193,6 @@ namespace WorldPackets
             uint32 WaveMax = 0;
             uint32 TimerDuration = 0;
             bool ScenarioComplete = false;
-            std::vector<BonusObjective> Objectives;
-            std::vector<WorldPackets::Achievement::CriteriaTreeProgress> Progress;
         };
 
         class ScenarioCompleted final : public ServerPacket

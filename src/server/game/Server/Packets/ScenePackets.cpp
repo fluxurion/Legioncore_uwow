@@ -117,6 +117,8 @@ WorldPacket const* WorldPackets::Scene::ScenarioState::Write()
     _worldPacket << TimerDuration;
     _worldPacket << static_cast<uint32>(Progress.size());
     _worldPacket << static_cast<uint32>(Objectives.size());
+    _worldPacket << static_cast<uint32>(UnkInts.size());
+    _worldPacket << static_cast<uint32>(UnkDatas.size());
 
     for (auto const& map : Progress)
         _worldPacket << map;
@@ -125,6 +127,16 @@ WorldPacket const* WorldPackets::Scene::ScenarioState::Write()
     {
         _worldPacket << obj.BonusObjectiveID;
         _worldPacket.WriteBit(obj.ObjectiveComplete);
+        _worldPacket.FlushBits();
+    }
+    
+    for (auto const& v : UnkInts)
+        _worldPacket << v;
+
+    for (auto const& obj : UnkDatas)
+    {
+        _worldPacket << obj.UnkInt;
+        _worldPacket.WriteBit(obj.UnkBool);
         _worldPacket.FlushBits();
     }
 

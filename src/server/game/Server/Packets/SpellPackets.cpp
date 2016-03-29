@@ -708,8 +708,8 @@ WorldPacket const* WorldPackets::Spells::CancelSpellVisual::Write()
 
 void WorldPackets::Spells::CancelCast::Read()
 {
+    _worldPacket >> CastGuid;
     _worldPacket >> SpellID;
-    _worldPacket >> CastID;
 }
 
 void WorldPackets::Spells::OpenItem::Read()

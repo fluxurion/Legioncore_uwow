@@ -664,8 +664,8 @@ namespace WorldPackets
 
             void Read() override;
 
+            ObjectGuid CastGuid;
             uint32 SpellID = 0;
-            uint8 CastID = 0;
         };
 
         class OpenItem final : public ClientPacket

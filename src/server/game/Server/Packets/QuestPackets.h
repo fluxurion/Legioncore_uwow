@@ -582,6 +582,61 @@ namespace WorldPackets
 
             uint32 QuestID = 0;
         };
+
+        class DisplayPlayerChoice final : public ServerPacket
+        {
+        public:
+            DisplayPlayerChoice() : ServerPacket(SMSG_DISPLAY_PLAYER_CHOICE, 24) { }
+
+            WorldPacket const* Write() override;
+
+            struct PlayerChoiceResponse
+            {
+                struct PlayerChoiceResponseReward
+                {
+                    struct PlayerChoiceResponseRewardEntry
+                    {
+                        struct UnkStruct
+                        {
+                            std::vector<uint32> UnkInts;
+                            uint8 UnkByte = 0;
+                        };
+
+                        Optional<UnkStruct> UnkData;
+                        Optional<std::string> UnkString;
+                        int32 Id = 0;
+                        int32 DisplayID = 0;
+                        int32 Quantity = 0;
+                    };
+                    
+                    std::vector<PlayerChoiceResponseRewardEntry> Items;
+                    std::vector<PlayerChoiceResponseRewardEntry> Currencies;
+                    std::vector<PlayerChoiceResponseRewardEntry> Factions;
+                    std::vector<PlayerChoiceResponseRewardEntry> ItemChoices;
+                    uint64 Money = 0;
+                    int32 TitleID = 0;
+                    int32 PackageID = 0;
+                    int32 SkillLineID = 0;
+                    uint32 SkillPointCount = 0;
+                    uint32 ArenaPointCount = 0;
+                    uint32 HonorPointCount = 0;
+                    uint32 Xp = 0;
+                };
+
+                Optional<PlayerChoiceResponseReward> Reward;
+                int32 ResponseID = 0;
+                int32 ChoiceArtFileID = 0;
+                std::string Answer;
+                std::string Description;
+                std::string UnkString;
+                std::string UnkString2;
+            };
+
+            std::vector<PlayerChoiceResponse> Responses;
+            ObjectGuid Guid;
+            int32 ChoiceID = 0;
+            std::string Question;
+        };
     }
 }
 

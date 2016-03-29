@@ -258,7 +258,7 @@ namespace WorldPackets
             int32 MapID = 0;
             NewWorldReason Reason = NewWorldReason::NORMAL;
             Position Pos;
-            Position Pos2;
+            G3D::Vector3 Pos2;
         };
 
         class WorldPortAck final : public ClientPacket

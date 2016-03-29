@@ -551,3 +551,89 @@ void WorldPackets::Quest::PushQuestToParty::Read()
 {
     _worldPacket >> QuestID;
 }
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Quest::DisplayPlayerChoice::PlayerChoiceResponse::PlayerChoiceResponseReward::PlayerChoiceResponseRewardEntry const& reward)
+{
+    data << reward.Id;
+    data << reward.DisplayID;
+    data << reward.Quantity;
+
+    data.WriteBit(reward.UnkData.is_initialized());
+    data.WriteBit(reward.UnkString.is_initialized());
+    data.FlushBits();
+
+    if (reward.UnkData)
+    {
+        data << reward.UnkData->UnkByte;
+        data << static_cast<uint32>(reward.UnkData->UnkInts.size());
+        for (uint32 const& z : reward.UnkData->UnkInts)
+            data << z;
+    }
+
+    if (reward.UnkString)
+    {
+        data << static_cast<uint32>(reward.UnkString->length());
+        data.WriteString(*reward.UnkString);
+    }
+
+    return data;
+}
+
+WorldPacket const* WorldPackets::Quest::DisplayPlayerChoice::Write()
+{
+    _worldPacket << ChoiceID;
+    _worldPacket << static_cast<uint32>(Responses.size());
+    _worldPacket << Guid;
+
+    for (auto const& v : Responses)
+    {
+        _worldPacket << v.ResponseID;
+        _worldPacket << v.ChoiceArtFileID;
+
+        _worldPacket.WriteBits(v.Answer.length(), 9);
+        _worldPacket.WriteBits(v.Description.length(), 9);
+        _worldPacket.WriteBits(v.UnkString.length(), 11);
+        _worldPacket.WriteBits(v.UnkString2.length(), 7);
+        _worldPacket.WriteBit(v.Reward.is_initialized());
+        _worldPacket.FlushBits();
+
+        _worldPacket.WriteString(v.Answer);
+        _worldPacket.WriteString(v.Description);
+        _worldPacket.WriteString(v.UnkString);
+        _worldPacket.WriteString(v.UnkString2);
+
+        if (v.Reward)
+        {
+            _worldPacket << v.Reward->TitleID;
+            _worldPacket << v.Reward->PackageID;
+            _worldPacket << v.Reward->SkillLineID;
+            _worldPacket << v.Reward->SkillPointCount;
+            _worldPacket << v.Reward->ArenaPointCount;
+            _worldPacket << v.Reward->HonorPointCount;
+            _worldPacket << v.Reward->Money;
+            _worldPacket << v.Reward->Xp;
+
+            _worldPacket << static_cast<uint32>(v.Reward->Items.size());
+            _worldPacket << static_cast<uint32>(v.Reward->Currencies.size());
+            _worldPacket << static_cast<uint32>(v.Reward->Factions.size());
+            _worldPacket << static_cast<uint32>(v.Reward->ItemChoices.size());
+
+            for (auto const& x : v.Reward->Items)
+                _worldPacket << x;
+
+            for (auto const& x : v.Reward->Currencies)
+                _worldPacket << x;
+
+            for (auto const& x : v.Reward->Factions)
+                _worldPacket << x;
+
+            for (auto const& x : v.Reward->ItemChoices)
+                _worldPacket << x;
+        }
+    }
+    
+    _worldPacket.WriteBits(Question.length(), 8);
+    _worldPacket.WriteString(Question);
+
+    return &_worldPacket;
+}
