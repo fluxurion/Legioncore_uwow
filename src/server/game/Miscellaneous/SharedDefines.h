@@ -2297,6 +2297,7 @@ enum GameObjectFlags
     GO_FLAG_UNK1            = 0x00000800,
     GO_FLAG_UNK2            = 0x00001000,
     GO_FLAG_UNK3            = 0x00002000,
+    GO_FLAG_PERSONAL_USE    = 0x00040000                    // todo: more research. On first look - personal visibility & usibility (only one time at all)
 };
 
 enum GameObjectDynamicLowFlags

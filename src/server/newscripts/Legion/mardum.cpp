@@ -115,9 +115,144 @@ public:
         return new go_q40378AI(go);
     }
 };
+
+
+/*
+before OBJECT_FIELD_DYNAMIC_FLAGS: 4294902018
+after OBJECT_FIELD_DYNAMIC_FLAGS: 2473853184
+
+*/
+
+//244439, 244440, 244441, 243873
+class go_q39279 : public GameObjectScript
+{
+public:
+    go_q39279() : GameObjectScript("go_q39279") { }
+
+    struct go_q39279AI : public GameObjectAI
+    {
+        go_q39279AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 39279,
+            SCENE = 189261,
+            GO_244439 = 244439,
+            GO_244440 = 244440,
+            GO_244441 = 244441,
+            GO_243873 = 243873,
+            NPC_CONV_GO_244439 = 558,
+            NPC_CONV_GO_244440 = 583,
+        };
+
+        bool GossipUse(Player* player)
+        { 
+            if (player->GetReqKillOrCastCurrentCount(QUEST, go->GetEntry()))
+                return true;
+            return false;
+        }
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, go->GetEntry()))
+                return true;
+
+            switch (go->GetEntry())
+            {
+                case GO_244439:
+                {
+                    Conversation* conversation = new Conversation;
+                    if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244439, player, NULL, *player))
+                        delete conversation;
+                    break;
+                }
+                case GO_244440:
+                {
+                    Conversation* conversation = new Conversation;
+                    if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244440, player, NULL, *player))
+                        delete conversation;
+                    break;
+                }
+                case GO_244441:
+                case GO_243873:
+                    break;
+            }
+
+            return false;
+        }
+
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q39279AI(go);
+    }
+};
+
+/*
+ClientToServer: CMSG_SPELL_CLICK (0x348C) Length: 16 ConnIdx: 2 Time: 02/06/2016 22:40:30.961 Number: 17163
+SpellClickUnitGUID: Full: 0x202090B9205EDD800000100002B64D15; HighType: Creature; Low: 45501717; Map: 1481; Entry: 97142;
+TryAutoDismount: True
+
+conv - 581
+*/
+
+// Destroying Fel Spreader - 191827
+class spell_legion_q39279 : public SpellScriptLoader
+{
+public:
+    spell_legion_q39279() : SpellScriptLoader("spell_legion_q39279") { }
+
+    class spell_legion_q39279_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_legion_q39279_SpellScript);
+
+        enum data
+        {
+            QUEST = 39279,
+            NPC_CONV = 581
+        };
+
+        void HandleScriptEffect(SpellEffIndex effIndex)
+        {
+            PreventHitDefaultEffect(EFFECT_0);
+            if (Unit* caster = GetCaster())
+            {
+                Player *player = caster->ToPlayer();
+                if (!player)
+                    return;
+
+                if (Unit * target = GetHitUnit())
+                {
+                    target->AddToHideList(caster->GetGUID());
+                    target->DestroyForPlayer(player, false);
+                    player->KilledMonsterCredit(target->GetEntry());
+
+                    Conversation* conversation = new Conversation;
+                    if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
+                        delete conversation;
+                }
+            }
+        }
+
+        void Register()
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_legion_q39279_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const
+    {
+        return new spell_legion_q39279_SpellScript();
+    }
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
     new go_q40077();
     new go_q40378();
+    new go_q39279();
+    new spell_legion_q39279();
 }

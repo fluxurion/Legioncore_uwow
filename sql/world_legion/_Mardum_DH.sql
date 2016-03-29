@@ -37,3 +37,5 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q40378' WHERE `gameobject_te
 
 -- Q: 39279 Area.
 REPLACE INTO `area_queststart` (`id`, `quest`) VALUES ('7741', '39279');
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q39279' WHERE `gameobject_template`.`entry` in (244439, 244440, 244441, 243873);
+REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('191827', 'spell_legion_q39279');
