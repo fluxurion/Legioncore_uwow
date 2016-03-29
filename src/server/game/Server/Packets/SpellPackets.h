@@ -181,7 +181,7 @@ namespace WorldPackets
             Optional<ObjectGuid> CastUnit;
             Optional<int32> Duration;
             Optional<int32> Remaining;
-            Optional<PlayerStatsInfo> PlayerStats;
+            //Optional<WorldPackets::CombatLog::PlayerStatsInfo> PlayerStats;
         };
 
         struct AuraInfo
