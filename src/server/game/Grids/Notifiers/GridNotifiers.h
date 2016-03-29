@@ -1711,7 +1711,7 @@ namespace Trinity
     class LocalizedPacketDo
     {
         public:
-            explicit LocalizedPacketDo(Builder& builder) : i_builder(builder) {}
+            explicit LocalizedPacketDo(Builder& builder) : i_builder(builder) { }
 
             ~LocalizedPacketDo()
             {
@@ -1723,6 +1723,24 @@ namespace Trinity
         private:
             Builder& i_builder;
             std::vector<WorldPacket*> i_data_cache;         // 0 = default, i => i-1 locale index
+    };
+
+    template<class Builder>
+    class LocalizedPacketDoNew
+    {
+        public:
+            explicit LocalizedPacketDoNew(Builder& builder) : i_builder(builder) { }
+
+            ~LocalizedPacketDoNew()
+            {
+                for (size_t i = 0; i < i_data_cache.size(); ++i)
+                    delete i_data_cache[i];
+            }
+            void operator()(Player* p);
+
+        private:
+            Builder& i_builder;
+            std::vector<WorldPackets::Packet*> i_data_cache; // 0 = default, i => i-1 locale index
     };
 
     // Prepare using Builder localized packets with caching and send to player
@@ -1739,14 +1757,34 @@ namespace Trinity
                     for (size_t j = 0; j < i_data_cache[i].size(); ++j)
                         delete i_data_cache[i][j];
             }
+
             void operator()(Player* p);
 
         private:
             Builder& i_builder;
-            std::vector<WorldPacketList> i_data_cache;
-                                                            // 0 = default, i => i-1 locale index
+            std::vector<WorldPacketList> i_data_cache; // 0 = default, i => i-1 locale index
     };
 
+    template<class Builder>
+    class LocalizedPacketListDoNew
+    {
+        public:
+            typedef std::vector<WorldPackets::Packet*> WorldPacketList;
+            explicit LocalizedPacketListDoNew(Builder& builder) : i_builder(builder) { }
+
+            ~LocalizedPacketListDoNew()
+            {
+                for (size_t i = 0; i < i_data_cache.size(); ++i)
+                    for (size_t j = 0; j < i_data_cache[i].size(); ++j)
+                        delete i_data_cache[i][j];
+            }
+
+            void operator()(Player* p);
+
+        private:
+            Builder& i_builder;
+            std::vector<WorldPacketList> i_data_cache; // 0 = default, i => i-1 locale index
+    };
     class UnitHealthState
     {
         public:

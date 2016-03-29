@@ -17,11 +17,14 @@
  */
 
 #include "AchievementMgr.h"
+#include "AchievementPackets.h"
 #include "Battleground.h"
 #include "BattlegroundAB.h"
 #include "BattlegroundMgr.h"
+#include "BattlegroundScore.h"
 #include "Bracket.h"
 #include "CellImpl.h"
+#include "ChatTextBuilder.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
 #include "DBCEnums.h"
@@ -44,35 +47,6 @@
 #include "SpellMgr.h"
 #include "World.h"
 #include "WorldPacket.h"
-#include "BattlegroundScore.h"
-#include "AchievementPackets.h"
-
-namespace Trinity
-{
-    class AchievementChatBuilder
-    {
-        public:
-            AchievementChatBuilder(Player const& player, ChatMsg msgtype, int32 textId, uint32 ach_id)
-                : i_player(player), i_msgtype(msgtype), i_textId(textId), i_achievementId(ach_id) {}
-            void operator()(WorldPacket& data, LocaleConstant loc_idx)
-            {
-                Trinity::ChatData c;
-                c.message = sObjectMgr->GetTrinityString(i_textId, loc_idx);
-                c.sourceGuid = i_player.GetGUID();
-                c.targetGuid = i_player.GetGUID();
-                c.chatType = i_msgtype;
-                c.achievementId = i_achievementId;
-
-                Trinity::BuildChatPacket(data, c);
-            }
-
-        private:
-            Player const& i_player;
-            ChatMsg i_msgtype;
-            int32 i_textId;
-            uint32 i_achievementId;
-    };
-}                                                           // namespace Trinity
 
 bool AchievementCriteriaData::IsValid(CriteriaEntry const* criteria)
 {
@@ -1280,9 +1254,9 @@ void AchievementMgr<T>::SendAchievementEarned(AchievementEntry const* achievemen
 
     if (Guild* guild = sGuildMgr->GetGuildById(GetOwner()->GetGuildId()))
     {
-        Trinity::AchievementChatBuilder say_builder(*GetOwner(), CHAT_MSG_GUILD_ACHIEVEMENT, LANG_ACHIEVEMENT_EARNED, achievement->ID);
-        Trinity::LocalizedPacketDo<Trinity::AchievementChatBuilder> say_do(say_builder);
-        guild->BroadcastWorker(say_do);
+        Trinity::BroadcastTextBuilder _builder(GetOwner(), CHAT_MSG_GUILD_ACHIEVEMENT, BROADCAST_TEXT_ACHIEVEMENT_EARNED, GetOwner(), achievement->ID);
+        Trinity::LocalizedPacketDoNew<Trinity::BroadcastTextBuilder> _localizer(_builder);
+        guild->BroadcastWorker(_localizer, GetOwner());
     }
 
     ObjectGuid ownerGuid = GetOwner()->GetGUID();
@@ -1299,17 +1273,10 @@ void AchievementMgr<T>::SendAchievementEarned(AchievementEntry const* achievemen
     // if player is in world he can tell his friends about new achievement
     else if (GetOwner()->IsInWorld())
     {
-        Trinity::AchievementChatBuilder say_builder(*GetOwner(), CHAT_MSG_ACHIEVEMENT, LANG_ACHIEVEMENT_EARNED, achievement->ID);
-
-        CellCoord p = Trinity::ComputeCellCoord(GetOwner()->GetPositionX(), GetOwner()->GetPositionY());
-
-        Cell cell(p);
-        cell.SetNoCreate();
-
-        Trinity::LocalizedPacketDo<Trinity::AchievementChatBuilder> say_do(say_builder);
-        Trinity::PlayerDistWorker<Trinity::LocalizedPacketDo<Trinity::AchievementChatBuilder> > say_worker(GetOwner(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_SAY), say_do);
-        TypeContainerVisitor<Trinity::PlayerDistWorker<Trinity::LocalizedPacketDo<Trinity::AchievementChatBuilder> >, WorldTypeMapContainer > message(say_worker);
-        cell.Visit(p, message, *GetOwner()->GetMap(), *GetOwner(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_SAY));
+        Trinity::BroadcastTextBuilder _builder(GetOwner(), CHAT_MSG_ACHIEVEMENT, BROADCAST_TEXT_ACHIEVEMENT_EARNED, GetOwner(), achievement->ID);
+        Trinity::LocalizedPacketDoNew<Trinity::BroadcastTextBuilder> _localizer(_builder);
+        Trinity::PlayerDistWorker<Trinity::LocalizedPacketDoNew<Trinity::BroadcastTextBuilder> > _worker(GetOwner(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_SAY), _localizer);
+        GetOwner()->VisitNearbyWorldObject(sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_SAY), _worker);
     }
 
     ObjectGuid firstPlayerOnAccountGuid = ownerGuid;

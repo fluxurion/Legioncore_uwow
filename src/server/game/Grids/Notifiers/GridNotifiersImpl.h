@@ -673,4 +673,56 @@ void Trinity::LocalizedPacketListDo<Builder>::operator()(Player* p)
         p->SendDirectMessage((*data_list)[i]);
 }
 
+template<class Builder>
+void Trinity::LocalizedPacketDoNew<Builder>::operator()(Player* p)
+{
+    LocaleConstant loc_idx = p->GetSession()->GetSessionDbLocaleIndex();
+    uint32 cache_idx = loc_idx + 1;
+    WorldPackets::Packet* data;
+
+    // create if not cached yet
+    if (i_data_cache.size() < cache_idx + 1 || !i_data_cache[cache_idx])
+    {
+        if (i_data_cache.size() < cache_idx + 1)
+            i_data_cache.resize(cache_idx + 1);
+
+        data = i_builder(loc_idx);
+
+        ASSERT(data->GetSize() == 0);
+
+        data->Write();
+
+        i_data_cache[cache_idx] = data;
+    }
+    else
+        data = i_data_cache[cache_idx];
+
+    p->SendDirectMessage(data->GetRawPacket());
+}
+
+template<class Builder>
+void Trinity::LocalizedPacketListDoNew<Builder>::operator()(Player* p)
+{
+    LocaleConstant loc_idx = p->GetSession()->GetSessionDbLocaleIndex();
+    uint32 cache_idx = loc_idx + 1;
+    WorldPacketList* data_list;
+
+    // create if not cached yet
+    if (i_data_cache.size() < cache_idx + 1 || i_data_cache[cache_idx].empty())
+    {
+        if (i_data_cache.size() < cache_idx + 1)
+            i_data_cache.resize(cache_idx + 1);
+
+        data_list = &i_data_cache[cache_idx];
+
+        i_builder(*data_list, loc_idx);
+    }
+    else
+        data_list = &i_data_cache[cache_idx];
+
+    for (size_t i = 0; i < data_list->size(); ++i)
+        p->SendDirectMessage((*data_list)[i]->GetRawPacket());
+}
+
+
 #endif                                                      // TRINITY_GRIDNOTIFIERSIMPL_H
