@@ -34,6 +34,12 @@ enum eCreatures
     NPC_SWIRLING_POOL_VEH       = 97099,  //veh - создает АТ и и суммонит тентаклю.
     NPC_PIERCING_TENTACLE       = 100188, //Появляется, бьет 197112 и ломает пол, исчезает.
     NPC_SWIRLING_POOL_TRIG      = 102306, //Плюеется из отверстий водой
+    
+    NPC_YMIRON                  = 96756,
+    //Imiron trash
+    NPC_BIRD                    = 97163,
+    NPC_SHIELDMAIDEN            = 102104,
+    NPC_RUNECARVER              = 102375,
 };
 
 enum eGameObjects
