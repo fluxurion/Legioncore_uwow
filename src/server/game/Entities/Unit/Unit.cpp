@@ -16041,6 +16041,7 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
         case POWER_MANA:
             return GetCreateMana();
         case POWER_RAGE:
+        case POWER_PAIN:
             return 1000;
         case POWER_FOCUS:
             if (GetTypeId() == TYPEID_PLAYER && getClass() == CLASS_HUNTER)
@@ -16059,11 +16060,10 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
         case POWER_SOUL_SHARDS:
             return 400;
         case POWER_FURY:
-        case POWER_PAIN:
         case POWER_LUNAR_POWER:
-            return 100; // Should be -100 to 100 this needs the power to be int32 instead of uint32
+            return 100;
         case POWER_HOLY_POWER:
-            return HasAura(115675) ? 5 : 3;
+            return 3;
         case POWER_CHI:
             return 4;
         case POWER_COMBO_POINTS:
@@ -16122,10 +16122,10 @@ void Unit::InitialPowers(bool maxpower)
 
         Powers power = Powers(powerEntry->PowerType);
         int32 curval = GetPowerForReset(power, maxpower);
+        int32 createval = GetCreatePowers(power);
 
         if (power != POWER_ALTERNATE_POWER)
         {
-            int32 createval = GetCreatePowers(power);
             if(maxpower)
             {
                 SetInt32Value(UNIT_FIELD_MAX_POWER + powerIndex, createval);

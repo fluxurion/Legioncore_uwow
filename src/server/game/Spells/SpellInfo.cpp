@@ -2857,8 +2857,6 @@ uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) 
                     break;
                 case POWER_RUNES:
                 case POWER_RUNIC_POWER:
-                case POWER_PAIN:
-                case POWER_FURY:
                     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "CalcPowerCost: Not implemented yet!");
                     break;
                 default:

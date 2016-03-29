@@ -315,6 +315,9 @@ void Player::UpdateMaxHealth()
 
 void Player::UpdateMaxPower(Powers power)
 {
+    if (power == POWER_ALTERNATE_POWER)
+        return;
+
     int32 cur_maxpower = GetMaxPower(power);
 
     UnitMods unitMod = UnitMods(UNIT_MOD_POWER_START + power);
