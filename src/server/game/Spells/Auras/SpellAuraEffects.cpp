@@ -307,7 +307,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNoImmediateEffect,                         //246 SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL_NOT_STACK implemented in Spell::EffectApplyAura
     &AuraEffect::HandleAuraCloneCaster,                           //247 SPELL_AURA_CLONE_CASTER
     &AuraEffect::HandleNoImmediateEffect,                         //248 SPELL_AURA_MOD_COMBAT_RESULT_CHANCE         implemented in Unit::RollMeleeOutcomeAgainst
-    &AuraEffect::HandleAuraConvertRune,                           //249 SPELL_AURA_CONVERT_RUNE
+    &AuraEffect::HandleModDamageWithMechanic,                     //249 SPELL_AURA_MOD_DAMAGE_WITH_MECHANIC
     &AuraEffect::HandleAuraModIncreaseHealth,                     //250 SPELL_AURA_MOD_INCREASE_HEALTH_3
     &AuraEffect::HandleNoImmediateEffect,                         //251 SPELL_AURA_MOD_ENEMY_DODGE
     &AuraEffect::HandleModCombatSpeedPct,                         //252 SPELL_AURA_252 Is there any difference between this and SPELL_AURA_MELEE_SLOW ? maybe not stacking mod?
@@ -6805,32 +6805,35 @@ void AuraEffect::HandleComprehendLanguage(AuraApplication const* aurApp, uint8 m
     }
 }
 
-void AuraEffect::HandleAuraConvertRune(AuraApplication const* aurApp, uint8 mode, bool apply) const
+void AuraEffect::HandleModDamageWithMechanic(AuraApplication const* aurApp, uint8 mode, bool apply) const
 {
     if (!(mode & AURA_EFFECT_HANDLE_REAL))
         return;
 
     Unit* target = aurApp->GetTarget();
 
-    if (target->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    Player* player = (Player*)target;
-
-    if (player->getClass() != CLASS_DEATH_KNIGHT)
-        return;
-
-    // convert number of runes specified in aura amount of rune type in miscvalue to runetype in miscvalueb
-    if (apply)
-    {
-        player->ConvertRune(m_amount - 1, RuneType(GetMiscValueB()));
-        player->SetBlockRuneConvert(m_amount - 1, true);
-    }
-    else
-    {
-        player->ConvertRune(m_amount - 1, player->GetBaseRune(m_amount - 1));
-        player->SetBlockRuneConvert(m_amount - 1, false);
-    }
+    // if (apply)
+    // {
+        // uint32 mechanic_mask = (1 << GetMiscValue());
+        // bool canMod = false;
+        // for (AuraApplicationMap::iterator iter = m_appliedAuras.begin(); iter != m_appliedAuras.end();)
+        // {
+            // if (Aura const* aura = iter->second->GetBase())
+            // {
+                // if (aura->GetSpellInfo()->GetAllEffectsMechanicMask() & mechanic_mask)
+                // {
+                    // canMod = true;
+                    // break;;
+                // }
+            // }
+            // ++iter;
+        // }
+        // if (canMod)
+            
+    // }
+    // else
+    // {
+    // }
 }
 
 void AuraEffect::HandleAuraLinked(AuraApplication const* aurApp, uint8 mode, bool apply) const
@@ -7366,40 +7369,10 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster, SpellEf
         {
             switch (GetId())
             {
-                // Death's Advance
-                case 96268:
-                {
-                    if (caster->ToPlayer()->GetRuneCooldown(RUNE_UNHOLY * 2) && caster->ToPlayer()->GetRuneCooldown(RUNE_UNHOLY * 2 + 1))
-                        GetBase()->RefreshDuration();
-                    else
-                        caster->RemoveAurasDueToSpell(96268);
-                    break;
-                }
                 // Death and Decay
                 case 43265:
                 {
                     trigger_spell_id = 52212;
-                    break;
-                }
-                case 50034: // Blood Rites
-                case 56835: // Reaping
-                {
-                    if (Player* plr = caster->ToPlayer())
-                    {
-                        if (Aura* aura = GetBase())
-                            if (AuraEffect* eff = aura->GetEffect(m_effIndex))
-                            {
-                                if (plr->isInCombat())
-                                    eff->SetAmount(10);
-                                else
-                                {
-                                    if (GetAmount() != 0)
-                                        eff->SetAmount(0);
-                                    else
-                                        plr->RestoreAllBaseRunes();
-                                }
-                            }
-                    }
                     break;
                 }
                 default:
@@ -8407,19 +8380,22 @@ void AuraEffect::HandlePeriodicManaLeechAuraTick(Unit* target, Unit* caster, Spe
     // ignore negative values (can be result apply spellmods to aura damage
     int32 drainAmount = std::max(m_amount, 0);
 
-    SpellPowerEntry power;
-    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), power))
-        power = GetSpellInfo()->GetPowerInfo(0);
+    SpellPowerData powerData;
+    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
+        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
 
     // Special case: draining x% of mana (up to a maximum of 2*x% of the caster's maximum mana)
     // It's mana percent cost spells, m_amount is percent drain from target
-    if (power.PowerCostPercentage)
+    for (SpellPowerEntry const* power : powerData)
     {
-        // max value
-        int32 maxmana = CalculatePct(caster->GetMaxPower(powerType), drainAmount * 2.0f);
-        ApplyPct(drainAmount, target->GetMaxPower(powerType));
-        if (drainAmount > maxmana)
-            drainAmount = maxmana;
+        if (power->PowerCostPercentage)
+        {
+            // max value
+            int32 maxmana = CalculatePct(caster->GetMaxPower(powerType), drainAmount * 2.0f);
+            ApplyPct(drainAmount, target->GetMaxPower(powerType));
+            if (drainAmount > maxmana)
+                drainAmount = maxmana;
+        }
     }
 
     GetBase()->CallScriptEffectChangeTickDamageHandlers(const_cast<AuraEffect const*>(this), drainAmount, target);

@@ -9115,36 +9115,6 @@ bool Unit::HandleAuraProc(Unit* victim, DamageInfo* /*dmgInfoProc*/, Aura* trigg
         }
         case SPELLFAMILY_DEATHKNIGHT:
         {
-            // Reaping
-            // Blood Rites
-            if (dummySpell->Id == 56835 || dummySpell->Id == 50034)
-            {
-                if (Player* plr = ToPlayer())
-                {
-                    //SpellRuneCostEntry const* runeCostData = sSpellRuneCostStore.LookupEntry(procSpell->RuneCostID);
-                    //if (!runeCostData || (runeCostData->NoRuneCost()))
-                    //    return false;
-
-                    //uint8 runeCost[NUM_RUNE_TYPES];
-                    //for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
-                    //    runeCost[i] = runeCostData->RuneCost[i];
-
-                    //for (uint8 i = 0; i < MAX_RUNES; ++i)
-                    //{
-                    //    RuneType baseRune = plr->GetBaseRune(i);
-                    //    if (plr->IsLastRuneUsed(i))
-                    //    {
-                    //        if (runeCost[baseRune])
-                    //        {
-                    //            plr->SetConvertIn(i, RUNE_DEATH);
-                    //            plr->ConvertRune(i, RUNE_DEATH);
-                    //        }
-                    //    }
-                    //}
-                }
-                return false;
-            }
-
             switch (dummySpell->Id)
             {
                 // Bone Shield cooldown
@@ -10179,15 +10149,6 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
                 return false;
             break;
         }
-        // Death's Advance
-        case 96268:
-        {
-            if (!ToPlayer())
-                return false;
-            if (!ToPlayer()->GetRuneCooldown(RUNE_UNHOLY*2) || !ToPlayer()->GetRuneCooldown(RUNE_UNHOLY*2+1))
-                return false;
-            break;
-        }
         // Primal Fury
         case 16953:
         {
@@ -10370,6 +10331,9 @@ void Unit::setPowerType(Powers fieldPower)
             SetPower(new_powertype, GetCreatePowers(new_powertype));
             break;
         case POWER_ENERGY:
+            SetMaxPower(new_powertype, GetCreatePowers(new_powertype));
+            break;
+        case POWER_RUNES:
             SetMaxPower(new_powertype, GetCreatePowers(new_powertype));
             break;
     }
@@ -16051,7 +16015,6 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return ((ToPet() && ToPet()->IsWarlockPet()) ? 200 : 100);
         case POWER_RUNIC_POWER:
             return 1000;
-        case POWER_RUNES:
         case POWER_MAELSTROM:
         case POWER_HEALTH:
             return 0;
@@ -16068,6 +16031,8 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return 4;
         case POWER_COMBO_POINTS:
             return 5;
+        case POWER_RUNES:
+            return 6;
         default:
             break;
     }
@@ -16087,6 +16052,8 @@ int32 Unit::GetPowerForReset(Powers power, bool maxpower /*= false*/, uint16 pow
 
     switch (power)
     {
+        case POWER_RUNES:
+            return  6;
         case POWER_SOUL_SHARDS:
             return  400;
         case POWER_MANA:
@@ -18325,7 +18292,8 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                         check = true;
                         continue;
                     }
-                    basepoints0 = CalculatePct(procSpell->CalcPowerCost(_caster, procSpell->GetSchoolMask()), bp0);
+                    SpellPowerCost cost = procSpell->CalcPowerCost(_caster, procSpell->GetSchoolMask());
+                    basepoints0 = CalculatePct(cost[POWER_MANA], bp0);
 
                     triggered_spell_id = abs(itr->spell_trigger);
                     _caster->CastCustomSpell(target, triggered_spell_id, &basepoints0, &bp1, &bp2, true, castItem, triggeredByAura, originalCaster);

@@ -1259,7 +1259,7 @@ enum SpellEffects
     SPELL_EFFECT_APPLY_AREA_AURA_OWNER              = 143,
     SPELL_EFFECT_KNOCK_BACK_DEST                    = 144,
     SPELL_EFFECT_PULL_TOWARDS_DEST                  = 145,
-    SPELL_EFFECT_ACTIVATE_RUNE                      = 146,
+    SPELL_EFFECT_ACTIVATE_RUNE                      = 146, //  Unused (7.0.1)
     SPELL_EFFECT_QUEST_FAIL                         = 147,
     SPELL_EFFECT_TRIGGER_MISSILE_SPELL_WITH_VALUE   = 148,
     SPELL_EFFECT_CHARGE_DEST                        = 149,

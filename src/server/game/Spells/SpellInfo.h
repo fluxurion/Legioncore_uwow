@@ -232,6 +232,9 @@ enum SpellAuraDummyType
     SPELL_DUMMY_DURATION                        = 5,
 };
 
+typedef std::vector<SpellPowerEntry const*> SpellPowerData;
+typedef std::unordered_map<int32, int32> SpellPowerCost;
+
 uint32 GetTargetFlagMask(SpellTargetObjectTypes objType);
 
 class SpellImplicitTargetInfo
@@ -482,7 +485,7 @@ public:
     
     struct SpellPowers
     {
-        uint32 PowerCost;
+        int32 PowerCost;
         float PowerCostPercentage;
         float PowerCostPercentagePerSecond;
         uint32 RequiredAura;
@@ -624,7 +627,7 @@ public:
     uint32 CalcCastTime(Unit* caster = NULL, Spell* spell = NULL) const;
     uint32 GetRecoveryTime() const;
 
-    uint32 CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) const;
+    SpellPowerCost CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) const;
 
     bool IsRanked() const;
     uint8 GetRank() const;
@@ -660,8 +663,8 @@ public:
 
     bool AddPowerData(SpellPowerEntry const * power);
     bool IsPowerActive(uint8 powerIndex) const;
-    SpellPowerEntry const GetPowerInfo(uint8 powerIndex) const;
-    bool GetSpellPowerByCasterPower(Unit const * caster, SpellPowerEntry& power) const;
+    SpellPowerEntry const* GetPowerInfo(uint8 powerIndex) const;
+    bool GetSpellPowerByCasterPower(Unit const * caster, SpellPowerData& power) const;
     bool HasPower(Powers power) const;
     bool NoPower() const;
     bool CanNonFacing(Unit const * caster) const;

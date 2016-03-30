@@ -316,8 +316,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellMissStatus c
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellPowerData const& spellPowerData)
 {
-    data << spellPowerData.Type;
-    data << (spellPowerData.Cost < 0 ? 0 : spellPowerData.Cost);
+    data << spellPowerData.Remain;
+    data << spellPowerData.Power;
 
     return data;
 }
@@ -836,7 +836,7 @@ WorldPacket const* WorldPackets::Spells::ResyncRunes::Write()
     _worldPacket << static_cast<uint32>(Runes.size());
     for (auto const& rune : Runes)
     {
-        _worldPacket << uint8(rune.RuneType);
+        _worldPacket << uint8(rune.Rune);
         _worldPacket << uint8(rune.Cooldown);
     }
 

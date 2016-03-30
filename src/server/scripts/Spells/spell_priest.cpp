@@ -648,7 +648,8 @@ class spell_pri_rapture : public SpellScriptLoader
                     AuraRemoveMode removeMode = GetTargetApplication()->GetRemoveMode();
                     if (removeMode == AURA_REMOVE_BY_ENEMY_SPELL)
                     {
-                        int32 bp = GetSpellInfo()->CalcPowerCost(caster, GetSpellInfo()->GetSchoolMask());
+                        SpellPowerCost cost = GetSpellInfo()->CalcPowerCost(caster, GetSpellInfo()->GetSchoolMask());
+                        int32 bp = cost[POWER_MANA];
                         if (caster->ToPlayer() && !caster->ToPlayer()->HasSpellCooldown(PRIEST_RAPTURE_ENERGIZE))
                         {
                             caster->CastCustomSpell(caster, PRIEST_RAPTURE_ENERGIZE, &bp, NULL, NULL, true);

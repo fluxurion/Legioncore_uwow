@@ -648,12 +648,18 @@ m_casterLevel(caster ? caster->getLevel() : m_spellInfo->SpellLevel), m_procChar
 m_isRemoved(false), m_isSingleTarget(false), m_isUsingCharges(false), m_fromAreatrigger(false), m_inArenaNerf(false), m_aura_amount(0),
 m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAreaTrGuid(), m_customData(0), m_damage_amount(0)
 {
-    SpellPowerEntry power;
-    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), power))
-        power = GetSpellInfo()->GetPowerInfo(0);
+    SpellPowerData powerData;
+    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
+        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
 
-    if (power.PowerCostPerSecond || power.PowerCostPercentagePerSecond)
-        m_timeCla = 1 * IN_MILLISECONDS;
+    for (SpellPowerEntry const* power : powerData)
+    {
+        if (power->PowerCostPerSecond || power->PowerCostPercentagePerSecond)
+        {
+            m_timeCla = 1 * IN_MILLISECONDS;
+            break;
+        }
+    }
 
     LoadScripts();
 
@@ -1015,39 +1021,42 @@ void Aura::Update(uint32 diff, Unit* caster)
             {                
                 m_timeCla += 1000 - diff;
 
-                SpellPowerEntry power;
-                if (!GetSpellInfo()->GetSpellPowerByCasterPower(caster, power))
-                    power = GetSpellInfo()->GetPowerInfo(0);
+                SpellPowerData powerData;
+                if (!GetSpellInfo()->GetSpellPowerByCasterPower(caster, powerData))
+                    powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
 
-                if (power.PowerCostPerSecond || power.PowerCostPercentagePerSecond)
+                for (SpellPowerEntry const* power : powerData)
                 {
-                    Powers powertype = Powers(power.PowerType);
-                    if (powertype == POWER_HEALTH)
+                    if (power->PowerCostPerSecond || power->PowerCostPercentagePerSecond)
                     {
-                        uint32 reqHealth = power.PowerCostPerSecond;
-                        if (power.PowerCostPercentagePerSecond)
-                            reqHealth += CalculatePct(caster->GetMaxHealth(), power.PowerCostPercentagePerSecond);
-                        
-                        if (reqHealth < caster->GetHealth())
-                            caster->ModifyHealth(-1 * reqHealth);
-                        else
+                        Powers powertype = Powers(power->PowerType);
+                        if (powertype == POWER_HEALTH)
                         {
-                            Remove();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        int32 reqPower = power.PowerCostPerSecond;
-                        if (power.PowerCostPercentagePerSecond)
-                            reqPower += CalculatePct(caster->GetMaxPower(powertype), power.PowerCostPercentagePerSecond);
+                            uint32 reqHealth = power->PowerCostPerSecond;
+                            if (power->PowerCostPercentagePerSecond)
+                                reqHealth += CalculatePct(caster->GetMaxHealth(), power->PowerCostPercentagePerSecond);
 
-                        if (reqPower <= caster->GetPower(powertype))
-                            caster->ModifyPower(powertype, -1 * reqPower, true);
+                            if (reqHealth < caster->GetHealth())
+                                caster->ModifyHealth(-1 * reqHealth);
+                            else
+                            {
+                                Remove();
+                                return;
+                            }
+                        }
                         else
                         {
-                            Remove();
-                            return;
+                            int32 reqPower = power->PowerCostPerSecond;
+                            if (power->PowerCostPercentagePerSecond)
+                                reqPower += CalculatePct(caster->GetMaxPower(powertype), power->PowerCostPercentagePerSecond);
+
+                            if (reqPower <= caster->GetPower(powertype))
+                                caster->ModifyPower(powertype, -1 * reqPower, true);
+                            else
+                            {
+                                Remove();
+                                return;
+                            }
                         }
                     }
                 }
@@ -1106,12 +1115,18 @@ void Aura::RefreshDuration(bool /*recalculate*/)
         if (HasEffect(i))
             GetEffect(i)->CalculatePeriodic(caster, (GetSpellInfo()->HasAttribute(SPELL_ATTR5_START_PERIODIC_AT_APPLY)), false);
 
-    SpellPowerEntry power;
-    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), power))
-        power = GetSpellInfo()->GetPowerInfo(0);
+    SpellPowerData powerData;
+    if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
+        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
 
-    if (power.PowerCostPerSecond || power.PowerCostPercentagePerSecond)
-        m_timeCla = 1 * IN_MILLISECONDS;
+    for (SpellPowerEntry const* power : powerData)
+    {
+        if (power->PowerCostPerSecond || power->PowerCostPercentagePerSecond)
+        {
+            m_timeCla = 1 * IN_MILLISECONDS;
+            break;
+        }
+    }
 }
 
 void Aura::RefreshTimers()
@@ -1334,7 +1349,7 @@ bool Aura::CanBeSaved() const
             return false;
 
     // Can't be saved - aura handler relies on calculated amount and changes it
-    if (HasEffectType(SPELL_AURA_CONVERT_RUNE))
+    if (HasEffectType(SPELL_AURA_MOD_DAMAGE_WITH_MECHANIC))
         return false;
 
     // No point in saving this, since the stable dialog can't be open on aura load anyway.
@@ -2224,21 +2239,6 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                             caster->CastSpell(caster, spellid, true);
                         }
                         break;
-                    }
-                    default:
-                        break;
-                }
-                break;
-            }
-            case SPELLFAMILY_DEATHKNIGHT:
-            {
-                switch (GetId())
-                {
-                    case 56835: // Reaping
-                    case 50034: // Blood Rites
-                    {
-                        if (Player* plr = caster->ToPlayer())
-                            plr->RestoreAllBaseRunes();
                     }
                     default:
                         break;

@@ -847,27 +847,6 @@ void Player::ApplyHealthRegenBonus(int32 amount, bool apply)
     _ModifyUInt32(apply, m_baseHealthRegen, amount);
 }
 
-void Player::UpdateRuneRegen(RuneType rune)
-{
-    //if (rune > NUM_RUNE_TYPES)
-    //    return;
-
-    //uint32 cooldown = 0;
-
-    //for (uint32 i = 0; i < MAX_RUNES; ++i)
-    //    if (GetBaseRune(i) == rune)
-    //    {
-    //        cooldown = RUNE_BASE_COOLDOWN;
-    //        break;
-    //    }
-
-    //if (cooldown <= 0)
-    //    return;
-
-    //float regen = float(1 * IN_MILLISECONDS) / float(cooldown);
-    //SetFloatValue(PLAYER_FIELD_RUNE_REGEN + uint8(rune), regen);
-}
-
 void Player::UpdateAllRunesRegen()
 {
     float val = m_baseMHastRatingPct;
@@ -879,22 +858,9 @@ void Player::UpdateAllRunesRegen()
     auratypelist.push_back(SPELL_AURA_MELEE_SLOW);
 
     val *= GetTotalForAurasMultiplier(&auratypelist);
+    val *= GetTotalAuraMultiplierByMiscValue(SPELL_AURA_MOD_POWER_REGEN_PERCENT, POWER_RUNES);
 
-    float coef[NUM_RUNE_TYPES];
-
-    for (uint8 i = 0; i < NUM_RUNE_TYPES; i++)
-        coef[i] = val;
-
-    AuraEffectList const& mTotalAuraList = GetAuraEffectsByType(SPELL_AURA_MOD_POWER_REGEN_PERCENT);
-    for (AuraEffectList::const_iterator i = mTotalAuraList.begin(); i != mTotalAuraList.end(); ++i)
-        if ((*i)->GetMiscValue() == POWER_RUNES)
-            AddPct(coef[(*i)->GetMiscValueB()], (*i)->GetAmount());
-
-    for (uint8 i = 0; i < NUM_RUNE_TYPES; i++)
-    {
-        SetRuneCooldownCoef(RuneType(i), coef[i]);
-        //SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, coef[i] / 10.0f);
-    }
+    SetRuneCooldownCoef(val);
 }
 
 void Player::_ApplyAllStatBonuses()

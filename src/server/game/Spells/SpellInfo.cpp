@@ -2826,77 +2826,91 @@ uint32 SpellInfo::GetRecoveryTime() const
     return Cooldowns.RecoveryTime > Cooldowns.CategoryRecoveryTime ? Cooldowns.RecoveryTime : Cooldowns.CategoryRecoveryTime;
 }
 
-uint32 SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) const
+SpellPowerCost SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask schoolMask) const
 {
-    // Spell drain all exist power on cast (Only paladin lay of Hands)
-    if (HasAttribute(SPELL_ATTR1_DRAIN_ALL_POWER))
-    {
-        // If power type - health drain all
-        if (Power.PowerType == POWER_HEALTH)
-            return caster->GetHealth();
-        // Else drain all power
-        if (Power.PowerType < MAX_POWERS)
-            return caster->GetPower(Powers(Power.PowerType));
-        sLog->outError(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CalcPowerCost: Unknown power type '%d' in spell %d", spellPower->PowerType, Id);
-        return 0;
-    }
+    SpellPowerCost cost;
+    for (uint32 i = 0; i < MAX_POWERS; ++i)
+        cost[i] = 0;
+    cost[POWER_HEALTH] = 0;
 
-    SpellPowerEntry power;
-    if (GetSpellPowerByCasterPower(caster, power))
+    SpellPowerData powerData;
+    if (GetSpellPowerByCasterPower(caster, powerData))
     {
-        // Base powerCost
-        int32 powerCost = power.PowerCost;
-        // PCT cost from total amount
-        if (power.PowerCostPercentage)
+        // Spell drain all exist power on cast (Only paladin lay of Hands)
+        if (HasAttribute(SPELL_ATTR1_DRAIN_ALL_POWER))
         {
-            switch (power.PowerType)
+            for (SpellPowerEntry const* power : powerData)
             {
-                // health as power used
-                case POWER_HEALTH:
-                    powerCost += int32(CalculatePct(caster->GetCreateHealth(), power.PowerCostPercentage));
-                    break;
-                case POWER_RUNES:
-                case POWER_RUNIC_POWER:
-                    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "CalcPowerCost: Not implemented yet!");
-                    break;
-                default:
-                    powerCost += int32(CalculatePct(caster->GetCreatePowers(Powers(power.PowerType)), power.PowerCostPercentage));
-                    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "CalcPowerCost: Power type '%i' in spell %d, powerCost %i, GetCreatePowers %i", power.PowerType, Id, powerCost, caster->GetCreatePowers(Powers(power.PowerType)));
-                    //return powerCost;
+                // If power type - health drain all
+                if (power->PowerType == POWER_HEALTH)
+                    cost[power->PowerType] = caster->GetHealth();
+                // Else drain all power
+                if (power->PowerType < MAX_POWERS)
+                    cost[power->PowerType] = caster->GetPower(Powers(power->PowerType));
             }
+
+            sLog->outError(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CalcPowerCost: Unknown power type '%d' in spell %d", spellPower->PowerType, Id);
+            return cost;
         }
 
-        if(Power.HealthCostPercentage)
-            powerCost += caster->CountPctFromMaxHealth(Power.HealthCostPercentage);
-
-        SpellSchools school = GetFirstSchoolInMask(schoolMask);
-        // Flat mod from caster auras by spell school
-        powerCost += caster->GetInt32Value(UNIT_FIELD_POWER_COST_MODIFIER + school);
-        // Apply cost mod by spell
-        if (Player* modOwner = caster->GetSpellModOwner())
-            if (power.PowerIndex == POWER_INDEX_SECOND)
-                modOwner->ApplySpellMod(Id, SPELLMOD_SPELL_COST2, powerCost);
-
-        if (!caster->IsControlledByPlayer() && G3D::fuzzyEq(power.PowerCostPercentage, 0.0f) && SpellLevel)
+        for (SpellPowerEntry const* power : powerData)
         {
-            if (HasAttribute(SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION))
+            // Base powerCost
+            int32 powerCost = power->PowerCost;
+            // PCT cost from total amount
+            if (power->PowerCostPercentage)
             {
-                GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1);
-                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1);
-                if (spellScaler && casterScaler)
-                    powerCost *= casterScaler->Value / spellScaler->Value;
+                switch (power->PowerType)
+                {
+                    // health as power used
+                    case POWER_HEALTH:
+                        powerCost += int32(CalculatePct(caster->GetCreateHealth(), power->PowerCostPercentage));
+                        break;
+                    default:
+                        powerCost += int32(CalculatePct(caster->GetCreatePowers(Powers(power->PowerType)), power->PowerCostPercentage));
+                        sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "CalcPowerCost: Power type '%i' in spell %d, powerCost %i, GetCreatePowers %i", power->PowerType, Id, powerCost, caster->GetCreatePowers(Powers(power->PowerType)));
+                        //return powerCost;
+                }
             }
+
+            if(power->HealthCostPercentage)
+                powerCost += caster->CountPctFromMaxHealth(power->HealthCostPercentage);
+
+            SpellSchools school = GetFirstSchoolInMask(schoolMask);
+            // Flat mod from caster auras by spell school
+            powerCost += caster->GetInt32Value(UNIT_FIELD_POWER_COST_MODIFIER + school);
+            // Apply cost mod by spell
+            if (Player* modOwner = caster->GetSpellModOwner())
+            {
+                modOwner->ApplySpellMod(Id, SPELLMOD_COST, powerCost);
+
+                if (power->PowerIndex == POWER_INDEX_MAIN)
+                    modOwner->ApplySpellMod(Id, SPELLMOD_COST, powerCost);
+                if (power->PowerIndex == POWER_INDEX_SECOND)
+                    modOwner->ApplySpellMod(Id, SPELLMOD_SPELL_COST2, powerCost);
+            }
+
+            if (!caster->IsControlledByPlayer() && G3D::fuzzyEq(power->PowerCostPercentage, 0.0f) && SpellLevel)
+            {
+                if (HasAttribute(SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION))
+                {
+                    GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(SpellLevel - 1);
+                    GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1);
+                    if (spellScaler && casterScaler)
+                        powerCost *= casterScaler->Value / spellScaler->Value;
+                }
+            }
+
+            // PCT mod from user auras by school
+            powerCost = int32(powerCost * (1.0f + caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + school)));
+
+            if (power->PowerCost >= 0 && powerCost < 0)
+                powerCost = 0;
+            cost[power->PowerType] = powerCost;
         }
-
-        // PCT mod from user auras by school
-        powerCost = int32(powerCost * (1.0f + caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + school)));
-
-        if (powerCost < 0)
-            powerCost = 0;
-        return powerCost;
     }
 
-    return 0;
+    return cost;
 }
 
 bool SpellInfo::IsRanked() const
@@ -3554,10 +3568,10 @@ bool SpellInfo::AddPowerData(SpellPowerEntry const *power)
 
 bool SpellInfo::IsPowerActive(uint8 powerIndex) const
 {
-    return GetPowerInfo(powerIndex).ID != 0;
+    return GetPowerInfo(powerIndex)->ID != 0;
 }
 
-SpellPowerEntry const SpellInfo::GetPowerInfo(uint8 powerIndex) const
+SpellPowerEntry const* SpellInfo::GetPowerInfo(uint8 powerIndex) const
 {
     if (powerIndex >= MAX_POWERS_FOR_SPELL)
     {
@@ -3565,45 +3579,30 @@ SpellPowerEntry const SpellInfo::GetPowerInfo(uint8 powerIndex) const
         powerIndex = 0;
     }
 
-    return spellPower[powerIndex];
+    return &spellPower[powerIndex];
 }
 
-bool SpellInfo::GetSpellPowerByCasterPower(Unit const * caster, SpellPowerEntry &power) const
+bool SpellInfo::GetSpellPowerByCasterPower(Unit const * caster, SpellPowerData &power) const
 {
     if (!caster)
         return false;
 
-    uint8 index = 0;
+    bool hasPower = false;
+
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
     {
         if (!spellPower[i].ID)
             continue;
 
         // skip requarement
-        if (spellPower[i].RequiredAura > 0 && caster->HasAura(spellPower[i].RequiredAura))
-        {
-            index = i;
+        if (spellPower[i].RequiredAura > 0 && !caster->HasAura(spellPower[i].RequiredAura))
             break;
-        }
 
-        if (spellPower[i].PowerType == caster->getPowerType())
-            index = i;
+        power.push_back(&spellPower[i]);
+        hasPower = true;
     }
 
-    if (spellPower[index].ID)
-    {
-        power.ID = spellPower[index].ID;
-        power.PowerType = spellPower[index].PowerType;
-        power.PowerCost = spellPower[index].PowerCost;
-        power.PowerCostPerSecond = spellPower[index].PowerCostPerSecond;
-        power.PowerCostPercentage = spellPower[index].PowerCostPercentage;
-        power.PowerCostPercentagePerSecond = spellPower[index].PowerCostPercentagePerSecond;
-        power.RequiredAura = spellPower[index].RequiredAura;
-        power.HealthCostPercentage = spellPower[index].HealthCostPercentage;
-        return true;
-    }
-
-    return false;
+    return hasPower;
 }
 
 bool SpellInfo::HasPower(Powers power) const

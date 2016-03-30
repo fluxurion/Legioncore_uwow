@@ -768,12 +768,6 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
             UpdateMaxPower(POWER_MANA);                         // Update max Mana (for add bonus from intellect)
             SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
             break;
-        case POWER_RUNIC_POWER:
-            SetPower(POWER_RUNES, 8);
-            SetMaxPower(POWER_RUNES, 8);
-            SetPower(POWER_RUNIC_POWER, 0);
-            SetMaxPower(POWER_RUNIC_POWER, 1000);
-            break;
         default:
             break;
     }
@@ -2260,53 +2254,24 @@ void Player::RegenerateAll()
     // Runes act as cooldowns, and they don't need to send any data
     if (getClass() == CLASS_DEATH_KNIGHT)
     {
-        for (uint8 i = 0; i < MAX_RUNES; i += 2)
+        int8 runeCount = 0; //Max run CD in runes = 3
+        for (uint8 i = 0; i < MAX_RUNES; i++)
         {
-            int8 cdRune = -1;
-            int8 fulCdRune = -1;
-            int32 cd1 = GetRuneCooldown(i);
-            int32 cd2 = GetRuneCooldown(i + 1);
+            if (!GetRuneCooldown(i) || runeCount >= 3)
+                continue;
 
-            if (cd1 > cd2)
-            {
-                if (cd2)
-                {
-                    cdRune = i + 1;
-                    fulCdRune = i;
-                }
-                else
-                    cdRune = i;
-            }
-            else if (cd1 < cd2)
-            {
-                if (cd1)
-                {
-                    cdRune = i;
-                    fulCdRune = i + 1;
-                }
-                else
-                    cdRune = i + 1;
-            }
-            else if (cd1 && cd1 == cd2)
-            {
-                cdRune = i;
-                fulCdRune = i + 1;
-            }
+            runeCount++;
+            float coef = GetRuneCooldownCoef();
+            int32 setCool = GetRuneCooldown(i) - (m_regenTimer * coef);
 
-            if (cdRune >= 0)
+            if (setCool < 0)
             {
-                float coef = GetRuneCooldownCoef(GetCurrentRune(i));
-                int32 setCool = GetRuneCooldown(cdRune) - (m_regenTimer * coef);
-
-                if (setCool < 0)
-                {
-                    SetRuneCooldown(cdRune, 0);
-                    if (fulCdRune >= 0)
-                        SetRuneCooldown(fulCdRune, GetRuneCooldown(fulCdRune) + setCool);
-                }
-                else
-                    SetRuneCooldown(cdRune, setCool);
+                SetRuneCooldown(i, 0);
+                Regenerate(POWER_RUNES, m_regenTimer);
+                sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "RegenerateAll coef %f, setCool %i, i %i", coef, setCool, i);
             }
+            else
+                SetRuneCooldown(i, setCool);
         }
     }
 
@@ -2451,8 +2416,10 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
             addvalue -= 1.0f; // remove 1 each 10 sec
             break;
         case POWER_MAELSTROM:
-        case POWER_RUNES:
         case POWER_HEALTH:
+            break;
+        case POWER_RUNES:
+            addvalue += 1.0f;
             break;
         // Regenerate Soul Shards
         case POWER_SOUL_SHARDS:
@@ -2466,7 +2433,7 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
     }
 
     // Mana regen calculated in UpdateManaRegen()
-    if (power > POWER_MANA)
+    if (power > POWER_MANA && power != POWER_RUNES)
     {
         addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + powerIndex) * (0.001f * (saveTimer / hastRegen)) * regenType;
         addvalue += GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_POWER_REGEN, power) * saveTimer / (5 * IN_MILLISECONDS);
@@ -24384,10 +24351,8 @@ void Player::SendInitialPacketsAfterAddToMap()
         SendInitWorldTimers();
 
     if (getClass() == CLASS_DEATH_KNIGHT)
-    {
-        RestoreAllBaseRunes();
         SetPower(POWER_RUNIC_POWER, 0);
-    }
+
     GetSession()->SendStablePet();
 
     // send step data when entering scenarios
@@ -26327,33 +26292,6 @@ void Player::UpdateCharmedAI()
     }
 }
 
-void Player::RestoreAllBaseRunes()
-{
-    for (uint8 i = 0; i < MAX_RUNES; ++i)
-    {
-        if (!IsBlockedRuneConvert(i))
-            RestoreBaseRune(i);
-        else
-            ConvertRune(i, GetCurrentRune(i));
-    }
-}
-
-void Player::RestoreBaseRune(uint8 index)
-{
-    ConvertRune(index, GetBaseRune(index));
-    SetConvertIn(index, GetBaseRune(index));
-}
-
-void Player::ConvertRune(uint8 index, RuneType newType)
-{
-    SetCurrentRune(index, newType);
-
-    WorldPackets::Spells::ConvertRune data;
-    data.Index = index;
-    data.Rune = newType;
-    GetSession()->SendPacket(data.Write());
-}
-
 void Player::ResyncRunes(uint8 count)
 {
     WorldPackets::Spells::ResyncRunes data(count);
@@ -26361,43 +26299,23 @@ void Player::ResyncRunes(uint8 count)
     for (uint32 i = 0; i < count; ++i)
     {
         WorldPackets::Spells::ResyncRunes::ResyncRune rune;
-        rune.RuneType = GetCurrentRune(i);
+        rune.Rune = i;
         rune.Cooldown = uint8(255 - (GetRuneCooldown(i) * 51));
         data.Runes.push_back(rune);
     }
     GetSession()->SendPacket(data.Write());
 }
 
-void Player::SendDeathRuneUpdate(uint8 index)
-{
-    WorldPackets::Spells::ConvertRune data1;
-    data1.Index = index;
-    data1.Rune = GetBaseRune(index);
-    GetSession()->SendPacket(data1.Write());
-
-    WorldPackets::Spells::ConvertRune data2;
-    data2.Index = index;
-    data2.Rune = RUNE_DEATH;
-    GetSession()->SendPacket(data2.Write());
-}
-
 //! 6.1.2
 void Player::AddRunePower(uint8 index)
 {
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AddRunePower index %i", index);
+
+    Regenerate(POWER_RUNES, m_regenTimer);
     WorldPacket data(SMSG_ADD_RUNE_POWER, 4);
     data << uint32(1 << index);                             // mask (0x00-0x3F probably)
     GetSession()->SendPacket(&data);
 }
-
-static RuneType runeSlotTypes[MAX_RUNES] =
-{
-    /*0*/ RUNE_BLOOD,
-    /*1*/ RUNE_BLOOD,
-    /*2*/ RUNE_UNHOLY,
-    /*3*/ RUNE_UNHOLY,
-    /*4*/ RUNE_FROST,
-    /*5*/ RUNE_FROST
-};
 
 void Player::InitRunes()
 {
@@ -26407,27 +26325,7 @@ void Player::InitRunes()
     m_runes.runeState = 0;
 
     for (uint8 i = 0; i < MAX_RUNES; ++i)
-    {
-        SetBaseRune(i, runeSlotTypes[i]);                              // init base types
-        SetCurrentRune(i, runeSlotTypes[i]);                           // init current types
-        SetRuneCooldown(i, 0);                                         // reset cooldowns
-        m_runes.SetRuneState(i);
-        SetDeathRuneUsed(i, false);
-        SetConvertIn(i, runeSlotTypes[i]);
-        SetBlockRuneConvert(i, false);
-    }
-
-    //for (uint8 i = 0; i < NUM_RUNE_TYPES; ++i)
-    //    SetFloatValue(PLAYER_FIELD_RUNE_REGEN + i, 0.1f);                  // set a base regen timer equal to 10 sec
-}
-
-bool Player::IsBaseRuneSlotsOnCooldown(RuneType runeType) const
-{
-    for (uint8 i = 0; i < MAX_RUNES; ++i)
-        if (GetBaseRune(i) == runeType && GetRuneCooldown(i) == 0)
-            return false;
-
-    return true;
+        SetRuneCooldown(i, 0);
 }
 
 bool Player::AutoStoreLoot(uint8 bag, uint8 slot, uint32 loot_id, LootStore const& store, uint32 filterLevel, bool broadcast)

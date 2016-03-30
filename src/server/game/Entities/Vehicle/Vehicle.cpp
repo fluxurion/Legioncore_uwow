@@ -96,8 +96,8 @@ void Vehicle::Install()
                 if (!spellInfo->IsPowerActive(0))
                     continue;
 
-                SpellPowerEntry power = spellInfo->GetPowerInfo(0);
-                powerType = (Powers)power.PowerType;
+                SpellPowerEntry const* power = spellInfo->GetPowerInfo(0);
+                powerType = (Powers)power->PowerType;
                 break;
             }
             _me->setPowerType(powerType);

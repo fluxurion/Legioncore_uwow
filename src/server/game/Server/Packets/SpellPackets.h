@@ -290,10 +290,10 @@ namespace WorldPackets
 
         struct SpellPowerData
         {
-            SpellPowerData(int32 cost, uint8 type) : Cost(cost), Type(type) { }
+            SpellPowerData(int32 remain, uint8 power) : Remain(remain), Power(power) { }
 
-            int32 Cost = 0;
-            uint8 Type = 0;
+            int32 Remain = 0;
+            uint8 Power = 0;
         };
 
         struct RuneData
@@ -821,7 +821,7 @@ namespace WorldPackets
         public:
             struct ResyncRune
             {
-                uint8 RuneType = 0;
+                uint8 Rune = 0;
                 uint8 Cooldown = 0;
             };
 

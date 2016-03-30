@@ -386,31 +386,16 @@ enum RuneCooldowns
     RUNE_MISS_COOLDOWN  = 1500,     // cooldown applied on runes when the spell misses
 };
 
-enum RuneType
-{
-    RUNE_BLOOD      = 0,
-    RUNE_UNHOLY     = 1,
-    RUNE_FROST      = 2,
-    RUNE_DEATH      = 3,
-    NUM_RUNE_TYPES  = 4
-};
-
 struct RuneInfo
 {
-    uint8 BaseRune;
-    uint8 CurrentRune;
     uint32 Cooldown;
-    float CooldownCoef;
-    RuneType ConvertIn;
-    bool DeathUsed;
-    bool isLastUsed;
-    bool blockConvert;
 };
 
 struct Runes
 {
     RuneInfo runes[MAX_RUNES];
     uint8 runeState;                                        // mask of available runes
+    float CooldownCoef;
 
     void SetRuneState(uint8 index, bool set = true)
     {
@@ -2493,7 +2478,6 @@ class Player : public Unit, public GridObject<Player>
         void ApplyManaRegenBonus(int32 amount, bool apply);
         void ApplyHealthRegenBonus(int32 amount, bool apply);
         void UpdateMasteryAuras();
-        void UpdateRuneRegen(RuneType rune);
         void UpdateAllRunesRegen();
         void UpdateVersality(CombatRating cr = CR_NONE);
         void UpdateMultistrike();
@@ -3115,28 +3099,11 @@ class Player : public Unit, public GridObject<Player>
 
         DeclinedName const* GetDeclinedNames() const { return m_declinedname; }
         uint8 GetRunesState() const { return m_runes.runeState; }
-        RuneType GetBaseRune(uint8 index) const { return RuneType(m_runes.runes[index].BaseRune); }
-        RuneType GetCurrentRune(uint8 index) const { return RuneType(m_runes.runes[index].CurrentRune); }
-        RuneType GetConvertIn(uint8 index) const { return m_runes.runes[index].ConvertIn; }
         uint32 GetRuneCooldown(uint8 index) const { return m_runes.runes[index].Cooldown; }
-        float GetRuneCooldownCoef(RuneType runeType) const { return m_runes.runes[runeType].CooldownCoef; }
-        void SetRuneCooldownCoef(RuneType runeType, float Coef) { m_runes.runes[runeType].CooldownCoef = Coef; }
-        bool IsBaseRuneSlotsOnCooldown(RuneType runeType) const;
-        void SetDeathRuneUsed(uint8 index, bool apply) { m_runes.runes[index].DeathUsed = apply; }
-        bool IsDeathRuneUsed(uint8 index) { return m_runes.runes[index].DeathUsed; }
-        bool IsLastRuneUsed(uint8 index) { return m_runes.runes[index].isLastUsed; }
-        void SetLastRuneUsed(uint8 index, bool use) { m_runes.runes[index].isLastUsed = use; }
-        bool IsBlockedRuneConvert(uint8 index) { return m_runes.runes[index].blockConvert; }
-        void SetBlockRuneConvert(uint8 index, bool blockRune) { m_runes.runes[index].blockConvert = blockRune; }
-        void SetConvertIn(uint8 index, RuneType rune) { m_runes.runes[index].ConvertIn = rune; }
-        void SetBaseRune(uint8 index, RuneType baseRune) { m_runes.runes[index].BaseRune = baseRune; }
-        void SetCurrentRune(uint8 index, RuneType currentRune) { m_runes.runes[index].CurrentRune = currentRune; }
+        float GetRuneCooldownCoef() const { return m_runes.CooldownCoef; }
+        void SetRuneCooldownCoef(float Coef) { m_runes.CooldownCoef = Coef; }
         void SetRuneCooldown(uint8 index, uint32 cooldown) { m_runes.runes[index].Cooldown = cooldown; m_runes.SetRuneState(index, (cooldown == 0) ? true : false); }
-        void RestoreAllBaseRunes();
-        void RestoreBaseRune(uint8 index);
-        void ConvertRune(uint8 index, RuneType newType);
         void ResyncRunes(uint8 count);
-        void SendDeathRuneUpdate(uint8 index);
         void AddRunePower(uint8 index);
         void InitRunes();
 

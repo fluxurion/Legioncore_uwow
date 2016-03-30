@@ -473,7 +473,7 @@ class spell_dk_blood_tap : public SpellScriptLoader
 
                     int32 cooldown = 0;
                     for (uint8 i = 0; i < MAX_RUNES; ++i)
-                        if (_player->GetCurrentRune(i) != RUNE_DEATH && _player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN)
+                        if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN)
                             cooldown++;
 
                     if (!cooldown)
@@ -505,27 +505,13 @@ class spell_dk_blood_tap : public SpellScriptLoader
                         int32 runesRestor = 0;
                         for (int i = 0; i < MAX_RUNES ; i++)
                         {
-                            if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN && runesRestor < 1 && _player->GetCurrentRune(i) != RUNE_DEATH)
+                            if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN && runesRestor < 1)
                             {
                                 runesRestor++;
                                 _player->SetRuneCooldown(i, 0);
-                                _player->SetConvertIn(i, RUNE_DEATH);
-                                _player->ConvertRune(i, RUNE_DEATH);
                                 _player->AddRunePower(i);
                             }
                         }
-                        /*if(runesRestor < 1)
-                        {
-                            for (int i = 0; i < MAX_RUNES ; i++)
-                            {
-                                if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN && runesRestor < 1)
-                                {
-                                    runesRestor++;
-                                    _player->SetRuneCooldown(i, 0);
-                                    _player->AddRunePower(i);
-                                }
-                            }
-                        }*/
                     }
                 }
             }
@@ -672,52 +658,6 @@ class spell_dk_plague_leech : public SpellScriptLoader
         {
             PrepareSpellScript(spell_dk_plague_leech_SpellScript);
 
-            RuneType GetRuneBan(Player* plr)
-            {
-                switch (plr->GetSpecializationId())
-                {
-                    case SPEC_DK_BLOOD:
-                    case SPEC_DK_FROST:  return RUNE_BLOOD;
-                    case SPEC_DK_UNHOLY: return RUNE_UNHOLY;
-                    default:
-                        return NUM_RUNE_TYPES;
-                }
-            }
-
-            SpellCastResult CheckRunes()
-            {
-                int32 runesUsed = 0;
-                
-                if (GetCaster())
-                    if (Player* _player = GetCaster()->ToPlayer())
-                    {
-                        RuneType runesBan = GetRuneBan(_player);
-
-                        for (uint8 i = 0; i < MAX_RUNES; ++i)
-                            if (_player->GetBaseRune(i) != runesBan)
-                                if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN)
-                                    runesUsed++;
-
-                        if (!runesUsed)
-                        {
-                            GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_NO_DEPLETED_RUNES);
-                            return SPELL_FAILED_DONT_REPORT;
-                        }
-
-                        if (Unit* target = GetExplTargetUnit())
-                        {
-                            if (!target->HasAura(DK_SPELL_BLOOD_PLAGUE, _player->GetGUID()) || !target->HasAura(DK_SPELL_FROST_FEVER, _player->GetGUID()))
-                            {
-                                GetSpell()->SendCastResult(_player, GetSpellInfo(), SPELL_FAILED_CUSTOM_ERROR, SPELL_CUSTOM_ERROR_FEVER_PLAGUE_MUST_BE_PRESENT);
-                                return SPELL_FAILED_DONT_REPORT;
-                            }
-                        }
-                        return SPELL_CAST_OK;
-                    }
-
-                return SPELL_FAILED_DONT_REPORT;
-            }
-
             void HandleOnHit()
             {
                 if (Player* _player = GetCaster()->ToPlayer())
@@ -728,23 +668,14 @@ class spell_dk_plague_leech : public SpellScriptLoader
                         target->RemoveAura(DK_SPELL_BLOOD_PLAGUE, _player->GetGUID());
 
                         int32 runesRestor = 0;
-                        RuneType runesBan = GetRuneBan(_player);
 
                         for (int i = 0; i < MAX_RUNES ; i++)
                         {
-                            if (_player->GetBaseRune(i) == runesBan)
-                                continue;
-
                             if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN && runesRestor < 2)
                             {
                                 runesRestor++;
                                 _player->SetRuneCooldown(i, 0);
                                 _player->AddRunePower(i);
-                                if (_player->GetCurrentRune(i) != RUNE_DEATH)
-                                {
-                                    _player->SetConvertIn(i, RUNE_DEATH);
-                                    _player->ConvertRune(i, RUNE_DEATH);
-                                }
                             }
                         }
                     }
@@ -753,7 +684,6 @@ class spell_dk_plague_leech : public SpellScriptLoader
 
             void Register()
             {
-                OnCheckCast += SpellCheckCastFn(spell_dk_plague_leech_SpellScript::CheckRunes);
                 OnHit += SpellHitFn(spell_dk_plague_leech_SpellScript::HandleOnHit);
             }
         };
@@ -1591,15 +1521,15 @@ class spell_dk_dancing_rune_weapon : public SpellScriptLoader
                 {
                     if (_player->HasAura(144950))
                     {
+                        int32 runesRestor = 0;
+
                         for (int i = 0; i < MAX_RUNES ; i++)
                         {
-                            if (_player->GetCurrentRune(i) == RUNE_DEATH)
-                                continue;
-
-                            if (_player->GetCurrentRune(i) == RUNE_FROST || _player->GetCurrentRune(i) == RUNE_UNHOLY)
+                            if (_player->GetRuneCooldown(i) == RUNE_BASE_COOLDOWN && runesRestor < 2)
                             {
-                                _player->SetConvertIn(i, RUNE_DEATH);
-                                _player->ConvertRune(i, RUNE_DEATH);
+                                runesRestor++;
+                                _player->SetRuneCooldown(i, 0);
+                                _player->AddRunePower(i);
                             }
                         }
                     }
