@@ -606,12 +606,6 @@ enum AbilytyLearnType
 {
     SKILL_LINE_ABILITY_LEARNED_ON_SKILL_VALUE   = 1, // Spell state will update depending on skill value
     SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN   = 2, // Spell will be learned/removed together with entire skill
-
-
-    ABILITY_LEARNED_ON_GET_PROFESSION_SKILL     = 1,
-    ABILITY_LEARNED_ON_GET_RACE_OR_CLASS_SKILL  = 2,
-    ABILITY_LEARNED_ON_GET_UNK                  = 3,
-    ABILITY_LEARNED_ON_GET_UNK2                 = 4,    // DK: Death Gate
 };
 
 enum ItemEnchantmentType
