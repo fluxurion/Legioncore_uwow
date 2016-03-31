@@ -749,6 +749,7 @@ class Spell
         uint8 m_runesState;
         SpellPowerCost m_powerCost;                        // Calculated spell cost initialized only in Spell::prepare
         SpellPowerData m_powerData;
+        int32 m_failedArg[2];
 
         uint8 m_delayAtDamageCount;
         bool isDelayableNoMore()

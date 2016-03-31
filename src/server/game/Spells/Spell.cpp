@@ -580,6 +580,8 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
     m_addpower = 0;
     m_addptype = -1;
     m_castItemEntry = 0;
+    m_failedArg[0] = -1;
+    m_failedArg[1] = -1;
 
     m_caster->GetPosition(&visualPos);
 
@@ -4700,17 +4702,20 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         packet.SpellGuid = m_castGuid[1];
     else
         packet.SpellGuid = m_spellGuid;
-    packet.SpellXSpellVisualID = spellInfo->GetSpellVisual(caster->GetDifficultyID(caster->GetMap()->GetEntry()));
+    packet.SpellXSpellVisualID = m_SpellVisual;
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
 
     switch (result)
     {
+        case SPELL_FAILED_NO_POWER:
+            packet.FailedArg1 = m_failedArg[0];
+            break;
         case SPELL_FAILED_NOT_READY:
             packet.FailedArg1 = 0;                                    // unknown (value 1 update cooldowns on client flag)                       
             break;
         case SPELL_FAILED_REQUIRES_SPELL_FOCUS:
-            packet.FailedArg1 = spellInfo->CastingReq.RequiresSpellFocus;
+            packet.FailedArg1 = m_failedArg[0];
             break;
         case SPELL_FAILED_REQUIRES_AREA:                    // AreaTable.dbc id
         {
@@ -4734,8 +4739,8 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
             break;
         }
         case SPELL_FAILED_TOTEMS:
-            packet.FailedArg1 = spellInfo->Totems.Totem[0];
-            packet.FailedArg2 = spellInfo->Totems.Totem[1];
+            packet.FailedArg1 = m_failedArg[0];
+            packet.FailedArg2 = m_failedArg[1];
             break;
         case SPELL_FAILED_TOTEM_CATEGORY:
             packet.FailedArg1 = spellInfo->Totems.TotemCategory[0];
@@ -4790,36 +4795,9 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
                 packet.FailedArg1 = talent->SpellID;
             break;
         case SPELL_FAILED_REAGENTS:
-        {
-            for (uint32 i = 0; i < MAX_SPELL_REAGENTS; i++)
-            {
-                if (spellInfo->Reagents.Reagent[i] <= 0)
-                    continue;
-
-                uint32 itemid    = spellInfo->Reagents.Reagent[i];
-                uint32 itemcount = spellInfo->Reagents.ReagentCount[i];
-
-                if (!caster->HasItemCount(itemid, itemcount))
-                {
-                    packet.FailedArg1 = itemid;
-                    packet.FailedArg2 = itemcount;
-                    break;
-                }
-            }
-
-            if (!packet.FailedArg1 && spellInfo->Reagents.CurrencyID != 0)
-            {
-                uint32 currencyId    = spellInfo->Reagents.CurrencyID;
-                uint32 currencyCount = spellInfo->Reagents.CurrencyCount;
-
-                if (!caster->HasCurrency(currencyId, currencyCount))
-                {
-                    packet.FailedArg1 = currencyId;
-                    packet.FailedArg2 = currencyCount;
-                }
-            }
+            packet.FailedArg1 = m_failedArg[0];
+            packet.FailedArg2 = m_failedArg[1];
             break;
-        }
         // TODO: SPELL_FAILED_NOT_STANDING
         default:
             break;
@@ -7436,7 +7414,10 @@ SpellCastResult Spell::CheckPower()
             // Check power amount
             Powers powerType = Powers(power->PowerType);
             if (int32(m_caster->GetPower(powerType)) < m_powerCost[power->PowerType])
+            {
+                m_failedArg[0] = powerType;
                 return SPELL_FAILED_NO_POWER;
+            }
 
             if (powerType == POWER_HOLY_POWER)
             {
@@ -7451,7 +7432,10 @@ SpellCastResult Spell::CheckPower()
     {
         for (uint32 i = 0; i < MAX_POWERS; ++i)
             if (m_powerCost[i])
+            {
+                m_failedArg[0] = i;
                 return SPELL_FAILED_NO_POWER;
+            }
     }
 
     return SPELL_CAST_OK;
@@ -7558,6 +7542,7 @@ SpellCastResult Spell::CheckItems()
     // check spell focus object
     if (m_spellInfo->CastingReq.RequiresSpellFocus)
     {
+        m_failedArg[0] = m_spellInfo->CastingReq.RequiresSpellFocus;
         CellCoord p(Trinity::ComputeCellCoord(m_caster->GetPositionX(), m_caster->GetPositionY()));
         Cell cell(p);
 
@@ -7602,6 +7587,8 @@ SpellCastResult Spell::CheckItems()
 
                 uint32 itemid    = m_spellInfo->Reagents.Reagent[i];
                 uint32 itemcount = m_spellInfo->Reagents.ReagentCount[i];
+                m_failedArg[0] = itemid;
+                m_failedArg[1] = itemcount;
 
                 // if CastItem is also spell reagent
                 if (m_CastItem && m_CastItem->GetEntry() == itemid)
@@ -7628,6 +7615,8 @@ SpellCastResult Spell::CheckItems()
             {
                 uint32 currencyId    = m_spellInfo->Reagents.CurrencyID;
                 uint32 currencyCount = m_spellInfo->Reagents.CurrencyCount;
+                m_failedArg[0] = currencyId;
+                m_failedArg[1] = currencyCount;
 
                 if (!p_caster->HasCurrency(currencyId, currencyCount))
                     return SPELL_FAILED_REAGENTS;
@@ -7638,6 +7627,7 @@ SpellCastResult Spell::CheckItems()
         uint32 totems = 2;
         for (uint8 i = 0; i < MAX_SPELL_TOTEMS; ++i)
         {
+            m_failedArg[i] = m_spellInfo->Totems.Totem[i];
             if (m_spellInfo->Totems.Totem[i] != 0)
             {
                 if (p_caster->HasItemCount(m_spellInfo->Totems.Totem[i]))
