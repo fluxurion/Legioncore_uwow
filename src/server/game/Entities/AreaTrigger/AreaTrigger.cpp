@@ -275,6 +275,21 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
                 m_movePath.push_back(nextPos);
                 break;
             }
+            case AT_MOVE_TYPE_RANDOM: // 6
+            {
+                float angle = urand(0, 6);
+                if (range != 0.0f)
+                {
+                    Vector3 curPos, nextPos;
+                    pos.PositionToVector(curPos);
+                    m_movePath.push_back(curPos);
+                    m_movePath.push_back(curPos);
+                    pos.SimplePosXYRelocationByAngle(nextPos.x, nextPos.y, nextPos.z, range, angle);
+                    m_movePath.push_back(nextPos);
+                    m_movePath.push_back(nextPos);
+                }
+                break;
+            }
         }
 
         if(!m_movePath.empty())
@@ -586,7 +601,7 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
         if (!caster || !caster->IsValidAttackTarget(unit))
             return;
     if (action.action->targetFlags & AT_TARGET_FLAG_OWNER)
-    if (unit->GetGUID() != GetCasterGUID())
+        if (unit->GetGUID() != GetCasterGUID())
             return;
     if (action.action->targetFlags & AT_TARGET_FLAG_PLAYER)
         if (!unit->ToPlayer())
@@ -615,6 +630,11 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
     if (action.action->targetFlags & AT_TARGET_FLAT_IN_FRONT)
         if (!HasInArc(static_cast<float>(M_PI), unit))
             return;
+
+    if (action.action->targetFlags & AT_TARGET_FLAG_TARGET_IS_SUMMONER)
+        if (Unit* summoner = _caster->GetAnyOwner())
+            if (unit->GetGUID() != summoner->GetGUID())
+                return;
 
     if (action.action->aura > 0 && !unit->HasAura(action.action->aura))
         return;

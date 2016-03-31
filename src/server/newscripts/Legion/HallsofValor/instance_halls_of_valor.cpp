@@ -9,8 +9,11 @@
 
 DoorData const doorData[] =
 {
-    //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
-    {0,                   0,                  DOOR_TYPE_ROOM,       BOUNDARY_NONE}, // END
+    {GO_HYMDALL_ENTER_DOOR,         DATA_HYMDALL,         DOOR_TYPE_ROOM,       BOUNDARY_NONE},
+    {GO_HYMDALL_EXIT_DOOR,          DATA_HYMDALL,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
+    {GO_HYRJA_DOOR,                 DATA_HYRJA,           DOOR_TYPE_ROOM,       BOUNDARY_NONE},
+    {GO_GATES_OF_GLORY_DOOR,        DATA_HYRJA,           DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
+    {GO_GATES_OF_GLORY_DOOR,        DATA_FENRYR,          DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
 };
 
 class instance_halls_of_valor : public InstanceMapScript
@@ -30,39 +33,67 @@ public:
             SetBossNumber(MAX_ENCOUNTER);
         }
 
+        ObjectGuid feryrGUID;
+        ObjectGuid OdynGUID;
+
         void Initialize()
         {
             LoadDoorData(doorData);
+
+            feryrGUID.Clear();
+            OdynGUID.Clear();
+        }
+
+        void OnCreatureCreate(Creature* creature)
+        {
+            switch (creature->GetEntry())
+            {
+                case NPC_BOSS_FENRYR:    
+                    feryrGUID = creature->GetGUID(); 
+                    break;
+                case NPC_ODYN:
+                    OdynGUID = creature->GetGUID();
+                    break;
+            }
+        }
+
+        void OnGameObjectCreate(GameObject* go)
+        {
+            switch (go->GetEntry())
+            {
+                case GO_HYMDALL_ENTER_DOOR:
+                case GO_HYMDALL_EXIT_DOOR:
+                case GO_HYRJA_DOOR:
+                case GO_GATES_OF_GLORY_DOOR:
+                    AddDoor(go, true);
+                    break;
+                default:
+                    break;
+            }
         }
 
         bool SetBossState(uint32 type, EncounterState state)
         {
             if (!InstanceScript::SetBossState(type, state))
                 return false;
-            
-            return true;
-        }
 
-        void OnGameObjectCreate(GameObject* go)
-        {
-            /* switch (go->GetEntry())
+            switch (type)
             {
-                case GO_DOOR:
-                    AddDoor(go, true);
+                case DATA_FENRYR_EVENT:
+                {
+                    if (state == DONE)
+                        if (Creature* fen = instance->GetCreature(feryrGUID))
+                        {
+                            fen->SetVisible(true);
+                            fen->SetReactState(REACT_AGGRESSIVE);
+                        }
                     break;
+                }
                 default:
                     break;
-            } */
-        }
+            }
 
-        void OnCreatureCreate(Creature* creature)
-        {
-            /* switch (creature->GetEntry())
-            {
-                case NPC_:    
-                    GUID = creature->GetGUID(); 
-                    break;
-            } */
+            return true;
         }
 
         void SetData(uint32 type, uint32 data)
@@ -74,15 +105,15 @@ public:
             }*/
         }
 
-        /* ObjectGuid GetGuidData(uint32 type) const
+        ObjectGuid GetGuidData(uint32 type) const
         {
             switch (type)
             {
-                case NPC_:   
-                    return GUID;
+                case DATA_ODYN:   
+                    return OdynGUID;
             }
             return ObjectGuid::Empty;
-        } */
+        }
 
         uint32 GetData(uint32 type) const
         {

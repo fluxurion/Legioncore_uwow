@@ -1127,7 +1127,7 @@ enum SpellEffects
     SPELL_EFFECT_PORTAL                             = 12,
     SPELL_EFFECT_RITUAL_BASE                        = 13, // Unused (5.0.5)
     SPELL_EFFECT_RITUAL_SPECIALIZE                  = 14, // Unused (5.0.5)
-    SPELL_EFFECT_RITUAL_ACTIVATE_PORTAL             = 15, // Unused (5.0.5)
+    SPELL_EFFECT_TELEPORT_FROM_PORTAL               = 15,
     SPELL_EFFECT_QUEST_COMPLETE                     = 16,
     SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL             = 17,
     SPELL_EFFECT_RESURRECT                          = 18,

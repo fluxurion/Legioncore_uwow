@@ -132,3 +132,9 @@ INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `cast_flags`, `use
 (100359, 46598, 1, 0),
 (100361, 46598, 1, 0);
 
+delete from vehicle_template_accessory where EntryOrAura in (99800,100353,100359,100361);
+INSERT INTO `vehicle_template_accessory` (`EntryOrAura`, `accessory_entry`, `seat_id`, `offsetX`, `offsetY`, `offsetZ`, `offsetO`, `minion`, `description`, `summontype`, `summontimer`) VALUES 
+(99800, 98363, 0, 0.001, 0, 0, 0, 1, '99800 - 98363', 8, 0),
+(100353, 100354, 0, 0.001, 0, 0, 0, 1, '100353 - 100354', 8, 0),
+(100359, 100360, 0, 0.001, 0, 0, 0, 1, '100359 - 100360', 8, 0),
+(100361, 100362, 0, 0.001, 0, 0, 0, 1, '100361 - 100362', 8, 0);

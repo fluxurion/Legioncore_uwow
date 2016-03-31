@@ -93,7 +93,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     // 12 SPELL_EFFECT_PORTAL
     &Spell::EffectUnused,                                   // 13 SPELL_EFFECT_RITUAL_BASE              unused
     &Spell::EffectUnused,                                   // 14 SPELL_EFFECT_RITUAL_SPECIALIZE        unused
-    &Spell::EffectUnused,                                   // 15 SPELL_EFFECT_RITUAL_ACTIVATE_PORTAL   unused
+    &Spell::EffectTeleportUnits,                            // 15 SPELL_EFFECT_TELEPORT_FROM_PORTAL
     &Spell::EffectQuestComplete,                            // 16 SPELL_EFFECT_QUEST_COMPLETE
     &Spell::EffectWeaponDmg,                                // 17 SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL
     &Spell::EffectResurrect,                                // 18 SPELL_EFFECT_RESURRECT
@@ -1754,7 +1754,7 @@ void Spell::EffectJump(SpellEffIndex effIndex)
     //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectJump start xyz %f %f %f caster %u target %u damage %i distance %f targetSize %f casterSize %f",
     //pos.m_positionX, pos.m_positionY, pos.m_positionZ, m_caster->GetGUIDLow(), unitTarget->GetGUIDLow(), damage, distance, unitTarget->GetObjectSize(), m_caster->GetObjectSize());
 
-    m_caster->GetMotionMaster()->MoveJump(pos.m_positionX, pos.m_positionY, pos.m_positionZ, speedXY, speedZ, 0, 0.0f, delayCast, unitTarget);
+    m_caster->GetMotionMaster()->MoveJump(pos.m_positionX, pos.m_positionY, pos.m_positionZ, speedXY, speedZ, m_spellInfo->Id, 0.0f, delayCast, unitTarget);
 }
 
 void Spell::EffectJumpDest(SpellEffIndex effIndex)
@@ -5668,23 +5668,37 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
     if (!sWorld->getBoolConfig(CONFIG_CAST_UNSTUCK))
         return;
 
-    Player* target = (Player*)m_caster;
+    Player* player = (Player*)m_caster;
 
     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell Effect: Stuck");
-    sLog->outInfo(LOG_FILTER_SPELLS_AURAS, "Player %s (guid %u) used auto-unstuck future at map %u (%f, %f, %f)", target->GetName(), target->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+    sLog->outInfo(LOG_FILTER_SPELLS_AURAS, "Player %s (guid %u) used auto-unstuck future at map %u (%f, %f, %f)", player->GetName(), player->GetGUIDLow(), m_caster->GetMapId(), m_caster->GetPositionX(), player->GetPositionY(), player->GetPositionZ());
 
-    if (target->isInFlight())
+    if (player->isInFlight())
         return;
 
-    target->TeleportTo(target->GetStartPosition(), TELE_TO_SPELL);
-    // homebind location is loaded always
-    // target->TeleportTo(target->m_homebindMapId, target->m_homebindX, target->m_homebindY, target->m_homebindZ, target->GetOrientation(), (m_caster == m_caster ? TELE_TO_SPELL : 0));
+    // if player is dead without death timer is teleported to graveyard, otherwise not apply the effect
+    if (player->isDead())
+    {
+        if (!player->GetDeathTimer())
+            player->RepopAtGraveyard();
+
+        return;
+    }
+
+    // the player dies if hearthstone is in cooldown, else the player is teleported to home
+    if (player->HasSpellCooldown(8690))
+    {
+        player->Kill(player);
+        return;
+    }
+
+    player->TeleportTo(player->m_homebindMapId, player->m_homebindX, player->m_homebindY, player->m_homebindZ, player->GetOrientation(), TELE_TO_SPELL);
 
     // Stuck spell trigger Hearthstone cooldown
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(8690);
     if (!spellInfo)
         return;
-    Spell spell(target, spellInfo, TRIGGERED_FULL_MASK);
+    Spell spell(player, spellInfo, TRIGGERED_NONE);
     spell.SendSpellCooldown();
 }
 
