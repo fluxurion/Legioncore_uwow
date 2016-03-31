@@ -15,16 +15,18 @@ INSERT INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `PlaybackFlags`,
 
 DELETE FROM `spell_area` WHERE area in (7705);
 REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
-('7705', '179665', '0', '0', '0', '0', '2', '1', '10', '64'), -- disable all mounts.
-('7705', '193525', '0', '40077', '0', '0', '2', '1', '10', '66'), -- 1106
+('7705', '179665', '0', '40077', '0', '0', '2', '1', '10', '64'), -- disable all mounts.
+('7705', '193525', '0', '40077', '0', '0', '2', '1', '10', '74'), -- 1106
 ('7705', '191677', '0', '40077', '0', '0', '2', '0', '10', '64'); -- 1116
-
 -- 179665 193525
 
 -- Quest chaine fixes.
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
 ('40378', '40077', '0', '0'),
-('39279', '40077', '0', '0');
+('39279', '40077', '0', '0'),
+('39049', '40378', '0', '0'),
+('38759', '40378', '0', '0'),
+('40379', '40378', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -34,8 +36,15 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q40077' WHERE `gameobject_te
 
 -- Q: 40378
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40378' WHERE `gameobject_template`.`entry` = 241751;
-
+REPLACE INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `caster`, `target`, `hastype`, `hastalent`, `hastype2`, `hastalent2`, `chance`, `cooldown`, `duration`, `hitmask`, `removeMask`, `targetCountType`, `targetCount`, `actiontype`, `group`, `comment`) VALUES
+ ('200255', '200175', '0', '5', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '-1', '0', '0', '');
+UPDATE `creature_template` SET `ScriptName` = 'npc_q40378' WHERE `creature_template`.`entry` = 94410;
+ 
 -- Q: 39279 Area.
 REPLACE INTO `area_queststart` (`id`, `quest`) VALUES ('7741', '39279');
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q39279' WHERE `gameobject_template`.`entry` in (244439, 244440, 244441, 243873);
 REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('191827', 'spell_legion_q39279');
+
+-- Q: 39049
+-- Q: 38759
+-- Q: 40379

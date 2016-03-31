@@ -103,8 +103,8 @@ public:
             GameObjectGUID: Full: 0x2C2090B920EEB5C00000100001364D15; HighType: GameObject; Low: 20335893; Map: 1481; Entry: 244439;
             */
             player->Dismount();
-            player->CastSpell(player, SCENE, true);
             player->KilledMonsterCredit(88872);
+            player->CastSpell(player, SCENE, true);
             return true;
         }
  
@@ -139,7 +139,6 @@ public:
         enum data
         {
             QUEST = 39279,
-            SCENE = 189261,
             GO_244439 = 244439,
             GO_244440 = 244440,
             GO_244441 = 244441,
@@ -248,6 +247,51 @@ public:
         return new spell_legion_q39279_SpellScript();
     }
 };
+
+//94410
+class npc_q40378 : public CreatureScript
+{
+public:
+    npc_q40378() : CreatureScript("npc_q40378") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q40378AI(creature);
+    }
+
+    enum data
+    {
+        QUEST = 40378,
+    };
+
+    struct npc_q40378AI : public ScriptedAI
+    {
+        npc_q40378AI(Creature* creature) : ScriptedAI(creature)
+        {
+        }
+
+        void Reset()
+        {
+        }
+
+        void MoveInLineOfSight(Unit* who)
+        {
+            Player *player = who->ToPlayer();
+            if (!player || !me->IsWithinDistInMap(who, 100.0f))
+                return;
+
+            if (player->GetQuestStatus(QUEST) != QUEST_STATUS_INCOMPLETE)
+                return;
+
+            if (player->GetQuestObjectiveData(QUEST, me->GetEntry()))
+                return;
+
+            player->KilledMonsterCredit(me->GetEntry());
+            return;
+        }
+    };
+};
+
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -255,4 +299,5 @@ void AddSC_Mardum()
     new go_q40378();
     new go_q39279();
     new spell_legion_q39279();
+    new npc_q40378();
 }
