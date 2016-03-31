@@ -327,7 +327,7 @@ enum Powers
     POWER_RUNES                         = 5,
     POWER_RUNIC_POWER                   = 6,
     POWER_SOUL_SHARDS                   = 7,
-    POWER_LUNAR_POWER                   = 8,
+    POWER_ASTRAL_POWER                   = 8,
     POWER_HOLY_POWER                    = 9,
     POWER_ALTERNATE_POWER               = 10,           // Used in some quests
     POWER_MAELSTROM                     = 11,

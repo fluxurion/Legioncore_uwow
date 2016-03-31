@@ -2124,7 +2124,7 @@ void Player::ProcessDelayedOperations()
         SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
         SetPower(POWER_FURY, GetMaxPower(POWER_FURY));
         SetPower(POWER_PAIN, GetMaxPower(POWER_PAIN));
-        SetPower(POWER_LUNAR_POWER, 0, false);
+        SetPower(POWER_ASTRAL_POWER, 0, false);
 
         if (uint32 aura = _resurrectionData->Aura)
             CastSpell(this, aura, true, NULL, NULL, _resurrectionData->GUID);
@@ -2272,22 +2272,6 @@ void Player::RegenerateAll()
         }
     }
 
-    if (isInCombat())
-        Regenerate(POWER_LUNAR_POWER, m_regenTimer);
-    else
-    {
-        if (m_powerRegenTimer[POWER_LUNAR_POWER] > m_regenTimer)
-        {
-            Regenerate(POWER_LUNAR_POWER, m_regenTimer);
-            m_powerRegenTimer[POWER_LUNAR_POWER] -= m_regenTimer;
-        }
-        else if (m_powerRegenTimer[POWER_LUNAR_POWER] != 0)
-        {
-            m_powerRegenTimer[POWER_LUNAR_POWER] = 0;
-            SetPower(POWER_LUNAR_POWER, 0);
-        }
-    }
-
     if (m_powerRegenTimer[POWER_FOCUS] >= 200 && getClass() == CLASS_HUNTER)
     {
         Regenerate(POWER_FOCUS, m_powerRegenTimer[POWER_FOCUS]);
@@ -2314,53 +2298,76 @@ void Player::RegenerateAll()
 
     if (!isInCombat())
     {
-        if(m_powerRegenTimer[POWER_HOLY_POWER] <= m_regenTimer)
+        m_powerRegenTimer[POWER_HOLY_POWER] -= m_regenTimer;
+        if(m_powerRegenTimer[POWER_HOLY_POWER] <= 0)
         {
-            m_powerRegenTimer[POWER_HOLY_POWER] = 10000;
             if (getClass() == CLASS_PALADIN)
-                Regenerate(POWER_HOLY_POWER, m_powerRegenTimer[POWER_HOLY_POWER]);
+                Regenerate(POWER_HOLY_POWER, 10000 - m_powerRegenTimer[POWER_HOLY_POWER]);
 
             if (getClass() == CLASS_MONK)
-                Regenerate(POWER_CHI, m_powerRegenTimer[POWER_HOLY_POWER]);
+                Regenerate(POWER_CHI, 10000 - m_powerRegenTimer[POWER_HOLY_POWER]);
+            m_powerRegenTimer[POWER_HOLY_POWER] = 10000;
         }
-        else
-            m_powerRegenTimer[POWER_HOLY_POWER] -= m_regenTimer;
 
-
-        if (m_powerRegenTimer[POWER_OBSOLETE2] <= m_regenTimer)
+        m_powerRegenTimer[POWER_SOUL_SHARDS] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_SOUL_SHARDS] <= 0)
         {
-            m_powerRegenTimer[POWER_OBSOLETE2] = 320;
-            Regenerate(POWER_OBSOLETE2, m_powerRegenTimer[POWER_OBSOLETE2]);
-        }
-        else
-            m_powerRegenTimer[POWER_OBSOLETE2] -= m_regenTimer;
-
-        if (m_powerRegenTimer[POWER_SOUL_SHARDS] <= m_regenTimer)
-        {
+            Regenerate(POWER_SOUL_SHARDS, 20000 - m_powerRegenTimer[POWER_SOUL_SHARDS]);
             m_powerRegenTimer[POWER_SOUL_SHARDS] = 20000;
-            Regenerate(POWER_SOUL_SHARDS, m_powerRegenTimer[POWER_SOUL_SHARDS]);
         }
-        else
 
-            m_powerRegenTimer[POWER_SOUL_SHARDS] -= m_regenTimer;
-
-        if (m_powerRegenTimer[POWER_OBSOLETE] <= m_regenTimer)
+        m_powerRegenTimer[POWER_ASTRAL_POWER] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_ASTRAL_POWER] <= 0)
         {
-            if (AuraEffect* aurEff = GetAuraEffect(108647, 0))
-                aurEff->ChangeAmount(0);
-            m_powerRegenTimer[POWER_OBSOLETE] = 2500;
-            Regenerate(POWER_OBSOLETE, m_powerRegenTimer[POWER_OBSOLETE]);
+            Regenerate(POWER_ASTRAL_POWER, 1000 - m_powerRegenTimer[POWER_ASTRAL_POWER]);
+            m_powerRegenTimer[POWER_ASTRAL_POWER] = 1000;
         }
-        else
-            m_powerRegenTimer[POWER_OBSOLETE] -= m_regenTimer;
+
+        m_powerRegenTimer[POWER_MAELSTROM] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_MAELSTROM] <= 0)
+        {
+            Regenerate(POWER_MAELSTROM, 1000 - m_powerRegenTimer[POWER_MAELSTROM]);
+            m_powerRegenTimer[POWER_MAELSTROM] = 1000;
+        }
+
+        m_powerRegenTimer[POWER_INSANITY] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_INSANITY] <= 0)
+        {
+            Regenerate(POWER_INSANITY, 1000 - m_powerRegenTimer[POWER_INSANITY]);
+            m_powerRegenTimer[POWER_INSANITY] = 1000;
+        }
+
+        m_powerRegenTimer[POWER_FURY] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_FURY] <= 0)
+        {
+            Regenerate(POWER_FURY, 1000 - m_powerRegenTimer[POWER_FURY]);
+            m_powerRegenTimer[POWER_FURY] = 1000;
+        }
+
+        m_powerRegenTimer[POWER_PAIN] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_PAIN] <= 0)
+        {
+            Regenerate(POWER_PAIN, 1000 - m_powerRegenTimer[POWER_PAIN]);
+            m_powerRegenTimer[POWER_PAIN] = 1000;
+        }
+
+        m_powerRegenTimer[POWER_COMBO_POINTS] -= m_regenTimer;
+        if (m_powerRegenTimer[POWER_COMBO_POINTS] <= 0)
+        {
+            Regenerate(POWER_COMBO_POINTS, 10000 - m_powerRegenTimer[POWER_COMBO_POINTS]);
+            m_powerRegenTimer[POWER_COMBO_POINTS] = 10000;
+        }
     }
     else
     {
         m_powerRegenTimer[POWER_HOLY_POWER] = 10000;
-        m_powerRegenTimer[POWER_OBSOLETE] = 28000;
         m_powerRegenTimer[POWER_SOUL_SHARDS] = 20000;
-        m_powerRegenTimer[POWER_OBSOLETE2] = 30000;
-        m_powerRegenTimer[POWER_LUNAR_POWER] = 30000;
+        m_powerRegenTimer[POWER_COMBO_POINTS] = 20000;
+        m_powerRegenTimer[POWER_ASTRAL_POWER] = 10000;
+        m_powerRegenTimer[POWER_MAELSTROM] = 1000;
+        m_powerRegenTimer[POWER_FURY] = 1000;
+        m_powerRegenTimer[POWER_PAIN] = 1000;
+        m_powerRegenTimer[POWER_INSANITY] = 30000;
     }
 
     m_regenTimer = 0;
@@ -2405,11 +2412,6 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
 
     switch (power)
     {
-        case POWER_LUNAR_POWER:
-        {
-            addvalue += saveTimer + GetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER + powerIndex) * saveTimer;
-            break;
-        }
         case POWER_MANA: // Regenerate Mana
         {
             float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
@@ -2457,9 +2459,9 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
         }
         case POWER_HOLY_POWER:
         case POWER_CHI:
+        case POWER_COMBO_POINTS:
             addvalue -= 1.0f; // remove 1 each 10 sec
             break;
-        case POWER_MAELSTROM:
         case POWER_HEALTH:
             break;
         case POWER_RUNES:
@@ -2470,6 +2472,19 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
         {
             // If isn't in combat, gain 1 shard every 20s
             addvalue += 100.0f;
+            break;
+        }
+        case POWER_INSANITY:
+        case POWER_MAELSTROM:
+        case POWER_FURY:
+        case POWER_PAIN:
+        {
+            addvalue -= 0.001f * saveTimer; // remove 1 each 1 sec
+            break;
+        }
+        case POWER_ASTRAL_POWER:
+        {
+            addvalue -= 0.004f * saveTimer; // remove 4 each 1 sec
             break;
         }
         default:
@@ -2549,6 +2564,7 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
         case POWER_HOLY_POWER:
         case POWER_CHI:
         case POWER_SOUL_SHARDS:
+        case POWER_COMBO_POINTS:
         {
             SetInt32Value(UNIT_FIELD_POWER + powerIndex, curValue);
             break;
@@ -2562,6 +2578,8 @@ void Player::Regenerate(Powers power, uint32 saveTimer)
             break;
         }
     }
+
+    // sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Player::Regenerate power %i curValue %i powerIndex %i RegenTimer %u", power, curValue, powerIndex, m_powerRegenTimer[POWER_RAGE]);
 }
 
 void Player::RegenerateHealth()
@@ -2649,7 +2667,7 @@ void Player::ResetAllPowers(bool preparation)
     switch (getClass())
     {
         case CLASS_DRUID:
-            ResetEclipseState();
+            SetPower(POWER_ASTRAL_POWER, 0, false);
             break;
         case CLASS_MONK:
             SetPower(POWER_CHI, preparation ? GetMaxPower(POWER_CHI) : 0);
@@ -2667,21 +2685,12 @@ void Player::ResetAllPowers(bool preparation)
             SetPower(POWER_PAIN, 0);
             SetPower(POWER_FURY, 0);
             break;
+        case CLASS_SHAMAN:
+            SetPower(POWER_MAELSTROM, 0);
+            break;
         default:
             break;
     }
-}
-
-void Player::ResetEclipseState()
-{
-    SetPower(POWER_LUNAR_POWER, 0, false);
-
-    // remove Eclipse
-    RemoveAurasDueToSpell(48517);
-    RemoveAurasDueToSpell(48518);
-    // remove markers
-    RemoveAurasDueToSpell(67483);
-    RemoveAurasDueToSpell(67484);
 }
 
 bool Player::CanInteractWithQuestGiver(Object* questGiver)
@@ -5557,7 +5566,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         SetPower(POWER_RAGE, 0);
         SetPower(POWER_ENERGY, uint32(GetMaxPower(POWER_ENERGY)*restore_percent));
         SetPower(POWER_FOCUS, uint32(GetMaxPower(POWER_FOCUS)*restore_percent));
-        SetPower(POWER_LUNAR_POWER, 0, false);
+        SetPower(POWER_ASTRAL_POWER, 0, false);
         SetPower(POWER_SOUL_SHARDS, 100, false);
         SetPower(POWER_CHI, 0);
         SetPower(POWER_INSANITY, 0);
@@ -25497,7 +25506,7 @@ void Player::ResurectUsingRequestData()
     SetPower(POWER_RAGE, 0);
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
     SetPower(POWER_FOCUS, GetMaxPower(POWER_FOCUS));
-    SetPower(POWER_LUNAR_POWER, 0, false);
+    SetPower(POWER_ASTRAL_POWER, 0, false);
     SetPower(POWER_SOUL_SHARDS, 100, false);
     SetPower(POWER_INSANITY, 0);
     SetPower(POWER_CHI, 0);

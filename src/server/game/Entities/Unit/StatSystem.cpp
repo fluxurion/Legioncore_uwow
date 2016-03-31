@@ -1225,7 +1225,7 @@ void Unit::UpdatePowerRegen(uint32 power)
             regenNotCombat = true;
             break;
         }
-        case POWER_LUNAR_POWER:
+        case POWER_ASTRAL_POWER:
             addvalue += 1.0f;
             regenInCombat = true;
             break;

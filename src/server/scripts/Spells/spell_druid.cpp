@@ -1201,7 +1201,7 @@ class spell_dru_celestial_alignment : public SpellScriptLoader
                 if (!player)
                     return;
 
-                player->SetPower(POWER_LUNAR_POWER, 0);
+                player->SetPower(POWER_ASTRAL_POWER, 0);
 
                 player->RemoveAurasDueToSpell(SPELL_DRUID_SOLAR_ECLIPSE);
                 player->RemoveAurasDueToSpell(SPELL_DRUID_LUNAR_ECLIPSE);

@@ -2670,7 +2670,6 @@ class Player : public Unit, public GridObject<Player>
         void _RemoveAllStatBonuses();
 
         void ResetAllPowers(bool preparation = false);
-        void ResetEclipseState();
 
         void _ApplyOrRemoveItemEquipDependentAuras(ObjectGuid const& itemGUID = ObjectGuid::Empty, bool apply = true);
         bool CheckItemEquipDependentSpell(SpellInfo const* spellInfo = NULL, ObjectGuid const& itemGUID = ObjectGuid::Empty);
@@ -3256,7 +3255,7 @@ class Player : public Unit, public GridObject<Player>
         // Gamemaster whisper whitelist
         GuidList WhisperList;
 
-        uint32 m_powerRegenTimer[MAX_POWERS];
+        int32 m_powerRegenTimer[MAX_POWERS];
         float m_powerFraction[MAX_POWERS_PER_CLASS];
 
         uint32 m_contestedPvPTimer;

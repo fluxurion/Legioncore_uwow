@@ -302,17 +302,13 @@ class spell_mage_arcane_barrage : public SpellScriptLoader
                 {
                     if (Unit* target = GetHitUnit())
                     {
-                        /*if (Aura* arcaneCharge = _player->GetAura(SPELL_MAGE_ARCANE_CHARGE))
-                        {
-                            chargeCount = arcaneCharge->GetStackAmount();
-                            _player->RemoveAura(arcaneCharge);
-                        }*/
                         if(_player->GetSelectedUnit() != target)
                         {
                             int32 _damage = int32((GetHitDamage() * GetSpellInfo()->Effects[EFFECT_1].BasePoints) / 100);
                             SetHitDamage(_damage);
                         }
                     }
+                    _player->ModifyPower(POWER_ARCANE_CHARGES, -_player->GetPower(POWER_ARCANE_CHARGES));
                 }
             }
 
@@ -340,23 +336,6 @@ class spell_mage_arcane_explosion : public SpellScriptLoader
 
             void HandleOnCast()
             {
-                Unit* caster = GetCaster();
-                if (!caster || !GetSpell()->GetTargetCount())
-                    return;
-
-                Player* player = caster->ToPlayer();
-                if (!player)
-                    return;
-
-                if (player->GetSpecializationId() != SPEC_MAGE_ARCANE)
-                    return;
-
-                int32 chance = GetSpellInfo()->Effects[EFFECT_1].BasePoints;
-                if (roll_chance_i(chance))
-                    caster->CastSpell(caster, SPELL_MAGE_ARCANE_CHARGE, true);
-
-                if (Aura* arcaneCharge = caster->GetAura(SPELL_MAGE_ARCANE_CHARGE))
-                    arcaneCharge->RefreshDuration();
             }
 
             void Register()

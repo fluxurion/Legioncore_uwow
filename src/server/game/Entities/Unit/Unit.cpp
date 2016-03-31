@@ -14340,105 +14340,26 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
 
     switch(power)
     {
-        case POWER_SOUL_SHARDS:
+        case POWER_ARCANE_CHARGES:
         {
-            if(specId != SPEC_WARLOCK_AFFLICTION)
-            {
-                RemoveAura(104756);
-                RemoveAura(104759);
-                RemoveAura(123171);
-                if (HasAura(56241))
-                {
-                    RemoveAura(123728);
-                    RemoveAura(123730);
-                    RemoveAura(123731);
-                }
-                break;
-            }
-
-            uint32 spellid[] = {104756, 104759, 123171};
-            if(HasAura(56241)) // Glyph of Verdant Spheres (Affliction, Destruction)
-            {
-                spellid[0] = 123728;
-                spellid[1] = 123730;
-                spellid[2] = 123731;
-            }
-
-            switch(curentVal)
-            {
-                case 100:
-                {
-                    RemoveAura(spellid[1]);
-                    RemoveAura(spellid[2]);
-                    CastSpell(this, spellid[0], true);
-                    break;
-                }
-                case 200:
-                {
-                    RemoveAura(spellid[0]);
-                    RemoveAura(spellid[2]);
-                    CastSpell(this, spellid[1], true);
-                    break;
-                }
-                case 300:
-                {
-                    RemoveAura(spellid[2]);
-                    CastSpell(this, spellid[1], true);
-                    CastSpell(this, spellid[0], true);
-                    break;
-                }
-                case 400:
-                {
-                    RemoveAura(spellid[0]);
-                    CastSpell(this, spellid[2], true);
-                    CastSpell(this, spellid[1], true);
-                    break;
-                }
-                default:
-                {
-                    RemoveAura(spellid[0]);
-                    break;
-                }
-            }
+            if (modVal > 0)
+                CastSpell(this, 36032, true); // Arcane Charge
             break;
         }
         case POWER_CHI:
         {
             if (modVal < 0)
             {
-                if (Aura* tigereyeBrew = GetAura(123980))
-                    tigereyeBrew->SetScriptData(0, -modVal);
-                else if (Aura* manaTea = GetAura(123766))
-                    manaTea->SetScriptData(0, -modVal);
                 if(!generate)
                 {
                     if (Aura* serenity = GetAura(152173)) // Serenity
                         serenity->SetCustomData(serenity->GetCustomData() - modVal);
-                    if (HasAura(154436))
-                        if (Aura* crane = GetAura(139598)) // Crane Style Techniques
-                            crane->SetCustomData(crane->GetCustomData() - modVal);
                 }
             }
             break;
         }
         case POWER_INSANITY:
         {
-            if(specId != SPEC_PRIEST_SHADOW)
-            {
-                RemoveAura(77487);
-                break;
-            }
-
-            if (curentVal > 0)
-            {
-                if (!HasAura(77487))
-                    CastSpell(this, 77487, true);
-            }
-            else
-                RemoveAura(77487);
-            if (modVal < 0 && !generate)
-                if (Aura* insanity = GetAura(139139)) // Insanity
-                    insanity->SetCustomData(insanity->GetCustomData() - modVal);
             break;
         }
         case POWER_RAGE:
@@ -14485,13 +14406,6 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
         }
         case POWER_RUNIC_POWER:
         {
-            if (HasAura(50029)) // Veteran of the Third War
-            {
-                if(!isInCombat() && HasAura(174431))
-                    RemoveAura(174431);
-                else if(isInCombat() && !HasAura(174431))
-                    CastSpell(this, 174431, true);
-            }
             if (modVal < 0 && !generate)
             {
                 if (HasAura(51462)) // Runic Corruption
@@ -14515,23 +14429,6 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
                                 player->AddRunePower(i);
                             }
                         }
-                    }
-                }
-                if (HasSpell(45529)) // Blood Tap
-                {
-                    if(m_everyPower[power] > 150)
-                    {
-                        int32 countMod = int32(m_everyPower[power] / 150);
-
-                        if (Aura* aura = GetAura(114851)) // Blood Charge
-                            aura->ModStackAmount(countMod);
-                        else if (Aura* aura = AddAura(114851, this))
-                            aura->ModStackAmount(countMod - 1);
-
-                        //for (uint8 i = 0; i < countMod; ++i)
-                            //CastSpell(this, 114851, true); // Blood Charge
-
-                        m_everyPower[power] -= (150 * countMod);
                     }
                 }
             }
@@ -15948,12 +15845,13 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
         case POWER_SOUL_SHARDS:
             return 400;
         case POWER_FURY:
-        case POWER_LUNAR_POWER:
+        case POWER_ASTRAL_POWER:
         case POWER_MAELSTROM:
             return 100;
         case POWER_HOLY_POWER:
             return 3;
         case POWER_CHI:
+        case POWER_ARCANE_CHARGES:
             return 4;
         case POWER_COMBO_POINTS:
             return 5;
@@ -16027,6 +15925,8 @@ void Unit::InitialPowers(bool maxpower)
             else
                 SetInt32Value(UNIT_FIELD_POWER + powerIndex, curval);
         }
+
+        //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "InitialPowers power %i curval %i createval %i powerIndex %i classId %u maxpower %u", power, curval, createval, powerIndex, classId, maxpower);
 
         powerIndex++;
 
