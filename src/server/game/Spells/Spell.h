@@ -506,6 +506,8 @@ class Spell
         void EffectReTrainFollower(SpellEffIndex effIndex);
         void EffectCreateArtifactItem(SpellEffIndex effIndex);
         void EffectArtifactPower(SpellEffIndex effIndex);
+        void EffectLaunchQuestChoice(SpellEffIndex effIndex);
+
         typedef std::set<Aura*> UsedSpellMods;
 
         Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID = ObjectGuid::Empty, bool skipCheck = false, bool replaced = false);
@@ -624,7 +626,6 @@ class Spell
         ObjectGuid m_castGuid[2];
         uint32 m_preCastSpell;
         SpellCastTargets m_targets;
-        int8 m_comboPointGain;
         uint32 m_SpellVisual;
         SpellCustomErrors m_customError;
         uint8 m_diffMode;
@@ -683,6 +684,8 @@ class Spell
         Unit* GetCaster() const { return m_caster; }
         Unit* GetOriginalCaster() const { return m_originalCaster; }
         SpellInfo const* GetSpellInfo() const { return m_spellInfo; }
+        int32 GetPowerCost(int8 power) { return m_powerCost[power]; }
+        int8 GetComboPoints() { return m_powerCost[POWER_COMBO_POINTS]; }
 
         void UpdatePointers();                              // must be used at call Spell code after time delay (non triggered spell cast/update spell call/etc)
 
@@ -763,7 +766,6 @@ class Spell
         // These vars are used in both delayed spell system and modified immediate spell system
         bool m_referencedFromCurrentSpell;                  // mark as references to prevent deleted and access by dead pointers
         bool m_executedCurrently;                           // mark as executed to prevent deleted and access by dead pointers
-        bool m_needComboPoints;
         uint8 hasPredictedDispel;
         uint32 m_applyMultiplierMask;
         float m_damageMultipliers[32];

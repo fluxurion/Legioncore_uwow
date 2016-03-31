@@ -453,14 +453,14 @@ Aura* Aura::Create(SpellInfo const* spellproto, uint32 effMask, WorldObject* own
     {
         case TYPEID_UNIT:
         case TYPEID_PLAYER:
-            aura = new UnitAura(spellproto, effMask, owner, caster, baseAmount, castItem, casterGUID, stackAmount);
+            aura = new UnitAura(spellproto, effMask, owner, caster, baseAmount, castItem, casterGUID, stackAmount, spell ? spell->GetComboPoints() : 0);
             if(spell)
                 aura->m_damage_amount = spell->GetDamage();
             aura->_InitEffects(effMask, caster, baseAmount);
             aura->GetUnitOwner()->_AddAura((UnitAura*)aura, caster);
             break;
         case TYPEID_DYNAMICOBJECT:
-            aura = new DynObjAura(spellproto, effMask, owner, caster, baseAmount, castItem, casterGUID, stackAmount);
+            aura = new DynObjAura(spellproto, effMask, owner, caster, baseAmount, castItem, casterGUID, stackAmount, spell ? spell->GetComboPoints() : 0);
             aura->_InitEffects(effMask, caster, baseAmount);
             aura->GetDynobjOwner()->SetAura(aura);
 
@@ -640,17 +640,19 @@ void Aura::CalculateDurationFromDummy(int32 &duration)
     }
 }
 
-Aura::Aura(SpellInfo const* spellproto, WorldObject* owner, Unit* caster, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount) :
+Aura::Aura(SpellInfo const* spellproto, WorldObject* owner, Unit* caster, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount, int8 comboPoints) :
 m_spellInfo(spellproto), m_casterGuid(!casterGUID.IsEmpty() ? casterGUID : caster->GetGUID()),
 m_castItemGuid(castItem ? castItem->GetGUID() : ObjectGuid::Empty), m_applyTime(time(NULL)),
 m_owner(owner), m_timeCla(0), m_updateTargetMapInterval(0),
 m_casterLevel(caster ? caster->getLevel() : m_spellInfo->SpellLevel), m_procCharges(0), m_stackAmount(stackAmount ? stackAmount: 1),
 m_isRemoved(false), m_isSingleTarget(false), m_isUsingCharges(false), m_fromAreatrigger(false), m_inArenaNerf(false), m_aura_amount(0),
-m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAreaTrGuid(), m_customData(0), m_damage_amount(0)
+m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAreaTrGuid(), m_customData(0), m_damage_amount(0),
+m_comboPoints(comboPoints)
 {
     SpellPowerData powerData;
     if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
-        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
+        if (SpellPowerEntry const* power = GetSpellInfo()->GetPowerInfo(0))
+            powerData.push_back(power);
 
     for (SpellPowerEntry const* power : powerData)
     {
@@ -1023,7 +1025,8 @@ void Aura::Update(uint32 diff, Unit* caster)
 
                 SpellPowerData powerData;
                 if (!GetSpellInfo()->GetSpellPowerByCasterPower(caster, powerData))
-                    powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
+                    if (SpellPowerEntry const* power = GetSpellInfo()->GetPowerInfo(0))
+                        powerData.push_back(power);
 
                 for (SpellPowerEntry const* power : powerData)
                 {
@@ -1073,7 +1076,7 @@ int32 Aura::CalcMaxDuration(Unit* caster)
     if (caster)
     {
         modOwner = caster->GetSpellModOwner();
-        maxDuration = caster->CalcSpellDuration(m_spellInfo);
+        maxDuration = caster->CalcSpellDuration(m_spellInfo, GetComboPoints());
     }
     else
         maxDuration = m_spellInfo->GetDuration();
@@ -1117,7 +1120,8 @@ void Aura::RefreshDuration(bool /*recalculate*/)
 
     SpellPowerData powerData;
     if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
-        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
+        if (SpellPowerEntry const* power = GetSpellInfo()->GetPowerInfo(0))
+            powerData.push_back(power);
 
     for (SpellPowerEntry const* power : powerData)
     {
@@ -3053,8 +3057,8 @@ bool Aura::CallScriptEffectProcHandlers(AuraEffect const* aurEff, AuraApplicatio
     return preventDefault;
 }
 
-UnitAura::UnitAura(SpellInfo const* spellproto, uint32 effMask, WorldObject* owner, Unit* caster, int32 *baseAmount, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount)
-    : Aura(spellproto, owner, caster, castItem, casterGUID, stackAmount)
+UnitAura::UnitAura(SpellInfo const* spellproto, uint32 effMask, WorldObject* owner, Unit* caster, int32 *baseAmount, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount, int8 comboPoints)
+    : Aura(spellproto, owner, caster, castItem, casterGUID, stackAmount, comboPoints)
 {
     m_AuraDRGroup = DIMINISHING_NONE;
 }
@@ -3180,8 +3184,8 @@ void UnitAura::FillTargetMap(std::map<Unit*, uint32> & targets, Unit* caster)
     }
 }
 
-DynObjAura::DynObjAura(SpellInfo const* spellproto, uint32 effMask, WorldObject* owner, Unit* caster, int32 *baseAmount, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount)
-    : Aura(spellproto, owner, caster, castItem, casterGUID, stackAmount)
+DynObjAura::DynObjAura(SpellInfo const* spellproto, uint32 effMask, WorldObject* owner, Unit* caster, int32 *baseAmount, Item* castItem, ObjectGuid casterGUID, uint16 stackAmount, int8 comboPoints)
+    : Aura(spellproto, owner, caster, castItem, casterGUID, stackAmount, comboPoints)
 {
 }
 

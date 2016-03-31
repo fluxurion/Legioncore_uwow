@@ -503,20 +503,6 @@ class spell_dru_ferocious_bite : public SpellScriptLoader
         {
             PrepareSpellScript(spell_dru_ferocious_bite_SpellScript);
 
-            uint8 comboPoints;
-
-            bool Validate(SpellInfo const * /*spellEntry*/)
-            {
-                comboPoints = 0;
-                return true;
-            }
-
-            void HandleBeforeCast()
-            {
-                if (GetCaster()->ToPlayer())
-                    comboPoints = GetCaster()->ToPlayer()->GetComboPoints(GetSpellInfo()->Id);
-            }
-
             void Damage(SpellEffIndex /*effIndex*/)
             {
                 Unit* caster = GetCaster();
@@ -534,7 +520,7 @@ class spell_dru_ferocious_bite : public SpellScriptLoader
 
                 float perc = 1.0f;
                 int32 bpHp = 5;
-                int32 damageN = (GetHitDamage() / 5) * comboPoints;
+                int32 damageN = (GetHitDamage() / 5) * GetSpell()->GetComboPoints();
                 int32 curValue = caster->GetPower(POWER_ENERGY);
 
                 if(curValue >= 25)
@@ -558,7 +544,7 @@ class spell_dru_ferocious_bite : public SpellScriptLoader
                     // energize
                     if (SpellInfo const* info = sSpellMgr->GetSpellInfo(114113))
                     {
-                        int32 bp = info->Effects[EFFECT_0].CalcValue(player) * comboPoints;
+                        int32 bp = info->Effects[EFFECT_0].CalcValue(player) * GetSpell()->GetComboPoints();
                         player->CastCustomSpell(player, info->Id, &bp, NULL, NULL, true);
                     }
                 }
@@ -570,7 +556,6 @@ class spell_dru_ferocious_bite : public SpellScriptLoader
 
             void Register()
             {
-                BeforeCast += SpellCastFn(spell_dru_ferocious_bite_SpellScript::HandleBeforeCast);
                 OnEffectHitTarget += SpellEffectFn(spell_dru_ferocious_bite_SpellScript::Damage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
             }
         };
@@ -590,20 +575,6 @@ class spell_dru_rip : public SpellScriptLoader
         class spell_dru_rip_SpellScript : public SpellScript
         {
             PrepareSpellScript(spell_dru_rip_SpellScript);
-
-            uint8 comboPoints;
-
-            bool Validate(SpellInfo const * /*spellEntry*/)
-            {
-                comboPoints = 0;
-                return true;
-            }
-
-            void HandleBeforeCast()
-            {
-                if (GetCaster()->ToPlayer())
-                    comboPoints = GetCaster()->ToPlayer()->GetComboPoints(GetSpellInfo()->Id);
-            }
 
             void HandleOnHit()
             {
@@ -625,7 +596,7 @@ class spell_dru_rip : public SpellScriptLoader
                     // energize
                     if (SpellInfo const* info = sSpellMgr->GetSpellInfo(114113))
                     {
-                        int32 bp = info->Effects[EFFECT_0].CalcValue(player) * comboPoints;
+                        int32 bp = info->Effects[EFFECT_0].CalcValue(player) * GetSpell()->GetComboPoints();
                         player->CastCustomSpell(player, info->Id, &bp, NULL, NULL, true);
                     }
                 }
@@ -633,7 +604,6 @@ class spell_dru_rip : public SpellScriptLoader
 
             void Register()
             {
-                BeforeCast += SpellCastFn(spell_dru_rip_SpellScript::HandleBeforeCast);
                 OnHit += SpellHitFn(spell_dru_rip_SpellScript::HandleOnHit);
             }
         };

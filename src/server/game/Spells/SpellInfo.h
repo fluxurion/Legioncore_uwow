@@ -300,7 +300,7 @@ public:
     {
         float Coefficient;
         float Variance;
-        float ResourceCoefficient;
+        float OtherCoefficient;
     } Scaling;
 
     SpellEffectInfo() {}
@@ -510,7 +510,7 @@ public:
     SpellTargetRestrictionsMap RestrrictionsMap;
     uint32 ExplicitTargetMask;
     SpellChainNode const* ChainEntry;
-    SpellPowerEntry spellPower[MAX_POWERS_FOR_SPELL];
+    SpellPowerEntry const* spellPower[MAX_POWERS_FOR_SPELL];
 
     // TalentInfo
     uint32 talentId;
@@ -571,7 +571,6 @@ public:
     bool IsPositive() const;
     bool IsPositiveEffect(uint8 effIndex, bool caster = false) const;
     bool IsChanneled() const;
-    bool NeedsComboPoints() const;
     bool IsBreakingStealth() const;
     bool IsRangedWeaponSpell() const;
     bool IsRangedSpell() const;

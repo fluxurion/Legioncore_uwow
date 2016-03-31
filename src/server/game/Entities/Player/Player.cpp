@@ -282,9 +282,6 @@ Player::Player(WorldSession* session): Unit(true),
     m_curSelection.Clear();
     m_lootGuid.Clear();
 
-    m_comboPoints = 0;
-    m_comboSavePoints = 0;
-
     m_regenTimer = 0;
     m_regenTimerCount = 0;
     m_chiholyPowerRegenTimerCount = 0;
@@ -606,7 +603,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
                 loc.m_positionZ   = charTemplate->Z;
                 loc.SetOrientation(charTemplate->O);
                 money = charTemplate->Money * 10000;
-                loadoutItem = true;
+                if (createInfo->Class != CLASS_DEMON_HUNTER)
+                    loadoutItem = true;
                 break;
             }
 
@@ -8510,9 +8508,6 @@ void Player::DuelComplete(DuelCompleteType type)
         else
             ++i;
     }
-
-    // cleanup combo points
-    //ClearComboPoints();   //Need it?
 
     // Honor points after duel (the winner) - ImpConfig
     if (uint32 amount = sWorld->getIntConfig(CONFIG_HONOR_AFTER_DUEL))
@@ -24085,83 +24080,6 @@ Player* Player::GetSelectedPlayer() const
     if (m_curSelection)
         return ObjectAccessor::GetPlayer(*this, m_curSelection);
     return NULL;
-}
-
-void Player::SendComboPoints()
-{
-    SetPower(POWER_COMBO_POINTS, m_comboPoints, false);
-}
-
-void Player::AddComboPoints(Unit* target, int8 count, Spell* spell)
-{
-    if (!count)
-        return;
-
-    int8 * comboPoints = spell ? &spell->m_comboPointGain : &m_comboPoints;
-
-    // without combo points lost (duration checked in aura)
-    RemoveAurasByType(SPELL_AURA_RETAIN_COMBO_POINTS);
-
-    *comboPoints += count;
-
-    if (*comboPoints > 5)
-        *comboPoints = 5;
-    else if (*comboPoints < 0)
-        *comboPoints = 0;
-
-    if (!spell)
-        SendComboPoints();
-}
-
-void Player::GainSpellComboPoints(int8 count)
-{
-    if (!count)
-        return;
-
-    m_comboPoints += count;
-    if (m_comboPoints > 5) m_comboPoints = 5;
-    else if (m_comboPoints < 0) m_comboPoints = 0;
-
-    SendComboPoints();
-}
-
-uint8 Player::GetComboPoints(uint32 spellId)
-{
-    uint8 add = 0;
-    uint8 cost = 5;
-    uint8 mod = 0;
-    if(HasAura(138148))
-        add += 1;
-
-    if(spellId)
-        ApplySpellMod(spellId, SPELLMOD_COST, cost);
-
-    mod = 5 - cost;
-
-    return ((m_comboPoints + mod) > 5 ? 5 : (m_comboPoints + mod)) + add;
-}
-
-void Player::ClearComboPoints()
-{
-    // without combopoints lost (duration checked in aura)
-    RemoveAurasByType(SPELL_AURA_RETAIN_COMBO_POINTS);
-
-    // omg hack
-    int32 chancekd = 0;
-    if (HasAura(79096))
-        chancekd = -2000 * GetComboPoints();
-
-    m_comboPoints = 0;
-
-    SendComboPoints();
-
-    if (chancekd != 0)
-    {
-        ModifySpellCooldown(51690, chancekd);  // Killing Spree
-        ModifySpellCooldown(13750, chancekd);  // Adrenaline Rush
-        ModifySpellCooldown(2983, chancekd);   // Sprint
-        ModifySpellCooldown(121471, chancekd); // Shadow Blades
-    }
 }
 
 void Player::SetGroup(Group* group, int8 subgroup)

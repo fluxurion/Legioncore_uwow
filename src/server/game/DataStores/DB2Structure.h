@@ -2387,7 +2387,7 @@ struct SpellEffectScalingEntry
     uint32      ID;
     float       Coefficient;                                // 0
     float       Variance;                                   // 1
-    float       ResourceCoefficient;                        // 2
+    float       OtherCoefficient;                           // 2
     uint32      SpellEffectId;                              // 3
 };
 

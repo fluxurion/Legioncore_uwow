@@ -484,8 +484,8 @@ Spell::Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags,
 m_spellInfo(info),
 m_caster((info->HasAttribute(SPELL_ATTR6_CAST_BY_CHARMER) && caster->GetCharmerOrOwner()) ? caster->GetCharmerOrOwner() : caster),
 m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(0), m_selfContainer(NULL),
-m_referencedFromCurrentSpell(false), m_executedCurrently(false), m_needComboPoints(info->NeedsComboPoints()), hasPredictedDispel(0),
-m_comboPointGain(0), m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
+m_referencedFromCurrentSpell(false), m_executedCurrently(false), hasPredictedDispel(0),
+m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
 m_CastItem(NULL), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
 m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
 m_runesState(0), m_casttime(0), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
@@ -2857,18 +2857,6 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         }
     }
 
-    // Do not take combo points on dodge and miss
-    if (missInfo != SPELL_MISS_NONE && m_needComboPoints &&
-            m_targets.GetUnitTargetGUID() == target->targetGUID)
-    {
-        m_needComboPoints = false;
-        // Restore spell mods for a miss/dodge/parry Cold Blood
-        // TODO: check how broad this rule should be
-        if (m_caster->GetTypeId() == TYPEID_PLAYER && (missInfo == SPELL_MISS_MISS ||
-                missInfo == SPELL_MISS_DODGE || missInfo == SPELL_MISS_PARRY))
-            m_caster->ToPlayer()->RestoreSpellMods(this, 14177);
-    }
-
     // Trigger info was not filled in spell::preparedatafortriggersystem - we do it now
     bool positive = true;
     if (canEffectTrigger && !procAttacker && !procVictim)
@@ -3626,14 +3614,13 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
         m_caster->ToPlayer()->SetSpellModTakingSpell(this, true);
     // Fill cost data (not use power for item casts
     if (!m_CastItem)
+    {
         m_powerCost = m_spellInfo->CalcPowerCost(m_caster, m_spellSchoolMask);
+        m_caster->SetComboPoints(m_powerCost[POWER_COMBO_POINTS]);
+    }
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         m_caster->ToPlayer()->SetSpellModTakingSpell(this, false);
-
-    // Set combo point requirement
-    if ((_triggeredCastFlags & TRIGGERED_IGNORE_COMBO_POINTS) || m_CastItem || !m_caster->m_movedPlayer)
-        m_needComboPoints = false;
 
     LinkedSpell(m_caster, m_targets.GetUnitTarget(), SPELL_LINK_BEFORE_CHECK);
 
@@ -4381,38 +4368,36 @@ void Spell::_handle_immediate_phase()
 
 void Spell::_handle_finish_phase()
 {
-    if (m_caster->m_movedPlayer)
+    if (Player* _player = m_caster->ToPlayer())
     {
         // Take for real after all targets are processed
-        if (m_needComboPoints)
+        if (m_powerCost[POWER_COMBO_POINTS])
         {
-            Player* _player = m_caster->ToPlayer();
-
-            if(_player && _player->HasAura(158476)) // Soul of the Forest
+            if(m_caster->HasAura(158476)) // Soul of the Forest
             {
-                int32 newBp = 4 * _player->GetComboPoints(m_spellInfo->Id);
-                _player->CastCustomSpell(_player, 114113, &newBp, NULL, NULL, true);
+                int32 newBp = 4 * GetComboPoints();
+                m_caster->CastCustomSpell(m_caster, 114113, &newBp, NULL, NULL, true);
             }
 
-            m_caster->m_movedPlayer->ClearComboPoints();
+            // omg hack
+            int32 chancekd = 0;
+            if (m_caster->HasAura(79096))
+                chancekd = -2000 * GetComboPoints();
 
-            // Anticipation
-            if (_player)
+            if (chancekd != 0)
             {
-                if (_player->HasAura(115189))
-                {
-                    int32 basepoints0 = _player->GetAura(115189) ? _player->GetAura(115189)->GetStackAmount() : 0;
-                    _player->CastCustomSpell(m_caster->getVictim(), 115190, &basepoints0, NULL, NULL, true);
-
-                    if (basepoints0)
-                        _player->RemoveAura(115189);
-                }
+                _player->ModifySpellCooldown(51690, chancekd);  // Killing Spree
+                _player->ModifySpellCooldown(13750, chancekd);  // Adrenaline Rush
+                _player->ModifySpellCooldown(2983, chancekd);   // Sprint
+                _player->ModifySpellCooldown(121471, chancekd); // Shadow Blades
             }
-            if(uint8 count = m_caster->m_movedPlayer->GetSaveComboPoints())
+
+            m_caster->SetComboPoints(0);
+
+            if(uint8 count = m_caster->GetSaveComboPoints())
             {
-                if (Unit* target = m_targets.GetUnitTarget())
-                    m_caster->m_movedPlayer->AddComboPoints(target, count, this);
-                m_caster->m_movedPlayer->SaveAddComboPoints(-count);
+                m_caster->AddComboPoints(count);
+                m_caster->SaveAddComboPoints(-count);
             }
         }
         if (Aura* serenity = m_caster->GetAura(152173)) // Serenity
@@ -4421,33 +4406,6 @@ void Spell::_handle_finish_phase()
             serenity->SetCustomData(0);
             m_caster->CastCustomSpell(m_caster, 157558, &bp, NULL, NULL, false);
         }
-        if (Aura* crane = m_caster->GetAura(139598)) // Crane Style Techniques
-        {
-            int32 count = crane->GetCustomData();
-            crane->SetCustomData(0);
-            if (count > 0)
-            {
-                for (uint8 i = 0; i < count; ++i)
-                    m_caster->CastSpell(m_caster, 118674, true);
-            }
-        }
-        if (Aura* insanity = m_caster->GetAura(139139)) // Insanity
-        {
-            int32 bp = insanity->GetCustomData();
-            if (bp)
-            {
-                if (Aura* aura = m_caster->GetAura(132573)) // Insanity
-                {
-                    aura->SetDuration(aura->GetDuration() + (2000 * bp));
-                    insanity->SetCustomData(0);
-                }
-                else
-                    m_caster->CastSpell(m_caster, 132573, true);
-            }
-        }
-        // Real add combo points from effects
-        if (m_comboPointGain)
-            m_caster->m_movedPlayer->GainSpellComboPoints(m_comboPointGain);
     }
 
     if (m_caster->m_extraAttacks && GetSpellInfo()->HasEffect(SPELL_EFFECT_ADD_EXTRA_ATTACKS))
@@ -6036,7 +5994,6 @@ SpellCastResult Spell::CheckCast(bool strict)
     {
         if ((*j)->IsAffectingSpell(m_spellInfo))
         {
-            m_needComboPoints = false;
             if ((*j)->GetMiscValue() == 1)
             {
                 reqCombat=false;
@@ -6359,15 +6316,12 @@ SpellCastResult Spell::CheckCast(bool strict)
                         break;
                     }
                     case 5171:  // Slice and Dice
-                    case 73651: // Recuperate
                     {
                         if (Aura * aura = m_caster->GetAura(m_spellInfo->Id))
                         {
-                            int32 bonusDuration = m_spellInfo->Id == 5171 ? 6000: 0;
-                        
                             if (Player * player = m_caster->ToPlayer())
                             {
-                                if (aura->GetDuration() > player->GetComboPoints(m_spellInfo->Id) * 6000 + bonusDuration)
+                                if (aura->GetDuration() > GetPowerCost(POWER_COMBO_POINTS) * 6000 + 6000)
                                     return SPELL_FAILED_TRY_AGAIN;
                             }
                         }
@@ -7082,12 +7036,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_TARGET_IS_PLAYER_CONTROLLED;
     }
 
-    // check if caster has at least 1 combo point for spells that require combo points
-    if (m_needComboPoints)
-        if (Player* plrCaster = m_caster->ToPlayer())
-            if (!plrCaster->GetComboPoints(m_spellInfo->Id))
-                return SPELL_FAILED_NO_COMBO_POINTS;
-
     // all ok
     return SPELL_CAST_OK;
 }
@@ -7467,6 +7415,9 @@ SpellCastResult Spell::CheckPower()
             continue;
 
         SpellPowerEntry const* power = GetSpellInfo()->GetPowerInfo(i);
+        if (!power)
+            continue;
+
         // health as power used - need check health amount
         if (power->PowerType == POWER_HEALTH)
         {

@@ -305,7 +305,6 @@ class AuraEffect
         void HandleModPowerCost(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleArenaPreparation(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleNoReagentUseAura(AuraApplication const* aurApp, uint8 mode, bool apply) const;
-        void HandleAuraRetainComboPoints(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         //  others
         void HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleChannelDeathItem(AuraApplication const* aurApp, uint8 mode, bool apply) const;
@@ -341,6 +340,7 @@ class AuraEffect
         void HandleDisableMovementForce(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleAnimReplacementSet(AuraApplication const* aurApp, uint8 mode, bool apply) const;
         void HandleModNpcFlags2(AuraApplication const* aurApp, uint8 mode, bool apply) const;
+        void HandleAuraCooldownRecoveryIncreased(AuraApplication const* aurApp, uint8 mode, bool apply) const;
 
         // aura effect periodic tick handlers
         void HandlePeriodicDummyAuraTick(Unit* target, Unit* caster, SpellEffIndex effIndex) const;

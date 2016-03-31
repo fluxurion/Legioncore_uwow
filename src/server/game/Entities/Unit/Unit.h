@@ -1556,13 +1556,20 @@ class Unit : public WorldObject
         void SetFieldPowerType(uint32 powerType) { SetUInt32Value(UNIT_FIELD_DISPLAY_POWER, powerType); }
         void setPowerType(Powers power);
         int32 GetPower(Powers power) const;
-        int32 GetMinPower(Powers power) const { return power == POWER_LUNAR_POWER ? -100 : 0; }
+        int32 GetMinPower(Powers power) const { return 0; }
         int32 GetMaxPower(Powers power) const;
         void SetPower(Powers power, int32 val, bool send = true);
         void InitialPowers(bool maxpower = false);
         void SetMaxPower(Powers power, int32 val);
         int32 GetPowerForReset(Powers power, bool maxpower = false, uint16 powerDisplayID = 0) const;
         void VisualForPower(Powers power, int32 curentVal, int32 modVal = 0, bool generate = false);
+
+        void SaveAddComboPoints(int8 count) { m_comboSavePoints += count; }
+        uint8 GetSaveComboPoints() const { return m_comboSavePoints; }
+
+        uint8 GetComboPoints() const;
+        void AddComboPoints(int8 count);
+        void SetComboPoints(int8 count) { m_comboPoints = count; }
 
         // returns the change in power
         int32 ModifyPower(Powers power, int32 val, bool set = false);
@@ -2210,6 +2217,9 @@ class Unit : public WorldObject
         float m_threatModifier[MAX_SPELL_SCHOOL];
         float m_modAttackSpeedPct[3];
 
+        int8 m_comboPoints;
+        int8 m_comboSavePoints;
+
         // Event handler
         EventProcessor m_Events;
 
@@ -2392,7 +2402,7 @@ class Unit : public WorldObject
 
         float ApplyEffectModifiers(SpellInfo const* spellProto, uint8 effect_index, float value) const;
         int32 CalculateSpellDamage(Unit const* target, SpellInfo const* spellProto, uint8 effect_index, int32 const* basePoints = NULL, Item* m_castitem = NULL, bool lockBasePoints = false, float* variance = nullptr) const;
-        int32 CalcSpellDuration(SpellInfo const* spellProto);
+        int32 CalcSpellDuration(SpellInfo const* spellProto, int8 comboPoints = 0);
         int32 ModSpellDuration(SpellInfo const* spellProto, Unit const* target, int32 duration, bool positive, uint32 effectMask, Unit* caster = NULL);
         void  ModSpellCastTime(SpellInfo const* spellProto, int32 & castTime, Spell* spell=NULL);
         float CalculateLevelPenalty(SpellInfo const* spellProto) const;

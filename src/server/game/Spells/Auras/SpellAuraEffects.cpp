@@ -206,7 +206,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleAuraModPetTalentsPoints,                   //145 SPELL_AURA_MOD_PET_TALENT_POINTS
     &AuraEffect::HandleNoImmediateEffect,                         //146 SPELL_AURA_ALLOW_TAME_PET_TYPE
     &AuraEffect::HandleModStateImmunityMask,                      //147 SPELL_AURA_MECHANIC_IMMUNITY_MASK
-    &AuraEffect::HandleAuraRetainComboPoints,                     //148 SPELL_AURA_RETAIN_COMBO_POINTS
+    &AuraEffect::HandleAuraCooldownRecoveryIncreased,             //148 SPELL_AURA_RETAIN_COMBO_POINTS
     &AuraEffect::HandleNoImmediateEffect,                         //149 SPELL_AURA_REDUCE_PUSHBACK
     &AuraEffect::HandleShieldBlockValue,                          //150 SPELL_AURA_MOD_SHIELD_BLOCKVALUE_PCT
     &AuraEffect::HandleAuraTrackStealthed,                        //151 SPELL_AURA_TRACK_STEALTHED
@@ -1058,8 +1058,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                     if (caster->GetTypeId() != TYPEID_PLAYER)
                         break;
 
-                    amount *= caster->ToPlayer()->GetComboPoints(1943);
-                    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::CalculateAmount amount %i m_send_baseAmount %i", amount, m_send_baseAmount, caster->ToPlayer()->GetComboPoints(1943));
+                    amount *= GetBase()->GetComboPoints();
                     break;
                 }
                 case 1079: // Rip
@@ -1067,7 +1066,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
                     if (caster->GetTypeId() != TYPEID_PLAYER)
                         break;
 
-                    amount *= caster->ToPlayer()->GetComboPoints(1079);
+                    amount *= GetBase()->GetComboPoints();
                     break;
                 }
                 case 53301: // Explosive Shot
@@ -6121,25 +6120,10 @@ void AuraEffect::HandleNoReagentUseAura(AuraApplication const* aurApp, uint8 mod
     target->SetUInt32Value(PLAYER_FIELD_NO_REAGENT_COST_MASK+3, mask[3]);
 }
 
-void AuraEffect::HandleAuraRetainComboPoints(AuraApplication const* aurApp, uint8 mode, bool apply) const
+void AuraEffect::HandleAuraCooldownRecoveryIncreased(AuraApplication const* aurApp, uint8 mode, bool apply) const
 {
     if (!(mode & AURA_EFFECT_HANDLE_REAL))
         return;
-
-    Unit* target = aurApp->GetTarget();
-
-    if (target->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    // combo points was added in SPELL_EFFECT_ADD_COMBO_POINTS handler
-    // remove only if aura expire by time (in case combo points amount change aura removed without combo points lost)
-    //if (!(apply) && GetBase()->GetDuration() == 0 && target->ToPlayer()->GetComboTarget())
-    //    if (Unit* unit = ObjectAccessor::GetUnit(*target, target->ToPlayer()->GetComboTarget()))
-    //        target->ToPlayer()->AddComboPoints(unit, -GetAmount());
-
-    //! Now no check target?
-    if (!(apply) && GetBase()->GetDuration() == 0)
-        target->ToPlayer()->AddComboPoints(NULL, -GetAmount());
 }
 
 /*********************************************************/
@@ -8382,7 +8366,8 @@ void AuraEffect::HandlePeriodicManaLeechAuraTick(Unit* target, Unit* caster, Spe
 
     SpellPowerData powerData;
     if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
-        powerData.push_back(GetSpellInfo()->GetPowerInfo(0));
+        if (SpellPowerEntry const* power = GetSpellInfo()->GetPowerInfo(0))
+            powerData.push_back(power);
 
     // Special case: draining x% of mana (up to a maximum of 2*x% of the caster's maximum mana)
     // It's mana percent cost spells, m_amount is percent drain from target

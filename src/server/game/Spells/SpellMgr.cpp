@@ -3932,10 +3932,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 145067: // Turn Evil
                     spellInfo->Categories.Mechanic = MECHANIC_FEAR;
                     break;
-                case 86213:  // Soul Swap Exhale
-                    spellInfo->Misc.Speed = 0.0f;
-                    spellInfo->spellPower->PowerCostPercentage = 0;
-                    break;
                 case 122470: // Touch of Karma
                     spellInfo->Misc.Attributes[6] &= ~SPELL_ATTR6_NOT_LIMIT_ABSORB;
                     break;
@@ -5705,5 +5701,5 @@ SpellPowerEntry const* SpellMgr::GetSpellPowerEntryByIdAndPower(uint32 id, Power
     }
 
     SpellInfo const* spell = sSpellMgr->GetSpellInfo(id);
-    return spell->spellPower;
+    return spell->GetPowerInfo(0);
 }

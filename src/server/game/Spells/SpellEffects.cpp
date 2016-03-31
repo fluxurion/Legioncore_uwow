@@ -157,7 +157,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectScriptEffect,                             // 77 SPELL_EFFECT_SCRIPT_EFFECT
     &Spell::EffectUnused,                                   // 78 SPELL_EFFECT_ATTACK
     &Spell::EffectSanctuary,                                // 79 SPELL_EFFECT_SANCTUARY
-    &Spell::EffectAddComboPoints,                           // 80 SPELL_EFFECT_ADD_COMBO_POINTS
+    &Spell::EffectAddComboPoints,                           // 80 SPELL_EFFECT_ADD_COMBO_POINTS         unused 7.0.1
     &Spell::EffectUnused,                                   // 81 SPELL_EFFECT_CREATE_HOUSE             one spell: Create House (TEST)
     &Spell::EffectNULL,                                     // 82 SPELL_EFFECT_BIND_SIGHT
     &Spell::EffectDuel,                                     // 83 SPELL_EFFECT_DUEL
@@ -282,7 +282,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //202 SPELL_EFFECT_APPLY_AURA_WITH_VALUE
     &Spell::EffectRemoveAura,                               //203 SPELL_EFFECT_REMOVE_AURA_2 Based on 144863 -> This spell remove auras. 145052 possible trigger spell.
     &Spell::EffectNULL,                                     //204 SPELL_EFFECT_UPGRADE_BATTLE_PET
-    &Spell::EffectNULL,                                     //205 SPELL_EFFECT_LAUNCH_QUEST_CHOICE
+    &Spell::EffectLaunchQuestChoice,                              //205 SPELL_EFFECT_LAUNCH_QUEST_CHOICE
     &Spell::EffectCreateItem3,                              //206 SPELL_EFFECT_CREATE_ITEM_3
     &Spell::EffectNULL,                                     //207 SPELL_EFFECT_LAUNCH_QUEST_TASK
     &Spell::EffectNULL,                                     //208 SPELL_EFFECT_REPUTATION_SET
@@ -547,13 +547,11 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                 {
                     if (Player* player = m_caster->ToPlayer())
                     {
-                        uint8 combo = player->GetComboPoints(m_spellInfo->Id);
-
                         float ap = player->GetTotalAttackPowerValue(BASE_ATTACK);
 
-                        if (combo)
+                        if (uint8 combo = GetComboPoints())
                         {
-                            damage += int32(0.306f * combo * ap + damage * combo); //!TODO 0.417 on 6.2.2a
+                            damage += int32(0.417f * combo * ap + damage * combo);
 
                             // Eviscerate and Envenom Bonus Damage (item set effect)
                             if (m_caster->HasAura(37169))
@@ -566,27 +564,14 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                 {
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     {
-                        if (uint32 combo = ((Player*)m_caster)->GetComboPoints(m_spellInfo->Id))
+                        if (uint8 combo = GetComboPoints())
                         {
-                            float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
-                            damage += int32(ap * combo * 0.577f); //!TODO 0.559f on 6.2.2a
+                            damage += int32(m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * combo * 0.559f);
 
                             // Eviscerate and Envenom Bonus Damage (item set effect)
                             if (m_caster->HasAura(37169))
                                 damage += combo * 40;
-
-                            if (AuraEffect* aurEff = unitTarget->GetAuraEffect(84617, 2, m_caster->GetGUID()))
-                                AddPct(damage, aurEff->GetAmount());
                         }
-                    }
-                }
-                // Crimson Tempest
-                else if (m_spellInfo->Id == 121411)
-                {
-                    if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                    {
-                        if (uint32 combo = ((Player*)m_caster)->GetComboPoints(m_spellInfo->Id))
-                            damage += int32(float(m_caster->GetTotalAttackPowerValue(BASE_ATTACK)) * combo * 0.09f);
                     }
                 }
                 // Deadly Throw
@@ -594,7 +579,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                 {
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     {
-                        if (uint32 combo = m_caster->ToPlayer()->GetComboPoints(m_spellInfo->Id))
+                        if (uint32 combo = GetPowerCost(POWER_COMBO_POINTS))
                         {
                             damage += int32(float(m_caster->GetTotalAttackPowerValue(BASE_ATTACK)) * combo * 0.178f);
                             if (combo >= 3)
@@ -2864,12 +2849,6 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
     if (unitTarget->GetMaxPower(power) == 0)
         return;
 
-    if (power == POWER_COMBO_POINTS) //Hack for used old CP system
-    {
-        EffectAddComboPoints(effIndex);
-        return;
-    }
-
     // Some level depends spells
     int level_multiplier = 0;
     int level_diff = 0;
@@ -3017,6 +2996,9 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
             m_caster->CastSpell(unitTarget, Trinity::Containers::SelectRandomContainerElement(avalibleElixirs), true, m_CastItem);
         }
     }
+
+    if (m_spellInfo->Id == 144859) //Add CP after use old CP
+        m_caster->m_movedPlayer->SaveAddComboPoints(damage);
 }
 
 void Spell::EffectEnergizePct(SpellEffIndex effIndex)
@@ -4477,7 +4459,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                     break;
 
                 //if (m_caster->ToPlayer()->GetComboTarget() == unitTarget->GetGUID())
-                m_caster->ToPlayer()->AddComboPoints(unitTarget, 1);
+                m_caster->ToPlayer()->AddComboPoints(1);
 
                 // Fan of Knives - Vile Poisons
                 if (AuraEffect* aur = m_caster->GetDummyAuraEffect(SPELLFAMILY_ROGUE, 857, 2))
@@ -4505,7 +4487,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
             if (m_spellInfo->ClassOptions.SpellClassMask[1] & 0x400)
             {
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                    m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
+                    m_caster->ToPlayer()->AddComboPoints(1);
             }
             break;
         }
@@ -5585,42 +5567,6 @@ void Spell::EffectSanctuary(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectAddComboPoints(SpellEffIndex /*effIndex*/)
 {
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
-        return;
-
-    if (!unitTarget)
-        return;
-
-    if (!m_caster->m_movedPlayer)
-        return;
-
-    if (m_spellInfo->Id == 1752 && unitTarget->HasAura(84617, m_caster->GetGUID()) && roll_chance_i(20)) //Debuff Revealing Strike add CP Sinister Strike
-    {
-        if (m_caster->HasAura(114015) && m_caster->ToPlayer() && m_caster->ToPlayer()->GetComboPoints(m_spellInfo->Id) >= 4)
-            m_caster->CastSpell(m_caster, 115189, true);
-        else
-            damage += 1;
-    }
-    if (damage <= 0)
-        return;
-
-    if (m_spellInfo->IsTargetingArea())
-    {
-        if (Unit* target = m_caster->m_movedPlayer->GetSelectedUnit())
-        {
-            if (unitTarget->GetGUID() != target->GetGUID())
-                return;
-        }
-        else
-            return;
-    }
-
-    if (/*m_spellInfo->Id == 139546 || */m_spellInfo->Id == 144859) //Add CP after use old CP
-        m_caster->m_movedPlayer->SaveAddComboPoints(damage);
-    else
-        m_caster->m_movedPlayer->AddComboPoints(unitTarget, damage, this);
-
-    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::EffectAddComboPoints damage %i, Id %i", damage, m_spellInfo->Id);
 }
 
 void Spell::EffectDuel(SpellEffIndex effIndex)
@@ -8298,8 +8244,23 @@ void Spell::EffectCreateArtifactItem(SpellEffIndex effIndex)
     // }
 }
 
-
 void Spell::EffectArtifactPower(SpellEffIndex /*effIndex*/)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    Player* player = m_caster->ToPlayer();
+    if (!player || !m_CastItem)
+        return;
+
+    // if (Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+    // {
+        // uint32 power = m_CastItem->GetCount() * damage;
+        // item->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, power);
+    // }
+}
+
+void Spell::EffectLaunchQuestChoice(SpellEffIndex /*effIndex*/)
 {
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;

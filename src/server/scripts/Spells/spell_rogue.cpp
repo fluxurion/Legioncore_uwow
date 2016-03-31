@@ -925,10 +925,9 @@ class spell_rog_eviscerate : public SpellScriptLoader
                         caster->ToPlayer()->KilledMonsterCredit(44175, ObjectGuid::Empty);
                         caster->ToPlayer()->KilledMonsterCredit(44548, ObjectGuid::Empty);
                     }
-                    if (target && caster->HasAura(14171) || caster->HasAura(14172))
+                    if (target && caster->HasAura(14172))
                     {
-                        uint8 comboPoint = caster->m_movedPlayer ? caster->m_movedPlayer->GetComboPoints(GetSpellInfo()->Id) : 1;
-                        uint32 chance = 10 * comboPoint;
+                        uint32 chance = 10 * GetSpell()->GetComboPoints();
                         if(caster->HasAura(14172))
                             chance *= 2;
                         if(roll_chance_i(chance))
@@ -1269,11 +1268,10 @@ class spell_rog_internal_bleeding : public SpellScriptLoader
         {
             PrepareAuraScript(spell_rog_internal_bleeding_AuraScript);
 
-            void CalculateAmount(AuraEffect const* /*aurEff*/, int32 & amount, bool & /*canBeRecalculated*/)
+            void CalculateAmount(AuraEffect const* aurEff, int32 & amount, bool & /*canBeRecalculated*/)
             {
                 if (Unit* caster = GetCaster())
-                    if (Player* plyarr = caster->ToPlayer())
-                        amount *= plyarr->GetComboPoints(GetSpellInfo()->Id);
+                    amount *= aurEff->GetBase()->GetComboPoints();
             }
 
             void Register()

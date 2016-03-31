@@ -396,7 +396,7 @@ SpellEffectInfo::SpellEffectInfo(SpellEntry const* spellEntry, SpellInfo const* 
     SpellEffectScalingEntry const* _effectScaling = sDB2Manager.GetSpellEffectScaling(_effect ? _effect->ID : 0);
     Scaling.Coefficient = _effectScaling ? _effectScaling->Coefficient : 0.0f;
     Scaling.Variance = _effectScaling ? _effectScaling->Variance : 0.0f;
-    Scaling.ResourceCoefficient = _effectScaling ? _effectScaling->ResourceCoefficient : 0.0f;
+    Scaling.OtherCoefficient = _effectScaling ? _effectScaling->OtherCoefficient : 0.0f;
 }
 
 bool SpellEffectInfo::IsEffect() const
@@ -515,9 +515,6 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
         }
 
         basePoints = int32(ceil(value));
-
-        if (Scaling.ResourceCoefficient)
-            comboDamage = Scaling.ResourceCoefficient * value;
     }
     else
     {
@@ -552,10 +549,6 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
     // random damage
     if (caster)
     {
-        if (caster->m_movedPlayer && comboDamage)
-            if (uint8 comboPoints = caster->m_movedPlayer->GetComboPoints(_spellInfo->Id))
-                value += comboDamage * comboPoints;
-
         value = caster->ApplyEffectModifiers(_spellInfo, EffectIndex, value);
 
         // amount multiplication based on caster's level
@@ -631,6 +624,10 @@ float SpellEffectInfo::CalcValueMultiplier(Unit* caster, Spell* spell) const
     float multiplier = Amplitude;
     if (Player* modOwner = (caster ? caster->GetSpellModOwner() : NULL))
         modOwner->ApplySpellMod(_spellInfo->Id, SPELLMOD_VALUE_MULTIPLIER, multiplier, spell);
+
+    if (spell && spell->GetComboPoints())
+        multiplier *= spell->GetComboPoints();
+
     return multiplier;
 }
 
@@ -639,6 +636,10 @@ float SpellEffectInfo::CalcDamageMultiplier(Unit* caster, Spell* spell) const
     float multiplier = ChainAmplitude;
     if (Player* modOwner = (caster ? caster->GetSpellModOwner() : NULL))
         modOwner->ApplySpellMod(_spellInfo->Id, SPELLMOD_DAMAGE_MULTIPLIER, multiplier, spell);
+
+    if (spell && spell->GetComboPoints())
+        multiplier *= spell->GetComboPoints();
+
     return multiplier;
 }
 
@@ -1085,17 +1086,7 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry, SpellVisualMap&& visuals)
     Power.PowerCostPerLevel = 0;
 
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
-    {
-        spellPower[i].ID = 0;
-        spellPower[i].SpellID = Id;
-        spellPower[i].PowerType = POWER_NULL;
-        spellPower[i].PowerCost = 0;
-        spellPower[i].PowerCostPerSecond = 0;
-        spellPower[i].PowerCostPercentage = 0.0f;
-        spellPower[i].PowerCostPercentagePerSecond = 0.0f;
-        spellPower[i].RequiredAura = 0;
-        spellPower[i].HealthCostPercentage = 0.0f;
-    }
+        spellPower[i] = nullptr;
 
     RangeEntry = sSpellRangeStore.LookupEntry(Misc.RangeIndex);
 
@@ -1679,11 +1670,6 @@ bool SpellInfo::IsChanneled() const
     return (Misc.Attributes[1] & (SPELL_ATTR1_CHANNELED_1 | SPELL_ATTR1_CHANNELED_2)) != 0;
 }
 
-bool SpellInfo::NeedsComboPoints() const
-{
-    return (Misc.Attributes[1] & (SPELL_ATTR1_REQ_COMBO_POINTS1 | SPELL_ATTR1_REQ_COMBO_POINTS2)) != 0;
-}
-
 bool SpellInfo::IsBreakingStealth() const
 {
     return !(HasAttribute(SPELL_ATTR1_NOT_BREAK_STEALTH));
@@ -1721,7 +1707,7 @@ bool SpellInfo::IsAffectedBySpellMod(SpellModifier* mod) const
 
     SpellInfo const* affectSpell = sSpellMgr->GetSpellInfo(mod->spellId);
     // False if affect_spell == NULL or spellFamily not equal
-    if (!affectSpell || affectSpell->ClassOptions.SpellClassMask != ClassOptions.SpellClassMask)
+    if (!affectSpell || affectSpell->ClassOptions.SpellClassSet != ClassOptions.SpellClassSet)
         return false;
 
     // true
@@ -2849,7 +2835,7 @@ SpellPowerCost SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask scho
                     cost[power->PowerType] = caster->GetPower(Powers(power->PowerType));
             }
 
-            sLog->outError(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CalcPowerCost: Unknown power type '%d' in spell %d", spellPower->PowerType, Id);
+            //sLog->outError(LOG_FILTER_SPELLS_AURAS, "SpellInfo::CalcPowerCost: Unknown power type '%d' in spell %d", power->PowerType, Id);
             return cost;
         }
 
@@ -2873,12 +2859,28 @@ SpellPowerCost SpellInfo::CalcPowerCost(Unit const* caster, SpellSchoolMask scho
                 }
             }
 
+            if(power->ManaCostAdditional)
+            {
+                int32 addCost = caster->GetPower(Powers(power->PowerType)) - powerCost;
+                if (addCost > 0)
+                {
+                    if (addCost > power->ManaCostAdditional)
+                        powerCost += power->ManaCostAdditional;
+                    else
+                        powerCost += addCost;
+                }
+            }
+
             if(power->HealthCostPercentage)
                 powerCost += caster->CountPctFromMaxHealth(power->HealthCostPercentage);
+
+            if(power->PowerCostPerLevel)
+                powerCost += caster->getLevel() * power->PowerCostPerLevel;
 
             SpellSchools school = GetFirstSchoolInMask(schoolMask);
             // Flat mod from caster auras by spell school
             powerCost += caster->GetInt32Value(UNIT_FIELD_POWER_COST_MODIFIER + school);
+
             // Apply cost mod by spell
             if (Player* modOwner = caster->GetSpellModOwner())
             {
@@ -3545,21 +3547,14 @@ bool SpellInfo::IsSealSpell() const
     return false;
 }
 
-bool SpellInfo::AddPowerData(SpellPowerEntry const *power)
+bool SpellInfo::AddPowerData(SpellPowerEntry const* power)
 {
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
     {
         if (IsPowerActive(i))
             continue;
 
-        spellPower[i].ID = power->ID;
-        spellPower[i].PowerType = power->PowerType;
-        spellPower[i].PowerCost = power->PowerCost;
-        spellPower[i].PowerCostPerSecond = power->PowerCostPerSecond;
-        spellPower[i].PowerCostPercentage = power->PowerCostPercentage;
-        spellPower[i].PowerCostPercentagePerSecond = power->PowerCostPercentagePerSecond;
-        spellPower[i].RequiredAura = power->RequiredAura;
-        spellPower[i].HealthCostPercentage = power->HealthCostPercentage;
+        spellPower[i] = power;
         return true;
     }
 
@@ -3568,7 +3563,7 @@ bool SpellInfo::AddPowerData(SpellPowerEntry const *power)
 
 bool SpellInfo::IsPowerActive(uint8 powerIndex) const
 {
-    return GetPowerInfo(powerIndex)->ID != 0;
+    return GetPowerInfo(powerIndex);
 }
 
 SpellPowerEntry const* SpellInfo::GetPowerInfo(uint8 powerIndex) const
@@ -3579,7 +3574,7 @@ SpellPowerEntry const* SpellInfo::GetPowerInfo(uint8 powerIndex) const
         powerIndex = 0;
     }
 
-    return &spellPower[powerIndex];
+    return spellPower[powerIndex];
 }
 
 bool SpellInfo::GetSpellPowerByCasterPower(Unit const * caster, SpellPowerData &power) const
@@ -3591,14 +3586,14 @@ bool SpellInfo::GetSpellPowerByCasterPower(Unit const * caster, SpellPowerData &
 
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
     {
-        if (!spellPower[i].ID)
+        if (!spellPower[i])
             continue;
 
         // skip requarement
-        if (spellPower[i].RequiredAura > 0 && !caster->HasAura(spellPower[i].RequiredAura))
+        if (spellPower[i]->RequiredAura > 0 && !caster->HasAura(spellPower[i]->RequiredAura))
             break;
 
-        power.push_back(&spellPower[i]);
+        power.push_back(spellPower[i]);
         hasPower = true;
     }
 
@@ -3608,7 +3603,7 @@ bool SpellInfo::GetSpellPowerByCasterPower(Unit const * caster, SpellPowerData &
 bool SpellInfo::HasPower(Powers power) const
 {
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
-    if (spellPower[i].PowerType == power && spellPower[i].ID)
+    if (spellPower[i] && spellPower[i]->PowerType == power)
         return true;
 
     return false;
@@ -3617,7 +3612,7 @@ bool SpellInfo::HasPower(Powers power) const
 bool SpellInfo::NoPower() const
 {
     for (uint8 i = 0; i < MAX_POWERS_FOR_SPELL; ++i)
-    if (spellPower[i].ID)
+    if (spellPower[i])
             return false;
 
     return true;

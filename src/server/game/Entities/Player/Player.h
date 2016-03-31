@@ -2049,15 +2049,6 @@ class Player : public Unit, public GridObject<Player>
         Player* GetSelectedPlayer() const;
         void SetSelection(ObjectGuid const& guid) { if (m_curSelection) m_lastSelection = m_curSelection; m_curSelection = guid; SetGuidValue(UNIT_FIELD_TARGET, guid); }
 
-        uint8 GetComboPoints(uint32 spellId = 0);
-        void SaveAddComboPoints(int8 count) { m_comboSavePoints += count; }
-        uint8 GetSaveComboPoints() const { return m_comboSavePoints; }
-
-        void AddComboPoints(Unit* target, int8 count, Spell* spell = NULL);
-        void GainSpellComboPoints(int8 count);
-        void ClearComboPoints();
-        void SendComboPoints();
-
         void SendMailResult(uint32 mailId, MailResponseType mailAction, MailResponseResult mailError, uint32 equipError = 0, ObjectGuid::LowType item_guid = UI64LIT(0), uint32 item_count = 0);
         void SendNewMail();
         void UpdateNextMailTimeAndUnreads();
@@ -3426,9 +3417,6 @@ class Player : public Unit, public GridObject<Player>
         ObjectGuid m_lastSelection;
         DigSiteInfo m_digsite;
 
-        int8 m_comboPoints;
-        int8 m_comboSavePoints;
-
         QuestStatusMap m_QuestStatus;
         QuestStatusSaveMap m_QuestStatusSave;
 
@@ -3704,9 +3692,11 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
 
         if (!IsAffectedBySpellmod(spellInfo, mod, spell))
             continue;
+
         SpellInfo const* affectSpell = sSpellMgr->GetSpellInfo(mod->spellId);
         if(!affectSpell)
             continue;
+
         if((affectSpell->HasAttribute(SPELL_ATTR0_ONLY_STEALTHED)) && !HasStealthAura())
             continue;
 

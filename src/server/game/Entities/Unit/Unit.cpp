@@ -339,6 +339,9 @@ Unit::Unit(bool isWorldObject): WorldObject(isWorldObject)
 
     for (uint8 i = 0; i < MAX_COMBAT_RATING; i++)
         m_baseRatingValue[i] = 0;
+
+    m_comboPoints = 0;
+    m_comboSavePoints = 0;
 }
 
 ////////////////////////////////////////////////////////////
@@ -7988,58 +7991,6 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                         AddAura(84745, this);
                     break;
                 }
-                case 51701: // Honor Among Thieves
-                {
-                    if (Unit* owner = (Unit *)(triggeredByAura->GetBase()->GetOwner()))
-                    {
-                        if (Player* rogue = owner->ToPlayer())
-                        {
-                            if (rogue->HasSpellCooldown(51699) || !rogue->isInCombat())
-                                break;
-
-                            if (rogue->GetComboPoints(procSpell ? procSpell->Id : 0) >= 5 && owner->HasAura(114015))
-                            {
-                                owner->CastSpell(owner, 115189, true);
-                                rogue->AddSpellCooldown(51699, NULL, getPreciseTime() + cooldown);
-                                break;
-                            }
-
-                            if (rogue->GetSelectedUnit() && !rogue->GetSelectedUnit()->IsFriendlyTo(rogue))
-                            {
-                                rogue->CastSpell(rogue->GetSelectedUnit(), 51699, true);
-                                rogue->AddSpellCooldown(51699, NULL, getPreciseTime() + cooldown);
-                                break;
-                            } 
-                            if (target && !target->IsFriendlyTo(rogue))
-                            {
-                                rogue->CastSpell(target, 51699, true);
-                                rogue->AddSpellCooldown(51699, NULL, getPreciseTime() + cooldown);
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case 114015: // Anticipation
-                {
-                    if (GetTypeId() != TYPEID_PLAYER)
-                        return false;
-
-                    if (!procSpell)
-                        return false;
-
-                    if (procSpell->Id == 115190)
-                        return false;
-
-                    if (ToPlayer()->GetComboPoints(procSpell->Id) < 5 && procSpell->Id != 27576) //Mutilate add 2 KP
-                        return false;
-
-                    if (ToPlayer()->GetComboPoints(procSpell->Id) < 4 && procSpell->Id == 27576) //Mutilate add 2 KP
-                        return false;
-
-                    CastSpell(this,115189,true);
-                    return false;
-                }
                 // Cut to the Chase
                 case 51667:
                 {
@@ -10025,19 +9976,6 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
             stack_for_trigger = triggerEntry->AuraOptions.CumulativeAura;
             break;
         }
-        // Finish movies that add combo
-        case 14189: // Seal Fate (Netherblade set)
-        {
-            if (!victim || victim == this)
-                return false;
-            if (HasAura(114015) && ToPlayer()->GetComboPoints(procSpell ? procSpell->Id : 0) >= 5)
-            {
-                CastSpell(this,115189,true);
-                return false;
-            }
-            // Need add combopoint AFTER finish movie (or they dropped in finish phase)
-            break;
-        }
         // Item - Druid T10 Balance 2P Bonus
         case 16870:
         {
@@ -10152,7 +10090,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
         // Primal Fury
         case 16953:
         {
-            if (!procSpell || !procSpell->HasEffect(SPELL_EFFECT_ADD_COMBO_POINTS))
+            if (!procSpell || !procSpell->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
                 return false;
             break;
         }
@@ -14604,6 +14542,27 @@ void Unit::VisualForPower(Powers power, int32 curentVal, int32 modVal, bool gene
     }
 }
 
+void Unit::AddComboPoints(int8 count)
+{
+    ModifyPower(POWER_COMBO_POINTS, count);
+}
+
+uint8 Unit::GetComboPoints() const
+{
+    uint8 add = 0;
+    uint8 cost = 5;
+    uint8 mod = 0;
+
+    if(HasAura(138148))
+        add += 1;
+
+    mod = 5 - cost;
+
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "GetComboPoints %i", m_comboPoints);
+
+    return ((m_comboPoints + mod) > 5 ? 5 : (m_comboPoints + mod)) + add;
+}
+
 // returns negative amount on power reduction
 int32 Unit::ModifyPower(Powers power, int32 dVal, bool set /*= false*/)
 {
@@ -15335,9 +15294,8 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellInfo const* spellProto
     return spellProto->GetEffect(effect_index, GetSpawnMode())->CalcValue(this, basePoints, target, m_castitem, lockBasePoints, variance);
 }
 
-int32 Unit::CalcSpellDuration(SpellInfo const* spellProto)
+int32 Unit::CalcSpellDuration(SpellInfo const* spellProto, int8 comboPoints)
 {
-    uint8 comboPoints = m_movedPlayer ? m_movedPlayer->GetComboPoints(spellProto->Id) : 0;
     uint8 holyPower   = 0;
 
     int32 minduration = spellProto->GetDuration();
@@ -16015,7 +15973,6 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return ((ToPet() && ToPet()->IsWarlockPet()) ? 200 : 100);
         case POWER_RUNIC_POWER:
             return 1000;
-        case POWER_MAELSTROM:
         case POWER_HEALTH:
             return 0;
         case POWER_INSANITY:
@@ -16024,6 +15981,7 @@ int32 Unit::GetCreatePowers(Powers power, uint16 powerDisplay/* = 0*/) const
             return 400;
         case POWER_FURY:
         case POWER_LUNAR_POWER:
+        case POWER_MAELSTROM:
             return 100;
         case POWER_HOLY_POWER:
             return 3;
@@ -17620,8 +17578,6 @@ void Unit::ClearAllReactives()
         ModifyAuraState(AURA_STATE_DEFENSE, false);
     if (getClass() == CLASS_HUNTER && HasAuraState(AURA_STATE_HUNTER_PARRY))
         ModifyAuraState(AURA_STATE_HUNTER_PARRY, false);
-    if (getClass() == CLASS_WARRIOR && GetTypeId() == TYPEID_PLAYER)
-        ToPlayer()->ClearComboPoints();
 }
 
 void Unit::UpdateReactives(uint32 p_time)
@@ -18623,7 +18579,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                         if(itr->aura && procSpell && itr->aura != procSpell->Id)
                             continue;
 
-                        int32 ChangeCooldown = triggerAmount * (player->GetComboPoints(procSpell->Id) ? player->GetComboPoints(procSpell->Id) : 1);
+                        int32 ChangeCooldown = triggerAmount * (target->GetComboPoints() ? target->GetComboPoints() : 1);
 
                         if(ChangeCooldown < 100)
                             ChangeCooldown *= IN_MILLISECONDS;
@@ -18860,7 +18816,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                 break;
                 case SPELL_TRIGGER_COMBOPOINT_BP: //29
                 {
-                    if(!procSpell || !procSpell->NeedsComboPoints())
+                    if(!GetComboPoints())
                     {
                         check = true;
                         continue;
@@ -18876,7 +18832,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                         continue;
                     }
                     triggered_spell_id = abs(itr->spell_trigger);
-                    int32 basepoints0 = triggerAmount * ToPlayer()->GetComboPoints(procSpell->Id);
+                    int32 basepoints0 = triggerAmount * GetComboPoints();
 
                     _caster->CastCustomSpell(target, triggered_spell_id, &basepoints0, &basepoints0, &basepoints0, true, castItem, triggeredByAura, originalCaster);
                     if(itr->target == 6)
@@ -19075,7 +19031,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                 break;
                 case SPELL_TRIGGER_NEED_COMBOPOINTS: //35
                 {
-                    if(!procSpell || !procSpell->NeedsComboPoints())
+                    if(!procSpell || !GetComboPoints())
                     {
                         check = true;
                         continue;
@@ -19302,7 +19258,6 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
     uint32 Attributes = procSpell ? procSpell->Misc.Attributes[0] : 0;
     uint32 AllEffectsMechanicMask = procSpell ? procSpell->GetAllEffectsMechanicMask() : 0;
     uint32 SpellTypeMask = procSpell ? procSpell->GetSpellTypeMask() : 1;
-    uint32 NeedsComboPoints = procSpell ? procSpell->NeedsComboPoints() : 0;
     int32 duration = procSpell ? procSpell->GetDuration() : 0;
     int32 specCheckid = ToPlayer() ? ToPlayer()->GetSpecializationId() : 0;
     int32 deathstateMask = victim ? (1 << victim->getDeathState()) : 0;
@@ -19380,7 +19335,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
                             procCheck = true;
                             break;
                         }
-                        if(itr->combopoints != 0 && !NeedsComboPoints)
+                        if(itr->combopoints != 0 && !GetComboPoints())
                         {
                             procCheck = true;
                             break;
@@ -19492,7 +19447,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
                     procCheck = true;
                     continue;
                 }
-                if(itr->combopoints != 0 && !NeedsComboPoints)
+                if(itr->combopoints != 0 && !GetComboPoints())
                 {
                     procCheck = true;
                     continue;
@@ -19593,7 +19548,7 @@ bool Unit::SpellProcCheck(Unit* victim, SpellInfo const* spellProto, SpellInfo c
                     procCheckSecond = true;
                     continue;
                 }
-                if(itr->combopoints != 0 && !NeedsComboPoints)
+                if(itr->combopoints != 0 && !GetComboPoints())
                 {
                     procCheckSecond = true;
                     continue;
@@ -20102,8 +20057,8 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* victim, SpellInfo const* spellProto
     // Get chance from spell
     float chance = float(spellProto->AuraOptions.ProcChance);
 
-    if(spellProto->GetEffect(effect, GetSpawnMode())->PointsPerResource != 0.0f && ToPlayer())
-        chance = spellProto->GetEffect(effect, GetSpawnMode())->PointsPerResource * ToPlayer()->GetComboPoints(procSpell ? procSpell->Id : 0);
+    if(spellProto->GetEffect(effect, GetSpawnMode())->PointsPerResource != 0.0f)
+        chance = spellProto->GetEffect(effect, GetSpawnMode())->PointsPerResource * GetComboPoints();
 
     // If in spellProcEvent exist custom chance, chance = spellProcEvent->customChance;
     if (spellProcEvent && spellProcEvent->customChance)
