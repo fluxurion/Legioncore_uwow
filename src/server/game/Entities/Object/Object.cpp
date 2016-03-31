@@ -559,7 +559,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
                 *data << t->GetAreaTriggerInfo().verticesPoints[i].y;    // Y
             }
 
-            for (uint16 i = 0; i < t->GetAreaTriggerInfo().verticesTargetPoints.size(); ++i) // VerticesTarget
+            for (size_t i = 0; i < t->GetAreaTriggerInfo().verticesTargetPoints.size(); ++i) // VerticesTarget
             {
                 *data << t->GetAreaTriggerInfo().verticesTargetPoints[i].x; // X
                 *data << t->GetAreaTriggerInfo().verticesTargetPoints[i].y; // Y
@@ -1173,6 +1173,8 @@ uint32 Object::GetDynamicUpdateFieldData(Player const* target, uint32*& flags) c
         case TYPEID_UNIT:
         case TYPEID_PLAYER:
         {
+            visibleFlag |= UF_FLAG_UNIT_ALL;
+
             Player* plr = ToUnit()->GetCharmerOrOwnerPlayerOrPlayerItself();
             flags = UnitDynamicFieldFlags;
             if (ToUnit()->GetOwnerGUID() == target->GetGUID())
@@ -2161,7 +2163,7 @@ bool WorldObject::canSeeOrDetect(WorldObject const* obj, bool ignoreStealth, boo
             return false;
     }
 
-    if (obj->IsNeverVisible() || CanNeverSee(obj))
+    if (obj->IsNeverVisible(this) || CanNeverSee(obj))
         return false;
 
     if (obj->IsAlwaysVisibleFor(this) || CanAlwaysSee(obj))

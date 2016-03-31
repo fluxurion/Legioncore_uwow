@@ -2213,9 +2213,9 @@ void ObjectMgr::LoadGameobjects()
             continue;
         }
 
-        if (gInfo->type == GAMEOBJECT_TYPE_GARRISON_BUILDING || gInfo->type ==  GAMEOBJECT_TYPE_GARRISON_PLOT)
+        if (gInfo->type == GAMEOBJECT_TYPE_GARRISON_BUILDING || gInfo->type == GAMEOBJECT_TYPE_GARRISON_PLOT || gInfo->type == GAMEOBJECT_TYPE_GARRISON_SHIPMENT)
         {
-            sLog->outError(LOG_FILTER_SQL, "Gameobject (GUID: " UI64FMTD " Entry %u GoType: %u) is GAMEOBJECT_TYPE_GARRISON_BUILDING or GAMEOBJECT_TYPE_GARRISON_PLOT, not loaded.", guid, entry, gInfo->type);
+            sLog->outError(LOG_FILTER_SQL, "Gameobject (GUID: " UI64FMTD " Entry %u GoType: %u) is GARRISON_BUILDING or GARRISON_PLOT or GARRISON_SHIPMENT, not loaded.", guid, entry, gInfo->type);
             continue;
         }
 
@@ -5831,8 +5831,8 @@ void ObjectMgr::LoadAccessRequirements()
 
     _accessRequirementStore.clear();                                  // need for reload case
 
-    //                                               0      1           2          3          4           5     6      7             8             9                      10                        11
-    QueryResult result = WorldDatabase.Query("SELECT mapid, difficulty, level_min, level_max, item_level, item, item2, quest_done_A, quest_done_H, completed_achievement, quest_failed_text, completed_achievement_A FROM access_requirement");
+    //                                               0      1           2          3          4           5     6      7             8             9                      10                        11                   12
+    QueryResult result = WorldDatabase.Query("SELECT mapid, difficulty, level_min, level_max, item_level, item, item2, quest_done_A, quest_done_H, completed_achievement, quest_failed_text, completed_achievement_A, dungeonId FROM access_requirement");
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 access requirement definitions. DB table `access_requirement` is empty.");
@@ -5847,12 +5847,16 @@ void ObjectMgr::LoadAccessRequirements()
 
         ++count;
 
-        uint32 mapid = fields[0].GetUInt32();
+        int32 mapid = fields[0].GetInt32();
         uint8 difficulty = fields[1].GetUInt8();
-        uint32 requirement_ID = MAKE_PAIR32(mapid, difficulty);
+        uint16 dungeonId = fields[12].GetUInt32();
+        AccessRequirementKey requirement_ID (mapid, difficulty, dungeonId);
 
         AccessRequirement ar;
 
+        ar.mapid                    = mapid;
+        ar.difficulty               = difficulty;
+        ar.dungeonId                = dungeonId;
         ar.levelMin                 = fields[2].GetUInt8();
         ar.levelMax                 = fields[3].GetUInt8();
         ar.item_level               = fields[4].GetUInt16();
@@ -6233,7 +6237,7 @@ void ObjectMgr::LoadGameObjectTemplate()
             for (uint8 i = 0; i < MAX_GAMEOBJECT_QUEST_ITEMS; ++i)
                 got.questItems[i] = 0;
 
-            for (uint8 i = 0; i < 8; ++i)
+            for (uint8 i = 0; i < GO_DBC_DATA_COUNT/*MAX_GAMEOBJECT_DATA*/; ++i)
                 got.raw.data[i] = goe->Data[i];
 
             got.unkInt32 = 0;

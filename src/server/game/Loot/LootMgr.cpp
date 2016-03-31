@@ -29,6 +29,8 @@
 #include "LootPackets.h"
 #include "ObjectMgr.h"
 #include "ItemPackets.h"
+#include "Garrison.h"
+#include "GarrisonMgr.h"
 
 static Rates const qualityToRate[MAX_ITEM_QUALITY] =
 {
@@ -369,6 +371,20 @@ LootItem::LootItem(LootStoreItem const& li, Loot* loot)
     is_underthreshold = 0;
     is_counted = 0;
 
+    init(loot);
+}
+
+void LootItem::InitItem(uint32 itemID, uint32 _count, Loot* loot, bool isCurrency)
+{
+    item.ItemID = itemID;
+    currency = type = isCurrency;
+    count = _count;
+
+    init(loot);
+}
+
+void LootItem::init(Loot* loot)
+{
     if (currency)
     {
         freeforall = false;
@@ -394,7 +410,7 @@ LootItem::LootItem(LootStoreItem const& li, Loot* loot)
             {
                 Unit::AuraEffectList const& auras = lootOwner->GetAuraEffectsByType(SPELL_AURA_MOD_ITEM_LOOT);
                 for (Unit::AuraEffectList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
-                    if ((*itr)->GetMiscValue() == proto->Class && (*itr)->GetMiscValueB() & (1 << proto->SubClass))
+                    if (proto && (*itr)->GetMiscValue() == proto->Class && (*itr)->GetMiscValueB() & (1 << proto->SubClass))
                         mult *= ((*itr)->GetAmount() + 100.0f) / 100.0f;
             }
 
@@ -437,6 +453,15 @@ bool LootItem::AllowedForPlayer(Player const* player) const
         // check quest requirements
         if (!(pProto->FlagsCu & ITEM_FLAGS_CU_IGNORE_QUEST_STATUS) && ((needs_quest || (pProto->StartQuest && player->GetQuestStatus(pProto->StartQuest) != QUEST_STATUS_NONE)) && !player->HasQuestForItem(item.ItemID)))
             return false;
+
+        //! GARR_BTYPE_WARMILL support.
+        if (item.ItemID == 113681)
+        {
+            if (Garrison * gar = const_cast<Player*>(player)->GetGarrison())
+                if (gar->GetPlotWithBuildingType(GARR_BTYPE_WARMILL))
+                    return true;
+            return false;
+        }
     }
     else if (type == LOOT_ITEM_TYPE_CURRENCY)
     {
@@ -485,6 +510,38 @@ Loot::Loot(uint32 _gold)
 void Loot::GenerateLootGuid(ObjectGuid __objGuid)
 {
     m_guid = ObjectGuid::Create<HighGuid::LootObject>(__objGuid.GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::LootObject>()->Generate());
+}
+
+LootItem* Loot::GetLootItem(uint32 entry)
+{
+    for (auto &i : items)
+    {
+        if (i.item.ItemID == entry)
+            return &i;
+    }
+    return nullptr;
+}
+
+void Loot::AddOrReplaceItem(uint32 itemID, uint32 _count, bool isRes, bool update/*=false*/)
+{
+    LootItem* item = GetLootItem(itemID);
+    if (item)
+    {
+        if (update)
+            item->count += _count;
+        else
+            item->count = _count;
+        item->is_looted = false;
+    }
+    else
+    {
+        LootItem item;
+        item.InitItem(itemID, _count, this, isRes);
+        items.push_back(item);
+
+        if (isRes)
+            FillCurrencyLoot(m_lootOwner); //register
+    }
 }
 
 // Inserts the item into the loot (called by LootTemplate processors)
@@ -551,7 +608,7 @@ bool Loot::FillLoot(uint32 lootId, LootStore const& store, Player* lootOwner, bo
 
     LootTemplate const* tab = store.GetLootFor(lootId);
 
-    if (!tab)
+    if (!tab && !shipmentBuildingType)
     {
         if(objType == 2)
             FillNotNormalLootFor(lootOwner, true);
@@ -564,12 +621,15 @@ bool Loot::FillLoot(uint32 lootId, LootStore const& store, Player* lootOwner, bo
     items.reserve(MAX_NR_LOOT_ITEMS);
     quest_items.reserve(MAX_NR_QUEST_ITEMS);
 
-    if(personal)
-        tab->ProcessPersonal(*this);
-    else if(lootOwner->GetZoneId() == 6757)  //Hack for Timeless Isle
-        tab->Process(*this, false);          // Processing is done there, callback via Loot::AddItem()
-    else
-        tab->Process(*this, store.IsRatesAllowed());          // Processing is done there, callback via Loot::AddItem()
+    //! For garrisone
+    if (tab){
+        if(personal)
+            tab->ProcessPersonal(*this);
+        else if(lootOwner->GetZoneId() == 6757)  //Hack for Timeless Isle
+            tab->Process(*this, false);          // Processing is done there, callback via Loot::AddItem()
+        else
+            tab->Process(*this, store.IsRatesAllowed());          // Processing is done there, callback via Loot::AddItem()
+    }
 
     // Setting access rights for group loot case
     Group* group = lootOwner->GetGroup();
@@ -1307,7 +1367,7 @@ LootStoreItem const* LootTemplate::LootGroup::Roll() const
     {
         float Roll = (float)rand_chance();
 
-        for (uint32 i = 0; i < ExplicitlyChanced.size(); ++i)   // check each explicitly chanced entry in the template and modify its chance based on quality.
+        for (size_t i = 0; i < ExplicitlyChanced.size(); ++i)   // check each explicitly chanced entry in the template and modify its chance based on quality.
         {
             if (ExplicitlyChanced[i].chance >= 100.0f)
                 return &ExplicitlyChanced[i];

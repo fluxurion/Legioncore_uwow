@@ -1,0 +1,1 @@
+ALTER TABLE `character_garrison_buildings` ADD `data` VARCHAR(64) NULL DEFAULT NULL AFTER `timeBuilt`;

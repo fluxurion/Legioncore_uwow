@@ -773,12 +773,12 @@ enum NPCFlags2
     UNIT_NPC_FLAG2_NONE                 = 0x00000000,
     UNIT_NPC_FLAG2_UPGRADE_MASTER       = 0x00000001,
     UNIT_NPC_FLAG2_GARRISON_ARCHITECT   = 0x00000002,
-    UNIT_NPC_FLAG2_UNK1                 = 0x00000004,       // AIObstacleMgr::Register
+    UNIT_NPC_FLAG2_SHIPMENT_ORDER       = 0x00000004,       // AIObstacleMgr::Register
     UNIT_NPC_FLAG2_UNK2                 = 0x00000008,       // CGUnit_C::EnableSteering
     UNIT_NPC_FLAG2_UNK3                 = 0x00000010, 
     UNIT_NPC_FLAG2_SHIPMENT_CRAFTER     = 0x00000020,
     UNIT_NPC_FLAG2_GARRISON_MISSION_NPC = 0x00000040,
-    UNIT_NPC_FLAG2_TRADESKILL_NPC       = 0x00000080
+    UNIT_NPC_FLAG2_TRADESKILL_NPC       = 0x00000080,
 };
 
 enum MovementFlags
@@ -1574,7 +1574,6 @@ class Unit : public WorldObject
         // returns the change in power
         int32 ModifyPower(Powers power, int32 val, bool set = false);
         int32 ModifyPowerPct(Powers power, float pct, bool apply = true);
-        void TriggerEclipse(int32 power);
 
         uint32 GetPowerIndex(uint32 powerType) const;
 
@@ -2031,6 +2030,7 @@ class Unit : public WorldObject
         AuraEffectList const& GetAuraEffectsByType(AuraType type) const { return m_modAuras[type]; }
         AuraEffectList GetAuraEffectsByMechanic(uint32 mechanic_mask) const;
         AuraEffectList GetTotalNotStuckAuraEffectByType(AuraType auratype) const;
+        AuraEffectList GetAuraEffectsByType(AuraType type) { return m_modAuras[type]; }
 
         AuraList      & GetSingleCastAuras()       { return m_scAuras; }
         AuraList const& GetSingleCastAuras() const { return m_scAuras; }
@@ -2598,7 +2598,7 @@ class Unit : public WorldObject
         bool HasSomeCasterAura(ObjectGuid const& guid) const;
         bool HasMyAura(uint32 spellId);
         bool HasMyAura(Aura const* hasAura, bool check = false);
-        void RemoveMyAura(uint32 spellId);
+        void RemovePetAndOwnerAura(uint32 spellId, Unit* owner = NULL);
         uint32 GetCountMyAura(uint32 spellId);
 
         Unit* GetUnitForLinkedSpell(Unit* caster, Unit* target, uint8 type);

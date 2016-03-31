@@ -101,18 +101,13 @@ namespace WorldPackets
             uint32 MissionState = 0;
         };
 
-        struct LandingPageData
-        {
-            uint64 FollowerDBID = 0;
-            uint32 MissionRecID = 0;
-            uint32 Unk1 = 0;
-            uint32 Unk2 = 0;
-        };
-
         struct Shipment
         {
+            Shipment() {}
+            uint64 Unk2 = 0;
             uint64 ShipmentID = 0;
             uint32 ShipmentRecID = 0;
+            uint32 BuildingTypeID = 0;
             time_t CreationTime = time(0);
             int32 ShipmentDuration = 0;
         };
@@ -120,25 +115,19 @@ namespace WorldPackets
         class GetGarrisonInfoResult final : public ServerPacket
         {
         public:
-            GetGarrisonInfoResult() : ServerPacket(SMSG_GET_GARRISON_INFO_RESULT, 8) { }
+            GetGarrisonInfoResult() : ServerPacket(SMSG_GET_GARRISON_INFO_RESULT, 36) { }
 
             WorldPacket const* Write() override;
 
-            struct Info
-            {
-                uint32 GarrSiteID = 0;
-                uint32 GarrSiteLevelID = 0;
-                uint32 FactionIndex = 0;
-                uint32 NumFollowerActivationsRemaining = 0;
-                std::vector<GarrisonPlotInfo*> Plots;
-                std::vector<GarrisonBuildingInfo const*> Buildings;
-                std::vector<GarrisonFollower const*> Followers;
-                std::vector<GarrisonMission const*> Missions;
-                std::vector<int32> ArchivedMissions;
-            };
-
-            uint32 Unk = 0; // maybe garrType?
-            std::vector<Info> Data;
+            uint32 GarrSiteID = 0;
+            uint32 GarrSiteLevelID = 0;
+            uint32 FactionIndex = 0;
+            uint32 NumFollowerActivationsRemaining = 0;
+            std::vector<GarrisonPlotInfo*> Plots;
+            std::vector<GarrisonBuildingInfo const*> Buildings;
+            std::vector<GarrisonFollower const*> Followers;
+            std::vector<GarrisonMission const*> Missions;
+            std::vector<int32> ArchivedMissions;
         };
 
         struct GarrisonRemoteBuildingInfo
@@ -383,6 +372,18 @@ namespace WorldPackets
             uint32 MissionRecID = 0;
         };
 
+        class GarrisonSwapBuildings final : public ClientPacket
+        {
+        public:
+            GarrisonSwapBuildings(WorldPacket&& packet) : ClientPacket(CMSG_GARRISON_SWAP_BUILDINGS, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid NpcGUID;
+            uint32 PlotId1;
+            uint32 PlotId2;
+        };
+
         class GarrisonCompleteMission final : public ClientPacket
         {
         public:
@@ -413,7 +414,7 @@ namespace WorldPackets
 
             WorldPacket const* Write() override;
 
-            std::vector<LandingPageData> MsgData;
+            std::vector<Shipment> MsgData;
         };
 
         class GarrisonAddMissionResult final : public ServerPacket
@@ -478,6 +479,17 @@ namespace WorldPackets
         {
         public:
             CreateShipment(WorldPacket&& packet) : ClientPacket(CMSG_CREATE_SHIPMENT, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid NpcGUID;
+            uint32 Count;
+        };
+
+        class GarrisonRequestShipmentInfo final : public ClientPacket
+        {
+        public:
+            GarrisonRequestShipmentInfo(WorldPacket&& packet) : ClientPacket(CMSG_GARRISON_REQUEST_SHIPMENT_INFO, std::move(packet)) { }
 
             void Read() override;
 
@@ -768,7 +780,30 @@ namespace WorldPackets
             std::vector<uint32> updatedMissionRecIDs;
             bool openMissionNpc;
         };
+
+        struct GarrTradeSkill
+        {
+            uint32 unk = 0;
+            std::vector<uint32> skillStorel;
+            std::vector<uint32> unkStore1;
+            std::vector<uint32> unkStore2;
+            std::vector<uint32> spellStore;
+        };
+
+        class GarrisonTradeSkillResponse final : public ServerPacket
+        {
+        public:
+            GarrisonTradeSkillResponse() : ServerPacket(SMSG_GARRISON_OPEN_TRADESKILL_NPC_RESPONSE, 4 + 4 + 1) { }
+
+            WorldPacket const* Write() override;
+
+            ObjectGuid GUID;
+            GarrTradeSkill tradeSkill;
+            std::vector<uint32> conditionPlayerStore;
+        };
     }
 }
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::GarrTradeSkill const& gar);
 
 #endif // GarrisonPackets_h__

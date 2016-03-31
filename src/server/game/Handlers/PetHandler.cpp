@@ -150,7 +150,6 @@ void WorldSession::HandleQueryPetName(WorldPackets::Query::QueryPetName& packet)
         if (declinedNames)
         {
             response.HasDeclined = true;
-
             for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
                 if (declinedNames->name[i].size())
                     response.DeclinedNames.name[i] = declinedNames->name[i];

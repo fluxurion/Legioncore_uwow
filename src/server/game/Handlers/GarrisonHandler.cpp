@@ -74,7 +74,10 @@ void WorldSession::HandleGarrisonMissionBonusRoll(WorldPackets::Garrison::Garris
 }
 
 void WorldSession::HandleGarrisonRequestLandingPageShipmentInfo(WorldPackets::Garrison::GarrisonRequestLandingPageShipmentInfo& /*packet*/)
-{ }
+{ 
+    if (Garrison* garrison = _player->GetGarrison())
+        garrison->SendGarrisonShipmentLandingPage();
+}
 
 void WorldSession::HandleGarrisonCheckUpgradeable(WorldPackets::Garrison::GarrisonCheckUpgradeable& /*packet*/)
 {
@@ -102,6 +105,12 @@ void WorldSession::HandleGarrisonStartMission(WorldPackets::Garrison::GarrisonSt
     }
 }
 
+void WorldSession::HandleGarrisonSwapBuildings(WorldPackets::Garrison::GarrisonSwapBuildings& packet)
+{
+    if (Garrison* garrison = _player->GetGarrison())
+        garrison->Swap(packet.PlotId1, packet.PlotId2);
+}
+
 void WorldSession::HandleGarrisonCompleteMission(WorldPackets::Garrison::GarrisonCompleteMission& packet)
 {
     if (!_player->GetNPCIfCanInteractWith(packet.NpcGUID, UNIT_NPC_FLAG_NONE, UNIT_NPC_FLAG2_GARRISON_MISSION_NPC))
@@ -123,8 +132,23 @@ void WorldSession::HandleGarrisonCompleteMission(WorldPackets::Garrison::Garriso
     }
 }
 
-void WorldSession::HandleCreateShipment(WorldPackets::Garrison::CreateShipment& /*packet*/)
-{ }
+void WorldSession::HandleCreateShipment(WorldPackets::Garrison::CreateShipment& packet)
+{
+    if (!_player->GetNPCIfCanInteractWith(packet.NpcGUID, UNIT_NPC_FLAG_NONE, UNIT_NPC_FLAG2_SHIPMENT_ORDER))
+        return;
+
+    if (Garrison* garrison = _player->GetGarrison())
+        garrison->CreateShipment(packet.NpcGUID, packet.Count);
+}
+
+void WorldSession::HandleGarrisonRequestShipmentInfo(WorldPackets::Garrison::GarrisonRequestShipmentInfo& packet)
+{
+    if (!_player->GetNPCIfCanInteractWith(packet.NpcGUID, UNIT_NPC_FLAG_NONE, UNIT_NPC_FLAG2_SHIPMENT_ORDER))
+        return;
+
+    if (Garrison* garrison = _player->GetGarrison())
+        garrison->SendShipmentInfo(packet.NpcGUID);
+}
 
 void WorldSession::HandleGarrisonOpenMissionNpc(WorldPackets::Garrison::GarrisonOpenMissionNpc& packet)
 {
@@ -135,8 +159,19 @@ void WorldSession::HandleGarrisonOpenMissionNpc(WorldPackets::Garrison::Garrison
         garrison->SendMissionListUpdate(true);
 }
 
-void WorldSession::HandleCompleteAllReadyShipments(WorldPackets::Garrison::CompleteAllReadyShipments& /*packet*/)
-{ }
+void WorldSession::HandleCompleteAllReadyShipments(WorldPackets::Garrison::CompleteAllReadyShipments& packet)
+{
+    Map * m = _player->FindMap();
+    if (!m)
+        return;
+
+    GameObject *go = m->GetGameObject(packet.GUID);
+    if (!go)
+        return;
+
+    if (Garrison* garrison = _player->GetGarrison())
+        garrison->CompleteShipments(go);
+}
 
 void WorldSession::HandleUpgradeGarrison(WorldPackets::Garrison::UpgradeGarrison& packet)
 {
@@ -149,15 +184,15 @@ void WorldSession::HandleUpgradeGarrison(WorldPackets::Garrison::UpgradeGarrison
 
 void WorldSession::HandleTrophyData(WorldPackets::Garrison::TrophyData& packet)
 {
-    switch (packet.GetOpcode())
-    {
+    //switch (packet.GetOpcode())
+    //{
         //case CMSG_REPLACE_TROPHY:
         //    break;
         //case CMSG_CHANGE_MONUMENT_APPEARANCE:
         //    break;
-        default:
-            break;
-    }
+        //default:
+            //break;
+    //}
 }
 
 void WorldSession::HandleRevertTrophy(WorldPackets::Garrison::RevertTrophy& /*packet*/)

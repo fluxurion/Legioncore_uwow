@@ -365,12 +365,7 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
             SpellShapeshiftFormEntry const* form = sSpellShapeshiftFormStore.LookupEntry(GetShapeshiftForm());
             // Directly taken from client, SHAPESHIFT_FLAG_AP_FROM_STRENGTH ?
             if (form && form->Flags & 0x20)
-            {
                 agilityValue += std::max(GetStat(STAT_AGILITY) * entry->AttackPowerPerStrength, 0.0f);
-                // Druid feral has AP per agility = 2
-                if (form->ID == FORM_CAT || form->ID == FORM_BEAR)
-                    agilityValue *= 2;
-            }
 
             val2 = strengthValue + agilityValue;
         }
@@ -745,6 +740,9 @@ void Player::UpdateDodgePercentage()
     val = val < 0.0f ? 0.0f : val;
 
     SetStatFloatValue(PLAYER_FIELD_DODGE_PERCENTAGE, val);
+
+    if (Aura* aura = GetAura(155578)) // Guardian of Elune
+        aura->RecalculateAmountOfEffects(true);
 }
 
 void Player::UpdateSpellCritChance(uint32 school)
@@ -1185,44 +1183,65 @@ void Unit::UpdatePowerRegen(uint32 power)
     if (powerIndex == MAX_POWERS || powerIndex >= MAX_POWERS_PER_CLASS)
         return;
 
+    float meleeHaste = GetFloatValue(UNIT_FIELD_MOD_HASTE);
     float addvalue = 0.0f;
+    bool regenInCombat = false;
+    bool regenNotCombat = false;
 
     //add value in 1s
     switch (power)
     {
-        case POWER_RAGE:
-            addvalue -= 25 / GetFloatValue(UNIT_FIELD_MOD_HASTE) / 2;
+        case POWER_RAGE: // Regenerate Rage
+        {
+            addvalue -= 25.0f / meleeHaste / 2.0f;
+            regenInCombat = true;
+            regenNotCombat = true;
             break;
-        case POWER_FOCUS:
-            addvalue += 1.0f * 5;
+        }
+        case POWER_FOCUS: // Regenerate Focus
+        {
+            addvalue += 1.0f * 5.0f;
+            regenInCombat = true;
+            regenNotCombat = true;
             break;
-        case POWER_ENERGY:
-            addvalue += 0.01f * 1000;
+        }
+        case POWER_ENERGY: // Regenerate Energy
+        {
+            addvalue += 0.01f * 1000.0f;
+            regenInCombat = true;
+            regenNotCombat = true;
             break;
-        case POWER_RUNIC_POWER:
-            addvalue -= 30 / 2;
+        }
+        case POWER_RUNIC_POWER: // Regenerate Runic Power
+        {
+            addvalue -= 30.0f / 2.0f;
+            regenNotCombat = true;
             break;
+        }
         case POWER_HOLY_POWER:
         case POWER_CHI:
-            addvalue -= 1.0f / 10;
+        {
+            addvalue -= 1.0f / 10.0f;
+            regenNotCombat = true;
             break;
-        case POWER_SOUL_SHARDS:
-            addvalue += 100.0f / 20;
-            break;
+        }
         case POWER_LUNAR_POWER:
             addvalue += 1.0f;
+            regenInCombat = true;
             break;
         default:
             break;
     }
 
     float val = (addvalue * GetTotalAuraMultiplierByMiscValue(SPELL_AURA_MOD_POWER_REGEN_PERCENT, power) - addvalue);
+    val += GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_POWER_REGEN, power) / 5.0f;
 
-    SetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + powerIndex, val);
-    if(power < POWER_COMBO_POINTS)
+    if(regenNotCombat)
+        SetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + powerIndex, val);
+    if(regenInCombat)
         SetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER + powerIndex, val);
 
-    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Unit::UpdatePowerRegen val %f, perc %i, powerIndex %i, power %i, addvalue %f", val, perc, powerIndex, power, addvalue);
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Unit::UpdatePowerRegen val %f, powerIndex %i, power %i, addvalue %f", val, powerIndex, power, addvalue);
 }
 
 /*#######################################
@@ -1781,7 +1800,7 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
     if (attType > OFF_ATTACK || GetEntry() == 69792 || GetEntry() == 69680 || GetEntry() == 69791)
         return;
 
-    float APCoefficient = 11.f;
+    float APCoefficient = 3.5f;
     UnitMods unitMod = UNIT_MOD_DAMAGE_MAINHAND;
 
     float att_speed = BASE_ATTACK_TIME / 1000.0f;

@@ -20,13 +20,18 @@
 
 #include "DB2Stores.h"
 
+struct randShipment
+{
+    uint32 Timer = 0;
+    uint32 ShipmentID = 0;
+};
+
 struct FinalizeGarrisonPlotGOInfo
 {
     struct
     {
         uint32 GameObjectId;
         Position Pos;
-        uint16 AnimKitId;
     } FactionInfo[2];
 };
 
@@ -42,6 +47,65 @@ struct GarrAbilities
 {
     std::unordered_set<GarrAbilityEntry const*> Counters;
     std::unordered_set<GarrAbilityEntry const*> Traits;
+};
+
+struct GarrShipment
+{
+    uint32 SiteID = 0;
+    uint32 ContainerID = 0;
+    uint32 NpcEntry = 0;
+    uint32 ShipmentID = 0;
+
+    CharShipmentEntry const* data = NULL;
+    CharShipmentConteiner const* cEntry = NULL;
+};
+
+struct GarrTradeSkill
+{
+    uint32 spellID;
+    uint32 conditionID;
+    uint16 skillID;
+    uint8  reqBuildingLvl;
+};
+
+typedef std::list<GarrTradeSkill /*tradeskill*/> TradeskillList;
+typedef std::unordered_map<uint32 /*npcEntry*/, TradeskillList> NpcTradeskillList;
+
+
+enum ShipmentGetType : uint8
+{
+    SHIPMENT_GET_BY_NPC           = 0,
+    SHIPMENT_GET_BY_CONTEINER_ID  = 1,
+};
+
+enum GarrBuildingType
+{
+    GARR_BTYPE_NONE         = 0,
+    GARR_BTYPE_MINE         = 1,
+    GARR_BTYPE_HERB_GARDEN  = 2,
+    GARR_BTYPE_BARN         = 3,
+    GARR_BTYPE_LUMBER_MILL  = 4,
+    GARR_BTYPE_TAVERN       = 5,
+    GARR_BTYPE_TRADING_POST = 6,
+    GARR_BTYPE_MENAGERIE    = 7,
+    GARR_BTYPE_BARRACKS     = 8,
+    GARR_BTYPE_WARMILL      = 10,
+    GARR_BTYPE_STABLES      = 11,
+    GARR_BTYPE_MAGETOWER    = 13,
+    GARR_BTYPE_SALVAGE_YARD = 14,
+    GARR_BTYPE_STOREHOUSE   = 15,
+    GARR_BTYPE_ALCHEMY_LAB  = 16,
+    GARR_BTYPE_FORGE        = 17,
+    GARR_BTYPE_ENCHANTERS   = 18,
+    GARR_BTYPE_ENGINEERING  = 19,
+    GARR_BTYPE_SCRIBE       = 20,
+    GARR_BTYPE_GEM          = 21,
+    GARR_BTYPE_TANNERY      = 22,
+    GARR_BTYPE_TAILORING    = 23,
+    GARR_BTYPE_FISHING      = 24,
+    GARR_BTYPE_GLADIATORS   = 25,
+    GARR_BTYPE_WORKSHOP     = 26,
+    GARR_BTYPE_MAX
 };
 
 class GarrisonMgr
@@ -68,12 +132,17 @@ public:
     std::list<GarrAbilityEntry const*> RollFollowerAbilities(GarrFollowerEntry const* follower, uint32 quality, uint32 faction, bool initial) const;
     std::list<GarrAbilityEntry const*> GetClassSpecAbilities(GarrFollowerEntry const* follower, uint32 faction) const;
     uint64 GenerateMissionDbId();
-
+    uint64 GenerateShipmentDbId();
     std::list<GameObjectData> const* GetGoSpawnBuilding(uint32 plotID, uint32 build) const;
     std::list<CreatureData> const* GetNpcSpawnBuilding(uint32 plotID, uint32 build) const;
+    TradeskillList const * GetTradeSkill(uint32 npcID);
 
     GarrMissionEntry const* GetNextMissionInQuestLine(uint32 missionID);
     GarrMissionEntry const* GetMissionAtFollowerTaking(uint32 followerID);
+
+    GarrShipment const* GetGarrShipment(uint32 entry, ShipmentGetType type) const;
+    uint32 GetShipmentID(GarrShipment const* shipment);
+    
 private:
     void InitializeDbIdSequences();
     void LoadPlotFinalizeGOInfo();
@@ -81,6 +150,8 @@ private:
     void LoadBuildingSpawnNPC();
     void LoadBuildingSpawnGo();
     void LoadMissionLine();
+    void LoadShipment();
+    void LoadTradeSkill();
 
     std::unordered_map<uint32 /*garrSiteId*/, std::vector<GarrSiteLevelPlotInstEntry const*>> _garrisonPlotInstBySiteLevel;
     std::unordered_map<uint32 /*mapId*/, std::unordered_map<uint32 /*garrPlotId*/, GameObjectsEntry const*>> _garrisonPlots;
@@ -98,10 +169,17 @@ private:
     std::unordered_map<uint32 /*MissionID*/, GarrMissionEntry const* /*nextMission*/> _nextMission;
     std::unordered_map<uint32 /*FollowerID*/, GarrMissionEntry const* /*nextMission*/> _nextMissionByFollower;
     
-    std::set<GarrAbilityEntry const*> _garrisonFollowerRandomTraits;
+    NpcTradeskillList _garrNpcTradeSkill;
+    
+    typedef std::unordered_map<uint32/*entry*/, GarrShipment> shipmentStoreMap;
+    std::map<uint8 /*ShipmentGetType*/, shipmentStoreMap> shipment;
 
+    std::set<GarrAbilityEntry const*> _garrisonFollowerRandomTraits;
+    std::unordered_map<uint32 /*ShipmentConteinerID*/, randShipment> _randShipment;
+    
     uint64 _followerDbIdGenerator = UI64LIT(1);
     uint64 _missionDbIdGenerator = UI64LIT(1);
+    uint64 _shipmentDbIdGenerator = UI64LIT(1);
 };
 
 #define sGarrisonMgr GarrisonMgr::Instance()

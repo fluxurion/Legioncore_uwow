@@ -51,6 +51,8 @@ DB2Storage<ChrClassesXPowerTypesEntry>      sChrClassesXPowerTypesStore("ChrClas
 DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRacesFormat, HOTFIX_SEL_CHR_RACES);
 DB2Storage<ChrSpecializationEntry>          sChrSpecializationStore("ChrSpecialization.db2", ChrSpecializationFormat, HOTFIX_SEL_CHR_SPECIALIZATION);
 DB2Storage<ConversationLineEntry>           sConversationLineStore("ConversationLine.db2", ConversationLineFormat, HOTFIX_SEL_CONVERSATION_LINE);
+DB2Storage<CharShipmentEntry>               sCharShipmentStore("CharShipment.db2", CharShipmentFormat, HOTFIX_SEL_CHAR_SHIPMENT);
+DB2Storage<CharShipmentConteiner>           sCharShipmentContainerStore("CharShipmentContainer.db2", CharShipmentConteinerFormat, HOTFIX_SEL_CHAR_SHIPMENT_CONTAINER);
 DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDifficulty.db2", CreatureDifficultyFormat, HOTFIX_SEL_CREATURE_DIFFICULTY);
 DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, HOTFIX_SEL_CREATURE_DISPLAY_INFO);
 DB2Storage<CreatureFamilyEntry>             sCreatureFamilyStore("CreatureFamily.db2", CreatureFamilyFormat, HOTFIX_SEL_CREATURE_FAMILY);
@@ -337,6 +339,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sChrRacesStore);
     LOAD_DB2(sChrSpecializationStore);
     LOAD_DB2(sConversationLineStore);
+    // LOAD_DB2(sCharShipmentStore);
+    // LOAD_DB2(sCharShipmentContainerStore);
     LOAD_DB2(sCreatureDifficultyStore);
     LOAD_DB2(sCreatureDisplayInfoStore);
     LOAD_DB2(sCreatureFamilyStore);
@@ -578,6 +582,12 @@ void DB2Manager::InitDB2CustomStores()
 
     for (GarrMissionRewardEntry const* entry : sGarrMissionRewardStore)
         _garrMissionRewardByMissionID[entry->MissionID] = entry;
+
+    for (CharShipmentEntry const* entry : sCharShipmentStore)
+        _charShipmentConteiner.insert(ShipmentConteinerMap::value_type(entry->ShipmentConteinerID, entry));
+
+    for (GarrBuildingEntry const* entry : sGarrBuildingStore)
+        _buldingTypeConteiner.insert(GarrBuildingTypeMap::value_type(entry->Type, entry));
 
     for (LanguageWordsEntry const* entry : sLanguageWordsStore)
         _languageWordsMap[entry->Lang][strlen(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()])].push_back(entry->Word->Str[sObjectMgr->GetDBCLocaleIndex()]);
@@ -1823,4 +1833,9 @@ PvpTalentUnlockEntry const* DB2Manager::GetTalentUnlockForHonorLevel(uint8 honor
         return data->second;
 
     return nullptr;
+}
+
+DB2Manager::ShipmentConteinerMapBounds DB2Manager::GetShipmentConteinerBounds(uint32 conteinerID) const
+{
+    return ShipmentConteinerMapBounds(_charShipmentConteiner.lower_bound(conteinerID), _charShipmentConteiner.upper_bound(conteinerID));
 }

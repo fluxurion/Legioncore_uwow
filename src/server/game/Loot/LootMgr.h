@@ -222,9 +222,16 @@ struct LootItem
     bool    needs_quest       : 1;                          // quest drop
     bool    follow_loot_rules : 1;
 
+    LootItem() : type(0), quality(ITEM_QUALITY_POOR), count(0), currency(false),
+        is_looted(false), freeforall(false), is_underthreshold(false), is_counted(false), needs_quest(false),
+        follow_loot_rules(false){}
+
     // Constructor, copies most fields from LootStoreItem, generates random count and random suffixes/properties
     // Should be called for non-reference LootStoreItem entries only (mincountOrRef > 0)
     explicit LootItem(LootStoreItem const& li, Loot* loot);
+    void init(Loot* loot);
+
+    void InitItem(uint32 itemID, uint32 count, Loot* loot, bool isCurrency = false);
 
     // Basic checks for player/item compatibility - if false no chance to see the item in the loot
     bool AllowedForPlayer(Player const* player) const;
@@ -372,10 +379,11 @@ struct Loot
     uint8 spawnMode;
     uint32 itemLevel;
     uint32 chance;
-    bool personal;
-    bool bonusLoot;
-    bool isBoss;
-    bool isClear;
+    uint32 shipmentBuildingType = 0;                       // of garrison
+    bool personal = false;
+    bool bonusLoot = false;
+    bool isBoss = false;
+    bool isClear = false;
 
 
     explicit Loot(uint32 _gold = 0);
@@ -383,6 +391,9 @@ struct Loot
 
     ObjectGuid const& GetGUID() const { return m_guid; }
     void SetGUID(ObjectGuid const& guid) { m_guid = guid; }
+
+    LootItem* GetLootItem(uint32 entry);
+    void AddOrReplaceItem(uint32 itemID, uint32 _count, bool isRes = false, bool update = false);
 
     // if loot becomes invalid this reference is used to inform the listener
     void addLootValidatorRef(LootValidatorRef* pLootValidatorRef)
@@ -413,14 +424,16 @@ struct Loot
     bool hasItemFor(Player* player) const;
     bool hasOverThresholdItem() const;
     Player const* GetLootOwner() const { return m_lootOwner; }
+    void SetLootOwner(Player* p) { m_lootOwner = p;  }
     uint32 GetBonusTreeMod() const { return _difficultyBonusTreeMod; }
 
     // Builds data for SMSG_LOOT_RESPONSE
     void BuildLootResponse(WorldPackets::Loot::LootResponse& packet, Player* viewer, PermissionTypes permission = ALL_PERMISSION, ItemQualities t = ITEM_QUALITY_POOR) const;
 
+    QuestItemList* FillCurrencyLoot(Player* player);
+
 private:
     void FillNotNormalLootFor(Player* player, bool presentAtLooting);
-    QuestItemList* FillCurrencyLoot(Player* player);
     QuestItemList* FillFFALoot(Player* player);
     QuestItemList* FillQuestLoot(Player* player);
     QuestItemList* FillNonQuestNonFFAConditionalLoot(Player* player, bool presentAtLooting);

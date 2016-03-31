@@ -90,7 +90,7 @@ enum CreatureFlagsExtra
 
 #define CREATURE_REGEN_INTERVAL 5 * IN_MILLISECONDS
 #define PET_FOCUS_REGEN_INTERVAL 2 * IN_MILLISECONDS
-
+#define BOSS_REGEN_INTERVAL 1 * IN_MILLISECONDS
 
 #define MAX_EQUIPMENT_ITEMS 3
 
@@ -1016,6 +1016,8 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         uint64 m_DBTableGuid;                  ///< For new or temporary creatures is 0 for saved it is lowguid
         uint8 m_equipmentId;
         int8 m_originalEquipmentId; // can be -1
+        uint32 m_powerRegenTimer[MAX_POWERS];
+        float m_powerFraction[MAX_POWERS_PER_CLASS];
 
         bool m_AlreadyCallAssistance;
         bool m_AlreadySearchedAssistance;
@@ -1045,7 +1047,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
 
         bool IsInvisibleDueToDespawn() const;
         bool CanAlwaysSee(WorldObject const* obj) const;
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* seer = NULL) const;
     private:
 
         //WaypointMovementGenerator vars

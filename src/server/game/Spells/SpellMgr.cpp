@@ -135,7 +135,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         case SPELLFAMILY_WARRIOR:
         {
             // Hamstring and Piercing Howl - limit duration to 10s in PvP
-            if (spellproto->ClassOptions.SpellClassMask[0] & 0x2 || spellproto->Id == 12323 || spellproto->Id == 137637)
+            if (spellproto->ClassOptions.SpellClassMask[0] & 0x2 || spellproto->Id == 12323 || spellproto->Id == 170995)
                 return DIMINISHING_LIMITONLY;
             // Charge Stun (own diminishing)
             else if (spellproto->ClassOptions.SpellClassMask[0] & 0x01000000)
@@ -3307,8 +3307,8 @@ void SpellMgr::LoadPetLevelupSpellMap()
                 if (!spell) // not exist or triggered or talent
                     continue;
 
-                if (!spell->SpellLevel)
-                    continue;
+                //if (!spell->SpellLevel) // disable, not learn all need spell, example 134477
+                    //continue;
 
                 PetLevelupSpellSet& spellSet = mPetLevelupSpellMap[creatureFamily->ID];
                 if (spellSet.empty())
@@ -4054,10 +4054,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 115834: // Shroud of Concealment
                     spellInfo->Misc.Attributes[1] |= SPELL_ATTR1_CANT_TARGET_IN_COMBAT;
                     break;
-                case 1850:   // Dash
-                case 113636: // Cat Form (Passive)
-                    spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_MOD_INCREASE_SPEED;
-                    break;
                 case 9005: // Pounce
                     spellInfo->Categories.Mechanic = MECHANIC_STUN;
                     break;
@@ -4399,6 +4395,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 123267:  // Divine Insight
                 case 152117:  // Words of Mending
                 case 155363:  // Words of Mending
+                case 157228:  // Empowered Moonkin
                     spellInfo->AuraOptions.ProcCharges = 1;
                     break;
                 case 89485:  // Inner Focus
@@ -5007,7 +5004,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     break;
                 case 144331: //Iron Prison
                 case 142906: //Ancient Miasma Dmg
-                case 29604:  // Jom Gabbar
+                case 29604: // Jom Gabbar
                     spellInfo->Misc.Attributes[6] |= SPELL_ATTR6_NO_DONE_PCT_DAMAGE_MODS;
                     break;
                 //General Nazgrim
@@ -5327,10 +5324,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 83116:
                     spellInfo->Effects[EFFECT_0].MiscValueB = 3302;  //SUMMON_TYPE_MINIPET
                     break;
-                case 103964: // Touch of Chaos
-                case 129347: // Chaos Wave
-                    spellInfo->Misc.SchoolMask &= ~SPELL_SCHOOL_MASK_NORMAL;
-                    break;
                 case 53257: // Cobra Strikes
                     spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_CANT_CANCEL;
                     break;
@@ -5570,6 +5563,13 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 168375: // Grasping Vine
                 case 175997: // Noxious Eruption
                     spellInfo->AuraRestrictions.CasterAuraSpell = 0;
+                    break;
+                case 160856: // Q: 34582
+                case 178790:
+                    spellInfo->Misc.Attributes[0] |= SPELL_ATTR0_CASTABLE_WHILE_MOUNTED;
+                    break;
+                case 33891: // Incarnation: Tree of Life
+                    spellInfo->Effects[EFFECT_2].TriggerSpell = 0;
                     break;
                 default:
                     break;

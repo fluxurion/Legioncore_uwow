@@ -293,7 +293,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectJumpDest,                                 //213 SPELL_EFFECT_JUMP_DEST2
     &Spell::EffectCreateGarrison,                           //214 SPELL_EFFECT_CREATE_GARRISON
     &Spell::EffectNULL,                                     //215 SPELL_EFFECT_UPGRADE_CHARACTER_SPELLS
-    &Spell::EffectNULL,                                     //216 SPELL_EFFECT_CREATE_SHIPMENT
+    &Spell::EffectCreateGarrisonShipment,                   //216 SPELL_EFFECT_CREATE_SHIPMENT
     &Spell::EffectNULL,                                     //217 SPELL_EFFECT_UPGRADE_GARRISON
     &Spell::EffectNULL,                                     //218 SPELL_EFFECT_218
     &Spell::EffectSummonConversation,                       //219 SPELL_EFFECT_SUMMON_CONVERSATION
@@ -315,7 +315,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //235 SPELL_EFFECT_235
     &Spell::EffectGieveExperience,                          //236 SPELL_EFFECT_GIVE_EXPERIENCE
     &Spell::EffectNULL,                                     //237 SPELL_EFFECT_GIVE_RESTED_EXPERIENCE_BONUS
-    &Spell::EffectNULL,                                     //238 SPELL_EFFECT_INCREASE_SKILL
+    &Spell::EffectIncreaseSkill,                            //238 SPELL_EFFECT_INCREASE_SKILL
     &Spell::EffectNULL,                                     //239 SPELL_EFFECT_END_GARRISON_BUILDING_CONSTRUCTION
     &Spell::EffectArtifactPower,                            //240 SPELL_EFFECT_ARTIFACT_POWER
     &Spell::EffectNULL,                                     //241 SPELL_EFFECT_241
@@ -860,11 +860,6 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
                         basepoints0 *= -1;
 
                     triggerCaster->CastCustomSpell(triggerTarget, spell_trigger, &basepoints0, &basepoints0, &basepoints0, true, m_CastItem, NULL, m_originalCasterGUID);
-                    if (itr->target == 6)
-                    {
-                        if (Guardian* pet = triggerCaster->GetGuardianPet())
-                            triggerCaster->CastCustomSpell(pet, spell_trigger, &basepoints0, &bp1, &bp2, true);
-                    }
                     check = true;
                 }
                 break;
@@ -873,11 +868,6 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
                     if(!triggerCaster || !triggerTarget)
                         break;
                     triggerCaster->CastCustomSpell(triggerTarget, spell_trigger, &bp0, &bp1, &bp2, true, m_CastItem, NULL, m_originalCasterGUID);
-                    if (itr->target == 6)
-                    {
-                        if (Guardian* pet = triggerCaster->GetGuardianPet())
-                            triggerCaster->CastCustomSpell(pet, spell_trigger, &basepoints0, &bp1, &bp2, true);
-                    }
                     check = true;
                 }
                 break;
@@ -967,11 +957,6 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
                     basepoints0 = CalculatePct(triggerTarget->GetMaxHealth(), percent);
 
                     triggerCaster->CastCustomSpell(triggerTarget, spell_trigger, &basepoints0, &bp1, &bp2, true, m_CastItem, NULL, m_originalCasterGUID);
-                    if (itr->target == 6)
-                    {
-                        if (Guardian* pet = triggerCaster->GetGuardianPet())
-                            triggerCaster->CastCustomSpell(pet, spell_trigger, &basepoints0, &bp1, &bp2, true);
-                    }
                     check = true;
                 }
                 break;
@@ -1153,8 +1138,10 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 }
                 case 6203:  // Soulstone
                 {
-                    if (!unitTarget->isAlive())
+                    if (unitTarget->isAlive())
                         unitTarget->CastSpell(unitTarget, 3026, true); // Self resurrect
+                    else
+                        m_caster->CastSpell(unitTarget, 95750, true);
                     break;
                 }
                 case 45206: // Copy Off-hand Weapon
@@ -1483,13 +1470,6 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
                 }
                 break;
             }
-            // Demonic Fury (not exist)
-            case 104330:
-            {
-                if (Unit* owner = m_caster->GetAnyOwner())
-                    m_caster->EnergizeBySpell(owner, m_spellInfo->Id, damage, POWER_OBSOLETE2);
-                return;
-            }
             // Vanish (not exist)
             case 18461:
             {
@@ -1761,18 +1741,19 @@ void Spell::EffectJump(SpellEffIndex effIndex)
     if (m_caster->ToCreature())
         m_caster->GetMotionMaster()->Clear(false);
 
-    float x, y, z;
-    unitTarget->GetContactPoint(m_caster, x, y, z, CONTACT_DISTANCE);
-
+    Position pos;
+    unitTarget->GetFirstCollisionPosition(pos, CONTACT_DISTANCE, unitTarget->GetAngle(m_caster));
+    //float x, y, z;
+    //unitTarget->GetContactPoint(m_caster, x, y, z, CONTACT_DISTANCE);
 
     float speedXY, speedZ;
-    float distance = m_caster->GetExactDist(x, y, z);
+    float distance = m_caster->GetExactDist(&pos);
     CalculateJumpSpeeds(effIndex, distance, speedXY, speedZ);
 
-    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectJump start xyz %f %f %f caster %u target %u damage %i distance %f",
-    x, y, z, m_caster->GetGUIDLow(), unitTarget->GetGUIDLow(), damage, distance);
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "EffectJump start xyz %f %f %f caster %u target %u damage %i distance %f targetSize %f casterSize %f",
+    //pos.m_positionX, pos.m_positionY, pos.m_positionZ, m_caster->GetGUIDLow(), unitTarget->GetGUIDLow(), damage, distance, unitTarget->GetObjectSize(), m_caster->GetObjectSize());
 
-    m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ, 0, 0.0f, delayCast, unitTarget);
+    m_caster->GetMotionMaster()->MoveJump(pos.m_positionX, pos.m_positionY, pos.m_positionZ, speedXY, speedZ, 0, 0.0f, delayCast, unitTarget);
 }
 
 void Spell::EffectJumpDest(SpellEffIndex effIndex)
@@ -2461,13 +2442,6 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
             if (m_caster->HasAura(119447)) // Glyph of Chimera Shot
                 damage += 2;
             break;
-        case 114635:  // Ember Tap
-        {
-            // Mastery: Emberstorm
-            if (AuraEffect const* aurEff = m_caster->GetAuraEffect(77220, EFFECT_0))
-                AddPct(damage, aurEff->GetAmount());
-            break;
-        }
         case 118340:// Impending Victory - Heal
             // Victorious State causes your next Impending Victory to heal for 20% of your maximum health.
             if (m_caster->HasAura(32216))
@@ -2502,6 +2476,18 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
     {
         case 149254: // Spirit Bond
             heal = m_originalCaster->CalcVersalityBonusDone(unitTarget, heal);
+        case 114635:  // Ember Tap
+        {
+            // Mastery: Emberstorm
+            if (AuraEffect const* aurEff = m_caster->GetAuraEffect(77220, EFFECT_0))
+                heal += CalculatePct(heal, aurEff->GetAmount());
+
+            if (Player* _player = m_caster->ToPlayer())
+                if (m_caster->HasAura(157121)) // Enhanced Ember Tap
+                    if (Pet* pet = _player->GetPet())
+                        m_caster->HealBySpell(pet, m_spellInfo, uint32(heal/5));
+            break;
+        }
         default:
             break;
     }
@@ -2898,14 +2884,6 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
 
     if (level_diff > 0)
         damage -= level_multiplier * level_diff;
-
-    // now alter power used as mana too as it's some kind of category not power.
-    //if (damage < 0 && power != POWER_LUNAR_POWER && power != POWER_ALTERNATE_POWER)
-    //    return;
-
-    // Do not energize when in Celestial Alignment
-    //if (power == POWER_LUNAR_POWER && m_caster->HasAura(112071))
-        //return;
 
     if (power == POWER_RAGE && m_caster->HasAura(138222) && unitTarget->HasAura(5229)) // Item - Druid T15 Guardian 4P Bonus
         damage *= 1.5;
@@ -3923,6 +3901,25 @@ void Spell::EffectLearnSkill(SpellEffIndex effIndex)
         unitTarget->ToPlayer()->GenerateResearchSites();
         unitTarget->ToPlayer()->GenerateResearchProjects();
     }
+}
+
+void Spell::EffectIncreaseSkill(SpellEffIndex effIndex)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    if (damage < 0)
+        return;
+
+    uint32 skillid = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue;
+    SkillRaceClassInfoEntry const* rcEntry = sDB2Manager.GetSkillRaceClassInfo(skillid, unitTarget->getRace(), unitTarget->getClass());
+    if (!rcEntry)
+        return;
+
+    unitTarget->ToPlayer()->SetSkill(skillid, unitTarget->ToPlayer()->GetSkillStep(skillid), m_spellInfo->GetEffect(effIndex, m_diffMode)->CalcValue(), unitTarget->ToPlayer()->GetMaxSkillValue(skillid));
 }
 
 void Spell::EffectPlayMovie(SpellEffIndex effIndex)
@@ -8043,6 +8040,18 @@ void Spell::EffectCreateGarrison(SpellEffIndex effIndex)
         return;
 
     unitTarget->ToPlayer()->CreateGarrison(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
+}
+
+void Spell::EffectCreateGarrisonShipment(SpellEffIndex effIndex)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    if (Garrison *garr = unitTarget->ToPlayer()->GetGarrison())
+        garr->CreateGarrisonShipment(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
 }
 
 void Spell::EffectAddGarrisonFollower(SpellEffIndex effIndex)

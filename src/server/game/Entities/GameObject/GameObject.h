@@ -53,6 +53,8 @@ enum GoVisualCounter
     GO_VISUAL_AFTER_COMPLETEQUEST = 1,
 };
 
+typedef std::map<ObjectGuid, uint32/*time*/> lastUserList;
+
 // from `gameobject_template`
 struct GameObjectTemplate
 {
@@ -1043,6 +1045,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
             m_respawnTime = respawn > 0 ? time(NULL) + respawn : 0;
             m_respawnDelayTime = respawn > 0 ? respawn : 0;
         }
+        void SetRespawnDelayTime(int32 respawn) { m_respawnDelayTime = respawn > 0 ? respawn : 0; }
         void Respawn();
         bool isSpawned() const
         {
@@ -1099,6 +1102,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void SaveRespawnTime();
 
         Loot        loot;
+        uint16      garrBuildingType = 0;
 
         Player* GetLootRecipient() const;
         Group* GetLootRecipientGroup() const;
@@ -1119,7 +1123,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         bool IsAlwaysVisibleFor(WorldObject const* seer) const;
         bool IsInvisibleDueToDespawn() const;
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* obj) const;
 
         uint8 getLevelForTarget(WorldObject const* target) const
         {
@@ -1167,7 +1171,10 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void EnableOrDisableGo(bool activate, bool alternative = false);
 
         uint32 GetVignetteId() const { return m_goInfo ? m_goInfo->GetVignetteId() : 0; }
+
+        void setVisibilityCDForPlayer(ObjectGuid const& guid, uint32 sec = 300);
     protected:
+        lastUserList m_lastUser;
         bool AIM_Initialize();
         GameObjectModel* CreateModel();
         uint32      m_spellId;

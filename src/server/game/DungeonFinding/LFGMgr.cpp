@@ -805,7 +805,7 @@ void LFGMgr::UpdateRoleCheck(ObjectGuid gguid, ObjectGuid guid /* = 0 */, uint8 
     {
         if (LFGDungeonData const* dungeonData = GetLFGDungeon(*dungeons.begin()))
             if (dungeonData->dbc->IsScenario() && !dungeonData->dbc->IsChallenge())
-                roles = roles & PLAYER_ROLE_LEADER | PLAYER_ROLE_DAMAGE;
+                roles = roles & (PLAYER_ROLE_LEADER | PLAYER_ROLE_DAMAGE);
     }
 
     if (guid.IsEmpty())
@@ -825,7 +825,8 @@ void LFGMgr::UpdateRoleCheck(ObjectGuid gguid, ObjectGuid guid /* = 0 */, uint8 
         {
             // use temporal var to check roles, CheckGroupRoles modifies the roles
             check_roles = roleCheck.roles;
-            roleCheck.state = CheckGroupRoles(check_roles, LfgRoleData(*roleCheck.dungeons.begin() & 0xFFFFF))
+            uint32 n = 0;
+            roleCheck.state = CheckGroupRoles(check_roles, LfgRoleData(*roleCheck.dungeons.begin() & 0xFFFFF), n)
                 ? LFG_ROLECHECK_FINISHED : LFG_ROLECHECK_WRONG_ROLES;
         }
     }
@@ -909,7 +910,7 @@ void LFGMgr::GetCompatibleDungeons(LfgDungeonSet& dungeons, GuidSet const& playe
    @param[in]     removeLeaderFlag Determines if we have to remove leader flag (only used first call, Default = true)
    @return True if roles are compatible
 */
-bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, bool removeLeaderFlag /*= true*/)
+bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, uint32 &n, bool removeLeaderFlag /*= true*/)
 {
     if (groles.empty())
         return false;
@@ -922,8 +923,11 @@ bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, b
         for (LfgRolesMap::iterator it = groles.begin(); it != groles.end(); ++it)
             it->second &= ~PLAYER_ROLE_LEADER;
 
-    for (LfgRolesMap::iterator it = groles.begin(); it != groles.end(); ++it)
+    for (LfgRolesMap::iterator it = groles.begin(); it != groles.end(); ++it, ++n)
     {
+        if (n > 1000)
+            return false;
+
         if (it->second == PLAYER_ROLE_NONE || (it->second & ROLE_FULL_MASK) == 0)
             return false;
 
@@ -932,7 +936,7 @@ bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, b
             if (it->second != PLAYER_ROLE_TANK)                 // if not one role taken - check enother
             {
                 it->second -= PLAYER_ROLE_TANK;                 // exclude role for recurse check
-                if (CheckGroupRoles(groles, roleData, false))   // check role with it
+                if (CheckGroupRoles(groles, roleData, n, false))   // check role with it
                     return true;                                // if plr not tank group can be completed
                 it->second += PLAYER_ROLE_TANK;                 // return back excluded role.
             }
@@ -949,7 +953,7 @@ bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, b
             if (it->second != PLAYER_ROLE_DAMAGE)
             {
                 it->second -= PLAYER_ROLE_DAMAGE;
-                if (CheckGroupRoles(groles, roleData, false))
+                if (CheckGroupRoles(groles, roleData, n, false))
                     return true;
                 it->second += PLAYER_ROLE_DAMAGE;
             }
@@ -964,7 +968,7 @@ bool LFGMgr::CheckGroupRoles(LfgRolesMap& groles, LfgRoleData const& roleData, b
             if (it->second != PLAYER_ROLE_HEALER)
             {
                 it->second -= PLAYER_ROLE_HEALER;
-                if (CheckGroupRoles(groles, roleData, false))
+                if (CheckGroupRoles(groles, roleData, n, false))
                     return true;
                 it->second += PLAYER_ROLE_HEALER;
             }
@@ -1794,29 +1798,37 @@ LfgLockMap const LFGMgr::GetLockedDungeons(ObjectGuid guid)
             || (dungeon->type != LFG_TYPE_RANDOM && dungeon->x == 0.0f && dungeon->y == 0.0f && dungeon->z == 0.0f) || !dungeon->dbc->IsValid())
             // TODO: for non-faction check find correct reason
             lockData.status = LFG_LOCKSTATUS_WRONG_FACTION;
-        else if (AccessRequirement const* ar = sObjectMgr->GetAccessRequirement(dungeon->map, Difficulty(dungeon->difficulty)))
+        else
         {
-            uint32 avgItemLevel = player->GetAverageItemLevel();
-            if (ar->item_level && avgItemLevel < ar->item_level)
+            AccessRequirement const* ar = sObjectMgr->GetAccessRequirement(dungeon->map, Difficulty(dungeon->difficulty), dungeon->id);
+            if (!ar)
+                ar = sObjectMgr->GetAccessRequirement(dungeon->map, Difficulty(dungeon->difficulty));
+            if (ar)
             {
-                lockData.currItemLevel = avgItemLevel;
-                lockData.reqItemLevel = ar->item_level;
-                lockData.status = LFG_LOCKSTATUS_TOO_LOW_GEAR_SCORE;
-            }
-            else if (ar->achievement && !player->HasAchieved(ar->achievement))
-                lockData.status = LFG_LOCKSTATUS_MISSING_ACHIEVEMENT;
-            else if (player->GetTeam() == ALLIANCE && ar->quest_A && !player->GetQuestRewardStatus(ar->quest_A))
-                lockData.status = LFG_LOCKSTATUS_QUEST_NOT_COMPLETED;
-            else if (player->GetTeam() == HORDE && ar->quest_H && !player->GetQuestRewardStatus(ar->quest_H))
-                lockData.status = LFG_LOCKSTATUS_QUEST_NOT_COMPLETED;
-            else
-                if (ar->item)
+                uint32 avgItemLevel = player->GetAverageItemLevel();
+                if (ar->item_level && avgItemLevel < ar->item_level)
                 {
-                    if (!player->HasItemCount(ar->item) && (!ar->item2 || !player->HasItemCount(ar->item2)))
+                    lockData.currItemLevel = avgItemLevel;
+                    lockData.reqItemLevel = ar->item_level;
+                    lockData.status = LFG_LOCKSTATUS_TOO_LOW_GEAR_SCORE;
+                }
+                else if (ar->achievement && !player->HasAchieved(ar->achievement))
+                    lockData.status = LFG_LOCKSTATUS_MISSING_ACHIEVEMENT;
+                else if (player->GetTeam() == ALLIANCE && ar->quest_A && !player->GetQuestRewardStatus(ar->quest_A))
+                    lockData.status = LFG_LOCKSTATUS_QUEST_NOT_COMPLETED;
+                else if (player->GetTeam() == HORDE && ar->quest_H && !player->GetQuestRewardStatus(ar->quest_H))
+                    lockData.status = LFG_LOCKSTATUS_QUEST_NOT_COMPLETED;
+                else
+                {
+                    if (ar->item)
+                    {
+                        if (!player->HasItemCount(ar->item) && (!ar->item2 || !player->HasItemCount(ar->item2)))
+                            lockData.status = LFG_LOCKSTATUS_MISSING_ITEM;
+                    }
+                    else if (ar->item2 && !player->HasItemCount(ar->item2))
                         lockData.status = LFG_LOCKSTATUS_MISSING_ITEM;
                 }
-                else if (ar->item2 && !player->HasItemCount(ar->item2))
-                    lockData.status = LFG_LOCKSTATUS_MISSING_ITEM;
+            }
         }
 
         /* @todo VoA closed if WG is not under team control (LFG_LOCKSTATUS_RAID_LOCKED)

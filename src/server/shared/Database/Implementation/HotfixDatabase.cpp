@@ -160,6 +160,12 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM barber_shop_style ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Name_lang, Description_lang FROM barber_shop_style_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // CharShipment.db2
+    PrepareStatement(HOTFIX_SEL_CHAR_SHIPMENT, "SELECT ID, ShipmentConteinerID, CriteriaID, Flags, TimeForShipment, SpellCreation, ShipmentResultItemID FROM char_shipment ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // CharShipmentContainer.db2
+    PrepareStatement(HOTFIX_SEL_CHAR_SHIPMENT_CONTAINER, "SELECT ID, Flags, BuildingType, unt3, unk4, unk5, unk6, unk7, MaxShipments, enotherID, fractionType FROM char_shipment_container ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // BroadcastText.db2
     PrepareStatement(HOTFIX_SEL_BROADCAST_TEXT, "SELECT ID, MaleText, FemaleText, EmoteID1, EmoteID2, EmoteID3, EmoteDelay1, EmoteDelay2, "
         "EmoteDelay3, SoundID, UnkEmoteID, Language, Type FROM broadcast_text ORDER BY ID DESC", CONNECTION_SYNCH);

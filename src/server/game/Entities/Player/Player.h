@@ -992,6 +992,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOAD_GARRISON_FOLLOWERS,
     PLAYER_LOGIN_QUERY_LOAD_GARRISON_FOLLOWER_ABILITIES,
     PLAYER_LOGIN_QUERY_LOAD_GARRISON_MISSIONS,
+    PLAYER_LOGIN_QUERY_LOAD_GARRISON_SHIPMENTS,
     PLAYER_LOGIN_QUERY_LOAD_TOYS,
     PLAYER_LOGIN_QUERY_LOAD_HEIRLOOMS,
     PLAYER_LOGIN_QUERY_HONOR_INFO,
@@ -1038,6 +1039,9 @@ enum DungeonStatusFlag
 
 struct AccessRequirement
 {
+    int32  mapid;
+    uint8  difficulty;
+    uint16 dungeonId;
     uint8  levelMin;
     uint8  levelMax;
     uint16 item_level;
@@ -2013,7 +2017,7 @@ class Player : public Unit, public GridObject<Player>
         void RegenerateAll();
         void Regenerate(Powers power, uint32 saveTimer);
         void RegenerateHealth();
-        void setRegenTimerCount(uint32 time) {m_regenTimerCount = time;}
+        void setRegenTimerCount(uint32 time) {m_powerRegenTimer[POWER_RAGE] = time;}
         void setWeaponChangeTimer(uint32 time) {m_weaponChangeTimer = time;}
 
         uint64 GetMoney() const { return GetUInt64Value(PLAYER_FIELD_COINAGE); }
@@ -2963,7 +2967,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveFromExtraLook(WorldObject *u) { m_extraLookList.erase(u->GetGUID()); } 
         bool HaveExtraLook(ObjectGuid guid) const { return m_extraLookList.find(guid) != m_extraLookList.end(); }
 
-        bool IsNeverVisible() const;
+        bool IsNeverVisible(WorldObject const* seer = NULL) const;
 
         bool IsVisibleGloballyFor(Player const* player) const;
 
@@ -3251,11 +3255,10 @@ class Player : public Unit, public GridObject<Player>
     protected:
         // Gamemaster whisper whitelist
         GuidList WhisperList;
-        uint32 m_regenTimerCount;
-        uint32 m_chiholyPowerRegenTimerCount;
-        uint32 m_soulShardsRegenTimerCount;
-        uint32 m_focusRegenTimerCount;
+
+        uint32 m_powerRegenTimer[MAX_POWERS];
         float m_powerFraction[MAX_POWERS_PER_CLASS];
+
         uint32 m_contestedPvPTimer;
         uint32 m_statsUpdateTimer;
         bool m_needToUpdateRunesRegen;

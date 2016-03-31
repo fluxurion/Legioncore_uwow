@@ -81,6 +81,8 @@ void GarrisonMgr::Initialize()
     LoadBuildingSpawnNPC();
     LoadBuildingSpawnGo();
     LoadMissionLine();
+    LoadShipment();
+    LoadTradeSkill();
 }
 
 GarrSiteLevelEntry const* GarrisonMgr::GetGarrSiteLevelEntry(uint32 garrSiteId, uint32 level) const
@@ -172,6 +174,17 @@ uint64 GarrisonMgr::GenerateMissionDbId()
     }
 
     return _missionDbIdGenerator++;
+}
+
+uint64 GarrisonMgr::GenerateShipmentDbId()
+{
+    if (_shipmentDbIdGenerator >= std::numeric_limits<uint64>::max())
+    {
+        sLog->outError(LOG_FILTER_GENERAL, "Garrison shipment db id overflow! Can't continue, shutting down server. ");
+        World::StopNow(ERROR_EXIT_CODE);
+    }
+
+    return _shipmentDbIdGenerator++;
 }
 
 uint32 const AbilitiesForQuality[][2] =
@@ -355,14 +368,17 @@ void GarrisonMgr::InitializeDbIdSequences()
 
     if (QueryResult result = CharacterDatabase.Query("SELECT MAX(dbId) FROM character_garrison_missions"))
         _missionDbIdGenerator = (*result)[0].GetUInt64() + 1;
+
+    if (QueryResult result = CharacterDatabase.Query("SELECT MAX(dbId) FROM character_garrison_shipment"))
+        _shipmentDbIdGenerator = (*result)[0].GetUInt64() + 1;
 }
 
 void GarrisonMgr::LoadPlotFinalizeGOInfo()
 {
-    //                                                                0                  1       2       3       4       5               6
-    QueryResult result = WorldDatabase.Query("SELECT garrPlotInstanceId, hordeGameObjectId, hordeX, hordeY, hordeZ, hordeO, hordeAnimKitId, "
-    //                      7          8          9         10         11                 12
-        "allianceGameObjectId, allianceX, allianceY, allianceZ, allianceO, allianceAnimKitId FROM garrison_plot_finalize_info");
+    //                                                                0                  1       2       3       4       5
+    QueryResult result = WorldDatabase.Query("SELECT garrPlotInstanceId, hordeGameObjectId, hordeX, hordeY, hordeZ, hordeO, "
+    //                      6          7          8         9         10                 11
+        "allianceGameObjectId, allianceX, allianceY, allianceZ, allianceO FROM garrison_plot_finalize_info");
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 garrison follower class spec abilities. DB table `garrison_plot_finalize_info` is empty.");
@@ -375,10 +391,8 @@ void GarrisonMgr::LoadPlotFinalizeGOInfo()
         Field* fields = result->Fetch();
         uint32 garrPlotInstanceId = fields[0].GetUInt32();
         uint32 hordeGameObjectId = fields[1].GetUInt32();
-        uint32 allianceGameObjectId = fields[7].GetUInt32();
-        uint16 hordeAnimKitId = fields[6].GetUInt16();
-        uint16 allianceAnimKitId = fields[12].GetUInt16();
-
+        uint32 allianceGameObjectId = fields[6].GetUInt32();
+        
         if (!sGarrPlotInstanceStore.LookupEntry(garrPlotInstanceId))
         {
             sLog->outError(LOG_FILTER_SQL, "Non-existing GarrPlotInstance.db2 entry %u was referenced in `garrison_plot_finalize_info`.", garrPlotInstanceId);
@@ -400,7 +414,7 @@ void GarrisonMgr::LoadPlotFinalizeGOInfo()
             continue;
         }
 
-        /*goTemplate = sObjectMgr->GetGameObjectTemplate(allianceGameObjectId);
+        goTemplate = sObjectMgr->GetGameObjectTemplate(allianceGameObjectId);
         if (!goTemplate)
         {
             sLog->outError(LOG_FILTER_SQL, "Non-existing gameobject_template entry %u was referenced in `garrison_plot_finalize_info`.`allianceGameObjectId` for garrPlotInstanceId %u goID %u.",
@@ -413,17 +427,15 @@ void GarrisonMgr::LoadPlotFinalizeGOInfo()
             sLog->outError(LOG_FILTER_SQL, "Invalid gameobject type %u (entry %u) was referenced in `garrison_plot_finalize_info`.`allianceGameObjectId` for garrPlotInstanceId %u.",
                 goTemplate->type, allianceGameObjectId, garrPlotInstanceId);
             continue;
-        */
+        }
+        
 
         FinalizeGarrisonPlotGOInfo& info = _finalizePlotGOInfo[garrPlotInstanceId];
         info.FactionInfo[GARRISON_FACTION_INDEX_HORDE].GameObjectId = hordeGameObjectId;
         info.FactionInfo[GARRISON_FACTION_INDEX_HORDE].Pos.Relocate(fields[2].GetFloat(), fields[3].GetFloat(), fields[4].GetFloat(), fields[5].GetFloat());
-        info.FactionInfo[GARRISON_FACTION_INDEX_HORDE].AnimKitId = hordeAnimKitId;
 
         info.FactionInfo[GARRISON_FACTION_INDEX_ALLIANCE].GameObjectId = allianceGameObjectId;
-        info.FactionInfo[GARRISON_FACTION_INDEX_ALLIANCE].Pos.Relocate(fields[8].GetFloat(), fields[9].GetFloat(), fields[10].GetFloat(), fields[11].GetFloat());
-        info.FactionInfo[GARRISON_FACTION_INDEX_ALLIANCE].AnimKitId = allianceAnimKitId;
-
+        info.FactionInfo[GARRISON_FACTION_INDEX_ALLIANCE].Pos.Relocate(fields[7].GetFloat(), fields[8].GetFloat(), fields[9].GetFloat(), fields[10].GetFloat());
     }
     while (result->NextRow());
 
@@ -556,11 +568,20 @@ void GarrisonMgr::LoadBuildingSpawnGo()
         uint32 garrPlotInstanceId = fields[index++].GetUInt32();
         uint32 BuildID = fields[index++].GetUInt32();
         uint32 entry = fields[index++].GetUInt32();
-
-        if (!sObjectMgr->GetGameObjectTemplate(entry))
+        auto templ = sObjectMgr->GetGameObjectTemplate(entry);
+        if (!templ)
         {
-            sLog->outError(LOG_FILTER_SQL, "Table `garrison_building_gameobject` has creature with non existing go entry %u, skipped.", entry);
+            sLog->outError(LOG_FILTER_SQL, "Table `garrison_building_gameobject` has go with non existing go entry %u, skipped.", entry);
             continue;
+        }
+
+        if (templ->type == GAMEOBJECT_TYPE_GARRISON_BUILDING || templ->type == GAMEOBJECT_TYPE_GARRISON_PLOT)
+        {
+            if (entry  != 239085)
+            {
+                sLog->outError(LOG_FILTER_SQL, "Table `garrison_building_gameobject` has go (%u) with no allowed type %u, skipped.", templ->type, entry);
+                continue;
+            }
         }
 
         if (!sGarrPlotInstanceStore.LookupEntry(garrPlotInstanceId))
@@ -664,6 +685,161 @@ void GarrisonMgr::LoadMissionLine()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison mission lines in %u.", count, GetMSTimeDiffToNow(msTime));
 }
 
+void GarrisonMgr::LoadShipment()
+{
+    //                                                  0            1         2         3
+    QueryResult result = WorldDatabase.Query("SELECT SiteID, ContainerID, NpcEntry, ShipmentID FROM garrison_shipment");
+
+    if (!result)
+    {
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 garrison shipment. DB table `garrison_shipment` is empty.");
+        return;
+    }
+
+    uint32 msTime = getMSTime();
+    uint32 count = 0;
+    do
+    {
+        uint8 index = 0;
+        Field* fields = result->Fetch();
+
+        GarrShipment data;
+        data.SiteID = fields[index++].GetUInt32();
+        data.ContainerID = fields[index++].GetUInt32();
+        data.NpcEntry = fields[index++].GetUInt32();
+        data.ShipmentID = fields[index++].GetUInt32();
+
+        if (data.SiteID && data.SiteID != SITE_ID_GARRISON_ALLIANCE && data.SiteID != SITE_ID_GARRISON_HORDE)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `garrison_shipment` has non-existen SiteID %u, skipped.", data.SiteID);
+            continue;
+        }
+
+        CreatureTemplate const* cInfo = sObjectMgr->GetCreatureTemplate(data.NpcEntry);
+        if (!cInfo)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `garrison_shipment` has creature with non existing creature entry %u, skipped.", data.NpcEntry);
+            continue;
+        }
+
+        CharShipmentEntry const* shipmentEntry = sCharShipmentStore.LookupEntry(data.ShipmentID);
+        if (!shipmentEntry)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Non-existing CharShipment.db2 entry %u was referenced in `garrison_shipment`.", data.ShipmentID);
+            continue;
+        }
+
+        CharShipmentConteiner const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(data.ContainerID);
+        if (!shipmentConteinerEntry)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Non-existing CharShipmentContainer.db2 entry %u was referenced in `garrison_shipment`.", data.ContainerID);
+            continue;
+        }
+        data.cEntry = shipmentConteinerEntry;
+        data.data = shipmentEntry;
+
+        const_cast<CreatureTemplate*>(cInfo)->npcflag2 |= UNIT_NPC_FLAG2_SHIPMENT_ORDER;
+        const_cast<CreatureTemplate*>(cInfo)->npcflag |= UNIT_NPC_FLAG_GOSSIP;
+        const_cast<CreatureTemplate*>(cInfo)->CursorName = "workorders";
+
+        shipment[SHIPMENT_GET_BY_NPC].insert(shipmentStoreMap::value_type(data.NpcEntry, data));
+        shipment[SHIPMENT_GET_BY_CONTEINER_ID].insert(shipmentStoreMap::value_type(data.ContainerID, data));
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison_shipment in %u.", count, GetMSTimeDiffToNow(msTime));
+}
+
+void GarrisonMgr::LoadTradeSkill()
+{
+    uint32 msTime = getMSTime();
+    uint32 count = 0;
+
+    //! WARNING! ORDER IS PART OF LOGIC!
+    //                                                  0            1         2
+    QueryResult result = WorldDatabase.Query("SELECT npcEntry, spellID, conditionID FROM garrison_tradeskill ORDER BY `npcEntry` DESC, `conditionID` ASC");
+
+    if (!result)
+    {
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 garrison tradeskills. DB table `garrison_tradeskill` is empty.");
+        return;
+    }
+
+    do
+    {
+        uint8 index = 0;
+        Field* fields = result->Fetch();
+        GarrTradeSkill gts_data;
+
+        uint32 npc = fields[index++].GetUInt32();
+
+        CreatureTemplate const* cInfo = sObjectMgr->GetCreatureTemplate(npc);
+        if (!cInfo)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `garrison_tradeskill` has creature with non existing creature entry %u, skipped.", npc);
+            continue;
+        }
+
+        const_cast<CreatureTemplate*>(cInfo)->npcflag2 |= UNIT_NPC_FLAG2_TRADESKILL_NPC;
+        const_cast<CreatureTemplate*>(cInfo)->npcflag |= UNIT_NPC_FLAG_GOSSIP;
+        const_cast<CreatureTemplate*>(cInfo)->CursorName = "trainer";
+
+        gts_data.spellID = fields[index++].GetUInt32();
+        gts_data.conditionID = fields[index++].GetUInt32();
+
+
+        SkillLineAbilityMapBounds bounds = sSpellMgr->GetSkillLineAbilityMapBounds(gts_data.spellID);
+        for (SkillLineAbilityMap::const_iterator _spell_idx = bounds.first; _spell_idx != bounds.second; ++_spell_idx)
+        {
+            SkillLineEntry const* pSkill = sSkillLineStore.LookupEntry(_spell_idx->second->SkillLine);
+            if (!pSkill)
+                continue;
+
+            gts_data.skillID = _spell_idx->second->SkillLine;
+        }
+
+        if (gts_data.conditionID)
+        {
+            bool find_higher = false;
+            for (auto data : _garrNpcTradeSkill[npc])
+                if (data.conditionID && data.conditionID < gts_data.conditionID)
+                    find_higher = true;
+            gts_data.reqBuildingLvl = find_higher ? 2 : 1;
+        }
+        else
+            gts_data.reqBuildingLvl = 0;
+
+        _garrNpcTradeSkill[npc].push_back(gts_data);
+
+        ++count;
+
+    } while (result->NextRow());
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u garrison_tradeskill in %u.", count, GetMSTimeDiffToNow(msTime));
+}
+
+TradeskillList const * GarrisonMgr::GetTradeSkill(uint32 npcID)
+{
+    auto data = _garrNpcTradeSkill.find(npcID);
+    if (data == _garrNpcTradeSkill.end())
+        return nullptr;
+    return &data->second;
+}
+
+GarrShipment const* GarrisonMgr::GetGarrShipment(uint32 entry, ShipmentGetType type) const
+{
+    std::map<uint8, shipmentStoreMap>::const_iterator i = shipment.find(type);
+    if (i == shipment.end())
+        return NULL;
+
+    shipmentStoreMap::const_iterator itr = i->second.find(entry);
+    if (itr == i->second.end())
+        return NULL;
+
+    return &itr->second;
+}
+
 GarrMissionEntry const* GarrisonMgr::GetNextMissionInQuestLine(uint32 missionID)
 {
     auto data = _nextMission.find(missionID);
@@ -706,4 +882,31 @@ std::list<CreatureData> const* GarrisonMgr::GetNpcSpawnBuilding(uint32 plotID, u
         }
     }
     return NULL;
+}
+
+uint32 GarrisonMgr::GetShipmentID(GarrShipment const* shipment)
+{
+    if (shipment->cEntry->BuildingType != GARR_BTYPE_TRADING_POST)
+        return shipment->ShipmentID;
+
+    if (time(nullptr) > _randShipment[shipment->ContainerID].Timer)
+    {
+        uint32 count = sDB2Manager._charShipmentConteiner.count(shipment->data->ShipmentConteinerID);
+        uint32 idx = urand(1, count);
+        uint32 i = 1;
+        DB2Manager::ShipmentConteinerMapBounds bounds = sDB2Manager.GetShipmentConteinerBounds(shipment->data->ShipmentConteinerID);
+        for (DB2Manager::ShipmentConteinerMap::const_iterator sh_idx = bounds.first; sh_idx != bounds.second; ++sh_idx)
+        {
+            if (i == idx)
+            {
+                _randShipment[shipment->ContainerID].ShipmentID = sh_idx->second->ID;
+                break;
+            }
+            i++;
+        }
+
+        _randShipment[shipment->ContainerID].Timer = time(nullptr) + DAY;
+    }
+
+    return _randShipment[shipment->ContainerID].ShipmentID;
 }

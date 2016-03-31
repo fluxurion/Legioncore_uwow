@@ -57,7 +57,6 @@ void WorldSession::SendPartyResult(PartyOperation operation, std::string const& 
     packet.Command = operation;
     packet.Result = res;
     packet.ResultData = val;
-    packet.ResultGUID;
     SendPacket(packet.Write());
 }
 

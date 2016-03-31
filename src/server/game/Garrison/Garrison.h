@@ -21,6 +21,17 @@
 #include "Player.h"
 #include "Packets/GarrisonPackets.h"
 
+#define MAX_BUILDING_SAVE_DATA 5
+
+enum BuildingDataStore
+{
+    BUILDING_DATA_SPECIAL_SPAWN = 0,
+};
+enum GarrisonSiteiD
+{
+    SITE_ID_GARRISON_ALLIANCE = 2,
+    SITE_ID_GARRISON_HORDE = 71,
+};
 enum GarrisonFactionIndex
 {
     GARRISON_FACTION_INDEX_HORDE    = 0,
@@ -92,6 +103,10 @@ enum FollowerQuality
 class GameObject;
 class Map;
 
+typedef std::list<WorldPackets::Garrison::Shipment> ShipmentSet;
+typedef std::unordered_map<uint32/*buildingType*/, ObjectGuid /*guid*/> ShipmentConteinerSpawn;
+typedef std::unordered_map<uint16/*buildingType*/, std::unordered_map<uint16, uint32>> buildingData;
+
 class Garrison
 {
 public:
@@ -106,12 +121,17 @@ public:
 
     struct Plot
     {
-        GameObject* CreateGameObject(Map* map, GarrisonFactionIndex faction);
+        void getRandTrader(uint32& entry);
+        GameObject* CreateGameObject(Map* map, GarrisonFactionIndex faction, Garrison* g);
         void DeleteGameObject(Map* map);
         void ClearBuildingInfo(Player* owner);
         void SetBuildingInfo(WorldPackets::Garrison::GarrisonBuildingInfo const& buildingInfo, Player* owner);
 
         WorldPackets::Garrison::GarrisonPlotInfo PacketInfo;
+        float RotationX;                                                // 6
+        float RotationY;                                                // 7
+        float RotationZ;                                                // 8
+        float RotationW;                                                // 9
         uint32 EmptyGameObjectId = 0;
         uint32 GarrSiteLevelPlotInstId = 0;
         Building BuildingInfo;
@@ -151,7 +171,7 @@ public:
     explicit Garrison(Player* owner);
 
     bool LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blueprints, PreparedQueryResult buildings,
-        PreparedQueryResult followers, PreparedQueryResult abilities, PreparedQueryResult missions);
+        PreparedQueryResult followers, PreparedQueryResult abilities, PreparedQueryResult missions, PreparedQueryResult shipments);
     void SaveToDB(SQLTransaction trans);
     static void DeleteFromDB(ObjectGuid::LowType ownerGuid, SQLTransaction trans);
 
@@ -170,25 +190,41 @@ public:
     std::vector<Plot*> GetPlots();
     Plot* GetPlot(uint32 garrPlotInstanceId);
     Plot const* GetPlot(uint32 garrPlotInstanceId) const;
+    Garrison::Plot* GetPlotWithBuildingType(uint32 BuildingTypeID);
+    Garrison::Plot* GetPlotWithNpc(uint32 entry);
 
     // Buildings
     bool LearnBlueprint(uint32 garrBuildingId);
     void UnlearnBlueprint(uint32 garrBuildingId);
-    void PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId);
+    void Swap(uint32 plot1, uint32 plot2);
+    void PlaceBuilding(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool byQuest = false, bool swap = false);
     void CancelBuildingConstruction(uint32 garrPlotInstanceId);
     void ActivateBuilding(uint32 garrPlotInstanceId);
     uint32 GetCountOfBluePrints() const { return _knownBuildings.size();  }
     uint32 GetCountOFollowers() const { return _followers.size(); }
-    
+    uint32 GetBuildingData(uint32 buildingType, uint32 idx)
+    {
+        return _buildingData[buildingType][idx];
+    }
+    void SetBuildingData(uint32 buildingType, uint32 idx, uint32 value)
+    {
+        _buildingData[buildingType][idx] = value;
+    }
+
+    uint32 GetSpecialSpawnBuildingTime(uint32 buildingType);
+
     // Followers
     void AddFollower(uint32 garrFollowerId);
     Follower const* GetFollower(uint64 dbId) const;
     Follower* GetFollower(uint64 dbId);
     Follower* GetFollowerByID(uint32 entry);
     void ReTrainFollower(SpellInfo const* spellInfo, uint32 followerID);
+    uint16 GetMaxFolowerLvl();
+    uint16 GetMaxFolowerItemLvl();
 
     // Missions
     void AddMission(uint32 missionRecID);
+    void GenerateRandomMission(uint16 count = 0);
     Mission const* GetMission(uint64 dbId) const;
     Mission* GetMissionByRecID(uint32 missionRecID);
     void RewardMission(uint32 missionRecID);
@@ -201,6 +237,7 @@ public:
     void SendMissionListUpdate(bool openMissionNpc) const;
 
     void ResetFollowerActivationLimit() { _followerActivationsRemainingToday = 1; }
+    uint32 GetPlotInstanceForBuildingType(uint32 type) const;
 
     // Map
     int32 GetGarrisonMapID() const { return _siteLevel ? _siteLevel->MapID : -1; }
@@ -211,15 +248,34 @@ public:
     uint32 GetResNumber() const;
     void UpdateResTakenTime();
 
-private:
+    // Enother
+    void OnQuestReward(uint32 questID);
+
+    // Shipment
+    void CreateShipment(ObjectGuid const& guid, uint32 count);
+    void CreateGarrisonShipment(uint32 shipmentID);
+    bool canAddShipmentOrder(Creature* source);
+    void OnGossipSelect(WorldObject* source);
+    void SendShipmentInfo(ObjectGuid const& guid);
+    uint64 PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID = 0);
+    void SendGarrisonShipmentLandingPage();
+    void CompleteShipments(GameObject *go);
+    void FreeShipmentChest(uint32 shipment);
+    uint32 GetShipmentMaxMod();
+
+    //TradeSkill
+    bool CanCastTradeSkill(ObjectGuid const& guid, uint32 spellID);
+    void OnGossipTradeSkill(WorldObject* source);
+protected:
     Map* FindMap() const;
     void InitializePlots();
-    GarrisonError CheckBuildingPlacement(uint32 garrPlotInstanceId, uint32 garrBuildingId) const;
+    GarrisonError CheckBuildingPlacement(uint32 garrPlotInstanceId, uint32 garrBuildingId, bool byQuest = false) const;
     GarrisonError CheckBuildingRemoval(uint32 garrPlotInstanceId) const;
     Player* _owner;
     GarrSiteLevelEntry const* _siteLevel;
     uint32 _followerActivationsRemainingToday;
     uint32 _lastResTaken;
+    uint32 _MissionGen = 0;
 
     std::unordered_map<uint32 /*garrPlotInstanceId*/, Plot> _plots;
     std::unordered_set<uint32 /*garrBuildingId*/> _knownBuildings;
@@ -227,6 +283,12 @@ private:
     std::unordered_set<uint32> _followerIds;
     std::unordered_map<uint64 /*dbId*/, Mission> _missions;
     std::unordered_set<uint32> _missionIds;
+    buildingData _buildingData;
+
+    std::map<uint32/*shipmentID*/, ShipmentSet> _shipments;
+    ShipmentConteinerSpawn ShipmentConteiners;
+
+    IntervalTimer updateTimer;
 };
 
 #endif // Garrison_h__

@@ -543,7 +543,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
             m_originalCaster = NULL;
     }
 
-    if (info->HasAttribute(SPELL_ATTR4_TRIGGERED))
+    if (!m_replaced && info->HasAttribute(SPELL_ATTR4_TRIGGERED))
         _triggeredCastFlags = TRIGGERED_FULL_MASK;
     if(m_replaced || AttributesCustomEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG) //If spell casted as replaced, enable proc from him
         _triggeredCastFlags &= ~TRIGGERED_DISALLOW_PROC_EVENTS;
@@ -1394,13 +1394,6 @@ void Spell::SelectImplicitAreaTargets(SpellEffIndex effIndex, SpellImplicitTarge
                     case 148009: // Spirit of Chi-Ji
                     {
                         maxSize = 5;
-                        power = POWER_HEALTH;
-                        break;
-                    }
-                    case 113828: // Healing Touch
-                    {
-                        unitTargets.push_back(m_caster);
-                        maxSize = 1;
                         power = POWER_HEALTH;
                         break;
                     }
@@ -3430,11 +3423,6 @@ void Spell::DoTriggersOnSpellHit(Unit* unit, uint32 effMask)
         m_hitTriggerSpells.clear();
     }
 
-    // Predatory Swiftness
-    if (Aura* aura = m_caster->GetAura(69369))
-        if (aura->GetEffect(EFFECT_0)->IsAffectingSpell(GetSpellInfo()))
-            aura->Remove();
-
     // trigger linked auras remove/apply
     // TODO: remove/cleanup this, as this table is not documented and people are doing stupid things with it
     LinkedSpell(unit, unit, SPELL_LINK_ON_HIT);
@@ -4678,6 +4666,11 @@ void Spell::finish(bool ok)
             break;
     }
 
+    // Predatory Swiftness
+    if (Aura* aura = m_caster->GetAura(69369))
+        if (aura->GetEffect(EFFECT_0)->IsAffectingSpell(GetSpellInfo()))
+            aura->Remove();
+
     LinkedSpell(m_caster, unitTarget, SPELL_LINK_FINISH_CAST);
 }
 
@@ -5561,6 +5554,10 @@ void Spell::LinkedSpell(Unit* _caster, Unit* _target, SpellLinkedType type)
                         if (Aura* aura = (_target ? _target : _caster)->GetAura(abs(i->effect)))
                             aura->ModStackAmount(-1);
                         break;
+                    case LINK_ACTION_CHANGE_CHARGES:
+                        if (Aura* aura = (_target ? _target : _caster)->GetAura(abs(i->effect)))
+                            aura->ModCharges(-1);
+                        break;
                 }
             }
             else
@@ -5594,11 +5591,13 @@ void Spell::LinkedSpell(Unit* _caster, Unit* _target, SpellLinkedType type)
                         _caster->AddAura(i->effect, _target ? _target : _caster);
                         break;
                     case LINK_ACTION_CHANGE_STACK: //7
+                    {
                         if (Aura* aura = (_target ? _target : _caster)->GetAura(i->effect))
                             aura->ModStackAmount(1);
                         else
                             _caster->CastSpell(_target ? _target : _caster, i->effect, true);
                         break;
+                    }
                     case LINK_ACTION_REMOVE_COOLDOWN: //8
                         if (Player* _lplayer = _caster->ToPlayer())
                             _lplayer->RemoveSpellCooldown(i->effect, true);
@@ -5611,25 +5610,33 @@ void Spell::LinkedSpell(Unit* _caster, Unit* _target, SpellLinkedType type)
                         if(Aura* aura = (_target ? _target : _caster)->GetAura(i->effect, _caster->GetGUID()))
                         {
                             if (!i->duration)
-                                aura->SetDuration(aura->GetSpellInfo()->GetMaxDuration(), true);
+                                aura->RefreshTimers();
                             else
                             {
                                 int32 _duration = int32(aura->GetDuration() + i->duration);
                                 if (_duration < aura->GetMaxDuration())
-                                    aura->SetDuration(_duration, true);
+                                    aura->SetDuration(_duration);
                             }
                         }
                         else
                             _caster->CastSpell(_target ? _target : _caster, i->effect, true);
                         break;
                     }
-                    case LINK_UNIT_TYPE_CAST_DEST: //11
+                    case LINK_ACTION_CAST_DEST: //11
                     {
                         if (m_targets.HasDst())
                         {
                             Position pos = *m_targets.GetDstPos();
                             _caster->CastSpell(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), i->effect, true);
                         }
+                        break;
+                    }
+                    case LINK_ACTION_CHANGE_CHARGES: //12
+                    {
+                        if (Aura* aura = (_target ? _target : _caster)->GetAura(i->effect))
+                            aura->ModCharges(1);
+                        else
+                            _caster->CastSpell(_target ? _target : _caster, i->effect, true);
                         break;
                     }
                 }
@@ -6373,17 +6380,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                         if (Player* plr = m_caster->ToPlayer())
                             if (plr->GetSpecializationId() != SPEC_WARLOCK_DEMONOLOGY)
                                 return SPELL_FAILED_NO_SPEC;
-                        break;
-                    }
-                    case 86121:  // Soul Swap
-                    {
-                        if (Unit* target = m_targets.GetUnitTarget())
-                        {
-                            if (!target->GetAuraEffect(SPELL_AURA_PERIODIC_DAMAGE, SPELLFAMILY_WARLOCK, 0x00000402, 0x00000112, 0, m_caster->GetGUID()))
-                            {
-                                return SPELL_FAILED_BAD_TARGETS;
-                            }
-                        }
                         break;
                     }
                     case 86213:  // Soul Swap Exhale
@@ -7261,7 +7257,7 @@ bool Spell::CanAutoCast(Unit* target)
                         for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
                             if (target->GetCurrentSpell(CurrentSpellTypes(i)))
                                 find = true;
-                        if(!find)
+                        if(!find && !m_spellInfo->Effects[j].IsTargetingArea())
                             return false;
                         break;
                     }
@@ -8674,7 +8670,7 @@ SpellCastResult Spell::CustomCheckCast()
 {
     SpellCastResult retVal = SPELL_CAST_OK;
 
-    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u", m_spellInfo->Id);
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u", m_spellInfo->Id);
 
     if (std::vector<SpellCheckCast> const* checkCast = sSpellMgr->GetSpellCheckCast(m_spellInfo->Id))
     {
@@ -8693,8 +8689,8 @@ SpellCastResult Spell::CustomCheckCast()
             if(!_caster)
                 check = true;
 
-            if(!_target)
-                check = true;
+            if(_target)
+                _target = _caster;
 
             if(itr->dataType)
                 if(m_caster->HasAuraLinkedSpell(_caster, _target, itr->checkType, itr->dataType))
@@ -8724,8 +8720,8 @@ SpellCastResult Spell::CustomCheckCast()
                 }
             }
 
-            sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u check %i param1 %i type %i errorId %i customErrorId %i",
-            m_spellInfo->Id, check, itr->param1, itr->type, itr->errorId, itr->customErrorId);
+            //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u check %i param1 %i type %i errorId %i customErrorId %i",
+            //m_spellInfo->Id, check, itr->param1, itr->type, itr->errorId, itr->customErrorId);
 
             if(check)
             {
@@ -8741,7 +8737,7 @@ SpellCastResult Spell::CustomCheckCast()
         }
     }
 
-    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u retVal %i m_customError %i", m_spellInfo->Id, retVal, m_customError);
+    //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::CustomCheckCast spellId %u retVal %i m_customError %i", m_spellInfo->Id, retVal, m_customError);
 
     return retVal;
 }
@@ -9434,7 +9430,7 @@ bool WorldObjectSpellTargetCheck::operator()(WorldObject* target)
     if (res != SPELL_CAST_OK)
     {
         #ifdef WIN32
-        sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::WorldObjectSpellTargetCheck::checkcast fail. spell id %u res %u caster %u target %u", _spellInfo->Id, res, _caster->GetGUIDLow(), target->GetGUIDLow());
+        sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::WorldObjectSpellTargetCheck::checkcast fail. spell id %u res %u caster %s target %s", _spellInfo->Id, res, _caster->GetGUID().ToString().c_str(), target->GetGUID().ToString().c_str());
         #endif
         return false;
     }

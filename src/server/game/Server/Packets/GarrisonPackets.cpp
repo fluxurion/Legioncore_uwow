@@ -90,35 +90,37 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::GarrisonMission
 
 WorldPacket const* WorldPackets::Garrison::GetGarrisonInfoResult::Write()
 {
-    _worldPacket << Unk;
-    _worldPacket << static_cast<uint32>(Data.size());
-    for (auto const& v : Data)
-    {
-        _worldPacket << int32(v.GarrSiteID);
-        _worldPacket << int32(v.GarrSiteLevelID);
-        _worldPacket << int32(v.FactionIndex);
-        _worldPacket << static_cast<uint32>(v.Buildings.size());
-        _worldPacket << static_cast<uint32>(v.Plots.size());
-        _worldPacket << static_cast<uint32>(v.Followers.size());
-        _worldPacket << static_cast<uint32>(v.Missions.size());
-        _worldPacket << static_cast<uint32>(v.ArchivedMissions.size());
-        _worldPacket << int32(v.NumFollowerActivationsRemaining);
+    _worldPacket.reserve(4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 +
+        Buildings.size() * sizeof(GarrisonBuildingInfo) +
+        Plots.size() * sizeof(GarrisonPlotInfo) +
+        Followers.size() * (sizeof(GarrisonFollower) + 5 * 4) +
+        Missions.size() * sizeof(GarrisonMission) +
+        ArchivedMissions.size() * 4);
 
-        for (GarrisonBuildingInfo const* building : v.Buildings)
-            _worldPacket << *building;
+    _worldPacket << int32(GarrSiteID);
+    _worldPacket << int32(GarrSiteLevelID);
+    _worldPacket << int32(FactionIndex);
+    _worldPacket << static_cast<uint32>(Buildings.size());
+    _worldPacket << static_cast<uint32>(Plots.size());
+    _worldPacket << static_cast<uint32>(Followers.size());
+    _worldPacket << static_cast<uint32>(Missions.size());
+    _worldPacket << static_cast<uint32>(ArchivedMissions.size());
+    _worldPacket << int32(NumFollowerActivationsRemaining);
 
-        for (GarrisonPlotInfo* plot : v.Plots)
-            _worldPacket << *plot;
+    for (GarrisonBuildingInfo const* building : Buildings)
+        _worldPacket << *building;
 
-        for (GarrisonFollower const* follower : v.Followers)
-            _worldPacket << *follower;
+    for (GarrisonPlotInfo* plot : Plots)
+        _worldPacket << *plot;
 
-        for (GarrisonMission const* mission : v.Missions)
-            _worldPacket << *mission;
+    for (GarrisonFollower const* follower : Followers)
+        _worldPacket << *follower;
 
-        if (!v.ArchivedMissions.empty())
-            _worldPacket.append(v.ArchivedMissions.data(), v.ArchivedMissions.size());
-    }
+    for (GarrisonMission const* mission : Missions)
+        _worldPacket << *mission;
+
+    if (!ArchivedMissions.empty())
+        _worldPacket.append(ArchivedMissions.data(), ArchivedMissions.size());
 
     return &_worldPacket;
 }
@@ -131,22 +133,14 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::GarrisonRemoteB
     return data;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::LandingPageData const& page)
-{
-    data << uint32(page.MissionRecID);
-    data << uint32(page.FollowerDBID);
-    data << uint32(page.Unk1);
-    data << uint32(page.Unk2);
-
-    return data;
-}
-
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Garrison::Shipment const& shipment)
 {
     data << shipment.ShipmentRecID;
     data << shipment.ShipmentID;
-    data.AppendPackedTime(shipment.CreationTime);
+    data << shipment.Unk2;
+    data << uint32(shipment.CreationTime);
     data << shipment.ShipmentDuration;
+    data << shipment.BuildingTypeID;
 
     return data;
 }
@@ -316,6 +310,11 @@ void WorldPackets::Garrison::GarrisonStartMission::Read()
     }
 }
 
+void WorldPackets::Garrison::GarrisonSwapBuildings::Read()
+{
+    _worldPacket >> NpcGUID >> PlotId1 >> PlotId2;
+}
+
 void WorldPackets::Garrison::GarrisonCompleteMission::Read()
 {
     _worldPacket >> NpcGUID;
@@ -388,6 +387,11 @@ WorldPacket const* WorldPackets::Garrison::GarrisonIsUpgradeableResult::Write()
 
 void WorldPackets::Garrison::CreateShipment::Read()
 {
+    _worldPacket >> NpcGUID >> Count;
+}
+
+void WorldPackets::Garrison::GarrisonRequestShipmentInfo::Read()
+{
     _worldPacket >> NpcGUID;
 }
 
@@ -410,6 +414,9 @@ WorldPacket const* WorldPackets::Garrison::GetShipmentInfoResponse::Write()
     _worldPacket << MaxShipments;
 
     _worldPacket << static_cast<uint32>(Shipments.size());
+
+    _worldPacket << PlotInstanceID;
+
     for (auto const& map : Shipments)
         _worldPacket << map;
 
@@ -608,6 +615,41 @@ WorldPacket const* WorldPackets::Garrison::QueryGarrisonCreatureNameResponse::Wr
         _worldPacket.WriteBits(Name->size(), 8);
         _worldPacket.WriteString(*Name);
     }
+
+    return &_worldPacket;
+}
+
+ByteBuffer& operator<<(ByteBuffer& _worldPacket, WorldPackets::Garrison::GarrTradeSkill const& tradeSkill)
+{
+    _worldPacket << tradeSkill.unk;
+    _worldPacket << static_cast<uint32>(tradeSkill.skillStorel.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.unkStore1.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.unkStore2.size());
+    _worldPacket << static_cast<uint32>(tradeSkill.spellStore.size());
+
+    for (auto const& data : tradeSkill.skillStorel)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.unkStore1)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.unkStore2)
+        _worldPacket << data;
+
+    for (auto const& data : tradeSkill.spellStore)
+        _worldPacket << data;
+
+    return _worldPacket;
+}
+
+WorldPacket const* WorldPackets::Garrison::GarrisonTradeSkillResponse::Write()
+{
+    _worldPacket << GUID;
+    _worldPacket << tradeSkill;
+
+    _worldPacket << static_cast<uint32>(conditionPlayerStore.size());
+    for (auto const& data : conditionPlayerStore)
+        _worldPacket << data;
 
     return &_worldPacket;
 }

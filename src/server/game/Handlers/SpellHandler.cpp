@@ -38,6 +38,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "GameObjectPackets.h"
+#include "Garrison.h"
 
 void WorldSession::HandleUseItemOpcode(WorldPackets::Spells::ItemUse& cast)
 {
@@ -201,11 +202,17 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
             {
                 mover->RemoveAurasDueToSpell(107837);
                 mover->RemoveAurasDueToSpell(101601);
-            }
+            }else
             if (cast.Cast.SpellID == 119393)
             {
                 mover->RemoveAurasDueToSpell(119388);
                 mover->RemoveAurasDueToSpell(119386);
+            }
+            else if (!cast.Cast.Charmer.IsEmpty())
+            {
+                if (Garrison *garr = mover->ToPlayer()->GetGarrison())
+                    if (!garr->CanCastTradeSkill(cast.Cast.Charmer, cast.Cast.SpellID))
+                        return;
             }
             else
             {
@@ -238,7 +245,10 @@ void WorldSession::HandleCastSpellOpcode(WorldPackets::Spells::CastSpell& cast)
             }
     }
 
+    SpellInfo const* saveSpellInfo = spellInfo;
     spellInfo = _player->GetCastSpellInfo(spellInfo);
+    if (saveSpellInfo != spellInfo)
+        replaced = true;
 
     // Client is resending autoshot cast opcode when other spell is casted during shoot rotation
     // Skip it to prevent "interrupt" message

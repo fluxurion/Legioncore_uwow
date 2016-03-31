@@ -59,6 +59,8 @@ extern DB2Storage<CreatureModelDataEntry>           sCreatureModelDataStore;
 extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
 extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
 extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
+extern DB2Storage<CharShipmentEntry>                sCharShipmentStore;
+extern DB2Storage<CharShipmentConteiner>            sCharShipmentContainerStore;
 extern DB2Storage<CurrencyTypesEntry>               sCurrencyTypesStore;
 extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
 extern DB2Storage<DifficultyEntry>                  sDifficultyStore;
@@ -364,6 +366,10 @@ public:
     typedef std::unordered_map<uint32, uint32> SpellEffectScallingByEffectIDContainer;
     typedef std::map<uint8 /*HonorLevel*/, PvpTalentUnlockEntry const*> TalentUnlockContainer;
 
+    typedef std::multimap<uint32 /*ShipmentConteinerID*/, CharShipmentEntry const*> ShipmentConteinerMap;
+    typedef std::pair<ShipmentConteinerMap::const_iterator, ShipmentConteinerMap::const_iterator> ShipmentConteinerMapBounds;
+
+    typedef std::multimap<uint32 /*BuildingTypeID*/, GarrBuildingEntry const*> GarrBuildingTypeMap;
     static DB2Manager& Instance()
     {
         static DB2Manager instance;
@@ -458,6 +464,11 @@ public:
     MapDifficultyContainer _mapDifficulty;
     SpellCategoryContainer _spellCategory;
     TalentsByPositionContainer _talentByPos;
+
+    ShipmentConteinerMapBounds GetShipmentConteinerBounds(uint32 conteinerID) const;
+    ShipmentConteinerMap _charShipmentConteiner;
+    GarrBuildingTypeMap _buldingTypeConteiner;
+
 private:
     StorageMap _stores;
     HotfixData _hotfixData;

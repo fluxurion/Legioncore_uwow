@@ -117,7 +117,7 @@ void AuraApplication::_InitFlags(Unit* caster, uint32 effMask)
 {
     Aura const* aura = GetBase();
     // mark as selfcasted if needed
-    _flags |= (aura->GetCasterGUID() == GetTarget()->GetGUID()) ? AFLAG_NONE : AFLAG_NOCASTER;
+    _flags |= (aura->GetCasterGUID() == GetTarget()->GetGUID()) ? AFLAG_NOCASTER : AFLAG_NONE;
 
     // aura is casted by self or an enemy
     // one negative effect and we know aura is negative
@@ -1417,6 +1417,12 @@ bool Aura::CanBeSaved() const
         case 159127:
         case 166646:
         case 116014:
+        case 169482:
+        case 93431:
+        case 164724:
+        case 163119:
+        case 164725:
+        case 93430:
             return false;
         default:
             break;
@@ -1458,6 +1464,7 @@ bool Aura::CanBeSentToClient() const
     || HasEffectType(SPELL_AURA_MOD_CHARGES)
     || HasEffectType(SPELL_AURA_CHARGE_RECOVERY_MOD)
     || HasEffectType(SPELL_AURA_CHARGE_RECOVERY_MULTIPLIER)
+    || HasEffectType(SPELL_AURA_CHARGE_RECOVERY_AFFECTED_BY_HASTE_REGEN)
     || HasEffectType(SPELL_AURA_OVERRIDE_ACTIONBAR_SPELLS)
     || HasEffectType(SPELL_AURA_OVERRIDE_ACTIONBAR_SPELLS_2)
     || HasEffectType(SPELL_AURA_MOD_SPELL_VISUAL)
@@ -1499,15 +1506,22 @@ void Aura::UnregisterCasterAuras()
         caster = ObjectAccessor::GetObjectInOrOutOfWorld(GetCasterGUID(), (Unit*)NULL);
     if(!caster)
         return;
-    caster->GetMyCastAuras().remove(this);
-    if(caster->GetTypeId() == TYPEID_PLAYER)
+    if (!caster->GetMyCastAuras().empty())
+        caster->GetMyCastAuras().remove(this);
+
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
-        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
-            if (GetSpellInfo()->Effects[i].TargetA.GetTarget() == TARGET_UNIT_CASTER_AREA_SUMMON)
-            {
-                caster->RemoveMyAura(GetId());
+        if (GetSpellInfo()->Effects[i].TargetA.GetTarget() == TARGET_UNIT_CASTER_AREA_SUMMON)
+        {
+            if (Player* player = caster->ToPlayer())
+                if (player->GetSession() && player->GetSession()->PlayerLogout())
+                    return;
+
+            if(!caster->IsInWorld() || !GetUnitOwner() || !GetUnitOwner()->IsInWorld() || caster != GetUnitOwner())
                 return;
-            }
+
+            caster->RemovePetAndOwnerAura(GetId(), GetUnitOwner());
+        }
     }
 }
 
@@ -3341,7 +3355,7 @@ void Aura::UpdateConcatenateAura(Unit* caster, int32 amount, int32 effIndex, int
         break;
         case CONCATENATE_ON_REMOVE_AURA: // 2
         {
-            if (std::vector<SpellConcatenateAura> const* spellConcatenateAura = sSpellMgr->GetSpellConcatenateUpdate(-GetId()))
+            if (std::vector<SpellConcatenateAura> const* spellConcatenateAura = sSpellMgr->GetSpellConcatenateUpdate(-GetId())) // int32(GetId()) ?
             {
                 for (std::vector<SpellConcatenateAura>::const_iterator itr = spellConcatenateAura->begin(); itr != spellConcatenateAura->end(); ++itr)
                 {

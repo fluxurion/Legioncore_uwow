@@ -949,7 +949,15 @@ enum SpellAttr13
     SPELL_ATTR13_UNK20                            = 0x00100000, // 20
     SPELL_ATTR13_UNK21                            = 0x00200000, // 21
     SPELL_ATTR13_UNK22                            = 0x00400000, // 22
-    SPELL_ATTR13_UNK23                            = 0x00800000  // 23
+    SPELL_ATTR13_UNK23                            = 0x00800000, // 23
+    SPELL_ATTR13_UNK24                            = 0x01000000, // 24
+    SPELL_ATTR13_UNK25                            = 0x02000000, // 25
+    SPELL_ATTR13_UNK26                            = 0x04000000, // 26 some healing spell
+    SPELL_ATTR13_UNK27                            = 0x08000000, // 27
+    SPELL_ATTR13_UNK28                            = 0x10000000, // 28
+    SPELL_ATTR13_UNK29                            = 0x20000000, // 29
+    SPELL_ATTR13_UNK30                            = 0x40000000, // 30
+    SPELL_ATTR13_UNK31                            = 0x80000000  // 31
 };
 
 #define MAX_TALENT_SPECS        4
@@ -2297,6 +2305,7 @@ enum GameObjectFlags
     GO_FLAG_UNK1            = 0x00000800,
     GO_FLAG_UNK2            = 0x00001000,
     GO_FLAG_UNK3            = 0x00002000,
+    GO_FLAG_LUMBER          = 0x00008000,
     GO_FLAG_PERSONAL_USE    = 0x00040000                    // todo: more research. On first look - personal visibility & usibility (only one time at all)
 };
 
