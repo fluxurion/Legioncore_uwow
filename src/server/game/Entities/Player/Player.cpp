@@ -24461,7 +24461,8 @@ void Player::SendInstanceResetWarning(uint32 mapid, Difficulty difficulty, uint3
     message.MapID = mapid;
     message.DifficultyID = difficulty;
     message.TimeLeft = time;
-    message.Locked = false;
+    if (InstancePlayerBind const* bind = GetBoundInstance(mapid, difficulty))
+        message.Locked = bind->perm;
     message.Extended = false;
     GetSession()->SendPacket(message.Write());
 }
