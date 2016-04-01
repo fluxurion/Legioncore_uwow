@@ -321,11 +321,12 @@ void WorldSession::HandleMovementOpcodes(WorldPackets::Movement::ClientPlayerMov
     OpcodeClient opcode = packet.GetOpcode();
     if (plrMover)
     {
-        if (opcode == CMSG_MOVE_FALL_LAND && !plrMover->isInFlight())
-            plrMover->HandleFall(movementInfo);
+        if (plrMover->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) && !plrMover->isInFlight())
+            if (!plrMover->Zliquid_status)
+                plrMover->HandleFall(movementInfo);
 
         if (movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING) != plrMover->IsInWater())
-            plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(movementInfo.Pos));
+            plrMover->SetInWater(!plrMover->IsInWater() || plrMover->GetBaseMap()->IsUnderWater(&movementInfo.Pos));
 
         if (mover)
             if (Vehicle const* veh = mover->GetVehicleKit())

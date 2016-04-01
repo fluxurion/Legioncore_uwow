@@ -2097,10 +2097,10 @@ bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
     return false;
 }
 
-bool Map::IsUnderWater(Position pos) const
+bool Map::IsUnderWater(Position const* pos) const
 {
-    if (const_cast<Map*>(this)->GetGrid(pos.GetPositionX(), pos.GetPositionY()))
-        if (getLiquidStatus(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN) & LIQUID_MAP_UNDER_WATER)
+    if (const_cast<Map*>(this)->GetGrid(pos->GetPositionX(), pos->GetPositionY()))
+        if (getLiquidStatus(pos->GetPositionX(), pos->GetPositionY(), pos->GetPositionZ(), MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN) & LIQUID_MAP_UNDER_WATER)
             return true;
 
     return false;

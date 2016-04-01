@@ -351,7 +351,7 @@ class Map : public GridRefManager<NGridType>
         uint8 GetTerrainType(float x, float y) const;
         float GetWaterLevel(float x, float y) const;
         bool IsInWater(float x, float y, float z, LiquidData* data = 0) const;
-        bool IsUnderWater(Position pos) const;
+        bool IsUnderWater(Position const* pos) const;
 
         void MoveAllCreaturesInMoveList();
         void RemoveAllObjectsInRemoveList();

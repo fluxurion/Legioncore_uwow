@@ -208,7 +208,7 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
             Creature* owner = (Creature*)_sourceUnit;
 
             Position pos;
-            if (_sourceUnit->GetBaseMap()->IsUnderWater(pos.VectorToPosition((distToStartPoly > 7.0f) ? startPos : endPos)))
+            if (_sourceUnit->GetBaseMap()->IsUnderWater(&pos.VectorToPosition((distToStartPoly > 7.0f) ? startPos : endPos)))
             {
                 sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: underWater case\n");
                 if (owner->CanSwim())

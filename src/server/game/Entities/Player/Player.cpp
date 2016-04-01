@@ -870,7 +870,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
         {
             for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
             {
-                if (oEntry->ItemID[j] <= 0 /*|| oEntry->ItemDisplayId[j] <= 0*/)
+                if (oEntry->ItemID[j] <= 0)
                     continue;
 
                 uint32 itemId = oEntry->ItemID[j];
@@ -2799,8 +2799,7 @@ GameObject* Player::GetGameObjectIfCanInteractWith(ObjectGuid guid, GameobjectTy
 
 bool Player::IsUnderWater() const
 {
-    return IsInWater() &&
-        GetPositionZ() < (GetBaseMap()->GetWaterLevel(GetPositionX(), GetPositionY())-2);
+    return IsInWater() && GetPositionZ() < (GetBaseMap()->GetWaterLevel(GetPositionX(), GetPositionY()) - 2);
 }
 
 void Player::SetInWater(bool apply)
@@ -16553,9 +16552,7 @@ void Player::AdjustQuestReqItemCount(Quest const* quest)
             if (obj.Flags & 0x4)
                 continue;
 
-            uint32 reqItemCount = obj.Amount;
-            uint32 curItemCount = GetItemCount(obj.ObjectID, true);
-            SetQuestObjectiveData(quest, &obj, std::min(curItemCount, reqItemCount));
+            SetQuestObjectiveData(quest, &obj, std::min(GetItemCount(obj.ObjectID, true), uint32(obj.Amount)));
         }
     }
 }
@@ -16716,19 +16713,13 @@ void Player::ItemAddedQuestCheck(uint32 entry, uint32 count)
             if (obj.Type != QUEST_OBJECTIVE_ITEM)
                 continue;
 
-            uint32 reqItem = obj.ObjectID;
-            if (reqItem == entry)
+            if (obj.ObjectID == entry)
             {
                 uint32 reqitemcount = obj.Amount;
                 uint16 curitemcount = GetQuestObjectiveData(qInfo, obj.StorageIndex);
                 if (curitemcount < reqitemcount)
-                {
-                    uint32 newItemCount = std::min<uint32>(curitemcount + count, reqitemcount);
-                    SetQuestObjectiveData(qInfo, &obj, newItemCount);
+                    SetQuestObjectiveData(qInfo, &obj, std::min<uint32>(curitemcount + count, reqitemcount));
 
-                    //SendQuestUpdateAddItem(qInfo, j, additemcount);
-                    // FIXME: verify if there's any packet sent updating item
-                }
                 if (CanCompleteQuest(questid))
                     CompleteQuest(questid);
                 return;
