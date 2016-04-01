@@ -35,16 +35,16 @@ CREATE TABLE `area_table` (
   `LiquidTypeID2` smallint(5) unsigned NOT NULL DEFAULT '0',
   `LiquidTypeID3` smallint(5) unsigned NOT NULL DEFAULT '0',
   `LiquidTypeID4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UWIntroMusic` smallint(5) unsigned NOT NULL DEFAULT '0',
   `UWZoneMusic` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `WorldPvPID` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `PvPCombastWorldStateID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UWAmbience` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `WorldPvPID` tinyint(4) NOT NULL DEFAULT '0',
+  `WindSettingsID` tinyint(4) NOT NULL DEFAULT '0',
   `SoundProviderPref` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `SoundProviderPrefUnderwater` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `ExplorationLevel` tinyint(4) NOT NULL DEFAULT '0',
   `FactionGroupMask` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `MountFlags` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `UWIntroMusic` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `WindSettingsID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `WildBattlePetLevelMin` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `WildBattlePetLevelMax` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
@@ -139,14 +139,14 @@ CREATE TABLE `achievement` (
   `Description` text,
   `Flags` int(10) unsigned NOT NULL DEFAULT '0',
   `Reward` text,
-  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `MapID` smallint(6) NOT NULL DEFAULT '0',
   `ParentAchievement` smallint(5) unsigned NOT NULL DEFAULT '0',
   `CategoryID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `OrderInCategory` smallint(5) unsigned NOT NULL DEFAULT '0',
   `IconID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `RefAchievement` smallint(5) unsigned NOT NULL DEFAULT '0',
   `CriteriaTree` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `FactionFlag` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `FactionFlag` tinyint(4) NOT NULL DEFAULT '0',
   `RewardPoints` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Amount` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
@@ -225,9 +225,9 @@ DROP TABLE IF EXISTS `auction_house`;
 CREATE TABLE `auction_house` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
-  `FactionID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DepositRate` int(10) unsigned NOT NULL DEFAULT '0',
-  `ConsignmentRate` int(10) unsigned NOT NULL DEFAULT '0',
+  `FactionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DepositRate` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ConsignmentRate` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -337,32 +337,36 @@ DROP TABLE IF EXISTS `battlemaster_list`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battlemaster_list` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID1` int(11) NOT NULL DEFAULT '0',
-  `MapID2` int(11) NOT NULL DEFAULT '0',
-  `MapID3` int(11) NOT NULL DEFAULT '0',
-  `MapID4` int(11) NOT NULL DEFAULT '0',
-  `MapID5` int(11) NOT NULL DEFAULT '0',
-  `MapID6` int(11) NOT NULL DEFAULT '0',
-  `MapID7` int(11) NOT NULL DEFAULT '0',
-  `MapID8` int(11) NOT NULL DEFAULT '0',
-  `MapID9` int(11) NOT NULL DEFAULT '0',
-  `MapID10` int(11) NOT NULL DEFAULT '0',
-  `MapID11` int(11) NOT NULL DEFAULT '0',
-  `MapID12` int(11) NOT NULL DEFAULT '0',
-  `MapID13` int(11) NOT NULL DEFAULT '0',
-  `MapID14` int(11) NOT NULL DEFAULT '0',
-  `MapID15` int(11) NOT NULL DEFAULT '0',
-  `MapID16` int(11) NOT NULL DEFAULT '0',
-  `InstanceType` int(10) unsigned NOT NULL DEFAULT '0',
   `NameLang` text,
-  `MaxGroupSize` int(10) unsigned NOT NULL DEFAULT '0',
-  `HolidayWorldState` int(10) unsigned NOT NULL DEFAULT '0',
-  `Minlevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `Maxlevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `RatedPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `MinPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `MaxPlayers` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `IconFileDataID` int(10) unsigned NOT NULL DEFAULT '0',
+  `GametypeLang` text,
+  `MapID1` smallint(6) NOT NULL DEFAULT '0',
+  `MapID2` smallint(6) NOT NULL DEFAULT '0',
+  `MapID3` smallint(6) NOT NULL DEFAULT '0',
+  `MapID4` smallint(6) NOT NULL DEFAULT '0',
+  `MapID5` smallint(6) NOT NULL DEFAULT '0',
+  `MapID6` smallint(6) NOT NULL DEFAULT '0',
+  `MapID7` smallint(6) NOT NULL DEFAULT '0',
+  `MapID8` smallint(6) NOT NULL DEFAULT '0',
+  `MapID9` smallint(6) NOT NULL DEFAULT '0',
+  `MapID10` smallint(6) NOT NULL DEFAULT '0',
+  `MapID11` smallint(6) NOT NULL DEFAULT '0',
+  `MapID12` smallint(6) NOT NULL DEFAULT '0',
+  `MapID13` smallint(6) NOT NULL DEFAULT '0',
+  `MapID14` smallint(6) NOT NULL DEFAULT '0',
+  `MapID15` smallint(6) NOT NULL DEFAULT '0',
+  `MapID16` smallint(6) NOT NULL DEFAULT '0',
+  `HolidayWorldState` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `CritreriaID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `InstanceType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `GroupsAllowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MaxGroupSize` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Minlevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Maxlevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `RatedPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MinPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `MaxPlayers` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -375,6 +379,32 @@ CREATE TABLE `battlemaster_list` (
 LOCK TABLES `battlemaster_list` WRITE;
 /*!40000 ALTER TABLE `battlemaster_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `battlemaster_list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `battlemaster_list_locale`
+--
+
+DROP TABLE IF EXISTS `battlemaster_list_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `battlemaster_list_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `NameLang_lang` text,
+  `GametypeLang_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `battlemaster_list_locale`
+--
+
+LOCK TABLES `battlemaster_list_locale` WRITE;
+/*!40000 ALTER TABLE `battlemaster_list_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `battlemaster_list_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -535,6 +565,37 @@ CREATE TABLE `creature_model_data` (
 LOCK TABLES `creature_model_data` WRITE;
 /*!40000 ALTER TABLE `creature_model_data` DISABLE KEYS */;
 /*!40000 ALTER TABLE `creature_model_data` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `conversation_line`
+--
+
+DROP TABLE IF EXISTS `conversation_line`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `conversation_line` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `tesxID` int(10) unsigned NOT NULL DEFAULT '0',
+  `duration` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `unk` smallint(6) NOT NULL DEFAULT '0',
+  `nextID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `unk1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `unk4` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `conversation_line`
+--
+
+LOCK TABLES `conversation_line` WRITE;
+/*!40000 ALTER TABLE `conversation_line` DISABLE KEYS */;
+/*!40000 ALTER TABLE `conversation_line` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1348,14 +1409,13 @@ DROP TABLE IF EXISTS `barber_shop_style`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `barber_shop_style` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Description` text,
   `CostMultiplier` float NOT NULL DEFAULT '0',
+  `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Race` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Gender` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `HairID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `Tato` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1934,9 +1994,9 @@ CREATE TABLE `criteria_tree` (
   `Description` text,
   `CriteriaID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Parent` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Flags` smallint(6) NOT NULL DEFAULT '0',
+  `Operator` smallint(6) NOT NULL DEFAULT '0',
   `OrderIndex` smallint(6) NOT NULL DEFAULT '0',
-  `Operator` tinyint(4) NOT NULL DEFAULT '0',
+  `Flags` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -3398,14 +3458,13 @@ DROP TABLE IF EXISTS `mount_capability`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mount_capability` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpeedModSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredSpell` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredAura` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpeedModSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `RequiredRidingSkill` smallint(5) unsigned NOT NULL DEFAULT '0',
   `RequiredArea` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `RequiredMap` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `RequiredMap` smallint(6) NOT NULL DEFAULT '0',
   `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `Unknown7` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `RequiredAura` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4620,9 +4679,9 @@ DROP TABLE IF EXISTS `battle_pet_state`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_state` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk` int(10) unsigned NOT NULL DEFAULT '0',
   `stateName` text,
-  `flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `unk` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4674,11 +4733,11 @@ CREATE TABLE `battle_pet_species` (
   `CreatureEntry` int(10) unsigned NOT NULL DEFAULT '0',
   `IconFileID` int(10) unsigned NOT NULL DEFAULT '0',
   `spellId` int(10) unsigned NOT NULL DEFAULT '0',
-  `petType` int(10) unsigned NOT NULL DEFAULT '0',
-  `source` int(11) NOT NULL DEFAULT '0',
-  `flags` int(10) unsigned NOT NULL DEFAULT '0',
   `SourceText` text,
   `Description` text,
+  `flags` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `petType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `source` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4728,9 +4787,9 @@ DROP TABLE IF EXISTS `battle_pet_species_state`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_species_state` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpeciesID` int(10) unsigned NOT NULL DEFAULT '0',
-  `State` int(10) unsigned NOT NULL DEFAULT '0',
   `Value` int(11) NOT NULL DEFAULT '0',
+  `SpeciesID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `State` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4754,10 +4813,10 @@ DROP TABLE IF EXISTS `battle_pet_species_x_ability`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_species_x_ability` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `speciesID` int(10) unsigned NOT NULL DEFAULT '0',
-  `abilityID` int(10) unsigned NOT NULL DEFAULT '0',
-  `requiredLevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `rank` int(10) unsigned NOT NULL DEFAULT '0',
+  `speciesID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `abilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `requiredLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `rank` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4781,8 +4840,8 @@ DROP TABLE IF EXISTS `battle_pet_breed_quality`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_breed_quality` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `quality` int(10) unsigned NOT NULL DEFAULT '0',
   `qualityModifier` float NOT NULL DEFAULT '0',
+  `quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4806,9 +4865,9 @@ DROP TABLE IF EXISTS `battle_pet_breed_state`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_breed_state` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `breedID` int(10) unsigned NOT NULL DEFAULT '0',
-  `stateID` int(10) unsigned NOT NULL DEFAULT '0',
-  `stateModifier` int(11) NOT NULL DEFAULT '0',
+  `stateModifier` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `breedID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `stateID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4821,6 +4880,96 @@ CREATE TABLE `battle_pet_breed_state` (
 LOCK TABLES `battle_pet_breed_state` WRITE;
 /*!40000 ALTER TABLE `battle_pet_breed_state` DISABLE KEYS */;
 /*!40000 ALTER TABLE `battle_pet_breed_state` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `char_shipment`
+--
+
+DROP TABLE IF EXISTS `char_shipment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `char_shipment` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `ShipmentConteinerID` int(10) unsigned NOT NULL DEFAULT '0',
+  `CriteriaID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `TimeForShipment` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellCreation` int(10) unsigned NOT NULL DEFAULT '0',
+  `ShipmentResultItemID` int(10) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `char_shipment`
+--
+
+LOCK TABLES `char_shipment` WRITE;
+/*!40000 ALTER TABLE `char_shipment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `char_shipment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `char_shipment_conteiner`
+--
+
+DROP TABLE IF EXISTS `char_shipment_conteiner`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `char_shipment_conteiner` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `BuildingType` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `unt3` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk4` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk5` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk6` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk7` int(10) unsigned NOT NULL DEFAULT '0',
+  `MaxShipments` int(10) unsigned NOT NULL DEFAULT '0',
+  `Description` text,
+  `enotherID` int(10) unsigned NOT NULL DEFAULT '0',
+  `fractionType` int(11) NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `char_shipment_conteiner`
+--
+
+LOCK TABLES `char_shipment_conteiner` WRITE;
+/*!40000 ALTER TABLE `char_shipment_conteiner` DISABLE KEYS */;
+/*!40000 ALTER TABLE `char_shipment_conteiner` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `char_shipment_conteiner_locale`
+--
+
+DROP TABLE IF EXISTS `char_shipment_conteiner_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `char_shipment_conteiner_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `Description_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `char_shipment_conteiner_locale`
+--
+
+LOCK TABLES `char_shipment_conteiner_locale` WRITE;
+/*!40000 ALTER TABLE `char_shipment_conteiner_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `char_shipment_conteiner_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -6247,7 +6396,7 @@ DROP TABLE IF EXISTS `spell_power`;
 CREATE TABLE `spell_power` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PowerCost` int(10) unsigned NOT NULL DEFAULT '0',
+  `PowerCost` int(11) NOT NULL DEFAULT '0',
   `PowerCostPercentage` float NOT NULL DEFAULT '0',
   `PowerCostPercentagePerSecond` float NOT NULL DEFAULT '0',
   `RequiredAura` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6566,16 +6715,16 @@ DROP TABLE IF EXISTS `taxi_nodes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxi_nodes` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `PosX` float NOT NULL DEFAULT '0',
   `PosY` float NOT NULL DEFAULT '0',
   `PosZ` float NOT NULL DEFAULT '0',
   `Name` text,
   `MountCreatureID` int(10) unsigned NOT NULL DEFAULT '0',
-  `ConditionID` int(10) unsigned NOT NULL DEFAULT '0',
-  `LearnableIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
   `MapOffset` float NOT NULL DEFAULT '0',
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ConditionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `LearnableIndex` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -6624,9 +6773,9 @@ DROP TABLE IF EXISTS `taxi_path`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxi_path` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `From` int(10) unsigned NOT NULL DEFAULT '0',
-  `To` int(10) unsigned NOT NULL DEFAULT '0',
-  `Cost` int(10) unsigned NOT NULL DEFAULT '0',
+  `From` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `To` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Cost` smallint(5) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -6650,16 +6799,16 @@ DROP TABLE IF EXISTS `taxi_path_node`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxi_path_node` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PathID` int(10) unsigned NOT NULL DEFAULT '0',
-  `NodeIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `LocX` float NOT NULL DEFAULT '0',
   `LocY` float NOT NULL DEFAULT '0',
   `LocZ` float NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
   `Delay` int(10) unsigned NOT NULL DEFAULT '0',
-  `ArrivalEventID` int(10) unsigned NOT NULL DEFAULT '0',
-  `DepartureEventID` int(10) unsigned NOT NULL DEFAULT '0',
+  `PathID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `MapID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArrivalEventID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `DepartureEventID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `NodeIndex` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -6683,11 +6832,11 @@ DROP TABLE IF EXISTS `item_upgrade`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_upgrade` (
   `id` int(10) unsigned NOT NULL DEFAULT '0',
-  `itemUpgradePathId` int(10) unsigned NOT NULL DEFAULT '0',
-  `levelBonus` int(10) unsigned NOT NULL DEFAULT '0',
-  `prevUpgradeId` int(10) unsigned NOT NULL DEFAULT '0',
-  `currencyReqId` int(10) unsigned NOT NULL DEFAULT '0',
   `currencyReqAmt` int(10) unsigned NOT NULL DEFAULT '0',
+  `prevUpgradeId` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `currencyReqId` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `itemUpgradePathId` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `levelBonus` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -7558,7 +7707,7 @@ CREATE TABLE `spell_effect_scaling` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Coefficient` float NOT NULL DEFAULT '0',
   `Variance` float NOT NULL DEFAULT '0',
-  `ResourceCoefficient` float NOT NULL DEFAULT '0',
+  `OtherCoefficient` float NOT NULL DEFAULT '0',
   `SpellEffectId` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
@@ -8678,14 +8827,14 @@ CREATE TABLE `lock` (
   `Index6` int(10) unsigned NOT NULL DEFAULT '0',
   `Index7` int(10) unsigned NOT NULL DEFAULT '0',
   `Index8` int(10) unsigned NOT NULL DEFAULT '0',
-  `Skill1` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill2` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill3` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill4` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill5` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill6` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill7` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `Skill8` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `Skill1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill5` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill6` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill7` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Skill8` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Type1` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Type2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Type3` tinyint(3) unsigned NOT NULL DEFAULT '0',

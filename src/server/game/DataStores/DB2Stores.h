@@ -60,7 +60,7 @@ extern DB2Storage<CreatureTypeEntry>                sCreatureTypeStore;
 extern DB2Storage<CriteriaEntry>                    sCriteriaStore;
 extern DB2Storage<CriteriaTreeEntry>                sCriteriaTreeStore;
 extern DB2Storage<CharShipmentEntry>                sCharShipmentStore;
-extern DB2Storage<CharShipmentConteiner>            sCharShipmentContainerStore;
+extern DB2Storage<CharShipmentConteinerEntry>       sCharShipmentContainerStore;
 extern DB2Storage<CurrencyTypesEntry>               sCurrencyTypesStore;
 extern DB2Storage<DestructibleModelDataEntry>       sDestructibleModelDataStore;
 extern DB2Storage<DifficultyEntry>                  sDifficultyStore;

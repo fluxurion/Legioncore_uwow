@@ -52,7 +52,7 @@ DB2Storage<ChrRacesEntry>                   sChrRacesStore("ChrRaces.db2", ChrRa
 DB2Storage<ChrSpecializationEntry>          sChrSpecializationStore("ChrSpecialization.db2", ChrSpecializationFormat, HOTFIX_SEL_CHR_SPECIALIZATION);
 DB2Storage<ConversationLineEntry>           sConversationLineStore("ConversationLine.db2", ConversationLineFormat, HOTFIX_SEL_CONVERSATION_LINE);
 DB2Storage<CharShipmentEntry>               sCharShipmentStore("CharShipment.db2", CharShipmentFormat, HOTFIX_SEL_CHAR_SHIPMENT);
-DB2Storage<CharShipmentConteiner>           sCharShipmentContainerStore("CharShipmentContainer.db2", CharShipmentConteinerFormat, HOTFIX_SEL_CHAR_SHIPMENT_CONTAINER);
+DB2Storage<CharShipmentConteinerEntry>      sCharShipmentContainerStore("CharShipmentContainer.db2", CharShipmentConteinerFormat, HOTFIX_SEL_CHAR_SHIPMENT_CONTEINER);
 DB2Storage<CreatureDifficultyEntry>         sCreatureDifficultyStore("CreatureDifficulty.db2", CreatureDifficultyFormat, HOTFIX_SEL_CREATURE_DIFFICULTY);
 DB2Storage<CreatureDisplayInfoEntry>        sCreatureDisplayInfoStore("CreatureDisplayInfo.db2", CreatureDisplayInfoFormat, HOTFIX_SEL_CREATURE_DISPLAY_INFO);
 DB2Storage<CreatureFamilyEntry>             sCreatureFamilyStore("CreatureFamily.db2", CreatureFamilyFormat, HOTFIX_SEL_CREATURE_FAMILY);

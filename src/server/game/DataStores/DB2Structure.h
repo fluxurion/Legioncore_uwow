@@ -1591,21 +1591,21 @@ struct CharShipmentEntry
     uint32 ShipmentResultItemID;
 };
 
-struct CharShipmentConteiner
+struct CharShipmentConteinerEntry
 {
-    uint32 ID;
-    uint32 Flags;
-    uint32 BuildingType;
-    //LocalizedString* Name;
-    uint32 unt3;
-    uint32 unk4;
-    uint32 unk5;
-    uint32 unk6;
-    uint32 unk7;
-    uint32 MaxShipments;
-    //LocalizedString* Description;
-    uint32 enotherID;          //id of other fraction.
-    int32 fractionType;        //-1 - for all, 0 - horde, 1 - alliance
+    uint32      ID;
+    uint32      Flags;
+    uint32      BuildingType;
+    LocalizedString* Name;
+    uint32      unt3;
+    uint32      unk4;
+    uint32      unk5;
+    uint32      unk6;
+    uint32      unk7;
+    uint32      MaxShipments;
+    LocalizedString* Description;
+    uint32      enotherID;          //id of other fraction.
+    int32       fractionType;        //-1 - for all, 0 - horde, 1 - alliance
 };
 
 struct GarrAbilityEntry

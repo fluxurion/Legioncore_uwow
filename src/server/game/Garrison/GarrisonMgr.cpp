@@ -729,7 +729,7 @@ void GarrisonMgr::LoadShipment()
             continue;
         }
 
-        CharShipmentConteiner const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(data.ContainerID);
+        CharShipmentConteinerEntry const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(data.ContainerID);
         if (!shipmentConteinerEntry)
         {
             sLog->outError(LOG_FILTER_SQL, "Non-existing CharShipmentContainer.db2 entry %u was referenced in `garrison_shipment`.", data.ContainerID);

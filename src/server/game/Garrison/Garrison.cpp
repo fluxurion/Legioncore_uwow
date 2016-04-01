@@ -2346,7 +2346,7 @@ uint64 Garrison::PlaceShipment(uint32 shipmentID, uint32 placeTime, uint64 dbID/
     if (!shipmentEntry)
         return 0;
 
-    CharShipmentConteiner const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(shipmentEntry->ShipmentConteinerID);
+    CharShipmentConteinerEntry const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(shipmentEntry->ShipmentConteinerID);
     if (!shipmentConteinerEntry)
         return 0;
 
@@ -2401,7 +2401,7 @@ void Garrison::SendGarrisonShipmentLandingPage()
 
 void Garrison::CompleteShipments(GameObject *go)
 {
-    CharShipmentConteiner const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(go->GetGOInfo()->garrisonShipment.ShipmentContainer);
+    CharShipmentConteinerEntry const* shipmentConteinerEntry = sCharShipmentContainerStore.LookupEntry(go->GetGOInfo()->garrisonShipment.ShipmentContainer);
     if (!shipmentConteinerEntry)
         return;
  

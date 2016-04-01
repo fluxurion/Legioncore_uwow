@@ -57,7 +57,7 @@ struct GarrShipment
     uint32 ShipmentID = 0;
 
     CharShipmentEntry const* data = NULL;
-    CharShipmentConteiner const* cEntry = NULL;
+    CharShipmentConteinerEntry const* cEntry = NULL;
 };
 
 struct GarrTradeSkill
