@@ -729,6 +729,7 @@ struct ItemTemplate
     uint32 CurrencySubstitutionId;                          // May be used instead of a currency
     uint32 CurrencySubstitutionCount;
     uint32 ItemNameDescriptionID;
+    uint32 ArtifactID;
     std::vector<ItemEffectEntry const*> Effects;
 
     // extra fields, not part of db2 files
@@ -760,6 +761,7 @@ struct ItemTemplate
     SocketColor GetSocketColor(uint32 index) const { ASSERT(index < MAX_ITEM_PROTO_SOCKETS); return SocketColor(Socket[index].Color/*ExtendedData->SocketColor[index]*/); }
     uint32 GetSocketBonus() const { return socketBonus/*ExtendedData->SocketBonus*/; }
     uint32 GetGemProperties() const { return GemProperties/*ExtendedData->GemProperties*/; }
+    uint32 GetArtifactID() const { return ArtifactID; }
 
     uint32 GetBaseArmor() const { return GetArmor(GetBaseItemLevel()); }
     void GetBaseDamage(float& minDamage, float& maxDamage) const { GetDamage(GetBaseItemLevel(), minDamage, maxDamage); }

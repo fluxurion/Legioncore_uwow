@@ -2725,6 +2725,7 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.CurrencySubstitutionId = sparse->CurrencySubstitutionID;
         itemTemplate.CurrencySubstitutionCount = sparse->CurrencySubstitutionCount;
         itemTemplate.ItemNameDescriptionID = sparse->ItemNameDescriptionID;
+        itemTemplate.ArtifactID = sparse->ArtifactID;
         itemTemplate.ScriptId = 0;
         itemTemplate.FoodType = 0;
         itemTemplate.MinMoneyLoot = 0;
