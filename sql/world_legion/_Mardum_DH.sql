@@ -1,3 +1,6 @@
+-- Misc
+UPDATE `creature_template` SET `ScriptName` = 'conversation_announcer' WHERE `entry` in (101748);
+
 --
 DELETE FROM `spell_scene` WHERE `SceneScriptPackageID` in (1487, 1451, 1460, 1468, 1470, 1512, 1469, 1479, 1423, 1480, 1493);
 INSERT INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `PlaybackFlags`, MonsterCredit, trigerSpell, ScriptName, comment) VALUES
@@ -33,6 +36,7 @@ UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID
 REPLACE INTO `gameobject_quest_visual` (`goID`, `questID`, `incomplete_state_spell_visual`, `incomplete_state_world_effect`, `complete_state_spell_visual`, `complete_state_world_effect`, `Comment`)
  VALUES ('244898', '40077', '37794', '0', '8743', '0', 'Legion. Q: 40077');
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40077' WHERE `gameobject_template`.`entry` = 244898;
+UPDATE `creature_template` SET `ScriptName` = 'npc_q40077' WHERE `creature_template`.`entry` = 93011;
 
 -- Q: 40378
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40378' WHERE `gameobject_template`.`entry` = 241751;

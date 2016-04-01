@@ -26,6 +26,7 @@ public:
             Conversation* conversation = new Conversation;
             if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
             {
+                conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                 delete conversation;
             }
 
@@ -76,6 +77,36 @@ public:
     {
         return new go_q40077AI(go);
     }
+};
+
+//93011
+class npc_q40077 : public CreatureScript
+{
+public:
+    npc_q40077() : CreatureScript("npc_q40077") { }
+
+
+    enum data
+    {
+        QUEST    = 40077,
+        NPC_CONV = 922,
+    };
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == QUEST)
+        {
+            Conversation* conversation = new Conversation;
+            if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
+            {
+                conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
+                delete conversation;
+            }
+        }
+
+        return true;
+    }
+
 };
 
 // 241751
@@ -164,14 +195,20 @@ public:
                 {
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244439, player, NULL, *player))
+                    {
+                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
+                    }
                     break;
                 }
                 case GO_244440:
                 {
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244440, player, NULL, *player))
+                    {
+                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
+                    }
                     break;
                 }
                 case GO_244441:
@@ -231,7 +268,10 @@ public:
 
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
+                    {
+                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
+                    }
                 }
             }
         }
@@ -292,12 +332,113 @@ public:
     };
 };
 
+class conversation_announcer : public CreatureScript
+{
+public:
+    conversation_announcer() : CreatureScript("conversation_announcer") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new conversation_announcerAI(creature);
+    }
+
+    struct conversation_announcerAI : public ScriptedAI
+    {
+        conversation_announcerAI(Creature* creature) : ScriptedAI(creature)
+        {
+
+        }
+
+        void Reset()
+        {
+            conversationEntry = 0;
+            targetGUID.Clear();
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        enum events
+        {
+            EVENT_1 = 1,
+            EVENT_2_ANNOUNCER6 = 2,
+            EVENT_CLEAR = 3,
+        };
+
+        enum npcs
+        {
+            NPC_ANNOUNCER_1 = 101748, //583
+        };
+
+        uint32 conversationEntry;
+        ObjectGuid targetGUID;
+        GuidSet m_player_for_event;
+        EventMap events;
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (who->GetTypeId() != TYPEID_PLAYER || who->IsOnVehicle())
+                return;
+
+            GuidSet::iterator itr = m_player_for_event.find(who->GetGUID());
+            if (itr != m_player_for_event.end())
+                return;
+
+            if (!me->IsWithinDistInMap(who, 60.0f))
+                return;
+
+            uint32 eTimer = 1000;
+
+            switch (me->GetEntry())
+            {
+                case NPC_ANNOUNCER_1:
+                    conversationEntry = 583;
+                    break;
+                default:
+                    break;
+            }
+
+            ASSERT(conversationEntry);
+            m_player_for_event.insert(who->GetGUID());
+            events.RescheduleEvent(EVENT_1, eTimer);
+            events.RescheduleEvent(EVENT_CLEAR, 300000);
+            targetGUID = who->GetGUID();
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_1:
+                    {
+                        if (Player* player = sObjectAccessor->FindPlayer(targetGUID))
+                        {
+                            Conversation* conversation = new Conversation;
+                            if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), conversationEntry, player, NULL, *player))
+                            {
+                                conversation->AddPlayerInPersonnalVisibilityList(targetGUID);
+                                delete conversation;
+                            }
+                        }
+                        break;
+                    }
+                    case EVENT_CLEAR:
+                        m_player_for_event.clear();
+                        break;
+                }
+            }
+        }
+    };
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
     new go_q40077();
+    new npc_q40077();
     new go_q40378();
     new go_q39279();
     new spell_legion_q39279();
     new npc_q40378();
+    new conversation_announcer();
 }
