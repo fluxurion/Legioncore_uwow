@@ -334,6 +334,7 @@ namespace WorldPackets
         class MountSpecialAnim;
         class WardenData;
         class RequestResearchHistory;
+        class ChoiceResponse;
     }
 
     namespace Movement
@@ -1149,6 +1150,7 @@ class WorldSession
         // cemetery/graveyard related
         void HandlePortGraveyard(WorldPackets::Misc::PortGraveyard& packet);
         void HandleRequestCemeteryList(WorldPackets::Misc::RequestCemeteryList& packet);
+        void HandleChoiceResponse(WorldPackets::Misc::ChoiceResponse& packet);
 
         void HandleInspect(WorldPackets::Inspect::Inspect& packet);
 

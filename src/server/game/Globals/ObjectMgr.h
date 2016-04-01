@@ -439,6 +439,55 @@ typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationCreature> > 
 typedef std::unordered_map<uint32/*entry*/, std::vector<ConversationActor> > ConversationActorMap;
 typedef std::unordered_map<uint32/*entry*/, std::vector<CreatureActionData> > CreatureActionDataMap;
 
+enum ChoiceItemType
+{
+    CHOICE_TYPE_ITEM,
+    CHOICE_TYPE_CURRENCY,
+    CHOICE_TYPE_FACTION,
+    CHOICE_TYPE_ITEMCHOICE,
+    CHOICE_TYPE_MAX,
+};
+
+struct DisplayChoiceItemData
+{
+    int32 ResponseID;
+    int32 Type;
+    int32 Id;
+    int32 DisplayID;
+    int32 Unk;
+    int32 Quantity;
+};
+
+struct DisplayChoiceData
+{
+    int32 ChoiceID;
+    int32 ResponseID;
+    int32 ChoiceArtFileID;
+    bool HasReward;
+    std::string Answer;
+    std::string Title;
+    std::string Description;
+    std::string Confirm;
+    int32 TitleID;
+    int32 PackageID;
+    int32 SkillLineID;
+    int32 SkillPointCount;
+    int32 ArenaPointCount;
+    int32 HonorPointCount;
+    int64 Money;
+    int32 Xp;
+    int32 ItemsCount;
+    int32 CurrenciesCount;
+    int32 FactionsCount;
+    int32 ItemChoicesCount;
+    std::string Question;
+    int32 SpellID;
+
+    std::vector<DisplayChoiceItemData> DisplayChoiceItems[CHOICE_TYPE_MAX];
+};
+
+typedef std::unordered_map<uint32/*entry*/, std::vector<DisplayChoiceData> > DisplayChoiceMap;
+
 typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
 struct CellObjectGuids
@@ -1317,6 +1366,7 @@ class ObjectMgr
         void LoadCreatures();
         void LoadCreatureAIInstance();
         void LoadCreatureActionData();
+        void LoadDisplayChoiceData();
         void LoadLinkedRespawn();
         bool SetCreatureLinkedRespawn(ObjectGuid::LowType const& guid, ObjectGuid::LowType const& linkedGuid);
         void LoadCreatureAddons();
@@ -1585,6 +1635,8 @@ class ObjectMgr
         const std::vector<ConversationCreature>* GetConversationCreature(uint32 entry) const;
         const std::vector<ConversationActor>* GetConversationActor(uint32 entry) const;
         const std::vector<CreatureActionData>* GetCreatureActionData(uint32 entry, uint8 type = 0, uint8 action = 0) const;
+
+        const std::vector<DisplayChoiceData>* GetDisplayChoiceData(uint32 ChoiceID) const;
 
         void AddCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid, uint32 instance);
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
@@ -1996,6 +2048,8 @@ class ObjectMgr
         ConversationCreatureMap _conversationCreatureList;
         ConversationActorMap _conversationActorList;
         CreatureActionDataMap _creatureActionDataList[2][2];
+
+        DisplayChoiceMap _displayChoiceMap;
 };
 
 #define sObjectMgr ObjectMgr::instance()

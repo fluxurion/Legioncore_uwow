@@ -812,3 +812,17 @@ void WorldSession::HandleRequestResearchHistory(WorldPackets::Misc::RequestResea
 {
     _player->SendCompletedProjects();
 }
+
+void WorldSession::HandleChoiceResponse(WorldPackets::Misc::ChoiceResponse& packet)
+{
+    std::vector<DisplayChoiceData> const* displayData = sObjectMgr->GetDisplayChoiceData(packet.ChoiceID);
+    if (displayData && !displayData->empty())
+    {
+        for (std::vector<DisplayChoiceData>::const_iterator itr = displayData->begin(); itr != displayData->end(); ++itr)
+        {
+            if (itr->ResponseID == packet.ResponseID && itr->SpellID)
+                _player->CastSpell(_player, itr->SpellID, true);
+        }
+    }
+}
+

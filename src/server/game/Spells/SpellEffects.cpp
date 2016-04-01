@@ -74,6 +74,7 @@
 #include "CombatLogPackets.h"
 #include "DuelPackets.h"
 #include "MiscPackets.h"
+#include "QuestPackets.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {
@@ -282,7 +283,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectNULL,                                     //202 SPELL_EFFECT_APPLY_AURA_WITH_VALUE
     &Spell::EffectRemoveAura,                               //203 SPELL_EFFECT_REMOVE_AURA_2 Based on 144863 -> This spell remove auras. 145052 possible trigger spell.
     &Spell::EffectNULL,                                     //204 SPELL_EFFECT_UPGRADE_BATTLE_PET
-    &Spell::EffectLaunchQuestChoice,                              //205 SPELL_EFFECT_LAUNCH_QUEST_CHOICE
+    &Spell::EffectLaunchQuestChoice,                        //205 SPELL_EFFECT_LAUNCH_QUEST_CHOICE
     &Spell::EffectCreateItem3,                              //206 SPELL_EFFECT_CREATE_ITEM_3
     &Spell::EffectNULL,                                     //207 SPELL_EFFECT_LAUNCH_QUEST_TASK
     &Spell::EffectNULL,                                     //208 SPELL_EFFECT_REPUTATION_SET
@@ -8269,18 +8270,79 @@ void Spell::EffectArtifactPower(SpellEffIndex /*effIndex*/)
     // }
 }
 
-void Spell::EffectLaunchQuestChoice(SpellEffIndex /*effIndex*/)
+void Spell::EffectLaunchQuestChoice(SpellEffIndex effIndex)
 {
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
-    Player* player = m_caster->ToPlayer();
-    if (!player || !m_CastItem)
-        return;
+    std::vector<DisplayChoiceData> const* displayData = sObjectMgr->GetDisplayChoiceData(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
+    if (displayData && !displayData->empty())
+    {
+        WorldPackets::Quest::DisplayPlayerChoice choice;
+        for (std::vector<DisplayChoiceData>::const_iterator itr = displayData->begin(); itr != displayData->end(); ++itr)
+        {
+            choice.ChoiceID = itr->ChoiceID;
+            choice.Question = itr->Question;
 
-    // if (Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-    // {
-        // uint32 power = m_CastItem->GetCount() * damage;
-        // item->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, power);
-    // }
+            WorldPackets::Quest::DisplayPlayerChoice::PlayerChoiceResponse response;
+            response.ResponseID = itr->ResponseID;
+            response.ChoiceArtFileID = itr->ChoiceArtFileID;
+            response.Answer = itr->Answer;
+            response.Title = itr->Title;
+            response.Description = itr->Description;
+            response.Confirm = itr->Confirm;
+
+            if (!itr->HasReward)
+            {
+                choice.Responses.push_back(response);
+                continue;
+            }
+
+            for (uint8 i = 0; i < CHOICE_TYPE_MAX; ++i)
+            {
+                if (!itr->DisplayChoiceItems[i].empty())
+                {
+                    for (std::vector<DisplayChoiceItemData>::const_iterator iter = itr->DisplayChoiceItems[i].begin(); iter != itr->DisplayChoiceItems[i].end(); ++iter)
+                    {
+                        WorldPackets::Quest::DisplayPlayerChoice::PlayerChoiceResponse::PlayerChoiceResponseReward responseReward;
+
+                        responseReward.TitleID = itr->TitleID;
+                        responseReward.PackageID = itr->PackageID;
+                        responseReward.SkillLineID = itr->SkillLineID;
+                        responseReward.SkillPointCount = itr->SkillPointCount;
+                        responseReward.ArenaPointCount = itr->ArenaPointCount;
+                        responseReward.HonorPointCount = itr->HonorPointCount;
+                        responseReward.Xp = itr->Xp;
+                        responseReward.Money = itr->Money;
+
+                        WorldPackets::Quest::DisplayPlayerChoice::PlayerChoiceResponse::PlayerChoiceResponseReward::PlayerChoiceResponseRewardEntry responseRewardEntry;
+                        responseRewardEntry.DisplayID = iter->DisplayID;
+                        responseRewardEntry.Id = iter->Id;
+                        responseRewardEntry.Unk = iter->Unk;
+                        responseRewardEntry.Quantity = iter->Quantity;
+
+                        switch (i)
+                        {
+                        case CHOICE_TYPE_ITEM:
+                            responseReward.Items.push_back(responseRewardEntry);
+                            break;
+                        case CHOICE_TYPE_CURRENCY:
+                            responseReward.Currencies.push_back(responseRewardEntry);
+                            break;
+                        case CHOICE_TYPE_FACTION:
+                            responseReward.Factions.push_back(responseRewardEntry);
+                            break;
+                        case CHOICE_TYPE_ITEMCHOICE:
+                            responseReward.ItemChoices.push_back(responseRewardEntry);
+                            break;
+                        }
+
+                        response.Reward = responseReward;
+                    }
+                }
+            }
+            choice.Responses.push_back(response);
+        }
+        m_caster->SendMessageToSet(choice.Write(), true);
+    }
 }

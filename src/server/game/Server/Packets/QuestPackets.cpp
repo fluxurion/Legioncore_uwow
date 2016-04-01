@@ -556,7 +556,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Quest::DisplayPlayerChoic
 {
     data << reward.Id;
     data << reward.DisplayID;
-    data << reward.Quantity;
+    data << reward.Unk;
 
     data.WriteBit(reward.UnkData.is_initialized());
     data.WriteBit(reward.UnkString.is_initialized());
@@ -576,6 +576,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Quest::DisplayPlayerChoic
         data.WriteString(*reward.UnkString);
     }
 
+    data << reward.Quantity;
+
     return data;
 }
 
@@ -591,16 +593,16 @@ WorldPacket const* WorldPackets::Quest::DisplayPlayerChoice::Write()
         _worldPacket << v.ChoiceArtFileID;
 
         _worldPacket.WriteBits(v.Answer.length(), 9);
-        _worldPacket.WriteBits(v.Description.length(), 9);
-        _worldPacket.WriteBits(v.UnkString.length(), 11);
-        _worldPacket.WriteBits(v.UnkString2.length(), 7);
+        _worldPacket.WriteBits(v.Title.length(), 9);
+        _worldPacket.WriteBits(v.Description.length(), 11);
+        _worldPacket.WriteBits(v.Confirm.length(), 7);
         _worldPacket.WriteBit(v.Reward.is_initialized());
         _worldPacket.FlushBits();
 
         _worldPacket.WriteString(v.Answer);
+        _worldPacket.WriteString(v.Title);
         _worldPacket.WriteString(v.Description);
-        _worldPacket.WriteString(v.UnkString);
-        _worldPacket.WriteString(v.UnkString2);
+        _worldPacket.WriteString(v.Confirm);
 
         if (v.Reward)
         {

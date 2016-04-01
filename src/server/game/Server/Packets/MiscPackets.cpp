@@ -814,3 +814,10 @@ WorldPacket const* WorldPackets::Misc::ResearchComplete::Write()
 
     return &_worldPacket;
 }
+
+void WorldPackets::Misc::ChoiceResponse::Read()
+{
+    _worldPacket >> ChoiceID;
+    _worldPacket >> ResponseID;
+}
+

@@ -1663,6 +1663,9 @@ void World::SetInitialWorldSettings()
     sObjectMgr->LoadCreatureAddons();                            // must be after LoadCreatureTemplates() and LoadCreatures()
     sObjectMgr->LoadCreatureActionData();
 
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Display Choice Data...");
+    sObjectMgr->LoadDisplayChoiceData();
+
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Treasure Data...");
     sObjectMgr->LoadPersonalLootTemplate();
 

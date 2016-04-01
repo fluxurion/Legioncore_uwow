@@ -1063,6 +1063,18 @@ namespace WorldPackets
 
             ResearchHistory Research;
         };
+
+        class ChoiceResponse final : public ClientPacket
+        {
+        public:
+            ChoiceResponse(WorldPacket&& packet) : ClientPacket(CMSG_CHOICE_RESPONSE, std::move(packet)) { }
+        
+            void Read() override;
+
+            uint32 ChoiceID = 0;
+            uint32 ResponseID = 0;
+        };
+
     }
 }
 

@@ -261,7 +261,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_CHAT_UNREGISTER_ALL_ADDON_PREFIXES,                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Chat::ChatUnregisterAllAddonPrefixes, &WorldSession::HandleChatUnregisterAllAddonPrefixes);
     DEFINE_HANDLER(CMSG_CHECK_RAF_EMAIL_ENABLED,                            STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_CHECK_WOW_TOKEN_VETERAN_ELIGIBILITY,                STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
-    DEFINE_HANDLER(CMSG_CHOICE_RESPONSE,                                    STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_CHOICE_RESPONSE,                                    STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Misc::ChoiceResponse, &WorldSession::HandleChoiceResponse);
     DEFINE_HANDLER(CMSG_CLEAR_RAID_MARKER,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Party::ClearRaidMarker, &WorldSession::HandleClearRaidMarker);
     DEFINE_HANDLER(CMSG_CLEAR_TRADE_ITEM,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Trade::ClearTradeItem, &WorldSession::HandleClearTradeItem);
     DEFINE_HANDLER(CMSG_CLIENT_PORT_GRAVEYARD,                              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Misc::PortGraveyard, &WorldSession::HandlePortGraveyard);

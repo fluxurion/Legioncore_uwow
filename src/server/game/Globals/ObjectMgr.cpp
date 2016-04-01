@@ -9728,7 +9728,6 @@ void ObjectMgr::LoadConversationData()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 conversation actor data. DB table `conversation_actor` is empty.");
 }
 
-
 void ObjectMgr::LoadCreatureActionData()
 {
     for (uint8 i = 0; i < 2; ++i)
@@ -9762,6 +9761,72 @@ void ObjectMgr::LoadCreatureActionData()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creature_action data. DB table `creature_action` is empty.");
 }
 
+void ObjectMgr::LoadDisplayChoiceData()
+{
+    _displayChoiceMap.clear();
+
+    //                                                    0            1                2              3          4         5           6            7           8          9             10               11                 12                13            14      15       16          17
+    QueryResult result = WorldDatabase.Query("SELECT `ChoiceID`, `ResponseID`, `ChoiceArtFileID`, `HasReward`, `Answer`, `Title`, `Description`, `Confirm`, `TitleID`, `PackageID`, `SkillLineID`, `SkillPointCount`, `ArenaPointCount`, `HonorPointCount`, `Money`, `Xp`, `Question`, `SpellID` FROM `display_choice`");
+    if (result)
+    {
+        uint32 counter = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+
+            uint8 i = 0;
+            DisplayChoiceData data;
+            data.ChoiceID = fields[i++].GetUInt32();
+            data.ResponseID = fields[i++].GetUInt32();
+            data.ChoiceArtFileID = fields[i++].GetUInt32();
+            data.HasReward = fields[i++].GetBool();
+            data.Answer = fields[i++].GetString();
+            data.Title = fields[i++].GetString();
+            data.Description = fields[i++].GetString();
+            data.Confirm = fields[i++].GetString();
+            data.TitleID = fields[i++].GetUInt32();
+            data.PackageID = fields[i++].GetUInt32();
+            data.SkillLineID = fields[i++].GetUInt32();
+            data.SkillPointCount = fields[i++].GetUInt32();
+            data.ArenaPointCount = fields[i++].GetUInt32();
+            data.HonorPointCount = fields[i++].GetUInt32();
+            data.Money = fields[i++].GetUInt32();
+            data.Xp = fields[i++].GetUInt32();
+            data.Question = fields[i++].GetString();
+            data.SpellID = fields[i++].GetUInt32();
+
+            QueryResult itemResult = WorldDatabase.PQuery("SELECT `Type`, `Id`, `DisplayID`, `Unk`, `Quantity` FROM `display_choice_item` WHERE `ResponseID` = '%u'", data.ResponseID);
+            if (itemResult)
+            {
+                do
+                {
+                    Field* itemFields = itemResult->Fetch();
+
+                    uint8 i = 0;
+                    DisplayChoiceItemData itemData;
+                    itemData.ResponseID = data.ResponseID;
+                    itemData.Type = itemFields[i++].GetUInt32();
+                    itemData.Id = itemFields[i++].GetUInt32();
+                    itemData.DisplayID = itemFields[i++].GetUInt32();
+                    itemData.Unk = itemFields[i++].GetUInt32();
+                    itemData.Quantity = itemFields[i++].GetUInt32();
+
+                    data.DisplayChoiceItems[itemData.Type].push_back(itemData);
+                }
+                while (itemResult->NextRow());
+            }
+
+            _displayChoiceMap[data.ChoiceID].push_back(data);
+            ++counter;
+        }
+        while (result->NextRow());
+
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u display_choice data.", counter);
+    }
+    else
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 display_choice data. DB table `display_choice` is empty.");
+}
+
 const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId) const
 {
     ScenarioDataListMap::const_iterator itr = _scenarioDataList.find(mapId);
@@ -9780,6 +9845,12 @@ const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId)
     }
 
     return NULL;
+}
+
+const std::vector<DisplayChoiceData>* ObjectMgr::GetDisplayChoiceData(uint32 ChoiceID) const
+{
+    DisplayChoiceMap::const_iterator itr = _displayChoiceMap.find(ChoiceID);
+    return itr != _displayChoiceMap.end() ? &(itr->second) : NULL;
 }
 
 const std::vector<ConversationData>* ObjectMgr::GetConversationData(uint32 entry) const

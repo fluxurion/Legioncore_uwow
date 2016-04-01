@@ -606,6 +606,7 @@ namespace WorldPackets
                         Optional<std::string> UnkString;
                         int32 Id = 0;
                         int32 DisplayID = 0;
+                        int32 Unk = 0;
                         int32 Quantity = 0;
                     };
                     
@@ -627,9 +628,9 @@ namespace WorldPackets
                 int32 ResponseID = 0;
                 int32 ChoiceArtFileID = 0;
                 std::string Answer;
+                std::string Title;
                 std::string Description;
-                std::string UnkString;
-                std::string UnkString2;
+                std::string Confirm;
             };
 
             std::vector<PlayerChoiceResponse> Responses;
