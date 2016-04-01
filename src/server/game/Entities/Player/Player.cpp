@@ -7462,22 +7462,26 @@ void Player::RewardReputation(Quest const* quest)
     }
 }
 
-Expansion Player::GetExpByLevel()
+Expansions Player::GetExpByLevel()
 {
     uint8 level = getLevel();
 
     if (level <= 60)
-        return EXP_VANILLA;
+        return EXPANSION_CLASSIC;
     else if (level <= 70)
-        return EXP_BC;
+        return EXPANSION_THE_BURNING_CRUSADE;
     else if (level <= 80)
-        return EXP_WOTLK;
+        return EXPANSION_WRATH_OF_THE_LICH_KING;
     else if (level <= 85)
-        return EXP_CATACLYSM;
+        return EXPANSION_CATACLYSM;
     else if (level <= 90)
-        return EXP_PANDARIA;
+        return EXPANSION_MISTS_OF_PANDARIA;
+    else if (level <= 100)
+        return EXPANSION_WARLORDS_OF_DRAENOR;
+    else if (level <= 110)
+        return EXPANSION_LEGION;
     else
-        return EXP_VANILLA;
+        return EXPANSION_CLASSIC;
 }
 
 void Player::RewardGuildReputation(Quest const* quest)
@@ -7486,12 +7490,12 @@ void Player::RewardGuildReputation(Quest const* quest)
 
     switch (GetExpByLevel())
     {
-        case EXP_VANILLA:   rep = 25;  break;
-        case EXP_BC:        rep = 50;  break;
-        case EXP_WOTLK:     rep = 75;  break;
-        case EXP_CATACLYSM: rep = 100; break;
-        case EXP_PANDARIA:  rep = 150; break;
-        default:            rep = 0;   break;
+        case EXPANSION_CLASSIC:                 rep = 25;  break;
+        case EXPANSION_THE_BURNING_CRUSADE:     rep = 50;  break;
+        case EXPANSION_WRATH_OF_THE_LICH_KING:  rep = 75;  break;
+        case EXPANSION_CATACLYSM:               rep = 100; break;
+        case EXPANSION_MISTS_OF_PANDARIA:       rep = 150; break;
+        default:                                rep = 0;   break;
     }
 
     rep = CalculateReputationGain(GetQuestLevel(quest), rep, REP_GUILD, true);

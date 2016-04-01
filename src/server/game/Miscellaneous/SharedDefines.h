@@ -155,15 +155,6 @@ enum SpecIndex
 #define EFFECT_FIRST_FOUND 254
 #define EFFECT_ALL 255
 
-enum Expansion
-{
-    EXP_VANILLA     = 0,
-    EXP_BC          = 1,
-    EXP_WOTLK       = 2,
-    EXP_CATACLYSM   = 3,
-    EXP_PANDARIA    = 4
-};
-
 enum Expansions
 {
     EXPANSION_CLASSIC                  = 0,
