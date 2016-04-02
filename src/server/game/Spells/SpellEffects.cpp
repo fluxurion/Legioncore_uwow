@@ -1552,10 +1552,16 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
     // Hack. Lana'thel Vampiric Bite
-    if (m_spellInfo->Id == 71726 || m_spellInfo->Id == 70946)
+    switch (m_spellInfo->Id)
     {
-        unitTarget->CastSpell(unitTarget, 70867, false);
-        return;
+        case 71726:
+        case 70946:
+            unitTarget->CastSpell(unitTarget, 70867, false);
+            return;
+        case 201006: //Odyn: Radiant Tempest
+            return;
+        default:
+            break;
     }
 
     switch (triggered_spell_id)

@@ -21,10 +21,9 @@ enum Spells
 
     SPELL_FELBLAZE_RUSH         = 193658,
     SPELL_RAGNAROK              = 193826,
-    
-    //193783, 194214, 193765
-    //Odyn
     SPELL_AEGIS_SPAWN           = 193940,
+    SPELL_CLAIM_THE_AEGIS       = 194112,
+    SPELL_SAVAGE_BLADE          = 193668,
     
     //Aegis
     SPELL_AEGIS_VISUAL_SHIELD   = 193769,
@@ -36,8 +35,8 @@ enum eEvents
     EVENT_INTRO_COMPLETE        = 1,
     EVENT_FELBLAZE_RUSH         = 2,
     EVENT_RAGNAROK              = 3,
-    //EVENT_    = 4,
-    //EVENT_    = 5,
+    EVENT_PICK_AEGIS            = 4,
+    EVENT_SAVAGE_BLADE          = 5,
 };
 
 Position const kingsPos[4] =
@@ -65,15 +64,19 @@ public:
     {
         boss_god_king_skovaldAI(Creature* creature) : BossAI(creature, DATA_SKOVALD) 
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
-            me->SetReactState(REACT_PASSIVE);
-            me->SetVisible(false);
-            SummonOdynKings();
-            intro = true;
-            kingDiedCount = 0;
+            if (me->isAlive())
+            {
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
+                me->SetReactState(REACT_PASSIVE);
+                me->SetVisible(false);
+                SummonOdynKings();
+                intro = true;
+                kingDiedCount = 0;
+            }
         }
 
         bool intro;
+        bool aegisEvent;
         uint8 kingDiedCount;
         uint8 power, powerCounter;
         uint16 powerTimer;
@@ -82,13 +85,18 @@ public:
         {
             events.Reset();
             _Reset();
+            aegisEvent = false;
 
             DoCast(me, SPELL_ZERO_REGEN, true);
             me->SetPower(POWER_ENERGY, 80);
             powerTimer = 1000;
             if (!intro)
+            {
+                me->SetReactState(REACT_AGGRESSIVE);
+
                 if (Creature* odyn = instance->instance->GetCreature(instance->GetGuidData(DATA_ODYN)))
-                    odyn->CastSpell(odyn, SPELL_AEGIS_SPAWN, true, nullptr, 0, me->GetGUID());
+                    odyn->CastSpell(odyn, SPELL_AEGIS_SPAWN, true);
+            }
         }
 
         void EnterCombat(Unit* /*who*/) //57:56
@@ -96,6 +104,7 @@ public:
             //Talk(SAY_AGGRO); //Give up the aegis or die!
             _EnterCombat();
             events.ScheduleEvent(EVENT_FELBLAZE_RUSH, 7000); //58:03, 58:39, 58:50, 59:02, 59:23
+            events.ScheduleEvent(EVENT_SAVAGE_BLADE, 24000); //58:20, 58:44, 59:07, 59:41
         }
 
         void EnterEvadeMode()
@@ -138,7 +147,7 @@ public:
                 if (Creature* odyn = instance->instance->GetCreature(instance->GetGuidData(DATA_ODYN)))
                 {
                     //odyn->AI()->Talk();
-                    odyn->CastSpell(odyn, SPELL_AEGIS_SPAWN, true, nullptr, 0, me->GetGUID());
+                    odyn->CastSpell(odyn, SPELL_AEGIS_SPAWN, true);
                 }
                 DoCast(me, SPELL_CONVERSATION, true);
             }
@@ -154,6 +163,31 @@ public:
                 me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
                 events.ScheduleEvent(EVENT_INTRO_COMPLETE, 24000);
             }
+            else if (id == 2)
+            {
+                DoCast(SPELL_CLAIM_THE_AEGIS);
+                me->SetReactState(REACT_AGGRESSIVE);
+            }
+        }
+
+        void SpellHit(Unit* caster, const SpellInfo* spell)
+        {
+            if (spell->Id == 193988)
+            {
+                DoCast(193983);
+                aegisEvent = false;
+            }
+        }
+
+        void SpellHitTarget(Unit* target, const SpellInfo* spell)
+        {
+            if (spell->Id == SPELL_SAVAGE_BLADE)
+                DoCast(target, 193686, true);
+        }
+
+        void DoAction(int32 const action)
+        {
+            events.ScheduleEvent(EVENT_PICK_AEGIS, 500);
         }
 
         void UpdateAI(uint32 diff)
@@ -191,7 +225,7 @@ public:
                 else powerTimer -=diff;
             }
 
-            if (me->HasUnitState(UNIT_STATE_CASTING))
+            if (me->HasUnitState(UNIT_STATE_CASTING) || aegisEvent)
                 return;
 
             while (uint32 eventId = events.ExecuteEvent())
@@ -209,6 +243,22 @@ public:
                         break;
                     case EVENT_RAGNAROK:
                         DoCast(SPELL_RAGNAROK);
+                        break;
+                    case EVENT_PICK_AEGIS:
+                        aegisEvent = true;
+                        DoStopAttack();
+                        if (Creature* aegis = me->FindNearestCreature(NPC_AEGIS_OF_AGGRAMAR, 60.0f))
+                            me->GetMotionMaster()->MovePoint(2, aegis->GetPositionX(), aegis->GetPositionY(), aegis->GetPositionZ());
+                        else
+                        {
+                            aegisEvent = false;
+                            me->SetReactState(REACT_AGGRESSIVE);
+                        }
+                        break;
+                    case EVENT_SAVAGE_BLADE:
+                        if (me->getVictim())
+                            DoCast(me->getVictim(), SPELL_SAVAGE_BLADE, true);
+                        events.ScheduleEvent(EVENT_SAVAGE_BLADE, 24000);
                         break;
                 }
             }
@@ -280,7 +330,13 @@ public:
 
     struct npc_skovald_aegis_of_aggramarAI : public ScriptedAI
     {
-        npc_skovald_aegis_of_aggramarAI(Creature* creature) : ScriptedAI(creature) {}
+        npc_skovald_aegis_of_aggramarAI(Creature* creature) : ScriptedAI(creature) 
+        {
+            me->SetReactState(REACT_PASSIVE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
+        }
+
+        InstanceScript* instance;
 
         bool click;
 
@@ -288,6 +344,13 @@ public:
 
         void IsSummonedBy(Unit* summoner)
         {
+            if (summoner->GetTypeId() == TYPEID_PLAYER)
+            {
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                if (Creature* skovald = instance->instance->GetCreature(instance->GetGuidData(DATA_SKOVALD)))
+                    skovald->AI()->DoAction(true);
+            }
+
             click = false;
             DoCast(me, SPELL_AEGIS_VISUAL_SHIELD, true);
         }
@@ -298,6 +361,15 @@ public:
             {
                 click = true;
                 clicker->CastSpell(clicker, SPELL_AEGIS_OVERRIDE, true);
+                me->DespawnOrUnsummon();
+            }
+        }
+
+        void SpellHit(Unit* caster, const SpellInfo* spell)
+        {
+            if (spell->Id == SPELL_CLAIM_THE_AEGIS)
+            {
+                DoCast(caster, 193988, true);
                 me->DespawnOrUnsummon();
             }
         }
@@ -355,10 +427,78 @@ class spell_skovald_ragnarok : public SpellScriptLoader
         }
 };
 
+//193991
+class spell_skovald_drop_aegis : public SpellScriptLoader
+{
+    public:
+        spell_skovald_drop_aegis() : SpellScriptLoader("spell_skovald_drop_aegis") { }
+
+        class spell_skovald_drop_aegis_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_skovald_drop_aegis_SpellScript);
+            
+            void HandleScript(SpellEffIndex effIndex)
+            {
+                Unit* caster = GetCaster();
+                if (!caster)
+                    return;
+
+                PreventHitEffect(EFFECT_0);
+                WorldLocation* loc = GetHitDest();
+                if (InstanceScript* instance = caster->GetInstanceScript())
+                    if (instance->GetData(DATA_SKOVALD) == IN_PROGRESS)
+                        caster->CastSpell(loc->GetPositionX(), loc->GetPositionY(), loc->GetPositionZ(), 193781, true);
+            }
+
+            void Register()
+            {
+                OnEffectHit += SpellEffectFn(spell_skovald_drop_aegis_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_TRIGGER_MISSILE);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_skovald_drop_aegis_SpellScript();
+        }
+};
+
+//193983, 193783
+class spell_skovald_aegis_remove : public SpellScriptLoader
+{
+    public:
+        spell_skovald_aegis_remove() : SpellScriptLoader("spell_skovald_aegis_remove") { }
+
+        class spell_skovald_aegis_remove_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_skovald_aegis_remove_AuraScript);
+
+            void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+            {
+                if (!GetTarget())
+                    return;
+
+                GetTarget()->CastSpell(GetTarget(), 193991, true);
+            }
+
+            void Register()
+            {
+                OnEffectRemove += AuraEffectRemoveFn(spell_skovald_aegis_remove_AuraScript::OnRemove, EFFECT_1, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+                OnEffectRemove += AuraEffectRemoveFn(spell_skovald_aegis_remove_AuraScript::OnRemove, EFFECT_1, SPELL_AURA_SCHOOL_ABSORB, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_skovald_aegis_remove_AuraScript();
+        }
+};
+
 void AddSC_boss_god_king_skovald()
 {
     new boss_god_king_skovald();
     new npc_generic_odyn_kings();
     new npc_skovald_aegis_of_aggramar();
     new spell_skovald_ragnarok();
+    new spell_skovald_drop_aegis();
+    new spell_skovald_aegis_remove();
 }

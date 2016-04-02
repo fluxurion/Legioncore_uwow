@@ -5563,6 +5563,9 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 168041: // Briarskin
                 case 168375: // Grasping Vine
                 case 175997: // Noxious Eruption
+                case 198263: // Odyn: Radiant Tempest
+                case 198077: // Odyn: Shatter Spears
+                case 197961: // Odyn: Runic Brand
                     spellInfo->AuraRestrictions.CasterAuraSpell = 0;
                     break;
                 case 160856: // Q: 34582
