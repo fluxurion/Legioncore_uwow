@@ -1221,7 +1221,7 @@ struct NamesReservedLocaleEntry
 struct QuestFactionRewEntry
 {
     uint32      ID;
-    int32       Difficulty[10];
+    int16       Difficulty[10];
 };
 
 struct QuestPOIPointEntry

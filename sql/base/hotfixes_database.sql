@@ -3662,16 +3662,16 @@ DROP TABLE IF EXISTS `quest_faction_rew`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `quest_faction_rew` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Difficulty1` int(11) NOT NULL DEFAULT '0',
-  `Difficulty2` int(11) NOT NULL DEFAULT '0',
-  `Difficulty3` int(11) NOT NULL DEFAULT '0',
-  `Difficulty4` int(11) NOT NULL DEFAULT '0',
-  `Difficulty5` int(11) NOT NULL DEFAULT '0',
-  `Difficulty6` int(11) NOT NULL DEFAULT '0',
-  `Difficulty7` int(11) NOT NULL DEFAULT '0',
-  `Difficulty8` int(11) NOT NULL DEFAULT '0',
-  `Difficulty9` int(11) NOT NULL DEFAULT '0',
-  `Difficulty10` int(11) NOT NULL DEFAULT '0',
+  `Difficulty1` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty2` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty3` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty4` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty5` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty6` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty7` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty8` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty9` smallint(6) NOT NULL DEFAULT '0',
+  `Difficulty10` smallint(6) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

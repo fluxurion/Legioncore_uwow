@@ -7418,16 +7418,15 @@ void Player::RewardReputation(Unit* victim, float rate)
     }
 }
 
-//Calculate how many reputation points player gain with the quest
 void Player::RewardReputation(Quest const* quest)
 {
     float recruitAFriend = GetsAFriendBonus(false);
 
-    // quest reputation reward/loss
     for (uint8 i = 0; i < QUEST_REWARD_REPUTATIONS_COUNT; ++i)
     {
         if (!quest->RewardFactionId[i])
             continue;
+
         if (quest->RewardFactionOverride[i])
         {
             int32 rep = CalculateReputationGain(GetQuestLevel(quest), quest->RewardFactionOverride[i]/100, quest->RewardFactionId[i], true, true);
@@ -7454,7 +7453,7 @@ void Player::RewardReputation(Quest const* quest)
                 if (recruitAFriend)
                     repPoints = int32(repPoints * (1 + sWorld->getRate(RATE_REPUTATION_RECRUIT_A_FRIEND_BONUS)));
 
-                if (const FactionEntry* factionEntry = sFactionStore.LookupEntry(quest->RewardFactionId[i]))
+                if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(quest->RewardFactionId[i]))
                     GetReputationMgr().ModifyReputation(factionEntry, repPoints);
             }
         }
