@@ -8216,33 +8216,33 @@ void Spell::EffectCreateArtifactItem(SpellEffIndex effIndex)
     if (!player)
         return;
 
-    // if(uint32 ItemID = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue)
-    // {
-        // ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ItemID);
-        // if (!pProto)
-        // {
-            // player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
-            // return;
-        // }
+    if(uint32 ItemID = m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue)
+    {
+        ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ItemID);
+        if (!pProto)
+        {
+            player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, NULL);
+            return;
+        }
 
-        // uint16 dst = ((INVENTORY_SLOT_BAG_0 << 8) | EQUIPMENT_SLOT_MAINHAND);
+        uint16 dst = ((INVENTORY_SLOT_BAG_0 << 8) | EQUIPMENT_SLOT_MAINHAND);
 
-        // Item* item = Item::CreateItem(ItemID, 1, player);
-        // ItemPosCountVec dest;
-        // InventoryResult msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, true);
-        // if (msg == EQUIP_ERR_OK)
-        // {
-            // player->StoreItem(dest, item, true);
-            // player->SwapItem(item->GetPos(), dst);
-        // }
-        // else
-        // {
-            // SQLTransaction trans = CharacterDatabase.BeginTransaction();
-            // std::string subject = player->GetSession()->GetTrinityString(LANG_NOT_EQUIPPED_ITEM);
-            // MailDraft(subject, "There were problems with equipping one or several items").AddItem(item).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
-            // CharacterDatabase.CommitTransaction(trans);
-        // }
-    // }
+        Item* item = Item::CreateItem(ItemID, 1, player);
+        ItemPosCountVec dest;
+        InventoryResult msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, item, true);
+        if (msg == EQUIP_ERR_OK)
+        {
+            player->StoreItem(dest, item, true);
+            player->SwapItem(item->GetPos(), dst);
+        }
+        else
+        {
+            SQLTransaction trans = CharacterDatabase.BeginTransaction();
+            std::string subject = player->GetSession()->GetTrinityString(LANG_NOT_EQUIPPED_ITEM);
+            MailDraft(subject, "There were problems with equipping one or several items").AddItem(item).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+            CharacterDatabase.CommitTransaction(trans);
+        }
+    }
     // if(uint32 ItemID = m_spellInfo->GetEffect(effIndex, m_diffMode)->ItemType)
     // {
         // ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ItemID);
