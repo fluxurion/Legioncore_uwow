@@ -473,7 +473,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "RequiredReputationFaction, ItemStatValue, ScalingStatDistribution, Delay, PageText, StartQuest, LockID, RandomProperty, RandomSuffix, "
         "ItemSet, Area, Map, SocketBonus, GemProperties, ItemLimitCategory, HolidayID, ItemNameDescriptionID, Quality, BuyCount, InventoryType, "
         "RequiredLevel, RequiredHonorRank, RequiredCityRank, RequiredReputationRank, ContainerSlots, ItemStatType, DamageType, Bonding, LanguageID, "
-        "PageMaterial, Material, Sheath, TotemCategory, SocketColor, CurrencySubstitutionID, CurrencySubstitutionCount, UnkLegion, UnkLegion2"
+        "PageMaterial, Material, Sheath, TotemCategory, SocketColor, CurrencySubstitutionID, CurrencySubstitutionCount, ArtifactID, UnkLegion2"
         " FROM item_sparse ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Name_lang, Name2_lang, Name3_lang, Name4_lang, Description_lang FROM item_sparse_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);

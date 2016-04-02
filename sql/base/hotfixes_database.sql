@@ -4365,7 +4365,7 @@ CREATE TABLE `item_sparse` (
   `SocketColor` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `CurrencySubstitutionID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `CurrencySubstitutionCount` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `UnkLegion` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ArtifactID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `UnkLegion2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
