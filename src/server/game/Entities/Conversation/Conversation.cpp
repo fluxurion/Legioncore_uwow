@@ -136,44 +136,32 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
                     arrayMask.SetCount(conversationCreature->size() * 6);
                     for (std::vector<ConversationCreature>::const_iterator itr = conversationCreature->begin(); itr != conversationCreature->end(); ++itr)
                     {
-                        if (!itr->creatureId)
-                        {
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(0);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(0);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(0);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(0);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(itr->unk1);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(itr->unk2);
+                        ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(0xFFFFFFFFFF);
 
-                            if (itr->duration)
-                                duration = itr->duration;
-                        }
-                        else if (Creature* creature = caster->FindNearestCreature(itr->creatureId, caster->GetVisibilityRange()))
+                        if (itr->creatureId)
                         {
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetLowPart()));
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetLowPart()));
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(PAIR64_LOPART(creature->GetGUID().GetHighPart()));
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(PAIR64_HIPART(creature->GetGUID().GetHighPart()));
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(itr->unk1);
-                            arrayMask.SetBit(count++);
-                            buffer << uint32(itr->unk2);
+                            Creature* creature = caster->FindNearestCreature(itr->creatureId, caster->GetVisibilityRange());
+                            if (!creature)
+                                return false;
 
-                            if (itr->duration)
-                                duration = itr->duration;
+                            guid = creature->GetGUID();
                         }
-                        else
-                            return false;
+
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_LOPART(guid.GetLowPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_HIPART(guid.GetLowPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_LOPART(guid.GetHighPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_HIPART(guid.GetHighPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk1);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk2);
+
+                        if (itr->duration)
+                            duration = itr->duration;
                     }
                 }
             }
