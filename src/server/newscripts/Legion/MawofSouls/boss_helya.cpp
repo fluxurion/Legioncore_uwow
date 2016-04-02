@@ -369,7 +369,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //30:46
         {
-            if (instance->GetBossState(DATA_HELYA) != IN_PROGRESS)
+            if (instance && instance->GetBossState(DATA_HELYA) != IN_PROGRESS)
                 if (Creature* helya = instance->instance->GetCreature(instance->GetGuidData(DATA_HELYA)))
                     helya->SetInCombatWithZone();
         }

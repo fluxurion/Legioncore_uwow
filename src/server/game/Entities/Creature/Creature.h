@@ -965,6 +965,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         AutoSpellList   m_autospells;
         AutoSpellList   m_castspells;
         PetSpellMap     m_spells;
+        bool m_despan;
 
         std::vector<CreatureActionData> const* m_actionData[2];
 
@@ -1043,7 +1044,6 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         uint8 m_spawnMode;
         uint32 m_playerCount;
         float m_followAngle;
-        bool m_despan;
 
         bool IsInvisibleDueToDespawn() const;
         bool CanAlwaysSee(WorldObject const* obj) const;
