@@ -1,4 +1,4 @@
-ALTER TABLE `trinworld701`.`creature_equip_template`   
+ALTER TABLE `creature_equip_template`   
   ADD COLUMN `ItemID2` INT(11) UNSIGNED DEFAULT 0  NOT NULL AFTER `ItemID1`,
   CHANGE `ItemID2` `ItemID3` INT(11) UNSIGNED DEFAULT 0  NOT NULL,
   ADD COLUMN `ItemID4` INT(11) UNSIGNED DEFAULT 0  NOT NULL AFTER `ItemID3`,

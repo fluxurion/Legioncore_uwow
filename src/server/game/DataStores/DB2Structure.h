@@ -46,6 +46,7 @@
 #define MAX_FACTION_RELATIONS 4
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 #define MAX_VEHICLE_SEATS 8
+#define MAX_TAXI_TEAMS 2
 
 #pragma pack(push, 1)
 
@@ -2103,14 +2104,14 @@ struct SpellXSpellVisualEntry
 struct TaxiNodesEntry
 {
     uint32          ID;                                     // 0
-    DBCPosition3D   Pos;                                    // 1-4
+    DBCPosition3D   Pos;                                    // 1 - 4
     LocalizedString* Name_lang;                             // 5
-    uint32          MountCreatureID[MAX_TEAMS];           // 6-7
-    float           MapOffset[MAX_TEAMS];                 // 8-9
+    uint32          MountCreatureID[MAX_TAXI_TEAMS];        // 6 - 7
+    float           MapOffset[MAX_TAXI_TEAMS];              // 8 - 9
     uint16          MapID;                                  // 10
     uint16          ConditionID;                            // 11
     uint16          LearnableIndex;                         // 12 - some kind of index only for learnable nodes
-    uint8          Flags;                                  // 13
+    uint8           Flags;                                  // 13
 };
 
 struct TaxiPathEntry

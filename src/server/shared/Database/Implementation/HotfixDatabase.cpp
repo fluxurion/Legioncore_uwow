@@ -725,8 +725,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "DifficultyID, Flags FROM spell_x_spell_visual ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TaxiNodes.db2
-    PrepareStatement(HOTFIX_SEL_TAXI_NODES, "SELECT ID, PosX, PosY, PosZ, Name, MountCreatureID1, MountCreatureID2, MapOffset1, MapOffset2, MapID, ConditionID, LearnableIndex, Flags "
-        " FROM taxi_nodes ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TAXI_NODES, "SELECT ID, PosX, PosY, PosZ, Name, MountCreatureID1, MountCreatureID2, MapOffset1, MapOffset2, MapID, "
+        "ConditionID, LearnableIndex, Flags FROM taxi_nodes ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TAXI_NODES, "SELECT ID, Name_lang FROM taxi_nodes_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // TaxiPath.db2
