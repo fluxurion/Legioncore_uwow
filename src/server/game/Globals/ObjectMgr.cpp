@@ -4151,14 +4151,15 @@ void ObjectMgr::LoadQuests()
 
         if (qinfo->PrevQuestID)
         {
-            if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
+            // Example: 39049 38759 40379 should be add after  40378 but with filling correct data to db it not happended.
+            /*if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
             {
                 if (!qinfo->Line.LineID)
                     sLog->outError(LOG_FILTER_SQL, "QuestID: %d has wrong questLine pos or questLine", qinfo->Id);
                 else if (qinfo->Line.Pos >= 1)
                     qinfo->prevQuests.push_back(sDB2Manager.GetQuestIDbyLineAndPos(qinfo->Line.LineID, qinfo->Line.Pos - 1));
             }
-            else
+            else*/
             {
                 if (_questTemplates.find(abs(qinfo->PrevQuestID)) == _questTemplates.end())
                     sLog->outError(LOG_FILTER_SQL, "Quest %d has PrevQuestID %i, but no such quest", qinfo->GetQuestId(), qinfo->PrevQuestID);
@@ -4169,14 +4170,15 @@ void ObjectMgr::LoadQuests()
 
         if (qinfo->NextQuestID)
         {
-            if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
+            // Example: 39049 38759 40379 should be add after  40378 but with filling correct data to db it not happended.
+            /*if (sDB2Manager.GetQuestLineXQuestData(qinfo->Id))
             {
                 if (!qinfo->Line.Pos || !qinfo->Line.LineID)
                     sLog->outError(LOG_FILTER_SQL, "QuestID: %d has wrong questLine pos or questLine", qinfo->Id);
                 else
                     qinfo->prevQuests.push_back(sDB2Manager.GetQuestIDbyLineAndPos(qinfo->Line.LineID, qinfo->Line.Pos + 1));
             }
-            else
+            else*/
             {
                 QuestMap::iterator qNextItr = _questTemplates.find(abs(qinfo->NextQuestID));
                 if (qNextItr == _questTemplates.end())
