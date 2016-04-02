@@ -158,6 +158,10 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
     SetTargetGuid(targetGuid);
 
     float range = GetSpellInfo()->GetMaxRange() < _radius ? _radius : GetSpellInfo()->GetMaxRange(); //If spline not set client crash, set default to 15m
+
+    if(atInfo.Distance != 0.0f)
+        range = atInfo.Distance;
+
     if (range > 200.0f)
         range = 75.0f;
 

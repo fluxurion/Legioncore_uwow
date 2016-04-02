@@ -126,7 +126,7 @@ struct AreaTriggerInfo
         MoveCurveID(0), ElapsedTime(0), windX(0.0f), windY(0.0f), windZ(0.0f), windSpeed(0.0f), windType(0),
         MorphCurveID(0), FacingCurveID(0), ScaleCurveID(0), HasFollowsTerrain(0), HasAttached(0), HasAbsoluteOrientation(0),
         HasDynamicShape(0), HasFaceMovementDir(0), hasAreaTriggerBox(0), RollPitchYaw1X(0.0f), RollPitchYaw1Y(0.0f), RollPitchYaw1Z(0.0f),
-        TargetRollPitchYawX(0.0f), TargetRollPitchYawY(0.0f), TargetRollPitchYawZ(0.0f)        {}
+        TargetRollPitchYawX(0.0f), TargetRollPitchYawY(0.0f), TargetRollPitchYawZ(0.0f), Distance(0.0f)        {}
 
     bool isMoving;
     uint32 spellId;
@@ -168,6 +168,7 @@ struct AreaTriggerInfo
     float TargetRollPitchYawX;
     float TargetRollPitchYawY;
     float TargetRollPitchYawZ;
+    float Distance;
     uint32 polygon;
     PolygonPOIMap verticesPoints;
     PolygonPOIMap verticesTargetPoints;

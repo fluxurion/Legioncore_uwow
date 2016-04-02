@@ -9427,7 +9427,7 @@ void ObjectMgr::LoadAreaTriggerActionsAndData()
     //    9          10        11            12                13           14         15           16             17           18      19       20         21           22         23
     "`isMoving`, `moveType`, `speed`, `activationDelay`, `updateDelay`, `maxCount`, `hitType`, `MoveCurveID`, `ElapsedTime`, `windX`, `windY`, `windZ`, `windSpeed`, `windType`, `polygon`,"
     "`MorphCurveID`, `FacingCurveID`, `ScaleCurveID`, `HasFollowsTerrain`, `HasAttached`, `HasAbsoluteOrientation`, `HasDynamicShape`, `HasFaceMovementDir`, `waitTime`,"
-    "`hasAreaTriggerBox`, `RollPitchYaw1X`, `RollPitchYaw1Y`, `RollPitchYaw1Z`, `TargetRollPitchYawX`, `TargetRollPitchYawY`, `TargetRollPitchYawZ` FROM areatrigger_data");
+    "`hasAreaTriggerBox`, `RollPitchYaw1X`, `RollPitchYaw1Y`, `RollPitchYaw1Z`, `TargetRollPitchYawX`, `TargetRollPitchYawY`, `TargetRollPitchYawZ`, `Distance` FROM areatrigger_data");
 
     if (result)
     {
@@ -9479,6 +9479,8 @@ void ObjectMgr::LoadAreaTriggerActionsAndData()
             info.TargetRollPitchYawX = fields[i++].GetFloat();
             info.TargetRollPitchYawY = fields[i++].GetFloat();
             info.TargetRollPitchYawZ = fields[i++].GetFloat();
+            info.Distance = fields[i++].GetFloat();
+
             if(info.polygon && info.customEntry)
             {
                 QueryResult resultPolygon = WorldDatabase.PQuery("SELECT `id`, `x`, `y` FROM areatrigger_polygon WHERE `entry` = '%u' AND `spellId` = '%u' AND `type` = 1", info.customEntry, info.spellId);
