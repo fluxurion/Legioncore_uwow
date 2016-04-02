@@ -4469,13 +4469,13 @@ DROP TABLE IF EXISTS `battle_pet_ability`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_ability` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Type` int(10) unsigned NOT NULL DEFAULT '0',
-  `fileDataEntry` int(10) unsigned NOT NULL DEFAULT '0',
-  `turnCooldown` int(10) unsigned NOT NULL DEFAULT '0',
-  `auraAbilityID` int(10) unsigned NOT NULL DEFAULT '0',
-  `auraDuration` int(10) unsigned NOT NULL DEFAULT '0',
-  `name` text,
-  `description` text,
+  `IconFileID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Description` text,
+  `AuraAbilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `School` tinyint(4) NOT NULL DEFAULT '0',
+  `Cooldown` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `AuraDuration` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4500,8 +4500,8 @@ DROP TABLE IF EXISTS `battle_pet_ability_locale`;
 CREATE TABLE `battle_pet_ability_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `name_lang` text,
-  `description_lang` text,
+  `Name_lang` text,
+  `Description_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4525,17 +4525,17 @@ DROP TABLE IF EXISTS `battle_pet_ability_effect`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_ability_effect` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `TurnEntryID` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk` int(10) unsigned NOT NULL DEFAULT '0',
-  `AuraId_unk` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertiesID` int(10) unsigned NOT NULL DEFAULT '0',
-  `effectIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues1` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues2` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues3` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues4` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues5` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyValues6` int(10) unsigned NOT NULL DEFAULT '0',
+  `TurnID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Unk1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AuraID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PropertyValue1` smallint(6) NOT NULL DEFAULT '0',
+  `PropertyValue2` smallint(6) NOT NULL DEFAULT '0',
+  `PropertyValue3` smallint(6) NOT NULL DEFAULT '0',
+  `PropertyValue4` smallint(6) NOT NULL DEFAULT '0',
+  `PropertyValue5` smallint(6) NOT NULL DEFAULT '0',
+  `PropertyValue6` smallint(6) NOT NULL DEFAULT '0',
+  `EffectPropertiesID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Effect` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4626,10 +4626,10 @@ DROP TABLE IF EXISTS `battle_pet_ability_turn`;
 CREATE TABLE `battle_pet_ability_turn` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `AbilityID` int(10) unsigned NOT NULL DEFAULT '0',
-  `stateID` int(10) unsigned NOT NULL DEFAULT '0',
-  `turnIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk` int(10) unsigned NOT NULL DEFAULT '0',
-  `procIndex` int(10) unsigned NOT NULL DEFAULT '0',
+  `StateID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Turn` int(10) unsigned NOT NULL DEFAULT '0',
+  `HasProcType` int(10) unsigned NOT NULL DEFAULT '0',
+  `ProcType` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4653,9 +4653,9 @@ DROP TABLE IF EXISTS `battle_pet_ability_state`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_ability_state` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AbilityID` int(10) unsigned NOT NULL DEFAULT '0',
-  `stateID` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk` int(10) unsigned NOT NULL DEFAULT '0',
+  `Value` int(11) NOT NULL DEFAULT '0',
+  `AbilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `State` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4813,10 +4813,10 @@ DROP TABLE IF EXISTS `battle_pet_species_x_ability`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_species_x_ability` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `speciesID` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `abilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `requiredLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `rank` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SpeciesID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `AbilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Slot` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4840,8 +4840,8 @@ DROP TABLE IF EXISTS `battle_pet_breed_quality`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_breed_quality` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `qualityModifier` float NOT NULL DEFAULT '0',
-  `quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Modifier` float NOT NULL DEFAULT '0',
+  `Quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

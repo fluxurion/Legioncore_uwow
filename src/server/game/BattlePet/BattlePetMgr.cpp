@@ -212,13 +212,13 @@ void BattlePetMgr::BattlePet::CalculateStats()
     float power = GetBaseStateValue(STATE_STAT_POWER);
     float speed = GetBaseStateValue(STATE_STAT_SPEED);
 
-    for (auto itr : sBattlePetBreedQualityStore)
+    for (BattlePetBreedQualityEntry const* itr : sBattlePetBreedQualityStore)
     {
-        if (itr->quality == JournalInfo.BreedQuality)
+        if (itr->Quality == JournalInfo.BreedQuality)
         {
-            health *= itr->qualityModifier;
-            power *= itr->qualityModifier;
-            speed *= itr->qualityModifier;
+            health *= itr->Modifier;
+            power *= itr->Modifier;
+            speed *= itr->Modifier;
             break;
         }
     }
@@ -1807,21 +1807,21 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
 {
     for (BattlePetSpeciesXAbilityEntry const* xEntry : sBattlePetSpeciesXAbilityStore)
     {
-        if (xEntry->speciesID == JournalInfo.SpeciesID && xEntry->rank == rank)
+        if (xEntry->SpeciesID == JournalInfo.SpeciesID && xEntry->Slot == rank)
         {
             if (rank == 0)
             {
                 if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_1)
                 {
-                    if (xEntry->requiredLevel == 10)
-                        return xEntry->abilityID;
+                    if (xEntry->Level == 10)
+                        return xEntry->AbilityID;
                     else
                         continue;
                 }
                 else
                 {
-                    if (xEntry->requiredLevel < 10)
-                        return xEntry->abilityID;
+                    if (xEntry->Level < 10)
+                        return xEntry->AbilityID;
                 }
             }
 
@@ -1829,15 +1829,15 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
             {
                 if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_2)
                 {
-                    if (xEntry->requiredLevel == 15)
-                        return xEntry->abilityID;
+                    if (xEntry->Level == 15)
+                        return xEntry->AbilityID;
                     else
                         continue;
                 }
                 else
                 {
-                    if (xEntry->requiredLevel < 15)
-                        return xEntry->abilityID;
+                    if (xEntry->Level < 15)
+                        return xEntry->AbilityID;
                 }
             }
 
@@ -1845,15 +1845,15 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
             {
                 if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_3)
                 {
-                    if (xEntry->requiredLevel == 20)
-                        return xEntry->abilityID;
+                    if (xEntry->Level == 20)
+                        return xEntry->AbilityID;
                     else
                         continue;
                 }
                 else
                 {
-                    if (xEntry->requiredLevel < 20)
-                        return xEntry->abilityID;
+                    if (xEntry->Level < 20)
+                        return xEntry->AbilityID;
                 }
             }
         }
@@ -1995,9 +1995,9 @@ void PetBattle::RoundResults::AuraProcessingEnd()
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-int32 PetBattle::RoundResults::Effect::GetBaseDamage(PetBattleInfo* attacker, uint32 turnIndex)
+int32 PetBattle::RoundResults::Effect::GetBaseDamage(PetBattleInfo* attacker, uint32 turn /*= 1*/)
 {
-    uint32 basePoints = GetProperties(BASEPOINTS, turnIndex);
+    uint32 basePoints = GetProperties(BASEPOINTS, turn);
     return basePoints * (1 + attacker->GetPower() * 0.05f);
 }
 
@@ -2005,7 +2005,7 @@ int32 PetBattle::RoundResults::Effect::CalculateDamage(PetBattleInfo* attacker, 
 {
     int32 baseDamage = GetBaseDamage(attacker);
     int32 cleanDamage = urand(baseDamage - 5, baseDamage + 5);
-    float mod = GetAttackModifier(abilityEntry->Type, sDB2Manager.GetBattlePetSpeciesBySpellID(victim->GetCreatureEntry()));
+    float mod = GetAttackModifier(abilityEntry->School, sDB2Manager.GetBattlePetSpeciesBySpellID(victim->GetCreatureEntry()));
     int32 finalDamage = cleanDamage * mod;
     if (crit)
         finalDamage *= 2;
@@ -2016,7 +2016,7 @@ int32 PetBattle::RoundResults::Effect::CalculateDamage(PetBattleInfo* attacker, 
 int16 PetBattle::RoundResults::Effect::CalculateHitResult(PetBattleInfo* victim)
 {
     uint16 flags = PETBATTLE_EFFECT_FLAG_BASE;
-    float mod = GetAttackModifier(abilityEntry->Type, sDB2Manager.GetBattlePetSpeciesBySpellID(victim->GetCreatureEntry()));
+    float mod = GetAttackModifier(abilityEntry->School, sDB2Manager.GetBattlePetSpeciesBySpellID(victim->GetCreatureEntry()));
 
     if (roll_chance_i(5))
         flags |= PETBATTLE_EFFECT_FLAG_CRIT;
@@ -2029,7 +2029,7 @@ int16 PetBattle::RoundResults::Effect::CalculateHitResult(PetBattleInfo* victim)
     return flags;
 }
 
-uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 turnIndex)
+uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 turn /*= 1*/)
 {
     LocalizedString desc;
     desc.Str[LOCALE_enUS] = "Points";
@@ -2044,14 +2044,14 @@ uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 t
     }
 
     for (BattlePetAbilityTurnEntry const* tEntry : sBattlePetAbilityTurnStore)
-        if (tEntry->AbilityID == abilityEntry->ID && tEntry->turnIndex == turnIndex)
+        if (tEntry->AbilityID == abilityEntry->ID && tEntry->Turn == turn)
             for (BattlePetAbilityEffectEntry const* eEntry : sBattlePetAbilityEffectStore)
-                if (eEntry->TurnEntryID == tEntry->ID)
+                if (eEntry->TurnID == tEntry->ID)
                     for (BattlePetEffectPropertiesEntry const* entry : sBattlePetEffectPropertiesStore)
-                        if (eEntry->propertiesID == entry->ID)
+                        if (eEntry->EffectPropertiesID == entry->ID)
                             for (uint8 l = 0; l < MAX_EFFECT_PROPERTIES; ++l)
                                 if (!strcmp(entry->propertyDescs[l]->Str[LOCALE_enUS], desc.Str[LOCALE_enUS]))
-                                    return eEntry->propertyValues[l];
+                                    return eEntry->PropertyValue[l];
 
     return 0;
 }

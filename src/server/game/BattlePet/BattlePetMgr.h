@@ -363,10 +363,10 @@ public:
 
             BattlePetAbilityEntry const* abilityEntry;
             int16 CalculateHitResult(PetBattleInfo* victim);
-            int32 GetBaseDamage(PetBattleInfo* attacker, uint32 turnIndex = 1);
+            int32 GetBaseDamage(PetBattleInfo* attacker, uint32 turn = 1);
             int32 CalculateDamage(PetBattleInfo* attacker, PetBattleInfo* victim, bool crit);
             float GetAttackModifier(uint8 attackType, uint8 defenseType);
-            uint32 GetProperties(uint8 properties, uint32 turnIndex = 1);
+            uint32 GetProperties(uint8 properties, uint32 turn = 1);
         };
 
         struct AbilityData

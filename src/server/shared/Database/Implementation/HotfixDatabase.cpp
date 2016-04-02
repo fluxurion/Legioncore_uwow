@@ -486,13 +486,13 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "RequiredFactionId, RequirementFlags, RequiredFactionStanding FROM item_extended_cost ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetAbility.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY, "SELECT ID, Type, fileDataEntry, turnCooldown, auraAbilityID, auraDuration, name, description"
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY, "SELECT ID, IconFileID, Name, Description, AuraAbilityID, School, Cooldown, AuraDuration"
         " FROM battle_pet_ability ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_ABILITY, "SELECT ID, name_lang, description_lang FROM battle_pet_ability_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_ABILITY, "SELECT ID, Name_lang, Description_lang FROM battle_pet_ability_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BattlePetAbilityEffect.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_EFFECT, "SELECT ID, TurnEntryID, unk, AuraId_unk, propertiesID, effectIndex, propertyValues1, "
-        "propertyValues2, propertyValues3, propertyValues4, propertyValues5, propertyValues6 FROM battle_pet_ability_effect ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_EFFECT, "SELECT ID, TurnID, Unk1, AuraID, PropertyValue1, PropertyValue2, PropertyValue3, "
+        "PropertyValue4, PropertyValue5, PropertyValue6, EffectPropertiesID, Effect FROM battle_pet_ability_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetEffectProperties.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_EFFECT_PROPERTIES, "SELECT ID, someFlags, propertyDescs1, propertyDescs2, propertyDescs3, propertyDescs4, "
@@ -501,11 +501,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "propertyDescs4_lang, propertyDescs5_lang, propertyDescs6_lang FROM battle_pet_effect_properties_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BattlePetAbilityTurn.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_TURN, "SELECT ID, AbilityID, stateID, turnIndex, unk, procIndex FROM battle_pet_ability_turn"
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_TURN, "SELECT ID, AbilityID, StateID, Turn, HasProcType, ProcType FROM battle_pet_ability_turn"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetAbilityState.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_STATE, "SELECT ID, AbilityID, stateID, unk FROM battle_pet_ability_state ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_STATE, "SELECT ID, Value, AbilityID, State FROM battle_pet_ability_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetState.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_STATE, "SELECT ID, stateName, flags, unk FROM battle_pet_state ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -520,11 +520,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_STATE, "SELECT ID, Value, SpeciesID, State FROM battle_pet_species_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetSpeciesXAbility.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_X_ABILITY, "SELECT ID, speciesID, abilityID, requiredLevel, rank FROM battle_pet_species_x_ability"
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_X_ABILITY, "SELECT ID, SpeciesID, AbilityID, Level, Slot FROM battle_pet_species_x_ability"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetBreedQuality.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_QUALITY, "SELECT ID, qualityModifier, quality FROM battle_pet_breed_quality ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_QUALITY, "SELECT ID, Modifier, Quality FROM battle_pet_breed_quality ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetBreedState.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_STATE, "SELECT ID, stateModifier, breedID, stateID FROM battle_pet_breed_state ORDER BY ID DESC", CONNECTION_SYNCH);

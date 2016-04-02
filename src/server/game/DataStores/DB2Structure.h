@@ -1476,25 +1476,25 @@ struct ItemExtendedCostEntry
 
 struct BattlePetAbilityEntry
 {
-    uint32 ID;                  // 0
-    uint32 Type;                // 1
-    uint32 fileDataEntry;     // 2
-    uint32 turnCooldown;        // 3
-    uint32 auraAbilityID;       // 4
-    uint32 auraDuration;        // 5
-    LocalizedString* name;               // 6
-    LocalizedString* description;        // 7
+    uint32      ID;                                                 // 0
+    uint32      IconFileID;                                         // 1
+    LocalizedString* Name;                                          // 2
+    LocalizedString* Description;                                   // 3
+    uint16      AuraAbilityID;                                      // 4
+    int8        School;                                             // 5
+    uint8       Cooldown;                                           // 6
+    uint8       AuraDuration;                                       // 7
 };
 
 struct BattlePetAbilityEffectEntry
 {
-    uint32 ID;                  // 0
-    uint32 TurnEntryID;         // 1
-    uint32 unk;               // 2
-    uint32 AuraId_unk;           // 3
-    uint32 propertiesID;        // 4
-    uint32 effectIndex;         // 5
-    uint32 propertyValues[MAX_EFFECT_PROPERTIES];   // 6 - 11
+    uint32      ID;                                                 // 0
+    uint16      TurnID;                                             // 1
+    uint16      Unk1;                                               // 2
+    uint16      AuraID;                                             // 3
+    int16       PropertyValue[MAX_EFFECT_PROPERTIES];               // 4 - 9
+    uint8       EffectPropertiesID;                                 // 10
+    uint8       Effect;                                             // 11
 };
 
 struct BattlePetEffectPropertiesEntry
@@ -1512,20 +1512,20 @@ struct BattlePetEffectPropertiesEntry
 
 struct BattlePetAbilityTurnEntry
 {
-    uint32 ID;                  // 0
-    uint32 AbilityID;           // 1
-    uint32 stateID;           // 2
-    uint32 turnIndex;           // 3
-    uint32 unk;              // 4
-    uint32 procIndex;        // 5
+    uint32      ID;                                                 // 0
+    uint32      AbilityID;                                          // 1
+    uint32      StateID;                                            // 2
+    uint32      Turn;                                               // 3
+    uint32      HasProcType;                                        // 4
+    uint32      ProcType;                                           // 5
 };
 
 struct BattlePetAbilityStateEntry
 {
-    uint32 ID;                  // 0
-    uint32 AbilityID;         // 1
-    uint32 stateID;           // 2
-    uint32 unk;               // 3
+    uint32      ID;                                                 // 0
+    int32       Value;                                              // 1
+    uint16      AbilityID;                                          // 2
+    uint8       State;                                              // 3
 };
 
 struct BattlePetStateEntry
@@ -1559,18 +1559,18 @@ struct BattlePetSpeciesStateEntry
 
 struct BattlePetSpeciesXAbilityEntry
 {
-    uint32 ID;
-    uint16 speciesID;
-    uint16 abilityID;
-    uint8 requiredLevel;
-    uint8 rank;
+    uint32      ID;                                                 // 0
+    uint16      SpeciesID;                                          // 1
+    uint16      AbilityID;                                          // 2
+    uint8       Level;                                              // 3
+    uint8       Slot;                                               // 4
 };
 
 struct BattlePetBreedQualityEntry
 {
-    uint32 ID;
-    float qualityModifier;
-    uint8 quality;
+    uint32      ID;                                                 // 0
+    float       Modifier;                                           // 1
+    uint8       Quality;                                            // 2
 };
 
 struct BattlePetBreedStateEntry

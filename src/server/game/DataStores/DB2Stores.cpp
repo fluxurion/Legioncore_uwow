@@ -316,9 +316,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sBannedAddOnsStore);
     LOAD_DB2(sBarberShopStyleStore);
     LOAD_DB2(sBattlemasterListStore);
-    //LOAD_DB2(sBattlePetAbilityEffectStore);
-    //LOAD_DB2(sBattlePetAbilityStateStore);
-    //LOAD_DB2(sBattlePetAbilityStore);
+    LOAD_DB2(sBattlePetAbilityEffectStore);
+    LOAD_DB2(sBattlePetAbilityStateStore);
+    LOAD_DB2(sBattlePetAbilityStore);
     //LOAD_DB2(sBattlePetAbilityTurnStore);
     LOAD_DB2(sBattlePetBreedQualityStore);
     LOAD_DB2(sBattlePetBreedStateStore);
@@ -563,16 +563,16 @@ void DB2Manager::InitDB2CustomStores()
         _battlePetBreedStates[entry->breedID][BattlePetState(entry->stateID)] = entry->stateModifier;
 
     for (BattlePetBreedQualityEntry const* entry : sBattlePetBreedQualityStore)
-        _battlePetQualityMultiplierId[entry->quality] = entry->qualityModifier;
+        _battlePetQualityMultiplierId[entry->Quality] = entry->Modifier;
 
     for (BattlePetAbilityTurnEntry const* entry : sBattlePetAbilityTurnStore)
-        _battlePetTurnByAbilityId.insert(BattlePetTurnByAbilityIdContainer::value_type(entry->AbilityID, std::make_pair(entry->ID, entry->turnIndex)));
+        _battlePetTurnByAbilityId.insert(BattlePetTurnByAbilityIdContainer::value_type(entry->AbilityID, std::make_pair(entry->ID, entry->Turn)));
 
     for (BattlePetAbilityEffectEntry const* entry : sBattlePetAbilityEffectStore)
-        _battlePetEffectEntryByTurnId[entry->TurnEntryID] = entry;
+        _battlePetEffectEntryByTurnId[entry->TurnID] = entry;
 
     for (BattlePetSpeciesXAbilityEntry const* entry : sBattlePetSpeciesXAbilityStore)
-        _battlePetXAbilityEntryBySpecId.insert(BattlePetXAbilityEntryBySpecIdContainer::value_type(entry->speciesID, entry));
+        _battlePetXAbilityEntryBySpecId.insert(BattlePetXAbilityEntryBySpecIdContainer::value_type(entry->SpeciesID, entry));
 
     for (GarrFollowerLevelXPEntry* const entry : sGarrFollowerLevelXPStore)
         _garrFollowerLevelXP[entry->Level] = entry->NextLevelXP;
@@ -1257,8 +1257,8 @@ uint32 DB2Manager::GetBattlePetXAbilityEntryBySpec(uint32 speciesID, uint32 cust
         if (!entry)
             continue;
 
-        if (entry->rank == rank && customAbility == entry->abilityID && entry->requiredLevel >= 10)
-            return entry->abilityID;
+        if (entry->Slot == rank && customAbility == entry->AbilityID && entry->Level >= 10)
+            return entry->AbilityID;
     }
 
     return 0;

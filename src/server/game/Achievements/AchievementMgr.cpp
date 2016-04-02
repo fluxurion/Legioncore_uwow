@@ -4031,7 +4031,7 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                     uint8 qPet = 0;
                     for (BattlePetBreedQualityEntry const* qEntry : sBattlePetBreedQualityStore)
                     {
-                        if (miscValue2 == qEntry->quality)
+                        if (miscValue2 == qEntry->Quality)
                             qPet = qEntry->ID;
 
                         if (qPet != reqValue)
