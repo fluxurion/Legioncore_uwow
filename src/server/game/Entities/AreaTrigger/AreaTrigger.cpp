@@ -158,6 +158,8 @@ bool AreaTrigger::CreateAreaTrigger(ObjectGuid::LowType guidlow, uint32 triggerE
     SetTargetGuid(targetGuid);
 
     float range = GetSpellInfo()->GetMaxRange() < _radius ? _radius : GetSpellInfo()->GetMaxRange(); //If spline not set client crash, set default to 15m
+    if (range > 200.0f)
+        range = 75.0f;
 
     // culculate destination point
     if (isMoving())

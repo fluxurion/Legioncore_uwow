@@ -3733,7 +3733,6 @@ void SpellMgr::UnloadSpellInfoImplicitTargetConditionLists()
 
 void SpellMgr::LoadSpellCustomAttr()
 {
-
     uint32 oldMSTime = getMSTime();
 
     SpellInfo* spellInfo = NULL;
@@ -3743,6 +3742,16 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo = mSpellInfoMap[i];
             if (!spellInfo)
                 continue;
+
+            // If spell not exist, not use him
+            if (spellInfo->AuraRestrictions.CasterAuraSpell && !mSpellInfoMap[spellInfo->AuraRestrictions.CasterAuraSpell])
+                spellInfo->AuraRestrictions.CasterAuraSpell = 0;
+            if (spellInfo->AuraRestrictions.TargetAuraSpell && !mSpellInfoMap[spellInfo->AuraRestrictions.TargetAuraSpell])
+                spellInfo->AuraRestrictions.TargetAuraSpell = 0;
+            if (spellInfo->AuraRestrictions.ExcludeCasterAuraSpell && !mSpellInfoMap[spellInfo->AuraRestrictions.ExcludeCasterAuraSpell])
+                spellInfo->AuraRestrictions.ExcludeCasterAuraSpell = 0;
+            if (spellInfo->AuraRestrictions.ExcludeTargetAuraSpell && !mSpellInfoMap[spellInfo->AuraRestrictions.ExcludeTargetAuraSpell])
+                spellInfo->AuraRestrictions.ExcludeTargetAuraSpell = 0;
 
             for (uint8 j = 0; j < MAX_SPELL_EFFECTS; ++j)
             {
