@@ -20,7 +20,9 @@ DELETE FROM `spell_area` WHERE area in (7705);
 REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
 ('7705', '179665', '0', '40077', '0', '0', '2', '1', '10', '64'), -- disable all mounts.
 ('7705', '193525', '0', '40077', '0', '0', '2', '1', '10', '74'), -- 1106
-('7705', '191677', '0', '40077', '0', '0', '2', '0', '10', '64'); -- 1116
+('7705', '191677', '0', '40077', '0', '0', '2', '0', '10', '64'), -- 1116
+('7705', '191466', '40378', '0', '0', '0', '2', '0', '66', '64'); -- 1116
+
 -- 179665 193525
 
 -- Quest chaine fixes.
@@ -43,12 +45,18 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q40378' WHERE `gameobject_te
 REPLACE INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `caster`, `target`, `hastype`, `hastalent`, `hastype2`, `hastalent2`, `chance`, `cooldown`, `duration`, `hitmask`, `removeMask`, `targetCountType`, `targetCount`, `actiontype`, `group`, `comment`) VALUES
  ('200255', '200175', '0', '5', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '-1', '0', '0', '');
 UPDATE `creature_template` SET `ScriptName` = 'npc_q40378' WHERE `creature_template`.`entry` = 94410;
- 
+
 -- Q: 39279 Area.
 REPLACE INTO `area_queststart` (`id`, `quest`) VALUES ('7741', '39279');
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q39279' WHERE `gameobject_template`.`entry` in (244439, 244440, 244441, 243873);
 REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('191827', 'spell_legion_q39279');
 
 -- Q: 39049
+REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
+(93105, 0, 0, 'Я вижу все твои тайны...', 12, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to Player'),
+(93105, 1, 0, 'Довольно! Сейчас мой инфернал сокрушит тебя. ', 14, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to 0'),
+(93105, 2, 0, 'А-а-а... Мои глаза!', 14, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to Player');
+UPDATE `creature_template` SET `ScriptName` = 'npc_q39049' WHERE `entry` = 93105;
+
 -- Q: 38759
 -- Q: 40379

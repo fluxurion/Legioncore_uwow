@@ -96,6 +96,9 @@ public:
     {
         if (quest->GetQuestId() == QUEST)
         {
+            //ToDo: how load npc for converstation?
+            player->GetMap()->LoadGrid(1170.74f, 3204.71f); //voice
+
             Conversation* conversation = new Conversation;
             if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
             {
@@ -431,6 +434,60 @@ public:
         }
     };
 };
+
+//93105
+class npc_q39049 : public CreatureScript
+{
+public:
+    npc_q39049() : CreatureScript("npc_q39049") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39049AI(creature);
+    }
+
+    enum data
+    {
+        QUEST       = 39049,
+        CREDIT      = 105946,
+        SPELL_LEARN = 195447,
+    };
+
+    struct npc_q39049AI : public ScriptedAI
+    {
+        npc_q39049AI(Creature* creature) : ScriptedAI(creature) {}
+        void Reset()
+        {
+            me->SetReactState(REACT_DEFENSIVE);
+        }
+
+        void EnterCombat(Unit* victim)
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0);
+        }
+
+        void JustDied(Unit* attacker)
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_2);
+
+            Player *player = attacker->ToPlayer();
+            if (!player)
+                return;
+
+            if (player->GetQuestStatus(QUEST) != QUEST_STATUS_INCOMPLETE)
+                return;
+
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL_LEARN, false);
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+            DoMeleeAttackIfReady();
+        }
+    };
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -441,4 +498,5 @@ void AddSC_Mardum()
     new spell_legion_q39279();
     new npc_q40378();
     new conversation_announcer();
+    new npc_q39049();
 }
