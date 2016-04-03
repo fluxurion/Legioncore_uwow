@@ -92,7 +92,7 @@ enum OpcodeClient : uint16
     CMSG_BATTLE_PET_REQUEST_JOURNAL                   = 0x3624,
     CMSG_BATTLE_PET_REQUEST_JOURNAL_LOCK              = 0x3623,
     CMSG_BATTLE_PET_SET_BATTLE_SLOT                   = 0x362C,
-    CMSG_BATTLE_PET_SET_FLAGS                         = 0xBADD,
+    CMSG_BATTLE_PET_SET_FLAGS                         = 0x362F,
     CMSG_BATTLE_PET_SUMMON                            = 0x3629,
     CMSG_BATTLE_PET_UPDATE_NOTIFY                     = 0x31CA,
     CMSG_BATTLEFIELD_LEAVE                            = 0x3171,
