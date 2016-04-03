@@ -6456,14 +6456,6 @@ void Spell::EffectKnockBack(SpellEffIndex effIndex)
     if (unitTarget->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
 
-    // Thunderstorm
-    if (m_spellInfo->ClassOptions.SpellClassSet == SPELLFAMILY_SHAMAN && m_spellInfo->ClassOptions.SpellClassMask[1] & 0x00002000)
-    {
-        // Glyph of Thunderstorm
-        if (m_caster->HasAura(62132))
-            return;
-    }
-
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
         if (unitTarget->ToPlayer()->GetKnockBackTime())
             return;

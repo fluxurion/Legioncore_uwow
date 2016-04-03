@@ -22009,7 +22009,7 @@ void Player::CharmSpellInitialize()
 
     WorldPackets::PetPackets::Mode mode;
     mode.PetGUID = charm->GetGUID();
-    mode._reactState = charm->ToCreature()->GetReactState();
+    mode._reactState = charm->ToCreature() ? charm->ToCreature()->GetReactState() : 0;
     mode._commandState = charmInfo->GetCommandState();
     GetSession()->SendPacket(mode.Write());
 }
