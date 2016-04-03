@@ -1,6 +1,6 @@
 /*
-* Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+* Copyright (C) 2012-2016 Uwow <https://uwow.biz/>
+* Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -16,10 +16,9 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WorldPacket.h"
 #include "Player.h"
 #include "BattlePetMgr.h"
-#include "BattlePetPackets.h"
+#include "PetBattleAbility.h" // temp'll not be needed here
 
 void BattlePetMgr::Initialize()
 { }
@@ -477,7 +476,7 @@ uint8 BattlePetMgr::GetWeightForBreed(uint16 breedID)
 void BattlePetMgr::CreatePetBattle(Player* initiator, ObjectGuid opponentGuid)
 {
     delete _petBattle;
-    _petBattle = new PetBattle(initiator);
+    _petBattle = new PetBattleOLD(initiator);
     _petBattle->Init(opponentGuid);
 }
 
@@ -804,7 +803,7 @@ void BattlePetMgr::UpdateWaitTimeAvg(int32 waitTime)
     _waitTimesAvgStore += waitTime;
 }
 
-PetBattle::PetBattle(Player* owner) : _player(owner)
+PetBattleOLD::PetBattleOLD(Player* owner) : _player(owner)
 {
     battleInfo.clear();
     nextRoundFinal = false;
@@ -819,7 +818,7 @@ BattlePetFamily BattlePetMgr::BattlePet::GetFamily()
     return BATTLE_PET_FAMILY_MAX;
 }
 
-bool PetBattle::PrepareBattleInfo(ObjectGuid opponentGuid)
+bool PetBattleOLD::PrepareBattleInfo(ObjectGuid opponentGuid)
 {
     // PLAYER (copying data from journal and other sources)
     for (uint8 i = 0; i < MAX_ACTIVE_BATTLE_PETS; ++i)
@@ -853,7 +852,7 @@ bool PetBattle::PrepareBattleInfo(ObjectGuid opponentGuid)
         return InitiPvEBattle(opponentGuid);
 }
 
-bool PetBattle::InitiPvEBattle(ObjectGuid wildPetGuid)
+bool PetBattleOLD::InitiPvEBattle(ObjectGuid wildPetGuid)
 {
     SetBattleState(PETBATTLE_STATE_WAITING_PRE_BATTLE);
     SetCurrentRoundID(0);
@@ -909,13 +908,13 @@ bool PetBattle::InitiPvEBattle(ObjectGuid wildPetGuid)
     return true;
 }
 
-bool PetBattle::InitiPvPBattle(ObjectGuid playerGuid) 
+bool PetBattleOLD::InitiPvPBattle(ObjectGuid playerGuid) 
 {
     
     return false;
 }
 
-uint8 PetBattle::GetTotalPetCountInTeam(uint8 team, bool onlyActive)
+uint8 PetBattleOLD::GetTotalPetCountInTeam(uint8 team, bool onlyActive)
 {
     uint8 count = 0;
 
@@ -934,7 +933,7 @@ uint8 PetBattle::GetTotalPetCountInTeam(uint8 team, bool onlyActive)
     return count;
 }
 
-PetBattleInfo* PetBattle::GetPet(uint8 petNumber)
+PetBattleInfo* PetBattleOLD::GetPet(uint8 petNumber)
 {
     for (auto v : battleInfo)
     {
@@ -947,7 +946,7 @@ PetBattleInfo* PetBattle::GetPet(uint8 petNumber)
     return nullptr;
 }
 
-PetBattleInfo* PetBattle::GetFrontPet(uint8 team)
+PetBattleInfo* PetBattleOLD::GetFrontPet(uint8 team)
 {
     for (auto const& x : battleInfo)
     {
@@ -960,7 +959,7 @@ PetBattleInfo* PetBattle::GetFrontPet(uint8 team)
     return nullptr;
 }
 
-PetBattleInfo* PetBattle::GetNotFrontPet(uint8 team)
+PetBattleInfo* PetBattleOLD::GetNotFrontPet(uint8 team)
 {
     for (auto const& x : battleInfo)
     {
@@ -973,7 +972,7 @@ PetBattleInfo* PetBattle::GetNotFrontPet(uint8 team)
     return nullptr;
 }
 
-void PetBattle::SetFrontPet(uint8 team, uint8 petNumber)
+void PetBattleOLD::SetFrontPet(uint8 team, uint8 petNumber)
 {
     if (PetBattleInfo* pb = GetFrontPet(team))
         pb->SetFrontPet(false);
@@ -982,7 +981,7 @@ void PetBattle::SetFrontPet(uint8 team, uint8 petNumber)
         pb1->SetFrontPet(true);
 }
 
-void PetBattle::SetWinner(uint8 team)
+void PetBattleOLD::SetWinner(uint8 team)
 {
     for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
     {
@@ -993,7 +992,7 @@ void PetBattle::SetWinner(uint8 team)
     }
 }
 
-uint8 PetBattle::GetWinner()
+uint8 PetBattleOLD::GetWinner()
 {
     for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
     {
@@ -1004,7 +1003,7 @@ uint8 PetBattle::GetWinner()
     return 0;
 }
 
-uint8 PetBattle::GetPetTeamIndex(uint8 petNumber)
+uint8 PetBattleOLD::GetPetTeamIndex(uint8 petNumber)
 {
     switch (petNumber)
     {
@@ -1018,7 +1017,7 @@ uint8 PetBattle::GetPetTeamIndex(uint8 petNumber)
     }
 }
 
-uint8 PetBattle::GetTeamByPetID(uint8 petNumber)
+uint8 PetBattleOLD::GetTeamByPetID(uint8 petNumber)
 {
     switch (petNumber)
     {
@@ -1035,7 +1034,7 @@ uint8 PetBattle::GetTeamByPetID(uint8 petNumber)
     }
 }
 
-void PetBattle::InitializePetBattle(ObjectGuid opponentGuid)
+void PetBattleOLD::InitializePetBattle(ObjectGuid opponentGuid)
 {
     auto mgr = _player->GetBattlePetMgr();
 
@@ -1154,13 +1153,13 @@ bool PetBattleInfo::HasAbility(uint32 abilityID)
     return false;
 }
 
-void PetBattle::Init(ObjectGuid opponentGuid)
+void PetBattleOLD::Init(ObjectGuid opponentGuid)
 {
     if (PrepareBattleInfo(opponentGuid))
         InitializePetBattle(opponentGuid);
 }
 
-bool PetBattle::FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID)
+bool PetBattleOLD::FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID)
 {
     RoundResults firstRound;
     firstRound.PacketInfo.CurRound = 0;
@@ -1169,17 +1168,17 @@ bool PetBattle::FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID)
     SetFrontPet(TEAM_ALLY, allyFrontPetID);
     SetFrontPet(TEAM_ENEMY, enemyFrontPetID);
 
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = allyFrontPetID;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     firstRound.PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 
-    PetBattle::RoundResults::Effect effect1;
+    PetBattleOLD::RoundResults::Effect effect1;
     effect1.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     effect1.PacketInfo.CasterPBOID = 3;
-    PetBattle::RoundResults::Effect::Target target1;
+    PetBattleOLD::RoundResults::Effect::Target target1;
     target1.PacketInfo.Petx = enemyFrontPetID;
     target1.PacketInfo.Type = EFFECT_TARGET_3;
     effect1.PacketInfo.EffectTargetData.emplace_back(target1.PacketInfo);
@@ -1191,7 +1190,7 @@ bool PetBattle::FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID)
     return true;
 }
 
-void PetBattle::SendFirstRound(RoundResults* roundResult)
+void PetBattleOLD::SendFirstRound(RoundResults* roundResult)
 {
     WorldPackets::BattlePet::BattleRound round(SMSG_PET_BATTLE_FIRST_ROUND);
 
@@ -1212,7 +1211,7 @@ void PetBattle::SendFirstRound(RoundResults* roundResult)
     _player->GetSession()->SendPacket(round.Write());
 }
 
-void PetBattle::ReplaceFrontPet(uint8 frontPet /*= 0*/)
+void PetBattleOLD::ReplaceFrontPet(uint8 frontPet /*= 0*/)
 {
     if (!frontPet)
     {
@@ -1223,7 +1222,7 @@ void PetBattle::ReplaceFrontPet(uint8 frontPet /*= 0*/)
         ForceReplacePetHandler(GetCurrentRoundID(), frontPet, TEAM_ALLY);
 }
 
-void PetBattle::ForceReplacePetHandler(uint32 roundID, uint8 newFrontPet, uint8 team)
+void PetBattleOLD::ForceReplacePetHandler(uint32 roundID, uint8 newFrontPet, uint8 team)
 {
     RoundResults round;
     round.PacketInfo.CurRound = roundID;
@@ -1242,7 +1241,7 @@ void PetBattle::ForceReplacePetHandler(uint32 roundID, uint8 newFrontPet, uint8 
     SetFrontPet(team, newFrontPet);
 }
 
-void PetBattle::SendForceReplacePet(RoundResults* roundResult)
+void PetBattleOLD::SendForceReplacePet(RoundResults* roundResult)
 {
     WorldPackets::BattlePet::BattleRound round(SMSG_PET_BATTLE_REPLACEMENTS_MADE);
     round.MsgData.NextPetBattleState = GetBattleState();
@@ -1262,7 +1261,7 @@ void PetBattle::SendForceReplacePet(RoundResults* roundResult)
     _player->GetSession()->SendPacket(round.Write());
 }
 
-bool PetBattle::UseAbilityHandler(uint32 abilityID, uint32 roundID)
+bool PetBattleOLD::UseAbility(uint32 abilityID, uint32 roundID)
 {
     RoundResults round;
     round.PacketInfo.CurRound = roundID;
@@ -1346,7 +1345,7 @@ bool PetBattle::UseAbilityHandler(uint32 abilityID, uint32 roundID)
     return true;
 }
 
-int8 PetBattle::GetLastAlivePetID(uint8 team)
+int8 PetBattleOLD::GetLastAlivePetID(uint8 team)
 {
     for (auto const& x : battleInfo)
     {
@@ -1360,12 +1359,12 @@ int8 PetBattle::GetLastAlivePetID(uint8 team)
     return -1;
 }
 
-uint32 PetBattle::GetCurrentRoundID()
+uint32 PetBattleOLD::GetCurrentRoundID()
 {
     return currentRoundID;
 }
 
-bool PetBattle::SkipTurnHandler(uint32 roundID)
+bool PetBattleOLD::SkipTurnHandler(uint32 roundID)
 {
     RoundResults round;
     round.PacketInfo.CurRound = roundID;
@@ -1413,7 +1412,7 @@ bool PetBattle::SkipTurnHandler(uint32 roundID)
     return true;
 }
 
-bool PetBattle::UseTrapHandler(uint32 roundID)
+bool PetBattleOLD::UseTrapHandler(uint32 roundID)
 {
     // check active pets
     PetBattleInfo* allyPet = GetFrontPet(TEAM_ALLY);
@@ -1439,13 +1438,13 @@ bool PetBattle::UseTrapHandler(uint32 roundID)
     SetBattleState(PETBATTLE_STATE_ROUND_IN_PROGRESS);
 
     // demo
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = allyPet->GetPetID();
     effect.PacketInfo.AbilityEffectID = 698;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_STATUS_CHANGE;
     effect.PacketInfo.TurnInstanceID = 1;
     effect.PacketInfo.StackDepth = 1;
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = enemyPet->GetPetID();
     target.PacketInfo.Type = EFFECT_TARGET_1;
     target.PacketInfo.NewStatValue = trapped;
@@ -1487,7 +1486,7 @@ bool PetBattle::UseTrapHandler(uint32 roundID)
     return true;
 }
 
-bool PetBattle::SwapPetHandler(uint8 newFrontPet, uint32 roundID)
+bool PetBattleOLD::SwapPetHandler(uint8 newFrontPet, uint32 roundID)
 {
     RoundResults round;
     round.PacketInfo.CurRound = roundID;
@@ -1556,7 +1555,7 @@ bool PetBattle::SwapPetHandler(uint8 newFrontPet, uint32 roundID)
     return true;
 }
 
-void PetBattle::CheckTrapStatuses(RoundResults* round)
+void PetBattleOLD::CheckTrapStatuses(RoundResults* round)
 {
     PetBattleInfo* allyPet = GetFrontPet(TEAM_ALLY);
     PetBattleInfo* enemyPet = GetFrontPet(TEAM_ENEMY);
@@ -1585,7 +1584,7 @@ void PetBattle::CheckTrapStatuses(RoundResults* round)
     round->PacketInfo.NextTrapStatus[TEAM_ALLY] = allyTrapStatus;
 }
 
-void PetBattle::CheckInputFlags(RoundResults* round)
+void PetBattleOLD::CheckInputFlags(RoundResults* round)
 {
     for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         round->PacketInfo.NextInputFlags[i] = 0;
@@ -1598,7 +1597,7 @@ void PetBattle::CheckInputFlags(RoundResults* round)
     }
 }
 
-void PetBattle::SendRoundResults(RoundResults* roundResult)
+void PetBattleOLD::SendRoundResults(RoundResults* roundResult)
 {
     WorldPackets::BattlePet::BattleRound round(SMSG_PET_BATTLE_ROUND_RESULT);
     round.MsgData.NextPetBattleState = GetBattleState();
@@ -1618,8 +1617,11 @@ void PetBattle::SendRoundResults(RoundResults* roundResult)
     _player->GetSession()->SendPacket(round.Write());
 }
 
-bool PetBattle::FinalRoundHandler(bool abandoned)
+bool PetBattleOLD::FinalRoundHandler(bool abandoned)
 {
+    if (!NextRoundFinal())
+        return false;
+
     PetBattleInfo* allyPet = GetFrontPet(TEAM_ALLY);
     PetBattleInfo* enemyPet = GetFrontPet(TEAM_ENEMY);
     if (!allyPet || !enemyPet)
@@ -1690,7 +1692,7 @@ bool PetBattle::FinalRoundHandler(bool abandoned)
     return true;
 }
 
-void PetBattle::SendFinalRound(bool pvpBattle /*= false*/)
+void PetBattleOLD::SendFinalRound(bool pvpBattle /*= false*/)
 {
     WorldPackets::BattlePet::SceneObjectFinalRound round;
     round.MsgData.Abandoned = abandoned;
@@ -1723,12 +1725,12 @@ void PetBattle::SendFinalRound(bool pvpBattle /*= false*/)
     _player->GetSession()->SendPacket(round.Write());
 }
 
-void PetBattle::SendFinishPetBattle()
+void PetBattleOLD::SendFinishPetBattle()
 {
     _player->GetSession()->SendPacket(WorldPackets::BattlePet::NullSMsg(SMSG_PET_BATTLE_FINISHED).Write());
 }
 
-void PetBattle::UpdatePetsAfterBattle()
+void PetBattleOLD::UpdatePetsAfterBattle()
 {
     GuidList updates;
     updates.clear();
@@ -1793,7 +1795,7 @@ void PetBattle::UpdatePetsAfterBattle()
         _player->GetBattlePetMgr()->SendUpdatePets(pets, false);
 }
 
-void PetBattle::FinishPetBattle(bool error)
+void PetBattleOLD::FinishPetBattle(bool error)
 {
     SendFinishPetBattle();
 
@@ -1811,7 +1813,7 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
         {
             if (rank == 0)
             {
-                if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_1)
+                if (HasFlag(BATTLE_PET_FLAG_CUSTOM_ABILITY_1))
                 {
                     if (xEntry->Level == 10)
                         return xEntry->AbilityID;
@@ -1827,7 +1829,7 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
 
             if (rank == 1)
             {
-                if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_2)
+                if (HasFlag(BATTLE_PET_FLAG_CUSTOM_ABILITY_2))
                 {
                     if (xEntry->Level == 15)
                         return xEntry->AbilityID;
@@ -1843,7 +1845,7 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
 
             if (rank == 2)
             {
-                if (JournalInfo.BattlePetDBFlags & BATTLE_PET_FLAG_CUSTOM_ABILITY_3)
+                if (HasFlag(BATTLE_PET_FLAG_CUSTOM_ABILITY_3))
                 {
                     if (xEntry->Level == 20)
                         return xEntry->AbilityID;
@@ -1881,7 +1883,7 @@ uint32 BattlePetMgr::BattlePet::GetAbilityID(uint8 rank)
     //return sDB2Manager.GetBattlePetXAbilityEntryBySpec(speciesID, customAbility, rank);
 }
 
-void PetBattle::RoundResults::ProcessAbilityDamage(PetBattleInfo* caster, PetBattleInfo* target, uint32 abilityID, uint32 effectID, uint8 TurnInstanceID)
+void PetBattleOLD::RoundResults::ProcessAbilityDamage(PetBattleInfo* caster, PetBattleInfo* target, uint32 abilityID, uint32 effectID, uint8 TurnInstanceID)
 {
     // check on dead
     if (caster->IsDead() || target->IsDead())
@@ -1889,12 +1891,12 @@ void PetBattle::RoundResults::ProcessAbilityDamage(PetBattleInfo* caster, PetBat
 
     // simple combination of effect 0 and target type 6
 
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = caster->GetPetID();
     effect.PacketInfo.AbilityEffectID = effectID;
     effect.PacketInfo.TurnInstanceID = TurnInstanceID;
     effect.PacketInfo.StackDepth = 1;
-    PetBattle::RoundResults::Effect::Target t;
+    PetBattleOLD::RoundResults::Effect::Target t;
     t.PacketInfo.Petx = target->GetPetID();
     t.PacketInfo.Type = EFFECT_TARGET_6;
 
@@ -1927,15 +1929,15 @@ void PetBattle::RoundResults::ProcessAbilityDamage(PetBattleInfo* caster, PetBat
     }
 }
 
-void PetBattle::RoundResults::ProcessSetState(PetBattleInfo* caster, PetBattleInfo* target, uint32 effectID, uint8 stateID, uint32 stateValue, uint8 TurnInstanceID)
+void PetBattleOLD::RoundResults::ProcessSetState(PetBattleInfo* caster, PetBattleInfo* target, uint32 effectID, uint8 stateID, uint32 stateValue, uint8 TurnInstanceID)
 {
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = caster->GetPetID();
     effect.PacketInfo.AbilityEffectID = effectID;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_SET_STATE;
     effect.PacketInfo.SourceAuraInstanceID = TurnInstanceID;
     effect.PacketInfo.StackDepth = 1;
-    PetBattle::RoundResults::Effect::Target t;
+    PetBattleOLD::RoundResults::Effect::Target t;
     t.PacketInfo.Petx = target->GetPetID();
     t.PacketInfo.Type = EFFECT_TARGET_4;
     t.PacketInfo.StateID = stateID;
@@ -1944,64 +1946,64 @@ void PetBattle::RoundResults::ProcessSetState(PetBattleInfo* caster, PetBattleIn
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-void PetBattle::RoundResults::ProcessPetSwap(uint8 oldPetNumber, uint8 newPetNumber)
+void PetBattleOLD::RoundResults::ProcessPetSwap(uint8 oldPetNumber, uint8 newPetNumber)
 {
     // simple combination of effect 4 and target type 3
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = oldPetNumber;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = newPetNumber;
     target.PacketInfo.Type = EFFECT_TARGET_3;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-void PetBattle::RoundResults::ProcessSkipTurn(uint8 petNumber)
+void PetBattleOLD::RoundResults::ProcessSkipTurn(uint8 petNumber)
 {
     // simple combination of effect 4 and target type 3
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = petNumber;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     effect.PacketInfo.Flags = PETBATTLE_EFFECT_FLAG_INVALID_TARGET; //@TODO check flag...
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = petNumber;
     target.PacketInfo.Type = EFFECT_TARGET_3;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-void PetBattle::RoundResults::AuraProcessingBegin()
+void PetBattleOLD::RoundResults::AuraProcessingBegin()
 {
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = -1;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_BEGIN;
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = -1;
     target.PacketInfo.Type = EFFECT_TARGET_3;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-void PetBattle::RoundResults::AuraProcessingEnd()
+void PetBattleOLD::RoundResults::AuraProcessingEnd()
 {
-    PetBattle::RoundResults::Effect effect;
+    PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = -1;
     effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_END;
-    PetBattle::RoundResults::Effect::Target target;
+    PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = -1;
     target.PacketInfo.Type = EFFECT_TARGET_3;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 }
 
-int32 PetBattle::RoundResults::Effect::GetBaseDamage(PetBattleInfo* attacker, uint32 turn /*= 1*/)
+int32 PetBattleOLD::RoundResults::Effect::GetBaseDamage(PetBattleInfo* attacker, uint32 turn /*= 1*/)
 {
     uint32 basePoints = GetProperties(BASEPOINTS, turn);
     return basePoints * (1 + attacker->GetPower() * 0.05f);
 }
 
-int32 PetBattle::RoundResults::Effect::CalculateDamage(PetBattleInfo* attacker, PetBattleInfo* victim, bool crit)
+int32 PetBattleOLD::RoundResults::Effect::CalculateDamage(PetBattleInfo* attacker, PetBattleInfo* victim, bool crit)
 {
     int32 baseDamage = GetBaseDamage(attacker);
     int32 cleanDamage = urand(baseDamage - 5, baseDamage + 5);
@@ -2013,7 +2015,7 @@ int32 PetBattle::RoundResults::Effect::CalculateDamage(PetBattleInfo* attacker, 
     return finalDamage;
 }
 
-int16 PetBattle::RoundResults::Effect::CalculateHitResult(PetBattleInfo* victim)
+int16 PetBattleOLD::RoundResults::Effect::CalculateHitResult(PetBattleInfo* victim)
 {
     uint16 flags = PETBATTLE_EFFECT_FLAG_BASE;
     float mod = GetAttackModifier(abilityEntry->School, sDB2Manager.GetBattlePetSpeciesBySpellID(victim->GetCreatureEntry()));
@@ -2029,7 +2031,7 @@ int16 PetBattle::RoundResults::Effect::CalculateHitResult(PetBattleInfo* victim)
     return flags;
 }
 
-uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 turn /*= 1*/)
+uint32 PetBattleOLD::RoundResults::Effect::GetProperties(uint8 properties, uint32 turn /*= 1*/)
 {
     LocalizedString desc;
     desc.Str[LOCALE_enUS] = "Points";
@@ -2056,7 +2058,7 @@ uint32 PetBattle::RoundResults::Effect::GetProperties(uint8 properties, uint32 t
     return 0;
 }
 
-float PetBattle::RoundResults::Effect::GetAttackModifier(uint8 attackType, uint8 defenseType)
+float PetBattleOLD::RoundResults::Effect::GetAttackModifier(uint8 attackType, uint8 defenseType)
 {
     if (GameTableEntry const* gt = sGtBattlePetTypeDamageModStore.EvaluateTable(defenseType - 1, attackType - 1))
         return gt->Value;

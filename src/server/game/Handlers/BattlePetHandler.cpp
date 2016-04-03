@@ -16,13 +16,14 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "BattlePetMgr.h"
+#include "BattlePetPackets.h"
 #include "Common.h"
 #include "DBCEnums.h"
 #include "ObjectMgr.h"
-#include "WorldPacket.h"
-#include "BattlePetMgr.h"
+#include "PetBattle.h"
 #include "Player.h"
-#include "BattlePetPackets.h"
+#include "WorldPacket.h"
 
 void WorldSession::HandleBattlePetSummon(WorldPackets::BattlePet::BattlePetGuidRead& packet)
 {
@@ -176,7 +177,7 @@ void WorldSession::HandleReplaceFrontPet(WorldPackets::BattlePet::ReplaceFrontPe
         return;
 
     if (BattlePetMgr* battlePetMgr = player->GetBattlePetMgr())
-        if (PetBattle* petBattle = battlePetMgr->GetPetBattle())
+        if (PetBattleOLD* petBattle = battlePetMgr->GetPetBattle())
             petBattle->ReplaceFrontPet(packet.FrontPet);
 }
 
@@ -186,33 +187,30 @@ void WorldSession::HandlePetBattleRequestUpdate(WorldPackets::BattlePet::Request
 void WorldSession::HandlePetBattleInput(WorldPackets::BattlePet::PetBattleInput& packet)
 {
     Player* player = GetPlayer();
-    if (!player)
+    PetBattleOLD* battle = player->GetBattlePetMgr()->GetPetBattle();
+    if (!battle)
         return;
 
-    PetBattle* petBattle = player->GetBattlePetMgr()->GetPetBattle();
-    if (!petBattle)
-        return;
-
-    if (packet.AbilityID && packet.MoveType == MOVE_TYPE_USE_ABILITY)
+    switch (MoveType(packet.MoveType))
     {
-        if (!petBattle->UseAbilityHandler(packet.AbilityID, packet.Round))
-            petBattle->FinishPetBattle(true);
-    }
-    else if (packet.MoveType == MOVE_TYPE_SWAP_FRONT_PET && packet.NewFrontPet != -1)
-    {
-        if (!petBattle->SwapPetHandler(packet.NewFrontPet, packet.Round))
-            petBattle->FinishPetBattle(true);
-    }
-    else if (packet.MoveType == MOVE_TYPE_USE_TRAP)
-    {
-        if (!petBattle->UseTrapHandler(packet.Round))
-            petBattle->FinishPetBattle(true);
-    }
-
-    if (petBattle->NextRoundFinal() && packet.MoveType != MOVE_TYPE_REJECTION_FROM_BATTLE)
-    {
-        if (!petBattle->FinalRoundHandler(false))
-            petBattle->FinishPetBattle(true);
+        case MOVE_TYPE_PET_SWAP:
+            if (!battle->SwapPetHandler(packet.NewFrontPet, packet.Round))
+                battle->FinishPetBattle(true);
+            break;
+        case MOVE_TYPE_REJECTION_FROM_BATTLE:
+            if (!battle->FinalRoundHandler(false))
+                battle->FinishPetBattle(true);
+            break;
+        case MOVE_TYPE_USE_ABILITY:
+            if (!battle->UseAbility(packet.AbilityID, packet.Round))
+                battle->FinishPetBattle(true);
+            break;
+        case MOVE_TYPE_USE_TRAP:
+            if (!battle->FinalRoundHandler(false))
+                battle->FinishPetBattle(true);
+            break;
+        default:
+            break;
     }
 }
 
@@ -222,7 +220,7 @@ void WorldSession::HandlePetBattleFinalNotify(WorldPackets::BattlePet::NullCmsg&
     if (!player)
         return;
 
-    if (PetBattle* petBattle = player->GetBattlePetMgr()->GetPetBattle())
+    if (PetBattleOLD* petBattle = player->GetBattlePetMgr()->GetPetBattle())
         petBattle->FinishPetBattle();
 }
 
@@ -232,7 +230,7 @@ void WorldSession::HandlePetBattleQuitNotify(WorldPackets::BattlePet::NullCmsg& 
     if (!player)
         return;
 
-    if (PetBattle* petBattle = player->GetBattlePetMgr()->GetPetBattle())
+    if (PetBattleOLD* petBattle = player->GetBattlePetMgr()->GetPetBattle())
     {
         petBattle->SetAbandoned(true);
         petBattle->SetWinner(TEAM_ENEMY);
@@ -256,7 +254,7 @@ void WorldSession::HandleBattlePetDelete(WorldPackets::BattlePet::BattlePetGuidR
     if (petInfo->SaveInfo == STATE_DELETED)
         return;
 
-    if (petInfo->JournalInfo.BattlePetDBFlags & 0xC)
+    if (petInfo->HasFlag(BATTLE_PET_FLAG_REVOKED | BATTLE_PET_FLAG_LOCKED_FOR_CONVERT))
         return;
 
     if (battlePetMgr->PetIsSlotted(packet.BattlePetGUID))

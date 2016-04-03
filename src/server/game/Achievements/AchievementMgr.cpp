@@ -4008,7 +4008,7 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                 }
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_BATTLEPET_HP_LOW_THAT: // 79
                 {
-                    PetBattle* petBattle = referencePlayer->GetBattlePetMgr()->GetPetBattle();
+                    PetBattleOLD* petBattle = referencePlayer->GetBattlePetMgr()->GetPetBattle();
                     if (!petBattle || petBattle->GetFrontPet(TEAM_ENEMY)->GetHealthPct() >= reqValue)
                         check = false;
                     break;

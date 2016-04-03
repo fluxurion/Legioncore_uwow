@@ -1,6 +1,6 @@
 /*
-* Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+* Copyright (C) 2012-2016 Uwow <https://uwow.biz/>
+* Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -19,12 +19,8 @@
 #ifndef __TRINITY_BATTLEPETMGR_H
 #define __TRINITY_BATTLEPETMGR_H
 
-#include "Common.h"
-#include "DatabaseEnv.h"
-#include "DBCEnums.h"
-#include "DBCStores.h"
-#include "DB2Stores.h"
 #include "Packets/BattlePetPackets.h"
+#include "DatabaseEnv.h"
 
 enum BattlePetError
 {
@@ -103,20 +99,6 @@ enum BattlePetDBSpeciesFlags
     SPECIES_FLAG_CANT_BATTLE            = 0x80,
     SPECIES_FLAG_UNK3                   = 0x200,
     SPECIES_FLAG_ELITE                  = 0x400,
-};
-
-enum BattlePetSpeciesSource
-{
-    SOURCE_LOOT                         = 0,
-    SOURCE_QUEST                        = 1,
-    SOURCE_VENDOR                       = 2,
-    SOURCE_PROFESSION                   = 3,
-    SOURCE_PET_BATTLE                   = 4,
-    SOURCE_ACHIEVEMENT                  = 5,
-    SOURCE_GAME_EVENT                   = 6,
-    SOURCE_PROMO                        = 7,
-    SOURCE_TCG                          = 8,
-    SOURCE_NOT_AVALIABLE                = 0xFFFFFFFF,
 };
 
 enum BattlePetFamily
@@ -211,35 +193,6 @@ enum PetBattleQueueStatus : int32
     PET_BATTLE_QUEUE_STATUS_JOINED,
 
     PET_BATTLE_QUEUE_STATUS_LEAVE = 12,
-};
-
-enum MoveType
-{
-    MOVE_TYPE_NONE                  = 0,
-    MOVE_TYPE_USE_ABILITY           = 1,
-    MOVE_TYPE_SWAP_FRONT_PET        = 2,
-    MOVE_TYPE_USE_TRAP              = 3,
-    MOVE_TYPE_REJECTION_FROM_BATTLE = 4,
-};
-
-enum PetBattleEffectType
-{
-    PETBATTLE_EFFECT_TYPE_INVALID               = -1,
-    PETBATTLE_EFFECT_TYPE_SET_HEALTH            = 0,
-    PETBATTLE_EFFECT_TYPE_AURA_APPLY            = 1,
-    PETBATTLE_EFFECT_TYPE_AURA_CANCEL           = 2,
-    PETBATTLE_EFFECT_TYPE_AURA_CHANGE           = 3,
-    PETBATTLE_EFFECT_TYPE_PET_SWAP              = 4,
-    PETBATTLE_EFFECT_TYPE_STATUS_CHANGE         = 5,
-    PETBATTLE_EFFECT_TYPE_SET_STATE             = 6,
-    PETBATTLE_EFFECT_TYPE_SET_MAX_HEALTH        = 7,
-    PETBATTLE_EFFECT_TYPE_SET_SPEED             = 8,
-    PETBATTLE_EFFECT_TYPE_SET_POWER             = 9,
-    PETBATTLE_EFFECT_TYPE_TRIGGER_ABILITY       = 10,
-    PETBATTLE_EFFECT_TYPE_ABILITY_CHANGE        = 11,
-    PETBATTLE_EFFECT_TYPE_NPC_EMOTE             = 12,
-    PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_BEGIN = 13,
-    PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_END   = 14
 };
 
 enum PetBattleState
@@ -341,7 +294,7 @@ private:
 
 typedef std::list<PetBattleInfo*> BattleInfo;
 
-class PetBattle
+class PetBattleOLD
 {
 public:
     struct RoundInfo
@@ -384,7 +337,7 @@ public:
         void AuraProcessingEnd();
     };
 
-    PetBattle(Player* owner);
+    PetBattleOLD(Player* owner);
 
     bool CreateBattleInfo();
     bool PrepareBattleInfo(ObjectGuid creatureGuid);
@@ -399,7 +352,7 @@ public:
     void ReplaceFrontPet(uint8 frontPet = 0);
 
     bool FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID);
-    bool UseAbilityHandler(uint32 abilityID, uint32 roundID);
+    bool UseAbility(uint32 abilityID, uint32 roundID);
     bool SkipTurnHandler(uint32 roundID);
     bool UseTrapHandler(uint32 roundID);
     bool SwapPetHandler(uint8 newFrontPet, uint32 roundID);
@@ -552,7 +505,7 @@ public:
     bool CanAwardXP();
     uint32 CalcAvengerPetsLevelInSlots();
     bool PetIsSlotted(ObjectGuid guid);
-    PetBattle* GetPetBattle() { return _petBattle; }
+    PetBattleOLD* GetPetBattle() { return _petBattle; }
     uint32 GetXPForNextLevel(uint8 level);
     uint8 GetRandomQuailty();
     uint16 GetRandomBreedID(uint32 speciesID);
@@ -581,7 +534,7 @@ private:
     Player* _player;
     std::unordered_map<ObjectGuid::LowType /*battlePetGuid*/, BattlePetMgr::BattlePet> _pets;
     std::vector<WorldPackets::BattlePet::BattlePetSlot> _slots;
-    PetBattle* _petBattle;
+    PetBattleOLD* _petBattle;
 
     uint32 _queueTimer;
     uint32 _waitTimesAvgStore;
