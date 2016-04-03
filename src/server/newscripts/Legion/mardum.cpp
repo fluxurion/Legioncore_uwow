@@ -534,6 +534,83 @@ public:
         return new go_q38759AI(go);
     }
 };
+
+//99914
+class npc_q40379 : public CreatureScript
+{
+public:
+    npc_q40379() : CreatureScript("npc_q40379") { }
+
+    enum Credit
+    {
+        QUEST = 40379,
+        SPELL = 196724,
+    };
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+    {
+        player->PlayerTalkClass->ClearMenus();
+        if (action == 1)
+        {
+            player->CLOSE_GOSSIP_MENU();
+            if (player->GetQuestStatus(QUEST) == QUEST_STATUS_INCOMPLETE && !player->GetReqKillOrCastCurrentCount(QUEST, creature->GetEntry()))
+            {
+            /*
+            ClientToServer: CMSG_CLOSE_INTERACTION(0x348A) Length : 15 ConnIdx : 2 Time : 02 / 22 / 2016 13 : 10 : 10.127 Number : 17187
+            Guid : Full : 0x202090B92061928000109C00004AF10C; HighType: Creature; Low: 4911372; Map: 1481; Entry: 99914;
+            */
+                player->CastSpell(creature, SPELL, false);
+                player->KilledMonsterCredit(creature->GetEntry());
+            }
+        }
+
+        return true;
+    }
+};
+
+
+class go_q40379 : public GameObjectScript
+{
+public:
+    go_q40379() : GameObjectScript("go_q40379") { }
+
+    struct go_q40379AI : public GameObjectAI
+    {
+        go_q40379AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST  = 40379,
+            SPELL  = 190793,
+            CREDIT = 94406,
+            CREDIT_REQUARE = 99914,
+        };
+
+        bool GossipUse(Player* player)
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, CREDIT) || !player->GetReqKillOrCastCurrentCount(QUEST, CREDIT_REQUARE))
+                return true;
+            return false;
+        }
+
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, CREDIT) || !player->GetReqKillOrCastCurrentCount(QUEST, CREDIT_REQUARE))
+                return true;
+
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL, false);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q40379AI(go);
+    }
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -546,4 +623,6 @@ void AddSC_Mardum()
     new conversation_announcer();
     new npc_q39049();
     new go_q38759();
+    new npc_q40379();
+    new go_q40379();
 }
