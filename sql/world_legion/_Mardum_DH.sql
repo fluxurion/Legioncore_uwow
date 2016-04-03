@@ -31,9 +31,14 @@ REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_sp
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
 ('40378', '40077', '0', '0'),
 ('39279', '40077', '0', '0'),
-('39049', '40378', '0', '0'),
-('38759', '40378', '0', '0'),
-('40379', '40378', '0', '0');
+('39049', '40378', '0', '-39050'),
+('38759', '40378', '0', '-39050'),
+('40379', '40378', '0', '-39050'),
+('39050', '40379', '0', ''),
+('38765', '39050', '0', '0'),
+('38766', '39050', '0', '0');
+
+
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -54,7 +59,6 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q39279' WHERE `gameobject_te
 REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('191827', 'spell_legion_q39279');
 
 -- Q: 39049
-
 DELETE FROM `creature_text` WHERE `Entry` = 93105;
 REPLACE INTO `creature_text` (`Entry`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextID`, `comment`) VALUES
 (93105, 0, 0, 'I can see your secrets...', 12, 0, 100, 0, 0, 55222, 94930, 'Инквизитор Зловеш to Player'),
@@ -94,3 +98,8 @@ REPLACE INTO `locales_creature_text` (`entry`, `textGroup`, `id`, `text_loc8`) V
 -- Q: 40379
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40379' WHERE `gameobject_template`.`entry` = 241756;
 UPDATE `creature_template` SET `ScriptName` = 'npc_q40379' WHERE `creature_template`.`entry` = 99914;
+
+-- Q: 39050
+
+-- Q: 38765
+-- Q: 38766
