@@ -459,8 +459,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sQuestXPStore);
     LOAD_DB2(sRandPropPointsStore);
     LOAD_DB2(sResearchBranchStore);
-    //LOAD_DB2(sResearchProjectStore);
-    //LOAD_DB2(sResearchSiteStore);
+    LOAD_DB2(sResearchProjectStore);
+    LOAD_DB2(sResearchSiteStore);
     //LOAD_DB2(sRuleSetItemUpgradeEntryStore);
     LOAD_DB2(sScalingStatDistributionStore);
     LOAD_DB2(sScenarioStepStore);

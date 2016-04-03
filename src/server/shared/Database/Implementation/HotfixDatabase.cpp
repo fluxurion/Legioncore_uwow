@@ -440,13 +440,13 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_BRANCH, "SELECT ID, Name_lang, Texture_lang FROM research_branch_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ResearchProject.db2
-    PrepareStatement(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT ID, Name, Description, Rare, BranchID, SpellID, IconName, Complexity, "
+    PrepareStatement(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT ID, Name, Description, SpellID, IconName, BranchID, Rare, Complexity, "
         "RequiredCurrencyAmount FROM research_project ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_PROJECT, "SELECT ID, Name_lang, Description_lang, IconName_lang FROM research_project_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 
     // ResearchSite.db2
-    PrepareStatement(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, MapID, POIid, areaName, flags FROM research_site ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, POIid, areaName, MapID, flags FROM research_site ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_RESEARCH_SITE, "SELECT ID, areaName_lang FROM research_site_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ItemBonus.db2

@@ -1298,12 +1298,12 @@ struct ResearchProjectEntry
     uint32      ID;
     LocalizedString* Name;                                  // 1
     LocalizedString* Description;                           // 2
-    uint32      Rare;                                       // 3
-    uint32      BranchID;                                   // 4
-    uint32      SpellID;                                    // 5
-    LocalizedString* IconName;                              // 7
-    uint32      Complexity;                                 // 6
-    uint32      RequiredCurrencyAmount;                     // 8
+    uint32      SpellID;                                    // 3
+    LocalizedString* IconName;                              // 4
+    int16      BranchID;                                    // 5
+    int8      Rare;                                         // 6
+    int8      Complexity;                                   // 7
+    int8      RequiredCurrencyAmount;                       // 8
 
     bool IsVaid() const
     {
@@ -1314,10 +1314,10 @@ struct ResearchProjectEntry
 struct ResearchSiteEntry
 {
     uint32      ID;                                           // 0 ID
-    uint32      MapID;                                        // 1 MapID
-    uint32      POIid;                                        // 2
-    LocalizedString* areaName;                              // 3 Research site name
-    uint32      flags;                                        // 4 Always 177.
+    uint32      POIid;                                        // 1
+    LocalizedString* areaName;                                // 2 Research site name
+    int16      MapID;                                         // 3 MapID
+    int8      flags;                                          // 4 Always 177.
 
     bool IsValid() const
     {
