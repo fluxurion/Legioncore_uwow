@@ -23,7 +23,7 @@
 #include <list>
 
 #include "CascLib.h"
-#include "Common.h"
+#include "Define.h"
 
 class DBCFile
 {
