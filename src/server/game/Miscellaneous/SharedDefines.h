@@ -5129,4 +5129,12 @@ enum StableResultCode : uint8
 
 static uint8 const MAX_PVP_TALENTS = 6;
 
+enum BattlePetTeam : uint8
+{
+    TEAM_ALLY   = 0,
+    TEAM_ENEMY  = 1,
+
+    MAX_PETBATTLE_TEAMS
+};
+
 #endif

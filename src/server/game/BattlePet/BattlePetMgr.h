@@ -55,14 +55,6 @@ enum BattlePetSaveInfo
     STATE_DELETED = 3
 };
 
-enum BattlePetTeam
-{
-    TEAM_ALLY   = 0,
-    TEAM_ENEMY  = 1,
-
-    MAX_PETBATTLE_TEAMS
-};
-
 enum BattlePetBreeds
 {
     BATTLE_PET_BREED_BB = 3,  // 25% health, 25% power, 25% speed
