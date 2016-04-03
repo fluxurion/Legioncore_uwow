@@ -59,4 +59,17 @@ REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `languag
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39049' WHERE `entry` = 93105;
 
 -- Q: 38759
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q38759' WHERE `gameobject_template`.`entry` in (242989, 244916, 242987, 242990);
+REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
+('95226', '128227', '-100', '0', '0', '1', '1', '0');
+REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
+(94400, 0, 0, 'Я вас всех уничтожу.', 12, 0, 100, 0, 0, 0, 'Белат Клинок Рассвета to Player'),
+(94400, 1, 0, 'Я убью всех демонов на своем пути.', 12, 0, 100, 0, 0, 0, 'Белат Клинок Рассвета to Player'),
+(94377, 0, 0, 'Нет... я… не... сдамся!', 14, 0, 100, 0, 0, 0, 'Циана Ночная Глефа to Player'),
+(94377, 1, 0, 'Я больше никогда не окажусь в клетке!', 12, 0, 100, 0, 0, 0, 'Циана Ночная Глефа to Player'),
+(93117, 0, 0, 'Больно!', 12, 0, 100, 0, 0, 0, 'Изаль Белая Луна to Player'),
+(93117, 1, 0, 'Досадное недоразумение. Этого больше не повторится.', 12, 0, 100, 0, 0, 0, 'Изаль Белая Луна to Player'),
+(93230, 0, 0, 'Я слабею... не могу... сдержать... силу...', 12, 0, 100, 0, 0, 0, 'Маннетрель Темная Звезда to Player'),
+(93230, 1, 0, 'Еще немного, и я бы поддался энергии Скверны.', 12, 0, 100, 0, 0, 0, 'Маннетрель Темная Звезда to Player');
+
 -- Q: 40379

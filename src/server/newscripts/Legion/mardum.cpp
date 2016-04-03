@@ -488,6 +488,52 @@ public:
         }
     };
 };
+
+//242989 244916 242987 242990
+class go_q38759 : public GameObjectScript
+{
+public:
+    go_q38759() : GameObjectScript("go_q38759") { }
+
+    struct go_q38759AI : public GameObjectAI
+    {
+        go_q38759AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 38759,
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            std::map<uint32, uint32> _data;
+            _data[242989] = 94400;
+            _data[244916] = 94377;
+            _data[242987] = 93117;
+            _data[242990] = 93230;
+
+            if (player->GetQuestObjectiveData(QUEST, _data[go->GetEntry()]))
+                return true;
+
+            if (Creature *c = player->FindNearestCreature(_data[go->GetEntry()], 100.0f))
+            {
+                player->KilledMonsterCredit(c->GetEntry());
+                sCreatureTextMgr->SendChat(c, TEXT_GENERIC_1, player->GetGUID());
+            }
+
+            return true;
+        }
+
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q38759AI(go);
+    }
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -499,4 +545,5 @@ void AddSC_Mardum()
     new npc_q40378();
     new conversation_announcer();
     new npc_q39049();
+    new go_q38759();
 }
