@@ -54,25 +54,42 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q39279' WHERE `gameobject_te
 REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('191827', 'spell_legion_q39279');
 
 -- Q: 39049
-REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
-(93105, 0, 0, 'Я вижу все твои тайны...', 12, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to Player'),
-(93105, 1, 0, 'Довольно! Сейчас мой инфернал сокрушит тебя. ', 14, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to 0'),
-(93105, 2, 0, 'А-а-а... Мои глаза!', 14, 0, 100, 0, 0, 0, 'Инквизитор Зловеш to Player');
+
+DELETE FROM `creature_text` WHERE `Entry` = 93105;
+REPLACE INTO `creature_text` (`Entry`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextID`, `comment`) VALUES
+(93105, 0, 0, 'I can see your secrets...', 12, 0, 100, 0, 0, 55222, 94930, 'Инквизитор Зловеш to Player'),
+(93105, 1, 0, 'Enough! My colossal infernal will crush you.', 14, 0, 100, 0, 0, 55224, 99554, 'Инквизитор Зловеш to 0'),
+(93105, 2, 0, 'My eyes... My eyes!', 14, 0, 100, 0, 0, 55223, 96010, 'Инквизитор Зловеш to Player');
+REPLACE INTO `locales_creature_text` (`entry`, `textGroup`, `id`, `text_loc8`) VALUES
+(93105, 0, 0, 'Я вижу все твои тайны...'),
+(93105, 1, 0, 'Довольно! Сейчас мой инфернал сокрушит тебя. '),
+(93105, 2, 0, 'А-а-а... Мои глаза!');
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39049' WHERE `entry` = 93105;
 
 -- Q: 38759
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q38759' WHERE `gameobject_template`.`entry` in (242989, 244916, 242987, 242990);
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('95226', '128227', '-100', '0', '0', '1', '1', '0');
-REPLACE INTO `creature_text` (`entry`, `groupid`, `id`, `text`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) VALUES
-(94400, 0, 0, 'Я вас всех уничтожу.', 12, 0, 100, 0, 0, 0, 'Белат Клинок Рассвета to Player'),
-(94400, 1, 0, 'Я убью всех демонов на своем пути.', 12, 0, 100, 0, 0, 0, 'Белат Клинок Рассвета to Player'),
-(94377, 0, 0, 'Нет... я… не... сдамся!', 14, 0, 100, 0, 0, 0, 'Циана Ночная Глефа to Player'),
-(94377, 1, 0, 'Я больше никогда не окажусь в клетке!', 12, 0, 100, 0, 0, 0, 'Циана Ночная Глефа to Player'),
-(93117, 0, 0, 'Больно!', 12, 0, 100, 0, 0, 0, 'Изаль Белая Луна to Player'),
-(93117, 1, 0, 'Досадное недоразумение. Этого больше не повторится.', 12, 0, 100, 0, 0, 0, 'Изаль Белая Луна to Player'),
-(93230, 0, 0, 'Я слабею... не могу... сдержать... силу...', 12, 0, 100, 0, 0, 0, 'Маннетрель Темная Звезда to Player'),
-(93230, 1, 0, 'Еще немного, и я бы поддался энергии Скверны.', 12, 0, 100, 0, 0, 0, 'Маннетрель Темная Звезда to Player');
+
+REPLACE INTO `creature_text` (`Entry`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextID`, `comment`) VALUES
+(93117, 0, 0, 'The pain!', 12, 0, 100, 0, 0, 55226, 96415, 'Изаль Белая Луна to Player'),
+(93117, 1, 0, 'A slight setback. I assure you it will not happen again.', 12, 0, 100, 274, 0, 55227, 96644, 'Изаль Белая Луна to Player'),
+(93230, 0, 0, 'So weak... hard to contain... my energy.', 12, 0, 100, 0, 0, 55310, 96407, 'Маннетрель Темная Звезда to Player'),
+(93230, 1, 0, 'I almost lost the fight against the fel energy inside me.', 12, 0, 100, 6, 0, 55311, 96202, 'Маннетрель Темная Звезда to Player'),
+(94377, 0, 0, 'I... will not... give in!', 14, 0, 100, 0, 0, 55090, 96405, 'Циана Ночная Глефа to Player'),
+(94377, 1, 0, 'I will never be taken prisoner again. Never!', 12, 0, 100, 5, 0, 55089, 95081, 'Циана Ночная Глефа to Player'),
+(94400, 0, 0, 'I will destroy all of you.', 12, 0, 100, 0, 0, 55052, 96411, 'Белат Клинок Рассвета to Player'),
+(94400, 1, 0, 'I will kill every last demon in my way.', 12, 0, 100, 5, 0, 55053, 96643, 'Белат Клинок Рассвета to Player');
+
+REPLACE INTO `locales_creature_text` (`entry`, `textGroup`, `id`, `text_loc8`) VALUES
+(94400, 0, 0, 'Я вас всех уничтожу.'),
+(94400, 1, 0, 'Я убью всех демонов на своем пути.'),
+(94377, 0, 0, 'Нет... я… не... сдамся!'),
+(94377, 1, 0, 'Я больше никогда не окажусь в клетке!'),
+(93117, 0, 0, 'Больно!'),
+(93117, 1, 0, 'Досадное недоразумение. Этого больше не повторится.'),
+(93230, 0, 0, 'Я слабею... не могу... сдержать... силу...'),
+(93230, 1, 0, 'Еще немного, и я бы поддался энергии Скверны.');
 
 -- Q: 40379
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40379' WHERE `gameobject_template`.`entry` = 241756;
