@@ -240,9 +240,9 @@ namespace WorldPackets
         {
             uint32 CurRound = 0;
             uint8 NextPetBattleState = 0;
-            uint8 NextInputFlags[2] = { };
-            uint8 NextTrapStatus[2] = { };
-            uint16 RoundTimeSecs[2] = { };
+            uint8 NextInputFlags[MAX_PETBATTLE_TEAMS] = { };
+            uint8 NextTrapStatus[MAX_PETBATTLE_TEAMS] = { };
+            uint16 RoundTimeSecs[MAX_PETBATTLE_TEAMS] = { };
             std::vector<Effect> EffectData;
             std::vector<ActiveAbility> Ability;
             std::vector<uint8> PetXDied;
@@ -280,8 +280,8 @@ namespace WorldPackets
         {
             bool Abandoned = false;
             bool PvpBattle = false;
-            bool Winner[2] = { };
-            uint32 NpcCreatureID[2] = { };
+            bool Winner[MAX_PETBATTLE_TEAMS] = { };
+            uint32 NpcCreatureID[MAX_PETBATTLE_TEAMS] = { };
             std::vector<FinalPet> Pets;
         };
 
@@ -470,7 +470,7 @@ namespace WorldPackets
             int32 AbilityID = 0;
             int16 CooldownRemaining = 0;
             int16 LockdownRemaining = 0;
-            int8 AbilityIndex = 0;
+            uint8 AbilityIndex = 0;
             uint8 Pboid = 0;
         };
 
@@ -504,18 +504,18 @@ namespace WorldPackets
 
         struct PetBattleFullUpdate
         {
-            uint16 WaitingForFrontPetsMaxSecs = 0;
-            uint16 PvpMaxRoundTime = 0;
-            int32 CurRound = 0;
+            PetBattlePlayerUpdate Players[MAX_PETBATTLE_TEAMS] = { };
+            PetBattleEnviroUpdate Enviros[3] = { };
+            ObjectGuid InitialWildPetGUID;
             uint32 NpcCreatureID = 0;
             uint32 NpcDisplayID = 0;
-            int8 CurPetBattleState = 0;
+            int32 CurRound = 0;
+            uint16 WaitingForFrontPetsMaxSecs = 0;
+            uint16 PvpMaxRoundTime = 0;
             uint8 ForfeitPenalty = 0;
-            ObjectGuid InitialWildPetGUID;
+            int8 CurPetBattleState = 0;
             bool IsPVP = false;
             bool CanAwardXP = false;
-            PetBattlePlayerUpdate Players[2] = { };
-            PetBattleEnviroUpdate Enviros[3] = { };
         };
 
         class PetBattleInitialUpdate final : public ServerPacket
@@ -546,13 +546,13 @@ namespace WorldPackets
 
             void Read() override;
 
+            int32 AbilityID = 0;
+            int32 Round = 0;
             uint8 MoveType = 0;
             int8 NewFrontPet = 0;
             uint8 DebugFlags = 0;
             uint8 BattleInterrupted = 0;
             bool IgnoreAbandonPenalty = false;
-            int32 AbilityID = 0;
-            int32 Round = 0;
         };
     }
 }

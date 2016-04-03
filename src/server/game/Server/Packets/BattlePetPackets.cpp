@@ -243,7 +243,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::RoundResult co
     data << roundResult.NextPetBattleState;
     data << static_cast<uint32>(roundResult.EffectData.size());
 
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
     {
         data << roundResult.NextInputFlags[i];
         data << roundResult.NextTrapStatus[i];
@@ -290,12 +290,12 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::FinalRound con
 {
     data.WriteBit(finalRound.Abandoned);
     data.WriteBit(finalRound.PvpBattle);
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         data.WriteBit(finalRound.Winner[i]);
 
     data.FlushBits();
 
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         data << finalRound.NpcCreatureID[i];
 
     data << static_cast<uint32>(finalRound.Pets.size());
@@ -324,7 +324,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::Locations& loc
     data << locations.LocationResult;
     data << locations.BattleOrigin.PositionXYZStream();
     data << locations.BattleFacing;
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         data << locations.PlayerPositions[i].PositionXYZStream();
 
     return data;
@@ -335,7 +335,7 @@ ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::BattlePet::Locations& loc
     data >> locations.LocationResult;
     data >> locations.BattleOrigin.PositionXYZStream();
     data >> locations.BattleFacing;
-    for (uint8 i = 0; i < 2; ++i)
+    for (uint8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         data >> locations.PlayerPositions[i].PositionXYZStream();
 
     return data;
@@ -555,7 +555,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::PetBattleEnvir
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::PetBattleFullUpdate const& update)
 {
-    for (int8 i = 0; i < 2; ++i)
+    for (int8 i = 0; i < MAX_PETBATTLE_TEAMS; ++i)
         data << update.Players[i];
 
     for (int8 i = 0; i < 3; ++i)
@@ -603,8 +603,7 @@ void WorldPackets::BattlePet::PetBattleInput::Read()
     _worldPacket >> NewFrontPet;
     _worldPacket >> DebugFlags;
     _worldPacket >> BattleInterrupted;
-
     _worldPacket >> AbilityID;
-
+    _worldPacket >> Round;
     IgnoreAbandonPenalty = _worldPacket.ReadBit();
 }
