@@ -363,7 +363,7 @@ void WorldSession::HandleDBQueryBulk(WorldPackets::Query::DBQueryBulk& packet)
         {
             response.Allow = true;
             response.Timestamp = sDB2Manager.GetHotfixDate(rec.RecordID, packet.TableHash);
-            store->WriteRecord(rec.RecordID, GetSessionDbLocaleIndex(), response.Data);
+            store->WriteRecord(rec.RecordID, GetSessionDbcLocale(), response.Data);
         }
         else
             response.Timestamp = time(nullptr);
