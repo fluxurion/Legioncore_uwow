@@ -15293,7 +15293,7 @@ Quest const* Player::GetNextQuest(ObjectGuid guid, Quest const* quest)
 
 bool Player::CanSeeStartQuest(Quest const* quest)
 {
-    bool msg = true;   //for debug
+    bool msg = false;   //for debug
     if (SatisfyQuestClass(quest, msg) && SatisfyQuestRace(quest, msg) && SatisfyQuestSkill(quest, msg) &&
         SatisfyQuestExclusiveGroup(quest, msg) && SatisfyQuestReputation(quest, msg) &&
         SatisfyQuestPreviousQuest(quest, msg) && SatisfyQuestNextChain(quest, msg) &&
@@ -15996,78 +15996,81 @@ bool Player::SatisfyQuestPreviousQuest(Quest const* qInfo, bool msg)
     for (PrevQuests::const_iterator iter = qInfo->prevQuests.begin(); iter != qInfo->prevQuests.end(); ++iter)
     {
         uint32 prevId = abs(*iter);
+
         Quest const* qPrevInfo = sObjectMgr->GetQuestTemplate(prevId);
-        if (!qPrevInfo)
-            continue;
 
-        // If any of the positive previous quests completed, return true
-        if (*iter > 0 && m_RewardedQuests.find(prevId) != m_RewardedQuests.end())
+        if (qPrevInfo)
         {
-            // skip one-from-all exclusive group
-            if (qPrevInfo->ExclusiveGroup >= 0)
-                return true;
-
-            // each-from-all exclusive group (< 0)
-            // can be start if only all quests in prev quest exclusive group completed and rewarded
-            ObjectMgr::ExclusiveQuestGroups::iterator iter2 = sObjectMgr->mExclusiveQuestGroups.lower_bound(qPrevInfo->ExclusiveGroup);
-            ObjectMgr::ExclusiveQuestGroups::iterator end  = sObjectMgr->mExclusiveQuestGroups.upper_bound(qPrevInfo->ExclusiveGroup);
-
-            ASSERT(iter2 != end);                         // always must be found if qPrevInfo->ExclusiveGroup != 0
-            for (; iter2 != end; ++iter2)
+            // If any of the positive previous quests completed, return true
+            if (*iter > 0 && m_RewardedQuests.find(prevId) != m_RewardedQuests.end())
             {
-                uint32 exclude_Id = iter2->second;
+                // skip one-from-all exclusive group
+                if (qPrevInfo->ExclusiveGroup >= 0)
+                    return true;
 
-                // skip checked quest id, only state of other quests in group is interesting
-                if (exclude_Id == prevId)
-                    continue;
+                // each-from-all exclusive group (< 0)
+                // can be start if only all quests in prev quest exclusive group completed and rewarded
+                ObjectMgr::ExclusiveQuestGroups::iterator iter2 = sObjectMgr->mExclusiveQuestGroups.lower_bound(qPrevInfo->ExclusiveGroup);
+                ObjectMgr::ExclusiveQuestGroups::iterator end  = sObjectMgr->mExclusiveQuestGroups.upper_bound(qPrevInfo->ExclusiveGroup);
 
-                // skip enother team.
-                if (Quest const* qexclude = sObjectMgr->GetQuestTemplate(exclude_Id))
-                    if (!SatisfyQuestRace(qexclude, msg))
+                ASSERT(iter2 != end);                         // always must be found if qPrevInfo->ExclusiveGroup != 0
+
+                for (; iter2 != end; ++iter2)
+                {
+                    uint32 exclude_Id = iter2->second;
+
+                    // skip checked quest id, only state of other quests in group is interesting
+                    if (exclude_Id == prevId)
                         continue;
 
-                // alternative quest from group also must be completed and rewarded(reported)
-                if (m_RewardedQuests.find(exclude_Id) == m_RewardedQuests.end())
-                {
-                    if (msg)
-                        SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ, qInfo, "rewarded");
-                    return false;
-                }
-            }
-            return true;
-        }
+                    // skip enother team.
+                    if (Quest const* qexclude = sObjectMgr->GetQuestTemplate(exclude_Id))
+                        if (!SatisfyQuestRace(qexclude, msg))
+                            continue;
 
-        // If any of the negative previous quests active, return true
-        if (*iter < 0 && GetQuestStatus(prevId) != QUEST_STATUS_NONE)
-        {
-            // skip one-from-all exclusive group
-            if (qPrevInfo->ExclusiveGroup >= 0)
+                    // alternative quest from group also must be completed and rewarded(reported)
+                    if (m_RewardedQuests.find(exclude_Id) == m_RewardedQuests.end())
+                    {
+                        if (msg)
+                            SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ, qInfo, "rewarded");
+                        return false;
+                    }
+                }
                 return true;
-
-            // each-from-all exclusive group (< 0)
-            // can be start if only all quests in prev quest exclusive group active
-            ObjectMgr::ExclusiveQuestGroups::iterator iter2 = sObjectMgr->mExclusiveQuestGroups.lower_bound(qPrevInfo->ExclusiveGroup);
-            ObjectMgr::ExclusiveQuestGroups::iterator end  = sObjectMgr->mExclusiveQuestGroups.upper_bound(qPrevInfo->ExclusiveGroup);
-
-            ASSERT(iter2 != end);                         // always must be found if qPrevInfo->ExclusiveGroup != 0
-
-            for (; iter2 != end; ++iter2)
-            {
-                uint32 exclude_Id = iter2->second;
-
-                // skip checked quest id, only state of other quests in group is interesting
-                if (exclude_Id == prevId)
-                    continue;
-
-                // alternative quest from group also must be active
-                if (GetQuestStatus(exclude_Id) != QUEST_STATUS_NONE)
-                {
-                    if (msg)
-                        SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ, qInfo, "not active alt quest");
-                    return false;
-                }
             }
-            return true;
+
+            // If any of the negative previous quests active, return true
+            if (*iter < 0 && GetQuestStatus(prevId) != QUEST_STATUS_NONE)
+            {
+                // skip one-from-all exclusive group
+                if (qPrevInfo->ExclusiveGroup >= 0)
+                    return true;
+
+                // each-from-all exclusive group (< 0)
+                // can be start if only all quests in prev quest exclusive group active
+                ObjectMgr::ExclusiveQuestGroups::iterator iter2 = sObjectMgr->mExclusiveQuestGroups.lower_bound(qPrevInfo->ExclusiveGroup);
+                ObjectMgr::ExclusiveQuestGroups::iterator end  = sObjectMgr->mExclusiveQuestGroups.upper_bound(qPrevInfo->ExclusiveGroup);
+
+                ASSERT(iter2 != end);                         // always must be found if qPrevInfo->ExclusiveGroup != 0
+
+                for (; iter2 != end; ++iter2)
+                {
+                    uint32 exclude_Id = iter2->second;
+
+                    // skip checked quest id, only state of other quests in group is interesting
+                    if (exclude_Id == prevId)
+                        continue;
+
+                    // alternative quest from group also must be active
+                    if (GetQuestStatus(exclude_Id) != QUEST_STATUS_NONE)
+                    {
+                        if (msg)
+                            SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ, qInfo, "not active alt quest");
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
     }
 
