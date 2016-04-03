@@ -752,14 +752,6 @@ struct MapEntry
     bool IsDifficultyModeSupported(uint32 difficulty) const;
 };
 
-struct MinorTalentEntry
-{
-    uint32      ID;                                         // 0
-    uint32      SpecID;                                     // 1
-    uint32      SpellID;                                    // 2
-    uint32      OrderIndex;                                 // 3
-};
-
 struct CriteriaEntry
 {
     uint32      ID;
@@ -1499,25 +1491,20 @@ struct BattlePetAbilityEffectEntry
 
 struct BattlePetEffectPropertiesEntry
 {
-    uint32 ID;                  // 0
-    uint32 someFlags;         // 1
-    LocalizedString* propertyDescs[MAX_EFFECT_PROPERTIES];     // 2 - 7
-    uint32 unk;               // 8
-    uint32 unk2;               // 9
-    uint32 unk3;               // 10
-    uint32 unk4;               // 11
-    uint32 unk5;               // 12
-    uint32 unk6;               // 13
+    uint32      ID;                                                 // 0
+    LocalizedString* Description[MAX_EFFECT_PROPERTIES];            // 1 - 6
+    uint8       Flags;                                              // 7 
+    uint8       IsAura[MAX_EFFECT_PROPERTIES];                      // 8 - 13
 };
 
 struct BattlePetAbilityTurnEntry
 {
     uint32      ID;                                                 // 0
-    uint32      AbilityID;                                          // 1
-    uint32      StateID;                                            // 2
-    uint32      Turn;                                               // 3
-    uint32      HasProcType;                                        // 4
-    uint32      ProcType;                                           // 5
+    uint16      AbilityID;                                          // 1
+    uint16      StateID;                                            // 2
+    uint8       Turn;                                               // 3
+    uint8       HasProcType;                                        // 4
+    int8        ProcType;                                           // 5
 };
 
 struct BattlePetAbilityStateEntry
@@ -2578,12 +2565,6 @@ struct TotemCategoryEntry
     LocalizedString* Name;                                  // 0
     uint32      TotemCategoryType;                          // 1
     uint8       TotemCategoryMask;                          // 2
-};
-
-struct ItemToBattlePetSpeciesEntry
-{
-    uint32      ID;                                         // 0
-    uint32      BattlePetSpeciesID;                         // 1
 };
 
 struct TransportAnimationEntry

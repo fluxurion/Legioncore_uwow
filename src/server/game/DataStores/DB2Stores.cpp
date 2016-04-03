@@ -132,7 +132,6 @@ DB2Storage<ItemSetSpellEntry>               sItemSetSpellStore("ItemSetSpell.db2
 DB2Storage<ItemSparseEntry>                 sItemSparseStore("Item-sparse.db2", ItemSparseFormat, HOTFIX_SEL_ITEM_SPARSE);
 DB2Storage<ItemSpecEntry>                   sItemSpecStore("ItemSpec.db2", ItemSpecFormat, HOTFIX_SEL_ITEM_SPEC);
 DB2Storage<ItemSpecOverrideEntry>           sItemSpecOverrideStore("ItemSpecOverride.db2", ItemSpecOverrideFormat, HOTFIX_SEL_ITEM_SPEC_OVERRIDE);
-DB2Storage<ItemToBattlePetSpeciesEntry>     sItemToBattlePetSpeciesStore("ItemToBattlePetSpecies.db2", ItemToBattlePetSpeciesFormat, HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES);
 DB2Storage<ItemUpgradeEntry>                sItemUpgradeStore("ItemUpgrade.db2", ItemUpgradeFormat, HOTFIX_SEL_ITEM_UPGRADE);
 DB2Storage<ItemXBonusTreeEntry>             sItemXBonusTreeStore("ItemXBonusTree.db2", ItemXBonusTreeFormat, HOTFIX_SEL_ITEM_X_BONUS_TREE);
 DB2Storage<KeyChainEntry>                   sKeyChainStore("KeyChain.db2", KeyChainFormat, HOTFIX_SEL_KEY_CHAIN);
@@ -145,7 +144,6 @@ DB2Storage<MailTemplateEntry>               sMailTemplateStore("MailTemplate.db2
 DB2Storage<MapChallengeModeEntry>           sMapChallengeModeStore("MapChallengeMode.db2", MapChallengeModeFormat, HOTFIX_SEL_MAP_CHALLENGE_MODE);
 DB2Storage<MapDifficultyEntry>              sMapDifficultyStore("MapDifficulty.db2", MapDifficultyFormat, HOTFIX_SEL_MAP_DIFFICULTY);
 DB2Storage<MapEntry>                        sMapStore("Map.db2", MapFormat, HOTFIX_SEL_MAP);
-DB2Storage<MinorTalentEntry>                sMinorTalentStore("MinorTalent.db2", MinorTalentFormat, HOTFIX_SEL_MINOR_TALENT);
 DB2Storage<ModifierTreeEntry>               sModifierTreeStore("ModifierTree.db2", ModifierTreeFormat, HOTFIX_SEL_MODIFIER_TREE);
 DB2Storage<MountCapabilityEntry>            sMountCapabilityStore("MountCapability.db2", MountCapabilityFormat, HOTFIX_SEL_MOUNT_CAPABILITY);
 DB2Storage<MountEntry>                      sMountStore("Mount.db2", MountFormat, HOTFIX_SEL_MOUNT);
@@ -319,10 +317,10 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sBattlePetAbilityEffectStore);
     LOAD_DB2(sBattlePetAbilityStateStore);
     LOAD_DB2(sBattlePetAbilityStore);
-    //LOAD_DB2(sBattlePetAbilityTurnStore);
+    LOAD_DB2(sBattlePetAbilityTurnStore);
     LOAD_DB2(sBattlePetBreedQualityStore);
     LOAD_DB2(sBattlePetBreedStateStore);
-    //LOAD_DB2(sBattlePetEffectPropertiesStore);
+    LOAD_DB2(sBattlePetEffectPropertiesStore);
     LOAD_DB2(sBattlePetSpeciesStateStore);
     LOAD_DB2(sBattlePetSpeciesStore);
     LOAD_DB2(sBattlePetSpeciesXAbilityStore);
@@ -420,7 +418,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemSpecOverrideStore);
     LOAD_DB2(sItemSpecStore);
     LOAD_DB2(sItemStore);
-    //LOAD_DB2(sItemToBattlePetSpeciesStore);
     LOAD_DB2(sItemUpgradeStore);
     LOAD_DB2(sItemXBonusTreeStore);
     LOAD_DB2(sKeyChainStore);
@@ -433,7 +430,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sMapChallengeModeStore);
     LOAD_DB2(sMapDifficultyStore);
     LOAD_DB2(sMapStore);
-    //LOAD_DB2(sMinorTalentStore); // Spell in DB2 not exist Oo
     LOAD_DB2(sModifierTreeStore);
     LOAD_DB2(sMountCapabilityStore);
     LOAD_DB2(sMountStore);
@@ -910,10 +906,6 @@ void DB2Manager::InitDB2CustomStores()
     for (DungeonEncounterEntry const* store : sDungeonEncounterStore)
         if (store->CreatureDisplayID)
             _dungeonEncounterByDisplayID[store->CreatureDisplayID] = store;
-
-    memset(_minorTalentByIndexStore, 0, sizeof(_minorTalentByIndexStore));
-    for (MinorTalentEntry const* minotTal : sMinorTalentStore)
-        _minorTalentByIndexStore[minotTal->SpecID][minotTal->OrderIndex] = minotTal;
 
     for (MapDifficultyEntry const* entry : sMapDifficultyStore)
         _mapDifficulty[entry->MapID][entry->DifficultyID] = entry;
@@ -1720,14 +1712,6 @@ DungeonEncounterEntry const* DB2Manager::GetDungeonEncounterByDisplayID(uint32 d
     auto data = _dungeonEncounterByDisplayID.find(displayID);
     if (data != _dungeonEncounterByDisplayID.end())
         return data->second;
-
-    return nullptr;
-}
-
-MinorTalentEntry const* DB2Manager::GetMinorTalentBySpecAndPerkID(uint32 specID, uint32 perkID)
-{
-    if (MinorTalentEntry const* entry = _minorTalentByIndexStore[specID][perkID])
-        return entry;
 
     return nullptr;
 }

@@ -1922,32 +1922,6 @@ LOCK TABLES `map_locale` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `minor_talent`
---
-
-DROP TABLE IF EXISTS `minor_talent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `minor_talent` (
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpecID` int(10) unsigned NOT NULL DEFAULT '0',
-  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
-  `OrderIndex` int(10) unsigned NOT NULL DEFAULT '0',
-  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `minor_talent`
---
-
-LOCK TABLES `minor_talent` WRITE;
-/*!40000 ALTER TABLE `minor_talent` DISABLE KEYS */;
-/*!40000 ALTER TABLE `minor_talent` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `criteria`
 --
 
@@ -4559,19 +4533,19 @@ DROP TABLE IF EXISTS `battle_pet_effect_properties`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_effect_properties` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `someFlags` int(10) unsigned NOT NULL DEFAULT '0',
-  `propertyDescs1` text,
-  `propertyDescs2` text,
-  `propertyDescs3` text,
-  `propertyDescs4` text,
-  `propertyDescs5` text,
-  `propertyDescs6` text,
-  `unk` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk2` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk3` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk4` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk5` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk6` int(10) unsigned NOT NULL DEFAULT '0',
+  `Description1` text,
+  `Description2` text,
+  `Description3` text,
+  `Description4` text,
+  `Description5` text,
+  `Description6` text,
+  `Flags` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura4` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura5` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `IsAura6` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4596,12 +4570,12 @@ DROP TABLE IF EXISTS `battle_pet_effect_properties_locale`;
 CREATE TABLE `battle_pet_effect_properties_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `propertyDescs1_lang` text,
-  `propertyDescs2_lang` text,
-  `propertyDescs3_lang` text,
-  `propertyDescs4_lang` text,
-  `propertyDescs5_lang` text,
-  `propertyDescs6_lang` text,
+  `Description1_lang` text,
+  `Description2_lang` text,
+  `Description3_lang` text,
+  `Description4_lang` text,
+  `Description5_lang` text,
+  `Description6_lang` text,
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4625,11 +4599,11 @@ DROP TABLE IF EXISTS `battle_pet_ability_turn`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `battle_pet_ability_turn` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `AbilityID` int(10) unsigned NOT NULL DEFAULT '0',
-  `StateID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Turn` int(10) unsigned NOT NULL DEFAULT '0',
-  `HasProcType` int(10) unsigned NOT NULL DEFAULT '0',
-  `ProcType` int(10) unsigned NOT NULL DEFAULT '0',
+  `AbilityID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `StateID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Turn` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `HasProcType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ProcType` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -8283,30 +8257,6 @@ CREATE TABLE `totem_category_locale` (
 LOCK TABLES `totem_category_locale` WRITE;
 /*!40000 ALTER TABLE `totem_category_locale` DISABLE KEYS */;
 /*!40000 ALTER TABLE `totem_category_locale` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `item_to_battle_pet_species`
---
-
-DROP TABLE IF EXISTS `item_to_battle_pet_species`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `item_to_battle_pet_species` (
-  `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `BattlePetSpeciesID` int(10) unsigned NOT NULL DEFAULT '0',
-  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `item_to_battle_pet_species`
---
-
-LOCK TABLES `item_to_battle_pet_species` WRITE;
-/*!40000 ALTER TABLE `item_to_battle_pet_species` DISABLE KEYS */;
-/*!40000 ALTER TABLE `item_to_battle_pet_species` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

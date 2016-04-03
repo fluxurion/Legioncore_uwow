@@ -206,9 +206,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MAP, "SELECT ID, Directory_lang, MapName_lang, MapDescription0_lang, MapDescription1_lang FROM map_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 
-    // MinorTalent.db2
-    PrepareStatement(HOTFIX_SEL_MINOR_TALENT, "SELECT ID, SpecID, SpellID, OrderIndex FROM minor_talent ORDER BY ID DESC", CONNECTION_SYNCH);
-
     // Criteria.db2
     PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, Asset, StartAsset, FailAsset, StartTimer, ModifyTree, EligibilityWorldStateID, Type, "
         "StartEvent, FailEvent, Flags, EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
@@ -495,10 +492,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "PropertyValue4, PropertyValue5, PropertyValue6, EffectPropertiesID, Effect FROM battle_pet_ability_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BattlePetEffectProperties.db2
-    PrepareStatement(HOTFIX_SEL_BATTLE_PET_EFFECT_PROPERTIES, "SELECT ID, someFlags, propertyDescs1, propertyDescs2, propertyDescs3, propertyDescs4, "
-        "propertyDescs5, propertyDescs6, unk, unk2, unk3, unk4, unk5, unk6 FROM battle_pet_effect_properties ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_EFFECT_PROPERTIES, "SELECT ID, propertyDescs1_lang, propertyDescs2_lang, propertyDescs3_lang, "
-        "propertyDescs4_lang, propertyDescs5_lang, propertyDescs6_lang FROM battle_pet_effect_properties_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_EFFECT_PROPERTIES, "SELECT ID, Description1, Description2, Description3, Description4, Description5, "
+        "Description6, Flags, IsAura1, IsAura2, IsAura3, IsAura4, IsAura5, IsAura6 FROM battle_pet_effect_properties ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_EFFECT_PROPERTIES, "SELECT ID, Description1_lang, Description2_lang, Description3_lang, "
+        "Description4_lang, Description5_lang, Description6_lang FROM battle_pet_effect_properties_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // BattlePetAbilityTurn.db2
     PrepareStatement(HOTFIX_SEL_BATTLE_PET_ABILITY_TURN, "SELECT ID, AbilityID, StateID, Turn, HasProcType, ProcType FROM battle_pet_ability_turn"
@@ -896,9 +893,6 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // TotemCategory.db2
     PrepareStatement(HOTFIX_SEL_TOTEM_CATEGORY, "SELECT ID, Name, TotemCategoryType, TotemCategoryMask FROM totem_category ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TOTEM_CATEGORY, "SELECT ID, Name_lang FROM totem_category_locale WHERE locale = ?", CONNECTION_SYNCH);
-
-    // ItemToBattlePetSpecies.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES, "SELECT ID, BattlePetSpeciesID FROM item_to_battle_pet_species ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // TransportAnimation.db2
     PrepareStatement(HOTFIX_SEL_TRANSPORT_ANIMATION, "SELECT ID, TransportID, TimeIndex, PosX, PosY, PosZ, SequenceID FROM transport_animation"

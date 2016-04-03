@@ -1388,7 +1388,8 @@ void WorldSession::HandleUseCritterItem(WorldPackets::Item::UseCritterItem& useC
     if (!item)
         return;
 
-    ItemToBattlePetSpeciesEntry const* itemToBattlePetSpecies = sItemToBattlePetSpeciesStore.LookupEntry(item->GetEntry());
+    //< ItemToBattlePetSpecies.db2 was dropped from client
+    /*ItemToBattlePetSpeciesEntry const* itemToBattlePetSpecies = sItemToBattlePetSpeciesStore.LookupEntry(item->GetEntry());
     if (!itemToBattlePetSpecies)
         return;
 
@@ -1401,5 +1402,5 @@ void WorldSession::HandleUseCritterItem(WorldPackets::Item::UseCritterItem& useC
     {
         mgr->AddPet(battlePetSpecies->ID, mgr->GetRandomBreedID(battlePetSpecies->ID), mgr->GetRandomQuailty());
         player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
-    }
+    }*/
 }
