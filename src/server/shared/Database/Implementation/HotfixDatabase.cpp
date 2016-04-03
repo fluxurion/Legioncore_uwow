@@ -715,7 +715,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_PVP_TALENT, "SELECT ID, Desc_lang FROM pvp_talent_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellTotems.db2
-    PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, SpellID, TotemCategory1, TotemCategory2, Totem1, Totem2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_SPELL_TOTEMS, "SELECT ID, SpellID, Totem1, Totem2, TotemCategory1, TotemCategory2 FROM spell_totems ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // SpellXSpellVisual.db2
     PrepareStatement(HOTFIX_SEL_SPELL_X_SPELL_VISUAL, "SELECT ID, SpellID, TravelSpeed, SpellVisualID1, SpellVisualID2, PlayerConditionID, "

@@ -2073,8 +2073,8 @@ struct SpellTotemsEntry
 {
     uint32      ID;
     uint32      SpellID;                                    // 0
-    uint32      TotemCategory[MAX_SPELL_TOTEMS];            // 1 - 2
-    uint8       Totem[MAX_SPELL_TOTEMS];                    // 3 - 4
+    uint32      Totem[MAX_SPELL_TOTEMS];                    // 1 - 2
+    uint8       TotemCategory[MAX_SPELL_TOTEMS];            // 3 - 4
 };
 
 struct SpellXSpellVisualEntry
