@@ -302,10 +302,10 @@ void WorldPackets::Quest::QuestGiverChooseReward::Read()
 WorldPacket const* WorldPackets::Quest::QuestGiverQuestComplete::Write()
 {
     _worldPacket << QuestID;
-    _worldPacket << SkillLineIDReward;
+    _worldPacket << XPReward;
     _worldPacket << MoneyReward;
     _worldPacket << NumSkillUpsReward;
-    _worldPacket << XPReward;
+    _worldPacket << SkillLineIDReward;
     _worldPacket << TalentReward;
     _worldPacket << ItemReward;
 

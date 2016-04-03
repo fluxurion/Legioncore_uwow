@@ -15378,7 +15378,7 @@ bool Player::CanCompleteQuest(uint32 quest_id)
                         float scale = 0.0f;
                         for (QuestObjective const& task : qInfo->GetObjectives())
                         {
-                            if (obj.Flags & QUEST_OBJECTIVE_FLAG_TASK)
+                            if (task.Flags & QUEST_OBJECTIVE_FLAG_TASK)
                                 scale += float(GetQuestObjectiveData(qInfo, task.StorageIndex) * task.TaskStep);
                         }
                         return scale >= 100.0f;
@@ -15640,8 +15640,8 @@ void Player::CompleteQuest(uint32 quest_id)
 
         if (Quest const* qInfo = sObjectMgr->GetQuestTemplate(quest_id))
         {
-            if (qInfo->HasFlag(QUEST_FLAGS_AUTO_REWARDED))
-                RewardQuest(qInfo, 0, this, false);
+            if (qInfo->HasFlag(QUEST_FLAGS_AUTO_REWARDED) || qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_AUTO_REWARD))
+                RewardQuest(qInfo, 0, this, true);
             else
                 SendQuestComplete(qInfo);
         }

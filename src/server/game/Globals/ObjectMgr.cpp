@@ -3968,6 +3968,7 @@ void ObjectMgr::LoadQuests()
                         sLog->outError(LOG_FILTER_SQL, "Quest %u has not exist CriteriaTreeID: %u in ObjectID field ", qinfo->GetQuestId(), obj.ObjectID);
                     break;
                 case QUEST_OBJECTIVE_TASK_IN_ZONE:
+                    qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_AUTO_REWARD;
                     break;
                 default:
                     sLog->outError(LOG_FILTER_SQL, "Quest %u objective %u has unhandled type %u", qinfo->GetQuestId(), obj.ID, obj.Type);

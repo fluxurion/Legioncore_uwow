@@ -288,6 +288,7 @@ enum __QuestSpecialFlags
     QUEST_SPECIAL_FLAGS_KILL                 = 0x200,   // Internal flag computed only
     QUEST_SPECIAL_FLAGS_TIMED                = 0x400,   // Internal flag computed only
     QUEST_SPECIAL_FLAGS_PLAYER_KILL          = 0x800,   // Internal flag computed only
+    QUEST_SPECIAL_FLAGS_AUTO_REWARD         = 0x1000,
 };
 
 struct QuestTemplateLocale
