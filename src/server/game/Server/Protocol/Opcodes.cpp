@@ -146,7 +146,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_BATTLE_PET_MODIFY_NAME,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::ModifyName, &WorldSession::HandleModifyName);
     DEFINE_HANDLER(CMSG_BATTLE_PET_REQUEST_JOURNAL,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleBattlePetRequestJournal);
     DEFINE_HANDLER(CMSG_BATTLE_PET_REQUEST_JOURNAL_LOCK,                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::NullCmsg, &WorldSession::HandleBattlePetJournalLock);
-    DEFINE_HANDLER(CMSG_BATTLE_PET_SET_BATTLE_SLOT,                         STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::SetBattleSlot, &WorldSession::HandleBattlePetSetSlot);
+    DEFINE_HANDLER(CMSG_BATTLE_PET_SET_BATTLE_SLOT,                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::BattlePet::SetBattleSlot, &WorldSession::HandleBattlePetSetSlot);
     DEFINE_HANDLER(CMSG_BATTLE_PET_SET_FLAGS,                               STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::SetFlags, &WorldSession::HandleBattlePetSetFlags);
     DEFINE_HANDLER(CMSG_BATTLE_PET_SUMMON,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::BattlePet::BattlePetGuidRead, &WorldSession::HandleBattlePetSummon);
     DEFINE_HANDLER(CMSG_BATTLE_PET_UPDATE_NOTIFY,                           STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
