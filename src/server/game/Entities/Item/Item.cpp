@@ -1169,7 +1169,7 @@ void Item::BuildDynamicValuesUpdate(uint8 updateType, ByteBuffer* data, Player* 
 
             }
 
-            fieldBuffer << uint8(arrayMask.GetBlockCount());
+            fieldBuffer << uint16(arrayMask.GetBlockCount());
             arrayMask.AppendToPacket(&fieldBuffer);
             fieldBuffer.append(buffer);
         }
