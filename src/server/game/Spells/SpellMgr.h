@@ -675,6 +675,7 @@ struct SpellArea
     uint32 questStartStatus;                                // QuestStatus that quest_start must have in order to keep the spell
     uint32 questEndStatus;                                  // QuestStatus that the quest_end must have in order to keep the spell (if the quest_end's status is different than this, the spell will be dropped)
     bool autocast;                                          // if true then auto applied at area enter, in other case just allowed to cast
+    int32 classmask;                                        // can be applied only to class
 
     // helpers
     bool IsFitToRequirements(Player const* player, uint32 newZone, uint32 newArea) const;

@@ -1223,32 +1223,45 @@ SpellAreaForAreaMapBounds SpellMgr::GetSpellAreaForAreaMapBounds(uint32 area_id)
 
 bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32 newArea) const
 {
-    if (gender != GENDER_NONE)                   // not in expected gender
-        if (!player || gender != player->getGender())
-            return false;
-
-    if (raceMask)                                // not in expected race
-        if (!player || !(raceMask & player->getRaceMask()))
-            return false;
-
     if (areaId > 0)                                  // not in expected zone
         if (newZone != areaId && newArea != areaId)
             return false;
 
-    if (areaId < 0 && player)
+    if (!player)
+        return false;
+
+    if (gender != GENDER_NONE)                   // not in expected gender
+        if (gender != player->getGender())
+            return false;
+
+    if (raceMask)                                // not in expected race
+        if (!(raceMask & player->getRaceMask()))
+            return false;
+
+    if (classmask)                                // not in expected class
+    {
+        uint32 checkClassMask = classmask > 0 ? classmask : (CLASSMASK_ALL_PLAYABLE + classmask);
+
+        if (classmask > 0 && !(checkClassMask & player->getClassMask()))
+            return false;
+        else if (classmask < 0 && !(checkClassMask & player->getClassMask()))
+            return false;
+    }
+
+    if (areaId < 0)
         if(player->GetMapId() != abs(areaId))
             return false;
 
     if (questStart)                              // not in expected required quest state
-        if (!player || ((questStartStatus & (1 << player->GetQuestStatus(questStart))) == 0))
+        if (((questStartStatus & (1 << player->GetQuestStatus(questStart))) == 0))
             return false;
 
     if (questEnd)                                // not in expected forbidden quest state
-        if (!player || (questEndStatus & (1 << player->GetQuestStatus(questEnd))))
+        if ((questEndStatus & (1 << player->GetQuestStatus(questEnd))))
             return false;
 
     if (auraSpell)                               // not have expected aura
-        if (!player || (auraSpell > 0 && !player->HasAura(auraSpell)) || (auraSpell < 0 && player->HasAura(-auraSpell)))
+        if ((auraSpell > 0 && !player->HasAura(auraSpell)) || (auraSpell < 0 && player->HasAura(-auraSpell)))
             return false;
 
     // Extra conditions -- leaving the possibility add extra conditions...
@@ -1256,9 +1269,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
     {
         case 58600: // No fly Zone - Dalaran
         {
-            if (!player)
-                return false;
-
             AreaTableEntry const* pArea = sAreaTableStore.LookupEntry(player->GetAreaId());
             if (!(pArea && pArea->Flags[0] & AREA_FLAG_NO_FLY_ZONE))
                 return false;
@@ -1270,9 +1280,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
         }
         case 91604: // No fly Zone - Wintergrasp
         {
-            if (!player)
-                return false;
-
             //Battlefield* Bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId());
             if (/*!Bf || Bf->CanFlyIn() || */(!player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY)))
                 return false;
@@ -1281,7 +1288,7 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
         case 68719: // Oil Refinery - Isle of Conquest.
         case 68720: // Quarry - Isle of Conquest.
         {
-            if (!player || player->GetBattlegroundTypeId() != BATTLEGROUND_IC || !player->GetBattleground())
+            if (player->GetBattlegroundTypeId() != BATTLEGROUND_IC || !player->GetBattleground())
                 return false;
 
             uint8 nodeType = spellId == 68719 ? NODE_TYPE_REFINERY : NODE_TYPE_QUARRY;
@@ -1296,9 +1303,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
         case 56618: // Horde Controls Factory Phase Shift
         case 56617: // Alliance Controls Factory Phase Shift
         {
-            if (!player)
-                return false;
-
             Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId());
 
             if (!bf || bf->GetTypeId() != BATTLEFIELD_WG)
@@ -1316,18 +1320,12 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
         case 57940: // Essence of Wintergrasp - Northrend
         case 58045: // Essence of Wintergrasp - Wintergrasp
         {
-            if (!player)
-                return false;
-
             if (Battlefield* battlefieldWG = sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG))
                 return battlefieldWG->IsEnabled() && (player->GetTeamId() == battlefieldWG->GetDefenderTeam()) && !battlefieldWG->IsWarTime();
             break;
         }
         case 74411: // Battleground - Dampening
         {
-            if (!player)
-                return false;
-
             if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId()))
                 return bf->IsWarTime();
             break;
@@ -3489,8 +3487,8 @@ void SpellMgr::LoadSpellAreas()
     mSpellAreaForQuestEndMap.clear();
     mSpellAreaForAuraMap.clear();
 
-    //                                                  0     1         2              3               4                 5          6          7       8         9
-    QueryResult result = WorldDatabase.Query("SELECT spell, area, quest_start, quest_start_status, quest_end_status, quest_end, aura_spell, racemask, gender, autocast FROM spell_area");
+    //                                                  0     1         2              3               4                 5          6          7       8         9         10
+    QueryResult result = WorldDatabase.Query("SELECT spell, area, quest_start, quest_start_status, quest_end_status, quest_end, aura_spell, racemask, gender, autocast, classmask FROM spell_area");
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 spell area requirements. DB table `spell_area` is empty.");
@@ -3515,6 +3513,7 @@ void SpellMgr::LoadSpellAreas()
         spellArea.raceMask            = fields[7].GetUInt32();
         spellArea.gender              = Gender(fields[8].GetUInt8());
         spellArea.autocast            = fields[9].GetBool();
+        spellArea.classmask           = fields[10].GetInt32();
 
         if (SpellInfo const* spellInfo = GetSpellInfo(spell))
         {
