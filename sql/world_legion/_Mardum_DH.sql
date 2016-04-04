@@ -1,3 +1,7 @@
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!40014 SET FOREIGN_KEY_CHECKS=0 */;
+
 -- Misc
 UPDATE `creature_template` SET `ScriptName` = 'conversation_announcer' WHERE `entry` in (101748);
 
@@ -7,7 +11,7 @@ INSERT INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `PlaybackFlags`,
 (1487, 1106, 20, 0, 0, 'sceneTrigger_dh_init', 'spell 193525 DH_INIT'), -- 1487 - 1106 crash on 701
 (1493, 1116, 27, 0, 0, '', 'spell 191677'), -- 1493 - 1116
 (1451, 1053, 20, 0, 0, '', 'spell 189261'), -- 1451 - 1053
-(1460, 1061, 26, 0, 0, '', ''), -- 1460 - 1061
+(1460, 1061, 26, 0, 0, '', 'spell 189767'), -- 1460 - 1061
 (1468, 1077, 20, 0, 0, '', ''), -- 1468 - 1077
 (1470, 1079, 20, 0, 0, '', ''), -- 1470 - 1079
 (1512, 1142, 20, 0, 0, '', ''), -- 1512 - 1142
@@ -24,9 +28,6 @@ REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_sp
 ('7705', '191466', '40378', '0', '0', '0', '2', '0', '66', '64'), -- 1116
 ('7705', '190793', '40379', '0', '0', '0', '2', '0', '10', '64'); -- 1077
 
-
--- 179665 193525
-
 -- Quest chaine fixes.
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
 ('40378', '40077', '0', '0'),
@@ -37,7 +38,6 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('39050', '40379', '0', ''),
 ('38765', '39050', '0', '0'),
 ('38766', '39050', '0', '0');
-
 
 
 -- Q: 40077
@@ -100,6 +100,8 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q40379' WHERE `gameobject_te
 UPDATE `creature_template` SET `ScriptName` = 'npc_q40379' WHERE `creature_template`.`entry` = 99914;
 
 -- Q: 39050
+UPDATE `quest_template_addon` SET `SourceSpellID` = '201114' WHERE `quest_template_addon`.`ID` = 39050;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q39050' WHERE `gameobject_template`.`entry` = 243335;
 
 -- Q: 38765
 -- Q: 38766

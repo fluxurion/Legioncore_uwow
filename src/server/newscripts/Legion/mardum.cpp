@@ -611,6 +611,43 @@ public:
         return new go_q40379AI(go);
     }
 };
+
+//243335
+class go_q39050 : public GameObjectScript
+{
+public:
+    go_q39050() : GameObjectScript("go_q39050") { }
+
+    struct go_q39050AI : public GameObjectAI
+    {
+        go_q39050AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 40379,
+            SPELL = 188539,
+            CREDIT = 100722,
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, CREDIT))
+                return true;
+
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL, false);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q39050AI(go);
+    }
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -625,4 +662,5 @@ void AddSC_Mardum()
     new go_q38759();
     new npc_q40379();
     new go_q40379();
+    new go_q39050();
 }
