@@ -48,7 +48,7 @@ private:
     std::string filename;
 public:
     unsigned int col;
-    uint32 nTextures, nGroups, nP, nLights, nModels, nDoodads, nDoodadSets, RootWMOID, liquidType;
+    uint32 nTextures, nGroups, nP, nLights, nModels, nDoodads, nDoodadSets, RootWMOID, liquidType, flagHasSomeOutdoorGroup, FlagLod, Unk;
     float bbcorn1[3];
     float bbcorn2[3];
 
@@ -102,7 +102,7 @@ public:
     uint16 moprNItems;
     uint16 nBatchA;
     uint16 nBatchB;
-    uint32 nBatchC, fogIdx, liquidType, groupWMOID;
+    uint32 nBatchC, fogIdx, liquidType, groupWMOID, CanCutTerrain, Unused;
 
     int mopy_size, moba_size;
     int LiquEx_size;

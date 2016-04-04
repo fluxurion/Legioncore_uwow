@@ -30,7 +30,7 @@ char const* GetPlainName(char const* FileName)
 {
     const char * szTemp;
 
-    if((szTemp = strrchr(FileName, '\\')) != NULL)
+    if ((szTemp = strrchr(FileName, '\\')) != NULL)
         FileName = szTemp + 1;
     return FileName;
 }
@@ -39,7 +39,7 @@ char* GetPlainName(char* FileName)
 {
     char * szTemp;
 
-    if((szTemp = strrchr(FileName, '\\')) != NULL)
+    if ((szTemp = strrchr(FileName, '\\')) != NULL)
         FileName = szTemp + 1;
     return FileName;
 }
@@ -63,9 +63,9 @@ void FixNameCase(char* name, size_t len)
 
 void FixNameSpaces(char* name, size_t len)
 {
-    for (size_t i=0; i<len-3; i++)
+    for (size_t i = 0; i < len - 3; i++)
     {
-        if(name[i] == ' ')
+        if (name[i] == ' ')
             name[i] = '_';
     }
 }
@@ -93,7 +93,7 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
     std::string dirname = std::string(szWorkDirWmo) + "/dir_bin";
     FILE *dirfile;
     dirfile = fopen(dirname.c_str(), "ab");
-    if(!dirfile)
+    if (!dirfile)
     {
         printf("Can't open dirfile!'%s'\n", dirname.c_str());
         return false;
@@ -102,93 +102,88 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
     while (!ADT.isEof())
     {
         char fourcc[5];
-        ADT.read(&fourcc,4);
+        ADT.read(&fourcc, 4);
         ADT.read(&size, 4);
         flipcc(fourcc);
         fourcc[4] = 0;
 
         size_t nextpos = ADT.getPos() + size;
 
-        if (!strcmp(fourcc,"MCIN"))
+        if (!strcmp(fourcc, "MCIN")) { }
+        else if (!strcmp(fourcc, "MTEX")) { }
+        else if (!strcmp(fourcc, "MMDX"))
         {
-        }
-        else if (!strcmp(fourcc,"MTEX"))
-        {
-        }
-        else if (!strcmp(fourcc,"MMDX"))
-        {
-            if (size)
+            if (!size)
+                break;
+
+            char* buf = new char[size];
+            ADT.read(buf, size);
+            char* p = buf;
+            while (p < buf + size)
             {
-                char* buf = new char[size];
-                ADT.read(buf, size);
-                char* p = buf;
-                while (p < buf + size)
-                {
-                    std::string path(p);
+                std::string path(p);
 
-                    char* s = GetPlainName(p);
-                    FixNameCase(s, strlen(s));
-                    FixNameSpaces(s, strlen(s));
+                char* s = GetPlainName(p);
+                FixNameCase(s, strlen(s));
+                FixNameSpaces(s, strlen(s));
+                ModelInstanceNames.push_back(s);
 
-                    ModelInstanceNames.push_back(s);
+                ExtractSingleModel(path);
 
-                    ExtractSingleModel(path);
-
-                    p += strlen(p) + 1;
-                }
-                delete[] buf;
+                p += strlen(p) + 1;
             }
+            delete[] buf;
         }
-        else if (!strcmp(fourcc,"MWMO"))
+        else if (!strcmp(fourcc, "MWMO"))
         {
-            if (size)
+            if (!size)
+                break;
+
+            char* buf = new char[size];
+            ADT.read(buf, size);
+            char* p = buf;
+            while (p < buf + size)
             {
-                char* buf = new char[size];
-                ADT.read(buf, size);
-                char* p = buf;
-                while (p < buf + size)
-                {
-                    char* s = GetPlainName(p);
-                    FixNameCase(s, strlen(s));
-                    FixNameSpaces(s, strlen(s));
+                char* s = GetPlainName(p);
+                FixNameCase(s, strlen(s));
+                FixNameSpaces(s, strlen(s));
 
-                    WmoInstanceNames.push_back(s);
+                WmoInstanceNames.push_back(s);
 
-                    p += strlen(p) + 1;
-                }
-                delete[] buf;
+                p += strlen(p) + 1;
             }
+            delete[] buf;
         }
-        //======================
-        else if (!strcmp(fourcc,"MDDF"))
-        {
-            if (size)
-            {
-                nMDX = (int)size / 36;
-                for (int i=0; i<nMDX; ++i)
-                {
-                    uint32 id;
-                    ADT.read(&id, 4);
-                    ModelInstance inst(ADT, ModelInstanceNames[id].c_str(), map_num, tileX, tileY, dirfile);
-                }
 
-                ModelInstanceNames.clear();
+        else if (!strcmp(fourcc, "MDDF"))
+        {
+            if (!size)
+                break;
+
+            nMDX = (int)size / 36;
+            for (int i = 0; i < nMDX; ++i)
+            {
+                uint32 id;
+                ADT.read(&id, 4);
+                ModelInstance inst(ADT, ModelInstanceNames[id].c_str(), map_num, tileX, tileY, dirfile);
             }
+
+            ModelInstanceNames.clear();
         }
-        else if (!strcmp(fourcc,"MODF"))
+        else if (!strcmp(fourcc, "MODF")) // changed on legion
         {
-            if (size)
-            {
-                nWMO = (int)size / 64;
-                for (int i=0; i<nWMO; ++i)
-                {
-                    uint32 id;
-                    ADT.read(&id, 4);
-                    WMOInstance inst(ADT, WmoInstanceNames[id].c_str(), map_num, tileX, tileY, dirfile);
-                }
+            if (!size)
+                break;
 
-                WmoInstanceNames.clear();
+            nWMO = (int)size / 64;
+            for (int i = 0; i < nWMO; ++i)
+            {
+                uint32 id;
+                ADT.read(&id, 4);
+                WMOInstance inst(ADT, WmoInstanceNames[id].c_str(), map_num, tileX, tileY, dirfile);
             }
+
+            WmoInstanceNames.clear();
         }
 
         //======================

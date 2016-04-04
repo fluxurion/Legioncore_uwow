@@ -40,10 +40,7 @@ WDTFile::WDTFile(char* file_name, char* file_name1):WDT(CascStorage, file_name),
 bool WDTFile::init(char* /*map_id*/, unsigned int mapID)
 {
     if (WDT.isEof())
-    {
-        //printf("Can't find WDT file.\n");
         return false;
-    }
 
     char fourcc[5];
     uint32 size;
@@ -67,40 +64,35 @@ bool WDTFile::init(char* /*map_id*/, unsigned int mapID)
 
         size_t nextpos = WDT.getPos() + size;
 
-        if (!strcmp(fourcc,"MAIN"))
-        {
-        }
+        if (!strcmp(fourcc,"MAIN")) { }
         if (!strcmp(fourcc,"MWMO"))
         {
-            // global map objects
-            if (size)
-            {
-                char *buf = new char[size];
-                WDT.read(buf, size);
-                char *p = buf;
-                while (p < buf + size)
-                {
-                    char* s = wdtGetPlainName(p);
-                    FixNameCase(s, strlen(s));
-                    p = p + strlen(p) + 1;
-                    gWmoInstansName.push_back(s);
-                }
-                delete[] buf;
-            }
-        }
-        else if (!strcmp(fourcc, "MODF"))
-        {
-            // global wmo instance data
-            if (size)
-            {
-                gnWMO = (int)size / 64;
+            if (!size)
+                break;
 
-                for (int i = 0; i < gnWMO; ++i)
-                {
-                    int id;
-                    WDT.read(&id, 4);
-                    WMOInstance inst(WDT, gWmoInstansName[id].c_str(), mapID, 65, 65, dirfile);
-                }
+            char *buf = new char[size];
+            WDT.read(buf, size);
+            char *p = buf;
+            while (p < buf + size)
+            {
+                char* s = wdtGetPlainName(p);
+                FixNameCase(s, strlen(s));
+                p = p + strlen(p) + 1;
+                gWmoInstansName.push_back(s);
+            }
+            delete[] buf;
+        }
+        else if (!strcmp(fourcc, "MODF")) // changed on legion
+        {
+            if (!size)
+                break;
+
+            gnWMO = (int)size / 64;
+            for (int i = 0; i < gnWMO; ++i)
+            {
+                int id;
+                WDT.read(&id, 4);
+                WMOInstance inst(WDT, gWmoInstansName[id].c_str(), mapID, 65, 65, dirfile);
             }
         }
         WDT.seek((int)nextpos);
@@ -118,11 +110,11 @@ WDTFile::~WDTFile(void)
 
 ADTFile* WDTFile::GetMap(int x, int z)
 {
-    if(!(x>=0 && z >= 0 && x<64 && z<64))
+    if (!(x >= 0 && z >= 0 && x < 64 && z < 64))
         return NULL;
 
     char name[512];
 
-    sprintf(name,"World\\Maps\\%s\\%s_%d_%d_obj0.adt", filename.c_str(), filename.c_str(), x, z);
+    sprintf(name, "World\\Maps\\%s\\%s_%d_%d_obj0.adt", filename.c_str(), filename.c_str(), x, z);
     return new ADTFile(name);
 }

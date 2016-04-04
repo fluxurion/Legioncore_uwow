@@ -24,34 +24,29 @@
 #include <errno.h>
 
 #ifdef WIN32
-    #define WIN32_LEAN_AND_MEAN
-    #include <Windows.h>
-    #include <sys/stat.h>
-    #include <direct.h>
-    #define mkdir _mkdir
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <sys/stat.h>
+#include <direct.h>
+#define mkdir _mkdir
 #else
-    #include <sys/stat.h>
-    #define ERROR_PATH_NOT_FOUND ERROR_FILE_NOT_FOUND
+#include <sys/stat.h>
+#define ERROR_PATH_NOT_FOUND ERROR_FILE_NOT_FOUND
 #endif
 
 #include <map>
 #include <fstream>
+
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 //From Extractor
 #include "adtfile.h"
 #include "wdtfile.h"
 #include "dbcfile.h"
 #include "wmo.h"
-#include "mpqfile.h"
-
+#include "Common.h"
 #include "vmapexport.h"
-
-//------------------------------------------------------------------------------
-// Defines
-
-#define MPQ_BLOCK_SIZE 0x1000
-
-//-----------------------------------------------------------------------------
 
 HANDLE CascStorage = NULL;
 
@@ -76,13 +71,11 @@ const char* szRawVMAPMagic = "VMAP043";
 
 bool OpenCascStorage()
 {
-    if (!CascOpenStorage("Data", 0, &CascStorage))
-    {
-        printf("Error %d\n", GetLastError());
+    boost::filesystem::path const storage_dir(boost::filesystem::canonical(input_path) / "Data");
+    if (!CascOpenStorage(storage_dir.string().c_str(), CASC_LOCALE_ENUS | CASC_LOCALE_ENGB, &CascStorage))
         return false;
-    }
 
-    printf("\n");
+    printf("opened casc storage '%s' \n", storage_dir.string().c_str());
     return true;
 }
 
@@ -100,9 +93,9 @@ bool FileExists(const char* file)
 
 void strToLower(char* str)
 {
-    while(*str)
+    while (*str)
     {
-        *str=tolower(*str);
+        *str = tolower(*str);
         ++str;
     }
 }
@@ -123,7 +116,7 @@ void LoadLiquidTypeDB2Data()
     LiqType = new uint16[LiqType_maxid + 1];
     memset(LiqType, 0xff, (LiqType_maxid + 1) * sizeof(uint16));
 
-    for(uint32 x = 0; x < LiqType_count; ++x)
+    for (uint32 x = 0; x < LiqType_count; ++x)
         LiqType[dbc.getRecord(x).getUInt(0)] = dbc.getRecord(x).getUInt8(40);
 
     printf("Done! (%u LiqTypes loaded)\n", (unsigned int)LiqType_count);
@@ -167,7 +160,7 @@ bool ExtractSingleWmo(std::string& fname)
     char szLocalFile[1024];
     const char * plain_name = GetPlainName(fname.c_str());
     sprintf(szLocalFile, "%s/%s", szWorkDirWmo, plain_name);
-    FixNameCase(szLocalFile,strlen(szLocalFile));
+    FixNameCase(szLocalFile, strlen(szLocalFile));
 
     if (FileExists(szLocalFile))
         return true;
@@ -193,13 +186,13 @@ bool ExtractSingleWmo(std::string& fname)
     bool file_ok = true;
     std::cout << "Extracting " << fname << std::endl;
     WMORoot froot(fname);
-    if(!froot.open())
+    if (!froot.open())
     {
         printf("Couldn't open RootWmo!!!\n");
         return true;
     }
-    FILE *output = fopen(szLocalFile,"wb");
-    if(!output)
+    FILE *output = fopen(szLocalFile, "wb");
+    if (!output)
     {
         printf("couldn't open %s for writing!\n", szLocalFile);
         return false;
@@ -207,20 +200,20 @@ bool ExtractSingleWmo(std::string& fname)
     froot.ConvertToVMAPRootWmo(output);
     int Wmo_nVertices = 0;
     //printf("root has %d groups\n", froot->nGroups);
-    if (froot.nGroups !=0)
+    if (froot.nGroups != 0)
     {
         for (uint32 i = 0; i < froot.nGroups; ++i)
         {
             char temp[1024];
             strncpy(temp, fname.c_str(), 1024);
-            temp[fname.length()-4] = 0;
+            temp[fname.length() - 4] = 0;
             char groupFileName[1024];
             sprintf(groupFileName, "%s_%03u.wmo", temp, i);
             //printf("Trying to open groupfile %s\n",groupFileName);
 
             std::string s = groupFileName;
             WMOGroup fgroup(s);
-            if(!fgroup.open())
+            if (!fgroup.open())
             {
                 printf("Could not open all Group file for: %s\n", plain_name);
                 file_ok = false;
@@ -232,7 +225,7 @@ bool ExtractSingleWmo(std::string& fname)
     }
 
     fseek(output, 8, SEEK_SET); // store the correct no of vertices
-    fwrite(&Wmo_nVertices,sizeof(int),1,output);
+    fwrite(&Wmo_nVertices, sizeof(int), 1, output);
     fclose(output);
 
     // Delete the extracted file in the case of an error
@@ -246,19 +239,19 @@ void ParsMapFiles()
     char fn[512];
     //char id_filename[64];
     char id[10];
-    for (unsigned int i=0; i<map_count; ++i)
+    for (unsigned int i = 0; i < map_count; ++i)
     {
         sprintf(id, "%04u", map_ids[i].id);
-        sprintf(fn,"World\\Maps\\%s\\%s.wdt", map_ids[i].name, map_ids[i].name);
-        WDTFile WDT(fn,map_ids[i].name);
-        if(WDT.init(id, map_ids[i].id))
+        sprintf(fn, "World\\Maps\\%s\\%s.wdt", map_ids[i].name, map_ids[i].name);
+        WDTFile WDT(fn, map_ids[i].name);
+        if (WDT.init(id, map_ids[i].id))
         {
             printf("Processing Map %u\n[", map_ids[i].id);
-            for (int x=0; x<64; ++x)
+            for (int x = 0; x < 64; ++x)
             {
-                for (int y=0; y<64; ++y)
+                for (int y = 0; y < 64; ++y)
                 {
-                    if (ADTFile *ADT = WDT.GetMap(x,y))
+                    if (ADTFile *ADT = WDT.GetMap(x, y))
                     {
                         //sprintf(id_filename,"%02u %02u %03u",x,y,map_ids[i].id);//!!!!!!!!!
                         ADT->init(map_ids[i].id, x, y);
@@ -276,7 +269,7 @@ void ParsMapFiles()
 void getGamePath()
 {
 #ifdef _WIN32
-    strcpy(input_path,"Data\\");
+    strcpy(input_path, "Data\\");
 #else
     strcpy(input_path,"Data/");
 #endif
@@ -288,15 +281,15 @@ bool processArgv(int argc, char ** argv, const char *versionString)
     bool hasInputPathParam = false;
     preciseVectorData = false;
 
-    for(int i = 1; i < argc; ++i)
+    for (int i = 1; i < argc; ++i)
     {
-        if(strcmp("-s",argv[i]) == 0)
+        if (strcmp("-s", argv[i]) == 0)
         {
             preciseVectorData = false;
         }
-        else if(strcmp("-d",argv[i]) == 0)
+        else if (strcmp("-d", argv[i]) == 0)
         {
-            if((i+1)<argc)
+            if ((i + 1) < argc)
             {
                 hasInputPathParam = true;
                 strncpy(input_path, argv[i + 1], sizeof(input_path));
@@ -311,11 +304,11 @@ bool processArgv(int argc, char ** argv, const char *versionString)
                 result = false;
             }
         }
-        else if(strcmp("-?",argv[1]) == 0)
+        else if (strcmp("-?", argv[1]) == 0)
         {
             result = false;
         }
-        else if(strcmp("-l",argv[i]) == 0)
+        else if (strcmp("-l", argv[i]) == 0)
         {
             preciseVectorData = true;
         }
@@ -328,7 +321,7 @@ bool processArgv(int argc, char ** argv, const char *versionString)
 
     if (!result)
     {
-        printf("Extract %s.\n",versionString);
+        printf("Extract %s.\n", versionString);
         printf("%s [-?][-s][-l][-d <path>]\n", argv[0]);
         printf("   -s : (default) small size (data size optimization), ~500MB less vmap data.\n");
         printf("   -l : large size, ~500MB more vmap data. (might contain more details)\n");
@@ -336,20 +329,11 @@ bool processArgv(int argc, char ** argv, const char *versionString)
         printf("   -? : This message.\n");
     }
 
-    if(!hasInputPathParam)
+    if (!hasInputPathParam)
         getGamePath();
 
     return result;
 }
-
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-// Main
-//
-// The program must be run with two command line arguments
-//
-// Arg1 - The source MPQ name (for testing reading and file find)
-// Arg2 - Listfile name
-//
 
 int main(int argc, char ** argv)
 {
@@ -380,10 +364,10 @@ int main(int argc, char ** argv)
     // Create the working directory
     if (mkdir(szWorkDirWmo
 #if defined(__linux__) || defined(__APPLE__)
-                    , 0711
+        , 0711
 #endif
-                    ))
-            success = (errno == EEXIST);
+        ))
+        success = (errno == EEXIST);
 
     if (!OpenCascStorage())
     {
@@ -436,7 +420,7 @@ int main(int argc, char ** argv)
 
         delete dbc;
         ParsMapFiles();
-        delete [] map_ids;
+        delete[] map_ids;
     }
 
     CascCloseStorage(CascStorage);
@@ -449,6 +433,6 @@ int main(int argc, char ** argv)
     }
 
     printf("Extract %s. Work complete. No errors.\n", versionString);
-    delete [] LiqType;
+    delete[] LiqType;
     return 0;
 }

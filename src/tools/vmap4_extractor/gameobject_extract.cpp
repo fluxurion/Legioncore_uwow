@@ -86,13 +86,13 @@ void ExtractGameobjectModels()
     size_t maxFileId = fileData.getMaxId() + 1;
     uint32* fileDataIndex = new uint32[maxFileId];
     memset(fileDataIndex, 0, maxFileId * sizeof(uint32));
-    size_t files = fileData.getRecordCount();
-    for (uint32 i = 0; i < files; ++i)
+
+    for (size_t i = 0; i < fileData.getRecordCount(); ++i)
         fileDataIndex[fileData.getRecord(i).getUInt(0)] = i;
 
     for (DBCFile::Iterator it = dbc.begin(); it != dbc.end(); ++it)
     {
-        uint32 fileId = it->getUInt(1);
+        uint32 fileId = it->getUInt(0);
         if (!fileId)
             continue;
 

@@ -77,6 +77,9 @@ bool WMORoot::open()
             f.read(bbcorn1, 12);
             f.read(bbcorn2, 12);
             f.read(&liquidType, 4);
+            f.read(&flagHasSomeOutdoorGroup, 4);
+            f.read(&FlagLod, 4);
+            f.read(&Unk, 4);
             break;
         }
         /*
@@ -188,7 +191,8 @@ bool WMOGroup::open()
             f.read(&fogIdx, 4);
             f.read(&liquidType, 4);
             f.read(&groupWMOID,4);
-
+            f.read(&CanCutTerrain, 4);
+            f.read(&Unused, 4);
         }
         else if (!strcmp(fourcc,"MOPY"))
         {
@@ -539,8 +543,9 @@ WMOInstance::WMOInstance(MPQFile& f, char const* WmoInstName, uint32 mapID, uint
 
     float scale = 1.0f;
     uint32 flags = MOD_HAS_BOUND;
-    if(tileX == 65 && tileY == 65) flags |= MOD_WORLDSPAWN;
-    //write mapID, tileX, tileY, Flags, ID, Pos, Rot, Scale, Bound_lo, Bound_hi, name
+    if (tileX == 65 && tileY == 65)
+        flags |= MOD_WORLDSPAWN;
+
     fwrite(&mapID, sizeof(uint32), 1, pDirfile);
     fwrite(&tileX, sizeof(uint32), 1, pDirfile);
     fwrite(&tileY, sizeof(uint32), 1, pDirfile);
@@ -552,19 +557,16 @@ WMOInstance::WMOInstance(MPQFile& f, char const* WmoInstName, uint32 mapID, uint
     fwrite(&scale, sizeof(float), 1, pDirfile);
     fwrite(&pos2, sizeof(float), 3, pDirfile);
     fwrite(&pos3, sizeof(float), 3, pDirfile);
-    uint32 nlen=strlen(WmoInstName);
+    uint32 nlen = strlen(WmoInstName);
     fwrite(&nlen, sizeof(uint32), 1, pDirfile);
     fwrite(WmoInstName, sizeof(char), nlen, pDirfile);
 
-    /* fprintf(pDirfile,"%s/%s %f,%f,%f_%f,%f,%f 1.0 %d %d %d,%d %d\n",
+     fprintf(pDirfile,"MapName %s WmoInstName %s pos.x %f, pos.y %f, pos.z%f, rot.x %f, rot.y %f, rot.z %f nVertices %d\n",
         MapName,
         WmoInstName,
         (float) x, (float) pos.y, (float) z,
         (float) rot.x, (float) rot.y, (float) rot.z,
-        nVertices,
-        realx1, realy1,
-        realx2, realy2
-        ); */
+        nVertices); 
 
     // fclose(dirfile);
 }

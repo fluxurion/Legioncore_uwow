@@ -95,7 +95,7 @@ bool DBCFile::open()
         fread(&header.Max, sizeof(uint32), 1, f);
         fread(&header.Locale, sizeof(uint32), 1, f);
         fread(&header.ReferenceDataSize, sizeof(uint32), 1, f);
-        fread(&header.MetaFlags, sizeof(uint32), 1, f);
+        //fread(&header.MetaFlags, sizeof(uint32), 1, f);
     }
 
     recordTable = new unsigned char[header.RecordSize * header.RecordCount + header.BlockValue];
