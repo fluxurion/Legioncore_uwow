@@ -36,7 +36,7 @@ enum eCreatures
     NPC_SWIRLING_POOL_TRIG      = 102306, //Плюеется из отверстий водой
     
     NPC_YMIRON                  = 96756,
-    //Imiron trash
+    //Ymiron trash
     NPC_BIRD                    = 97163,
     NPC_SHIELDMAIDEN            = 102104,
     NPC_RUNECARVER              = 102375,

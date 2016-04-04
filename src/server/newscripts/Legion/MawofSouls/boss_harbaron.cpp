@@ -8,11 +8,15 @@
 #include "ScriptedCreature.h"
 #include "maw_of_souls.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_INTRO           = 0,
+    SAY_AGGRO           = 1,
+    SAY_SUMMON          = 2,
+    SAY_FRAGMENT        = 3,
+    SAY_EMOTE_FRAGMENT  = 4,
+    SAY_DEATH           = 5,
+}; 
 
 enum Spells
 {
@@ -63,7 +67,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //21:57
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
             //events.ScheduleEvent(EVENT_COSMIC_SCYTHE, 4000);         //22:01, 22:09, 22:24, 22:32
             //events.ScheduleEvent(EVENT_SUM_SHACKLED_SERVITOR, 7000); //22:04, 22:27, 22:56, 23:27
@@ -77,7 +81,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
 
@@ -130,15 +134,16 @@ public:
                         break;
                     case EVENT_SUM_SHACKLED_SERVITOR:
                     {
-                        //Talk();
+                        Talk(SAY_SUMMON);
                         Position pos;
                         me->GetNearPosition(pos, 20.0f, float(urand(0, 5)));
-                        me->CastSpell(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), EVENT_SUM_SHACKLED_SERVITOR);
+                        me->CastSpell(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), SPELL_SUM_SHACKLED_SERVITOR);
                         events.ScheduleEvent(EVENT_SUM_SHACKLED_SERVITOR, 23000);
                         break;
                     }
                     case EVENT_FRAGMENT:
-                        //Talk();
+                        Talk(SAY_FRAGMENT);
+                        Talk(SAY_EMOTE_FRAGMENT);
                         if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true))
                             DoCast(pTarget, SPELL_FRAGMENT);
                         events.ScheduleEvent(EVENT_FRAGMENT, 18000);
@@ -147,6 +152,22 @@ public:
             }
             DoMeleeAttackIfReady();
         }
+        
+         void MoveInLineOfSight(Unit* who)
+         {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!_introDone && me->IsWithinDistInMap(who, 45.0f))
+             {
+                _introDone = true;
+                Talk(SAY_INTRO);
+             }
+         }
+         
+         private:
+            bool _introDone;
     };
 
     CreatureAI* GetAI(Creature* creature) const
