@@ -206,18 +206,26 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
         if (_sourceUnit->GetTypeId() == TYPEID_UNIT)
         {
             Creature* owner = (Creature*)_sourceUnit;
-            if (_sourceUnit->GetBaseMap()->IsUnderWater((distToStartPoly > 7.0f) ? startPos : endPos))
-            {
-                sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: underWater case\n");
-                if (owner->CanSwim())
-                    buildShotrcut = true;
-            }
-            else
-            {
-                sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: flying case\n");
-                if (owner->CanFly())
-                    buildShotrcut = true;
-            }
+
+            sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: flying or underWater case\n");
+            if (owner->CanFly() || owner->CanSwim())
+                buildShotrcut = true;
+
+            //Crahed underwater check
+            // Position pos;
+            // pos.VectorToPosition((distToStartPoly > 7.0f) ? startPos : endPos);
+            // if (_sourceUnit->GetBaseMap()->IsUnderWater(&pos))
+            // {
+                // sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: underWater case\n");
+                // if (owner->CanSwim())
+                    // buildShotrcut = true;
+            // }
+            // else
+            // {
+                // sLog->outDebug(LOG_FILTER_MAPS, "++ BuildPolyPath :: flying case\n");
+                // if (owner->CanFly())
+                    // buildShotrcut = true;
+            // }
         }
 
         if (buildShotrcut)
