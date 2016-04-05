@@ -62,7 +62,7 @@ void WorldSession::SendUpdateTrade(bool traderData /*= true*/)
 
     WorldPackets::Trade::TradeUpdated packet;
     packet.WhichPlayer = traderData;
-    packet.ClientStateIndex = ViewTrade->GetClientStateIndex();
+    packet.ClientStateIndex = ViewTrade->GetServerStateIndex();
     packet.CurrentStateIndex = ViewTrade->GetServerStateIndex();
     packet.Gold = ViewTrade->GetMoney();
     packet.ProposedEnchantment = ViewTrade->GetSpell();
@@ -73,13 +73,12 @@ void WorldSession::SendUpdateTrade(bool traderData /*= true*/)
         {
             WorldPackets::Trade::TradeUpdated::TradeItem tradeItem;
             tradeItem.Slot = i;
-            tradeItem.EntryID = item->GetEntry();
+            tradeItem.Item.Initialize(item);
             tradeItem.StackCount = item->GetCount();
             tradeItem.GiftCreator = item->GetGuidValue(ITEM_FIELD_GIFT_CREATOR);
             if (!item->HasFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_FLAG_WRAPPED))
             {
                 tradeItem.Unwrapped = boost::in_place();
-                tradeItem.Unwrapped->Item.Initialize(item);
                 tradeItem.Unwrapped->EnchantID = item->GetEnchantmentId(PERM_ENCHANTMENT_SLOT);
                 tradeItem.Unwrapped->OnUseEnchantmentID = item->GetEnchantmentId(USE_ENCHANTMENT_SLOT);
                 tradeItem.Unwrapped->Creator = item->GetGuidValue(ITEM_FIELD_CREATOR);
@@ -87,9 +86,6 @@ void WorldSession::SendUpdateTrade(bool traderData /*= true*/)
                 tradeItem.Unwrapped->Lock = item->GetTemplate()->LockID != 0;
                 tradeItem.Unwrapped->MaxDurability = item->GetUInt32Value(ITEM_FIELD_MAX_DURABILITY);
                 tradeItem.Unwrapped->Durability = item->GetUInt32Value(ITEM_FIELD_DURABILITY);
-
-                for (uint32 s = SOCK_ENCHANTMENT_SLOT; s < MAX_GEM_SOCKETS; ++s)
-                    tradeItem.Unwrapped->SocketEnchant[s] = item->GetEnchantmentId(EnchantmentSlot(s + SOCK_ENCHANTMENT_SLOT));
             }
 
             packet.Items.push_back(tradeItem);
@@ -231,7 +227,7 @@ static void clearAcceptTradeMode(Item* *myItems, Item* *hisItems)
     }
 }
 
-void WorldSession::HandleAcceptTrade(WorldPackets::Trade::AcceptTrade& packet)
+void WorldSession::HandleAcceptTrade(WorldPackets::Trade::AcceptTrade& /*packet*/)
 {
     Player* player = GetPlayer();
     if (!player)
@@ -254,14 +250,6 @@ void WorldSession::HandleAcceptTrade(WorldPackets::Trade::AcceptTrade& packet)
     myTrade->SetAccepted(true);
 
     WorldPackets::Trade::TradeStatus info;
-    if (hisTrade->GetServerStateIndex() != packet.StateIndex)
-    {
-        info.Status = TRADE_STATUS_STATE_CHANGED;
-        SendTradeStatus(info);
-        myTrade->SetAccepted(false);
-        return;
-    }
-
     if (!player->IsWithinDistInMap(trader, TRADE_DISTANCE, false))
     {
         info.Status = TRADE_STATUS_TOO_FAR_AWAY;

@@ -29,10 +29,8 @@ namespace WorldPackets
         {
         public:
             AcceptTrade(WorldPacket&& packet) : ClientPacket(CMSG_ACCEPT_TRADE, std::move(packet)) { }
-
-            void Read() override;
-
-            uint32 StateIndex = 0;
+            
+            void Read() override { }
         };
 
         class ClearTradeItem final : public ClientPacket
@@ -126,7 +124,13 @@ namespace WorldPackets
         public:
             struct UnwrappedTradeItem
             {
-                WorldPackets::Item::ItemInstance Item;
+                struct UnkData
+                {
+                    WorldPackets::Item::ItemInstance Item;
+                    uint8 UnkByte = 0;
+                };
+
+                std::vector<UnkData> UnkDatas;
                 int32 EnchantID = 0;
                 int32 OnUseEnchantmentID = 0;
                 ObjectGuid Creator;
@@ -134,16 +138,15 @@ namespace WorldPackets
                 bool Lock = false;
                 uint32 MaxDurability = 0;
                 uint32 Durability = 0;
-                int32 SocketEnchant[MAX_GEM_SOCKETS] = { };
             };
 
             struct TradeItem
             {
                 uint8 Slot = 0;
-                int32 EntryID = 0;
                 int32 StackCount = 0;
                 ObjectGuid GiftCreator;
                 Optional<UnwrappedTradeItem> Unwrapped;
+                WorldPackets::Item::ItemInstance Item;
             };
 
             TradeUpdated() : ServerPacket(SMSG_TRADE_UPDATED, 8 + 4 + 1 + 4 + 7 * sizeof(UnwrappedTradeItem) + 4 + 4 + 4 + 4) { }
