@@ -27,6 +27,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     if (!m_reconnecting)
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
 
+    // AreaAssignment.db2
+    PrepareStatement(HOTFIX_SEL_AREA_ASSIGNMENT, "SELECT ID, MapID, AreaID, cellX, cellY FROM area_assignment ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // AreaTable.db2
     PrepareStatement(HOTFIX_SEL_AREA_TABLE, "SELECT ID, Flags1, Flags2, ZoneName, AmbientMultiplier, AreaName, MapID, ParentAreaID, AreaBit, "
         "AmbienceID, ZoneMusic, IntroSound, LiquidTypeID1, LiquidTypeID2, LiquidTypeID3, LiquidTypeID4, UWIntroMusic, UWZoneMusic, UWAmbience, "

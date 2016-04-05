@@ -25,6 +25,7 @@
 #include <boost/regex.hpp>
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
+extern DB2Storage<AreaAssignmentEntry>              sAreaAssignmentStore;
 extern DB2Storage<AreaTableEntry>                   sAreaTableStore;
 extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
@@ -367,6 +368,10 @@ public:
     typedef std::pair<ShipmentConteinerMap::const_iterator, ShipmentConteinerMap::const_iterator> ShipmentConteinerMapBounds;
 
     typedef std::multimap<uint32 /*BuildingTypeID*/, GarrBuildingEntry const*> GarrBuildingTypeMap;
+
+    typedef AreaAssignmentEntry const* AreaAssignmentByCellContainer[64][64];
+    typedef std::unordered_map<uint32 /*MapID*/, AreaAssignmentByCellContainer> AreaAssignmentMapContainer;
+
     static DB2Manager& Instance()
     {
         static DB2Manager instance;
@@ -520,6 +525,7 @@ private:
     WMOAreaInfoByTrippleContainer _WMOAreaInfoByTripple;
     SpellEffectScallingByEffectIDContainer _spellEffectScaling;
     TalentUnlockContainer _talentUnlock;
+    AreaAssignmentMapContainer _areaAssignmentMap;
 };
 
 #define sDB2Manager DB2Manager::Instance()

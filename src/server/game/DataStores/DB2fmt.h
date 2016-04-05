@@ -22,6 +22,7 @@
 #define TRINITY_DB2SFRM_H
 
 char const AchievementFormat[] = "nssistttttttbbb";
+char const AreaAssignmentFormat[] = "nttbb";
 char const AreaGroupMemberFormat[] = "ntt";
 char const AreaTableFormat[] = "niisfstttttttttttttbbbbbbbbb";
 char const AreaTriggerFormat[] = "nfffffffftttttbbb";

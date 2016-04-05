@@ -19,6 +19,7 @@
 #include "DB2fmt.h"
 
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
+DB2Storage<AreaAssignmentEntry>             sAreaAssignmentStore("AreaAssignment.db2", AreaAssignmentFormat, HOTFIX_SEL_AREA_ASSIGNMENT);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<AreaTableEntry>                  sAreaTableStore("AreaTable.db2", AreaTableFormat, HOTFIX_SEL_AREA_TABLE);
 DB2Storage<AreaTriggerEntry>                sAreaTriggerStore("AreaTrigger.db2", AreaTriggerFormat, HOTFIX_SEL_AREA_TRIGGER);
@@ -305,6 +306,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     LOAD_DB2(sAchievementStore);
+    LOAD_DB2(sAreaAssignmentStore);
     LOAD_DB2(sAreaGroupMemberStore);
     LOAD_DB2(sAreaTableStore);
     LOAD_DB2(sAreaTriggerStore);
@@ -546,6 +548,9 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 void DB2Manager::InitDB2CustomStores()
 {
+    for (AreaAssignmentEntry const* assignment : sAreaAssignmentStore)
+        _areaAssignmentMap[assignment->MapID][assignment->cellX][assignment->cellY] = assignment;
+
     for (AreaTableEntry const* area : sAreaTableStore)
         _areaEntry.insert(AreaEntryContainer::value_type(area->ID, area));
 
