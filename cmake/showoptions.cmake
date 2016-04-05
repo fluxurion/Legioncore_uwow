@@ -86,5 +86,12 @@ else()
   set(_WITH_SOURCE_TREE "" CACHE INTERNAL "WITH_SOURCE_TREE support disabled.")
 endif()
 
+if( WIN32 )
+  if( USE_MYSQL_SOURCES )
+    message("* Use MySQL sourcetree   : Yes (default)")
+  else()
+    message("* Use MySQL sourcetree   : No")
+  endif()
+endif( WIN32 )
 
 message("")
