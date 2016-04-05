@@ -159,7 +159,7 @@ private:
         PetBattleEffectTarget implicitTarget;
         void(PetBattleAbility::*function)();
     };
-    static std::unordered_map<PetBattleAbilityEffectName, EffectInfo> _effectsInfo;
+    //static std::unordered_map<PetBattleAbilityEffectName, EffectInfo> _effectsInfo;
 };
 
 #endif // PetBattleAbility_h__

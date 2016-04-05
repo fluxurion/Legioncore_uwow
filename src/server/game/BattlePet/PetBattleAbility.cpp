@@ -18,7 +18,7 @@
 
 #include "PetBattleAbility.h"
 
-std::unordered_map<PetBattleAbilityEffectName, PetBattleAbility::EffectInfo> PetBattleAbility::_effectsInfo
+/*std::unordered_map<PetBattleAbilityEffectName, PetBattleAbility::EffectInfo> PetBattleAbility::_effectsInfo
 {
     {EFFECT_DO_NOTHING,                         {PETBATTLE_EFFECT_TYPE_INVALID,         PetBattleEffectTarget::NONE,    &PetBattleAbility::EffectUnused}},
     {EFFECT_STANDARD_HEAL,                      {PETBATTLE_EFFECT_TYPE_SET_HEALTH,      PetBattleEffectTarget::CASTER,  &PetBattleAbility::EffectNULL}},
@@ -54,7 +54,7 @@ std::unordered_map<PetBattleAbilityEffectName, PetBattleAbility::EffectInfo> Pet
     //{EFFECT_DEAL_DAMAGE_IF_FIRST,               PetBattleEffectTarget::ENEMY}, 
     //{EFFECT_HEAL_WITH_STATE_CONDITION,          PetBattleEffectTarget::ENEMY}, 
     //{EFFECT_INSTA_KILL_CASTER,                  PetBattleEffectTarget::ENEMY}, 
-};
+};*/
 
 void PetBattleAbility::EffectNULL()
 { }
