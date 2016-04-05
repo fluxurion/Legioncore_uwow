@@ -648,6 +648,78 @@ public:
         return new go_q39050AI(go);
     }
 };
+
+//38765
+class npc_q38765 : public CreatureScript
+{
+public:
+    npc_q38765() : CreatureScript("npc_q38765") { }
+
+    enum Credit
+    {
+        QUEST = 38765,
+        SPELL = 196731,
+    };
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+    {
+        player->PlayerTalkClass->ClearMenus();
+        if (action == 1)
+        {
+            player->CLOSE_GOSSIP_MENU();
+            if (player->GetQuestStatus(QUEST) == QUEST_STATUS_INCOMPLETE && !player->GetReqKillOrCastCurrentCount(QUEST, creature->GetEntry()))
+            {
+                /*
+                ClientToServer: CMSG_CLOSE_INTERACTION (0x348A) Length: 15 ConnIdx: 2 Time: 02/22/2016 13:25:19.942 Number: 45189
+                Guid: Full: 0x202090B9206192C000109C00004AF10B; HighType: Creature; Low: 4911371; Map: 1481; Entry: 99915;
+                */
+                sCreatureTextMgr->SendChat(creature, TEXT_GENERIC_1, player->GetGUID());
+                player->CastSpell(creature, SPELL, false);
+                player->KilledMonsterCredit(creature->GetEntry());
+                creature->SendPlaySpellVisualKit(25111, 0);
+            }
+        }
+
+        return true;
+    }
+};
+
+//241757
+class go_q38765 : public GameObjectScript
+{
+public:
+    go_q38765() : GameObjectScript("go_q38765") { }
+
+    struct go_q38765AI : public GameObjectAI
+    {
+        go_q38765AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 38765,
+            SPELL = 190851,
+            CREDIT = 94407,
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, CREDIT))
+                return true;
+
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL, false);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q38765AI(go);
+    }
+};
+
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -663,4 +735,6 @@ void AddSC_Mardum()
     new npc_q40379();
     new go_q40379();
     new go_q39050();
+    new npc_q38765();
+    new go_q38765();
 }

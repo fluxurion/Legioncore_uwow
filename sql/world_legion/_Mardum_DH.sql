@@ -15,7 +15,7 @@ INSERT INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `PlaybackFlags`,
 (1468, 1077, 20, 0, 0, '', ''), -- 1468 - 1077
 (1470, 1079, 20, 0, 0, '', ''), -- 1470 - 1079
 (1512, 1142, 20, 0, 0, '', ''), -- 1512 - 1142
-(1469, 1078, 20, 0, 0, '', ''), -- 1469 - 1078
+(1469, 1078, 20, 0, 0, '', 'spell 190851'), -- 1469 - 1078
 (1479, 1094, 20, 0, 0, '', ''), -- 1479 - 1094
 (1423, 1016, 26, 0, 0, '', ''), -- 1423 - 1016
 (1480, 1095, 20, 0, 0, '', ''); -- 1480 - 1095
@@ -104,4 +104,7 @@ UPDATE `quest_template_addon` SET `SourceSpellID` = '201114' WHERE `quest_templa
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q39050' WHERE `gameobject_template`.`entry` = 243335;
 
 -- Q: 38765
+UPDATE `creature_template` SET `ScriptName` = 'npc_q38765' WHERE `entry` = 99915;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q38765' WHERE `gameobject_template`.`entry` = 241757;
+
 -- Q: 38766
