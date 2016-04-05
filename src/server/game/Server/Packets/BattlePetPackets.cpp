@@ -226,7 +226,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::Effect const& 
     data << effect.Flags;
     data << effect.SourceAuraInstanceID;
     data << effect.TurnInstanceID;
-    data << effect.PetBattleEffectType;
+    data << effect.EffectType;
     data << effect.CasterPBOID;
     data << effect.StackDepth;
     data << static_cast<uint32>(effect.EffectTargetData.size());

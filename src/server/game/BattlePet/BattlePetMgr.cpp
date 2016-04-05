@@ -1169,14 +1169,14 @@ bool PetBattleOLD::FirstRoundHandler(uint8 allyFrontPetID, uint8 enemyFrontPetID
     SetFrontPet(TEAM_ENEMY, enemyFrontPetID);
 
     PetBattleOLD::RoundResults::Effect effect;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = allyFrontPetID;
     effect.PacketInfo.EffectTargetData.emplace_back(target.PacketInfo);
     firstRound.PacketInfo.EffectData.emplace_back(effect.PacketInfo);
 
     PetBattleOLD::RoundResults::Effect effect1;
-    effect1.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
+    effect1.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     effect1.PacketInfo.CasterPBOID = 3;
     PetBattleOLD::RoundResults::Effect::Target target1;
     target1.PacketInfo.Petx = enemyFrontPetID;
@@ -1441,7 +1441,7 @@ bool PetBattleOLD::UseTrapHandler(uint32 roundID)
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = allyPet->GetPetID();
     effect.PacketInfo.AbilityEffectID = 698;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_STATUS_CHANGE;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_STATUS_CHANGE;
     effect.PacketInfo.TurnInstanceID = 1;
     effect.PacketInfo.StackDepth = 1;
     PetBattleOLD::RoundResults::Effect::Target target;
@@ -1934,7 +1934,7 @@ void PetBattleOLD::RoundResults::ProcessSetState(PetBattleInfo* caster, PetBattl
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = caster->GetPetID();
     effect.PacketInfo.AbilityEffectID = effectID;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_SET_STATE;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_SET_STATE;
     effect.PacketInfo.SourceAuraInstanceID = TurnInstanceID;
     effect.PacketInfo.StackDepth = 1;
     PetBattleOLD::RoundResults::Effect::Target t;
@@ -1951,7 +1951,7 @@ void PetBattleOLD::RoundResults::ProcessPetSwap(uint8 oldPetNumber, uint8 newPet
     // simple combination of effect 4 and target type 3
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = oldPetNumber;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = newPetNumber;
     target.PacketInfo.Type = EFFECT_TARGET_3;
@@ -1964,7 +1964,7 @@ void PetBattleOLD::RoundResults::ProcessSkipTurn(uint8 petNumber)
     // simple combination of effect 4 and target type 3
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = petNumber;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_PET_SWAP;
     effect.PacketInfo.Flags = PETBATTLE_EFFECT_FLAG_INVALID_TARGET; //@TODO check flag...
     PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = petNumber;
@@ -1977,7 +1977,7 @@ void PetBattleOLD::RoundResults::AuraProcessingBegin()
 {
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = -1;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_BEGIN;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_BEGIN;
     PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = -1;
     target.PacketInfo.Type = EFFECT_TARGET_3;
@@ -1989,7 +1989,7 @@ void PetBattleOLD::RoundResults::AuraProcessingEnd()
 {
     PetBattleOLD::RoundResults::Effect effect;
     effect.PacketInfo.CasterPBOID = -1;
-    effect.PacketInfo.PetBattleEffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_END;
+    effect.PacketInfo.EffectType = PETBATTLE_EFFECT_TYPE_AURA_PROCESSING_END;
     PetBattleOLD::RoundResults::Effect::Target target;
     target.PacketInfo.Petx = -1;
     target.PacketInfo.Type = EFFECT_TARGET_3;

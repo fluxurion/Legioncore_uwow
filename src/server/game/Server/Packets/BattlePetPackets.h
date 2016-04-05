@@ -230,7 +230,7 @@ namespace WorldPackets
             uint16 Flags = 0;
             uint16 SourceAuraInstanceID = 0;
             uint16 TurnInstanceID = 0;
-            uint8 PetBattleEffectType = 0;
+            uint8 EffectType = 0;
             uint8 CasterPBOID = 0;
             uint8 StackDepth = 0;
             std::list<EffectTarget> EffectTargetData;
