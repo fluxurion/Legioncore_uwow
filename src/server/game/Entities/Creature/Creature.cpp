@@ -419,7 +419,7 @@ bool Creature::UpdateEntry(uint32 entry, uint32 team, const CreatureData* data)
         SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_MAX, cInfo->ScaleLevelMax);
     if (cInfo->ScaleLevelDelta)
         SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_DELTA, cInfo->ScaleLevelDelta);
-    if (cInfo->ScaleLevelDuration)
+    if (cInfo->ScaleLevelDuration && cInfo->ScaleLevelDuration < 123)
         SetUInt32Value(UNIT_FIELD_SCALE_DURATION, cInfo->ScaleLevelDuration);
     if (cInfo->ControllerID)
         SetUInt32Value(UNIT_FIELD_LOOK_AT_CONTROLLER_ID, cInfo->ControllerID);
