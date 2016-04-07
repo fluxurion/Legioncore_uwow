@@ -453,6 +453,7 @@ public:
     SpellEffectScalingEntry const* GetSpellEffectScaling(uint32 effectID);
     uint32 GetDefaultMapLight(uint32 mapID);
     PvpTalentUnlockEntry const* GetTalentUnlockForHonorLevel(uint8 honorLevel);
+    AreaAssignmentEntry const* GetAreaAssignment(uint16 MapID, uint8 gridX, uint8 gridY);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;

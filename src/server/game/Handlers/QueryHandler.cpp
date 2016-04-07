@@ -114,7 +114,8 @@ void WorldSession::HandleCreatureQuery(WorldPackets::Query::QueryCreature& packe
         stats.CreatureMovementInfoID = creatureInfo->MovementInfoID;
         stats.RequiredExpansion = creatureInfo->RequiredExpansion;
         for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
-            stats.QuestItems.push_back(creatureInfo->QuestItem[i]);
+            if (creatureInfo->QuestItem[i])
+                stats.QuestItems.push_back(creatureInfo->QuestItem[i]);
         for (uint8 i = 0; i < MAX_TYPE_FLAGS; ++i)
             stats.Flags[i] = creatureInfo->TypeFlags[i];
         for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)

@@ -460,11 +460,11 @@ void ObjectMgr::LoadWDBCreatureTemplates()
     uint32 oldMSTime = getMSTime();
 
     QueryResult result = WorldDatabase.Query(
-    //      0      1      2       3     4       5         6        7         8         9      10        11          12    13         14          15
+    //        0      1      2      3      4       5         6        7         8         9      10        11         12      13         14          15
     "SELECT Entry, Name1, Name2, Name3, Name4, NameAlt1, NameAlt2, NameAlt3, NameAlt4, Title, TitleAlt, CursorName, Type, TypeFlags, TypeFlags2, RequiredExpansion, "
-    //16     17              18              19       20          21      22           23           24      25          26          28          29
+    //16           17              18          19        20         21        22           23         24        25          26          27          28
     "Family, Classification, MovementInfoID, HpMulti, PowerMulti, Leader, KillCredit1, KillCredit2, UnkInt, DisplayId1, DisplayId2, DisplayId3, DisplayId4, "
-    //30        31          32          33          34          35          36          37
+    //29           30           31          32          33          34          35          36
     "FlagQuest, QuestItem1, QuestItem2, QuestItem3, QuestItem4, QuestItem5, QuestItem6, VerifiedBuild FROM creature_template_wdb;");
 
     if (!result)
@@ -635,8 +635,8 @@ void ObjectMgr::LoadCreatureTemplates()
     "resistance4, resistance5, resistance6, spell1, spell2, spell3, spell4, spell5, spell6, spell7, spell8, PetSpellDataId, VehicleId, mingold, maxgold, "
     //51     52             53          54           55              56         57           58                    59           60          61
     "AIName, MovementType, InhabitType, HoverHeight, Mana_mod_extra, Armor_mod, RegenHealth, mechanic_immune_mask, flags_extra, ScriptName, personalloot, "
-    //62         63             64    65             66
-    "VignetteId, WorldEffectID, AiID, MovementIDKit, MeleeID FROM creature_template;");
+    //62         63             64    65             66         67              68              69              70                    71
+    "VignetteId, WorldEffectID, AiID, MovementIDKit, MeleeID, ScaleLevelMin, ScaleLevelMax, ScaleLevelDelta, ScaleLevelDuration, ControllerID FROM creature_template;");
 
     uint32 count = 0;
     do
@@ -709,6 +709,11 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.AiID               = fields[index++].GetUInt32();
         creatureTemplate.MovementIDKit      = fields[index++].GetUInt32();
         creatureTemplate.MeleeID            = fields[index++].GetUInt32();
+        creatureTemplate.ScaleLevelMin      = fields[index++].GetUInt8();
+        creatureTemplate.ScaleLevelMax      = fields[index++].GetUInt8();
+        creatureTemplate.ScaleLevelDelta    = fields[index++].GetUInt8();
+        creatureTemplate.ScaleLevelDuration = fields[index++].GetUInt8();
+        creatureTemplate.ControllerID       = fields[index++].GetInt32();
 
         if(creatureTemplate.TypeFlags[0] & CREATURE_TYPEFLAGS_BOSS)
         {
@@ -2104,7 +2109,10 @@ ObjectGuid::LowType ObjectMgr::AddCreData(uint32 entry, uint32 /*team*/, uint32 
     if (!cInfo)
         return UI64LIT(0);
 
-    uint32 level = cInfo->minlevel == cInfo->maxlevel ? cInfo->minlevel : urand(cInfo->minlevel, cInfo->maxlevel); // Only used for extracting creature base stats
+    uint32 level = cInfo->minlevel == cInfo->maxlevel ? cInfo->minlevel : urand(cInfo->minlevel, cInfo->maxlevel);
+    if (cInfo->ScaleLevelDuration)
+        level = cInfo->ScaleLevelDuration;
+
     CreatureBaseStats const* stats = GetCreatureBaseStats(level, cInfo->unit_class);
 
     ObjectGuid::LowType guid = GetGenerator<HighGuid::Creature>()->Generate();
@@ -8637,9 +8645,10 @@ void ObjectMgr::LoadCreatureClassLevelStats()
         GameTable<GameTableEntry>* hpTables[] = { &sGtNpcTotalHpStore, &sGtNpcTotalHpExp1Store, &sGtNpcTotalHpExp2Store, &sGtNpcTotalHpExp3Store, &sGtNpcTotalHpExp4Store, &sGtNpcTotalHpExp5Store, &sGtNpcTotalHpExp6Store, nullptr };
         GameTable<GameTableEntry>* dmgTables[] = { &sGtNpcDamageByClassStore, &sGtNpcDamageByClassStoreExp1, &sGtNpcDamageByClassStoreExp2, &sGtNpcDamageByClassStoreExp3, &sGtNpcDamageByClassStoreExp4, &sGtNpcDamageByClassStoreExp5, &sGtNpcDamageByClassStoreExp6, nullptr };
         GameTableEntry const* armor = sGtArmorMitigationByLvlStore.EvaluateTable(Level - 1);
+        GameTableEntry const* mp = sGtOCTBaseMPByClassStore.EvaluateTable(Level - 1, Class - 1);
 
         CreatureBaseStats stats;
-        stats.BaseMana = fields[2].GetUInt32();
+        stats.BaseMana = mp ? mp->Value : fields[2].GetUInt32();
         stats.BaseArmor = armor ? uint32(armor->Value) : 1; //@TODO:Legion - recheck
         stats.AttackPower = fields[3].GetUInt16();
         stats.RangedAttackPower = fields[4].GetUInt16();

@@ -55,8 +55,8 @@ struct AreaAssignmentEntry
     uint32      ID;                                         // 0
     uint16      MapID;                                      // 1
     uint16      AreaID;                                     // 2
-    uint8       cellX;                                      // 3
-    uint8       cellY;                                      // 4
+    uint8       gridX;                                      // 3
+    uint8       gridY;                                      // 4
 };
 
 struct AreaTableEntry

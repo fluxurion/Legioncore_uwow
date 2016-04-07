@@ -384,6 +384,9 @@ public:
 
         handler->PSendSysMessage("Diffyculty %i spawnmask %i", map->GetDifficultyID(), map->GetSpawnMode());
 
+        if (AreaAssignmentEntry const* areaAss = sDB2Manager.GetAreaAssignment(object->GetMapId(), cell.GridX(), cell.GridY()))
+            handler->PSendSysMessage("AreaAssignment ID %i MapID %i AreaID %i gridX %i gridY %i", areaAss->ID, areaAss->MapID, areaAss->AreaID, areaAss->gridX, areaAss->gridY);
+
         //if (object->m_movementInfo.transport.Guid)
 //            handler->PSendSysMessage("Transport position: %s", object->m_movementInfo.transport.Pos.ToString());
 

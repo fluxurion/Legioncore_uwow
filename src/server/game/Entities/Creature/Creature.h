@@ -170,6 +170,11 @@ struct CreatureTemplate
     uint32 WorldEffectID = 0;
     uint8 maxlevel = 1;
     uint8 minlevel = 1;
+    uint8 ScaleLevelMin = 0;
+    uint8 ScaleLevelMax = 0;
+    uint8 ScaleLevelDelta = 0;
+    uint8 ScaleLevelDuration = 0;
+    int8 ControllerID = 0;
     float dmg_multiplier = 1.0f;
     float HoverHeight = 1.0f;
     float maxdmg = 1.0f;
@@ -298,8 +303,6 @@ struct CreatureBaseStats
     {
         return uint32((BaseArmor * info->ModArmor) + 0.5f);
     }
-
-    static CreatureBaseStats const* GetBaseStats(uint8 level, uint8 unitClass);
 };
 
 typedef std::unordered_map<uint16, CreatureBaseStats> CreatureBaseStatsContainer;

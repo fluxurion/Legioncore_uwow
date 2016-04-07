@@ -130,11 +130,6 @@ bool AssistDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
     return true;
 }
 
-CreatureBaseStats const* CreatureBaseStats::GetBaseStats(uint8 level, uint8 unitClass)
-{
-    return sObjectMgr->GetCreatureBaseStats(level, unitClass);
-}
-
 bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 {
     m_owner.m_despan = false;
@@ -418,6 +413,17 @@ bool Creature::UpdateEntry(uint32 entry, uint32 team, const CreatureData* data)
 
     SetUInt32Value(OBJECT_FIELD_DYNAMIC_FLAGS, dynamicflags);
 
+    if (cInfo->ScaleLevelMin)
+        SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_MIN, cInfo->ScaleLevelMin);
+    if (cInfo->ScaleLevelMax)
+        SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_MAX, cInfo->ScaleLevelMax);
+    if (cInfo->ScaleLevelDelta)
+        SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_DELTA, cInfo->ScaleLevelDelta);
+    if (cInfo->ScaleLevelDuration)
+        SetUInt32Value(UNIT_FIELD_SCALE_DURATION, cInfo->ScaleLevelDuration);
+    if (cInfo->ControllerID)
+        SetUInt32Value(UNIT_FIELD_LOOK_AT_CONTROLLER_ID, cInfo->ControllerID);
+
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
@@ -489,11 +495,11 @@ void Creature::UpdateStat()
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = 0;
+    uint8 level = cInfo->ScaleLevelDuration;
     if(m_difficulty == 1 || m_difficulty == 2)
-        level = cInfo->maxlevel;
-    else
-        level = cInfo->minlevel;
+        level = cInfo->ScaleLevelMin ? cInfo->ScaleLevelMax : cInfo->maxlevel;
+    else if (!level)
+        level = cInfo->ScaleLevelMin ? cInfo->ScaleLevelMin : cInfo->minlevel;
 
     SetLevel(level);
 
@@ -1285,11 +1291,11 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = 0;
+    uint8 level = cinfo->ScaleLevelDuration;
     if(m_difficulty == 1 || m_difficulty == 2)
-        level = cinfo->maxlevel;
-    else
-        level = cinfo->minlevel;
+        level = cinfo->ScaleLevelMin ? cinfo->ScaleLevelMax : cinfo->maxlevel;
+    else if (!level)
+        level = cinfo->ScaleLevelMin ? cinfo->ScaleLevelMin : cinfo->minlevel;
 
     if (BattlegroundMap* map = GetMap()->ToBgMap())
     {
