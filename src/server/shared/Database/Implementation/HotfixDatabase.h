@@ -28,7 +28,6 @@ enum HotfixDatabaseStatements
         When updating more than one field, consider looking at the calling function
         name for a suiting suffix.
     */
-    HOTFIX_SEL_AREA_ASSIGNMENT,
 
     HOTFIX_SEL_AREA_TABLE,
     HOTFIX_SEL_AREA_TABLE_LOCALE,

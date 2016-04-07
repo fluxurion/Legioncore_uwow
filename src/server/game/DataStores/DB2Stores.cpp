@@ -19,7 +19,6 @@
 #include "DB2fmt.h"
 
 DB2Storage<AchievementEntry>                sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
-DB2Storage<AreaAssignmentEntry>             sAreaAssignmentStore("AreaAssignment.db2", AreaAssignmentFormat, HOTFIX_SEL_AREA_ASSIGNMENT);
 DB2Storage<AreaGroupMemberEntry>            sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<AreaTableEntry>                  sAreaTableStore("AreaTable.db2", AreaTableFormat, HOTFIX_SEL_AREA_TABLE);
 DB2Storage<AreaTriggerEntry>                sAreaTriggerStore("AreaTrigger.db2", AreaTriggerFormat, HOTFIX_SEL_AREA_TRIGGER);
@@ -306,7 +305,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale)
 
     LOAD_DB2(sAchievementStore);
-    //LOAD_DB2(sAreaAssignmentStore);
     LOAD_DB2(sAreaGroupMemberStore);
     LOAD_DB2(sAreaTableStore);
     LOAD_DB2(sAreaTriggerStore);
@@ -548,14 +546,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 void DB2Manager::InitDB2CustomStores()
 {
-    for (MapEntry const* map : sMapStore)
-        for (unsigned int x=0; x < MAX_NUMBER_OF_GRIDS; ++x)
-            for (unsigned int y=0; y < MAX_NUMBER_OF_GRIDS; ++y)
-                _areaAssignmentMap[map->ID][x][y] = nullptr;
-
-    for (AreaAssignmentEntry const* assignment : sAreaAssignmentStore)
-        _areaAssignmentMap[assignment->MapID][assignment->gridX][assignment->gridY] = assignment;
-
     for (AreaTableEntry const* area : sAreaTableStore)
         _areaEntry.insert(AreaEntryContainer::value_type(area->ID, area));
 
@@ -1832,13 +1822,4 @@ PvpTalentUnlockEntry const* DB2Manager::GetTalentUnlockForHonorLevel(uint8 honor
 DB2Manager::ShipmentConteinerMapBounds DB2Manager::GetShipmentConteinerBounds(uint32 conteinerID) const
 {
     return ShipmentConteinerMapBounds(_charShipmentConteiner.lower_bound(conteinerID), _charShipmentConteiner.upper_bound(conteinerID));
-}
-
-AreaAssignmentEntry const* DB2Manager::GetAreaAssignment(uint16 MapID, uint8 gridX, uint8 gridY)
-{
-    auto data = _areaAssignmentMap.find(MapID);
-    if (data != _areaAssignmentMap.end())
-        return data->second[gridX][gridY];
-
-    return nullptr;
 }

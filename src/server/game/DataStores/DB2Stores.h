@@ -25,7 +25,6 @@
 #include <boost/regex.hpp>
 
 extern DB2Storage<AchievementEntry>                 sAchievementStore;
-extern DB2Storage<AreaAssignmentEntry>              sAreaAssignmentStore;
 extern DB2Storage<AreaTableEntry>                   sAreaTableStore;
 extern DB2Storage<AreaTriggerEntry>                 sAreaTriggerStore;
 extern DB2Storage<ArmorLocationEntry>               sArmorLocationStore;
@@ -369,9 +368,6 @@ public:
 
     typedef std::multimap<uint32 /*BuildingTypeID*/, GarrBuildingEntry const*> GarrBuildingTypeMap;
 
-    typedef AreaAssignmentEntry const* AreaAssignmentByCellContainer[64][64];
-    typedef std::unordered_map<uint32 /*MapID*/, AreaAssignmentByCellContainer> AreaAssignmentMapContainer;
-
     static DB2Manager& Instance()
     {
         static DB2Manager instance;
@@ -453,7 +449,6 @@ public:
     SpellEffectScalingEntry const* GetSpellEffectScaling(uint32 effectID);
     uint32 GetDefaultMapLight(uint32 mapID);
     PvpTalentUnlockEntry const* GetTalentUnlockForHonorLevel(uint8 honorLevel);
-    AreaAssignmentEntry const* GetAreaAssignment(uint16 MapID, uint8 gridX, uint8 gridY);
 
     MapChallengeModeEntryContainer _mapChallengeModeEntrybyMap; // @TODO: move this to private and make special getters
     BattlePetBreedStatesContainer _battlePetBreedStates;
@@ -526,7 +521,6 @@ private:
     WMOAreaInfoByTrippleContainer _WMOAreaInfoByTripple;
     SpellEffectScallingByEffectIDContainer _spellEffectScaling;
     TalentUnlockContainer _talentUnlock;
-    AreaAssignmentMapContainer _areaAssignmentMap;
 };
 
 #define sDB2Manager DB2Manager::Instance()
