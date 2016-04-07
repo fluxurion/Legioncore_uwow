@@ -715,6 +715,19 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.ScaleLevelDuration = fields[index++].GetUInt8();
         creatureTemplate.ControllerID       = fields[index++].GetInt32();
 
+        if (creatureTemplate.ScaleLevelMin > 123)
+            creatureTemplate.ScaleLevelMin = 123;
+        if (creatureTemplate.ScaleLevelMax > 123)
+            creatureTemplate.ScaleLevelMax = 123;
+        if (creatureTemplate.minlevel > 123)
+            creatureTemplate.minlevel = 123;
+        if (creatureTemplate.maxlevel > 123)
+            creatureTemplate.maxlevel = 123;
+        if (creatureTemplate.ScaleLevelDelta > 2)
+            creatureTemplate.ScaleLevelDelta = 2;
+        if (creatureTemplate.ScaleLevelDuration > 5000)
+            creatureTemplate.ScaleLevelDuration = 5000;
+
         if(creatureTemplate.TypeFlags[0] & CREATURE_TYPEFLAGS_BOSS)
         {
             //Save loot spell

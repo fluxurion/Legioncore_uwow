@@ -419,7 +419,7 @@ bool Creature::UpdateEntry(uint32 entry, uint32 team, const CreatureData* data)
         SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_MAX, cInfo->ScaleLevelMax);
     if (cInfo->ScaleLevelDelta)
         SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_DELTA, cInfo->ScaleLevelDelta);
-    if (cInfo->ScaleLevelDuration && cInfo->ScaleLevelDuration < 123)
+    if (cInfo->ScaleLevelDuration)
         SetUInt32Value(UNIT_FIELD_SCALE_DURATION, cInfo->ScaleLevelDuration);
     if (cInfo->ControllerID)
         SetUInt32Value(UNIT_FIELD_LOOK_AT_CONTROLLER_ID, cInfo->ControllerID);
@@ -495,7 +495,7 @@ void Creature::UpdateStat()
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = cInfo->ScaleLevelDuration;
+    uint8 level = cInfo->ScaleLevelDuration < 123 ? cInfo->ScaleLevelDuration : 0;
     if(m_difficulty == 1 || m_difficulty == 2)
         level = cInfo->ScaleLevelMin ? cInfo->ScaleLevelMax : cInfo->maxlevel;
     else if (!level)
@@ -1291,7 +1291,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = cinfo->ScaleLevelDuration;
+    uint8 level = cinfo->ScaleLevelDuration < 123 ? cinfo->ScaleLevelDuration : 0;
     if(m_difficulty == 1 || m_difficulty == 2)
         level = cinfo->ScaleLevelMin ? cinfo->ScaleLevelMax : cinfo->maxlevel;
     else if (!level)
