@@ -720,6 +720,83 @@ public:
     }
 };
 
+//93221 Doom Commander Beliash
+class npc_q93221_beliash : public CreatureScript
+{
+public:
+    npc_q93221_beliash() : CreatureScript("npc_q93221_beliash") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q93221_beliashAI(creature);
+    }
+
+    struct npc_q93221_beliashAI : public ScriptedAI
+    {
+        EventMap events;
+        ObjectGuid playerGuid;
+
+        npc_q93221_beliashAI(Creature* creature) : ScriptedAI(creature)
+        {
+        }
+
+        enum data
+        {
+            QUEST           = 38766,
+            SPELL_AT_DEATH  = 210093,
+            CREDIT          = 106003,
+            EVENT_1 = 1,
+            EVENT_2,
+            EVENT_3,
+            EVENT_4,
+            EVENT_5,
+            EVENT_6,
+        };
+
+        void EnterCombat(Unit* victim) override
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, victim->GetGUID());
+        }
+
+        void DoAction(int32 const /*param*/)
+        {
+
+        }
+
+        //! HACK!!! ANTIL FINISH EVENT
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            if (attacker->ToPlayer())
+            {
+                damage *= 3;
+                return;
+            }
+            damage /= 2;
+        }
+
+        void JustDied(Unit* killer)
+        {
+            Player *player = killer->ToPlayer();
+            if (!player)
+                return;
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_1, player->GetGUID());
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL_AT_DEATH, false);
+        }
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+};
+
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -737,4 +814,5 @@ void AddSC_Mardum()
     new go_q39050();
     new npc_q38765();
     new go_q38765();
+    new npc_q93221_beliash();
 }

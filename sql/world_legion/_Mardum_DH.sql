@@ -108,3 +108,4 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q38765' WHERE `entry` = 99915
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q38765' WHERE `gameobject_template`.`entry` = 241757;
 
 -- Q: 38766
+UPDATE `creature_template` SET `ScriptName` = 'npc_q93221_beliash' WHERE `entry` = 93221;
