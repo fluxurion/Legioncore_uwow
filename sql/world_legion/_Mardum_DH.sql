@@ -38,7 +38,8 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('39050', '40379', '0', ''),
 ('38765', '39050', '0', '-38813'),
 ('38766', '39050', '0', '-38813'),
-('38813', '38766', '0', '0');
+('38813', '38766', '0', '0'),
+('39262', '38813', '0', '0');
 
 
 -- Q: 40077
@@ -130,3 +131,15 @@ DELETE FROM smart_scripts WHERE entryorguid = 90247;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (90247, 0, 0, 0, 62, 0, 100, 0, 17260, 0, 0, 0, 11, 191315, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
 (90247, 0, 1, 0, 62, 0, 100, 0, 17260, 0, 0, 0, 33, 90247, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
+
+-- Q: 39262
+-- npc 96436 gossip 19175
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=96436; -- gossIP 19175
+DELETE FROM smart_scripts WHERE entryorguid = 96436;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(96436, 0, 0, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 33, 96436, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(96436, 0, 1, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(96436, 0, 2, 0, 20, 0, 100, 0, 39262, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+-- hack
+(96436, 0, 3, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 11, 188501, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(96436, 0, 4, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 33, 96437, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
