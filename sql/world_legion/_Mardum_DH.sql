@@ -2,6 +2,26 @@
 /*!40101 SET NAMES utf8 */;
 /*!40014 SET FOREIGN_KEY_CHECKS=0 */;
 
+ALTER TABLE `phase_definitions` CHANGE `phaseId` `phaseId` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';
+
+-- ----------------
+--   P A S E
+-- ----------------
+
+-- 5086 object 245045 for quest 39495 after spec. event remove go.
+update gameobject set phaseId = '5086' WHERE id = 245045;
+-- 5084 npc 96493
+-- 5305 npc 98354 98229
+
+
+REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
+('7705', '1', '0', '5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
+('7705', '2', '0', '5086', '0', '0', '16', 'Legion. Global');
+
+DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup = 7705; 
+INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(23, 7705, 2, 0, 0, 14, 0, 39495, 0, 0, 0, 0, '', 'Legion. is non 39495');
+
 -- Misc
 UPDATE `creature_template` SET `ScriptName` = 'conversation_announcer' WHERE `entry` in (101748);
 
@@ -39,8 +59,8 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38765', '39050', '0', '-38813'),
 ('38766', '39050', '0', '-38813'),
 ('38813', '38766', '0', '0'),
-('39262', '38813', '0', '0');
-
+('39262', '38813', '0', '0'),
+('39495', '39262', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -143,3 +163,6 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- hack
 (96436, 0, 3, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 11, 188501, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
 (96436, 0, 4, 0, 62, 0, 100, 0, 19175, 0, 0, 0, 33, 96437, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
+
+-- Q: 39495
+UPDATE `creature_template` SET `ScriptName` = 'npc_q39495_caza' WHERE `entry` = 96441;

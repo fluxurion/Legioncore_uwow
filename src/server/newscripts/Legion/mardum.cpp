@@ -797,6 +797,83 @@ public:
     };
 };
 
+//96441 Fel Lord Caza
+class npc_q39495_caza : public CreatureScript
+{
+public:
+    npc_q39495_caza() : CreatureScript("npc_q39495_caza") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39495_cazaAI(creature);
+    }
+
+    //! Scripted_NoMovementAI HACK!
+    struct npc_q39495_cazaAI : public Scripted_NoMovementAI
+    {
+        EventMap events;
+        ObjectGuid playerGuid;
+
+        npc_q39495_cazaAI(Creature* creature) : Scripted_NoMovementAI(creature)
+        {
+        }
+
+        enum data
+        {
+            QUEST = 39495,
+            SPELL_AT_DEATH = 210107,
+            CREDIT = 106014,
+            EVENT_1 = 1,
+            EVENT_2,
+            EVENT_3,
+            EVENT_4,
+            EVENT_5,
+            EVENT_6,
+        };
+
+        void EnterCombat(Unit* victim) override
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, victim->GetGUID());
+        }
+
+        void DoAction(int32 const /*param*/)
+        {
+
+        }
+
+        //! HACK!!! ANTIL FINISH EVENT
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            if (attacker->ToPlayer())
+            {
+                damage *= 3;
+                return;
+            }
+            damage /= 2;
+        }
+
+        void JustDied(Unit* killer)
+        {
+            Player *player = killer->ToPlayer();
+            if (!player)
+                return;
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_2, player->GetGUID());
+            player->KilledMonsterCredit(CREDIT);
+            player->CastSpell(player, SPELL_AT_DEATH, false);
+        }
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -815,4 +892,5 @@ void AddSC_Mardum()
     new npc_q38765();
     new go_q38765();
     new npc_q93221_beliash();
+    new npc_q39495_caza();
 }
