@@ -13,12 +13,12 @@ INSERT INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `PlaybackFlags`,
 (1451, 1053, 20, 0, 0, '', 'spell 189261'), -- 1451 - 1053
 (1460, 1061, 26, 0, 0, '', 'spell 189767'), -- 1460 - 1061
 (1468, 1077, 20, 0, 0, '', ''), -- 1468 - 1077
-(1470, 1079, 20, 0, 0, '', ''), -- 1470 - 1079
+(1470, 1079, 20, 0, 0, '', 'spell 191315'), -- 1470 - 1079
 (1512, 1142, 20, 0, 0, '', ''), -- 1512 - 1142
 (1469, 1078, 20, 0, 0, '', 'spell 190851'), -- 1469 - 1078
-(1479, 1094, 20, 0, 0, '', ''), -- 1479 - 1094
+(1479, 1094, 20, 0, 0, '', 'spell 191400'), -- 1479 - 1094
 (1423, 1016, 26, 0, 0, '', ''), -- 1423 - 1016
-(1480, 1095, 20, 0, 0, '', ''); -- 1480 - 1095
+(1480, 1095, 20, 0, 0, '', 'spell 191402'); -- 1480 - 1095
 
 DELETE FROM `spell_area` WHERE area in (7705);
 REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
@@ -36,8 +36,9 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38759', '40378', '0', '-39050'),
 ('40379', '40378', '0', '-39050'),
 ('39050', '40379', '0', ''),
-('38765', '39050', '0', '0'),
-('38766', '39050', '0', '0');
+('38765', '39050', '0', '-38813'),
+('38766', '39050', '0', '-38813'),
+('38813', '38766', '0', '0');
 
 
 -- Q: 40077
@@ -109,3 +110,23 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q38765' WHERE `gameobject_te
 
 -- Q: 38766
 UPDATE `creature_template` SET `ScriptName` = 'npc_q93221_beliash' WHERE `entry` = 93221;
+
+-- Q: 38813
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=93693; -- gossIP 18447
+DELETE FROM smart_scripts WHERE entryorguid = 93693;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(93693, 0, 0, 0, 62, 0, 100, 0, 18447, 0, 0, 0, 11, 191400, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(93693, 0, 1, 0, 62, 0, 100, 0, 18447, 0, 0, 0, 33, 93693, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
+
+
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=94435; -- gossIP 18434
+DELETE FROM smart_scripts WHERE entryorguid = 94435;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(94435, 0, 0, 0, 62, 0, 100, 0, 18434, 0, 0, 0, 11, 191402, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(94435, 0, 1, 0, 62, 0, 100, 0, 18434, 0, 0, 0, 33, 94435, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
+
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=90247; -- gossIP 17260
+DELETE FROM smart_scripts WHERE entryorguid = 90247;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(90247, 0, 0, 0, 62, 0, 100, 0, 17260, 0, 0, 0, 11, 191315, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813'),
+(90247, 0, 1, 0, 62, 0, 100, 0, 17260, 0, 0, 0, 33, 90247, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q38813');
