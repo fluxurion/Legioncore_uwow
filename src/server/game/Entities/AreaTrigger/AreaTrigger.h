@@ -74,6 +74,8 @@ enum AreaTriggerTargetFlags
     AT_TARGET_FLAG_CAST_AURA_TARGET     = 0x004000,             // casted on aura target
     AT_TARGET_FLAG_NOT_AURA_TARGET      = 0x008000,             // casted on target is not aura target
     AT_TARGET_FLAG_TARGET_IS_SUMMONER   = 0x010000,
+    AT_TARGET_FLAG_NOT_OWNER            = 0x020000,
+    AT_TARGET_FLAG_NPC_ENTRY            = 0x040000,
 
     AT_TARGET_MASK_REQUIRE_TARGET = 
         AT_TARGET_FLAG_FRIENDLY | AT_TARGET_FLAG_HOSTILE | AT_TARGET_FLAG_OWNER | AT_TARGET_FLAG_PLAYER |

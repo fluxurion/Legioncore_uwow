@@ -122,6 +122,9 @@ class CreatureAI : public UnitAI
         
         virtual void DespawnOnRespawn(uint32 uiTimeToDespawn);
 
+        // Called when the creature summon successfully gameobject
+        virtual void JustSummonedGO(GameObject* /*summoner*/) {}
+
         // Called when hit by a spell
         virtual void SpellHit(Unit* /*caster*/, SpellInfo const* /*spell*/) {}
 
@@ -198,6 +201,7 @@ class CreatureAI : public UnitAI
         virtual void OnStartQuest(Player* /*player*/, Quest const* /*quest*/) {}
 
         virtual void OnInterruptCast(Unit* /*caster*/, uint32 /*spellId*/, uint32 /*curSpellID*/, uint32 /*schoolMask*/) {}
+        virtual void OnAreaTriggerCast(Unit* /*caster*/, Unit* /*target*/, uint32 /*spellId*/) {}
     protected:
         virtual void MoveInLineOfSight(Unit* /*who*/);
 

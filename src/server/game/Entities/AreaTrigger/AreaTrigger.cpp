@@ -642,6 +642,14 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
             if (unit->GetGUID() != summoner->GetGUID())
                 return;
 
+    if (action.action->targetFlags & AT_TARGET_FLAG_NOT_OWNER)
+        if (unit->GetGUID() == GetCasterGUID())
+            return;
+
+    if (action.action->targetFlags & AT_TARGET_FLAG_NPC_ENTRY)
+        if (action.amount != unit->GetEntry() || unit->ToPlayer())
+            return;
+
     if (action.action->aura > 0 && !unit->HasAura(action.action->aura))
         return;
     else if (action.action->aura < 0 && unit->HasAura(abs(action.action->aura)))
@@ -700,6 +708,10 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
                     caster->CastSpell(GetPositionX(), GetPositionY(), GetPositionZ(), action.action->spellId, TriggerCastFlags(TRIGGERED_FULL_MASK | TRIGGERED_CASTED_BY_AREATRIGGER));
                 else
                     caster->CastSpell(unit, action.action->spellId, TriggerCastFlags(TRIGGERED_FULL_MASK | TRIGGERED_CASTED_BY_AREATRIGGER));
+
+                if (Creature* creature = _caster->ToCreature())
+                    if (creature->IsAIEnabled)
+                        creature->AI()->OnAreaTriggerCast(_caster, unit, action.action->spellId);
             }
             break;
         }

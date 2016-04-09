@@ -6901,6 +6901,9 @@ void Spell::EffectTransmitted(SpellEffIndex effIndex)
 
     cMap->AddToMap(pGameObj);
 
+    if (Creature* creature = m_caster->ToCreature())
+        creature->AI()->JustSummonedGO(pGameObj);
+
     // Glyph of Soulwell, Create Soulwell - 29893
     if (m_spellInfo->Id == 29893 && m_caster->HasAura(58094))
         m_caster->CastSpell(fx, fy, fz, 34145, true);

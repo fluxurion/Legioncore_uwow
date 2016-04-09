@@ -1,0 +1,1 @@
+ALTER TABLE waypoint_data ADD COLUMN `speed` float(0) unsigned NOT NULL DEFAULT '0' AFTER `move_flag`;

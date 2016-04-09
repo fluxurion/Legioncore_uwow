@@ -160,6 +160,9 @@ bool WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
     if (node->orientation && node->delay)
         init.SetFacing(node->orientation);
 
+    if (node->speed > 0)
+        init.SetVelocity(node->speed);
+
     init.SetWalk(!node->run);
     //switch (node->move_type)
     //{
@@ -180,8 +183,9 @@ bool WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
     init.Launch();
 
     //Call for creature group update
-    if (creature.GetFormation() && creature.GetFormation()->getLeader() == &creature)
-        creature.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
+    if (creature.GetTypeId() != TYPEID_PLAYER)
+        if (creature.GetFormation() && creature.GetFormation()->getLeader() == &creature)
+            creature.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
 
     ////Call for creature group update
     //if (creature->GetFormation() && creature->GetFormation()->getLeader() == creature)
