@@ -1,4 +1,4 @@
-CREATE TABLE `trinworld701`.`character_template_item`(  
+CREATE TABLE `character_template_item`(  
   `ClassID` TINYINT(3) NOT NULL DEFAULT 0,
   `ItemID` INT(10) NOT NULL DEFAULT 0,
   `Count` INT(10) NOT NULL DEFAULT 0,

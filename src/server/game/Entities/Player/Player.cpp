@@ -25613,7 +25613,6 @@ void Player::UpdateAreaDependentAuras(uint32 newArea)
     }
 }
 
-
 void Player::UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId)
 {
     std::list<uint32> questAdd;
@@ -25622,6 +25621,12 @@ void Player::UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId)
     {
         for (Quest const* quest : *qInfo)
         {
+            if (FindQuestSlot(quest->GetQuestId()) < MAX_QUEST_LOG_SIZE)
+            {
+                questAdd.push_back(quest->GetQuestId());
+                continue;
+            }
+
             if (QuestV2CliTaskEntry const* questTask = sQuestV2CliTaskStore.LookupEntry(quest->GetQuestId()))
             {
                 bool needQuest = false;
