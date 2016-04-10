@@ -349,7 +349,7 @@ public:
     {
         conversation_announcerAI(Creature* creature) : ScriptedAI(creature)
         {
-
+            SetCanSeeEvenInPassiveMode(true);
         }
 
         void Reset()
@@ -369,6 +369,7 @@ public:
         enum npcs
         {
             NPC_ANNOUNCER_1 = 101748, //583
+            NPC_ANNOUNCER_2 = 101781, //1542
         };
 
         uint32 conversationEntry;
@@ -393,6 +394,11 @@ public:
             {
                 case NPC_ANNOUNCER_1:
                     conversationEntry = 583;
+                    events.RescheduleEvent(EVENT_1, eTimer);
+                    break;
+                case NPC_ANNOUNCER_2:
+                    conversationEntry = 1542;
+                    events.RescheduleEvent(EVENT_2, eTimer);
                     break;
                 default:
                     break;
@@ -400,7 +406,6 @@ public:
 
             ASSERT(conversationEntry);
             m_player_for_event.insert(who->GetGUID());
-            events.RescheduleEvent(EVENT_1, eTimer);
             events.RescheduleEvent(EVENT_CLEAR, 300000);
             targetGUID = who->GetGUID();
         }
@@ -426,6 +431,15 @@ public:
                         }
                         break;
                     }
+                    case EVENT_2:
+                    {
+                        if (Player* player = sObjectAccessor->FindPlayer(targetGUID))
+                        {
+                            player->SendSpellScene(conversationEntry, nullptr, true, player);
+                        }
+                        break;
+                    }
+
                     case EVENT_CLEAR:
                         m_player_for_event.clear();
                         break;

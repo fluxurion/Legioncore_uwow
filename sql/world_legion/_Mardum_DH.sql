@@ -23,7 +23,9 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (23, 7705, 2, 0, 0, 14, 0, 39495, 0, 0, 0, 0, '', 'Legion. is non 39495');
 
 -- Misc
-UPDATE `creature_template` SET `ScriptName` = 'conversation_announcer' WHERE `entry` in (101748);
+UPDATE `creature_template` SET flags_extra = 128, `ScriptName` = 'conversation_announcer' WHERE `entry` in (101748, 101781);
+update gameobject set phaseId = '' WHERE id in (101748, 101781);
+REPLACE INTO `spell_scene` (`SceneScriptPackageID`, `MiscValue`, `trigerSpell`, `MonsterCredit`, `PlaybackFlags`, `ScriptName`, `comment`) VALUES ('1542', '1542', '0', '0', '0', NULL, '');
 
 --
 DELETE FROM `spell_scene` WHERE `SceneScriptPackageID` in (1487, 1451, 1460, 1468, 1470, 1512, 1469, 1479, 1423, 1480, 1493);
@@ -60,7 +62,10 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38766', '39050', '0', '-38813'),
 ('38813', '38766', '0', '0'),
 ('39262', '38813', '0', '0'),
-('39495', '39262', '0', '0');
+('39495', '39262', '0', '0'),
+('38727', '39495', '0', '0'),
+('38819', '39495', '0', '0'),
+('38725', '39495', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -166,3 +171,7 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 
 -- Q: 39495
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39495_caza' WHERE `entry` = 96441;
+
+-- Q: 38727
+-- Q: 38819
+-- Q: 38725
