@@ -65,7 +65,10 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38727', '39495', '0', '-38727'),
 ('38819', '39495', '0', '-38727'),
 ('38725', '39495', '0', '0'),
-('40222', '38725', '0', '0');
+('40222', '38725', '0', '0'),
+('40051', '40222', '0', '0'),
+('39516', '40051', '0', '0'),
+('39663', '39516', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -184,3 +187,9 @@ UPDATE `creature_template` SET flags_extra = 128, `ScriptName` = 'npc_q40222_pro
 UPDATE `creature_template` SET lootid = 98986, `ScriptName` = 'npc_q39495_prolifica' WHERE `entry` = 98986;
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('98986', '129957', '-100', '0', '0', '1', '1', '0');
+
+-- Q: 40051
+
+-- Q: 39516
+
+-- Q: 39663
