@@ -13,9 +13,8 @@ update gameobject set phaseId = '5086' WHERE id = 245045;
 -- 5084 npc 96493
 -- 5305 npc 98354 98229
 
-
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
-('7705', '1', '0', '5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
+('7705', '1', '0', '5344 5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
 ('7705', '2', '0', '5086', '0', '0', '16', 'Legion. Global');
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup = 7705; 
@@ -173,5 +172,7 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39495_caza' WHERE `entry` = 96441;
 
 -- Q: 38727
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q38727' WHERE `gameobject_template`.`entry` in(243965, 243968, 243967);
+
 -- Q: 38819
 -- Q: 38725
