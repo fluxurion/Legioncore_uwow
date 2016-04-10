@@ -999,10 +999,17 @@ struct CharcterTemplateClass
     uint8 ClassID;
 };
 
+struct CharacterTemplateItem
+{
+    uint32 ItemID;
+    uint32 Count;
+};
+
 struct CharacterTemplate
 {
     uint32 TemplateSetID;
     std::vector<CharcterTemplateClass> Classes;
+    std::vector<CharacterTemplateItem> Items;
     std::string Name;
     std::string Description;
     uint8 Level;
@@ -1015,6 +1022,8 @@ struct CharacterTemplate
 };
 
 typedef std::unordered_map<uint32, CharacterTemplate> CharacterTemplateContainer;
+
+typedef std::unordered_map<uint32, std::vector<Quest const*> > QuestAreaTaskMap;
 
 class ObjectMgr
 {
@@ -1861,6 +1870,15 @@ class ObjectMgr
 
             return nullptr;
         }
+
+        std::vector<Quest const*> const* GetQuestTask(uint32 areaId) const
+        {
+            auto itr = _questAreaTaskStore.find(areaId);
+            if (itr != _questAreaTaskStore.end())
+                return &itr->second;
+
+            return nullptr;
+        }
     private:
         // first free id for selected id type
         uint32 _auctionId;
@@ -2031,6 +2049,8 @@ class ObjectMgr
         ExpansionRequirementContainer _classExpansionRequirementStore;
         RealmNameContainer _realmNameStore;
         CharacterTemplateContainer _characterTemplateStore;
+
+        QuestAreaTaskMap _questAreaTaskStore;
 
         enum CreatureLinkedRespawnType
         {

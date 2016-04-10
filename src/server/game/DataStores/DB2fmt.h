@@ -169,6 +169,7 @@ char const QuestPackageItemFormat[] = "nitbb";
 char const QuestPOIPointFormat[] = "nitt";
 char const QuestSortFormat[] = "ns";
 char const QuestV2Format[] = "nt";
+char const QuestV2CliTaskFormat[] = "niissittttttttbbbbbbbbbb";
 char const QuestXPFormat[] = "ntttttttttt";
 char const RandPropPointsStoreFormat[] = "nttttttttttttttt";
 char const ResearchBranchFormat[] = "nssitb";

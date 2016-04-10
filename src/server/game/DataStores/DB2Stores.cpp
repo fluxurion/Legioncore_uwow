@@ -170,6 +170,7 @@ DB2Storage<QuestPackageItemEntry>           sQuestPackageItemStore("QuestPackage
 DB2Storage<QuestPOIPointEntry>              sQuestPOIPointStore("QuestPOIPoint.db2", QuestPOIPointFormat, HOTFIX_SEL_QUEST_P_O_I_POINT);
 DB2Storage<QuestSortEntry>                  sQuestSortStore("QuestSort.db2", QuestSortFormat, HOTFIX_SEL_QUEST_SORT);
 DB2Storage<QuestV2Entry>                    sQuestV2Store("QuestV2.db2", QuestV2Format, HOTFIX_SEL_QUEST_V2);
+DB2Storage<QuestV2CliTaskEntry>             sQuestV2CliTaskStore("QuestV2CliTask.db2", QuestV2CliTaskFormat, HOTFIX_SEL_QUEST_V2_CLI_TASK);
 DB2Storage<QuestXPEntry>                    sQuestXPStore("QuestXP.db2", QuestXPFormat, HOTFIX_SEL_QUEST_XP);
 DB2Storage<RandPropPointsEntry>             sRandPropPointsStore("RandPropPoints.db2", RandPropPointsStoreFormat, HOTFIX_SEL_RAND_PROP_POINTS);
 DB2Storage<ResearchBranchEntry>             sResearchBranchStore("ResearchBranch.db2", ResearchBranchFormat, HOTFIX_SEL_RESEARCH_BRANCH);
@@ -456,6 +457,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sQuestPOIPointStore);
     LOAD_DB2(sQuestSortStore);
     LOAD_DB2(sQuestV2Store);
+    LOAD_DB2(sQuestV2CliTaskStore);
     LOAD_DB2(sQuestXPStore);
     LOAD_DB2(sRandPropPointsStore);
     LOAD_DB2(sResearchBranchStore);

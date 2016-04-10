@@ -1,0 +1,6 @@
+CREATE TABLE `trinworld701`.`character_template_item`(  
+  `ClassID` TINYINT(3) NOT NULL DEFAULT 0,
+  `ItemID` INT(10) NOT NULL DEFAULT 0,
+  `Count` INT(10) NOT NULL DEFAULT 0,
+  `RaceID` TINYINT(3) NOT NULL DEFAULT 0
+) ENGINE=MYISAM CHARSET=utf8 COLLATE=utf8_general_ci;

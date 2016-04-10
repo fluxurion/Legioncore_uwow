@@ -3531,6 +3531,7 @@ void ObjectMgr::LoadQuests()
         delete itr.second;
 
     _questTemplates.clear();
+    _questAreaTaskStore.clear();
     mExclusiveQuestGroups.clear();
 
     uint32 oldMSTime = getMSTime();
@@ -3578,6 +3579,12 @@ void ObjectMgr::LoadQuests()
 
         Quest* newQuest = new Quest(fields);
         _questTemplates[newQuest->GetQuestId()] = newQuest;
+        if (newQuest->Type == QUEST_TYPE_TASK && newQuest->AreaGroupID > 0)
+        {
+            std::vector<uint32> areaGroupMembers = sDB2Manager.GetAreasForGroup(newQuest->AreaGroupID);
+            for (uint32 areaId : areaGroupMembers)
+                _questAreaTaskStore[areaId].push_back(newQuest);
+        }
     } while (result->NextRow());
 
     // Load `quest_details` -  SMSG_QUESTGIVER_QUEST_DETAILS
@@ -10048,6 +10055,19 @@ void ObjectMgr::LoadCharacterTemplates()
                 templ.O = fields[6].GetFloat();
                 templ.MapID = fields[7].GetUInt16();
                 templ.Money = fields[8].GetUInt32();
+
+                if (QueryResult result = WorldDatabase.PQuery("SELECT `ItemID`, `Count` FROM `character_template_item` WHERE `ClassID` = '%u';", classID))
+                {
+                    do
+                    {
+                        Field* fieldItem = result->Fetch();
+                        CharacterTemplateItem itemTemp;
+                        itemTemp.ItemID = fieldItem[0].GetUInt32();
+                        itemTemp.Count = fieldItem[1].GetUInt32();
+                        templ.Items.push_back(itemTemp);
+                    }
+                    while (result->NextRow());
+                }
             }
             while (classes->NextRow());
 

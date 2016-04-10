@@ -409,6 +409,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // QuestV2.db2
     PrepareStatement(HOTFIX_SEL_QUEST_V2, "SELECT ID, UniqueBitFlag FROM quest_v2 ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // QuestV2CliTask.db2
+    PrepareStatement(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Flags, Unk, Name, Name1, Unk2, Unk3, Unk4, Unk5, Unk6, "
+    "Unk7, Unk8, Unk9, Unk10, Unk11, Unk12, Unk13, Unk14, Unk15, Unk16, Unk17, Unk18, Unk19, Unk20 FROM quest_v2_cli_task ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Name_lang , Name1_lang FROM quest_v2_cli_task_locale WHERE locale = ?", CONNECTION_SYNCH);
+
     // QuestXp.db2
     PrepareStatement(HOTFIX_SEL_QUEST_XP, "SELECT ID, Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, Difficulty7, "
         "Difficulty8, Difficulty9, Difficulty10 FROM quest_xp ORDER BY ID DESC", CONNECTION_SYNCH);

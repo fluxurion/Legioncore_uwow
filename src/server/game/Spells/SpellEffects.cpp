@@ -8289,6 +8289,10 @@ void Spell::EffectLaunchQuestChoice(SpellEffIndex effIndex)
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
+    Player* player = m_caster->ToPlayer();
+    if (!player)
+        return;
+
     std::vector<DisplayChoiceData> const* displayData = sObjectMgr->GetDisplayChoiceData(m_spellInfo->GetEffect(effIndex, m_diffMode)->MiscValue);
     if (displayData && !displayData->empty())
     {
@@ -8357,6 +8361,6 @@ void Spell::EffectLaunchQuestChoice(SpellEffIndex effIndex)
             }
             choice.Responses.push_back(response);
         }
-        m_caster->SendMessageToSet(choice.Write(), true);
+        player->GetSession()->SendPacket(choice.Write());
     }
 }

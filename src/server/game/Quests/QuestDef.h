@@ -50,12 +50,14 @@ namespace WorldPackets
 #define QUEST_REWARD_CURRENCY_COUNT 4
 #define QUEST_REQUIRED_CURRENCY_COUNT 4
 
+#define QUEST_REQUIRED 3
+
 enum QuestType
 {
     QUEST_TYPE_AUTOCOMPLETE         = 0,
     QUEST_TYPE_DISABLED             = 1,
     QUEST_TYPE_NORMAL               = 2,
-    QUEST_TYPE_UNK                  = 3,
+    QUEST_TYPE_TASK                 = 3,
 
     MAX_QUEST_TYPES
 };

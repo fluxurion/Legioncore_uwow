@@ -1236,6 +1236,32 @@ struct QuestV2Entry
     uint16      UniqueBitFlag;                              // 0
 };
 
+struct QuestV2CliTaskEntry
+{
+    uint32      ID;                                 // 0
+    int32       Flags;                              // 1
+    int32       Unk;                                // 2
+    LocalizedString* Name;                          // 3
+    LocalizedString* Name1;                         // 4
+    int32       requestAura;                        // 5
+    uint16      UniqueBitFlag;                      // 6
+    uint16      Unk4;                               // 7
+    int16       Unk5;                               // 8
+    uint16      requestQuest[3];                    // 12 - 14
+    uint16      Unk9;                               // 12
+    uint16      Unk10;                              // 13
+    uint8       Unk11;                              // 14
+    uint8       Unk12;                              // 15
+    uint8       Unk13;                              // 16
+    uint8       Unk14;                              // 17
+    int8        Unk15;                              // 18
+    uint8       Unk16;                              // 19
+    uint8       Unk17;                              // 20
+    int8        level;                              // 21
+    uint8       Unk19;                              // 22
+    uint8       Unk20;                              // 23
+};
+
 struct QuestXPEntry
 {
     uint32      ID;

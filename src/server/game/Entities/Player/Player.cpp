@@ -590,7 +590,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     WorldLocation loc(info->mapId, info->positionX, info->positionY, info->positionZ, info->orientation);
 
     bool loadoutItem = false;
-    if (CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet))
+    CharacterTemplate const* charTemplate = sObjectMgr->GetCharacterTemplate(*createInfo->TemplateSet);
+    if (charTemplate)
         for (CharcterTemplateClass const& v : charTemplate->Classes)
             if (v.ClassID == createInfo->Class)
             {
@@ -849,7 +850,13 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     for (PlayerCreateInfoActions::const_iterator action_itr = info->action.begin(); action_itr != info->action.end(); ++action_itr)
         addActionButton(action_itr->button, action_itr->action, action_itr->type);
 
-    if (loadoutItem)
+    if (charTemplate && !charTemplate->Items.empty())
+    {
+        for (CharacterTemplateItem const& v : charTemplate->Items)
+            if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
+                StoreNewItemInBestSlots(v.ItemID, v.Count);
+    }
+    else if (loadoutItem)
     {
         std::array<std::vector<uint32>, 2> itemsArray = sDB2Manager.GetItemLoadOutItemsByClassID(getClass(), 4);
         for (uint32 itemID : itemsArray[0])
@@ -8242,6 +8249,10 @@ void Player::UpdateArea(uint32 newArea)
         return;
     }
 
+    sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Player::UpdateArea m_areaUpdateId %i newArea %u m_zoneUpdateId %u", m_areaUpdateId, newArea, m_zoneUpdateId);
+
+    UpdateAreaQuestTasks(newArea, m_areaUpdateId);
+
     // FFA_PVP flags are area and not zone id dependent
     // so apply them accordingly
     m_areaUpdateId    = newArea;
@@ -8256,7 +8267,7 @@ void Player::UpdateArea(uint32 newArea)
         newArea != 6081 && newArea != 6526 && newArea != 6527 
         && m_zoneUpdateId == 5841 && !isGameMaster())
         TeleportTo(870, 3818.55f, 1793.18f, 950.35f, GetOrientation());
-    
+
     //Hack OO: Galakras. Fix me
     if (GetMapId() == 1136)
         SendInitWorldStates(m_zoneUpdateId, newArea);
@@ -17196,7 +17207,7 @@ void Player::SetQuestObjectiveData(Quest const* quest, QuestObjective const* obj
     if (log_slot < MAX_QUEST_LOG_SIZE && obj->StorageIndex >= 0 /*&& (obj->Flags & QUEST_OBJECTIVE_FLAG_HIDEN) == 0*/ && obj->Type != QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
         SetQuestSlotCounter(log_slot, obj->StorageIndex, status.ObjectiveData[obj->StorageIndex]);
 
-    if (obj->Type == QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+    if (log_slot < MAX_QUEST_LOG_SIZE && obj->Type == QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
     {
         SetSpecialCriteriaComplete(log_slot, obj->StorageIndex);
         WorldPackets::Quest::QuestUpdateAddCreditSimple packet;
@@ -17204,6 +17215,35 @@ void Player::SetQuestObjectiveData(Quest const* quest, QuestObjective const* obj
         packet.ObjectID = obj->ObjectID;
         packet.ObjectiveType = obj->Type;
         GetSession()->SendPacket(packet.Write());
+    }
+
+    SendVignette(false);
+}
+
+void Player::UpdateQuestObjectiveData(Quest const* quest)
+{
+    auto itr = m_QuestStatus.find(quest->GetQuestId());
+    if (itr == m_QuestStatus.end())
+        return;
+
+    QuestStatusData& status = itr->second;
+
+    for (QuestObjective const& obj : quest->GetObjectives())
+    {
+        sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "UpdateQuestObjectiveData ObjectiveData %u StorageIndex %u", status.ObjectiveData[obj.StorageIndex], obj.StorageIndex);
+
+        // No change
+        if (status.ObjectiveData[obj.StorageIndex] == 0)
+            continue;
+
+        // Update quest fields
+        // Negative index  - hiden
+        uint16 log_slot = FindQuestSlot(quest->GetQuestId());
+        if (log_slot < MAX_QUEST_LOG_SIZE && obj.StorageIndex >= 0 /*&& (obj.Flags & QUEST_OBJECTIVE_FLAG_HIDEN) == 0*/ && obj.Type != QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+            SetQuestSlotCounter(log_slot, obj.StorageIndex, status.ObjectiveData[obj.StorageIndex]);
+
+        if (log_slot < MAX_QUEST_LOG_SIZE && obj.Type == QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+            SetSpecialCriteriaComplete(log_slot, obj.StorageIndex);
     }
 
     SendVignette(false);
@@ -17236,6 +17276,13 @@ void Player::SendQuestReward(Quest const* quest, uint32 XP, Object* questGiver)
     {
         xp = 0;
         moneyReward = uint32(GetQuestMoneyReward(quest) + int32(quest->GetRewMoneyMaxLevel() * sWorld->getRate(RATE_DROP_MONEY)));
+    }
+
+    if (quest->Type == QUEST_TYPE_TASK)
+    {
+        WorldPackets::Misc::SetTaskComplete task;
+        task.TaskID = questId;
+        GetSession()->SendPacket(task.Write());
     }
 
     WorldPackets::Quest::QuestGiverQuestComplete packet;
@@ -17321,6 +17368,9 @@ void Player::SendPushToPartyResponse(Player* player, uint8 reason)
 
 void Player::SendQuestUpdateAddCredit(Quest const* quest, ObjectGuid guid, QuestObjective const& obj, uint16 count)
 {
+    if (quest->Type == QUEST_TYPE_TASK)
+        return;
+
     WorldPackets::Quest::QuestUpdateAddCredit packet;
     packet.VictimGUID = guid;
     packet.QuestID = quest->GetQuestId();
@@ -19064,7 +19114,7 @@ void Player::_LoadQuestStatus(PreparedQueryResult result)
                     quest_time = 0;
 
                 // add to quest log
-                if (slot < MAX_QUEST_LOG_SIZE && questStatusData.Status != QUEST_STATUS_NONE)
+                if (slot < MAX_QUEST_LOG_SIZE && questStatusData.Status != QUEST_STATUS_NONE && quest->Type != QUEST_TYPE_TASK)
                 {
                     SetQuestSlot(slot, quest_id, uint32(quest_time)); // cast can't be helped
 
@@ -19089,8 +19139,6 @@ void Player::_LoadQuestStatus(PreparedQueryResult result)
 
 void Player::_LoadQuestStatusObjectives(PreparedQueryResult result)
 {
-    uint16 slot = 0;
-
     ////                                                       0        1       2
     //QueryResult* result = CharacterDatabase.PQuery("SELECT quest, objective, data WHERE guid = '%u'", GetGUIDLow());
 
@@ -19101,10 +19149,6 @@ void Player::_LoadQuestStatusObjectives(PreparedQueryResult result)
             Field* fields = result->Fetch();
 
             uint32 questID = fields[0].GetUInt32();
-
-            slot = FindQuestSlot(questID);
-            if (slot >= MAX_QUEST_LOG_SIZE) // Player does not have any free slot in the quest log
-                continue;
 
             auto itr = m_QuestStatus.find(questID);
             if (itr != m_QuestStatus.end())
@@ -25564,6 +25608,83 @@ void Player::UpdateAreaDependentAuras(uint32 newArea)
                 break;
         }
     }
+}
+
+
+void Player::UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId)
+{
+    std::list<uint32> questAdd;
+
+    if (std::vector<Quest const*> const* qInfo = sObjectMgr->GetQuestTask(newAreaId))
+    {
+        for (Quest const* quest : *qInfo)
+        {
+            if (QuestV2CliTaskEntry const* questTask = sQuestV2CliTaskStore.LookupEntry(quest->GetQuestId()))
+            {
+                bool needQuest = false;
+                bool canStart = false;
+                for (uint8 slot = 0; slot < QUEST_REQUIRED; ++slot)
+                    if (questTask->requestQuest[slot])
+                        needQuest = true;
+
+                if (needQuest)
+                    for (uint8 slot = 0; slot < QUEST_REQUIRED; ++slot)
+                        if (questTask->requestQuest[slot] && GetQuestStatus(questTask->requestQuest[slot]) != QUEST_STATUS_NONE)
+                            canStart = true;
+
+                if (questTask->requestAura && !HasAura(questTask->requestAura))
+                    continue;
+
+                if (needQuest && !canStart)
+                    continue;
+
+                if (CanAddQuest(quest, true))
+                {
+                    AddQuest(quest, NULL);
+                    UpdateQuestObjectiveData(quest);
+                    questAdd.push_back(quest->GetQuestId());
+                }
+            }
+            else
+            {
+                if (CanAddQuest(quest, true))
+                {
+                    AddQuest(quest, NULL);
+                    UpdateQuestObjectiveData(quest);
+                    questAdd.push_back(quest->GetQuestId());
+                }
+            }
+        }
+    }
+
+    if (std::vector<Quest const*> const* qInfo = sObjectMgr->GetQuestTask(oldAreaId))
+    {
+        for (Quest const* quest : *qInfo)
+        {
+            bool questRemove = true;
+
+            for (uint32 questId : questAdd)
+                if (questId == quest->GetQuestId())
+                    questRemove = false;
+
+            if (!questRemove)
+                continue;
+
+            for (uint8 slot = 0; slot < MAX_QUEST_LOG_SIZE; ++slot)
+            {
+                uint32 logQuest = GetQuestSlotQuestId(slot);
+                if (logQuest == quest->GetQuestId())
+                {
+                    SetQuestSlot(slot, 0);
+
+                    // we ignore unequippable quest items in this case, its' still be equipped
+                    TakeQuestSourceItem(logQuest, false);
+                }
+            }
+        }
+    }
+
+    questAdd.clear();
 }
 
 uint32 Player::GetCorpseReclaimDelay(bool pvp) const

@@ -1948,6 +1948,7 @@ class Player : public Unit, public GridObject<Player>
         int32 GetQuestObjectiveData(Quest const* quest, int8 storageIndex) const;
         int32 GetQuestObjectiveData(uint32 QuestID, uint32 ObjectiveID) const;
         void SetQuestObjectiveData(Quest const* quest, QuestObjective const* obj, int32 data);
+        void UpdateQuestObjectiveData(Quest const* quest);
         void SendQuestComplete(Quest const* quest);
         void SendQuestReward(Quest const* quest, uint32 XP, Object* questGiver);
         void SendQuestFailed(uint32 questId, InventoryResult reason = EQUIP_ERR_OK);
@@ -2349,6 +2350,7 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateZoneDependentAuras(uint32 zone_id);    // zones
         void UpdateAreaDependentAuras(uint32 area_id);    // subzones
+        void UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId);
 
         void UpdateAfkReport(time_t currTime);
         void UpdatePvPFlag(time_t currTime);
