@@ -230,6 +230,7 @@ DB2Storage<TransportAnimationEntry>         sTransportAnimationStore("TransportA
 DB2Storage<UnitPowerBarEntry>               sUnitPowerBarStore("UnitPowerBar.db2", UnitPowerBarFormat, HOTFIX_SEL_UNIT_POWER_BAR);
 DB2Storage<VehicleEntry>                    sVehicleStore("Vehicle.db2", VehicleFormat, HOTFIX_SEL_VEHICLE);
 DB2Storage<VehicleSeatEntry>                sVehicleSeatStore("VehicleSeat.db2", VehicleSeatFormat, HOTFIX_SEL_VEHICLE_SEAT);
+DB2Storage<VignetteEntry>                   sVignetteStore("Vignette.db2", VignetteFormat, HOTFIX_SEL_VIGNETTE);
 DB2Storage<WMOAreaTableEntry>               sWMOAreaTableStore("WMOAreaTable.db2", WMOAreaTableFormat, HOTFIX_SEL_W_M_O_AREA_TABLE);
 DB2Storage<WorldMapAreaEntry>               sWorldMapAreaStore("WorldMapArea.db2", WorldMapAreaFormat, HOTFIX_SEL_WORLD_MAP_AREA);
 DB2Storage<WorldMapOverlayEntry>            sWorldMapOverlayStore("WorldMapOverlay.db2", WorldMapOverlayFormat, HOTFIX_SEL_WORLD_MAP_OVERLAY);
@@ -517,6 +518,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sUnitPowerBarStore);
     LOAD_DB2(sVehicleSeatStore);
     LOAD_DB2(sVehicleStore);
+    LOAD_DB2(sVignetteStore);
     LOAD_DB2(sWMOAreaTableStore);
     LOAD_DB2(sWorldMapAreaStore);
     LOAD_DB2(sWorldMapOverlayStore);

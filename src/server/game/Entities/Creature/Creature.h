@@ -114,7 +114,7 @@ struct CreatureTemplate
     uint32 KillCredit[MAX_KILL_CREDIT];
     uint32 Modelid[MAX_CREATURE_MODELS];
     uint32 QuestItem[MAX_CREATURE_QUEST_ITEMS];
-    uint32 UnkInt;
+    uint32 VignetteID;
     uint32 FlagQuest;
     uint32 VerifiedBuild;
     uint32 Classification;
@@ -149,7 +149,7 @@ struct CreatureTemplate
     uint32 MovementType = 0;
     uint32 npcflag = 0;
     uint32 npcflag2 = 0;
-    uint32 personalloot = 0;
+    uint32 QuestLootID = 0;
     uint32 PetSpellDataId = 0;
     uint32 pickpocketLootId = 0;
     uint32 rangeattacktime = 2000;
@@ -166,7 +166,6 @@ struct CreatureTemplate
     uint32 unit_flags2 = 2048;                             // enum UnitFlags2 mask values
     uint32 unit_flags3 = 0;                                // enum UnitFlags3 mask values
     uint32 VehicleId = 0;
-    uint32 VignetteId = 0;
     uint32 WorldEffectID = 0;
     uint8 maxlevel = 1;
     uint8 minlevel = 1;
@@ -975,8 +974,8 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         bool onVehicleAccessoryInit() const { return m_onVehicleAccessory; }
         void SetVehicleAccessoryInit(bool r) { m_onVehicleAccessory = r; }
 
-        uint32 GetVignetteId() const { return m_creatureInfo ? m_creatureInfo->VignetteId : 0; }
-        uint32 GetPersonalLootId() const { return m_creatureInfo ? m_creatureInfo->personalloot : 0; }
+        uint32 GetVignetteId() const { return m_creatureInfo ? m_creatureInfo->VignetteID : 0; }
+        uint32 GetPersonalLootId() const { return m_creatureInfo ? m_creatureInfo->QuestLootID : 0; }
 
         uint32 getCurrentUpdateAreaID() const { return m_areaUpdateId; }
         uint32 getCurrentUpdateZoneID() const { return m_zoneUpdateId; }

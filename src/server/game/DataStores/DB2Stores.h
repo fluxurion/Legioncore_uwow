@@ -204,6 +204,7 @@ extern DB2Storage<TaxiPathEntry>                    sTaxiPathStore;
 extern DB2Storage<UnitPowerBarEntry>                sUnitPowerBarStore;
 extern DB2Storage<VehicleEntry>                     sVehicleStore;
 extern DB2Storage<VehicleSeatEntry>                 sVehicleSeatStore;
+extern DB2Storage<VignetteEntry>                    sVignetteStore;
 extern DB2Storage<WorldMapAreaEntry>                sWorldMapAreaStore;     //@TODO
 extern DB2Storage<WorldMapOverlayEntry>             sWorldMapOverlayStore;
 extern DB2Storage<WorldSafeLocsEntry>               sWorldSafeLocsStore;

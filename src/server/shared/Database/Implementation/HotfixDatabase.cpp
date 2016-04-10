@@ -977,4 +977,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "EnterAnimKitID, RideAnimKitID, ExitAnimKitID, VehicleEnterAnimBone, VehicleExitAnimBone, VehicleRideAnimLoopBone, CameraModeID, "
         "AttachmentID, PassengerAttachmentID, VehicleAbilityDisplay, VehicleEnterAnimKitID, VehicleRideAnimKitID, VehicleExitAnimKitID"
         " FROM vehicle_seat ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // Vignette.db2
+    PrepareStatement(HOTFIX_SEL_VIGNETTE, "SELECT ID, Name, UnkFloat1, UnkFloat2, QuestUnk, QuestID, Unk1, Unk2 FROM vignette ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_VIGNETTE, "SELECT ID, Name_lang FROM vignette_locale WHERE locale = ?", CONNECTION_SYNCH);
 }

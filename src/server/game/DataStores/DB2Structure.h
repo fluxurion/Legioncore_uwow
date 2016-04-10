@@ -2844,6 +2844,18 @@ struct VehicleSeatEntry
     bool IsEjectable() const { return FlagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE; }
 };
 
+struct VignetteEntry
+{
+    uint32    ID;                                 // 0
+    LocalizedString* Name;                        // 1
+    float     UnkFloat1;                          // 2
+    float     UnkFloat2;                          // 3
+    uint32    QuestUnk;                           // 4
+    uint32    QuestID;                            // 5
+    int8      Unk1;                               // 6
+    int8      Unk2;                               // 7
+};
+
 #pragma pack(pop)
 
 struct TaxiPathBySourceAndDestination

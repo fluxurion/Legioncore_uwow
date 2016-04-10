@@ -462,8 +462,8 @@ void ObjectMgr::LoadWDBCreatureTemplates()
     QueryResult result = WorldDatabase.Query(
     //        0      1      2      3      4       5         6        7         8         9      10        11         12      13         14          15
     "SELECT Entry, Name1, Name2, Name3, Name4, NameAlt1, NameAlt2, NameAlt3, NameAlt4, Title, TitleAlt, CursorName, Type, TypeFlags, TypeFlags2, RequiredExpansion, "
-    //16           17              18          19        20         21        22           23         24        25          26          27          28
-    "Family, Classification, MovementInfoID, HpMulti, PowerMulti, Leader, KillCredit1, KillCredit2, UnkInt, DisplayId1, DisplayId2, DisplayId3, DisplayId4, "
+    //16           17              18          19        20         21        22           23           24        25          26          27          28
+    "Family, Classification, MovementInfoID, HpMulti, PowerMulti, Leader, KillCredit1, KillCredit2, VignetteID, DisplayId1, DisplayId2, DisplayId3, DisplayId4, "
     //29           30           31          32          33          34          35          36
     "FlagQuest, QuestItem1, QuestItem2, QuestItem3, QuestItem4, QuestItem5, QuestItem6, VerifiedBuild FROM creature_template_wdb;");
 
@@ -472,7 +472,7 @@ void ObjectMgr::LoadWDBCreatureTemplates()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creature template definitions. DB table `creature_template_wdb` is empty.");
         return;
     }
-    
+
     _creatureTemplateStore.rehash(result->GetRowCount());
 
     do
@@ -504,13 +504,17 @@ void ObjectMgr::LoadWDBCreatureTemplates()
         creatureTemplate.Leader = fields[index++].GetBool();
         for (uint8 i = 0; i < MAX_KILL_CREDIT; ++i)
             creatureTemplate.KillCredit[i] = fields[index++].GetUInt32();
-        creatureTemplate.UnkInt = fields[index++].GetUInt32();
+        creatureTemplate.VignetteID = fields[index++].GetUInt32();
         for (uint8 i = 0; i < MAX_CREATURE_MODELS; ++i)
             creatureTemplate.Modelid[i] = fields[index++].GetUInt32();
         creatureTemplate.FlagQuest = fields[index++].GetUInt32();
         for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
             creatureTemplate.QuestItem[i] = fields[index++].GetUInt32();
         creatureTemplate.VerifiedBuild = fields[index++].GetUInt32();
+
+        if (VignetteEntry const* vignette = sVignetteStore.LookupEntry(creatureTemplate.VignetteID))
+            creatureTemplate.QuestLootID = vignette->QuestID;
+
     }
     while (result->NextRow());
 
@@ -633,10 +637,10 @@ void ObjectMgr::LoadCreatureTemplates()
     "trainer_class, trainer_race, minrangedmg, maxrangedmg, rangedattackpower, lootid, pickpocketloot, skinloot, resistance1, resistance2, resistance3, "
     //36          37           38           39      40      41      42      43      44      45      46      47              48         49       50
     "resistance4, resistance5, resistance6, spell1, spell2, spell3, spell4, spell5, spell6, spell7, spell8, PetSpellDataId, VehicleId, mingold, maxgold, "
-    //51     52             53          54           55              56         57           58                    59           60          61
-    "AIName, MovementType, InhabitType, HoverHeight, Mana_mod_extra, Armor_mod, RegenHealth, mechanic_immune_mask, flags_extra, ScriptName, personalloot, "
-    //62         63             64    65             66         67              68              69              70                    71
-    "VignetteId, WorldEffectID, AiID, MovementIDKit, MeleeID, ScaleLevelMin, ScaleLevelMax, ScaleLevelDelta, ScaleLevelDuration, ControllerID FROM creature_template;");
+    //51     52             53          54           55              56         57           58                    59           60
+    "AIName, MovementType, InhabitType, HoverHeight, Mana_mod_extra, Armor_mod, RegenHealth, mechanic_immune_mask, flags_extra, ScriptName, "
+    //61             62    63             64         65              66              67              68                   69
+    "WorldEffectID, AiID, MovementIDKit, MeleeID, ScaleLevelMin, ScaleLevelMax, ScaleLevelDelta, ScaleLevelDuration, ControllerID FROM creature_template;");
 
     uint32 count = 0;
     do
@@ -703,8 +707,6 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.MechanicImmuneMask = fields[index++].GetUInt32();
         creatureTemplate.flags_extra        = fields[index++].GetUInt32();
         creatureTemplate.ScriptID           = GetScriptId(fields[index++].GetCString());
-        creatureTemplate.personalloot       = fields[index++].GetUInt32();
-        creatureTemplate.VignetteId         = fields[index++].GetUInt32();
         creatureTemplate.WorldEffectID      = fields[index++].GetUInt32();
         creatureTemplate.AiID               = fields[index++].GetUInt32();
         creatureTemplate.MovementIDKit      = fields[index++].GetUInt32();

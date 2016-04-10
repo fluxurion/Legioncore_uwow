@@ -229,6 +229,7 @@ char const TransportAnimationFormat[] = "niifffb";
 char const UnitPowerBarFormat[] = "niffiiiiiiiiiiiissssffttbbb";
 char const VehicleFormat[] = "nifffffffffffffffffffssssffttttttttttttbb";
 char const VehicleSeatFormat[] = "niiiffffffffffffffffffffffffffffffffffttttttttttttttttttttttbbbbbb";
+char const VignetteFormat[] = "nsffiibb";
 char const WMOAreaTableFormat[] = "nistttttttbbbbb";
 char const WorldMapAreaFormat[] = "nsffffttttttbbbb";
 char const WorldMapOverlayFormat[] = "nstttttttttttttt";

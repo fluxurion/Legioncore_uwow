@@ -2690,8 +2690,8 @@ uint8 Creature::getLevelForTarget(WorldObject const* target) const
     uint16 level = target->ToUnit()->getLevel() + sWorld->getIntConfig(CONFIG_WORLD_BOSS_LEVEL_DIFF);
     if (level < 1)
         return 1;
-    if (level > 255)
-        return 255;
+    if (level > 123)
+        return 123;
     return uint8(level);
 }
 
