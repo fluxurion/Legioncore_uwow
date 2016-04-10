@@ -15652,7 +15652,10 @@ void Player::CompleteQuest(uint32 quest_id)
 
         if (Quest const* qInfo = sObjectMgr->GetQuestTemplate(quest_id))
         {
-            if (qInfo->HasFlag(QUEST_FLAGS_AUTO_REWARDED) || qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_AUTO_REWARD))
+            //QUEST_SPECIAL_FLAGS_AUTO_REWARD - is just objectrive with scale. Q: 39279 auto-rewarded, but Q: 38819 not.
+            // SO. Diff of  flags is QUEST_FLAGS_AUTO_SUBMIT AND QUEST_FLAGS_AUTO_ACCEPT or  (0x00090000). 
+            // SO. QUEST_FLAGS_AUTO_SUBMIT is AutoRewerd. Yes? Or Not! But if u will be correct something on this logic check after quest: 39279 & 38819
+            if (qInfo->HasFlag(QUEST_FLAGS_AUTO_REWARDED) || /*qInfo->HasSpecialFlag(QUEST_SPECIAL_FLAGS_AUTO_REWARD) && */qInfo->HasFlag(QUEST_FLAGS_AUTO_SUBMIT))
                 RewardQuest(qInfo, 0, this, true);
             else
                 SendQuestComplete(qInfo);
