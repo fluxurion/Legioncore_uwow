@@ -62,9 +62,10 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38813', '38766', '0', '0'),
 ('39262', '38813', '0', '0'),
 ('39495', '39262', '0', '0'),
-('38727', '39495', '0', '0'),
-('38819', '39495', '0', '0'),
-('38725', '39495', '0', '0');
+('38727', '39495', '0', '-38727'),
+('38819', '39495', '0', '-38727'),
+('38725', '39495', '0', '0'),
+('40222', '38725', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -98,6 +99,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q39049' WHERE `entry` = 93105
 
 -- Q: 38759
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q38759' WHERE `gameobject_template`.`entry` in (242989, 244916, 242987, 242990);
+UPDATE `creature_template` SET lootid = 98986 WHERE `entry` = 95226;
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('95226', '128227', '-100', '0', '0', '1', '1', '0');
 
@@ -174,5 +176,11 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q39495_caza' WHERE `entry` = 
 -- Q: 38727
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q38727' WHERE `gameobject_template`.`entry` in(243965, 243968, 243967);
 
--- Q: 38819
+-- Q: 38819 - proggress with
+
 -- Q: 38725
+-- Q: 40222
+UPDATE `creature_template` SET flags_extra = 128, `ScriptName` = 'npc_q40222_progres1' WHERE `entry` = 103429;
+UPDATE `creature_template` SET lootid = 98986, `ScriptName` = 'npc_q39495_prolifica' WHERE `entry` = 98986;
+REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
+('98986', '129957', '-100', '0', '0', '1', '1', '0');

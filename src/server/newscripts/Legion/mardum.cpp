@@ -915,16 +915,144 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            std::map<uint32, uint32> _data;
-            _data[243965] = 93762;
-            _data[243968] = 96732;
-            _data[243967] = 96731;
+            uint32 credit1 = 0;
+            uint32 credit2 = 0;
 
-            if (player->GetQuestObjectiveData(QUEST, _data[go->GetEntry()]))
+            switch (go->GetEntry())
+            {
+                case 243965:
+                    credit1 = 93762;
+                    credit2 = 96692;
+                    break;
+                case 243968:
+                    credit1 = 96732;
+                    credit2 = 96734;
+                    break;
+                case 243967:
+                    credit1 = 96731;
+                    credit2 = 96733;
+                    break;
+            }
+            if (player->GetQuestObjectiveData(QUEST, credit1))
                 return true;
 
-            player->KilledMonsterCredit(_data[go->GetEntry()]);
+            player->KilledMonsterCredit(credit1);
+            player->KilledMonsterCredit(credit2); //Hack. Special event.
             return false;
+        }
+    };
+};
+
+//103429
+class npc_q40222_progres1 : public CreatureScript
+{
+public:
+    npc_q40222_progres1() : CreatureScript("npc_q40222_progres1") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q40222_progres1AI(creature);
+    }
+
+    struct npc_q40222_progres1AI : public ScriptedAI
+    {
+        npc_q40222_progres1AI(Creature* creature) : ScriptedAI(creature)
+        {
+            SetCanSeeEvenInPassiveMode(true);
+        }
+
+        void Reset()
+        {
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+
+        enum data
+        {
+            CREDIT = 103429,
+            QUEST = 40222,
+        };
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (who->GetTypeId() != TYPEID_PLAYER || !me->IsWithinDistInMap(who, 50.0f))
+                return;
+
+            if (who->ToPlayer()->GetQuestObjectiveData(QUEST, CREDIT))
+                return;
+
+            who->ToPlayer()->KilledMonsterCredit(CREDIT);
+        }
+    };
+};
+//98986 Prolifica
+class npc_q39495_prolifica : public CreatureScript
+{
+public:
+    npc_q39495_prolifica() : CreatureScript("npc_q39495_prolifica") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39495_prolificaAI(creature);
+    }
+
+    //! Scripted_NoMovementAI HACK!
+    struct npc_q39495_prolificaAI : public Scripted_NoMovementAI
+    {
+        EventMap events;
+        ObjectGuid playerGuid;
+
+        npc_q39495_prolificaAI(Creature* creature) : Scripted_NoMovementAI(creature)
+        {
+        }
+
+        enum data
+        {
+            EVENT_1 = 1,
+            EVENT_2,
+            EVENT_3,
+            EVENT_4,
+            EVENT_5,
+            EVENT_6,
+        };
+
+        void EnterCombat(Unit* victim) override
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, victim->GetGUID());
+        }
+
+        void DoAction(int32 const /*param*/)
+        {
+
+        }
+
+        //! HACK!!! ANTIL FINISH EVENT
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            if (attacker->ToPlayer())
+            {
+                damage *= 3;
+                return;
+            }
+            damage /= 2;
+        }
+
+        void JustDied(Unit* killer)
+        {
+            Player *player = killer->ToPlayer();
+            if (!player)
+                return;
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_2, player->GetGUID());
+        }
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+
+            }
+            DoMeleeAttackIfReady();
         }
     };
 };
@@ -948,4 +1076,6 @@ void AddSC_Mardum()
     new npc_q93221_beliash();
     new npc_q39495_caza();
     new go_q38727();
+    new npc_q40222_progres1();
+    new npc_q39495_prolifica();
 }
