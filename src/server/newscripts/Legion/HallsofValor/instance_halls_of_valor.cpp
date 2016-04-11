@@ -35,10 +35,13 @@ public:
         ObjectGuid aegisGUID;
         ObjectGuid OdynGUID;
         ObjectGuid OdynChestGUID;
+        
 
         std::map<uint32, ObjectGuid> runicBrandGUIDconteiner;
         
         bool onInitEnterState;
+        uint32 PlayerCount;
+        bool StartEvent;
 
         void Initialize()
         {
@@ -49,7 +52,9 @@ public:
             OdynGUID.Clear();
             aegisGUID.Clear();
             OdynChestGUID.Clear();
-
+            
+            PlayerCount = 0;
+            StartEvent = false;
             onInitEnterState = false;
         }
 
@@ -206,12 +211,28 @@ public:
 
         void OnPlayerEnter(Player* player)
         {
+           
+            if (!StartEvent)
+            {
+               if (PlayerCount < 5)
+               {
+                  PlayerCount++;
+               } 
+               else
+               {
+               StartEvent = true;
+               if (Group *g = player->GetGroup())
+                 if(Player* leader = ObjectAccessor::FindPlayer(g ->GetLeaderGUID()))
+                     leader->CastSpell(leader, 202036);
+               }
+            }
             if (onInitEnterState)
                 return;
 
             onInitEnterState = true;
 
             DoEventCreatures();
+            
         }
 
         void DoEventCreatures()
@@ -267,9 +288,10 @@ public:
         
         /* void Update(uint32 diff) 
         {
-            // Challenge
             InstanceScript::Update(diff);
+
         } */
+        
     };
 };
 

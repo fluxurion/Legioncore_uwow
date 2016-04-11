@@ -33,6 +33,7 @@ enum Spells
     //Defender
     SPELL_OLMYR_VISUAL          = 191899,
     SPELL_SOLSTEN_VISUAL        = 192147,
+    //  198226 - интро
 };
 
 enum eEvents

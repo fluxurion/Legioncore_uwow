@@ -8,11 +8,14 @@
 #include "ScriptedCreature.h"
 #include "halls_of_valor.h"
 
-/* enum Says
+ enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_HORN            = 1,
+    SAY_HORN_EMOTE      = 2,
+    SAY_BLOODLETTING    = 3,
+    SAY_DEATH           = 4,
+}; 
 
 enum Spells
 {
@@ -65,7 +68,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //12:47
         {
-            //Talk(SAY_AGGRO); //I will be the judge now.
+            Talk(SAY_AGGRO); //I will be the judge now.
             _EnterCombat();
             events.ScheduleEvent(EVENT_HORN_OF_VALOR, 6000);        //12:53, 13:24, 14:04
             events.ScheduleEvent(EVENT_DANCING_BLADE, 15000);       //13:02, 13:13, 13:34, 13:45
@@ -79,8 +82,9 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
+            DoCast(202152); // conversation
         }
 
         void JustSummoned(Creature* summon)
@@ -110,7 +114,8 @@ public:
                 {
                     case EVENT_HORN_OF_VALOR:
                     {
-                        //Talk();
+                        Talk(SAY_HORN);
+                        Talk(SAY_HORN_EMOTE);
                         DoCast(SPELL_HORN_OF_VALOR);
                         if (drakeCount < 3)
                             drakeCount++;
@@ -134,6 +139,7 @@ public:
                     case EVENT_BLOODLETTING_SWEEP:
                         if (me->getVictim())
                             DoCast(me->getVictim(), SPELL_BLOODLETTING_SWEEP, true);
+                         Talk(SAY_BLOODLETTING);
                         events.ScheduleEvent(EVENT_BLOODLETTING_SWEEP, 26000);
                         break;
                 }
@@ -214,9 +220,40 @@ public:
         return new npc_hymdall_storm_drakeAI(creature);
     }
 };
+// trash 198599
+class spell_thunderstrike : public SpellScriptLoader
+{
+    public:
+        spell_thunderstrike() : SpellScriptLoader("spell_thunderstrike") { }
+
+        class spell_thunderstrike_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_thunderstrike_AuraScript);
+
+            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                Unit* target = GetTarget();
+                if (Creature* caster = target->FindNearestCreature(95842, 40.0f, true))
+                  {
+                      caster->CastSpell(target, 198605, true);
+                  }
+            }
+
+            void Register()
+            {
+                OnEffectRemove += AuraEffectRemoveFn(spell_thunderstrike_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_thunderstrike_AuraScript();
+        }
+};
 
 void AddSC_boss_hymdall()
 {
     new boss_hymdall();
     new npc_hymdall_storm_drake();
+    new spell_thunderstrike();
 }
