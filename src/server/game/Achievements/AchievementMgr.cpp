@@ -296,7 +296,7 @@ bool AchievementCriteriaData::Meets(uint32 criteria_id, Player const* source, Un
         case ACHIEVEMENT_CRITERIA_DATA_TYPE_T_LEVEL:
             if (!target)
                 return false;
-            return target->getLevel() >= level.minlevel;
+            return target->getLevelForTarget(source) >= level.minlevel;
         case ACHIEVEMENT_CRITERIA_DATA_TYPE_T_GENDER:
             if (!target)
                 return false;
@@ -3870,7 +3870,7 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                     if (referencePlayer->getLevel() != reqValue)
                         check = false;
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_TARGET_LEVEL: // 40
-                    if (!unit || unit->getLevel() != reqValue)
+                    if (!unit || unit->getLevelForTarget(referencePlayer) != reqValue)
                         check = false;
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_TARGET_ZONE: // 41
                     if (referencePlayer->GetZoneId() != reqValue)
@@ -3990,13 +3990,13 @@ bool AchievementMgr<T>::AdditionalRequirementsSatisfied(uint32 modifierTreeId, u
                 }
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_TARGET_MIN_LEVEL: // 70
                 {
-                    if (!unit || unit->getLevel() >= reqValue)
+                    if (!unit || unit->getLevelForTarget(referencePlayer) >= reqValue)
                         check = false;
                     break;
                 }
                 case ACHIEVEMENT_CRITERIA_ADDITIONAL_CONDITION_TARGET_MAX_LEVEL: // 71
                 {
-                    if (!unit || unit->getLevel() < reqValue)
+                    if (!unit || unit->getLevelForTarget(referencePlayer) < reqValue)
                         check = false;
                     break;
                 }

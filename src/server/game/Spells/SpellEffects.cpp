@@ -407,7 +407,7 @@ void Spell::EffectInstaKill(SpellEffIndex /*effIndex*/)
     data.SpellID = m_spellInfo->Id;
     m_caster->SendMessageToSet(data.Write(), true);
 
-    m_caster->DealDamage(unitTarget, unitTarget->GetHealth(), NULL, NODAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+    m_caster->DealDamage(unitTarget, unitTarget->GetHealth(m_caster), NULL, NODAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 }
 
 void Spell::EffectEnvironmentalDMG(SpellEffIndex /*effIndex*/)
@@ -486,7 +486,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                     // percent from health with min
                     case 25599:                             // Thundercrash
                     {
-                        damage = unitTarget->GetHealth() / 2;
+                        damage = unitTarget->GetHealth(m_caster) / 2;
                         if (damage < 200)
                             damage = 200;
                         break;
@@ -955,7 +955,7 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
                     if (bp2)
                         percent *= bp2;
 
-                    basepoints0 = CalculatePct(triggerTarget->GetMaxHealth(), percent);
+                    basepoints0 = CalculatePct(triggerTarget->GetMaxHealth(triggerCaster), percent);
 
                     triggerCaster->CastCustomSpell(triggerTarget, spell_trigger, &basepoints0, &bp1, &bp2, true, m_CastItem, NULL, m_originalCasterGUID);
                     check = true;
@@ -2367,7 +2367,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
         }
 
         // Remove Grievous bite if fully healed
-        if (unitTarget->HasAura(48920) && (unitTarget->GetHealth() + addhealth >= unitTarget->GetMaxHealth()))
+        if (unitTarget->HasAura(48920) && (unitTarget->GetHealth(caster) + addhealth >= unitTarget->GetMaxHealth(caster)))
             unitTarget->RemoveAura(48920);
 
         // Chakra : Serenity - 81208
@@ -2401,7 +2401,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
                 caster->CastCustomSpell(unitTarget, 117549, &bp1, &bp2, &bp3, &bp4, &bp5, &bp6, true);
             }
 
-            if (unitTarget->GetHealth() + addhealth >= unitTarget->GetMaxHealth())
+            if (unitTarget->GetHealth(caster) + addhealth >= unitTarget->GetMaxHealth(caster))
                 unitTarget->CastSpell(unitTarget, 120717, true);  // Revitalized Spirit
         }
 
@@ -2477,7 +2477,7 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
             break;
     }
 
-    uint32 heal = unitTarget->CountPctFromMaxHealth(damage);
+    uint32 heal = unitTarget->CountPctFromMaxHealth(damage, m_caster);
 
     switch (m_spellInfo->Id)
     {
@@ -4584,7 +4584,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
             spell_bonus = int32(spell_bonus * weapon_total_pct);
     }
 
-    int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized, true);
+    int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized, true, unitTarget);
     bool  calculateWPD = true;
 
     // Sequence is important
@@ -4690,9 +4690,9 @@ void Spell::EffectHealMaxHealth(SpellEffIndex effIndex)
 
     // damage == 0 - heal for caster max health
     if (damage == 0)
-        addhealth = m_caster->GetMaxHealth();
+        addhealth = m_caster->GetMaxHealth(unitTarget);
     else
-        addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
+        addhealth = unitTarget->GetMaxHealth(m_caster) - unitTarget->GetHealth(m_caster);
 
     addhealth = m_caster->SpellHealingBonusDone(m_caster, m_spellInfo, addhealth, HEAL, effIndex);
     addhealth = unitTarget->SpellHealingBonusTaken(m_caster, m_spellInfo, addhealth, HEAL, effIndex);
@@ -5083,7 +5083,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 case 54426:
                     if (unitTarget)
                     {
-                        int32 damage = int32(unitTarget->GetHealth()) - int32(unitTarget->CountPctFromMaxHealth(5));
+                        int32 damage = int32(unitTarget->GetHealth(m_caster)) - int32(unitTarget->CountPctFromMaxHealth(5, m_caster));
                         if (damage > 0)
                             m_caster->CastCustomSpell(28375, SPELLVALUE_BASE_POINT0, damage, unitTarget);
                     }
@@ -7472,7 +7472,7 @@ void Spell::EffectDamageFromMaxHealthPCT(SpellEffIndex /*effIndex*/)
     if (m_spellInfo->Id == 125372)
         damage = damage / 100;
 
-    m_damage += unitTarget->CountPctFromMaxHealth(damage);
+    m_damage += unitTarget->CountPctFromMaxHealth(damage, m_caster);
 }
 
 void Spell::EffectGiveCurrency(SpellEffIndex effIndex)

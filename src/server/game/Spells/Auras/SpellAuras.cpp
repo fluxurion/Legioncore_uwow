@@ -644,7 +644,7 @@ Aura::Aura(SpellInfo const* spellproto, WorldObject* owner, Unit* caster, Item* 
 m_spellInfo(spellproto), m_casterGuid(!casterGUID.IsEmpty() ? casterGUID : caster->GetGUID()),
 m_castItemGuid(castItem ? castItem->GetGUID() : ObjectGuid::Empty), m_applyTime(time(NULL)),
 m_owner(owner), m_timeCla(0), m_updateTargetMapInterval(0),
-m_casterLevel(caster ? caster->getLevel() : m_spellInfo->SpellLevel), m_procCharges(0), m_stackAmount(stackAmount ? stackAmount: 1),
+m_casterLevel(caster ? caster->getLevelForTarget(owner) : m_spellInfo->SpellLevel), m_procCharges(0), m_stackAmount(stackAmount ? stackAmount: 1),
 m_isRemoved(false), m_isSingleTarget(false), m_isUsingCharges(false), m_fromAreatrigger(false), m_inArenaNerf(false), m_aura_amount(0),
 m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAreaTrGuid(), m_customData(0), m_damage_amount(0),
 m_comboPoints(comboPoints)
@@ -681,7 +681,7 @@ m_comboPoints(comboPoints)
     if (m_spellInfo->Scaling.ScalesFromItemLevel && castItem)
         m_casterLevel = castItem->GetItemLevel();
 
-    if (m_spellInfo->Scaling.MaxScalingLevel && caster && caster->getLevel() > m_spellInfo->Scaling.MaxScalingLevel)
+    if (m_spellInfo->Scaling.MaxScalingLevel && caster && caster->getLevelForTarget(m_owner) > m_spellInfo->Scaling.MaxScalingLevel)
         m_casterLevel = m_spellInfo->Scaling.MaxScalingLevel;
 }
 

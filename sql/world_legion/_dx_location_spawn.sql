@@ -12469,3 +12469,5 @@ INSERT IGNORE INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes
 (103584, 0, 0x0, 0x1, ''), -- 103584
 (97978, 0, 0x0, 0x1, ''), -- 97978
 (97978, 0, 0x0, 0x0, ''); -- 97978
+
+update creature set spawndist = 0,MovementType = 0 WHERE id IN (93011,98228,98227,98290,99918);

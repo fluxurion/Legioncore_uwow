@@ -495,11 +495,11 @@ void Creature::UpdateStat()
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = cInfo->ScaleLevelDuration < 123 ? cInfo->ScaleLevelDuration : 0;
+    uint8 level = 0;
     if(m_difficulty == 1 || m_difficulty == 2)
-        level = cInfo->ScaleLevelMin ? cInfo->ScaleLevelMax : cInfo->maxlevel;
-    else if (!level)
-        level = cInfo->ScaleLevelMin ? cInfo->ScaleLevelMin : cInfo->minlevel;
+        level = cInfo->maxlevel;
+    else
+        level = cInfo->minlevel;
 
     SetLevel(level);
 
@@ -1284,18 +1284,18 @@ void Creature::SaveToDB(uint32 mapid, uint32 spawnMask, uint32 phaseMask)
     WorldDatabase.CommitTransaction(trans);
 }
 
-void Creature::SelectLevel(const CreatureTemplate* cinfo)
+void Creature::SelectLevel(const CreatureTemplate* cInfo)
 {
-    uint32 rank = isPet()? 0 : cinfo->Classification;
+    uint32 rank = isPet()? 0 : cInfo->Classification;
 
     CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
 
     // level
-    uint8 level = cinfo->ScaleLevelDuration < 123 ? cinfo->ScaleLevelDuration : 0;
+    uint8 level = 0;
     if(m_difficulty == 1 || m_difficulty == 2)
-        level = cinfo->ScaleLevelMin ? cinfo->ScaleLevelMax : cinfo->maxlevel;
-    else if (!level)
-        level = cinfo->ScaleLevelMin ? cinfo->ScaleLevelMin : cinfo->minlevel;
+        level = cInfo->maxlevel;
+    else
+        level = cInfo->minlevel;
 
     if (BattlegroundMap* map = GetMap()->ToBgMap())
     {
@@ -1306,7 +1306,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     SetLevel(level);
 
     // for wild battle pets
-    if (cinfo->Type == CREATURE_TYPE_WILD_PET)
+    if (cInfo->Type == CREATURE_TYPE_WILD_PET)
     {
         // random level depends on zone data
         if (AreaTableEntry const * aEntry = sAreaTableStore.LookupEntry(GetZoneId()))
@@ -1321,12 +1321,12 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
             SetUInt32Value(UNIT_FIELD_WILD_BATTLE_PET_LEVEL, level);
     }
 
-    CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(level, cinfo->unit_class);
+    CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(level, cInfo->unit_class);
 
     // health
     float healthmod = _GetHealthMod(rank);
 
-    uint32 basehp = stats->GenerateHealth(cinfo, diffStats);
+    uint32 basehp = stats->GenerateHealth(cInfo, diffStats);
     uint32 health = uint32(basehp * healthmod);
 
     //shouldn't be more. Check stats.
@@ -1343,7 +1343,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     ResetPlayerDamageReq();
 
     // mana
-    uint32 mana = stats->GenerateMana(cinfo);
+    uint32 mana = stats->GenerateMana(cInfo);
     SetCreateMana(mana);
 
     switch (getClass())
@@ -1369,7 +1369,7 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
     SetModifierValue(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
 
     //damage
-    float basedamage = stats->GenerateBaseDamage(cinfo);
+    float basedamage = stats->GenerateBaseDamage(cInfo);
 
     float weaponBaseMinDamage = basedamage;
     float weaponBaseMaxDamage = basedamage * 1.5f;
@@ -1385,6 +1385,69 @@ void Creature::SelectLevel(const CreatureTemplate* cinfo)
 
     SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, stats->AttackPower);
     SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, stats->RangedAttackPower);
+
+    if (!cInfo->ScaleLevelMin || !cInfo->ScaleLevelMax)
+    {
+        CreatureLevelStat& levelStat = m_levelStat[level];
+        levelStat.baseHP = basehp;
+        levelStat.baseMP = mana;
+        levelStat.healthMax = health;
+        levelStat.baseMinDamage = weaponBaseMinDamage;
+        levelStat.baseMaxDamage = weaponBaseMaxDamage;
+        levelStat.AttackPower = stats->AttackPower;
+        levelStat.RangedAttackPower = stats->RangedAttackPower;
+        levelStat.BaseArmor = stats->GenerateArmor(cInfo);
+    }
+    else
+        GenerateScaleLevelStat(cInfo);
+}
+
+void Creature::GenerateScaleLevelStat(const CreatureTemplate* cInfo)
+{
+    uint32 rank = isPet()? 0 : cInfo->Classification;
+    float healthmod = _GetHealthMod(rank);
+    CreatureDifficultyStat const* diffStats = GetCreatureDiffStat();
+
+    for (uint8 level = cInfo->ScaleLevelMin; level < cInfo->ScaleLevelMax; ++level)
+    {
+        CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(level, cInfo->unit_class);
+
+        // health
+        uint32 basehp = stats->GenerateHealth(cInfo, diffStats);
+        uint32 health = uint32(basehp * healthmod);
+
+        //shouldn't be more. Check stats.
+        if (basehp > 0x7FFFFFFF)
+            health = 1;
+
+        // mana
+        uint32 mana = stats->GenerateMana(cInfo);
+
+        //damage
+        float basedamage = stats->GenerateBaseDamage(cInfo);
+
+        //armor
+        uint32 armor = stats->GenerateArmor(cInfo);
+
+        CreatureLevelStat& levelStat = m_levelStat[level];
+        levelStat.baseHP = basehp;
+        levelStat.baseMP = mana;
+        levelStat.healthMax = health;
+        levelStat.baseMinDamage = basedamage;
+        levelStat.baseMaxDamage = basedamage * 1.5f;
+        levelStat.AttackPower = stats->AttackPower;
+        levelStat.RangedAttackPower = stats->RangedAttackPower;
+        levelStat.BaseArmor = armor;
+    }
+}
+
+CreatureLevelStat const* Creature::GetScaleLevelStat(uint8 level)
+{
+    CreatureLevelStatContainer::const_iterator itr = m_levelStat.find(level);
+    if (itr != m_levelStat.end())
+        return &(itr->second);
+
+    return nullptr;
 }
 
 float Creature::_GetHealthMod(int32 Rank)
@@ -1783,10 +1846,10 @@ float Creature::GetAttackDistance(Unit const* player) const
     if (aggroRate == 0)
         return 0.0f;
 
-    uint32 playerlevel   = player->getLevelForTarget(this);
+    uint32 playerlevel = player->getLevelForTarget(this);
     uint32 creaturelevel = getLevelForTarget(player);
 
-    int32 leveldif       = int32(playerlevel) - int32(creaturelevel);
+    int32 leveldif = int32(playerlevel) - int32(creaturelevel);
 
     // "The maximum Aggro Radius has a cap of 25 levels under. Example: A level 30 char has the same Aggro Radius of a level 5 char on a level 60 mob."
     if (leveldif < - 25)
@@ -2680,19 +2743,6 @@ void Creature::AllLootRemovedFromCorpse()
         else
             m_corpseRemoveTime -= diff;
     }
-}
-
-uint8 Creature::getLevelForTarget(WorldObject const* target) const
-{
-    if (!isWorldBoss() || !target->ToUnit())
-        return Unit::getLevelForTarget(target);
-
-    uint16 level = target->ToUnit()->getLevel() + sWorld->getIntConfig(CONFIG_WORLD_BOSS_LEVEL_DIFF);
-    if (level < 1)
-        return 1;
-    if (level > 123)
-        return 123;
-    return uint8(level);
 }
 
 std::string Creature::GetAIName() const

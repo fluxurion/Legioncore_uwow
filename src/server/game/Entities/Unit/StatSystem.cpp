@@ -1383,79 +1383,44 @@ void Creature::UpdateDamagePhysical(WeaponAttackType attType)
             break;
     }
 
-    //float att_speed = float(GetAttackTime(BASE_ATTACK)) / 1000.0f;
-
-    float weapon_mindamage = GetWeaponDamageRange(attType, MINDAMAGE);
-    float weapon_maxdamage = GetWeaponDamageRange(attType, MAXDAMAGE);
-
-    float base_value  = GetModifierValue(unitMod, BASE_VALUE);
-    float base_pct    = GetModifierValue(unitMod, BASE_PCT);
-    float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
-    float total_pct   = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
-    float dmg_multiplier = GetCreatureTemplate()->dmg_multiplier;
-
-    /* if(CreatureDifficultyStat const* _stats = GetCreatureDiffStat())
-        if(GetMobDifficulty() == 1 || GetMobDifficulty() == 3)
-            dmg_multiplier *= _stats->dmg_multiplier; */
+    m_base_value  = GetModifierValue(unitMod, BASE_VALUE);
+    m_base_pct    = GetModifierValue(unitMod, BASE_PCT);
+    m_total_value = GetModifierValue(unitMod, TOTAL_VALUE);
+    m_total_pct   = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
+    m_dmg_multiplier = GetCreatureTemplate()->dmg_multiplier;
 
     switch (GetMap()->GetDifficultyID())
     {
         case DIFFICULTY_N_SCENARIO:
-            dmg_multiplier *= 1.5f;
+            m_dmg_multiplier *= 1.5f;
             break;
         case DIFFICULTY_NORMAL:
         case DIFFICULTY_HC_SCENARIO:
         case DIFFICULTY_10_N:
         case DIFFICULTY_10_HC:
-            dmg_multiplier *= 2;
+            m_dmg_multiplier *= 2;
             break;
         case DIFFICULTY_HEROIC:
         case DIFFICULTY_25_N:
         case DIFFICULTY_25_HC:
-            dmg_multiplier *= 4;
+            m_dmg_multiplier *= 4;
             break;
         case DIFFICULTY_CHALLENGE:
         case DIFFICULTY_LFR:
         case DIFFICULTY_LFR_NEW:
-            dmg_multiplier *= 5;
+            m_dmg_multiplier *= 5;
             break;
         case DIFFICULTY_NORMAL_RAID:
         case DIFFICULTY_MYTHIC_DUNGEON:
-            dmg_multiplier *= 6;
+            m_dmg_multiplier *= 6;
             break;
         case DIFFICULTY_HEROIC_RAID:
-            dmg_multiplier *= 7;
+            m_dmg_multiplier *= 7;
             break;
         case DIFFICULTY_MYTHIC_RAID:
-            dmg_multiplier *= 8;
+            m_dmg_multiplier *= 8;
             break;
         default:
-            break;
-    }
-
-    if (!CanUseAttackType(attType))
-    {
-        weapon_mindamage = 0;
-        weapon_maxdamage = 0;
-    }
-
-    float mindamage = ((base_value + weapon_mindamage) * dmg_multiplier * base_pct + total_value) * total_pct;
-    float maxdamage = ((base_value + weapon_maxdamage) * dmg_multiplier * base_pct + total_value) * total_pct;
-
-    switch (attType)
-    {
-        case BASE_ATTACK:
-        default:
-            SetStatFloatValue(UNIT_FIELD_MIN_DAMAGE, mindamage);
-            SetStatFloatValue(UNIT_FIELD_MAX_DAMAGE, maxdamage);
-            break;
-        case OFF_ATTACK:
-            SetStatFloatValue(UNIT_FIELD_MIN_OFF_HAND_DAMAGE, mindamage);
-            SetStatFloatValue(UNIT_FIELD_MAX_OFF_HAND_DAMAGE, maxdamage);
-            break;
-        case RANGED_ATTACK:
-            SetStatFloatValue(UNIT_FIELD_MIN_RANGED_DAMAGE, mindamage);
-            SetStatFloatValue(UNIT_FIELD_MAX_RANGED_DAMAGE, maxdamage);
             break;
     }
 }
@@ -1806,31 +1771,13 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
     float att_speed = BASE_ATTACK_TIME / 1000.0f;
 
     //float base_value  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / APCoefficient * att_speed;
-    float base_value  = GetModifierValue(unitMod, BASE_VALUE) + (GetTotalAttackPowerValue(attType) * att_speed / APCoefficient);
-    float base_pct    = GetModifierValue(unitMod, BASE_PCT);
-    float total_value = GetModifierValue(unitMod, TOTAL_VALUE);
-    float total_pct   = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
+    m_base_value  = GetModifierValue(unitMod, BASE_VALUE) + (GetTotalAttackPowerValue(attType) * att_speed / APCoefficient);
+    m_base_pct    = GetModifierValue(unitMod, BASE_PCT);
+    m_total_value = GetModifierValue(unitMod, TOTAL_VALUE);
+    m_total_pct   = GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, SPELL_SCHOOL_MASK_NORMAL);
     if(Unit* owner = GetOwner())
-        total_pct *= owner->GetTotalAuraMultiplier(SPELL_AURA_PET_DAMAGE_DONE_PCT);
-
-    float weapon_mindamage = GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
-    float weapon_maxdamage = GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
-
-    float mindamage = ((base_value + weapon_mindamage) * base_pct + total_value) * total_pct;
-    float maxdamage = ((base_value + weapon_maxdamage) * base_pct + total_value) * total_pct;
-
-    switch (attType)
-    {
-        case BASE_ATTACK:
-        default:
-            SetStatFloatValue(UNIT_FIELD_MIN_DAMAGE, mindamage);
-            SetStatFloatValue(UNIT_FIELD_MAX_DAMAGE, maxdamage);
-            break;
-        case OFF_ATTACK:
-            SetStatFloatValue(UNIT_FIELD_MIN_OFF_HAND_DAMAGE, mindamage / 2);
-            SetStatFloatValue(UNIT_FIELD_MAX_OFF_HAND_DAMAGE, maxdamage / 2);
-            break;
-    }
+        m_total_pct *= owner->GetTotalAuraMultiplier(SPELL_AURA_PET_DAMAGE_DONE_PCT);
+    m_dmg_multiplier = 1.0;
 }
 
 void Guardian::SetBonusDamage(int32 damage)

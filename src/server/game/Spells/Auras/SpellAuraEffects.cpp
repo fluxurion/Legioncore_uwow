@@ -670,7 +670,7 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
             m_canBeRecalculated = false;
             if (!m_spellInfo->AuraOptions.ProcTypeMask)
                 break;
-            amount = int32(target->CountPctFromMaxHealth(10));
+            amount = int32(target->CountPctFromMaxHealth(10, caster));
             if (caster)
             {
                 // Glyphs increasing damage cap
@@ -1187,12 +1187,12 @@ int32 AuraEffect::CalculateAmount(Unit* caster, int32 &m_aura_amount)
             {
                 // Arcane Shroud
                 case 26400:
-                    level_diff = target->getLevel() - 60;
+                    level_diff = target->getLevelForTarget(caster) - 60;
                     multiplier = 2;
                     break;
                 // The Eye of Diminution
                 case 28862:
-                    level_diff = target->getLevel() - 60;
+                    level_diff = target->getLevelForTarget(caster) - 60;
                     multiplier = 1;
                     break;
             }
@@ -7542,7 +7542,7 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster, 
                     // Frost Blast
                     case 27808:
                         if (caster)
-                            caster->CastCustomSpell(29879, SPELLVALUE_BASE_POINT0, int32(target->CountPctFromMaxHealth(21)), target, true, NULL, this);
+                            caster->CastCustomSpell(29879, SPELLVALUE_BASE_POINT0, int32(target->CountPctFromMaxHealth(21, caster)), target, true, NULL, this);
                         return;
                     // Inoculate Nestlewood Owlkin
                     case 29528:
@@ -8057,7 +8057,7 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster, Spell
     else if (GetSpellInfo()->GetEffect(effIndex, m_diffMode)->Effect == SPELL_EFFECT_PERSISTENT_AREA_AURA)
     {
         float critChance = 0.0f;
-        damage = uint32(target->CountPctFromMaxHealth(damage));
+        damage = uint32(target->CountPctFromMaxHealth(damage, caster));
         caster->isSpellCrit(target, GetSpellInfo(), GetSpellInfo()->GetSchoolMask(), BASE_ATTACK, critChance);
         crit = roll_chance_f(critChance);
         if (crit)
@@ -8124,7 +8124,7 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster, Spell
         }
     }
 
-    int32 overkill = damage - target->GetHealth();
+    int32 overkill = damage - target->GetHealth(GetCaster());
     if (overkill < 0)
         overkill = 0;
 
@@ -8175,8 +8175,8 @@ void AuraEffect::HandlePeriodicHealthLeechAuraTick(Unit* target, Unit* caster, S
     damage = caster->InterceptionOfDamage(target, dmg, DOT, m_spellInfo->GetSchoolMask(), m_spellInfo);
     caster->CalcAbsorbResist(target, GetSpellInfo()->GetSchoolMask(), DOT, damage, &absorb, &resist, m_spellInfo);
 
-    if (target->GetHealth() < damage)
-        damage = uint32(target->GetHealth());
+    if (target->GetHealth(caster) < damage)
+        damage = uint32(target->GetHealth(caster));
 
     sLog->outInfo(LOG_FILTER_SPELLS_AURAS, "PeriodicTick: %u (TypeId: %u) health leech of %u (TypeId: %u) for %u dmg inflicted by %u abs is %u",
         GetCasterGUID().GetCounter(), GetCasterGUID().GetHigh(), target->GetGUIDLow(), target->GetTypeId(), damage, GetId(), absorb);
@@ -8291,7 +8291,7 @@ void AuraEffect::HandlePeriodicHealAurasTick(Unit* target, Unit* caster, SpellEf
         TakenTotalMod = caster->CalcVersalityBonusDone(target, TakenTotalMod);
         TakenTotalMod = std::max(TakenTotalMod, 0.0f);
 
-        damage = uint32(target->CountPctFromMaxHealth(damage));
+        damage = uint32(target->CountPctFromMaxHealth(damage, caster));
         damage = uint32(damage * TakenTotalMod);
         
         switch (GetSpellInfo()->Id)

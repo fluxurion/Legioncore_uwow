@@ -264,6 +264,20 @@ struct CreatureDifficultyStat
 typedef std::unordered_map<ObjectGuid::LowType, CreatureTemplate> CreatureTemplateContainer;
 typedef std::unordered_map<uint32, std::vector<CreatureDifficultyStat> > CreatureDifficultyStatContainer;
 
+struct CreatureLevelStat
+{
+    uint32   baseHP;
+    uint32   baseMP;
+    uint32   healthMax;
+    float    baseMinDamage;
+    float    baseMaxDamage;
+    uint32 AttackPower;
+    uint32 RangedAttackPower;
+    uint32 BaseArmor;
+};
+
+typedef std::unordered_map<uint8, CreatureLevelStat > CreatureLevelStatContainer;
+
 // Defines base stats for creatures (used to calculate HP/mana/armor).
 struct CreatureBaseStats
 {
@@ -662,7 +676,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
 
         bool Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, uint32 Entry, int32 vehId, uint32 team, float x, float y, float z, float ang, const CreatureData* data = NULL);
         bool LoadCreaturesAddon(bool reload = false);
-        void SelectLevel(const CreatureTemplate* cinfo);
+        void SelectLevel(const CreatureTemplate* cInfo);
         void LoadEquipment(int8 id = 1, bool force=false);
 
         uint64 GetDBTableGUIDLow() const { return m_DBTableGuid; }
@@ -722,8 +736,6 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         bool IsDungeonBoss() const;
         bool IsPersonalLoot() const;
         bool IsAutoLoot() const;
-
-        uint8 getLevelForTarget(WorldObject const* target) const; // overwrite Unit::getLevelForTarget for boss level support
 
         bool IsInEvadeMode() const { return HasUnitState(UNIT_STATE_EVADE); }
 
@@ -968,6 +980,10 @@ class Creature : public Unit, public GridObject<Creature>, public MapCreature
         AutoSpellList   m_castspells;
         PetSpellMap     m_spells;
         bool m_despan;
+
+        CreatureLevelStatContainer m_levelStat;
+        void GenerateScaleLevelStat(const CreatureTemplate* cInfo);
+        CreatureLevelStat const* GetScaleLevelStat(uint8 level);
 
         std::vector<CreatureActionData> const* m_actionData[2];
 

@@ -470,9 +470,9 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
     {
         uint32 level = _spellInfo->SpellLevel;
         if (target && _spellInfo->IsPositiveEffect(EffectIndex) && (Effect == SPELL_EFFECT_APPLY_AURA))
-            level = target->getLevel();
+            level = target->getLevelForTarget(caster);
         else if (caster)
-            level = caster->getLevel();
+            level = caster->getLevelForTarget(target);
 
         if (!_spellInfo->HasAttribute(SPELL_ATTR11_SEND_ITEM_LEVEL) && _spellInfo->HasAttribute(SPELL_ATTR10_UNK12))
             level = _spellInfo->BaseLevel;
@@ -520,7 +520,7 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
     {
         if (caster)
         {
-            int32 level = int32(caster->getLevel());
+            int32 level = int32(caster->getLevelForTarget(target));
             if (level > int32(_spellInfo->MaxLevel) && _spellInfo->MaxLevel > 0)
                 level = int32(_spellInfo->MaxLevel);
             else if (level < int32(_spellInfo->BaseLevel))
@@ -553,7 +553,7 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
 
         // amount multiplication based on caster's level
         if (!caster->IsControlledByPlayer() &&
-            _spellInfo->SpellLevel && _spellInfo->SpellLevel != caster->getLevel() &&
+            _spellInfo->SpellLevel && _spellInfo->SpellLevel != caster->getLevelForTarget(target) &&
             !basePointsPerLevel && (_spellInfo->HasAttribute(SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION)))
         {
             bool canEffectScale = false;
@@ -597,7 +597,7 @@ int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const
             if (canEffectScale)
             {
                 GameTableEntry const* spellScaler = sGtNPCManaCostScalerStore.EvaluateTable(_spellInfo->SpellLevel - 1);
-                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevel() - 1);
+                GameTableEntry const* casterScaler = sGtNPCManaCostScalerStore.EvaluateTable(caster->getLevelForTarget(target) - 1);
                 if (spellScaler && casterScaler)
                     value *= casterScaler->Value / spellScaler->Value;
             }

@@ -1509,7 +1509,7 @@ class Unit : public WorldObject
         bool isAnySummons() const   { return (m_unitTypeMask & (UNIT_MASK_GUARDIAN | UNIT_MASK_PET | UNIT_MASK_HUNTER_PET | UNIT_MASK_TOTEM | UNIT_MASK_VEHICLE)) != 0; }
 
         uint8 getLevel() const { return uint8(GetUInt32Value(UNIT_FIELD_LEVEL)); }
-        uint8 getLevelForTarget(WorldObject const* /*target*/) const { return getLevel(); }
+        uint8 getLevelForTarget(WorldObject const* target) const;
         void SetLevel(uint8 lvl);
         uint8 getRace() const { return GetByteValue(UNIT_FIELD_BYTES_0, UNIT_BYTES_0_OFFSET_RACE); }
         uint32 getRaceMask() const { return 1 << (getRace()-1); }
@@ -1523,13 +1523,16 @@ class Unit : public WorldObject
         float GetStat(Stats stat) const { return float(GetUInt32Value(UNIT_FIELD_STATS+stat)); }
         void SetStat(Stats stat, int32 val) { SetStatInt32Value(UNIT_FIELD_STATS+stat, val); }
         uint32 GetArmor() const { return GetResistance(SPELL_SCHOOL_NORMAL); }
+        uint32 GetArmor(Unit* victim) const;
         void SetArmor(int32 val) { SetResistance(SPELL_SCHOOL_NORMAL, val); }
 
         uint32 GetResistance(SpellSchools school) const { return GetUInt32Value(UNIT_FIELD_RESISTANCES+school); }
         uint32 GetResistance(SpellSchoolMask mask) const;
         void SetResistance(SpellSchools school, int32 val) { SetStatInt32Value(UNIT_FIELD_RESISTANCES+school, val); }
 
-        uint32 GetHealth()    const { return GetUInt32Value(UNIT_FIELD_HEALTH); }
+        uint32 GetHealth(Unit* victim) const;
+        uint32 GetHealth() const { return GetUInt32Value(UNIT_FIELD_HEALTH); }
+        uint32 GetMaxHealth(Unit* victim) const;
         uint32 GetMaxHealth() const { return GetUInt32Value(UNIT_FIELD_MAX_HEALTH); }
 
         bool IsFullHealth() const { return GetHealth() == GetMaxHealth(); }
@@ -1539,17 +1542,18 @@ class Unit : public WorldObject
         bool HealthAbovePctHealed(int32 pct, uint32 heal) const { return uint64(GetHealth()) + uint64(heal) > CountPctFromMaxHealth(pct); }
         float GetHealthPct() const { return GetMaxHealth() ? 100.f * GetHealth() / GetMaxHealth() : 0.0f; }
         float GetManaPct() const { return GetMaxPower(POWER_MANA) ? 100.f * GetPower(POWER_MANA) / GetMaxPower(POWER_MANA) : 0.0f; }
-        uint32 CountPctFromMaxHealth(int32 pct) const { return CalculatePct(GetMaxHealth(), pct); }
-        uint32 CountPctFromCurHealth(int32 pct) const { return CalculatePct(GetHealth(), pct); }
+        uint32 CountPctFromMaxHealth(int32 pct, Unit* victim = nullptr) const { return CalculatePct(GetMaxHealth(victim), pct); }
+        uint32 CountPctFromCurHealth(int32 pct, Unit* victim = nullptr) const { return CalculatePct(GetHealth(victim), pct); }
         uint32 CountPctFromMaxMana(int32 pct) const { return CalculatePct(GetMaxPower(POWER_MANA), pct); }
         uint32 CountPctFromCurMana(int32 pct) const { return CalculatePct(GetPower(POWER_MANA), pct); }
         uint32 CountPctFromMaxPower(int32 pct, Powers power) const { return CalculatePct(GetMaxPower(power), pct); }
         uint32 CountPctFromCurPower(int32 pct, Powers power) const { return CalculatePct(GetPower(power), pct); }
 
         void SetHealth(uint32 val);
+        void SetHealthScal(uint32 val, Unit* victim = nullptr);
         void SetMaxHealth(uint32 val);
         inline void SetFullHealth() { SetHealth(GetMaxHealth()); }
-        int32 ModifyHealth(int32 val);
+        int32 ModifyHealth(int32 val, Unit* victim = nullptr);
         int32 GetHealthGain(int32 dVal);
 
         Powers getPowerType() const { return Powers(GetUInt32Value(UNIT_FIELD_DISPLAY_POWER)); }
@@ -1870,7 +1874,7 @@ class Unit : public WorldObject
 
         bool isAlive() const { return (m_deathState == ALIVE); };
         bool isDying() const { return (m_deathState == JUST_DIED); };
-        bool isDead() const { return (m_deathState == DEAD || m_deathState == CORPSE); };
+        bool isDead() const { return (m_deathState == DEAD || m_deathState == CORPSE || HasFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD)); };
         DeathState getDeathState() { return m_deathState; };
         virtual void setDeathState(DeathState s);           // overwrited in Creature/Player/Pet
 
@@ -2329,7 +2333,7 @@ class Unit : public WorldObject
         void RemoveGameObject(uint32 spellid, bool del);
         void RemoveAllGameObjects();
 
-        uint32 CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct);
+        uint32 CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, Unit* victim = nullptr);
         float GetAPMultiplier(WeaponAttackType attType, bool normalized);
         void ModifyAuraState(AuraStateType flag, bool apply);
         void ModifyExcludeCasterAuraSpell(uint32 auraId, bool apply);
@@ -2682,10 +2686,16 @@ class Unit : public WorldObject
         float m_auraModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_END];
         float m_weaponDamage[MAX_ATTACK][2];
         bool m_canModifyStats;
-        VisibleAuraMap m_visibleAuras;
+
+        float m_base_value = 0.0f;
+        float m_base_pct = 0.0f;
+        float m_total_value = 0.0f;
+        float m_total_pct = 0.0f;
+        float m_dmg_multiplier = 1.0f;
 
         float m_speed_rate[MAX_MOVE_TYPE];
 
+        VisibleAuraMap m_visibleAuras;
         CharmInfo* m_charmInfo;
         SharedVisionList m_sharedVision;
 

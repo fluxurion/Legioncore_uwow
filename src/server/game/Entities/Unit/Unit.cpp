@@ -172,7 +172,7 @@ _hitMask(hitMask), _spell(spell), _damageInfo(damageInfo), _healInfo(healInfo)
 
 SpellNonMeleeDamage::SpellNonMeleeDamage(Unit* _attacker, Unit* _target, uint32 _SpellID, uint32 _schoolMask)
     : target(_target), attacker(_attacker), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
-    absorb(0), resist(0), periodicLog(false), blocked(0), HitInfo(0), cleanDamage(0), preHitHealth(_target->GetHealth())
+    absorb(0), resist(0), periodicLog(false), blocked(0), HitInfo(0), cleanDamage(0), preHitHealth(_target->GetHealth(_attacker))
 {
 }
 
@@ -801,7 +801,7 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
 
     sLog->outDebug(LOG_FILTER_UNITS, "DealDamageStart");
 
-    uint32 health = victim->GetHealth();
+    uint32 health = victim->GetHealth(this);
     sLog->outInfo(LOG_FILTER_UNITS, "deal dmg:%d to health:%d to %s", damage, health, ToString().c_str());
 
     // duel ends when player has 1 or less hp
@@ -902,7 +902,7 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
         if (victim->GetTypeId() == TYPEID_PLAYER)
             victim->ToPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_TOTAL_DAMAGE_RECEIVED, damage);
 
-        victim->ModifyHealth(- (int32)damage);
+        victim->ModifyHealth(-(int32)damage, this);
 
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
             victim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
@@ -1524,9 +1524,9 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
         uint8 plrExp;
         uint8 plrlvl;
         if (victim->ToPlayer())
-            plrlvl = victim->getLevel();
+            plrlvl = victim->getLevelForTarget(this);
         else if (ToPlayer())
-            plrlvl = getLevel();
+            plrlvl = getLevelForTarget(victim);
 
         if (ToPlayer() || victim->ToPlayer())
         {
@@ -1545,14 +1545,14 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
         if (ToCreature() && victim->ToPlayer())
         {
             if (ToCreature() && ToCreature()->GetCreatureTemplate()->RequiredExpansion < plrExp)
-                if (plrlvl - getLevel() > 10)
+                if (plrlvl - getLevelForTarget(this) > 10)
                     damage /= 10;
         }
         else if (ToPlayer() && victim->ToCreature())
         {
             if (victim->ToCreature() && victim->ToCreature()->GetCreatureTemplate()->RequiredExpansion < plrExp)
             {
-                switch (plrlvl - victim->getLevel())
+                switch (plrlvl - victim->getLevelForTarget(this))
                 {
                     case 1: damage *= 1.0625f; break;
                     case 2: damage *= 1.1250f; break;
@@ -1567,7 +1567,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                             break;
                 }
 
-                if (plrlvl - victim->getLevel() >= 10)
+                if (plrlvl - victim->getLevelForTarget(this) >= 10)
                     damage *= 16.500f;
             }
         }
@@ -1665,16 +1665,16 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
        return;
     }
 
-    damage += CalculateDamage(damageInfo->attackType, false, true);
+    damage += CalculateDamage(damageInfo->attackType, false, true, victim);
 
     if (victim)
     {
         uint8 plrExp;
         uint8 plrlvl;
         if (victim->ToPlayer())
-            plrlvl = victim->getLevel();
+            plrlvl = victim->getLevelForTarget(this);
         else if (ToPlayer())
-            plrlvl = getLevel();
+            plrlvl = getLevelForTarget(victim);
 
         if (ToPlayer() || victim->ToPlayer())
         {
@@ -1693,14 +1693,14 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
         if (ToCreature() && victim->ToPlayer())
         {
             if (ToCreature() && ToCreature()->GetCreatureTemplate()->RequiredExpansion < plrExp)
-                if (plrlvl - getLevel() > 10)
+                if (plrlvl - getLevelForTarget(this) > 10)
                     damage /= 10;
         }
         else if (ToPlayer() && victim->ToCreature())
         {
             if (victim->ToCreature() && victim->ToCreature()->GetCreatureTemplate()->RequiredExpansion < plrExp)
             {
-                switch (plrlvl - victim->getLevel())
+                switch (plrlvl - victim->getLevelForTarget(this))
                 {
                     case 1: damage *= 1.0625f; break;
                     case 2: damage *= 1.1250f; break;
@@ -1715,7 +1715,7 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
                             break;
                 }
 
-                if (plrlvl - victim->getLevel() >= 10)
+                if (plrlvl - victim->getLevelForTarget(this) >= 10)
                     damage *= 16.500f;
             }
         }
@@ -1809,7 +1809,7 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
             damageInfo->HitInfo     |= HITINFO_GLANCING;
             damageInfo->TargetState  = VICTIMSTATE_HIT;
             damageInfo->procEx      |= PROC_EX_NORMAL_HIT;
-            int32 leveldif = int32(victim->getLevel()) - int32(getLevel());
+            int32 leveldif = int32(victim->getLevelForTarget(this)) - int32(getLevelForTarget(victim));
             if (leveldif > 3)
                 leveldif = 3;
             float reducePercent = 1 - leveldif * 0.1f;
@@ -1955,8 +1955,8 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
         float Probability = 20.0f;
 
         // there is a newbie protection, at level 10 just 7% base chance; assuming linear function
-        if (victim->getLevel() < 30)
-            Probability = 0.65f * victim->getLevel() + 0.5f;
+        if (victim->getLevelForTarget(this) < 30)
+            Probability = 0.65f * victim->getLevelForTarget(this) + 0.5f;
 
         if (Probability > 40.0f)
             Probability = 40.0f;
@@ -2008,7 +2008,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
             damageShield.Defender = GetGUID();
             damageShield.SpellID = i_spellProto->Id;
             damageShield.TotalDamage = damage;
-            damageShield.OverKill = std::max(int32(damage) - int32(GetHealth()), 0);
+            damageShield.OverKill = std::max(int32(damage) - int32(GetHealth(victim)), 0);
             damageShield.SchoolMask = i_spellProto->Misc.SchoolMask;
             damageShield.LogAbsorbed = absorb;
             damageShield.LogData.Initialize(this);
@@ -2055,7 +2055,7 @@ bool Unit::IsDamageReducedByArmor(SpellSchoolMask schoolMask, SpellInfo const* s
 uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage, SpellInfo const* spellInfo, WeaponAttackType /*attackType*/)
 {
     uint32 newdamage = 0;
-    float armor = float(victim->GetArmor());
+    float armor = float(victim->GetArmor(this));
 
     // bypass enemy armor by SPELL_AURA_BYPASS_ARMOR_FOR_CASTER
     int32 armorBypassPct = 0;
@@ -2094,7 +2094,7 @@ uint32 Unit::CalcArmorReducedDamage(Unit* victim, const uint32 damage, SpellInfo
     if (armor < 0.0f)
         armor = 0.0f;
 
-    GameTableEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevel() - 1);
+    GameTableEntry const* gtArmorMitigation = sGtArmorMitigationByLvlStore.EvaluateTable(victim->getLevelForTarget(this) - 1);
     float percReduced = 0.1f;/*armor / (armor + gtArmorMitigation->Value);*/
 
     if (percReduced < 0.0f)
@@ -2132,7 +2132,7 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
 
         static uint32 const BOSS_LEVEL = 83;
         static float const BOSS_RESISTANCE_CONSTANT = 510.0f;
-        uint32 level = victim->getLevel();
+        uint32 level = victim->getLevelForTarget(this);
         float resistanceConstant = 0.0f;
 
         if (level == BOSS_LEVEL)
@@ -2409,7 +2409,7 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
             {
                 int32 _damage = dmgInfo.GetDamage();
                 int32 _amount = aura->GetEffect(0)->GetAmount();
-                int32 _hpperc = victim->CountPctFromMaxHealth(20);
+                int32 _hpperc = victim->CountPctFromMaxHealth(20, this);
                 if((_damage + _amount) >= _hpperc) //Item - Paladin T15 Protection 4P Bonus
                 {
                     victim->CastSpell(victim, 138248, true);
@@ -2646,8 +2646,8 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit* victim, WeaponAttackT
     int32 sum = 0, tmp = 0;
     int32 roll = urand (0, 10000);
 
-    int32 attackerLevel = getLevel();
-    int32 victimLevel = victim->getLevel();
+    int32 attackerLevel = getLevelForTarget(victim);
+    int32 victimLevel = victim->getLevelForTarget(this);
 
     sLog->outDebug(LOG_FILTER_UNITS, "RollMeleeOutcomeAgainst: rolled %d, miss %d, dodge %d, parry %d, block %d, crit %d",
         roll, miss_chance, dodge_chance, parry_chance, block_chance, crit_chance);
@@ -2779,12 +2779,53 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit* victim, WeaponAttackT
     return MELEE_HIT_NORMAL;
 }
 
-uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct)
+uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, Unit* victim)
 {
     float min_damage, max_damage;
 
     if (GetTypeId() == TYPEID_PLAYER && (normalized || !addTotalPct))
         ToPlayer()->CalculateMinMaxDamage(attType, normalized, addTotalPct, min_damage, max_damage);
+    else if (Creature* creature = ToCreature())
+    {
+        float weapon_mindamage = 0;
+        float weapon_maxdamage = 0;
+
+        uint8 level = getLevelForTarget(victim);
+        CreatureLevelStat const* scaleStat = creature->GetScaleLevelStat(level);
+        if (!CanUseAttackType(attType))
+        {
+            weapon_mindamage = 0;
+            weapon_maxdamage = 0;
+        }
+        else if (scaleStat)
+        {
+            weapon_mindamage = scaleStat->baseMinDamage;
+            weapon_maxdamage = scaleStat->baseMaxDamage;
+        }
+        else
+        {
+            weapon_mindamage = GetWeaponDamageRange(attType, MINDAMAGE);
+            weapon_maxdamage = GetWeaponDamageRange(attType, MAXDAMAGE);
+        }
+
+        switch (attType)
+        {
+            case RANGED_ATTACK:
+            case BASE_ATTACK:
+                min_damage = ((m_base_value + weapon_mindamage) * m_dmg_multiplier * m_base_pct + m_total_value) * m_total_pct;
+                max_damage = ((m_base_value + weapon_maxdamage) * m_dmg_multiplier * m_base_pct + m_total_value) * m_total_pct;
+                break;
+            case OFF_ATTACK:
+                min_damage = (((m_base_value + weapon_mindamage) * m_dmg_multiplier * m_base_pct + m_total_value) * m_total_pct) / 2;
+                max_damage = (((m_base_value + weapon_maxdamage) * m_dmg_multiplier * m_base_pct + m_total_value) * m_total_pct) / 2;
+                break;
+                // Just for good manner
+            default:
+                min_damage = 0.0f;
+                max_damage = 0.0f;
+                break;
+        }
+    }
     else
     {
         switch (attType)
@@ -3114,10 +3155,10 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellInfo const* spell)
 
     SpellSchoolMask schoolMask = spell->GetSchoolMask();
     int32 lchance = victim->GetTypeId() == TYPEID_PLAYER ? 7 : 11;
-    int32 thisLevel = getLevel();
+    int32 thisLevel = getLevelForTarget(victim);
     if (GetTypeId() == TYPEID_UNIT && ToCreature()->isTrigger())
         thisLevel = std::max<int32>(thisLevel, spell->SpellLevel);
-    int32 leveldif = int32(victim->getLevel()) - thisLevel;
+    int32 leveldif = int32(victim->getLevelForTarget(this)) - thisLevel;
     int32 levelBasedHitDiff = leveldif;
     int32 modHitChance = 100;
 
@@ -3288,7 +3329,7 @@ float Unit::GetUnitDodgeChanceAgainst(Unit const* attacker) const
         else
         {
             float dodge = 3.0f + GetTotalAuraModifier(SPELL_AURA_MOD_DODGE_PERCENT);
-            int32 levelDiff = getLevel() - attacker->getLevel();
+            int32 levelDiff = getLevelForTarget(attacker) - attacker->getLevelForTarget(this);
             if (levelDiff > 0)
                 dodge += 1.5f * levelDiff;
             return dodge > 0.0f ? dodge : 0.0f;
@@ -3318,7 +3359,7 @@ float Unit::GetUnitParryChanceAgainst(Unit const* attacker) const
     else if (GetTypeId() == TYPEID_UNIT)
     {
         chance = 6.0f;
-        int32 levelDiff = getLevel() - attacker->getLevel();
+        int32 levelDiff = getLevelForTarget(attacker) - attacker->getLevelForTarget(this);
         if (levelDiff > 0)
             chance += 1.5f * levelDiff;
         chance += GetTotalAuraModifier(SPELL_AURA_MOD_PARRY_PERCENT);
@@ -3350,7 +3391,7 @@ float Unit::GetUnitBlockChanceAgainst(Unit const* attacker) const
         else
         {
             float block = 3.0f;
-            int32 levelDiff = getLevel() - attacker->getLevel();
+            int32 levelDiff = getLevelForTarget(attacker) - attacker->getLevelForTarget(this);
             if (levelDiff > 0)
                 block += 1.5f * levelDiff;
             return block > 0.0f ? block : 0.0f;
@@ -6040,7 +6081,7 @@ void Unit::SendAttackStateUpdate(CalcDamageInfo* damageInfo)
     packet.AttackerGUID = damageInfo->attacker->GetGUID();
     packet.VictimGUID = damageInfo->target->GetGUID();
     packet.Damage = damageInfo->damage;
-    int32 overkill = damageInfo->damage - damageInfo->target->GetHealth();
+    int32 overkill = damageInfo->damage - damageInfo->target->GetHealth(damageInfo->attacker);
     packet.OverDamage = (overkill < 0 ? -1 : overkill);
 
     packet.SubDmg = boost::in_place();
@@ -6267,7 +6308,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                     if(!target)
                         return false;
 
-                    basepoints0 = damage - (target->GetMaxHealth() - target->GetHealth());
+                    basepoints0 = damage - (target->GetMaxHealth(this) - target->GetHealth(this));
 
                     if (basepoints0 > 0)
                         triggered_spell_id = 148009;
@@ -6606,7 +6647,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                 case 25988:
                 {
                     // return damage % to attacker but < 50% own total health
-                    basepoints0 = int32(std::min(CalculatePct(damage, triggerAmount), CountPctFromMaxHealth(50)));
+                    basepoints0 = int32(std::min(CalculatePct(damage, triggerAmount), CountPctFromMaxHealth(50, victim)));
                     triggered_spell_id = 25997;
                     break;
                 }
@@ -7549,24 +7590,6 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
         }
         case SPELLFAMILY_PRIEST:
         {
-            // Divine Aegis
-            if (dummySpell->Id == 47515)
-            {
-                if (!target)
-                    return false;
-
-                basepoints0 = CalculatePct(damage, triggerAmount);
-
-                if(AuraEffect const* aurEff = target->GetAuraEffect(47753, EFFECT_0))
-                {
-                    basepoints0 += aurEff->GetAmount();
-                    if(basepoints0 > int32(CountPctFromMaxHealth(40)))
-                        basepoints0 = CountPctFromMaxHealth(40);
-                }
-
-                triggered_spell_id = 47753;
-                break;
-            }
             switch (dummySpell->Id)
             {
                 case 118314: // Colossus
@@ -7616,16 +7639,6 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
 
                     int32 tickcount = GoPoH->GetMaxDuration() / GoPoH->GetEffect(EFFECT_0, GetSpawnMode())->ApplyAuraPeriod;
                     basepoints0 = CalculatePct(int32(damage), triggerAmount) / tickcount;
-                    break;
-                }
-                // Glyph of Dispel Magic
-                case 55677:
-                {
-                    if (!target || !target->IsFriendlyTo(this))
-                        return false;
-
-                    basepoints0 = int32(target->CountPctFromMaxHealth(triggerAmount));
-                    triggered_spell_id = 56131;
                     break;
                 }
                 // Oracle Healing Bonus ("Garments of the Oracle" set)
@@ -8055,7 +8068,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect
                         return false;
 
                     triggered_spell_id = 86273;
-                    int32 maxAmt = GetMaxHealth() / 3;
+                    int32 maxAmt = GetMaxHealth(victim) / 3;
                     if (AuraEffect const* oldEff = victim->GetAuraEffect(triggered_spell_id, EFFECT_0, GetGUID()))
                         basepoints0 = oldEff->GetAmount();
 
@@ -9031,7 +9044,7 @@ bool Unit::HandleAuraProc(Unit* victim, DamageInfo* /*dmgInfoProc*/, Aura* trigg
                 // Item - Warrior T10 Protection 4P Bonus
                 case 70844:
                 {
-                    int32 basepoints0 = CalculatePct(GetMaxHealth(), dummySpell->GetEffect(EFFECT_1, GetSpawnMode())->CalcValue());
+                    int32 basepoints0 = CalculatePct(GetMaxHealth(victim), dummySpell->GetEffect(EFFECT_1, GetSpawnMode())->CalcValue());
                     CastCustomSpell(this, 70845, &basepoints0, NULL, NULL, true);
                     break;
                 }
@@ -9191,10 +9204,10 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
                     }
                     case 108945: // Angelic Bulwark
                     {
-                        if ((this->GetHealth() - damage) < CalculatePct(this->GetMaxHealth(), auraSpellInfo->Effects[0].BasePoints))
+                        if ((this->GetHealth(victim) - damage) < CalculatePct(this->GetMaxHealth(victim), auraSpellInfo->Effects[0].BasePoints))
                         {
                             trigger_spell_id = 114214;
-                            basepoints0 = CalculatePct(this->GetMaxHealth(), 15);
+                            basepoints0 = CalculatePct(this->GetMaxHealth(victim), 15);
                             cooldown = 90.0;
                         }
                         break;
@@ -9372,7 +9385,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
                     {
                         if (HealthBelowPctDamaged(30, damage))
                         {
-                            basepoints0 = int32(CountPctFromMaxHealth(triggerAmount));
+                            basepoints0 = int32(CountPctFromMaxHealth(triggerAmount, victim));
                             target = this;
                             trigger_spell_id = 31616;
                             if (victim && victim->isAlive())
@@ -9453,7 +9466,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
             trigger_spell_id = 0;
 
             if (HasAura(134563))
-                if (GetHealth() - damage < CountPctFromMaxHealth(35))
+                if (GetHealth() - damage < CountPctFromMaxHealth(35, victim))
                     trigger_spell_id = 122281;
             break;
         }
@@ -9753,7 +9766,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
         // Blazing Speed Trigger
         case 113857:
         {
-            int32 health = GetMaxHealth();
+            int32 health = GetMaxHealth(victim);
 
             if (!(procFlags & PROC_FLAG_KILL) && int32(damage) * 100 < health * 2)
                 return false;
@@ -9817,7 +9830,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, DamageInfo* dmgInfoProc, AuraEff
             if (victim->IsFullHealth())
                 return false;
             // If your Greater Heal brings the target to full health, you gain $37595s1 mana.
-            if (victim->GetHealth() + damage < victim->GetMaxHealth())
+            if (victim->GetHealth(this) + damage < victim->GetMaxHealth(this))
                 return false;
             break;
         }
@@ -11232,26 +11245,12 @@ int32 Unit::DealHeal(Unit* victim, uint32 addhealth, SpellInfo const* spellProto
         GetAI()->HealDone(victim, addhealth);
 
     if (addhealth)
-        gain = victim->ModifyHealth(int32(addhealth));
+        gain = victim->ModifyHealth(int32(addhealth), this);
 
     Unit* unit = this;
 
     if (GetTypeId() == TYPEID_UNIT && (ToCreature()->isTotem() || ToCreature()->GetEntry() == 60849))
         unit = GetOwner();
-
-    // Custom MoP Script
-    // Purification (passive) - 16213 : Increase maximum health by 10% of the amount healed up to a maximum of 10% of health
-    if (unit && unit->GetTypeId() == TYPEID_PLAYER && addhealth != 0 && unit->HasAura(16213))
-    {
-        int32 bp = 0;
-        bp = int32(addhealth / 10);
-
-        if (bp > (victim->GetMaxHealth() * 0.1f))
-            bp = (victim->GetMaxHealth() * 0.1f);
-
-        // Ancestral Vigor - 105284
-        victim->CastCustomSpell(victim, 105284, &bp, NULL, NULL, true);
-    }
 
     if (Player* player = unit->ToPlayer())
     {
@@ -12492,7 +12491,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
         AuraEffectList mHealingFromHealthPct = GetAuraEffectsByType(SPELL_AURA_MOD_HEALING_DONE_FROM_PCT_HEALTH);
         if (!mHealingFromHealthPct.empty())
         {
-            float healthPct = std::max(0.0f, 1.0f - float(victim->GetHealth()) / victim->GetMaxHealth());
+            float healthPct = std::max(0.0f, 1.0f - float(victim->GetHealth(this)) / victim->GetMaxHealth(this));
             for (AuraEffectList::const_iterator i = mHealingFromHealthPct.begin(); i != mHealingFromHealthPct.end(); ++i)
                 if ((*i)->IsAffectingSpell(spellProto))
                     DoneTotalMod *= (100.0f + (*i)->GetAmount() * healthPct) / 100.0f;
@@ -14203,14 +14202,14 @@ bool Unit::_IsValidAssistTarget(Unit const* target, SpellInfo const* bySpell) co
     return true;
 }
 
-int32 Unit::ModifyHealth(int32 dVal)
+int32 Unit::ModifyHealth(int32 dVal, Unit* victim)
 {
     int64 gain = 0;
 
     if (dVal == 0)
         return 0;
 
-    int64 curHealth = (int32)GetHealth();
+    int64 curHealth = (int32)GetHealth(victim);
     int64 val = dVal + curHealth;
 
     if(dVal < 0)
@@ -14220,7 +14219,7 @@ int32 Unit::ModifyHealth(int32 dVal)
         {
             next = i;
             ++next;
-            int64 curCount = CountPctFromMaxHealth((*i)->GetAmount());
+            int64 curCount = CountPctFromMaxHealth((*i)->GetAmount(), victim);
             uint32 triggered_spell_id = (*i)->GetTriggerSpell() ? (*i)->GetTriggerSpell(): 0;
             SpellInfo const* triggerEntry = sSpellMgr->GetSpellInfo(triggered_spell_id);
             if (curCount < curHealth && curCount > val)
@@ -14237,27 +14236,28 @@ int32 Unit::ModifyHealth(int32 dVal)
         return -curHealth;
     }
 
-    int64 maxHealth = (int64)GetMaxHealth();
+    int64 maxHealth = (int64)GetMaxHealth(victim);
 
     if (val < maxHealth)
     {
-        SetHealth(val);
+        SetHealthScal(val, victim);
         gain = val - curHealth;
     }
     else if (curHealth != maxHealth)
     {
-        SetHealth(maxHealth);
+        SetHealthScal(maxHealth, victim);
         gain = maxHealth - curHealth;
     }
 
     if (dVal < 0)
     {
-        WorldPackets::Combat::HealthUpdate packet;
-        packet.Guid = GetGUID();
-        packet.Health = GetHealth();
-
         if (Player* player = GetCharmerOrOwnerPlayerOrPlayerItself())
+        {
+            WorldPackets::Combat::HealthUpdate packet;
+            packet.Guid = GetGUID();
+            packet.Health = GetHealth();
             player->GetSession()->SendPacket(packet.Write());
+        }
     }
 
     return gain;
@@ -18743,7 +18743,7 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                         check = true;
                         continue;
                     }
-                    basepoints0 = int32(float(dmgInfoProc->GetDamage() * 100.0f) / target->GetMaxHealth());
+                    basepoints0 = int32(float(dmgInfoProc->GetDamage() * 100.0f) / target->GetMaxHealth(_caster));
                     if(bp0)
                         basepoints0 *= bp0;
 
@@ -20122,7 +20122,7 @@ void Unit::PlayOneShotAnimKit(uint16 animKitId)
 void Unit::Kill(Unit* victim, bool durabilityLoss, SpellInfo const* spellProto)
 {
     // Prevent killing unit twice (and giving reward from kill twice)
-    if (!victim->GetHealth() || m_IsInKillingProcess)
+    if (!victim->GetHealth(this) || m_IsInKillingProcess)
         return;
 
     m_IsInKillingProcess = true;
@@ -21173,7 +21173,7 @@ float Unit::MeleeSpellMissChance(const Unit* victim, WeaponAttackType attType, u
 {
     float missChance = 0.0f;
 
-    int16 level_diff = victim->getLevel() - getLevel();
+    int16 level_diff = victim->getLevelForTarget(this) - getLevelForTarget(victim);
     if (level_diff > 4)
         missChance +=  1.5f * level_diff;
 
@@ -24433,3 +24433,119 @@ void Unit::SetVirtualItem(uint32 slot, uint32 itemID, uint16 appearanceModID /*=
     SetUInt32Value(UNIT_FIELD_VIRTUAL_ITEM_ID + slot * 2, itemID);
     SetUInt16Value(UNIT_FIELD_VIRTUAL_ITEM_ID + slot * 2 + 1, 0, appearanceModID);
 }
+
+uint8 Unit::getLevelForTarget(WorldObject const* target) const
+{
+    Unit const* unit = target ? target->ToUnit() : nullptr;
+    Creature const* creature = ToCreature();
+    if (!unit || !creature)
+        return getLevel();
+
+    CreatureTemplate const* cInfo = creature->GetCreatureTemplate();
+    int32 level = getLevel();
+    int32 levelTarget = unit->getLevel();
+    int32 levelMin = cInfo->ScaleLevelMin;
+    int32 levelMax = cInfo->ScaleLevelMax;
+
+    if (creature->isWorldBoss())
+        level = unit->getLevel() + sWorld->getIntConfig(CONFIG_WORLD_BOSS_LEVEL_DIFF);
+    else if (levelMin && levelMax)
+    {
+        if (levelMin <= levelTarget && levelTarget <= levelMax)
+            level = levelTarget;
+        else if(levelMin >= levelTarget)
+            level = levelMin;
+        else if(levelMax <= levelTarget)
+            level = levelMax;
+    }
+
+    if (level < 1)
+        return 1;
+    if (level > 123)
+        return 123;
+    return uint8(level);
+}
+
+uint32 Unit::GetHealth(Unit* victim) const
+{
+    Creature const* creature = ToCreature();
+    if (!victim || !creature)
+        return GetHealth();
+
+    CreatureTemplate const* cInfo = creature->GetCreatureTemplate();
+    if (!cInfo->ScaleLevelMin || !cInfo->ScaleLevelMax)
+        return GetHealth();
+
+    uint8 level = getLevelForTarget(victim);
+    CreatureLevelStat const* scaleStat = const_cast<Creature*>(creature)->GetScaleLevelStat(level);
+    if (!scaleStat)
+        return GetHealth();
+
+    return CalculatePct(scaleStat->healthMax, GetHealthPct());
+}
+
+uint32 Unit::GetMaxHealth(Unit* victim) const
+{
+    Creature const* creature = ToCreature();
+    if (!victim || !creature)
+        return GetMaxHealth();
+
+    CreatureTemplate const* cInfo = creature->GetCreatureTemplate();
+    if (!cInfo->ScaleLevelMin || !cInfo->ScaleLevelMax)
+        return GetMaxHealth();
+
+    uint8 level = getLevelForTarget(victim);
+    CreatureLevelStat const* scaleStat = const_cast<Creature*>(creature)->GetScaleLevelStat(level);
+    if (!scaleStat)
+        return GetMaxHealth();
+
+    return scaleStat->healthMax;
+}
+
+uint32 Unit::GetArmor(Unit* victim) const
+{
+    Creature const* creature = ToCreature();
+    if (!victim || !creature)
+        return GetArmor();
+
+    CreatureTemplate const* cInfo = creature->GetCreatureTemplate();
+    if (!cInfo->ScaleLevelMin || !cInfo->ScaleLevelMax)
+        return GetArmor();
+
+    uint8 level = getLevelForTarget(victim);
+    CreatureLevelStat const* scaleStat = const_cast<Creature*>(creature)->GetScaleLevelStat(level);
+    if (!scaleStat)
+        return GetArmor();
+
+    return scaleStat->BaseArmor;
+}
+
+void Unit::SetHealthScal(uint32 val, Unit* victim)
+{
+    Creature const* creature = ToCreature();
+    if (!victim || !creature)
+    {
+        SetHealth(val);
+        return;
+    }
+
+    CreatureTemplate const* cInfo = creature->GetCreatureTemplate();
+    if (!cInfo->ScaleLevelMin || !cInfo->ScaleLevelMax)
+    {
+        SetHealth(val);
+        return;
+    }
+
+    uint8 level = getLevelForTarget(victim);
+    CreatureLevelStat const* scaleStat = const_cast<Creature*>(creature)->GetScaleLevelStat(level);
+    if (!scaleStat)
+    {
+        SetHealth(val);
+        return;
+    }
+
+    float perc = 100.f * val / scaleStat->healthMax;
+    uint32 newVal = CalculatePct(GetMaxHealth(), perc);
+    SetHealth(newVal);
+}
+

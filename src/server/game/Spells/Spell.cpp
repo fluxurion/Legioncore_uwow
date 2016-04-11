@@ -2349,7 +2349,7 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
             {
                 if (Unit* unitTarget = (*itr)->ToUnit())
                 {
-                    uint32 deficit = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
+                    uint32 deficit = unitTarget->GetMaxHealth(m_caster) - unitTarget->GetHealth(m_caster);
                     if ((deficit > maxHPDeficit || !foundItr) && nextTarget->IsWithinDist(unitTarget, jumpRadius) && nextTarget->IsWithinLOSInMap(unitTarget))
                     {
                         foundItr = unitTarget;
@@ -2496,7 +2496,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
             if (m_auraScaleMask && ihit->effectMask == m_auraScaleMask && m_caster != target)
             {
                 SpellInfo const* auraSpell = sSpellMgr->GetSpellInfo(sSpellMgr->GetFirstSpellInChain(m_spellInfo->Id));
-                if (uint32(target->getLevel() + 10) >= auraSpell->SpellLevel)
+                if (uint32(target->getLevelForTarget(m_caster) + 10) >= auraSpell->SpellLevel)
                     ihit->scaleAura = true;
             }
             return;
@@ -2520,7 +2520,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
     if (m_auraScaleMask && targetInfo.effectMask == m_auraScaleMask && m_caster != target)
     {
         SpellInfo const* auraSpell = sSpellMgr->GetSpellInfo(sSpellMgr->GetFirstSpellInChain(m_spellInfo->Id));
-        if (uint32(target->getLevel() + 10) >= auraSpell->SpellLevel)
+        if (uint32(target->getLevelForTarget(m_caster) + 10) >= auraSpell->SpellLevel)
             targetInfo.scaleAura = true;
     }
 
@@ -3238,7 +3238,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
         int32 basePoints[MAX_SPELL_EFFECTS];
         if (scaleAura)
         {
-            aurSpellInfo = m_spellInfo->GetAuraRankForLevel(unitTarget->getLevel());
+            aurSpellInfo = m_spellInfo->GetAuraRankForLevel(unitTarget->getLevelForTarget(m_caster));
             ASSERT(aurSpellInfo);
             for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
             {
@@ -6534,7 +6534,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 uint32 skill = creature->GetCreatureTemplate()->GetRequiredLootSkill();
 
                 int32 skillValue = m_caster->ToPlayer()->GetSkillValue(skill);
-                int32 TargetLevel = m_targets.GetUnitTarget()->getLevel();
+                int32 TargetLevel = m_targets.GetUnitTarget()->getLevelForTarget(m_caster);
                 int32 ReqValue = (skillValue < 100 ? (TargetLevel-10) * 10 : TargetLevel * 5);
                 if (ReqValue > skillValue)
                     return SPELL_FAILED_LOW_CASTLEVEL;
@@ -6909,7 +6909,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                         return SPELL_FAILED_CHARMED;
 
                     int32 damage = CalculateDamage(i, target);
-                    if (damage && int32(target->getLevel()) > damage)
+                    if (damage && int32(target->getLevelForTarget(m_caster)) > damage)
                         return SPELL_FAILED_HIGHLEVEL;
                 }
 
@@ -8093,7 +8093,7 @@ bool Spell::CheckEffectTarget(Unit const* target, uint32 eff) const
             if (target->GetCharmerGUID())
                 return false;
             if (int32 damage = CalculateDamage(eff, target))
-                if ((int32)target->getLevel() > damage)
+                if ((int32)target->getLevelForTarget(m_caster) > damage)
                     return false;
             break;
         default:
