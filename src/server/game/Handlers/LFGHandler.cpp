@@ -178,7 +178,9 @@ void WorldSession::SendLfgRoleChosen(ObjectGuid guid, uint8 roles)
 
 void WorldSession::SendLfgRoleCheckUpdate(lfg::LfgRoleCheck const& roleCheck)
 {
-    bool updateAll = roleCheck.state == lfg::LFG_ROLECHECK_FINISHED || roleCheck.state == lfg::LFG_ROLECHECK_NO_ROLE;
+    Player* player = GetPlayer();
+    if (!player || roleCheck.roles.empty())
+        return;
 
     lfg::LfgDungeonSet dungeons;
     if (roleCheck.rDungeonId)
@@ -186,45 +188,35 @@ void WorldSession::SendLfgRoleCheckUpdate(lfg::LfgRoleCheck const& roleCheck)
     else
         dungeons = roleCheck.dungeons;
 
-    ObjectGuid guid = _player->GetGUID();
+    ObjectGuid guid = player->GetGUID();
 
     WorldPackets::LFG::RoleCheckUpdate update;
-    update.PartyIndex = 0;
     update.RoleCheckStatus = roleCheck.state;
-    update.BgQueueID = guid.GetGUIDLow();
-    update.ActivityID = 0;
     update.IsBeginning = roleCheck.state == lfg::LFG_ROLECHECK_INITIALITING;
     update.ShowRoleCheck = roleCheck.state == lfg::LFG_ROLECHECK_FINISHED || roleCheck.state == lfg::LFG_ROLECHECK_ABORTED;
 
     for (auto const& i : dungeons)
         update.JoinSlots.push_back(sLFGMgr->GetLFGDungeonEntry(i));
 
-    if (updateAll && !roleCheck.roles.empty())
+    uint8 roles = roleCheck.roles.find(guid)->second;
+
+    WorldPackets::LFG::RoleCheckUpdate::CheckUpdateMember updateMember;
+    updateMember.Guid = guid;
+    updateMember.RolesDesired = roles;
+    updateMember.Level = player->getLevel();
+    updateMember.RoleCheckComplete = roles != 0;
+    update.Members.push_back(updateMember);
+
+    for (auto const& i : roleCheck.roles)
     {
-        ObjectGuid memberGuid = guid;
-        uint8 roles = roleCheck.roles.find(guid)->second;
-        Player* player = ObjectAccessor::FindPlayer(guid);
+        if (i.first == player->GetGUID())
+            continue;
 
-        WorldPackets::LFG::RoleCheckUpdate::CheckUpdateMember updateMember;
-        updateMember.Guid = guid;
-        updateMember.RolesDesired = roles;
-        updateMember.Level = player ? player->getLevel() : 0;
-        updateMember.RoleCheckComplete = roles != 0;
+        updateMember.Guid = i.first;
+        updateMember.RolesDesired = i.second;
+        updateMember.Level = player->getLevel();
+        updateMember.RoleCheckComplete = i.second != 0;
         update.Members.push_back(updateMember);
-
-        for (auto const& i : roleCheck.roles)
-        {
-            if (i.first == GetPlayer()->GetGUID() || !updateAll)
-                continue;
-
-            player = ObjectAccessor::FindPlayer(guid);
-
-            updateMember.Guid = i.first;
-            updateMember.RolesDesired = i.second;
-            updateMember.Level = player ? player->getLevel() : 0;
-            updateMember.RoleCheckComplete = i.second != 0;
-            update.Members.push_back(updateMember);
-        }
     }
 
     SendPacket(update.Write());
