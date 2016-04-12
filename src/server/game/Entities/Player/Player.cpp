@@ -852,9 +852,11 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
 
     if (charTemplate && !charTemplate->Items.empty())
     {
+        uint8 FactionGroup = GetTeamId() == TEAM_HORDE ? FACTION_MASK_HORDE : FACTION_MASK_ALLIANCE;
         for (CharacterTemplateItem const& v : charTemplate->Items)
-            if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
-                StoreNewItemInBestSlots(v.ItemID, v.Count);
+            if (v.ClassID == createInfo->Class && (v.FactionGroup & FactionGroup))
+                if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
+                    StoreNewItemInBestSlots(v.ItemID, v.Count);
     }
     else if (loadoutItem)
     {
@@ -17204,20 +17206,23 @@ void Player::SetQuestObjectiveData(Quest const* quest, QuestObjective const* obj
     // Add to save
     m_QuestStatusSave[quest->GetQuestId()] = QUEST_DEFAULT_SAVE_TYPE;
 
-    // Update quest fields
-    // Negative index  - hiden
-    uint16 log_slot = FindQuestSlot(quest->GetQuestId());
-    if (log_slot < MAX_QUEST_LOG_SIZE && obj->StorageIndex >= 0 /*&& (obj->Flags & QUEST_OBJECTIVE_FLAG_HIDEN) == 0*/ && obj->Type != QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
-        SetQuestSlotCounter(log_slot, obj->StorageIndex, status.ObjectiveData[obj->StorageIndex]);
-
-    if (log_slot < MAX_QUEST_LOG_SIZE && obj->Type == QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+    if (status.Status == QUEST_STATUS_INCOMPLETE)
     {
-        SetSpecialCriteriaComplete(log_slot, obj->StorageIndex);
-        WorldPackets::Quest::QuestUpdateAddCreditSimple packet;
-        packet.QuestID = quest->GetQuestId();
-        packet.ObjectID = obj->ObjectID;
-        packet.ObjectiveType = obj->Type;
-        GetSession()->SendPacket(packet.Write());
+        // Update quest fields
+        // Negative index  - hiden
+        uint16 log_slot = FindQuestSlot(quest->GetQuestId());
+        if (log_slot < MAX_QUEST_LOG_SIZE && obj->StorageIndex >= 0 /*&& (obj->Flags & QUEST_OBJECTIVE_FLAG_HIDEN) == 0*/ && obj->Type != QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+            SetQuestSlotCounter(log_slot, obj->StorageIndex, status.ObjectiveData[obj->StorageIndex]);
+
+        if (log_slot < MAX_QUEST_LOG_SIZE && obj->Type == QUEST_OBJECTIVE_COMPLETE_CRITERIA_TREE)
+        {
+            SetSpecialCriteriaComplete(log_slot, obj->StorageIndex);
+            WorldPackets::Quest::QuestUpdateAddCreditSimple packet;
+            packet.QuestID = quest->GetQuestId();
+            packet.ObjectID = obj->ObjectID;
+            packet.ObjectiveType = obj->Type;
+            GetSession()->SendPacket(packet.Write());
+        }
     }
 
     SendVignette(false);
@@ -19117,7 +19122,7 @@ void Player::_LoadQuestStatus(PreparedQueryResult result)
                     quest_time = 0;
 
                 // add to quest log
-                if (slot < MAX_QUEST_LOG_SIZE && questStatusData.Status != QUEST_STATUS_NONE && quest->Type != QUEST_TYPE_TASK)
+                if (slot < MAX_QUEST_LOG_SIZE && questStatusData.Status == QUEST_STATUS_INCOMPLETE && quest->Type != QUEST_TYPE_TASK)
                 {
                     SetQuestSlot(slot, quest_id, uint32(quest_time)); // cast can't be helped
 

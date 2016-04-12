@@ -639,8 +639,8 @@ void ObjectMgr::LoadCreatureTemplates()
     "resistance4, resistance5, resistance6, spell1, spell2, spell3, spell4, spell5, spell6, spell7, spell8, PetSpellDataId, VehicleId, mingold, maxgold, "
     //51     52             53          54           55              56         57           58                    59           60
     "AIName, MovementType, InhabitType, HoverHeight, Mana_mod_extra, Armor_mod, RegenHealth, mechanic_immune_mask, flags_extra, ScriptName, "
-    //61             62    63             64         65              66              67              68                   69
-    "WorldEffectID, AiID, MovementIDKit, MeleeID, ScaleLevelMin, ScaleLevelMax, ScaleLevelDelta, ScaleLevelDuration, ControllerID FROM creature_template;");
+    //61                 62              63              64              65                   66
+    "WorldEffectID, ScaleLevelMin, ScaleLevelMax, ScaleLevelDelta, ScaleLevelDuration, ControllerID FROM creature_template;");
 
     uint32 count = 0;
     do
@@ -708,9 +708,6 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.flags_extra        = fields[index++].GetUInt32();
         creatureTemplate.ScriptID           = GetScriptId(fields[index++].GetCString());
         creatureTemplate.WorldEffectID      = fields[index++].GetUInt32();
-        creatureTemplate.AiID               = fields[index++].GetUInt32();
-        creatureTemplate.MovementIDKit      = fields[index++].GetUInt32();
-        creatureTemplate.MeleeID            = fields[index++].GetUInt32();
         creatureTemplate.ScaleLevelMin      = fields[index++].GetUInt8();
         creatureTemplate.ScaleLevelMax      = fields[index++].GetUInt8();
         creatureTemplate.ScaleLevelDelta    = fields[index++].GetUInt8();
@@ -1680,8 +1677,8 @@ void ObjectMgr::LoadCreatures()
 
     //                                               0              1   2       3      4       5           6           7           8            9            10            11          12
     QueryResult result = WorldDatabase.Query("SELECT creature.guid, id, map, zoneId, areaId, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, "
-    //        13            14         15       16            17         18         19          20          21                22                   23                     24                    25                  26
-        "currentwaypoint, curhealth, curmana, MovementType, spawnMask, phaseMask, eventEntry, pool_entry, creature.npcflag, creature.npcflag2, creature.unit_flags, creature.dynamicflags, creature.isActive, creature.PhaseId "
+    //        13            14         15       16            17         18         19          20          21                22                   23                     24                    25                  26           27       28        29
+        "currentwaypoint, curhealth, curmana, MovementType, spawnMask, phaseMask, eventEntry, pool_entry, creature.npcflag, creature.npcflag2, creature.unit_flags, creature.dynamicflags, creature.isActive, creature.PhaseId, AiID, MovementID, MeleeID "
         "FROM creature "
         "LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
         "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid "
@@ -1751,6 +1748,10 @@ void ObjectMgr::LoadCreatures()
         for (Tokenizer::const_iterator::value_type itr : phasesToken)
             if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(itr, nullptr, 10))))
                 data.PhaseID.insert(phase->ID);
+
+        data.AiID = fields[index++].GetUInt32();
+        data.MovementID = fields[index++].GetUInt32();
+        data.MeleeID = fields[index++].GetUInt32();
 
         // check near npc with same entry.
         auto lastCreature = lastEntryCreature.find(entry);
@@ -10066,6 +10067,8 @@ void ObjectMgr::LoadCharacterTemplates()
                         CharacterTemplateItem itemTemp;
                         itemTemp.ItemID = fieldItem[0].GetUInt32();
                         itemTemp.Count = fieldItem[1].GetUInt32();
+                        itemTemp.ClassID = classID;
+                        itemTemp.FactionGroup = factionGroup;
                         templ.Items.push_back(itemTemp);
                     }
                     while (result->NextRow());

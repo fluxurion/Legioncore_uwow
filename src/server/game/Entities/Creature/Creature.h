@@ -126,10 +126,9 @@ struct CreatureTemplate
     float HpMulti = 1.0f;
     float PowerMulti;
     bool Leader = false;
-    
+
     std::string AIName  = "";
     int32 resistance[MAX_SPELL_SCHOOL];
-    uint32 AiID = 0;
     uint32 attackpower = 0;
     uint32 baseattacktime = 2000;
     uint32 dmgschool = 0;
@@ -143,9 +142,7 @@ struct CreatureTemplate
     uint32 lootid = 0;
     uint32 maxgold = 0;
     uint32 MechanicImmuneMask = 0;
-    uint32 MeleeID = 0;
     uint32 mingold = 0;
-    uint32 MovementIDKit = 0;
     uint32 MovementType = 0;
     uint32 npcflag = 0;
     uint32 npcflag2 = 0;
@@ -379,6 +376,10 @@ struct CreatureData
     bool dbData;
     bool building;                                              // garrison building state
     std::set<uint32> PhaseID;
+
+    uint32 AiID;
+    uint32 MovementID;
+    uint32 MeleeID;
 };
 
 // `creature_addon` table

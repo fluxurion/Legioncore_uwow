@@ -1003,6 +1003,8 @@ struct CharacterTemplateItem
 {
     uint32 ItemID;
     uint32 Count;
+    uint8 ClassID;
+    uint8 FactionGroup;
 };
 
 struct CharacterTemplate

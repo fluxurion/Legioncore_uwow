@@ -895,6 +895,16 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
 
     LoadCreaturesAddon();
 
+    if (data)
+    {
+        if (data->AiID)
+            SetAIAnimKitId(data->AiID);
+        if (data->MovementID)
+            SetMovementAnimKitId(data->MovementID);
+        if (data->MeleeID)
+            SetMeleeAnimKitId(data->MeleeID);
+    }
+
     //! Need to be called after LoadCreaturesAddon - MOVEMENTFLAG_HOVER is set there
     if (HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
     {
@@ -1576,13 +1586,6 @@ bool Creature::CreateFromProto(ObjectGuid::LowType guidlow, uint32 entry, int32 
 
     if(m_creatureInfo->WorldEffectID)
         SetUInt32Value(UNIT_FIELD_STATE_WORLD_EFFECT_ID, m_creatureInfo->WorldEffectID);
-
-    if (m_creatureInfo->AiID)
-        SetAIAnimKitId(m_creatureInfo->AiID);
-    if (m_creatureInfo->MovementIDKit)
-        SetMovementAnimKitId(m_creatureInfo->MovementIDKit);
-    if (m_creatureInfo->MeleeID)
-        SetMeleeAnimKitId(m_creatureInfo->MeleeID);
 
     return true;
 }
