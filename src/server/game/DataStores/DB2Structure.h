@@ -1245,13 +1245,13 @@ struct QuestV2CliTaskEntry
     LocalizedString* Name1;                         // 4
     int32       requestAura;                        // 5
     uint16      UniqueBitFlag;                      // 6
-    uint16      Unk4;                               // 7
+    uint16      PlayerConditionID;                  // 7
     int16       Unk5;                               // 8
     uint16      requestQuest[3];                    // 12 - 14
-    uint16      Unk9;                               // 12
+    uint16      SkillID;                            // 12
     uint16      Unk10;                              // 13
     uint8       Unk11;                              // 14
-    uint8       Unk12;                              // 15
+    uint8       SkillRank;                          // 15
     uint8       Unk13;                              // 16
     uint8       Unk14;                              // 17
     int8        Unk15;                              // 18
@@ -2850,7 +2850,7 @@ struct VignetteEntry
     LocalizedString* Name;                        // 1
     float     UnkFloat1;                          // 2
     float     UnkFloat2;                          // 3
-    uint32    QuestUnk;                           // 4
+    uint32    PlayerConditionID;                  // 4
     uint32    QuestID;                            // 5
     int8      Unk1;                               // 6
     int8      Unk2;                               // 7
