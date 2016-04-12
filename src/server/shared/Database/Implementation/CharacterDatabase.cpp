@@ -711,5 +711,9 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_SEL_CHARACTER_COMPLAINTS, "SELECT ID, PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog FROM report_complaints WHERE PlayerGuid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_INS_CHARACTER_COMPLAINTS, "INSERT INTO report_complaints (ID, PlayerGuid, ComplaintType, MailID, TimeSinceOffence, MessageLog) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
 
-    PrepareStatement(CHAR_INS_BUG_REPORT, "INSERT INTO report_bugreport (ID, PlayerGuid, Note, MapID, PosX, PosY, PosZ) VALUES(?, ?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_TRANSMOGS, "SELECT `ModelID`, `Condition` FROM character_transmogs WHERE guid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_REP_TRANSMOGS, "REPLACE INTO character_transmogs (`guid`, `ModelID`, `Condition`) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+
+    PrepareStatement(CHAR_REP_HEIRLOOMS, "REPLACE INTO account_heirlooms (accountId, itemId, flags) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+
 }

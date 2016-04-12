@@ -35,16 +35,36 @@ enum HeirloomItemFlags
     HEIRLOOM_ITEM_FLAG_PVP                  = 0x02
 };
 
+struct ToyBoxData
+{
+    ToyBoxData(bool _isFavourite = false, bool _needSave = false) : isFavourite(_isFavourite), needSave(_needSave) { }
+
+    bool isFavourite;
+    bool needSave;
+};
+
+typedef std::map<uint32, ToyBoxData> ToyBoxContainer;
+
 struct HeirloomData
 {
-    HeirloomData(uint32 _flags = 0, uint32 _bonusId = 0) : flags(_flags), bonusId(_bonusId) { }
+    HeirloomData(uint32 _flags = 0, uint32 _bonusId = 0, bool _needSave = false) : flags(_flags), bonusId(_bonusId), needSave(_needSave) { }
 
     uint32 flags;
     uint32 bonusId;
+    bool needSave;
 };
 
-typedef std::map<uint32, bool> ToyBoxContainer;
 typedef std::map<uint32, HeirloomData> HeirloomContainer;
+
+struct TransmogData
+{
+    TransmogData(uint32 _condition = 0, bool _needSave = false) : condition(_condition), needSave(_needSave) { }
+
+    uint32 condition;
+    bool needSave;
+};
+
+typedef std::map<uint32, TransmogData> TransmogContainer;
 
 class CollectionMgr
 {
@@ -53,7 +73,7 @@ public:
 
     // General
     void SaveToDB(SQLTransaction& trans);
-    bool LoadFromDB(PreparedQueryResult toys, PreparedQueryResult heirlooms);
+    bool LoadFromDB(PreparedQueryResult toys, PreparedQueryResult heirlooms, PreparedQueryResult transmogs);
 
     // Account-wide toys
     void ToySetFavorite(uint32 itemId, bool favorite);
@@ -70,6 +90,10 @@ public:
     uint32 GetHeirloomBonus(uint32 itemId) const;
     HeirloomContainer const& GetAccountHeirlooms() const { return _heirlooms; }
 
+    void AddTransmog(uint32 modelId, uint32 condition);
+    bool HasTransmog(uint32 modelId);
+    TransmogContainer const& GetTransmogs() const { return _transmogs; }
+
     // Account-wide mounts
 
 private:
@@ -77,6 +101,7 @@ private:
 
     ToyBoxContainer _toys;
     HeirloomContainer _heirlooms;
+    TransmogContainer _transmogs;
 };
 
 #endif // CollectionMgr_h__

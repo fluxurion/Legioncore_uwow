@@ -1,0 +1,6 @@
+CREATE TABLE `character_transmogs`(  
+  `guid` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  `ModelID` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  `Condition` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`guid`, `ModelID`)
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_general_ci;

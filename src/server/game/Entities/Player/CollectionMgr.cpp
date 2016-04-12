@@ -23,28 +23,50 @@ void CollectionMgr::SaveToDB(SQLTransaction& trans)
     PreparedStatement* stmt = nullptr;
     uint8 index = 0;
 
-    for (auto const& i : _toys)
+    for (auto& i : _toys)
     {
-        index = 0;
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_TOYS);
-        stmt->setUInt32(index++, _owner->GetSession()->GetAccountId());
-        stmt->setUInt32(index++, i.first);
-        stmt->setBool(index++, i.second);
-        trans->Append(stmt);
+        if (i.second.needSave)
+        {
+            index = 0;
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_TOYS);
+            stmt->setUInt32(index++, _owner->GetSession()->GetAccountId());
+            stmt->setUInt32(index++, i.first);
+            stmt->setBool(index++, i.second.isFavourite);
+            trans->Append(stmt);
+            i.second.needSave = false;
+        }
     }
 
-    for (auto const& t : _heirlooms)
+    for (auto& t : _heirlooms)
     {
-        index = 0;
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_HEIRLOOMS);
-        stmt->setUInt32(index++, _owner->GetSession()->GetAccountId());
-        stmt->setUInt32(index++, t.first);
-        stmt->setUInt32(index++, t.second.flags);
-        trans->Append(stmt);
+        if (t.second.needSave)
+        {
+            index = 0;
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_HEIRLOOMS);
+            stmt->setUInt32(index++, _owner->GetSession()->GetAccountId());
+            stmt->setUInt32(index++, t.first);
+            stmt->setUInt32(index++, t.second.flags);
+            trans->Append(stmt);
+            t.second.needSave = false;
+        }
+    }
+
+    for (auto& t : _transmogs)
+    {
+        if (t.second.needSave)
+        {
+            index = 0;
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_TRANSMOGS);
+            stmt->setUInt32(index++, _owner->GetGUIDLow());
+            stmt->setUInt32(index++, t.first);
+            stmt->setUInt32(index++, t.second.condition);
+            trans->Append(stmt);
+            t.second.needSave = false;
+        }
     }
 }
 
-bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult heirlooms)
+bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult heirlooms, PreparedQueryResult transmogs)
 {
     if (toys)
     {
@@ -54,7 +76,7 @@ bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult hei
             uint32 itemId = fields[0].GetUInt32();
             bool isFavourite = fields[1].GetBool();
 
-            _toys[itemId] = isFavourite;
+            _toys[itemId] = ToyBoxData(isFavourite, false);
         }
         while (toys->NextRow());
     }
@@ -77,9 +99,22 @@ bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult hei
             if (flags & HEIRLOOM_FLAG_BONUS_LEVEL_100)
                 bonusId = heirloom->ItemBonusListID[1];
 
-            _heirlooms[itemId] = HeirloomData(flags, bonusId);
+            _heirlooms[itemId] = HeirloomData(flags, bonusId, false);
         }
         while (heirlooms->NextRow());
+    }
+
+    if (transmogs)
+    {
+        do
+        {
+            Field* fields = transmogs->Fetch();
+            uint32 modelId = fields[0].GetUInt32();
+            uint32 condition = fields[1].GetUInt32();
+
+            _transmogs[modelId] = TransmogData(condition, false);
+        }
+        while (transmogs->NextRow());
     }
 
     for (auto const& t : _toys)
@@ -89,6 +124,12 @@ bool CollectionMgr::LoadFromDB(PreparedQueryResult toys, PreparedQueryResult hei
     {
         _owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_HEIRLOOMS, item.first);
         _owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS, item.second.flags);
+    }
+
+    for (auto const& transmog : _transmogs)
+    {
+        _owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_TRANSMOG, transmog.first);
+        //_owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_CONDITIONAL_TRANSMOG, transmog.second.condition);
     }
 
     return true;
@@ -107,7 +148,7 @@ bool CollectionMgr::AddToy(uint32 itemId, bool isFavourite /*= false*/)
 
 bool CollectionMgr::UpdateAccountToys(uint32 itemId, bool isFavourite /*= false*/)
 {
-    return _toys.insert(ToyBoxContainer::value_type(itemId, isFavourite)).second;
+    return _toys.insert(ToyBoxContainer::value_type(itemId, ToyBoxData(isFavourite, true))).second;
 }
 
 void CollectionMgr::ToySetFavorite(uint32 itemId, bool favorite)
@@ -121,7 +162,7 @@ void CollectionMgr::ToySetFavorite(uint32 itemId, bool favorite)
 
 bool CollectionMgr::UpdateAccountHeirlooms(uint32 itemId, uint32 flags)
 {
-    return _heirlooms.insert(HeirloomContainer::value_type(itemId, HeirloomData(flags, 0))).second;
+    return _heirlooms.insert(HeirloomContainer::value_type(itemId, HeirloomData(flags, 0, true))).second;
 }
 
 uint32 CollectionMgr::GetHeirloomBonus(uint32 itemId) const
@@ -179,6 +220,7 @@ void CollectionMgr::UpgradeHeirloom(uint32 itemId, uint32 castItem)
     player->SetDynamicUInt32Value(PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS, offset, flags);
     s->second.flags = flags;
     s->second.bonusId = bonusId;
+    s->second.needSave = true;
 }
 
 void CollectionMgr::CheckHeirloomUpgrades(Item* item)
@@ -253,3 +295,21 @@ bool CollectionMgr::CanApplyHeirloomXpBonus(uint32 itemId, uint32 level)
 
     return true;
 }
+
+bool CollectionMgr::HasTransmog(uint32 modelId)
+{
+    TransmogContainer::const_iterator z = _transmogs.find(modelId);
+    if (z != _transmogs.end())
+        return true;
+
+    return false;
+}
+
+void CollectionMgr::AddTransmog(uint32 modelId, uint32 condition)
+{
+    _transmogs.insert(TransmogContainer::value_type(modelId, TransmogData(condition, true)));
+
+    _owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_TRANSMOG, modelId);
+    //_owner->AddDynamicValue(PLAYER_DYNAMIC_FIELD_CONDITIONAL_TRANSMOG, condition);
+}
+

@@ -413,6 +413,13 @@ bool Creature::UpdateEntry(uint32 entry, uint32 team, const CreatureData* data)
 
     SetUInt32Value(OBJECT_FIELD_DYNAMIC_FLAGS, dynamicflags);
 
+    if (isDead())
+    {
+        AddUnitState(UNIT_STATE_DIED);
+        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        SetReactState(REACT_PASSIVE);
+    }
+
     if (cInfo->ScaleLevelMin)
         SetUInt32Value(UNIT_FIELD_SCALING_LEVEL_MIN, cInfo->ScaleLevelMin);
     if (cInfo->ScaleLevelMax)
@@ -1686,7 +1693,10 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType guid, Map* map, bool addTo
     SetHealth(m_deathState == ALIVE ? curhealth : 0);
 
     // checked at creature_template loading
-    m_defaultMovementType = MovementGeneratorType(data->movementType);
+    if (isDead())
+        m_defaultMovementType = MovementGeneratorType(0);
+    else
+        m_defaultMovementType = MovementGeneratorType(data->movementType);
 
     m_creatureData = data;
 

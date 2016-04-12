@@ -283,7 +283,7 @@ class Item : public Object
         void SetOwnerGUID(ObjectGuid guid) { SetGuidValue(ITEM_FIELD_OWNER, guid); }
         Player* GetOwner()const;
 
-        void SetBinding(bool val) { ApplyModFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_FLAG_SOULBOUND, val); }
+        void SetBinding(bool val);
         bool IsSoulBound() const { return HasFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_FLAG_SOULBOUND); }
         bool IsBoundAccountWide() const { return (GetTemplate()->Flags & ITEM_PROTO_FLAG_BIND_TO_ACCOUNT) != 0; }
         bool IsBindedNotWith(Player const* player) const;

@@ -27,6 +27,7 @@
 #include "ScriptMgr.h"
 #include "ConditionMgr.h"
 #include "ItemPackets.h"
+#include "CollectionMgr.h"
 
 void AddItemsSetItem(Player* player, Item* item)
 {
@@ -1763,6 +1764,18 @@ void Item::AddBonuses(uint32 bonusListID)
         for (ItemBonusEntry const* bonus : *bonuses)
             _bonusData.AddBonus(bonus->Type, bonus->Value);
     }
+}
+
+void Item::SetBinding(bool val)
+{
+    // if (Player* owner = GetOwner())
+    // {
+        // uint32 DisplayId = sDB2Manager.GetItemDisplayId(GetEntry(), GetAppearanceModId());
+        // if (IsValidTransmogrificationTarget() && !owner->GetCollectionMgr()->HasTransmog(DisplayId))
+            // owner->GetCollectionMgr()->AddTransmog(GetAppearanceModId(), 0);
+    // }
+
+    ApplyModFlag(ITEM_FIELD_DYNAMIC_FLAGS, ITEM_FLAG_SOULBOUND, val);
 }
 
 void BonusData::Initialize(ItemTemplate const* proto, Player const* owner)

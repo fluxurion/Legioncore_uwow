@@ -35,13 +35,16 @@ int AggressorAI::Permissible(const Creature* creature)
 
 void AggressorAI::UpdateAI(uint32 diff)
 {
+    if (me->isDead())
+        return;
+
     if (!UpdateVictim())
     {
         if (m_checkTimer <= diff)
         {
             if (me->HasUnitState(UNIT_STATE_CASTING) || !me->isAlive())
             {
-                m_checkTimer = 1000;
+                m_checkTimer = 5000;
                 return;
             }
 

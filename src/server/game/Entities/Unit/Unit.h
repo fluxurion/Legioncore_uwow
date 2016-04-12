@@ -1874,7 +1874,7 @@ class Unit : public WorldObject
 
         bool isAlive() const { return (m_deathState == ALIVE); };
         bool isDying() const { return (m_deathState == JUST_DIED); };
-        bool isDead() const { return (m_deathState == DEAD || m_deathState == CORPSE || HasFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD)); };
+        bool isDead() const { return (m_deathState == DEAD || m_deathState == CORPSE || HasFlag(OBJECT_FIELD_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD) || HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH)); };
         DeathState getDeathState() { return m_deathState; };
         virtual void setDeathState(DeathState s);           // overwrited in Creature/Player/Pet
 

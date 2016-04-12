@@ -856,7 +856,14 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
         for (CharacterTemplateItem const& v : charTemplate->Items)
             if (v.ClassID == createInfo->Class && (v.FactionGroup & FactionGroup))
                 if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
-                    StoreNewItemInBestSlots(v.ItemID, v.Count);
+                    if (pProto->GetInventoryType() == INVTYPE_BAG)
+                        StoreNewItemInBestSlots(v.ItemID, v.Count);
+
+        for (CharacterTemplateItem const& v : charTemplate->Items)
+            if (v.ClassID == createInfo->Class && (v.FactionGroup & FactionGroup))
+                if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
+                    if (pProto->GetInventoryType() != INVTYPE_BAG)
+                        StoreNewItemInBestSlots(v.ItemID, v.Count);
     }
     else if (loadoutItem)
     {
@@ -18296,7 +18303,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
    
     std::unique_ptr<CollectionMgr> collection = Trinity::make_unique<CollectionMgr>(this);
-    if (_collectionMgr->LoadFromDB(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_TOYS), holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_HEIRLOOMS)))
+    if (_collectionMgr->LoadFromDB(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_TOYS), holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_HEIRLOOMS), holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_TRANSMOGS)))
         _collectionMgr = std::move(collection);
 
     if (mustResurrectFromUnlock)
