@@ -8,11 +8,14 @@
 #include "ScriptedCreature.h"
 #include "halls_of_valor.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_RAGNAROK        = 1,
+    SAY_RAGNAROK_EMOTE  = 2,
+    SAY_EGIDA           = 3,
+    SAY_DEATH           = 4,
+};
 
 enum Spells
 {
@@ -28,6 +31,12 @@ enum Spells
     //Aegis
     SPELL_AEGIS_VISUAL_SHIELD   = 193769,
     SPELL_AEGIS_OVERRIDE        = 193783,
+    
+    // kings
+    SPELL_CALL_ANCESTOR         = 200969, // нужна доделка скилла (суммон и сам призываемый моб)
+    SPELL_WICKED_DAGGER         = 199674,
+    SPELL_UNRULY_YELL           = 199726,
+    SPELL_SEVER                 = 199652,
 };
 
 enum eEvents
@@ -101,7 +110,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //57:56
         {
-            //Talk(SAY_AGGRO); //Give up the aegis or die!
+            Talk(SAY_AGGRO); //Give up the aegis or die!
             _EnterCombat();
             events.ScheduleEvent(EVENT_FELBLAZE_RUSH, 7000); //58:03, 58:39, 58:50, 59:02, 59:23
             events.ScheduleEvent(EVENT_SAVAGE_BLADE, 24000); //58:20, 58:44, 59:07, 59:41
@@ -114,7 +123,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
 
@@ -146,7 +155,7 @@ public:
                 me->GetMotionMaster()->MovePoint(1, 2411.03f, 528.72f, 748.99f);
                 if (Creature* odyn = instance->instance->GetCreature(instance->GetGuidData(DATA_ODYN)))
                 {
-                    //odyn->AI()->Talk();
+                    odyn->AI()->Talk(1); // Победителям - достойная награда
                     odyn->CastSpell(odyn, SPELL_AEGIS_SPAWN, true);
                 }
                 DoCast(me, SPELL_CONVERSATION, true);
@@ -176,6 +185,7 @@ public:
             {
                 DoCast(193983);
                 aegisEvent = false;
+                Talk(SAY_EGIDA);
             }
         }
 
@@ -243,6 +253,8 @@ public:
                         break;
                     case EVENT_RAGNAROK:
                         DoCast(SPELL_RAGNAROK);
+                        Talk(SAY_RAGNAROK);
+                        Talk(SAY_RAGNAROK_EMOTE);
                         break;
                     case EVENT_PICK_AEGIS:
                         aegisEvent = true;
@@ -272,11 +284,27 @@ public:
     }
 };
 
-//95843, 97081, 97083, 97084
+//95843, 97081,       97083,      97084
 class npc_generic_odyn_kings : public CreatureScript
 {
 public:
     npc_generic_odyn_kings() : CreatureScript("npc_generic_odyn_kings") {}
+    
+         bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+        {
+            player->PlayerTalkClass->ClearMenus();
+            switch (action)
+            {
+               case 1:
+                  creature->setFaction(16);
+                  if (creature->GetEntry() == NPC_KING_RANULF)
+                     if (Unit* haldor = creature->FindNearestCreature(NPC_KING_HALDOR, 30.0f, true))
+                        haldor->setFaction(16);
+                  player->CLOSE_GOSSIP_MENU();
+               break;
+            }
+           return true;
+        }
 
     struct npc_generic_odyn_kingsAI : public ScriptedAI
     {
@@ -291,9 +319,26 @@ public:
 
         void EnterCombat(Unit* /*who*/)
         {
-            //events.ScheduleEvent(EVENT_1, );
+            events.ScheduleEvent(EVENT_1, urand(24000, 27000)); //call
+            events.ScheduleEvent(EVENT_2, urand(16000, 18000)); //dagger
+            events.ScheduleEvent(EVENT_3, urand(3000, 5000)); // yell
+            events.ScheduleEvent(EVENT_4, urand(11000, 15000)); // sever
+            if (me->GetEntry() != NPC_KING_RANULF)
+               Talk(0);
         }
-
+        void JustDied(Unit* /*killer*/)
+        {
+           Talk(1);
+           if (me->GetEntry() == NPC_KING_TOR)
+              me->CastSpell(me, 199614, true); //aura
+           if (me->GetEntry() == NPC_KING_RANULF)
+              me->CastSpell(me, 199622, true); // aura 
+           if (me->GetEntry() == NPC_KING_BJORN)
+              me->CastSpell(me, 199621, true); // aura
+           if (me->GetEntry() == NPC_KING_HALDOR)
+              me->CastSpell(me, 199620, true); //aura
+        }
+            
         void UpdateAI(uint32 diff)
         {
             if (!UpdateVictim())
@@ -308,7 +353,20 @@ public:
             {
                 switch (eventId)
                 {
-                    case EVENT_1:
+                    case EVENT_1: // call
+                           me->CastSpell(me, SPELL_CALL_ANCESTOR);
+                        events.ScheduleEvent(EVENT_1, urand(22000, 26000));
+                        break;                    
+                        case EVENT_2: // dagger
+                           DoCast(SPELL_WICKED_DAGGER);
+                        events.ScheduleEvent(EVENT_2, urand(16000, 18000));
+                        break;                        
+                        case EVENT_3: // yell
+                           DoCast(SPELL_UNRULY_YELL);
+                        break;                        
+                        case EVENT_4: // sever
+                           DoCast(SPELL_SEVER);
+                        events.ScheduleEvent(EVENT_4, urand(11000, 15000));
                         break;
                 }
             }
@@ -334,6 +392,7 @@ public:
         {
             me->SetReactState(REACT_PASSIVE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
+            Talk(0); // Эгида перегрудена
         }
 
         InstanceScript* instance;

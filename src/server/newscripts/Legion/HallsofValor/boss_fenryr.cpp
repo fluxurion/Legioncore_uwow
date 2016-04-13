@@ -8,11 +8,12 @@
 #include "ScriptedCreature.h"
 #include "halls_of_valor.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_UNNERVING_HOWL           = 0,
+    SAY_END                      = 1,
+    SAY_BLOOD                    = 1,
+};
 
 enum Spells
 {
@@ -125,7 +126,7 @@ public:
         {
             _JustDied();
         }
-
+       
         void MovementInform(uint32 type, uint32 id)
         {
             if (type == EFFECT_MOTION_TYPE)
@@ -181,7 +182,7 @@ public:
                 switch (eventId)
                 {
                     case EVENT_UNNERVING_HOWL:
-                        //Talk();
+                        Talk(SAY_UNNERVING_HOWL);
                         DoCast(SPELL_UNNERVING_HOWL);
                         events.ScheduleEvent(EVENT_UNNERVING_HOWL, 36000);
                         break;
@@ -269,7 +270,6 @@ public:
             std::list<Creature*> trashList;
             GetCreatureListWithEntryInGrid(trashList, me, 96609, 30.0f);
             GetCreatureListWithEntryInGrid(trashList, me, 96611, 30.0f);
-            GetCreatureListWithEntryInGrid(trashList, me, 96677, 30.0f);
             GetCreatureListWithEntryInGrid(trashList, me, 103801, 30.0f);
             GetCreatureListWithEntryInGrid(trashList, me, 96640, 30.0f);
             GetCreatureListWithEntryInGrid(trashList, me, 96934, 30.0f);
@@ -342,7 +342,7 @@ public:
                 switch (eventId)
                 {
                     case EVENT_UNNERVING_HOWL:
-                        //Talk();
+                        Talk(SAY_UNNERVING_HOWL);
                         DoCast(SPELL_UNNERVING_HOWL);
                         events.ScheduleEvent(EVENT_UNNERVING_HOWL, 32000);
                         break;
@@ -361,8 +361,9 @@ public:
                         DoCast(me, SPELL_LICKING_WOUNDS, true);
                         DoCast(me, SPELL_BLOOD_SPLAT, true);
                         DoCast(me, SPELL_STEALTH, true);
+                        Talk(SAY_END);
                         if (instance->GetData(DATA_FENRYR_EVENT) != DONE)
-                            instance->SetData(DATA_FENRYR_EVENT, DONE);
+                            instance->SetData(DATA_FENRYR_EVENT, DONE);                      
 
                         if (me->GetDistance(oneTrashPos[0]) < me->GetDistance(secondTrashPos[0]))
                             me->GetMotionMaster()->MovePoint(1, 2991.90f, 3071.94f, 605.72f);
@@ -437,7 +438,11 @@ public:
                 fenryr->CastSpell(fenryr, 196801, true); //aura + %dmg
                 fenryr->ClearUnitState(UNIT_STATE_CASTING);
                 if (GetTarget())
+                {
                     fenryr->AI()->AttackStart(GetTarget());
+                    if (Player* player = GetTarget()->ToPlayer())
+                     fenryr->AI()->Talk(SAY_BLOOD, player->GetGUID());
+                }
             }
         }
 
@@ -463,10 +468,46 @@ public:
     }
 };
 
+class npc_trigger_hov_conversation : public CreatureScript
+{
+    public:
+        npc_trigger_hov_conversation() : CreatureScript("npc_trigger_hov_conversation") { }
+
+        struct npc_trigger_hov_conversationAI : public ScriptedAI
+        {
+            npc_trigger_hov_conversationAI(Creature* creature) : ScriptedAI(creature)
+            {
+               _introDone = false;
+            }
+            
+         void MoveInLineOfSight(Unit* who)
+         {  
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!_introDone && me->IsWithinDistInMap(who, 45.0f))
+             {
+               _introDone = true;
+               if (Player* target = me->FindNearestPlayer(30.0f))
+                  target->CastSpell(target, SPELL_ODYN_HUNTING_GROUND, true);
+             }
+         }
+            
+          private:
+            bool _introDone;
+        };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_trigger_hov_conversationAI (creature);
+    }
+};
+
 void AddSC_boss_fenryr()
 {
     new boss_fenryr();
     new npc_fenryr();
     new spell_fenryr_scent_of_blood_filter();
     new spell_fenryr_scent_of_blood_fixate();
+    new npc_trigger_hov_conversation();
 }

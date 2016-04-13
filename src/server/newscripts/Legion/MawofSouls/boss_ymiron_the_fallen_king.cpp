@@ -435,7 +435,7 @@ class npc_trigger_mos_start : public CreatureScript
                      trigger->AI()->Talk(0);
                      trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
                      if (Creature* target = me->FindNearestCreature(97043, 30.0f, true))
-                         target->AI()->DoAction(ACTION_1);;
+                         target->AI()->DoAction(ACTION_1);
                  }
              }
              

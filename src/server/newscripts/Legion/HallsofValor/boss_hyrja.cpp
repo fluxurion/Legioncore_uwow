@@ -8,11 +8,12 @@
 #include "ScriptedCreature.h"
 #include "halls_of_valor.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_EXPEL_LIGHT     = 1,
+    SAY_DEATH           = 2,
+};
 
 enum Spells
 {
@@ -24,7 +25,7 @@ enum Spells
     SPELL_EXPEL_LIGHT_CONFUSE   = 192070,
     SPELL_SHIELD_OF_LIGHT       = 192018,
     //Special Ability
-    SPELL_EYE_OF_THE_STORM      = 192304, //Поиск ближайшего триггера
+    SPELL_EYE_OF_THE_STORM      = 192304, //Поиск ближайшего триггера (нужен фикс выбора таргетов и развешивания аур) (вырубил у босса и у моба)
     SPELL_EYE_OF_THE_STORM_DMG  = 200901,
     SPELL_EYE_OF_THE_STORM_AT   = 203955,
     SPELL_SANCTIFY_TICK         = 192158,
@@ -33,7 +34,10 @@ enum Spells
     //Defender
     SPELL_OLMYR_VISUAL          = 191899,
     SPELL_SOLSTEN_VISUAL        = 192147,
-    //  198226 - интро
+    SPELL_OLMYR_LIGHT           = 192288,
+    SPELL_SOLSTEN_ARCING        = 191976,
+       
+    SPELL_CONVERSATION          = 198226,
 };
 
 enum eEvents
@@ -55,6 +59,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
             eventComplete = false;
+            _introDone = false;
             defenderComplete = 0;
         }
 
@@ -62,6 +67,7 @@ public:
         uint8 defenderComplete;
         ObjectGuid defGUID[2];
         bool eventComplete;
+        bool _introDone;
 
         void Reset()
         {
@@ -76,7 +82,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //29:11
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
             DoCast(me, SPELL_EMPOWERMENT_TRACKER, true);
 
@@ -98,7 +104,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
             summons.DespawnAll();
         }
@@ -125,6 +131,19 @@ public:
                 defGUID[1] = sum->GetGUID();
             }
         }
+        
+        void MoveInLineOfSight(Unit* who)
+         {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!_introDone && me->IsWithinDistInMap(who, 45.0f))
+             {
+                _introDone = true;
+                DoCast(SPELL_CONVERSATION);
+             }
+         }
 
         void DoAction(int32 const action)
         {
@@ -183,6 +202,7 @@ public:
                 {
                     case EVENT_EXPEL_LIGHT:
                         DoCast(SPELL_EXPEL_LIGHT);
+                        Talk(SAY_EXPEL_LIGHT);
                         events.ScheduleEvent(EVENT_EXPEL_LIGHT, 22000);
                         break;
                     case EVENT_SHIELD_OF_LIGHT:
@@ -192,16 +212,17 @@ public:
                         break;
                     case EVENT_SPECIAL_ABILITY:
                     {
-                        Creature* olmyr = me->GetCreature(*me, defGUID[1]);
+                        Creature* olmyr = me->GetCreature(*me, defGUID[0]);
                         Creature* solsten = me->GetCreature(*me, defGUID[1]);
                         if (!olmyr || !solsten)
                             return;
 
                         if (me->GetDistance(solsten) < me->GetDistance(olmyr))
                         {
-                            DoCast(me, SPELL_EYE_OF_THE_STORM, true);
+                            /*DoCast(me, SPELL_EYE_OF_THE_STORM, true);
                             DoCast(me, SPELL_EYE_OF_THE_STORM_AT, true);
-                            DoCast(SPELL_EYE_OF_THE_STORM_DMG);
+                            DoCast(SPELL_EYE_OF_THE_STORM_DMG); 
+                            просто безумно багается и лагает из-за выбора таргетов */
                         }
                         else
                         {
@@ -254,7 +275,6 @@ public:
                 if (!ascendance)
                 {
                     ascendance = true;
-                    //Talk();
                     if (Unit* summoner = me->GetAnyOwner())
                         summoner->ToCreature()->AI()->DoAction(true);
 
@@ -265,9 +285,17 @@ public:
                 damage = 0;
             }
         }
+        
+        void EnterCombat(Unit* /*who*/)
+        {
+            Talk(0);
+            events.ScheduleEvent(EVENT_2, 30000);
+            events.ScheduleEvent(EVENT_1, 5000);
+        }
 
         void SpiritForm()
         {
+            Talk(1);
             DoStopAttack();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
 
@@ -298,6 +326,22 @@ public:
                 switch (eventId)
                 {
                     case EVENT_1:
+                        if (me->GetEntry() == NPC_OLMYR_THE_ENLIGHTENED)
+                            DoCast(SPELL_OLMYR_LIGHT);
+                        else
+                            DoCast(SPELL_SOLSTEN_ARCING);   
+                     events.ScheduleEvent(EVENT_1, 7000);
+                        break;                    
+                    case EVENT_2:
+                        if (me->GetEntry() == NPC_OLMYR_THE_ENLIGHTENED)
+                            DoCast(me, SPELL_SANCTIFY_TICK);
+                       /* else
+                        {
+                            DoCast(me, SPELL_EYE_OF_THE_STORM, true);
+                            DoCast(me, SPELL_EYE_OF_THE_STORM_AT, true);
+                            DoCast(SPELL_EYE_OF_THE_STORM_DMG);
+                        } тоже багается */
+                     events.ScheduleEvent(EVENT_2, 30000);
                         break;
                 }
             }
@@ -427,6 +471,18 @@ public:
         return new spell_hyrja_sanctify_AuraScript();
     }
 };
+//4885
+class at_sanctify : public AreaTriggerScript
+{
+    public:
+        at_sanctify() : AreaTriggerScript("at_sanctify") {}
+
+       bool OnTrigger(Player* player, const AreaTriggerEntry* /*at*/, bool /*enter*/)
+        {
+                player->CastSpell(player, 192206, true);
+            return true;
+        }
+};
 
 void AddSC_boss_hyrja()
 {
@@ -435,4 +491,5 @@ void AddSC_boss_hyrja()
     new spell_hyrja_empowerment_tracker();
     new spell_hyrja_expel_light();
     new spell_hyrja_sanctify();
+    new at_sanctify();
 }

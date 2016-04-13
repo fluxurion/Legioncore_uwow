@@ -8,11 +8,18 @@
 #include "ScriptedCreature.h"
 #include "halls_of_valor.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_FIRST           = 0,
+    SAY_INTRO_1         = 2,
+    SAY_INTRO_2         = 3,
+    SAY_INTRO_3         = 4,
+    SAY_RADIANT         = 5,
+    SAY_SPEARS          = 6,
+    SAY_RUNIC           = 7,
+    SAY_RUNIC_1         = 8,
+    SAY_DEATH           = 9,
+};
 
 enum Spells
 {
@@ -75,9 +82,11 @@ public:
         {
             intro = true;
             encounterComplete = false;
+            _firstSay = false;
         }
 
         bool intro;
+        bool _firstSay;
         bool encounterComplete;
         uint8 runicBrandCount;
 
@@ -94,10 +103,21 @@ public:
             for (uint8 i = 0; i < 5; i++)
                 instance->DoRemoveAurasDueToSpellOnPlayers(SpellsRunicColour[i]);
         }
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!_firstSay && me->IsWithinDistInMap(who, 150.0f))
+             {
+                _firstSay = true;
+                Talk(SAY_FIRST);
+             }
+        }
 
         void EnterCombat(Unit* /*who*/) //01:44
         {
-            //Talk(SAY_AGGRO);
             _EnterCombat();
             events.ScheduleEvent(EVENT_SPEAR_OF_LIGHT, 8000);   //01:52, 02:00, 02:20, 02:48
             events.ScheduleEvent(EVENT_RADIANT_TEMPEST, 24000); //02:08, 02:56, 03:52, 04:48
@@ -107,7 +127,7 @@ public:
 
         void DoAction(int32 const action)
         {
-            //Talk(); //Most impressive! I never thought I would meet anyone who could match the Valarjar's strength... and yet here you stand.
+            Talk(SAY_INTRO_1); //Most impressive! I never thought I would meet anyone who could match the Valarjar's strength... and yet here you stand.
             events.ScheduleEvent(EVENT_SKOVALD_DONE_1, 5000);
         }
 
@@ -136,6 +156,7 @@ public:
             {
                 DoCast(target, SpellsRunicColour[runicBrandCount], true);
                 DoCast(me, SpellsRunicAt[runicBrandCount], true);
+                Talk(SAY_RUNIC_1);
                 instance->SetData(DATA_RUNES_ACTIVATED, runicBrandCount);
                 runicBrandCount++;
             }
@@ -152,7 +173,7 @@ public:
             {
                 encounterComplete = true;
                 DoStopAttack();
-                //Talk();
+                Talk(SAY_DEATH);
                 _JustDied();
                 me->setFaction(35);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NOT_ATTACKABLE_1);
@@ -177,14 +198,14 @@ public:
                 switch (eventId)
                 {
                     case EVENT_SKOVALD_DONE_1:
-                        //Talk(); //There is one final trial that awaits......
+                        Talk(SAY_INTRO_2); //There is one final trial that awaits......
                         me->GetMotionMaster()->MoveJump(2399.30f, 528.85f, 749.0f, 25.0f, 15.0f, 1);
                         events.ScheduleEvent(EVENT_SKOVALD_DONE_2, 10000);
                         break;
                     case EVENT_SKOVALD_DONE_2:
                         intro = false;
                         me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
-                        //Talk(); //It has been ages since I faced a worthy opponent. Let the battle begin!
+                        Talk(SAY_INTRO_3); //It has been ages since I faced a worthy opponent. Let the battle begin!
                         me->setFaction(16);
                         break;
                     case EVENT_SPEAR_OF_LIGHT:
@@ -193,15 +214,18 @@ public:
                         break;
                     case EVENT_RADIANT_TEMPEST:
                         DoCast(SPELL_RADIANT_TEMPEST);
+                        Talk(SAY_RADIANT);
                         events.ScheduleEvent(EVENT_RADIANT_TEMPEST, 48000);
                         break;
                     case EVENT_SHATTER_SPEARS:
                         DoCast(SPELL_SHATTER_SPEARS);
+                        Talk(SAY_SPEARS);
                         events.ScheduleEvent(EVENT_SHATTER_SPEARS, 56000);
                         break;
                     case EVENT_RUNIC_BRAND:
                         runicBrandCount = 0;
                         DoCast(SPELL_RUNIC_BRAND);
+                        Talk(SAY_RUNIC);
                         events.ScheduleEvent(EVENT_RUNIC_BRAND, 56000);
                         break;
                 }

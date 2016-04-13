@@ -122,16 +122,6 @@ public:
 
             switch (type)
             {
-                case DATA_FENRYR_EVENT:
-                {
-                    if (state == DONE)
-                        if (Creature* fen = instance->GetCreature(feryrGUID))
-                        {
-                            fen->SetVisible(true);
-                            fen->SetReactState(REACT_AGGRESSIVE);
-                        }
-                    break;
-                }
                 case DATA_SKOVALD:
                 {
                     if (state != IN_PROGRESS)
@@ -177,6 +167,16 @@ public:
         {
             switch (type)
             {
+                case DATA_FENRYR_EVENT:
+                {
+                    if (data == DONE)
+                        if (Creature* fen = instance->GetCreature(feryrGUID))
+                        {
+                            fen->SetVisible(true);
+                            fen->SetReactState(REACT_AGGRESSIVE);
+                        }
+                    break;
+                }
                 case DATA_RUNES_ACTIVATED:
                     if (GameObject* rune = instance->GetGameObject(runicBrandGUIDconteiner[GoRunicColour[data]]))
                         rune->SetGoState(GO_STATE_ACTIVE);
@@ -215,16 +215,16 @@ public:
             if (!StartEvent)
             {
                if (PlayerCount < 5)
-               {
-                  PlayerCount++;
-               } 
+                  {
+                     PlayerCount++;
+                  } 
                else
-               {
-               StartEvent = true;
-               if (Group *g = player->GetGroup())
-                 if(Player* leader = ObjectAccessor::FindPlayer(g ->GetLeaderGUID()))
-                     leader->CastSpell(leader, 202036);
-               }
+                  {
+                  StartEvent = true;
+                  if (Group *g = player->GetGroup())
+                    if(Player* leader = ObjectAccessor::FindPlayer(g ->GetLeaderGUID()))
+                        leader->CastSpell(leader, 202036);
+                  }
             }
             if (onInitEnterState)
                 return;
