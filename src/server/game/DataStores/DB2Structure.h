@@ -146,6 +146,107 @@ struct ArmorLocationEntry
     float       Value[5];                                           // 0 - 4 multiplier for armor types: cloth...plate
 };
 
+struct ArtifactEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      Unk1;                                       // 2
+    uint32      Unk2;                                       // 3
+    uint32      Unk3;                                       // 4
+    uint16      SpecID;                                     // 5
+    uint8       UnkByte1;                                   // 6
+    uint8       UnkByte2;                                   // 6
+    uint8       UnkByte3;                                   // 6
+};
+
+struct ArtifactAppearanceEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name;                                  // 1
+    uint32      Flags;                                       // 2
+    float       UnkFloat1;                                  // 3
+    float       UnkFloat2;                                  // 4
+    uint32      Unk2;                                       // 5
+    uint16      PlayerConditionID;                          // 6
+    uint8       ArtifactAppearanceSetID;                    // 7
+    uint8       UnkByte2;                                   // 8
+    uint8       UnkByte3;                                   // 9
+    uint8       UnkByte4;                                   // 10
+    uint8       UnkByte5;                                   // 11
+    uint8       UnkByte6;                                   // 12
+};
+
+struct ArtifactAppearanceSetEntry
+{
+    uint32      ID;                                         // 0
+    LocalizedString* Name1;                                 // 1
+    LocalizedString* Name2;                                 // 2
+    uint16      ArtifactAppearanceID1;                      // 3
+    uint16      ArtifactAppearanceID2;                      // 4
+    uint8       ArtifactID;                                 // 5
+    uint8       UnkByte2;                                   // 6
+    uint8       UnkByte3;                                   // 7
+};
+
+struct ArtifactCategoryEntry
+{
+    uint32      ID;                                         // 0
+    uint16      UnkShot1;                                   // 2
+    uint16      UnkShot2;                                   // 3
+};
+
+struct ArtifactPowerEntry
+{
+    uint32      ID;                                         // 0
+    float       UnkFloat1;                                  // 1
+    float       UnkFloat2;                                  // 2
+    uint16      UnkShot1;                                   // 3
+    uint8       ArtifactID;                                 // 4
+    uint8       UnkByte2;                                   // 5
+    uint8       UnkByte3;                                   // 6
+};
+
+struct ArtifactPowerLinkEntry
+{
+    uint32      ID;                                         // 0
+    uint16      artifactPowerID1;                           // 1
+    uint16      artifactPowerID2;                           // 2
+};
+
+struct ArtifactPowerRankEntry
+{
+    uint32      ID;                                         // 0
+    uint32      SpellID;                                    // 1
+    float       UnkFloat1;                                  // 2
+    uint16      artifactPowerID;                            // 3
+    uint16      UnkShot2;                                   // 4
+    uint8       rank;                                       // 5
+};
+
+struct ArtifactQuestXPEntry
+{
+    uint32      ID;                                         // 0
+    uint16      UnkShot1;                                   // 1
+    uint16      UnkShot2;                                   // 2
+    uint16      UnkShot3;                                   // 3
+    uint16      UnkShot4;                                   // 4
+    uint16      UnkShot5;                                   // 5
+    uint16      UnkShot6;                                   // 6
+    uint16      UnkShot7;                                   // 7
+    uint16      UnkShot8;                                   // 8
+    uint16      UnkShot9;                                   // 9
+    uint16      UnkShot10;                                  // 10
+};
+
+struct ArtifactUnlockEntry
+{
+    uint32      ID;                                         // 0
+    uint16      UnkShot1;                                   // 1
+    uint16      ArtifactAppearanceID;                       // 2
+    uint8       artifactID;                                 // 3
+    uint8       UnkByte2;                                   // 4
+};
+
 struct BannedAddonsEntry
 {
     uint32      ID;                                         // 0

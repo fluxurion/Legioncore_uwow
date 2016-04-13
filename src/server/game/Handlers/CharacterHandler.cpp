@@ -306,6 +306,10 @@ bool LoginQueryHolder::Initialize()
     stmt->setUInt32(0, lowGuid);
     res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_TRANSMOGS, stmt);
 
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ARTIFACTS_BY_OWNER);
+    stmt->setUInt32(0, lowGuid);
+    res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_ARTIFACTS, stmt);
+
     return res;
 }
 

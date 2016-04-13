@@ -18184,6 +18184,8 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // update items with duration and realtime
     UpdateItemDuration(time_diff, true);
 
+    _LoadArtifacts(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_ARTIFACTS));
+
     _LoadActions(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADACTIONS));
 
     // unread mails and next delivery time, actual mails not loaded
@@ -18942,6 +18944,38 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
 		*/
     }
     return item;
+}
+
+void Player::_LoadArtifacts(PreparedQueryResult result)
+{
+    if (result)
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            ObjectGuid guid = ObjectGuid::Create<HighGuid::Item>(fields[0].GetUInt32());
+            uint32 Power = fields[1].GetUInt32();
+            uint16 AppearanceID = fields[2].GetUInt16();
+
+            if (Item* item = GetItemByGuid(guid))
+            {
+                item->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, Power);
+                item->SetUInt32Value(ITEM_FIELD_ITEM_APPEARANCE_MOD_ID, AppearanceID);
+                Tokenizer GemListIDs(fields[3].GetString(), ' ');
+                for (char const* token : GemListIDs)
+                {
+                    uint32 gemID = atoul(token);
+                    item->AddGem(gemID);
+                }
+                Tokenizer PowersListIDs(fields[4].GetString(), ' ');
+                for (char const* token : PowersListIDs)
+                {
+                    uint32 PowersID = atoul(token);
+                    item->AddPowers(PowersID);
+                }
+            }
+        } while (result->NextRow());
+    }
 }
 
 // load mailed item which should receive current player

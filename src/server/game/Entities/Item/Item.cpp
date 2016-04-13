@@ -317,7 +317,8 @@ void Item::SaveToDB(SQLTransaction& trans)
             stmt->setUInt32(++index, GetUInt32Value(ITEM_FIELD_EXPIRATION));
 
             std::ostringstream ssSpells;
-            if (ItemTemplate const* itemProto = sObjectMgr->GetItemTemplate(GetEntry()))
+            ItemTemplate const* itemProto = sObjectMgr->GetItemTemplate(GetEntry());
+            if (itemProto)
                 for (uint8 i = 0; i < itemProto->Effects.size(); ++i)
                 {
                     if (GetEntry() == 38186 && GetSpellCharges(i)) //Efir not have charges
@@ -363,6 +364,23 @@ void Item::SaveToDB(SQLTransaction& trans)
                 stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GIFT_OWNER);
                 stmt->setUInt64(0, GetOwnerGUID().GetCounter());
                 stmt->setUInt64(1, guid);
+                trans->Append(stmt);
+            }
+            if (itemProto && itemProto->ArtifactID)
+            {
+                stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_ARTIFACTS);
+                stmt->setUInt32(0, guid);
+                stmt->setUInt32(1, GetOwnerGUID().GetCounter());
+                stmt->setUInt32(2, GetUInt32Value(ITEM_FIELD_ARTIFACT_XP));
+                stmt->setUInt32(3, GetUInt32Value(ITEM_FIELD_ITEM_APPEARANCE_MOD_ID));
+                std::ostringstream GemLists;
+                for (uint32 GemListID : GetDynamicValues(ITEM_DYNAMIC_FIELD_GEMS))
+                    GemLists << GemListID << ' ';
+                stmt->setString(4, GemLists.str());
+                std::ostringstream PowerLists;
+                for (uint32 PowerListID : GetDynamicValues(ITEM_DYNAMIC_FIELD_ARTIFACT_POWERS))
+                    PowerLists << PowerListID << ' ';
+                stmt->setString(5, PowerLists.str());
                 trans->Append(stmt);
             }
             break;
@@ -1764,6 +1782,16 @@ void Item::AddBonuses(uint32 bonusListID)
         for (ItemBonusEntry const* bonus : *bonuses)
             _bonusData.AddBonus(bonus->Type, bonus->Value);
     }
+}
+
+void Item::AddGem(uint32 gemID)
+{
+    AddDynamicValue(ITEM_DYNAMIC_FIELD_GEMS, gemID);
+}
+
+void Item::AddPowers(uint32 PowersID)
+{
+    AddDynamicValue(ITEM_DYNAMIC_FIELD_ARTIFACT_POWERS, PowersID);
 }
 
 void Item::SetBinding(bool val)

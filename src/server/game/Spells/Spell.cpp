@@ -6858,6 +6858,23 @@ SpellCastResult Spell::CheckCast(bool strict)
                 }
                 break;
             }
+            case SPELL_EFFECT_ARTIFACT_POWER:
+            {
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                    return SPELL_FAILED_TARGET_NOT_PLAYER;
+
+                Item* targetItem = m_targets.GetItemTarget();
+                Item* pItem = m_caster->ToPlayer()->GetWeaponForAttack(m_attackType);
+                if (!targetItem && !pItem)
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                if (targetItem && !targetItem->GetTemplate()->ArtifactID)
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                if (!targetItem && pItem && !pItem->GetTemplate()->ArtifactID)
+                    return SPELL_FAILED_BAD_TARGETS;
+                break;
+            }
             default:
                 break;
         }

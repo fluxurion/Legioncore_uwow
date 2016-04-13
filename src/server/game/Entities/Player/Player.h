@@ -997,6 +997,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOAD_HEIRLOOMS,
     PLAYER_LOGIN_QUERY_LOAD_TRANSMOGS,
     PLAYER_LOGIN_QUERY_HONOR_INFO,
+    PLAYER_LOGIN_QUERY_ARTIFACTS,
 
     MAX_PLAYER_LOGIN_QUERY
 };
@@ -3316,6 +3317,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadAuras(PreparedQueryResult result, PreparedQueryResult resultEffect, uint32 timediff);
         void _LoadGlyphAuras();
         void _LoadBoundInstances(PreparedQueryResult result);
+        void _LoadArtifacts(PreparedQueryResult result);
         void _LoadInventory(PreparedQueryResult result, uint32 timeDiff);
         void _LoadVoidStorage(PreparedQueryResult result);
         void _LoadMailInit(PreparedQueryResult resultUnread, PreparedQueryResult resultDelivery);

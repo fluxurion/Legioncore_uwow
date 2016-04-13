@@ -8278,11 +8278,26 @@ void Spell::EffectArtifactPower(SpellEffIndex /*effIndex*/)
     if (!player || !m_CastItem)
         return;
 
-    // if (Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-    // {
-        // uint32 power = m_CastItem->GetCount() * damage;
-        // item->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, power);
-    // }
+    if (itemTarget)
+    {
+        ItemTemplate const* proto = itemTarget->GetTemplate();
+        if (!proto || !proto->ArtifactID)
+            return;
+
+        uint32 power = m_CastItem->GetCount() * damage;
+        itemTarget->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, itemTarget->GetUInt32Value(ITEM_FIELD_ARTIFACT_XP) + power);
+        itemTarget->SetState(ITEM_CHANGED, player);
+    }
+    else if (Item* pItem = player->GetWeaponForAttack(BASE_ATTACK, true))
+    {
+        ItemTemplate const* proto = pItem->GetTemplate();
+        if (!proto || !proto->ArtifactID)
+            return;
+
+        uint32 power = m_CastItem->GetCount() * damage;
+        pItem->SetUInt32Value(ITEM_FIELD_ARTIFACT_XP, pItem->GetUInt32Value(ITEM_FIELD_ARTIFACT_XP) + power);
+        pItem->SetState(ITEM_CHANGED, player);
+    }
 }
 
 void Spell::EffectLaunchQuestChoice(SpellEffIndex effIndex)

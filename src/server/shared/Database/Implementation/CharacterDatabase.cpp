@@ -714,6 +714,7 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_SEL_TRANSMOGS, "SELECT `ModelID`, `Condition` FROM character_transmogs WHERE guid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_REP_TRANSMOGS, "REPLACE INTO character_transmogs (`guid`, `ModelID`, `Condition`) VALUES (?, ?, ?)", CONNECTION_ASYNC);
 
-    PrepareStatement(CHAR_REP_HEIRLOOMS, "REPLACE INTO account_heirlooms (accountId, itemId, flags) VALUES (?, ?, ?)", CONNECTION_ASYNC);
-
+    PrepareStatement(CHAR_SEL_ARTIFACTS, "SELECT `Power`, `AppearanceID`, `Gems`, `Powers` FROM character_artifact WHERE guid = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_ARTIFACTS_BY_OWNER, "SELECT `guid`, `Power`, `AppearanceID`, `Gems`, `Powers` FROM character_artifact WHERE owner = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_REP_ARTIFACTS, "REPLACE INTO character_artifact (`guid`, `owner`, `Power`, `AppearanceID`, `Gems`, `Powers`) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
 }

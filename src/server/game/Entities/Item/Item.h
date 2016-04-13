@@ -292,6 +292,8 @@ class Item : public Object
         virtual bool LoadFromDB(ObjectGuid::LowType const& guid, ObjectGuid const& owner_guid, Field* fields, uint32 entry);
 
         void AddBonuses(uint32 bonusListID);    //ToDo
+        void AddGem(uint32 gemID);
+        void AddPowers(uint32 PowersID);
 
         static void DeleteFromDB(SQLTransaction& trans, ObjectGuid::LowType itemGuid);
         virtual void DeleteFromDB(SQLTransaction& trans);

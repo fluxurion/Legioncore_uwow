@@ -53,6 +53,36 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // ArmorLocation.db2
     PrepareStatement(HOTFIX_SEL_ARMOR_LOCATION, "SELECT ID, Value1, Value2, Value3, Value4, Value5 FROM armor_location ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // Artifact.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT, "SELECT ID, Name, Unk1, Unk2, Unk3, SpecID, UnkByte1, UnkByte2, UnkByte3 FROM artifact ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT, "SELECT ID, Name_lang FROM artifact_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // ArtifactAppearance.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE, "SELECT ID, Name, Unk1, UnkFloat1, UnkFloat2, Unk2, UnkShot1, UnkByte1, UnkByte2, UnkByte3, UnkByte4, UnkByte5, UnkByte6 FROM artifact_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT_APPEARANCE, "SELECT ID, Name_lang FROM artifact_appearance_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // ArtifactAppearanceSet.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE_SET, "SELECT ID, Name1, Name2, UnkShot1, UnkShot2, UnkByte1, UnkByte2, UnkByte3 FROM artifact_appearance_set ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT_APPEARANCE_SET, "SELECT ID, Name1_lang, Name2_lang FROM artifact_appearance_set_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // ArtifactCategory.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_CATEGORY, "SELECT ID, UnkShot1, UnkShot2 FROM artifact_category ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // ArtifactPower.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER, "SELECT ID, UnkFloat1, UnkFloat2, UnkShot1, UnkByte1, UnkByte2, UnkByte3 FROM artifact_power ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // ArtifactPowerLink.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_LINK, "SELECT ID, UnkShot1, UnkShot2 FROM artifact_power_link ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // ArtifactPowerRank.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_RANK, "SELECT ID, Unk1, UnkFloat1, UnkShot1, UnkShot2, UnkByte1 FROM artifact_power_rank ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // ArtifactQuestXP.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_QUEST_XP, "SELECT ID, UnkShot1, UnkShot2, UnkShot3, UnkShot4, UnkShot5, UnkShot6, UnkShot7, UnkShot8, UnkShot9, UnkShot10 FROM artifact_quest_xp ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // ArtifactUnlock.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_UNLOCK, "SELECT ID, UnkShot1, UnkShot2, UnkByte1, UnkByte2 FROM artifact_unlock ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // BannedAddons.db2
     PrepareStatement(HOTFIX_SEL_BANNED_ADDONS, "SELECT ID, NameMD51, NameMD52, NameMD53, NameMD54, VersionMD51, VersionMD52, VersionMD53, "
         "VersionMD54, LastModified, Flags FROM banned_addons ORDER BY ID DESC", CONNECTION_SYNCH);
