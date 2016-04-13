@@ -413,6 +413,13 @@ class Object
 
         TempSummonGroupMap tempSummonGroupList;
         TempSummonMap tempSummonList;
+
+        uint16 GetAIAnimKitId() const { return _aiAnimKitId; }
+        void SetAIAnimKitId(uint16 animKitId);
+        uint16 GetMovementAnimKitId() const { return _movementAnimKitId; }
+        void SetMovementAnimKitId(uint16 animKitId);
+        uint16 GetMeleeAnimKitId() const { return _meleeAnimKitId; }
+        void SetMeleeAnimKitId(uint16 animKitId);
     protected:
         Object();
 
@@ -453,6 +460,10 @@ class Object
         uint16 _dynamicValuesCount;
 
         ObjectGuid vignetteGuid;
+
+        uint16 _aiAnimKitId = 0;
+        uint16 _movementAnimKitId = 0;
+        uint16 _meleeAnimKitId = 0;
     private:
         C_PTR ptr;
         bool m_inWorld;
@@ -954,12 +965,6 @@ class WorldObject : public Object, public WorldLocation
         void AddToHideList(ObjectGuid  const& guid) { _hideForGuid.insert(guid); }
         bool ShouldHideFor(ObjectGuid const& guid) const { return _hideForGuid.find(guid) != _hideForGuid.end();  };
 
-        uint16 GetAIAnimKitId() const { return _aiAnimKitId; }
-        void SetAIAnimKitId(uint16 animKitId);
-        uint16 GetMovementAnimKitId() const { return _movementAnimKitId; }
-        void SetMovementAnimKitId(uint16 animKitId);
-        uint16 GetMeleeAnimKitId() const { return _meleeAnimKitId; }
-        void SetMeleeAnimKitId(uint16 animKitId);
     protected:
         std::string m_name;
         bool m_isActive;
@@ -982,9 +987,6 @@ class WorldObject : public Object, public WorldLocation
         virtual bool IsAlwaysDetectableFor(WorldObject const* /*seer*/) const { return false; }
 
     private:
-        uint16 _aiAnimKitId = 0;
-        uint16 _movementAnimKitId = 0;
-        uint16 _meleeAnimKitId = 0;
 
         Map* m_currMap;                                    //current object's Map location
 

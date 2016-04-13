@@ -405,7 +405,7 @@ void AreaTrigger::UpdateAffectedList(uint32 p_time, AreaTriggerActionMoment acti
             }
             else
             {
-                if (!unit->IsWithinDistInMap(searcher, GetRadius()) ||
+                if (!IsInHeight(unit, searcher) || !unit->IsWithinDistInMap(searcher, GetRadius()) ||
                     (isMoving() && !m_movePath.empty() && _HasActionsWithCharges(AT_ACTION_MOMENT_ON_THE_WAY) && !unit->IsInBetween(this, m_movePath[m_currentNode + 1].x, m_movePath[m_currentNode + 1].y)))
                 {
                     affectedPlayers.erase(itr);
@@ -424,6 +424,9 @@ void AreaTrigger::UpdateAffectedList(uint32 p_time, AreaTriggerActionMoment acti
             if (!IsUnitAffected((*itr)->GetGUID()))
             {
                 if(atInfo.polygon && !IsInPolygon((*itr), searcher))
+                    continue;
+
+                if (!IsInHeight((*itr), searcher))
                     continue;
 
                 //No 
@@ -1130,20 +1133,31 @@ void AreaTrigger::UpdateRotation(uint32 diff)
     }
 }
 
+bool AreaTrigger::IsInHeight(Unit* unit, WorldObject const* obj)
+{
+    if (!atInfo.Height)
+        return true;
+
+    float z_source = unit->GetPositionZ() - obj->GetPositionZ();
+    if(z_source > atInfo.Height)
+        return false;
+
+    return true;
+}
+
 bool AreaTrigger::IsInPolygon(Unit* unit, WorldObject const* obj)
 {
     if (atInfo.verticesPoints.size() < 3)
         return false;
 
-    float z_source = unit->GetPositionZ() - obj->GetPositionZ(); //Point Z on polygon
-    if(atInfo.Height && z_source > atInfo.Height)
+    if(!IsInHeight(unit, obj))
         return false;
 
-    PolygonPOIMap* _points;
+    PolygonPOIMap _points;
     if(!atInfo.verticesTargetPoints.empty())
-        _points = &atInfo.verticesTargetPoints;
+        _points = atInfo.verticesTargetPoints;
     else
-        _points = &atInfo.verticesPoints;
+        _points = atInfo.verticesPoints;
 
     static const int q_patt[2][2]= { {0,1}, {3,2} };
     float x_source = unit->GetPositionX() - obj->GetPositionX(); //Point X on polygon
@@ -1156,22 +1170,22 @@ bool AreaTrigger::IsInPolygon(Unit* unit, WorldObject const* obj)
 
     //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AreaTrigger::IsInPolygon x_source %f y_source %f angle %f dist %f x %f y %f", x_source, y_source, angle, dist, x, y);
 
-    PolygonPOI* pred_pt = &(*_points)[0];
-    pred_pt->x -= x;
-    pred_pt->y -= y;
+    PolygonPOI pred_pt = _points[0];
+    pred_pt.x -= x;
+    pred_pt.y -= y;
 
-    int pred_q = q_patt[pred_pt->y < 0][pred_pt->x < 0];
+    int pred_q = q_patt[pred_pt.y < 0][pred_pt.x < 0];
 
     int w = 0;
 
-    for (uint16 i = 0; i < _points->size(); ++i)
+    for (uint16 i = 0; i < _points.size(); ++i)
     {
-        PolygonPOI* cur_pt = &(*_points)[i];
+        PolygonPOI cur_pt = _points[i];
 
-        cur_pt->x -= x;
-        cur_pt->y -= y;
+        cur_pt.x -= x;
+        cur_pt.y -= y;
 
-        int q = q_patt[cur_pt->y < 0][cur_pt->x < 0];
+        int q = q_patt[cur_pt.y < 0][cur_pt.x < 0];
 
         switch (q - pred_q)
         {
@@ -1182,11 +1196,11 @@ bool AreaTrigger::IsInPolygon(Unit* unit, WorldObject const* obj)
                 --w;
                 break;
             case -2:
-                if (pred_pt->x * cur_pt->y >= pred_pt->y * cur_pt->x)
+                if (pred_pt.x * cur_pt.y >= pred_pt.y * cur_pt.x)
                     ++w;
                 break;
             case 2:
-                if (!(pred_pt->x * cur_pt->y >= pred_pt->y * cur_pt->x))
+                if (!(pred_pt.x * cur_pt.y >= pred_pt.y * cur_pt.x))
                     --w;
                 break;
         }

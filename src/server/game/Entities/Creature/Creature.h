@@ -377,9 +377,9 @@ struct CreatureData
     bool building;                                              // garrison building state
     std::set<uint32> PhaseID;
 
-    uint32 AiID;
-    uint32 MovementID;
-    uint32 MeleeID;
+    uint32 AiID = 0;
+    uint32 MovementID = 0;
+    uint32 MeleeID = 0;
 };
 
 // `creature_addon` table

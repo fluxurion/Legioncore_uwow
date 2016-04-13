@@ -22489,47 +22489,20 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return false;
 
-    // taximaster case
-    if (npc)
-    {
-        // not let cheating with start flight mounted
-        if (IsMounted())
-        {
-            GetSession()->SendActivateTaxiReply(ERR_TAXIPLAYERALREADYMOUNTED);
-            return false;
-        }
+    RemoveAurasByType(SPELL_AURA_MOUNTED);
 
-        if (IsInDisallowedMountForm())
-        {
-            GetSession()->SendActivateTaxiReply(ERR_TAXIPLAYERSHAPESHIFTED);
-            return false;
-        }
+    if (IsInDisallowedMountForm())
+        RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
 
-        // not let cheating with start flight in time of logout process || if casting not finished || while in combat || if not use Spell's with EffectSendTaxi
-        if (IsNonMeleeSpellCasted(false))
-        {
-            GetSession()->SendActivateTaxiReply(ERR_TAXIPLAYERBUSY);
-            return false;
-        }
-    }
-    // cast case or scripted call case
-    else
-    {
-        RemoveAurasByType(SPELL_AURA_MOUNTED);
+    if (Spell* spell = GetCurrentSpell(CURRENT_GENERIC_SPELL))
+        if (spell->m_spellInfo->Id != spellid)
+            InterruptSpell(CURRENT_GENERIC_SPELL, false);
 
-        if (IsInDisallowedMountForm())
-            RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
+    InterruptSpell(CURRENT_AUTOREPEAT_SPELL, false);
 
-        if (Spell* spell = GetCurrentSpell(CURRENT_GENERIC_SPELL))
-            if (spell->m_spellInfo->Id != spellid)
-                InterruptSpell(CURRENT_GENERIC_SPELL, false);
-
-        InterruptSpell(CURRENT_AUTOREPEAT_SPELL, false);
-
-        if (Spell* spell = GetCurrentSpell(CURRENT_CHANNELED_SPELL))
-            if (spell->m_spellInfo->Id != spellid)
-                InterruptSpell(CURRENT_CHANNELED_SPELL, true);
-    }
+    if (Spell* spell = GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+        if (spell->m_spellInfo->Id != spellid)
+            InterruptSpell(CURRENT_CHANNELED_SPELL, true);
 
     uint32 sourcenode = nodes[0];
 

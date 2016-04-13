@@ -59,6 +59,9 @@ Object::Object() : m_objectTypeId(TYPEID_OBJECT), m_objectType(TYPEMASK_OBJECT),
     _changedFields(NULL), m_valuesCount(0), _dynamicValuesCount(0), _fieldNotifyFlags(UF_FLAG_DYNAMIC), m_inWorld(false),
     m_objectUpdated(false), _dynamicValues(NULL), _dynamicChangesArrayMask(NULL)
 {
+    _aiAnimKitId = 0;
+    _movementAnimKitId = 0;
+    _meleeAnimKitId = 0;
 }
 
 WorldObject::~WorldObject()
@@ -232,7 +235,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
             flags |= UPDATEFLAG_HAS_TARGET;
     }
 
-    if (ToWorldObject()->GetAIAnimKitId() || ToWorldObject()->GetMovementAnimKitId() || ToWorldObject()->GetMeleeAnimKitId())
+    if (GetAIAnimKitId() || GetMovementAnimKitId() || GetMeleeAnimKitId())
         flags |= UPDATEFLAG_ANIMKITS;
 
     ByteBuffer buf(500);
@@ -1649,6 +1652,63 @@ void MovementInfo::OutDebug()
 
     if (MoveFlags[0] & MOVEMENTFLAG_SPLINE_ELEVATION)
         sLog->outInfo(LOG_FILTER_NETWORKIO, "splineElevation: %f", splineElevation);
+}
+
+void Object::SetAIAnimKitId(uint16 animKitID)
+{
+    if (_aiAnimKitId == animKitID)
+        return;
+
+    _aiAnimKitId = animKitID;
+
+    if (!IsInWorld())
+        return;
+
+    if (ToWorldObject())
+    {
+        WorldPackets::Misc::SetAIAnimKit aiAnimKit;
+        aiAnimKit.AnimKitID = animKitID;
+        aiAnimKit.Unit = GetGUID();
+        ToWorldObject()->SendMessageToSet(aiAnimKit.Write(), true);
+    }
+}
+
+void Object::SetMovementAnimKitId(uint16 animKitID)
+{
+    if (_movementAnimKitId == animKitID)
+        return;
+
+    _movementAnimKitId = animKitID;
+
+    if (!IsInWorld())
+        return;
+
+    if (ToWorldObject())
+    {
+        WorldPackets::Misc::SetMovementAnimKit movementAnimKit;
+        movementAnimKit.AnimKitID = animKitID;
+        movementAnimKit.Unit = GetGUID();
+        ToWorldObject()->SendMessageToSet(movementAnimKit.Write(), true);
+    }
+}
+
+void Object::SetMeleeAnimKitId(uint16 animKitID)
+{
+    if (_meleeAnimKitId == animKitID)
+        return;
+
+    _meleeAnimKitId = animKitID;
+
+    if (!IsInWorld())
+        return;
+
+    if (ToWorldObject())
+    {
+        WorldPackets::Misc::SetMeleeAnimKit meleeAnimKit;
+        meleeAnimKit.AnimKitID = animKitID;
+        meleeAnimKit.Unit = GetGUID();
+        ToWorldObject()->SendMessageToSet(meleeAnimKit.Write(), true);
+    }
 }
 
 WorldObject::WorldObject(bool isWorldObject): WorldLocation(),
@@ -3905,54 +3965,6 @@ bool WorldObject::InSamePhaseId(std::set<uint32> const& phase) const
         }
     }
     return true;
-}
-
-void WorldObject::SetAIAnimKitId(uint16 animKitID)
-{
-    if (_aiAnimKitId == animKitID)
-        return;
-
-    _aiAnimKitId = animKitID;
-
-    if (!IsInWorld())
-        return;
-
-    WorldPackets::Misc::SetAIAnimKit aiAnimKit;
-    aiAnimKit.AnimKitID = animKitID;
-    aiAnimKit.Unit = GetGUID();
-    SendMessageToSet(aiAnimKit.Write(), true);
-}
-
-void WorldObject::SetMovementAnimKitId(uint16 animKitID)
-{
-    if (_movementAnimKitId == animKitID)
-        return;
-
-    _movementAnimKitId = animKitID;
-
-    if (!IsInWorld())
-        return;
-
-    WorldPackets::Misc::SetMovementAnimKit movementAnimKit;
-    movementAnimKit.AnimKitID = animKitID;
-    movementAnimKit.Unit = GetGUID();
-    SendMessageToSet(movementAnimKit.Write(), true);
-}
-
-void WorldObject::SetMeleeAnimKitId(uint16 animKitID)
-{
-    if (_meleeAnimKitId == animKitID)
-        return;
-
-    _meleeAnimKitId = animKitID;
-
-    if (!IsInWorld())
-        return;
-
-    WorldPackets::Misc::SetMeleeAnimKit meleeAnimKit;
-    meleeAnimKit.AnimKitID = animKitID;
-    meleeAnimKit.Unit = GetGUID();
-    SendMessageToSet(meleeAnimKit.Write(), true);
 }
 
 C_PTR Object::get_ptr()
