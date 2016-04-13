@@ -45,6 +45,9 @@ Quest::Quest(Field* questRecord)
     RewardSpell             = questRecord[index++].GetInt32();
     RewardHonor             = questRecord[index++].GetUInt32();
     RewardKillHonor         = questRecord[index++].GetFloat();
+    UnkInt                  = questRecord[index++].GetUInt32();
+    UnkFloat                = questRecord[index++].GetFloat();
+    UnkInt2                 = questRecord[index++].GetUInt32();
     SourceItemId            = questRecord[index++].GetUInt32();
     Flags                   = questRecord[index++].GetUInt32();
     FlagsEx                 = questRecord[index++].GetUInt32();
@@ -99,6 +102,7 @@ Quest::Quest(Field* questRecord)
     AreaGroupID             = questRecord[index++].GetUInt32();
     LimitTime               = questRecord[index++].GetUInt32();
     AllowableRaces          = questRecord[index++].GetInt32();
+    UnkInt3                 = questRecord[index++].GetInt32();
 
     LogTitle                = questRecord[index++].GetString();
     QuestDescription        = questRecord[index++].GetString();

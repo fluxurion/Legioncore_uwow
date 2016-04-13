@@ -437,6 +437,9 @@ class Quest
         std::string QuestCompletionLog;
         uint32 RewardHonor;
         float RewardKillHonor;
+        int32  UnkInt;
+        float UnkFloat;
+        int32  UnkInt2;
         int32  RewardMoney;
         uint32 RewardMoneyDifficulty;
         float  RewardMoneyMultiplier;
@@ -465,6 +468,7 @@ class Quest
         uint32 m_rewItemsCount;
         uint32 m_rewCurrencyCount;
         uint32 m_reqCurrencyCount;
+        int32  UnkInt3;
 
         // quest_request_items table
         uint32 EmoteOnComplete          = 0;

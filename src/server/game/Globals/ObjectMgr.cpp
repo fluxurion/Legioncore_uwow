@@ -3541,10 +3541,10 @@ void ObjectMgr::LoadQuests()
 
     QueryResult result = WorldDatabase.Query("SELECT "
         //0  1          2           3               4         5            6            7                  8                9                   10                  11           12
-        "ID, QuestType, QuestLevel, QuestPackageID, MinLevel, QuestSortID, QuestInfoID, SuggestedGroupNum, RewardNextQuest, RewardXPDifficulty, RevardXPMultiplier, RewardMoney, RewardMoneyDifficulty, "
+        "ID, QuestType, QuestLevel, QuestPackageID, MinLevel, QuestSortID, QuestInfoID, SuggestedGroupNum, RewardNextQuest, RewardXPDifficulty, RewardXPMultiplier, RewardMoney, RewardMoneyDifficulty, "
 
-        //     20                21               22                   23              24                    25         26            27                  28            29          30                   31            32          33
-        "RewardMoneyMultiplier, RewardBonusMoney, RewardDisplaySpell, RewardSpell, RewardHonor, RewardKillHonor, "
+        //     20                21               22                   23              24              25         26        27       28
+        "RewardMoneyMultiplier, RewardBonusMoney, RewardDisplaySpell, RewardSpell, RewardHonor, RewardKillHonor, UnkInt, UnkFloat, UnkInt2, "
         //         34               35               36              37          38         39       40      41 
         "StartItem, Flags, FlagsEx, RewardItem1, RewardAmount1, RewardItem2, RewardAmount2, RewardItem3, RewardAmount3, RewardItem4, RewardAmount4, "
         //      50      51                  52             53          54                55          56                  57
@@ -3560,7 +3560,7 @@ void ObjectMgr::LoadQuests()
         //     168                  169                  170                 171             172                 173                 174                 175 
         "RewardCurrencyID1, RewardCurrencyQty1, RewardCurrencyID2, RewardCurrencyQty2, RewardCurrencyID3, RewardCurrencyQty3, RewardCurrencyID4, RewardCurrencyQty4, "
         //  176                     177              178          179         180         181          
-        "AcceptedSoundKitID, CompleteSoundKitID, AreaGroupID, TimeAllowed, AllowableRaces, "
+        "AcceptedSoundKitID, CompleteSoundKitID, AreaGroupID, TimeAllowed, AllowableRaces, UnkInt3, "
         //  182             183         184             185                 186             187                 188             189                 190                 191                 192
         "LogTitle, LogDescription, QuestDescription, AreaDescription, QuestCompletionLog, PortraitGiverText, PortraitGiverName, PortraitTurnInText, PortraitTurnInName, "
         //   215            216             217
