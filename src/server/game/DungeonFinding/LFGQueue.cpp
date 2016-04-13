@@ -276,6 +276,9 @@ uint8 LFGQueue::FindGroups()
 */
 LfgCompatibility LFGQueue::FindNewGroups(GuidList& check, GuidList& all)
 {
+    if (check.empty() || check.size() > MAX_GROUP_SIZE)
+        return LFG_INCOMPATIBLES_WRONG_GROUP_SIZE;
+
     std::string strGuids = ConcatenateGuids(check);
     LfgCompatibility compatibles = GetCompatibles(strGuids);
 

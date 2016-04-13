@@ -794,20 +794,6 @@ void LFGMgr::UpdateRoleCheck(ObjectGuid gguid, ObjectGuid guid /* = 0 */, uint8 
     LfgRoleCheck& roleCheck = itRoleCheck->second;
     bool sendRoleChosen = roleCheck.state != LFG_ROLECHECK_DEFAULT && !guid.IsEmpty();
 
-    LfgDungeonSet dungeons;
-    if (roleCheck.rDungeonId)
-        dungeons.insert(roleCheck.rDungeonId);
-    else
-        dungeons = roleCheck.dungeons;
-
-    // only damagers in scenarios
-    if (roles)
-    {
-        if (LFGDungeonData const* dungeonData = GetLFGDungeon(*dungeons.begin()))
-            if (dungeonData->dbc->IsScenario() && !dungeonData->dbc->IsChallenge())
-                roles = roles & (PLAYER_ROLE_LEADER | PLAYER_ROLE_DAMAGE);
-    }
-
     if (guid.IsEmpty())
         roleCheck.state = LFG_ROLECHECK_ABORTED;
     else if (roles < PLAYER_ROLE_TANK)                            // Player selected no role.
@@ -831,10 +817,33 @@ void LFGMgr::UpdateRoleCheck(ObjectGuid gguid, ObjectGuid guid /* = 0 */, uint8 
         }
     }
 
+    LfgDungeonSet dungeons;
+    if (roleCheck.rDungeonId)
+        dungeons.insert(roleCheck.rDungeonId);
+    else
+        dungeons = roleCheck.dungeons;
+
+    // only damagers in scenarios
+    if (roles)
+    {
+        if (LFGDungeonData const* dungeonData = GetLFGDungeon(*dungeons.begin()))
+            if (dungeonData->dbc->IsScenario() && !dungeonData->dbc->IsChallenge())
+                roles = roles & (PLAYER_ROLE_LEADER | PLAYER_ROLE_DAMAGE);
+    }
+
     LfgJoinResultData joinData = LfgJoinResultData(LFG_JOIN_FAILED, roleCheck.state);
     for (LfgRolesMap::const_iterator it = roleCheck.roles.begin(); it != roleCheck.roles.end(); ++it)
     {
         ObjectGuid pguid = it->first;
+        auto player = ObjectAccessor::FindPlayer(pguid);
+        if (!player)
+        {
+            if (roleCheck.state == LFG_ROLECHECK_FINISHED)
+                SetState(pguid, LFG_STATE_QUEUED);
+            else if (roleCheck.state != LFG_ROLECHECK_INITIALITING)
+                PlayersStore[pguid].ClearState();
+            continue;
+        }
 
         if (sendRoleChosen)
             SendLfgRoleChosen(pguid, guid, roles);
