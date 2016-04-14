@@ -211,7 +211,7 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save,
         ASSERT(false);
     }
     const InstanceTemplate* iTemplate = sObjectMgr->GetInstanceTemplate(GetId());
-    if (!iTemplate)
+    if (!iTemplate && !entry->IsScenario())
     {
         sLog->outError(LOG_FILTER_MAPS, "CreateInstance: no instance template for map %d", GetId());
         ASSERT(false);

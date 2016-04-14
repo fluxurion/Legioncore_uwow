@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ScenePackets_h__
-#define ScenePackets_h__
+#ifndef ScenarioPackets_h__
+#define ScenarioPackets_h__
 
 #include "Packet.h"
 #include "BattlePetPackets.h"
@@ -25,80 +25,8 @@
 
 namespace WorldPackets
 {
-    namespace Scene
+    namespace Scenario
     {
-        //< CMSG_SCENE_PLAYBACK_COMPLETE
-        //< CMSG_SCENE_PLAYBACK_CANCELED
-        class SceneInstance final : public ClientPacket
-        {
-        public:
-            SceneInstance(WorldPacket&& packet) : ClientPacket(std::move(packet)) { }
-
-            void Read() override;
-
-            uint32 SceneInstanceID = 0;
-        };
-
-        class CancelScene final : public ServerPacket
-        {
-        public:
-            CancelScene(uint32 ID) : ServerPacket(SMSG_CANCEL_SCENE, 4), SceneInstanceID(ID) { }
-
-            WorldPacket const* Write() override;
-
-            uint32 SceneInstanceID = 0;
-        };
-
-        class PlayScene final : public ServerPacket
-        {
-        public:
-            PlayScene() : ServerPacket(SMSG_PLAY_SCENE, 16 + 18 + 16) { }
-
-            WorldPacket const* Write() override;
-
-            uint32 SceneID = 0;
-            uint32 PlaybackFlags = 0;
-            uint32 SceneInstanceID = 0;
-            uint32 SceneScriptPackageID = 0;
-            ObjectGuid TransportGUID;
-            Position Pos;
-        };
-
-        //< SMSG_SCENE_OBJECT_PET_BATTLE_FIRST_ROUND
-        //< SMSG_SCENE_OBJECT_PET_BATTLE_ROUND_RESULT
-        //< SMSG_SCENE_OBJECT_PET_BATTLE_REPLACEMENTS_MADE
-        class PetBattleRound final : public ServerPacket
-        {
-        public:
-            PetBattleRound(OpcodeServer opcode) : ServerPacket(opcode) { }
-
-            WorldPacket const* Write() override;
-
-            ObjectGuid SceneObjectGUID;
-            WorldPackets::BattlePet::RoundResult MsgData;
-        };
-
-        class PetBattleFinalRound final : public ServerPacket
-        {
-        public:
-            PetBattleFinalRound() : ServerPacket(SMSG_SCENE_OBJECT_PET_BATTLE_FINAL_ROUND) { }
-
-            WorldPacket const* Write() override;
-
-            ObjectGuid SceneObjectGUID;
-            WorldPackets::BattlePet::FinalRound MsgData;
-        };
-
-        class PetBattleFinished final : public ServerPacket
-        {
-        public:
-            PetBattleFinished() : ServerPacket(SMSG_SCENE_OBJECT_PET_BATTLE_FINISHED, 16) { }
-
-            WorldPacket const* Write() override;
-
-            ObjectGuid SceneObjectGUID;
-        };
-
         class QueryScenarioPOI final : public ClientPacket
         {
         public:
@@ -204,29 +132,7 @@ namespace WorldPackets
 
             uint32 ScenarioID = 0;
         };
-
-        class SceneTriggerEvent final : public ClientPacket
-        {
-        public:
-            SceneTriggerEvent(WorldPacket&& packet) : ClientPacket(CMSG_SCENE_TRIGGER_EVENT, std::move(packet)) { }
-
-            void Read() override;
-
-            std::string Event;
-            uint32 SceneInstanceID = 0;
-        };
-
-        class SceneObjectPetBattleInitialUpdate final : public ServerPacket
-        {
-        public:
-            SceneObjectPetBattleInitialUpdate() : ServerPacket(SMSG_SCENE_OBJECT_PET_BATTLE_INITIAL_UPDATE) { }
-
-            WorldPacket const* Write() override;
-
-            ObjectGuid SceneObjectGUID;
-            WorldPackets::BattlePet::PetBattleFullUpdate MsgData;
-        };
     }
 }
 
-#endif // ScenePackets_h__
+#endif // ScenarioPackets_h__

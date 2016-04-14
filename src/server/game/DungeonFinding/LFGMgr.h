@@ -367,6 +367,7 @@ class LFGMgr
         /// Return Lfg dungeon entry for given dungeon id
         uint32 GetLFGDungeonEntry(uint32 id);
         LFGDungeonData const* GetLFGDungeon(uint32 id);
+        LFGDungeonData const* GetLFGDungeon(uint16 scenarioId, uint16 mapId);
         LFGDungeonData const* GetLFGDungeon(uint32 id, uint32 team);
         LFGDungeonData const* GetLFGDungeon(uint32 mapId, Difficulty diff, uint32 team);
 

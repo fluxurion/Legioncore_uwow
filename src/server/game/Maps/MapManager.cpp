@@ -164,7 +164,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
         return false;
 
     InstanceTemplate const* instance = sObjectMgr->GetInstanceTemplate(mapid);
-    if (!instance)
+    if (!instance && !entry->IsScenario())
         return false;
 
     Difficulty targetDifficulty = player->GetDifficultyID(entry);
@@ -325,7 +325,7 @@ bool MapManager::IsValidMAP(uint32 mapid, bool startUp)
         if (startUp || mEntry->IsGarrison())
             return true;
 
-        if (mEntry->IsDungeon())
+        if (mEntry->IsDungeon() && !mEntry->IsScenario())
             return sObjectMgr->GetInstanceTemplate(mapid);
 
         return true;

@@ -21,7 +21,7 @@
 #include "LFGMgr.h"
 #include "InstanceSaveMgr.h"
 #include "WorldSession.h"
-#include "ScenePackets.h"
+#include "ScenarioPackets.h"
 
 ScenarioProgress::ScenarioProgress(uint32 _instanceId, lfg::LFGDungeonData const* _dungeonData)
     : instanceId(_instanceId), dungeonData(_dungeonData),
@@ -44,6 +44,7 @@ ScenarioProgress::ScenarioProgress(uint32 _instanceId, lfg::LFGDungeonData const
 
     steps = *_steps;
     currentTree = GetScenarioCriteriaByStep(currentStep);
+    ActiveSteps.push_back(steps[currentStep]->ID);
 }
 
 Map* ScenarioProgress::GetMap()
@@ -103,13 +104,16 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
         if (GetAchievementMgr().IsCompletedScenarioTree(criteriaTree))
         {
             currentStep = itr->second->OrderIndex + 1;
-            currentTree = GetScenarioCriteriaByStep(currentStep);;
+            currentTree = GetScenarioCriteriaByStep(currentStep);
             continue;
         }
     }
 
     if (currentStep != oldStep && !loading)
     {
+        if (currentStep != 0)
+            ActiveSteps.push_back(steps[currentStep]->ID);
+
         SendStepUpdate();
 
         if (IsCompleted(false))
@@ -212,10 +216,10 @@ void ScenarioProgress::Reward(bool bonus)
 
 void ScenarioProgress::SendStepUpdate(Player* player, bool full)
 {
-    WorldPackets::Scene::ScenarioState state;
+    WorldPackets::Scenario::ScenarioState state;
 
     //@TODO implent this
-    //WorldPackets::Scene::ScenarioState::BonusObjective objective;
+    //WorldPackets::Scenario::ScenarioState::BonusObjective objective;
     //{
     //    objective.BonusObjectiveID = 0;
     //    objective.ObjectiveComplete = 0;
@@ -227,12 +231,13 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
     WorldPackets::Achievement::CriteriaTreeProgress progress;
 
     state.ScenarioID = GetScenarioId();
-    state.CurrentStep = currentStep;
+    state.CurrentStep = steps[currentStep]->ID;
     state.DifficultyID = 0;
     state.WaveCurrent = 0;
     state.WaveMax = 0;
     state.TimerDuration = 0;
     state.ScenarioComplete = IsCompleted(false);
+    state.ActiveSteps = ActiveSteps;
 
     if (full)
     {
@@ -270,7 +275,7 @@ void ScenarioProgress::SendCriteriaUpdate(CriteriaTreeProgress const* progress)
 {
     //sLog->outDebug(LOG_FILTER_MAPSCRIPTS, "ScenarioProgress::SendCriteriaUpdate criteria %u counter %u", progress->criteriaTree->criteria, progress->counter);
 
-    WorldPackets::Scene::ScenarioProgressUpdate update;
+    WorldPackets::Scenario::ScenarioProgressUpdate update;
 
     WorldPackets::Achievement::CriteriaTreeProgress& progressUpdate = update.Progress;
     progressUpdate.Id = progress->criteriaTree->CriteriaID;

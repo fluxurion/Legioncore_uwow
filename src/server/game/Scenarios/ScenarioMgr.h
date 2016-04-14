@@ -75,6 +75,7 @@ protected:
     uint8 currentStep;
     uint32 currentTree;
     ScenarioSteps steps;
+    std::vector<uint32> ActiveSteps;
 
     ScenarioType type;
 

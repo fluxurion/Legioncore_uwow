@@ -53,6 +53,7 @@
 #include "ReferAFriendPackets.h"
 #include "ReputationPackets.h"
 #include "ScenePackets.h"
+#include "ScenarioPackets.h"
 #include "SocialPackets.h"
 #include "TalentPackets.h"
 #include "TaxiPackets.h"

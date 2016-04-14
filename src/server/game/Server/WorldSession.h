@@ -551,9 +551,13 @@ namespace WorldPackets
 
     namespace Scene
     {
-        class QueryScenarioPOI;
         class SceneTriggerEvent;
         class SceneInstance;
+    }
+
+    namespace Scenario
+    {
+        class QueryScenarioPOI;
     }
 
     namespace Calendar
@@ -1752,7 +1756,8 @@ class WorldSession
         void HandleToySetFavorite(WorldPackets::Toy::ToySetFavorite& packet);
         void HandleUseToy(WorldPackets::Toy::UseToy& packet);
 
-        void HandleQueryScenarioPOI(WorldPackets::Scene::QueryScenarioPOI& packet);
+        // Scenario
+        void HandleQueryScenarioPOI(WorldPackets::Scenario::QueryScenarioPOI& packet);
 
         void HandleGetChallengeModeRewards(WorldPackets::ChallengeMode::Misc& packet);
         void HandleChallengeModeRequestMapStats(WorldPackets::ChallengeMode::Misc& packet);

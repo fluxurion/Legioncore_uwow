@@ -3255,6 +3255,10 @@ class Player : public Unit, public GridObject<Player>
         void SendVersionMismatchWarinings();
 
         uint32 GetGoVisualQuestData(GameObject* go, uint32 field);
+
+        uint16 GetScenarioId() { return m_scenarioId; }
+        void SetScenarioId(uint16 scenarioId) { m_scenarioId = scenarioId; }
+
     protected:
         // Gamemaster whisper whitelist
         GuidList WhisperList;
@@ -3668,6 +3672,8 @@ class Player : public Unit, public GridObject<Player>
         std::unique_ptr<Garrison> _garrison;
         std::unique_ptr<CollectionMgr> _collectionMgr;
         std::unique_ptr<BattlePetMgr> _battlePetMgr;
+
+        uint16 m_scenarioId = 0;
 };
 
 void AddItemsSetItem(Player*player, Item* item);

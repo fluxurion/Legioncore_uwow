@@ -579,7 +579,7 @@ void OpcodeTable::Initialize()
     DEFINE_HANDLER(CMSG_QUERY_QUEST_COMPLETION_NPCS,                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::Query::QueryQuestCompletionNPCs, &WorldSession::HandleQueryQuestCompletionNPCs);
     DEFINE_HANDLER(CMSG_QUERY_QUEST_INFO,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Quest::QueryQuestInfo, &WorldSession::HandleQueryQuestInfo);
     DEFINE_HANDLER(CMSG_QUERY_REALM_NAME,                                   STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryRealmName, &WorldSession::HandleQueryRealmName);
-    DEFINE_HANDLER(CMSG_QUERY_SCENARIO_POI,                                 STATUS_UNHANDLED, PROCESS_THREADUNSAFE, WorldPackets::Scene::QueryScenarioPOI, &WorldSession::HandleQueryScenarioPOI);
+    DEFINE_HANDLER(CMSG_QUERY_SCENARIO_POI,                                 STATUS_LOGGEDIN , PROCESS_THREADUNSAFE, WorldPackets::Scenario::QueryScenarioPOI, &WorldSession::HandleQueryScenarioPOI);
     DEFINE_HANDLER(CMSG_QUERY_TIME,                                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, WorldPackets::Query::QueryTime, &WorldSession::HandleQueryTime);
     DEFINE_HANDLER(CMSG_QUERY_VOID_STORAGE,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      WorldPackets::VoidStorage::QueryVoidStorage, &WorldSession::HandleVoidStorageQuery);
     DEFINE_HANDLER(CMSG_QUERY_WORLD_COUNTDOWN_TIMER,                        STATUS_UNHANDLED, PROCESS_INPLACE,      WorldPackets::Null, &WorldSession::Handle_NULL);
@@ -1532,7 +1532,7 @@ void OpcodeTable::Initialize()
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_BOOT,                           STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_COMPLETED,                      STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_OUT_OF_BOUNDS,                  STATUS_UNHANDLED);
-    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_PO_IS,                          STATUS_UNHANDLED);
+    DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_PO_IS,                          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_PROGRESS_UPDATE,                STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENARIO_STATE,                          STATUS_NEVER);
     DEFINE_SERVER_OPCODE_HANDLER(SMSG_SCENE_OBJECT_EVENT,                      STATUS_NEVER);

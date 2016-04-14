@@ -178,6 +178,18 @@ LFGDungeonData const* LFGMgr::GetLFGDungeon(uint32 id)
     return NULL;
 }
 
+LFGDungeonData const* LFGMgr::GetLFGDungeon(uint16 scenarioId, uint16 mapId)
+{
+    for (LFGDungeonContainer::const_iterator itr = LfgDungeonStore.begin(); itr != LfgDungeonStore.end(); ++itr)
+    {
+        LFGDungeonEntry const* dungeonEntry = itr->second.dbc;
+        if (dungeonEntry->ScenarioID == scenarioId && dungeonEntry->MapID == mapId)
+            return &itr->second;
+    }
+
+    return NULL;
+}
+
 LFGDungeonData const* LFGMgr::GetLFGDungeon(uint32 id, uint32 team)
 {
     LFGDungeonContainer::const_iterator itr = LfgDungeonStore.find(id);
@@ -605,7 +617,7 @@ void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, const
     // Can't join. Send result
     if (joinData.result != LFG_JOIN_OK)
     {
-        sLog->outDebug(LOG_FILTER_LFG, "LFGMgr::Join: [" UI64FMTD "] joining with %u members. result: %u", playerGuid, group ? group->GetMembersCount() : 1, joinData.result);
+        sLog->outDebug(LOG_FILTER_LFG, "LFGMgr::Join: [%u] joining with %u members. result: %u", playerGuid.GetGUIDLow(), group ? group->GetMembersCount() : 1, joinData.result);
         if (!dungeons.empty())                             // Only should show lockmap when have no dungeons available
             joinData.lockmap.clear();
         player->GetSession()->SendLfgJoinResult(joinData);

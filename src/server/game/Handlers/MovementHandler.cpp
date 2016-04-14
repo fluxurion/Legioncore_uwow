@@ -67,7 +67,7 @@ void WorldSession::HandleWorldPortAck()
     MapEntry const* mEntry = sMapStore.LookupEntry(loc.GetMapId());
     InstanceTemplate const* mInstance = sObjectMgr->GetInstanceTemplate(loc.GetMapId());
 
-    if (player->m_InstanceValid == false && !mInstance)
+    if (player->m_InstanceValid == false && (!mInstance && !mEntry->IsScenario()))
         player->m_InstanceValid = true;
 
     Map* oldMap = player->GetMap();

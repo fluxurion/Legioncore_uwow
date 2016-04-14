@@ -155,8 +155,9 @@ public:
             { "offhand",            SEC_ADMINISTRATOR,      true,  &HandleCharDisplayOffhandCommand,    "", NULL },
             { "ranged",             SEC_ADMINISTRATOR,      true,  &HandleCharDisplayRangedCommand,     "", NULL },
             { "tabard",             SEC_ADMINISTRATOR,      true,  &HandleCharDisplayTabardCommand,     "", NULL },
-            { "shirt",              SEC_ADMINISTRATOR,      true,  &HandleCharDisplayShirtCommand,     "", NULL },
+            { "shirt",              SEC_ADMINISTRATOR,      true,  &HandleCharDisplayShirtCommand,      "", NULL },
             { "itemspec",           SEC_ADMINISTRATOR,      false, &HandleItemSpecCommand,              "", NULL },
+            { "setscenario",        SEC_ADMINISTRATOR,      false, &HandleSetScenarioCommand,           "", NULL },
             { NULL,                 0,                      false, NULL,                                "", NULL }
         };
         return commandTable;
@@ -3511,7 +3512,7 @@ public:
         handler->PSendSysMessage("end");
         return true;
     }
-    
+
     static bool HandleTransferAbortReasonCommand(ChatHandler* handler, char const* args)
     {
         if (!*args)
@@ -3520,6 +3521,20 @@ public:
         uint8 reasonId = atoi((char*)args);
 
         handler->GetSession()->GetPlayer()->SendTransferAborted(0, TransferAbortReason(reasonId));
+        return true;
+    }
+
+    static bool HandleSetScenarioCommand(ChatHandler* handler, char const* args)
+    {
+        if (!*args)
+            return false;
+
+        uint32 scenarioId = atoi((char*)args);
+
+        handler->GetSession()->GetPlayer()->SetScenarioId(scenarioId);
+
+        handler->PSendSysMessage("HandleSetScenarioCommand scenarioId %u GetScenarioId %u", scenarioId, handler->GetSession()->GetPlayer()->GetScenarioId());
+
         return true;
     }
 };

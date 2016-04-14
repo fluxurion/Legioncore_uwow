@@ -2672,8 +2672,20 @@ bool InstanceMap::AddPlayerToMap(Player* player, bool initPlayer /*= true*/)
 
                     ScenarioProgress* progress = sScenarioMgr->GetScenarioProgress(GetInstanceId());
                     if(!progress)
-                        if (lfg::LFGDungeonData const* data = sLFGMgr->GetLFGDungeon(GetId(), GetDifficultyID(), player->GetTeam()))
-                            sScenarioMgr->AddScenarioProgress(GetInstanceId(), data, false);
+                    {
+                        bool find = false;
+                        if (player->GetScenarioId())
+                        {
+                            if (lfg::LFGDungeonData const* data = sLFGMgr->GetLFGDungeon(player->GetScenarioId(), (uint16)GetId()))
+                            {
+                                sScenarioMgr->AddScenarioProgress(GetInstanceId(), data, false);
+                                find = true;
+                            }
+                        }
+                        if (!find)
+                            if (lfg::LFGDungeonData const* data = sLFGMgr->GetLFGDungeon(GetId(), GetDifficultyID(), player->GetTeam()))
+                                sScenarioMgr->AddScenarioProgress(GetInstanceId(), data, false);
+                    }
                 }
 
                 sLog->outInfo(LOG_FILTER_MAPS, "InstanceMap::Add: creating instance save for map %d spawnmode %d with instance id %d", GetId(), GetSpawnMode(), GetInstanceId());
