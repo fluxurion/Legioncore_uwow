@@ -2049,7 +2049,6 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             delete targets;
             break;
         }
-
         case SMART_ACTION_SET_HOME_POS:
             {
                 if (!me)
@@ -2093,6 +2092,80 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 if (unit && e.action.creatureGroup.attackInvoker)
                     (*itr)->AI()->AttackStart(unit);
 
+            break;
+        }
+        case SMART_ACTION_SET_SCENATIO_ID:
+        {
+            if (!GetBaseObject())
+                break;
+
+            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SET_SCENATIO_ID: scenarioId %d", e.action.scenario.id);
+
+            ObjectList* targets = GetTargets(e, unit);
+            if (!targets)
+                break;
+
+            for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
+                if (Player* player = (*itr)->ToPlayer())
+                    player->SetScenarioId(e.action.scenario.id);
+
+            delete targets;
+            break;
+        }
+        case SMART_ACTION_UPDATE_ACHIEVEMENT_CRITERIA:
+        {
+            if (!GetBaseObject())
+                break;
+
+            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_UPDATE_ACHIEVEMENT_CRITERIA: type %d misc1 %d misc2 %d misc3 %d",
+                e.action.achievementCriteria.type, e.action.achievementCriteria.misc1, e.action.achievementCriteria.misc2, e.action.achievementCriteria.misc3);
+
+            ObjectList* targets = GetTargets(e, unit);
+            if (!targets)
+                break;
+
+            for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
+                if (Player* player = (*itr)->ToPlayer())
+                    player->UpdateAchievementCriteria((AchievementCriteriaTypes)e.action.achievementCriteria.type, e.action.achievementCriteria.misc1, e.action.achievementCriteria.misc2, e.action.achievementCriteria.misc3, unit);
+
+            delete targets;
+            break;
+        }
+        case SMART_ACTION_SUMMON_CONVERSATION:
+        {
+            if (!GetBaseObject())
+                break;
+
+            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SUMMON_CONVERSATION: Conversation %d", e.action.conversation.id, e.action.conversation.targetX, e.action.conversation.targetY, e.action.conversation.targetZ);
+
+            if (e.action.conversation.targetX || e.action.conversation.targetY || e.action.conversation.targetZ)
+            {
+                Position pos;
+                pos.Relocate(float(e.action.conversation.targetX), float(e.action.conversation.targetY), float(e.action.conversation.targetZ), 0.0f);
+
+                Conversation* conversation = new Conversation;
+                if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), e.action.conversation.id, GetBaseObject()->ToUnit(), NULL, pos))
+                    delete conversation;
+            }
+            else
+            {
+                ObjectList* targets = GetTargets(e, unit);
+                if (!targets)
+                    break;
+
+                for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
+                    if (Player* player = (*itr)->ToPlayer())
+                    {
+                        Position pos;
+                        player->GetPosition(&pos);
+
+                        Conversation* conversation = new Conversation;
+                        if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), e.action.conversation.id, player, NULL, pos))
+                            delete conversation;
+                    }
+
+                delete targets;
+            }
             break;
         }
         default:

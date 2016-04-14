@@ -525,8 +525,11 @@ enum SMART_ACTION
     SMART_ACTION_BOSS_ANOUNCE                       = 201,    // TextId from trinity_ctring
     SMART_ACTION_MOVE_Z                             = 202,    // TextId from trinity_ctring
     SMART_ACTION_SET_KD                             = 203,    // Set instanse kd
+    SMART_ACTION_SET_SCENATIO_ID                    = 204,    // Set Scenatio Id
+    SMART_ACTION_UPDATE_ACHIEVEMENT_CRITERIA        = 205,    // Update Achievement Criteria
+    SMART_ACTION_SUMMON_CONVERSATION                = 206,    // Summon Conversation
 
-    SMART_ACTION_END                                = 204,
+    SMART_ACTION_END                                = 207,
 };
 
 struct SmartAction
@@ -1017,6 +1020,27 @@ struct SmartAction
         {
             uint32 id;
         } gameEventStart;
+
+        struct
+        {
+            uint32 id;
+        } scenario;
+
+        struct
+        {
+            uint32 type;
+            uint32 misc1;
+            uint32 misc2;
+            uint32 misc3;
+        } achievementCriteria;
+
+        struct
+        {
+            uint32 id;
+            int32 targetX;
+            int32 targetY;
+            int32 targetZ;
+        } conversation;
     };
 };
 
