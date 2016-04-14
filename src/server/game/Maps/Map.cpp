@@ -2551,6 +2551,9 @@ InstanceMap::InstanceMap(uint32 id, time_t expiry, uint32 InstanceId, uint8 Spaw
     //lets initialize visibility distance for dungeons
     InstanceMap::InitVisibilityDistance();
 
+    if(float _distMap = GetVisibleDistance(TYPE_VISIBLE_MAP, id))
+        m_VisibleDistance = _distMap;
+
     // the timer is started by default, and stopped when the first player joins
     // this make sure it gets unloaded if for some reason no player joins
     m_unloadTimer = std::max(sWorld->getIntConfig(CONFIG_INSTANCE_UNLOAD_DELAY), (uint32)MIN_UNLOAD_DELAY);
@@ -3054,6 +3057,10 @@ BattlegroundMap::BattlegroundMap(uint32 id, time_t expiry, uint32 InstanceId, Ma
 {
     //lets initialize visibility distance for BG/Arenas
     BattlegroundMap::InitVisibilityDistance();
+
+    if(float _distMap = GetVisibleDistance(TYPE_VISIBLE_MAP, id))
+        m_VisibleDistance = _distMap;
+
 }
 
 BattlegroundMap::~BattlegroundMap()
