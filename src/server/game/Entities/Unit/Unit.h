@@ -2068,6 +2068,8 @@ class Unit : public WorldObject
         bool HasAuraWithMechanic(uint32 mechanicMask);
         bool HasAuraCastWhileWalking(SpellInfo const* spellInfo);
 
+        bool IsActiveSaveAbility() const;
+
         void RemoveSoulSwapDOT(Unit* target);
         void ApplySoulSwapDOT(Unit* target);
 

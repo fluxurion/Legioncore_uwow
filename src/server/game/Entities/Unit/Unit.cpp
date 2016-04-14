@@ -5198,6 +5198,18 @@ bool Unit::HasAuraCastWhileWalking(SpellInfo const* spellInfo)
            (spellInfo->HasAttribute(SPELL_ATTR5_USABLE_WHILE_MOVING));
 }
 
+bool Unit::IsActiveSaveAbility() const
+{
+    for (AuraApplicationMap::const_iterator iter = m_appliedAuras.begin(); iter != m_appliedAuras.end(); ++iter)
+    {
+        Aura const* aura = iter->second->GetBase();
+        if (HasAuraType(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN) && !aura->IsPassive() && iter->second->IsPositive() 
+            && aura->GetSpellInfo()->AuraOptions.ProcTypeMask == PROC_FLAG_NONE)
+            return true;
+    }
+    return false;
+}
+
 AuraEffect* Unit::IsScriptOverriden(SpellInfo const* spell, int32 script) const
 {
     AuraEffectList auras = GetAuraEffectsByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);

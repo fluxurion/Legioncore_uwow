@@ -506,7 +506,7 @@ bool MotionMaster::SpellMoveCharge(float x, float y, float z, float speed, uint3
     if (!_owner->IsWithinLOS(x, y, z))
         return false;
 
-    sLog->outDebug(LOG_FILTER_GENERAL, "Player (GUID: %u) charge point (X: %f Y: %f Z: %f)", _owner->GetGUIDLow(), x, y, z);
+    sLog->outDebug(LOG_FILTER_GENERAL, "Unit (GUID: %u) charge point (X: %f Y: %f Z: %f)", _owner->GetGUIDLow(), x, y, z);
 
     Mutate(new ChargeMovementGenerator(id, x, y, z, speed, triggerspellId), MOTION_SLOT_CONTROLLED);
 

@@ -5583,6 +5583,13 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 33891: // Incarnation: Tree of Life
                     spellInfo->Effects[EFFECT_2].TriggerSpell = 0;
                     break;
+                case 197484: //Illysanna: Dark Rush
+                    spellInfo->Effects[EFFECT_1].Effect = 0;
+                    spellInfo->Effects[EFFECT_1].TriggerSpell = 0;
+                    break;
+                case 197687: //Illysanna: Dark Rush
+                    spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(6); //100yards
+                    break;
                 default:
                     break;
             }

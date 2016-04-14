@@ -15,14 +15,28 @@ enum eData
     MAX_ENCOUNTER,
 };
 
-/* enum eCreatures
+enum eCreatures
 {
-    NPC_ = ,
+    NPC_SOUL_ECHOES_STALKER     = 99090,
+    //Illysanna
+    NPC_EYE_BEAM_STALKER        = 100436,
+    NPC_RISEN_ARCANIST          = 98280,
+    NPC_SOUL_TORN_VANGUARD      = 100485,
+    //Smashspite
+    NPC_FEL_BAT                 = 100759,
 };
 
 enum eGameObjects
 {
-    GO_ = ,
-}; */
+    GO_AMALGAM_DOOR_1           = 247403,
+    GO_AMALGAM_DOOR_2           = 247404,
+    GO_AMALGAM_DOOR_3           = 247405,
+    GO_AMALGAM_DOOR_4           = 247406,
+    GO_AMALGAM_DOOR_EXIT        = 247407,
+    GO_ILLYSANNA_DOOR_1         = 247401,
+    GO_ILLYSANNA_DOOR_2         = 247399,
+    GO_ILLYSANNA_DOOR_3         = 247400,
+    GO_SMASHSPITE_DOOR          = 247402,
+};
 
 #endif

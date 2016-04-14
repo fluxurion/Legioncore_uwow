@@ -222,9 +222,9 @@ void Creature::AddToWorld()
         sObjectAccessor->AddObject(this);
         Unit::AddToWorld();
         SearchFormation();
-        AIM_Initialize();
         if (IsVehicle())
             GetVehicleKit()->Install();
+        AIM_Initialize();
     }
 }
 

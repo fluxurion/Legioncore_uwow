@@ -9,8 +9,15 @@
 
 DoorData const doorData[] =
 {
-    //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
-    {0,                   0,                  DOOR_TYPE_ROOM,       BOUNDARY_NONE}, // END
+    {GO_AMALGAM_DOOR_EXIT,      DATA_AMALGAM,       DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    {GO_AMALGAM_DOOR_1,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_AMALGAM_DOOR_2,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_AMALGAM_DOOR_3,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_AMALGAM_DOOR_4,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_ILLYSANNA_DOOR_1,       DATA_ILLYSANNA,     DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    {GO_ILLYSANNA_DOOR_2,       DATA_ILLYSANNA,     DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    {GO_ILLYSANNA_DOOR_3,       DATA_ILLYSANNA,     DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_SMASHSPITE_DOOR,        DATA_SMASHSPITE,    DOOR_TYPE_ROOM,         BOUNDARY_NONE},
 };
 
 class instance_black_rook_hold_dungeon : public InstanceMapScript
@@ -35,26 +42,6 @@ public:
             LoadDoorData(doorData);
         }
 
-        bool SetBossState(uint32 type, EncounterState state)
-        {
-            if (!InstanceScript::SetBossState(type, state))
-                return false;
-            
-            return true;
-        }
-
-        void OnGameObjectCreate(GameObject* go)
-        {
-            /* switch (go->GetEntry())
-            {
-                case GO_DOOR:
-                    AddDoor(go, true);
-                    break;
-                default:
-                    break;
-            } */
-        }
-
         void OnCreatureCreate(Creature* creature)
         {
             /* switch (creature->GetEntry())
@@ -63,6 +50,34 @@ public:
                     GUID = creature->GetGUID(); 
                     break;
             } */
+        }
+
+        void OnGameObjectCreate(GameObject* go)
+        {
+            switch (go->GetEntry())
+            {
+                case GO_AMALGAM_DOOR_1:
+                case GO_AMALGAM_DOOR_2:
+                case GO_AMALGAM_DOOR_3:
+                case GO_AMALGAM_DOOR_4:
+                case GO_AMALGAM_DOOR_EXIT:
+                case GO_ILLYSANNA_DOOR_1:
+                case GO_ILLYSANNA_DOOR_2:
+                case GO_ILLYSANNA_DOOR_3:
+                case GO_SMASHSPITE_DOOR:
+                    AddDoor(go, true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        bool SetBossState(uint32 type, EncounterState state)
+        {
+            if (!InstanceScript::SetBossState(type, state))
+                return false;
+            
+            return true;
         }
 
         void SetData(uint32 type, uint32 data)
