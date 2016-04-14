@@ -98,6 +98,20 @@ bool Conversation::CreateConversation(ObjectGuid::LowType guidlow, uint32 trigge
     SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
     casterGUID = caster->GetGUID();
 
+    if (Player* player = caster->ToPlayer())
+    {
+        if (Group* group = player->GetGroup())
+        {
+            for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
+            {
+                if (Player* member = itr->getSource())
+                    AddPlayerInPersonnalVisibilityList(member->GetGUID());
+            }
+        }
+        else
+            AddPlayerInPersonnalVisibilityList(caster->GetGUID());
+    }
+
     for (uint16 index = 0; index < _dynamicValuesCount; ++index)
     {
         ByteBuffer buffer;

@@ -158,6 +158,7 @@ public:
             { "shirt",              SEC_ADMINISTRATOR,      true,  &HandleCharDisplayShirtCommand,      "", NULL },
             { "itemspec",           SEC_ADMINISTRATOR,      false, &HandleItemSpecCommand,              "", NULL },
             { "setscenario",        SEC_ADMINISTRATOR,      false, &HandleSetScenarioCommand,           "", NULL },
+            { "conversation",       SEC_ADMINISTRATOR,      false, &HandleConversationCommand,          "", NULL },
             { NULL,                 0,                      false, NULL,                                "", NULL }
         };
         return commandTable;
@@ -3534,6 +3535,23 @@ public:
         handler->GetSession()->GetPlayer()->SetScenarioId(scenarioId);
 
         handler->PSendSysMessage("HandleSetScenarioCommand scenarioId %u GetScenarioId %u", scenarioId, handler->GetSession()->GetPlayer()->GetScenarioId());
+
+        return true;
+    }
+
+    static bool HandleConversationCommand(ChatHandler* handler, char const* args)
+    {
+        if (!*args)
+            return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+        uint32 conversationId = atoi((char*)args);
+
+        Conversation* conversation = new Conversation;
+        if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), conversationId, player, NULL, *player))
+            delete conversation;
+
+        handler->PSendSysMessage("HandleConversationCommand conversationId %u", conversationId);
 
         return true;
     }

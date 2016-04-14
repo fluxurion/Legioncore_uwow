@@ -25,11 +25,7 @@ public:
             //player->CastSpell(player, CUEILLIDANTH, false);
             Conversation* conversation = new Conversation;
             if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
-            {
-                conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                 delete conversation;
-            }
-
         }
         return true;
     }
@@ -101,10 +97,7 @@ public:
 
             Conversation* conversation = new Conversation;
             if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
-            {
-                conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                 delete conversation;
-            }
         }
 
         return true;
@@ -198,20 +191,14 @@ public:
                 {
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244439, player, NULL, *player))
-                    {
-                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
-                    }
                     break;
                 }
                 case GO_244440:
                 {
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV_GO_244440, player, NULL, *player))
-                    {
-                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
-                    }
                     break;
                 }
                 case GO_244441:
@@ -271,10 +258,7 @@ public:
 
                     Conversation* conversation = new Conversation;
                     if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), NPC_CONV, player, NULL, *player))
-                    {
-                        conversation->AddPlayerInPersonnalVisibilityList(player->GetGUID());
                         delete conversation;
-                    }
                 }
             }
         }
@@ -424,10 +408,7 @@ public:
                         {
                             Conversation* conversation = new Conversation;
                             if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), conversationEntry, player, NULL, *player))
-                            {
-                                conversation->AddPlayerInPersonnalVisibilityList(targetGUID);
                                 delete conversation;
-                            }
                         }
                         break;
                     }
