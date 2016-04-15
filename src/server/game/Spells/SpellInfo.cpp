@@ -448,7 +448,7 @@ bool SpellEffectInfo::IsFarUnitTargetEffect() const
 
 bool SpellEffectInfo::IsFarDestTargetEffect() const
 {
-    return Effect == SPELL_EFFECT_TELEPORT_UNITS || Effect == SPELL_EFFECT_TELEPORT_L;
+    return (Effect == SPELL_EFFECT_TELEPORT_UNITS || Effect == SPELL_EFFECT_TELEPORT_L || Effect == SPELL_EFFECT_TELEPORT);
 }
 
 bool SpellEffectInfo::IsUnitOwnedAuraEffect() const

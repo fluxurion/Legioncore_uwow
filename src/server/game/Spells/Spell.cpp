@@ -590,8 +590,8 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
 
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 
-    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
-    m_castGuid[1] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), 3);
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), m_spellGuid.IsEmpty() ? 3 : 16);
+    m_castGuid[1] = m_spellGuid;
 }
 
 Spell::~Spell()
@@ -1042,7 +1042,7 @@ void Spell::SelectImplicitNearbyTargets(SpellEffIndex effIndex, SpellImplicitTar
                 if (SpellTargetPosition const* st = sSpellMgr->GetSpellTargetPosition(m_spellInfo->Id))
                 {
                     // TODO: fix this check
-                    if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L))
+                    if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT))
                         m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
                     else if (st->target_mapId == m_caster->GetMapId())
                         m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
@@ -1604,7 +1604,7 @@ void Spell::SelectImplicitCasterDestTargets(SpellEffIndex effIndex, SpellImplici
             if (SpellTargetPosition const* st = sSpellMgr->GetSpellTargetPosition(m_spellInfo->Id))
             {
                 // TODO: fix this check
-                if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L))
+                if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT))
                     m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
                 else if (st->target_mapId == m_caster->GetMapId())
                     m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
@@ -1741,7 +1741,7 @@ void Spell::SelectImplicitDestDestTargets(SpellEffIndex effIndex, SpellImplicitT
     if (SpellTargetPosition const* st = sSpellMgr->GetSpellTargetPosition(m_spellInfo->Id))
     {
         // TODO: fix this check
-        if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L))
+        if (m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_UNITS) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT_L) || m_spellInfo->HasEffect(SPELL_EFFECT_TELEPORT))
             m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
         else if (st->target_mapId == m_caster->GetMapId())
             m_targets.SetDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
@@ -4698,10 +4698,11 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, SpellCast
         return;
 
     WorldPackets::Spells::CastFailed packet(pet ? SMSG_PET_CAST_FAILED : SMSG_CAST_FAILED);
-    if (m_spellGuid.IsEmpty())
-        packet.SpellGuid = m_castGuid[1];
+    if (m_castGuid[1].IsEmpty())
+        packet.SpellGuid = m_castGuid[0];
     else
-        packet.SpellGuid = m_spellGuid;
+        packet.SpellGuid = m_castGuid[1];
+
     packet.SpellXSpellVisualID = m_SpellVisual;
     packet.SpellID = spellInfo->Id;
     packet.Reason = result;
@@ -4843,8 +4844,7 @@ void Spell::SendSpellStart()
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
     castData.CastGuid = m_castGuid[0];
-    if (IsTriggered())
-        castData.CastGuid2 = m_castGuid[1];
+    castData.CastGuid2 = m_castGuid[1];
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
@@ -4973,8 +4973,7 @@ void Spell::SendSpellGo()
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.CastGuid = m_castGuid[0];
-    if (IsTriggered())
-        castData.CastGuid2 = m_castGuid[1];
+    castData.CastGuid2 = m_castGuid[1];
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;

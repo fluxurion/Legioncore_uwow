@@ -1431,6 +1431,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
         targets.SetUnitTarget(unitTarget);
         Spell* spell = new Spell(m_caster, spellInfo, triggered ? TRIGGERED_FULL_MASK : TRIGGERED_NONE, m_originalCasterGUID, true);
         if (bp) spell->SetSpellValue(SPELLVALUE_BASE_POINT0, bp);
+        spell->m_spellGuid = m_castGuid[0];
         spell->prepare(&targets);
     }
 
