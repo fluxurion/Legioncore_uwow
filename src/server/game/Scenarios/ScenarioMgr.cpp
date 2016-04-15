@@ -111,7 +111,7 @@ uint8 ScenarioProgress::UpdateCurrentStep(bool loading)
 
     if (currentStep != oldStep && !loading)
     {
-        if (currentStep != 0)
+        if (currentStep != 0 && currentStep < steps.size())
             ActiveSteps.push_back(steps[currentStep]->ID);
 
         SendStepUpdate();
@@ -231,7 +231,7 @@ void ScenarioProgress::SendStepUpdate(Player* player, bool full)
     WorldPackets::Achievement::CriteriaTreeProgress progress;
 
     state.ScenarioID = GetScenarioId();
-    state.CurrentStep = steps[currentStep]->ID;
+    state.CurrentStep = currentStep < steps.size() ? steps[currentStep]->ID : -1;
     state.DifficultyID = 0;
     state.WaveCurrent = 0;
     state.WaveMax = 0;
