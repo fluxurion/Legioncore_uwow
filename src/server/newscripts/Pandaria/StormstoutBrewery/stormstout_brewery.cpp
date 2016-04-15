@@ -96,7 +96,6 @@ class npc_hopling : public CreatureScript
                         instance->SetData(DATA_HOPLING, HoplingCount);
                         if (HoplingCount == 100)
                             DoCast(SPELL_SMASH_ACHIEV);
-                        sLog->outError(LOG_FILTER_SERVER_LOADING, "HoplingCount %u", HoplingCount);
                         me->DespawnOrUnsummon(1000);
                     }
                 }

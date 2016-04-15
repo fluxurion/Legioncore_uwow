@@ -262,7 +262,6 @@ public:
 
         void SpellHit(Unit* caster, const SpellInfo* spell)
         {
-            sLog->outError(LOG_FILTER_SERVER_LOADING, ">>>ID %u", spell->Id);
             if (spell->Id == 200721 || spell->Id == 209947)
                 DespawnMe();
         }
