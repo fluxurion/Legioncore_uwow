@@ -188,8 +188,33 @@ UPDATE `creature_template` SET lootid = 98986, `ScriptName` = 'npc_q39495_prolif
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('98986', '129957', '-100', '0', '0', '1', '1', '0');
 
--- Q: 40051
+-- Q: 40051 
 
 -- Q: 39516
+-- NPC 99045 GOSSIP 18937 SPELL 195021
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=99045;
+DELETE FROM smart_scripts WHERE entryorguid = 99045;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(99045, 0, 0, 0, 62, 0, 100, 0, 18937, 0, 0, 0, 11, 195021, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
+-- NPC 96420 GOSSIP 18936 SPELL 195019
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=96420;
+DELETE FROM smart_scripts WHERE entryorguid = 96420;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(96420, 0, 0, 0, 62, 0, 100, 0, 18936, 0, 0, 0, 11, 195019, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
+-- NPC 96655 GOSSIP 18935 SPELL 194996
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=96655;
+DELETE FROM smart_scripts WHERE entryorguid = 96655;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(96655, 0, 0, 0, 62, 0, 100, 0, 18935, 0, 0, 0, 11, 194996, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
+-- NPC 93127 GOSSIP 18435 SPELL 195020
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=93127;
+DELETE FROM smart_scripts WHERE entryorguid = 93127;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(93127, 0, 0, 0, 62, 0, 100, 0, 18435, 1, 0, 0, 11, 195020, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
+-- NPC 96652 GOSSIP 18823 SPELL 195022
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=96652;
+DELETE FROM smart_scripts WHERE entryorguid = 96652;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(96652, 0, 0, 0, 62, 0, 100, 0, 18823, 0, 0, 0, 11, 195022, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
 
 -- Q: 39663
