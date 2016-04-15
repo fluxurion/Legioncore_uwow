@@ -18,6 +18,9 @@ DoorData const doorData[] =
     {GO_ILLYSANNA_DOOR_2,       DATA_ILLYSANNA,     DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
     {GO_ILLYSANNA_DOOR_3,       DATA_ILLYSANNA,     DOOR_TYPE_ROOM,         BOUNDARY_NONE},
     {GO_SMASHSPITE_DOOR,        DATA_SMASHSPITE,    DOOR_TYPE_ROOM,         BOUNDARY_NONE},
+    {GO_SMASH_KURT_DOOR_1,      DATA_SMASHSPITE,    DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    {GO_SMASH_KURT_DOOR_2,      DATA_SMASHSPITE,    DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    {GO_KURTALOS_DOOR,          DATA_KURTALOS,      DOOR_TYPE_ROOM,         BOUNDARY_NONE},
 };
 
 class instance_black_rook_hold_dungeon : public InstanceMapScript
@@ -37,9 +40,12 @@ public:
             SetBossNumber(MAX_ENCOUNTER);
         }
 
+        uint8 KurtalosState;
+
         void Initialize()
         {
             LoadDoorData(doorData);
+            KurtalosState = 0;
         }
 
         void OnCreatureCreate(Creature* creature)
@@ -65,6 +71,9 @@ public:
                 case GO_ILLYSANNA_DOOR_2:
                 case GO_ILLYSANNA_DOOR_3:
                 case GO_SMASHSPITE_DOOR:
+                case GO_SMASH_KURT_DOOR_1:
+                case GO_SMASH_KURT_DOOR_2:
+                case GO_KURTALOS_DOOR:
                     AddDoor(go, true);
                     break;
                 default:
@@ -82,11 +91,14 @@ public:
 
         void SetData(uint32 type, uint32 data)
         {
-            /*switch (type)
+            switch (type)
             {
+                case DATA_KURTALOS_STATE:
+                    KurtalosState = data;
+                    break;
                 default:
                     break;
-            }*/
+            }
         }
 
         /* ObjectGuid GetGuidData(uint32 type) const
@@ -101,6 +113,11 @@ public:
 
         uint32 GetData(uint32 type) const
         {
+            switch (type)
+            {
+                case DATA_KURTALOS_STATE:
+                    return KurtalosState;
+            }
             return 0;
         }
 

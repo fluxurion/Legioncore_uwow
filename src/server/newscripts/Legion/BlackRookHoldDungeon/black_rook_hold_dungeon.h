@@ -13,6 +13,8 @@ enum eData
     DATA_SMASHSPITE     = 2,
     DATA_KURTALOS       = 3,
     MAX_ENCOUNTER,
+
+    DATA_KURTALOS_STATE,
 };
 
 enum eCreatures
@@ -24,6 +26,14 @@ enum eCreatures
     NPC_SOUL_TORN_VANGUARD      = 100485,
     //Smashspite
     NPC_FEL_BAT                 = 100759,
+    //Kurtalos
+    NPC_KURTALOS                = 98965,
+    NPC_LATOSIUS                = 98970,
+    NPC_DANTALIONAX             = 99611,
+    NPC_SOUL_KURTALOS           = 101054,
+    NPC_IMAGE_OF_LATOSIUS       = 101028,
+    NPC_KURTALOS_BLADE_TRIGGER  = 100861, //Cast AT 198782
+    NPC_CLOUD_OF_HYPNOSIS       = 100994,
 };
 
 enum eGameObjects
@@ -37,6 +47,9 @@ enum eGameObjects
     GO_ILLYSANNA_DOOR_2         = 247399,
     GO_ILLYSANNA_DOOR_3         = 247400,
     GO_SMASHSPITE_DOOR          = 247402,
+    GO_SMASH_KURT_DOOR_1        = 245104,
+    GO_SMASH_KURT_DOOR_2        = 245105,
+    GO_KURTALOS_DOOR            = 247498,
 };
 
 #endif
