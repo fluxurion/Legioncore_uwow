@@ -13,9 +13,10 @@ update gameobject set phaseId = '5086' WHERE id = 245045;
 -- 5084 npc 96493
 -- 5305 npc 98354 98229
 -- 5322 npc 97297
+-- 5257 complete quest 38728
 
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
-('7705', '1', '0', '5322 5344 5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
+('7705', '1', '0', '5257 5322 5344 5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
 ('7705', '2', '0', '5086', '0', '0', '16', 'Legion. Global');
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup = 7705; 
@@ -242,3 +243,7 @@ REPLACE INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntr
 -- REPLACE INTO `taxi_path` (`ID`, `From`, `To`, `Cost`, `VerifiedBuild`) VALUES ('5286', '5000', '1732', '0', '0');
 
 -- Q: 38728
+UPDATE `creature_template` SET lootid = 93802, `ScriptName` = 'npc_q38728_tyranna' WHERE `entry` = 93802;
+REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
+('93802', '124672', '-100', '0', '0', '1', '1', '0');
+UPDATE `creature_template` SET flags_extra = 128, `ScriptName` = 'npc_q38728_progres1' WHERE `entry` in (101760);
