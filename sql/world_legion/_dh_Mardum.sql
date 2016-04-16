@@ -12,9 +12,10 @@ ALTER TABLE `phase_definitions` CHANGE `phaseId` `phaseId` VARCHAR(256) CHARACTE
 update gameobject set phaseId = '5086' WHERE id = 245045;
 -- 5084 npc 96493
 -- 5305 npc 98354 98229
+-- 5322 npc 97297
 
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
-('7705', '1', '0', '5344 5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
+('7705', '1', '0', '5322 5344 5595 5463 5305 5837 5324 5310 5116 5115 5114 5095 5094 5658 4881 5464 5461 4932 4931 4927 4925 5462 5161 5056 4883 6303 5534 5533 5381 5357 5160 4884 5203 5120 5117 5113 5343 5084 5077', '0', '0', '16', 'Legion. Global'),
 ('7705', '2', '0', '5086', '0', '0', '16', 'Legion. Global');
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup = 7705; 
@@ -68,7 +69,9 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('40222', '38725', '0', '0'),
 ('40051', '40222', '0', '0'),
 ('39516', '40051', '0', '0'),
-('39663', '39516', '0', '0');
+('39663', '39516', '0', '0'),
+('38728', '39663', '0', '0');
+
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -217,4 +220,25 @@ DELETE FROM smart_scripts WHERE entryorguid = 96652;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (96652, 0, 0, 0, 62, 0, 100, 0, 18823, 0, 0, 0, 11, 195022, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39516');
 
+REPLACE INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(15, 18937, 0, 0, 0, 9, 0, 39516, 0, 0, 0, 0, '', 'Show gossip option if Player has Quest 39516'),
+(15, 18936, 0, 0, 0, 9, 0, 39516, 0, 0, 0, 0, '', 'Show gossip option if Player has Quest 39516'),
+(15, 18935, 0, 0, 0, 9, 0, 39516, 0, 0, 0, 0, '', 'Show gossip option if Player has Quest 39516'),
+(15, 18435, 1, 0, 0, 9, 0, 39516, 0, 0, 0, 0, '', 'Show gossip option if Player has Quest 39516'),
+(15, 18823, 0, 0, 0, 9, 0, 39516, 0, 0, 0, 0, '', 'Show gossip option if Player has Quest 39516');
+
 -- Q: 39663
+-- NPC 96653 GOSSIP 18776 SPELL 192136
+UPDATE `creature_template` SET  `AIName`='SmartAI' WHERE `entry`=96653;
+DELETE FROM smart_scripts WHERE entryorguid = 96653;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(96653, 0, 0, 0, 62, 0, 100, 0, 18776, 0, 0, 0, 11, 192136, 18, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'At gossip select Q39663');
+
+REPLACE INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(15, 18776, 0, 0, 0, 14, 0, 39663, 0, 0, 1, 0, '', 'Show gossip option if Player not non Quest 39663');
+
+-- This should go to hotfixes db.
+-- REPLACE INTO `taxi_nodes` (`ID`, `PosX`, `PosY`, `PosZ`, `Name`, `MountCreatureID1`, `MountCreatureID2`, `MapOffset1`, `MapOffset2`, `MapID`, `ConditionID`, `LearnableIndex`, `Flags`, `VerifiedBuild`) VALUES ('5000', '1452', '1688', '47.3', 'Quest Path 5286: 7.0 DH-Mardum - Illidari Foothold -> The Fel Hammer (ELM)', '99257', '99257', '0', '0', '1481', '0', '0', '0', '0');
+-- REPLACE INTO `taxi_path` (`ID`, `From`, `To`, `Cost`, `VerifiedBuild`) VALUES ('5286', '5000', '1732', '0', '0');
+
+-- Q: 38728
