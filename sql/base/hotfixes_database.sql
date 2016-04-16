@@ -296,6 +296,345 @@ LOCK TABLES `armor_location` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `artifact`
+--
+
+DROP TABLE IF EXISTS `artifact`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Unk1` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unk2` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unk3` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpecID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkByte1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact`
+--
+
+LOCK TABLES `artifact` WRITE;
+/*!40000 ALTER TABLE `artifact` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_locale`
+--
+
+DROP TABLE IF EXISTS `artifact_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_locale`
+--
+
+LOCK TABLES `artifact_locale` WRITE;
+/*!40000 ALTER TABLE `artifact_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_appearance`
+--
+
+DROP TABLE IF EXISTS `artifact_appearance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_appearance` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkFloat1` float NOT NULL DEFAULT '0',
+  `UnkFloat2` float NOT NULL DEFAULT '0',
+  `Unk2` int(10) unsigned NOT NULL DEFAULT '0',
+  `PlayerConditionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArtifactAppearanceSetID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte4` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte5` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte6` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_appearance`
+--
+
+LOCK TABLES `artifact_appearance` WRITE;
+/*!40000 ALTER TABLE `artifact_appearance` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_appearance` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_appearance_locale`
+--
+
+DROP TABLE IF EXISTS `artifact_appearance_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_appearance_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_appearance_locale`
+--
+
+LOCK TABLES `artifact_appearance_locale` WRITE;
+/*!40000 ALTER TABLE `artifact_appearance_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_appearance_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_appearance_set`
+--
+
+DROP TABLE IF EXISTS `artifact_appearance_set`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_appearance_set` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name1` text,
+  `Name2` text,
+  `ArtifactAppearanceID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArtifactAppearanceID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArtifactID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_appearance_set`
+--
+
+LOCK TABLES `artifact_appearance_set` WRITE;
+/*!40000 ALTER TABLE `artifact_appearance_set` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_appearance_set` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_appearance_set_locale`
+--
+
+DROP TABLE IF EXISTS `artifact_appearance_set_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_appearance_set_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name1_lang` text,
+  `Name2_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_appearance_set_locale`
+--
+
+LOCK TABLES `artifact_appearance_set_locale` WRITE;
+/*!40000 ALTER TABLE `artifact_appearance_set_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_appearance_set_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_category`
+--
+
+DROP TABLE IF EXISTS `artifact_category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_category` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkShot1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_category`
+--
+
+LOCK TABLES `artifact_category` WRITE;
+/*!40000 ALTER TABLE `artifact_category` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_power`
+--
+
+DROP TABLE IF EXISTS `artifact_power`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_power` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkFloat1` float NOT NULL DEFAULT '0',
+  `UnkFloat2` float NOT NULL DEFAULT '0',
+  `UnkShot1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArtifactID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte3` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_power`
+--
+
+LOCK TABLES `artifact_power` WRITE;
+/*!40000 ALTER TABLE `artifact_power` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_power` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_power_link`
+--
+
+DROP TABLE IF EXISTS `artifact_power_link`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_power_link` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `artifactPowerID1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `artifactPowerID2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_power_link`
+--
+
+LOCK TABLES `artifact_power_link` WRITE;
+/*!40000 ALTER TABLE `artifact_power_link` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_power_link` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_power_rank`
+--
+
+DROP TABLE IF EXISTS `artifact_power_rank`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_power_rank` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkFloat1` float NOT NULL DEFAULT '0',
+  `artifactPowerID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `rank` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_power_rank`
+--
+
+LOCK TABLES `artifact_power_rank` WRITE;
+/*!40000 ALTER TABLE `artifact_power_rank` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_power_rank` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_quest_xp`
+--
+
+DROP TABLE IF EXISTS `artifact_quest_xp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_quest_xp` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkShot1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot5` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot6` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot7` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot8` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot9` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `UnkShot10` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_quest_xp`
+--
+
+LOCK TABLES `artifact_quest_xp` WRITE;
+/*!40000 ALTER TABLE `artifact_quest_xp` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_quest_xp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `artifact_unlock`
+--
+
+DROP TABLE IF EXISTS `artifact_unlock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `artifact_unlock` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `UnkShot1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `ArtifactAppearanceID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `artifactID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `UnkByte2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artifact_unlock`
+--
+
+LOCK TABLES `artifact_unlock` WRITE;
+/*!40000 ALTER TABLE `artifact_unlock` DISABLE KEYS */;
+/*!40000 ALTER TABLE `artifact_unlock` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `banned_addons`
 --
 
@@ -3760,6 +4099,78 @@ LOCK TABLES `quest_v2` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `quest_v2_cli_task`
+--
+
+DROP TABLE IF EXISTS `quest_v2_cli_task`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest_v2_cli_task` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags` int(11) NOT NULL DEFAULT '0',
+  `Unk` int(11) NOT NULL DEFAULT '0',
+  `Name` text,
+  `Name1` text,
+  `requestAura` int(11) NOT NULL DEFAULT '0',
+  `UniqueBitFlag` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `PlayerConditionID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Unk5` smallint(6) NOT NULL DEFAULT '0',
+  `requestQuest1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `requestQuest2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `requestQuest3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `SkillID` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Unk10` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `Unk11` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SkillRank` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk13` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk14` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk15` tinyint(4) NOT NULL DEFAULT '0',
+  `Unk16` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk17` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `level` tinyint(4) NOT NULL DEFAULT '0',
+  `Unk19` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Unk20` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `quest_v2_cli_task`
+--
+
+LOCK TABLES `quest_v2_cli_task` WRITE;
+/*!40000 ALTER TABLE `quest_v2_cli_task` DISABLE KEYS */;
+/*!40000 ALTER TABLE `quest_v2_cli_task` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `quest_v2_cli_task_locale`
+--
+
+DROP TABLE IF EXISTS `quest_v2_cli_task_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest_v2_cli_task_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `Name1_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `quest_v2_cli_task_locale`
+--
+
+LOCK TABLES `quest_v2_cli_task_locale` WRITE;
+/*!40000 ALTER TABLE `quest_v2_cli_task_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `quest_v2_cli_task_locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `quest_xp`
 --
 
@@ -4059,12 +4470,12 @@ CREATE TABLE `research_project` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `Name` text,
   `Description` text,
-  `Rare` int(10) unsigned NOT NULL DEFAULT '0',
-  `BranchID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
   `IconName` text,
-  `Complexity` int(10) unsigned NOT NULL DEFAULT '0',
-  `RequiredCurrencyAmount` int(10) unsigned NOT NULL DEFAULT '0',
+  `BranchID` smallint(6) NOT NULL DEFAULT '0',
+  `Rare` tinyint(4) NOT NULL DEFAULT '0',
+  `Complexity` tinyint(4) NOT NULL DEFAULT '0',
+  `RequiredCurrencyAmount` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4115,10 +4526,10 @@ DROP TABLE IF EXISTS `research_site`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `research_site` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `MapID` int(10) unsigned NOT NULL DEFAULT '0',
   `POIid` int(10) unsigned NOT NULL DEFAULT '0',
   `areaName` text,
-  `flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `MapID` smallint(6) NOT NULL DEFAULT '0',
+  `flags` tinyint(4) NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -4278,7 +4689,9 @@ DROP TABLE IF EXISTS `item_sparse`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_sparse` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
-  `Flags` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags1` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags2` int(10) unsigned NOT NULL DEFAULT '0',
+  `Flags3` int(10) unsigned NOT NULL DEFAULT '0',
   `UnkFloat1` float NOT NULL DEFAULT '0',
   `UnkFloat2` float NOT NULL DEFAULT '0',
   `BuyPrice` int(10) unsigned NOT NULL DEFAULT '0',
@@ -4288,10 +4701,28 @@ CREATE TABLE `item_sparse` (
   `RequiredSpell` int(10) unsigned NOT NULL DEFAULT '0',
   `MaxCount` int(11) NOT NULL DEFAULT '0',
   `Stackable` int(11) NOT NULL DEFAULT '0',
-  `ItemStatAllocation` int(11) NOT NULL DEFAULT '0',
-  `ItemStatSocketCostMultiplier` float NOT NULL DEFAULT '0',
+  `ItemStatAllocation1` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation2` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation3` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation4` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation5` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation6` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation7` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation8` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation9` int(11) NOT NULL DEFAULT '0',
+  `ItemStatAllocation10` int(11) NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier1` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier2` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier3` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier4` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier5` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier6` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier7` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier8` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier9` float NOT NULL DEFAULT '0',
+  `ItemStatSocketCostMultiplier10` float NOT NULL DEFAULT '0',
   `RangedModRange` float NOT NULL DEFAULT '0',
-  `Name` text,
+  `Name1` text,
   `Name2` text,
   `Name3` text,
   `Name4` text,
@@ -4304,7 +4735,16 @@ CREATE TABLE `item_sparse` (
   `RequiredSkill` smallint(5) unsigned NOT NULL DEFAULT '0',
   `RequiredSkillRank` smallint(5) unsigned NOT NULL DEFAULT '0',
   `RequiredReputationFaction` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ItemStatValue` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue1` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue2` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue3` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue4` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue5` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue6` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue7` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue8` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue9` smallint(6) NOT NULL DEFAULT '0',
+  `ItemStatValue10` smallint(6) NOT NULL DEFAULT '0',
   `ScalingStatDistribution` smallint(5) unsigned NOT NULL DEFAULT '0',
   `Delay` smallint(5) unsigned NOT NULL DEFAULT '0',
   `PageText` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -4328,7 +4768,16 @@ CREATE TABLE `item_sparse` (
   `RequiredCityRank` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `RequiredReputationRank` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `ContainerSlots` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ItemStatType` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType1` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType2` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType3` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType4` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType5` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType6` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType7` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType8` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType9` tinyint(4) NOT NULL DEFAULT '0',
+  `ItemStatType10` tinyint(4) NOT NULL DEFAULT '0',
   `DamageType` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `Bonding` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `LanguageID` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -4336,7 +4785,9 @@ CREATE TABLE `item_sparse` (
   `Material` tinyint(4) NOT NULL DEFAULT '0',
   `Sheath` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `TotemCategory` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `SocketColor` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SocketColor1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SocketColor2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `SocketColor3` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `CurrencySubstitutionID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `CurrencySubstitutionCount` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `ArtifactID` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -4365,7 +4816,7 @@ DROP TABLE IF EXISTS `item_sparse_locale`;
 CREATE TABLE `item_sparse_locale` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `locale` varchar(4) NOT NULL,
-  `Name_lang` text,
+  `Name1_lang` text,
   `Name2_lang` text,
   `Name3_lang` text,
   `Name4_lang` text,
@@ -6632,10 +7083,10 @@ DROP TABLE IF EXISTS `spell_totems`;
 CREATE TABLE `spell_totems` (
   `ID` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellID` int(10) unsigned NOT NULL DEFAULT '0',
-  `TotemCategory1` int(10) unsigned NOT NULL DEFAULT '0',
-  `TotemCategory2` int(10) unsigned NOT NULL DEFAULT '0',
-  `Totem1` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `Totem2` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Totem1` int(10) unsigned NOT NULL DEFAULT '0',
+  `Totem2` int(10) unsigned NOT NULL DEFAULT '0',
+  `TotemCategory1` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `TotemCategory2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -9038,5 +9489,60 @@ CREATE TABLE `vehicle_seat` (
 LOCK TABLES `vehicle_seat` WRITE;
 /*!40000 ALTER TABLE `vehicle_seat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `vehicle_seat` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vignette`
+--
+
+DROP TABLE IF EXISTS `vignette`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vignette` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Name` text,
+  `UnkFloat1` float NOT NULL DEFAULT '0',
+  `UnkFloat2` float NOT NULL DEFAULT '0',
+  `PlayerConditionID` int(10) unsigned NOT NULL DEFAULT '0',
+  `QuestID` int(10) unsigned NOT NULL DEFAULT '0',
+  `Unk1` tinyint(4) NOT NULL DEFAULT '0',
+  `Unk2` tinyint(4) NOT NULL DEFAULT '0',
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vignette`
+--
+
+LOCK TABLES `vignette` WRITE;
+/*!40000 ALTER TABLE `vignette` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vignette` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vignette_locale`
+--
+
+DROP TABLE IF EXISTS `vignette_locale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vignette_locale` (
+  `ID` int(10) unsigned NOT NULL DEFAULT '0',
+  `locale` varchar(4) NOT NULL,
+  `Name_lang` text,
+  `VerifiedBuild` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`,`locale`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vignette_locale`
+--
+
+LOCK TABLES `vignette_locale` WRITE;
+/*!40000 ALTER TABLE `vignette_locale` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vignette_locale` ENABLE KEYS */;
 UNLOCK TABLES;
 

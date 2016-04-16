@@ -2673,7 +2673,7 @@ void ObjectMgr::LoadItemTemplates()
         itemTemplate.Class = db2Data->Class;
         itemTemplate.SubClass = db2Data->SubClass;
         itemTemplate.SoundOverrideSubclass = db2Data->SoundOverrideSubclass;
-        itemTemplate.Name1 = sparse->Name->Str[DEFAULT_LOCALE];
+        itemTemplate.Name1 = sparse->Name1->Str[DEFAULT_LOCALE];
         itemTemplate.FileDataID = db2Data->FileDataID;
         itemTemplate.GroupSoundsID = db2Data->GroupSoundsID;
         itemTemplate.Quality = sparse->Quality;
@@ -10059,7 +10059,7 @@ void ObjectMgr::LoadCharacterTemplates()
                 templ.MapID = fields[7].GetUInt16();
                 templ.Money = fields[8].GetUInt32();
 
-                if (QueryResult result = WorldDatabase.PQuery("SELECT `ItemID`, `Count` FROM `character_template_item` WHERE `ClassID` = '%u';", classID))
+                if (QueryResult result = WorldDatabase.PQuery("SELECT `ItemID`, `Count` FROM `character_template_item` WHERE `ClassID` = '%u' AND `RaceID` = '%u';", classID, factionGroup))
                 {
                     do
                     {

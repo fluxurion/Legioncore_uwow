@@ -299,7 +299,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     bool HasMovementUpdate = (flags & UPDATEFLAG_LIVING) != 0;
     bool HasMovementTransport = (flags & UPDATEFLAG_GO_TRANSPORT_POSITION) != 0;
     bool Stationary = (flags & UPDATEFLAG_STATIONARY_POSITION) != 0;
-    bool CombatVictim = (flags & UPDATEFLAG_HAS_TARGET) != 0;
+    bool CombatVictim = ((flags & UPDATEFLAG_HAS_TARGET) != 0) && ToUnit() && ToUnit()->getVictim();
     bool ServerTime = (flags & UPDATEFLAG_TRANSPORT) != 0;
     bool VehicleCreate = (flags & UPDATEFLAG_VEHICLE) != 0;
     bool AnimKitCreate = (flags & UPDATEFLAG_ANIMKITS) != 0;

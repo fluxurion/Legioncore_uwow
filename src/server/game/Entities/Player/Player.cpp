@@ -856,15 +856,10 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
         uint8 FactionGroup = GetTeamId() == TEAM_HORDE ? FACTION_MASK_HORDE : FACTION_MASK_ALLIANCE;
         for (CharacterTemplateItem const& v : charTemplate->Items)
             if (v.ClassID == createInfo->Class && (v.FactionGroup & FactionGroup))
+            {
                 if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
-                    if (pProto->GetInventoryType() == INVTYPE_BAG)
-                        StoreNewItemInBestSlots(v.ItemID, v.Count);
-
-        for (CharacterTemplateItem const& v : charTemplate->Items)
-            if (v.ClassID == createInfo->Class && (v.FactionGroup & FactionGroup))
-                if (ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(v.ItemID))
-                    if (pProto->GetInventoryType() != INVTYPE_BAG)
-                        StoreNewItemInBestSlots(v.ItemID, v.Count);
+                    StoreNewItemInBestSlots(v.ItemID, v.Count);
+            }
     }
     else if (loadoutItem)
     {

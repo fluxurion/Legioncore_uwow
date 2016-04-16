@@ -58,30 +58,36 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT, "SELECT ID, Name_lang FROM artifact_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ArtifactAppearance.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE, "SELECT ID, Name, Unk1, UnkFloat1, UnkFloat2, Unk2, UnkShot1, UnkByte1, UnkByte2, UnkByte3, UnkByte4, UnkByte5, UnkByte6 FROM artifact_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE, "SELECT ID, Name, Flags, UnkFloat1, UnkFloat2, Unk2, PlayerConditionID, ArtifactAppearanceSetID, "
+        "UnkByte2, UnkByte3, UnkByte4, UnkByte5, UnkByte6 FROM artifact_appearance ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT_APPEARANCE, "SELECT ID, Name_lang FROM artifact_appearance_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ArtifactAppearanceSet.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE_SET, "SELECT ID, Name1, Name2, UnkShot1, UnkShot2, UnkByte1, UnkByte2, UnkByte3 FROM artifact_appearance_set ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_APPEARANCE_SET, "SELECT ID, Name1, Name2, ArtifactAppearanceID1, ArtifactAppearanceID2, ArtifactID, "
+        "UnkByte2, UnkByte3 FROM artifact_appearance_set ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_ARTIFACT_APPEARANCE_SET, "SELECT ID, Name1_lang, Name2_lang FROM artifact_appearance_set_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // ArtifactCategory.db2
     PrepareStatement(HOTFIX_SEL_ARTIFACT_CATEGORY, "SELECT ID, UnkShot1, UnkShot2 FROM artifact_category ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ArtifactPower.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER, "SELECT ID, UnkFloat1, UnkFloat2, UnkShot1, UnkByte1, UnkByte2, UnkByte3 FROM artifact_power ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER, "SELECT ID, UnkFloat1, UnkFloat2, UnkShot1, ArtifactID, UnkByte2, UnkByte3 FROM artifact_power"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ArtifactPowerLink.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_LINK, "SELECT ID, UnkShot1, UnkShot2 FROM artifact_power_link ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_LINK, "SELECT ID, artifactPowerID1, artifactPowerID2 FROM artifact_power_link ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ArtifactPowerRank.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_RANK, "SELECT ID, Unk1, UnkFloat1, UnkShot1, UnkShot2, UnkByte1 FROM artifact_power_rank ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_POWER_RANK, "SELECT ID, SpellID, UnkFloat1, artifactPowerID, UnkShot2, rank FROM artifact_power_rank"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
-    // ArtifactQuestXP.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_QUEST_XP, "SELECT ID, UnkShot1, UnkShot2, UnkShot3, UnkShot4, UnkShot5, UnkShot6, UnkShot7, UnkShot8, UnkShot9, UnkShot10 FROM artifact_quest_xp ORDER BY ID DESC", CONNECTION_SYNCH);
+    // ArtifactQuestXp.db2
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_QUEST_XP, "SELECT ID, UnkShot1, UnkShot2, UnkShot3, UnkShot4, UnkShot5, UnkShot6, UnkShot7, UnkShot8, "
+        "UnkShot9, UnkShot10 FROM artifact_quest_xp ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ArtifactUnlock.db2
-    PrepareStatement(HOTFIX_SEL_ARTIFACT_UNLOCK, "SELECT ID, UnkShot1, UnkShot2, UnkByte1, UnkByte2 FROM artifact_unlock ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_ARTIFACT_UNLOCK, "SELECT ID, UnkShot1, ArtifactAppearanceID, artifactID, UnkByte2 FROM artifact_unlock"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BannedAddons.db2
     PrepareStatement(HOTFIX_SEL_BANNED_ADDONS, "SELECT ID, NameMD51, NameMD52, NameMD53, NameMD54, VersionMD51, VersionMD52, VersionMD53, "
@@ -440,9 +446,10 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_QUEST_V2, "SELECT ID, UniqueBitFlag FROM quest_v2 ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // QuestV2CliTask.db2
-    PrepareStatement(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Flags, Unk, Name, Name1, Unk2, Unk3, Unk4, Unk5, Unk6, "
-    "Unk7, Unk8, Unk9, Unk10, Unk11, Unk12, Unk13, Unk14, Unk15, Unk16, Unk17, Unk18, Unk19, Unk20 FROM quest_v2_cli_task ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Name_lang , Name1_lang FROM quest_v2_cli_task_locale WHERE locale = ?", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Flags, Unk, Name, Name1, requestAura, UniqueBitFlag, PlayerConditionID, Unk5, "
+        "requestQuest1, requestQuest2, requestQuest3, SkillID, Unk10, Unk11, SkillRank, Unk13, Unk14, Unk15, Unk16, Unk17, level, Unk19, Unk20"
+        " FROM quest_v2_cli_task ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_QUEST_V2_CLI_TASK, "SELECT ID, Name_lang, Name1_lang FROM quest_v2_cli_task_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // QuestXp.db2
     PrepareStatement(HOTFIX_SEL_QUEST_XP, "SELECT ID, Difficulty1, Difficulty2, Difficulty3, Difficulty4, Difficulty5, Difficulty6, Difficulty7, "
@@ -499,15 +506,21 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         "`Trigger` FROM item_effect ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // ItemSparse.db2
-    PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Flags, UnkFloat1, UnkFloat2, BuyPrice, SellPrice, AllowableClass, AllowableRace, "
-        "RequiredSpell, MaxCount, Stackable, ItemStatAllocation, ItemStatSocketCostMultiplier, RangedModRange, Name, Name2, Name3, Name4, "
-        "Description, BagFamily, ArmorDamageModifier, Duration, StatScalingFactor, ItemLevel, RequiredSkill, RequiredSkillRank, "
-        "RequiredReputationFaction, ItemStatValue, ScalingStatDistribution, Delay, PageText, StartQuest, LockID, RandomProperty, RandomSuffix, "
-        "ItemSet, Area, Map, SocketBonus, GemProperties, ItemLimitCategory, HolidayID, ItemNameDescriptionID, Quality, BuyCount, InventoryType, "
-        "RequiredLevel, RequiredHonorRank, RequiredCityRank, RequiredReputationRank, ContainerSlots, ItemStatType, DamageType, Bonding, LanguageID, "
-        "PageMaterial, Material, Sheath, TotemCategory, SocketColor, CurrencySubstitutionID, CurrencySubstitutionCount, ArtifactID, UnkLegion2"
-        " FROM item_sparse ORDER BY ID DESC", CONNECTION_SYNCH);
-    PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Name_lang, Name2_lang, Name3_lang, Name4_lang, Description_lang FROM item_sparse_locale"
+    PrepareStatement(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Flags1, Flags2, Flags3, UnkFloat1, UnkFloat2, BuyPrice, SellPrice, AllowableClass, "
+        "AllowableRace, RequiredSpell, MaxCount, Stackable, ItemStatAllocation1, ItemStatAllocation2, ItemStatAllocation3, ItemStatAllocation4, "
+        "ItemStatAllocation5, ItemStatAllocation6, ItemStatAllocation7, ItemStatAllocation8, ItemStatAllocation9, ItemStatAllocation10, "
+        "ItemStatSocketCostMultiplier1, ItemStatSocketCostMultiplier2, ItemStatSocketCostMultiplier3, ItemStatSocketCostMultiplier4, "
+        "ItemStatSocketCostMultiplier5, ItemStatSocketCostMultiplier6, ItemStatSocketCostMultiplier7, ItemStatSocketCostMultiplier8, "
+        "ItemStatSocketCostMultiplier9, ItemStatSocketCostMultiplier10, RangedModRange, Name1, Name2, Name3, Name4, Description, BagFamily, "
+        "ArmorDamageModifier, Duration, StatScalingFactor, ItemLevel, RequiredSkill, RequiredSkillRank, RequiredReputationFaction, ItemStatValue1, "
+        "ItemStatValue2, ItemStatValue3, ItemStatValue4, ItemStatValue5, ItemStatValue6, ItemStatValue7, ItemStatValue8, ItemStatValue9, "
+        "ItemStatValue10, ScalingStatDistribution, Delay, PageText, StartQuest, LockID, RandomProperty, RandomSuffix, ItemSet, Area, Map, "
+        "SocketBonus, GemProperties, ItemLimitCategory, HolidayID, ItemNameDescriptionID, Quality, BuyCount, InventoryType, RequiredLevel, "
+        "RequiredHonorRank, RequiredCityRank, RequiredReputationRank, ContainerSlots, ItemStatType1, ItemStatType2, ItemStatType3, ItemStatType4, "
+        "ItemStatType5, ItemStatType6, ItemStatType7, ItemStatType8, ItemStatType9, ItemStatType10, DamageType, Bonding, LanguageID, PageMaterial, "
+        "Material, Sheath, TotemCategory, SocketColor1, SocketColor2, SocketColor3, CurrencySubstitutionID, CurrencySubstitutionCount, ArtifactID, "
+        "UnkLegion2 FROM item_sparse ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_ITEM_SPARSE, "SELECT ID, Name1_lang, Name2_lang, Name3_lang, Name4_lang, Description_lang FROM item_sparse_locale"
         " WHERE locale = ?", CONNECTION_SYNCH);
 
     // ItemExtendedCost.db2
@@ -745,8 +758,8 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_PVP_TALENT_UNLOCK, "SELECT ID, `Row`, `Column`, HonorLevel FROM pvp_talent_unlock ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // PvpTalent.db2
-    PrepareStatement(HOTFIX_SEL_PVP_TALENT, "SELECT ID, `Row`, `Column`, SpellID, Unknown4, ClassID, SpecializationID, Flags, OverrideSpellID, `Desc`"
-        " FROM pvp_talent ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_PVP_TALENT, "SELECT ID, `Row`, `Column`, SpellID, Unknown4, ClassID, SpecializationID, Flags, OverrideSpellID, "
+        "`Desc` FROM pvp_talent ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_PVP_TALENT, "SELECT ID, Desc_lang FROM pvp_talent_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // SpellTotems.db2
@@ -1009,6 +1022,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
         " FROM vehicle_seat ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // Vignette.db2
-    PrepareStatement(HOTFIX_SEL_VIGNETTE, "SELECT ID, Name, UnkFloat1, UnkFloat2, QuestUnk, QuestID, Unk1, Unk2 FROM vignette ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_VIGNETTE, "SELECT ID, Name, UnkFloat1, UnkFloat2, PlayerConditionID, QuestID, Unk1, Unk2 FROM vignette"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_VIGNETTE, "SELECT ID, Name_lang FROM vignette_locale WHERE locale = ?", CONNECTION_SYNCH);
 }

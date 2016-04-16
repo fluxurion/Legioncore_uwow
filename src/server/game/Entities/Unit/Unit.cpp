@@ -24459,9 +24459,10 @@ uint8 Unit::getLevelForTarget(WorldObject const* target) const
     int32 levelMin = cInfo->ScaleLevelMin;
     int32 levelMax = cInfo->ScaleLevelMax;
 
-    if (creature->isWorldBoss())
-        level = unit->getLevel() + sWorld->getIntConfig(CONFIG_WORLD_BOSS_LEVEL_DIFF);
-    else if (levelMin && levelMax)
+    // if (creature->isWorldBoss())
+        // level = unit->getLevel() + sWorld->getIntConfig(CONFIG_WORLD_BOSS_LEVEL_DIFF);
+    // else 
+    if (levelMin && levelMax)
     {
         if (levelMin <= levelTarget && levelTarget <= levelMax)
             level = levelTarget;

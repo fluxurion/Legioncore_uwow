@@ -48,6 +48,15 @@
 #define MAX_VEHICLE_SEATS 8
 #define MAX_TAXI_TEAMS 2
 
+// #define MAX_ITEM_PROTO_FLAGS 3
+// #define MAX_ITEM_PROTO_DAMAGES 2                            // changed in 3.1.0
+// #define MAX_ITEM_PROTO_SOCKETS 3
+// #define MAX_ITEM_PROTO_SPELLS  5
+// #define MAX_ITEM_PROTO_STATS  10
+
+// #define MIN_ITEM_LEVEL 1
+// #define MAX_ITEM_LEVEL 1000
+
 #pragma pack(push, 1)
 
 struct AreaTableEntry
@@ -1517,7 +1526,7 @@ struct ItemSparseEntry
     int32       ItemStatAllocation[MAX_ITEM_PROTO_STATS];           // 12 - 21
     float       ItemStatSocketCostMultiplier[MAX_ITEM_PROTO_STATS]; // 22 - 31
     float       RangedModRange;                                     // 32
-    LocalizedString* Name;                                          // 33
+    LocalizedString* Name1;                                         // 33
     LocalizedString* Name2;                                         // 34
     LocalizedString* Name3;                                         // 35
     LocalizedString* Name4;                                         // 36
