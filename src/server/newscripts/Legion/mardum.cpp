@@ -1153,6 +1153,41 @@ public:
         }
     };
 };
+
+//245728
+class go_q38729 : public GameObjectScript
+{
+public:
+    go_q38729() : GameObjectScript("go_q38729") { }
+
+    struct go_q38729AI : public GameObjectAI
+    {
+        go_q38729AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 38729,
+            CREDIT = 100651,
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetReqKillOrCastCurrentCount(QUEST, CREDIT))
+                return true;
+
+            player->KilledMonsterCredit(CREDIT);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q38729AI(go);
+    }
+};
 void AddSC_Mardum()
 {
     new sceneTrigger_dh_init();
@@ -1177,4 +1212,5 @@ void AddSC_Mardum()
     new npc_q39495_prolifica();
     new npc_q38728_tyranna();
     new npc_q38728_progres1();
+    new go_q38729();
 }

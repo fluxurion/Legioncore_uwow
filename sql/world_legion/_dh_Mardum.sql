@@ -49,7 +49,8 @@ REPLACE INTO `spell_area` (`area`, `spell`, `quest_start`, `quest_end`, `aura_sp
 ('7705', '193525', '0', '40077', '0', '0', '2', '1', '10', '74'), -- 1106
 ('7705', '191677', '0', '40077', '0', '0', '2', '0', '10', '64'), -- 1116
 ('7705', '191466', '40378', '0', '0', '0', '2', '0', '66', '64'), -- 1116
-('7705', '190793', '40379', '0', '0', '0', '2', '0', '10', '64'); -- 1077
+('7705', '190793', '40379', '0', '0', '0', '2', '0', '10', '64'), -- 1077
+('7705', '192140', '38729', '0', '0', '0', '2', '0', '64', '64');
 
 -- Quest chaine fixes.
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
@@ -71,8 +72,8 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('40051', '40222', '0', '0'),
 ('39516', '40051', '0', '0'),
 ('39663', '39516', '0', '0'),
-('38728', '39663', '0', '0');
-
+('38728', '39663', '0', '0'),
+('38729', '38728', '0', '0');
 
 -- Q: 40077
 UPDATE `quest_objectives` SET `ObjectID` = '244898' WHERE `quest_objectives`.`ID` = 280292 AND `QuestID` = 40077;
@@ -247,3 +248,9 @@ UPDATE `creature_template` SET lootid = 93802, `ScriptName` = 'npc_q38728_tyrann
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('93802', '124672', '-100', '0', '0', '1', '1', '0');
 UPDATE `creature_template` SET flags_extra = 128, `ScriptName` = 'npc_q38728_progres1' WHERE `entry` in (101760);
+
+-- Q: 38729 GO 245728
+UPDATE `gameobject_template` SET `ScriptName` = 'go_q38729' WHERE `gameobject_template`.`entry` in(245728);
+-- go 244466 cast 192140 at complete  + 192141
+UPDATE `gameobject_template` SET `flags` = '0' WHERE `gameobject_template`.`entry` = 244466;
+REPLACE INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `caster`, `target`, `hastype`, `hastalent`, `hastype2`, `hastalent2`, `chance`, `cooldown`, `duration`, `hitmask`, `removeMask`, `targetCountType`, `targetCount`, `actiontype`, `group`, `comment`) VALUES ('192140', '192141', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '-1', '0', '0', 'Q: 38729 GO 245728');
