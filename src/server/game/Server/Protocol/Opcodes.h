@@ -970,7 +970,7 @@ enum OpcodeServer : uint16
     SMSG_DUEL_WINNER                                  = 0x2673,
     SMSG_DURABILITY_DAMAGE_DEATH                      = 0x2787,
     SMSG_EMOTE                                        = 0x27FE,
-    SMSG_ENABLE_BARBER_SHOP                           = 0xBADD,
+    SMSG_ENABLE_BARBER_SHOP                           = 0x26E7,
     SMSG_ENCHANTMENT_LOG                              = 0x2750,
     SMSG_ENCOUNTER_END                                = 0x27B9,
     SMSG_ENCOUNTER_START                              = 0xBADD,

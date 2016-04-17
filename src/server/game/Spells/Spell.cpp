@@ -5038,29 +5038,32 @@ void Spell::SendSpellExecuteLog()
 
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
-        WorldPackets::CombatLog::SpellExecuteLog::SpellLogEffect spellLogEffect;
+        if (SpellEffectInfo const* effect = m_spellInfo->GetEffect(i))
+        {
+            WorldPackets::CombatLog::SpellExecuteLog::SpellLogEffect spellLogEffect;
 
-        spellLogEffect.Effect = m_spellInfo->GetEffect(i, m_diffMode)->Effect;
+            spellLogEffect.Effect = effect->Effect;
 
-        for (SpellLogEffectPowerDrainParams const& powerDrainParam : _powerDrainTargets[i])
-            spellLogEffect.PowerDrainTargets.push_back(powerDrainParam);
+            for (SpellLogEffectPowerDrainParams const& powerDrainParam : _powerDrainTargets[i])
+                spellLogEffect.PowerDrainTargets.push_back(powerDrainParam);
 
-        for (SpellLogEffectExtraAttacksParams const& extraAttacksTarget : _extraAttacksTargets[i])
-            spellLogEffect.ExtraAttacksTargets.push_back(extraAttacksTarget);
+            for (SpellLogEffectExtraAttacksParams const& extraAttacksTarget : _extraAttacksTargets[i])
+                spellLogEffect.ExtraAttacksTargets.push_back(extraAttacksTarget);
 
-        for (SpellLogEffectDurabilityDamageParams const& durabilityDamageTarget : _durabilityDamageTargets[i])
-            spellLogEffect.DurabilityDamageTargets.push_back(durabilityDamageTarget);
+            for (SpellLogEffectDurabilityDamageParams const& durabilityDamageTarget : _durabilityDamageTargets[i])
+                spellLogEffect.DurabilityDamageTargets.push_back(durabilityDamageTarget);
 
-        for (SpellLogEffectGenericVictimParams const& genericVictimTarget : _genericVictimTargets[i])
-            spellLogEffect.GenericVictimTargets.push_back(genericVictimTarget);
+            for (SpellLogEffectGenericVictimParams const& genericVictimTarget : _genericVictimTargets[i])
+                spellLogEffect.GenericVictimTargets.push_back(genericVictimTarget);
 
-        for (SpellLogEffectTradeSkillItemParams const& tradeSkillTarget : _tradeSkillTargets[i])
-            spellLogEffect.TradeSkillTargets.push_back(tradeSkillTarget);
+            for (SpellLogEffectTradeSkillItemParams const& tradeSkillTarget : _tradeSkillTargets[i])
+                spellLogEffect.TradeSkillTargets.push_back(tradeSkillTarget);
 
-        for (SpellLogEffectFeedPetParams const& feedPetTarget : _feedPetTargets[i])
-            spellLogEffect.FeedPetTargets.push_back(feedPetTarget);
+            for (SpellLogEffectFeedPetParams const& feedPetTarget : _feedPetTargets[i])
+                spellLogEffect.FeedPetTargets.push_back(feedPetTarget);
 
-        spellExecuteLog.Effects.push_back(spellLogEffect);
+            spellExecuteLog.Effects.push_back(spellLogEffect);
+        }
     }
 
     m_caster->SendCombatLogMessage(&spellExecuteLog);
