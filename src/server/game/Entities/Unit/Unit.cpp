@@ -10258,6 +10258,9 @@ FactionTemplateEntry const* Unit::getFactionTemplateEntry() const
 // function based on function Unit::UnitReaction from 13850 client
 ReputationRank Unit::GetReactionTo(Unit const* target) const
 {
+    if (!IsInWorld() || !target->IsInWorld())
+        return REP_FRIENDLY;
+
     // always friendly to self
     if (this == target)
         return REP_FRIENDLY;
