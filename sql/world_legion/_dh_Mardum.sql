@@ -83,6 +83,7 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_q40077' WHERE `gameobject_te
 UPDATE `creature_template` SET `ScriptName` = 'npc_q40077' WHERE `creature_template`.`entry` = 93011;
 
 -- Q: 40378
+UPDATE gameobject_template SET SpellStateAnimKitID = 1256 WHERE entry IN (241751,241756,241757);
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q40378' WHERE `gameobject_template`.`entry` = 241751;
 REPLACE INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `caster`, `target`, `hastype`, `hastalent`, `hastype2`, `hastalent2`, `chance`, `cooldown`, `duration`, `hitmask`, `removeMask`, `targetCountType`, `targetCount`, `actiontype`, `group`, `comment`) VALUES
  ('200255', '200175', '0', '5', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '-1', '0', '0', '');
