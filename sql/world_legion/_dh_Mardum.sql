@@ -107,7 +107,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q39049' WHERE `entry` = 93105
 
 -- Q: 38759
 UPDATE `gameobject_template` SET `ScriptName` = 'go_q38759' WHERE `gameobject_template`.`entry` in (242989, 244916, 242987, 242990);
-UPDATE `creature_template` SET lootid = 98986 WHERE `entry` = 95226;
+UPDATE `creature_template` SET lootid = 95226 WHERE `entry` = 95226;
 REPLACE INTO `creature_loot_template` (`entry`, `item`, `ChanceOrQuestChance`, `lootmode`, `groupid`, `mincountOrRef`, `maxcount`, `shared`) VALUES 
 ('95226', '128227', '-100', '0', '0', '1', '1', '0');
 

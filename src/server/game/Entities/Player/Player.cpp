@@ -965,8 +965,6 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
     SetFullHealth();
 
-    SetRestBonus(2.0f);
-
     return true;
 }
 
@@ -18125,6 +18123,8 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
         SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_FIELD_NEXT_LEVEL_XP)/72000)*bubble);
     }
+    else
+        SetRestBonus(2.0f);
 
     // load battle pets journal ans slots before spells and other
     _battlePetMgr->LoadFromDB(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_BATTLE_PETS),
@@ -25665,7 +25665,7 @@ void Player::UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId)
                 if (needQuest && !canStart)
                     continue;
 
-                if (CanAddQuest(quest, true))
+                if (CanAddQuest(quest, true) && CanTakeQuest(quest, true))
                 {
                     AddQuest(quest, NULL);
                     UpdateQuestObjectiveData(quest);

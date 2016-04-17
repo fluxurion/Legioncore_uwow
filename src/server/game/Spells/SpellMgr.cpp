@@ -2617,8 +2617,8 @@ void SpellMgr::LoadSpellVisual()
     mSpellVisualMap.clear();    // need for reload case
     mSpellVisualPlayOrphanMap.clear();    // need for reload case
 
-    //                                                  0            1            2            3             4            5        6
-    QueryResult result = WorldDatabase.Query("SELECT spellId, SpellVisualID, MissReason, ReflectStatus, TravelSpeed, SpeedAsTime, type FROM spell_visual");
+    //                                                  0            1            2            3             4            5        6        7
+    QueryResult result = WorldDatabase.Query("SELECT spellId, SpellVisualID, MissReason, ReflectStatus, TravelSpeed, SpeedAsTime, type, HasPosition FROM spell_visual");
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 visual spells. DB table `spell_visual` is empty.");
@@ -2637,6 +2637,7 @@ void SpellMgr::LoadSpellVisual()
         float TravelSpeed = fields[4].GetFloat();
         bool SpeedAsTime = bool(fields[5].GetUInt8());
         int32 type = fields[6].GetUInt8();
+        bool HasPosition = bool(fields[7].GetUInt8());
 
         SpellInfo const* spellInfo = GetSpellInfo(abs(spellId));
         if (!spellInfo)
@@ -2653,6 +2654,7 @@ void SpellMgr::LoadSpellVisual()
         templink.TravelSpeed = TravelSpeed;
         templink.SpeedAsTime = SpeedAsTime;
         templink.type = type;
+        templink.HasPosition = HasPosition;
         mSpellVisualMap[spellId].push_back(templink);
 
         ++count;

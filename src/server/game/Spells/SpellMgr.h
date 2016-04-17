@@ -867,6 +867,7 @@ struct SpellVisual
     int16 ReflectStatus;
     float TravelSpeed;
     bool SpeedAsTime;
+    bool HasPosition;
     int16 type;
 };
 

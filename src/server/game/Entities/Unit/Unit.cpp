@@ -23576,6 +23576,8 @@ void DelayCastEvent::Execute(Unit *caster)
 void Unit::SendSpellCreateVisual(SpellInfo const* spellInfo, Position const* position, Unit* target, uint32 type, uint32 visualId)
 {
     bool exist = false;
+    bool HasPosition = false;
+    Position TargetPosition{0.0f,0.0f,0.0f,0.0f};
 
     WorldPackets::Spells::PlaySpellVisual visual;
     visual.Source = GetGUID();
@@ -23600,6 +23602,7 @@ void Unit::SendSpellCreateVisual(SpellInfo const* spellInfo, Position const* pos
             if (x.TravelSpeed)
                 visual.TravelSpeed = x.TravelSpeed;
             visual.SpeedAsTime = x.SpeedAsTime;
+            HasPosition = x.HasPosition;
             exist = true;
             if (!type && roll_chance_f(chance))
                 break;
@@ -23609,13 +23612,14 @@ void Unit::SendSpellCreateVisual(SpellInfo const* spellInfo, Position const* pos
     if (!exist)
         return;
 
-    if (visual.TravelSpeed)
+    if (visual.TravelSpeed && HasPosition)
     {
         if (target && target != this)
-            visual.TargetPosition = target->GetPosition();
+            TargetPosition = target->GetPosition();
         else
-            visual.TargetPosition = *position;
+            TargetPosition = *position;
     }
+    visual.TargetPosition = TargetPosition;
 
     SendMessageToSet(visual.Write(), true);
 }
