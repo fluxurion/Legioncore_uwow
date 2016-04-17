@@ -25665,7 +25665,7 @@ void Player::UpdateAreaQuestTasks(uint32 newAreaId, uint32 oldAreaId)
                 if (needQuest && !canStart)
                     continue;
 
-                if (CanAddQuest(quest, true) && CanTakeQuest(quest, true))
+                if (CanAddQuest(quest, true) && !IsQuestRewarded(quest->GetQuestId()))
                 {
                     AddQuest(quest, NULL);
                     UpdateQuestObjectiveData(quest);
