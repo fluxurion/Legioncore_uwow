@@ -21,6 +21,7 @@
 
 #include "Spline.h"
 #include "MoveSplineInitArgs.h"
+#include "MoveSplineInit.h"
 
 namespace WorldPackets
 {
@@ -51,6 +52,7 @@ namespace Movement
     {
         friend class WorldPackets::Movement::CommonMovement;
         friend class WorldPackets::Movement::MonsterMove;
+        friend class Movement::MoveSplineInit;
 
     public:
         typedef Spline<int32> MySpline;

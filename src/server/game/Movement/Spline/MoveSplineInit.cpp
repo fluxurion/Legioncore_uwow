@@ -99,8 +99,20 @@ namespace Movement
         if (moveFlags & MOVEMENTFLAG_ROOT)
             moveFlags &= ~MOVEMENTFLAG_MASK_MOVING;
 
-        unit.m_movementInfo.SetMovementFlags(moveFlags);
         move_spline.Initialize(args);
+
+        //! fix client crash. ToDo: more research.
+        if (!move_spline.Finalized())
+        {
+            if (unit.GetPositionX() == move_spline.getPath()[0].x &&
+                unit.GetPositionY() == move_spline.getPath()[0].y &&
+                unit.GetPositionZ() == move_spline.getPath()[0].z)
+            {
+                return 0;
+            }
+        }
+
+        unit.m_movementInfo.SetMovementFlags(moveFlags);
 
         WorldPackets::Movement::MonsterMove packet;
         packet.MoverGUID = unit.GetGUID();
