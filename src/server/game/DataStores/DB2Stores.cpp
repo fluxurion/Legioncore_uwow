@@ -627,7 +627,8 @@ void DB2Manager::InitDB2CustomStores()
 
     for (ItemModifiedAppearanceEntry const* appearanceMod : sItemModifiedAppearanceStore)
         if (ItemAppearanceEntry const* appearance = sItemAppearanceStore.LookupEntry(appearanceMod->AppearanceID))
-            _itemDisplayIDs[appearanceMod->ItemID | (appearanceMod->AppearanceModID << 24)] = appearance->DisplayID;
+            if (appearance->DisplayID <= 151462) // 21021 DisplayID. Remove this after upgrade core to 703
+                _itemDisplayIDs[appearanceMod->ItemID | (appearanceMod->AppearanceModID << 24)] = appearance->DisplayID;
 
     {
         std::set<uint32> scalingCurves;
