@@ -65,7 +65,10 @@ class icecrown_citadel_teleport : public GameObjectScript
 
             if (player->isInCombat())
             {
-                Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                TriggerCastData triggerData;
+                triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+
+                Spell* spell = new Spell(player, spellInfo, triggerData);
                 spell->SendCastResult(player, spellInfo, SPELL_FAILED_AFFECTING_COMBAT);
                 spell->finish(false);
                 delete spell;
@@ -127,7 +130,10 @@ class at_frozen_throne_teleport : public AreaTriggerScript
             {
                 if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(FROZEN_THRONE_TELEPORT))
                 {
-                    Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                    TriggerCastData triggerData;
+                    triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+
+                    Spell* spell = new Spell(player, spellInfo, triggerData);
                     spell->SendCastResult(player, spellInfo, SPELL_FAILED_AFFECTING_COMBAT);
                     spell->finish(false);
                     delete spell;

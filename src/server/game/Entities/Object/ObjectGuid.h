@@ -149,6 +149,7 @@ class ObjectGuid
         uint32 GetRealmId() const { return uint32((_high >> 42) & 0x1FFF); }
         uint32 GetMapId() const { return uint32((_high >> 29) & 0x1FFF); }
         uint32 GetEntry() const { return uint32((_high >> 6) & 0x7FFFFF); }
+        uint8 GetSubType() const { return uint8(_high & 0x3F); }
         LowType GetCounter() const { return _low & UI64LIT(0x000000FFFFFFFFFF); }
 
         uint64 GetHighPart() const { return _high; }

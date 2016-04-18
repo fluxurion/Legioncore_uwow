@@ -67,7 +67,10 @@ public:
            case 34475:
                 if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(SPELL_ARCANE_CHARGES))
                 {
-                    Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                    TriggerCastData triggerData;
+                    triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+
+                    Spell* spell = new Spell(player, spellInfo, triggerData);
                     spell->SendCastResult(player, spellInfo, SPELL_FAILED_NOT_ON_GROUND);
                     spell->finish(false);
                     delete spell;
@@ -301,7 +304,10 @@ public:
         {
             if (const SpellInfo* spellInfo = sSpellMgr->GetSpellInfo(SPELL_PETROV_BOMB))
             {
-                Spell* spell = new Spell(player, spellInfo, TRIGGERED_FULL_MASK);
+                TriggerCastData triggerData;
+                triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+
+                Spell* spell = new Spell(player, spellInfo, triggerData);
                 spell->SendCastResult(player, spellInfo, SPELL_FAILED_NOT_HERE);
                 spell->finish(false);
                 delete spell;

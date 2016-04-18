@@ -1427,11 +1427,17 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
             return;
         }
 
+        TriggerCastData triggerData;
+        triggerData.triggerFlags = triggered ? TRIGGERED_FULL_MASK : TRIGGERED_NONE;
+        triggerData.spellGuid = (m_castGuid[1].GetSubType() == SPELL_CAST_TYPE_NORMAL) ? m_castGuid[1] : m_castGuid[0];
+        triggerData.originalCaster = m_originalCasterGUID;
+        triggerData.skipCheck = true;
+        triggerData.casttime = m_casttime;
+
         SpellCastTargets targets;
         targets.SetUnitTarget(unitTarget);
-        Spell* spell = new Spell(m_caster, spellInfo, triggered ? TRIGGERED_FULL_MASK : TRIGGERED_NONE, m_originalCasterGUID, true);
+        Spell* spell = new Spell(m_caster, spellInfo, triggerData);
         if (bp) spell->SetSpellValue(SPELLVALUE_BASE_POINT0, bp);
-        spell->m_spellGuid = m_castGuid[0];
         spell->prepare(&targets);
     }
 
@@ -1575,8 +1581,14 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
             break;
     }
 
+    TriggerCastData triggerData;
+    triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+    triggerData.spellGuid = (m_castGuid[1].GetSubType() == SPELL_CAST_TYPE_NORMAL) ? m_castGuid[1] : m_castGuid[0];
+    triggerData.originalCaster = m_originalCasterGUID;
+    triggerData.casttime = m_casttime;
+
     // original caster guid only for GO cast
-    m_caster->CastSpell(targets, spellInfo, &values, TRIGGERED_FULL_MASK, NULL, NULL, m_originalCasterGUID);
+    m_caster->CastSpell(targets, spellInfo, &values, triggerData);
 }
 
 void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
@@ -1656,8 +1668,15 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex effIndex)
     if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->Cooldowns.CategoryRecoveryTime && m_spellInfo->Categories.Category == spellInfo->Categories.Category)
         m_caster->ToPlayer()->RemoveSpellCooldown(spellInfo->Id);
 
+    TriggerCastData triggerData;
+    triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+    triggerData.spellGuid = (m_castGuid[1].GetSubType() == SPELL_CAST_TYPE_NORMAL) ? m_castGuid[1] : m_castGuid[0];
+    triggerData.originalCaster = m_originalCasterGUID;
+    triggerData.casttime = m_casttime;
+    triggerData.SubType = SPELL_CAST_TYPE_MISSILE;
+
     // original caster guid only for GO cast
-    m_caster->CastSpell(targets, spellInfo, &values, TRIGGERED_FULL_MASK, NULL, NULL, m_originalCasterGUID);
+    m_caster->CastSpell(targets, spellInfo, &values, triggerData);
 }
 
 void Spell::EffectForceCast(SpellEffIndex effIndex)
@@ -5705,7 +5724,10 @@ void Spell::EffectStuck(SpellEffIndex /*effIndex*/)
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(8690);
     if (!spellInfo)
         return;
-    Spell spell(player, spellInfo, TRIGGERED_NONE);
+
+    TriggerCastData triggerData;
+
+    Spell spell(player, spellInfo, triggerData);
     spell.SendSpellCooldown();
 }
 

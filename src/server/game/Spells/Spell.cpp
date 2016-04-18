@@ -480,17 +480,18 @@ SpellValue::SpellValue(SpellInfo const* proto, uint8 diff)
     AuraStackAmount = 1;
 }
 
-Spell::Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID, bool skipCheck, bool replaced) :
+Spell::Spell(Unit* caster, SpellInfo const* info, TriggerCastData& triggerData) :
 m_spellInfo(info),
 m_caster((info->HasAttribute(SPELL_ATTR6_CAST_BY_CHARMER) && caster->GetCharmerOrOwner()) ? caster->GetCharmerOrOwner() : caster),
-m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(skipCheck), m_spellMissMask(0), m_selfContainer(NULL),
+m_customError(SPELL_CUSTOM_ERROR_NONE), m_skipCheck(triggerData.skipCheck), m_spellMissMask(0), m_selfContainer(NULL),
 m_referencedFromCurrentSpell(false), m_executedCurrently(false), hasPredictedDispel(0),
 m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
-m_CastItem(NULL), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
+m_CastItem(triggerData.castItem), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
 m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
-m_runesState(0), m_casttime(0), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
-m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced), m_triggeredByAura(NULL)
+m_runesState(0), m_casttime(triggerData.casttime), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerData.triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
+m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(triggerData.replaced), m_triggeredByAura(NULL)
 {
+    m_spellGuid = triggerData.spellGuid;
     m_diffMode = m_caster->GetMap() ? m_caster->GetMap()->GetSpawnMode() : 0;
     m_spellValue = new SpellValue(m_spellInfo, m_diffMode);
 
@@ -529,8 +530,8 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
             if (Item* pItem = m_caster->ToPlayer()->GetWeaponForAttack(RANGED_ATTACK))
                 m_spellSchoolMask = SpellSchoolMask(1 << pItem->GetTemplate()->DamageType);
 
-    if (!originalCasterGUID.IsEmpty())
-        m_originalCasterGUID = originalCasterGUID;
+    if (!triggerData.originalCaster.IsEmpty())
+        m_originalCasterGUID = triggerData.originalCaster;
     else
         m_originalCasterGUID = m_caster->GetGUID();
 
@@ -541,6 +542,12 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
         m_originalCaster = ObjectAccessor::GetUnit(*m_caster, m_originalCasterGUID);
         if (m_originalCaster && !m_originalCaster->IsInWorld())
             m_originalCaster = NULL;
+    }
+
+    if (triggerData.triggeredByAura)
+    {
+        m_triggeredByAuraSpell  = triggerData.triggeredByAura->GetSpellInfo();
+        m_triggeredByAura = triggerData.triggeredByAura;
     }
 
     if (!m_replaced && info->HasAttribute(SPELL_ATTR4_TRIGGERED))
@@ -588,9 +595,12 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(replaced
     memset(m_miscData, 0, sizeof(m_miscData));
     memset(m_castFlags, 0, sizeof(m_castFlags));
 
+    m_miscData[0] = triggerData.miscData0;
+    m_miscData[1] = triggerData.miscData1;
+
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 
-    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), m_spellGuid.IsEmpty() ? 3 : 16);
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), triggerData.SubType);
     m_castGuid[1] = m_spellGuid;
 }
 
@@ -3539,7 +3549,7 @@ bool Spell::UpdateChanneledTargetList()
     return channelTargetEffectMask == 0;
 }
 
-void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggeredByAura)
+void Spell::prepare(SpellCastTargets const* targets)
 {
     if (m_CastItem)
     {
@@ -3548,12 +3558,6 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
     }
     else
         m_castItemGUID.Clear();
-
-    if (triggeredByAura)
-    {
-        m_triggeredByAuraSpell  = triggeredByAura->GetSpellInfo();
-        m_triggeredByAura = triggeredByAura;
-    }
 
     InitExplicitTargets(*targets);
 
@@ -3621,10 +3625,10 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
         // for example bladestorm aura should be removed on disarm as of patch 3.3.5
         // channeled periodic spells should be affected by this (arcane missiles, penance, etc)
         // a possible alternative sollution for those would be validating aura target on unit state change
-        if (triggeredByAura && triggeredByAura->IsPeriodic() && !triggeredByAura->GetBase()->IsPassive())
+        if (m_triggeredByAura && m_triggeredByAura->IsPeriodic() && !m_triggeredByAura->GetBase()->IsPassive())
         {
             SendChannelUpdate(0);
-            triggeredByAura->GetBase()->SetDuration(0);
+            m_triggeredByAura->GetBase()->SetDuration(0);
         }
         #ifdef WIN32
         sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::prepare::CheckCast fail. spell id %u res %u m_caster %u m_originalCaster %u customCastFlags %u mask %u TargetGUID %u",
@@ -3638,12 +3642,13 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
     }
 
     // Prepare data for triggers
-    prepareDataForTriggerSystem(triggeredByAura);
+    prepareDataForTriggerSystem(m_triggeredByAura);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         m_caster->ToPlayer()->SetSpellModTakingSpell(this, true);
     // calculate cast time (calculated after first CheckCast check to prevent charge counting for first CheckCast fail)
-    m_casttime = m_spellInfo->CalcCastTime(m_caster, this);
+    if (!m_casttime)
+        m_casttime = m_spellInfo->CalcCastTime(m_caster, this);
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
     { 
         m_caster->ToPlayer()->SetSpellModTakingSpell(this, false);
@@ -4814,7 +4819,7 @@ void Spell::SendSpellCastGuids()
 
     WorldPackets::Spells::SpellCastGuids packet;
     packet.SpellGuid = m_spellGuid;
-    packet.CastGuid = m_castGuid[IsTriggered() ? 1 : 0];
+    packet.CastGuid = m_castGuid[0];
     m_caster->SendMessageToSet(packet.Write(), true);
 }
 
@@ -4844,7 +4849,8 @@ void Spell::SendSpellStart()
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
     castData.CastGuid = m_castGuid[0];
-    castData.CastGuid2 = m_castGuid[1];
+    if (_triggeredCastFlags)
+        castData.CastGuid2 = m_castGuid[1];
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.SpellID = m_spellInfo->Id;
@@ -4973,7 +4979,8 @@ void Spell::SendSpellGo()
     castData.CasterGUID = m_CastItem ? m_CastItem->GetGUID() : m_caster->GetGUID();
     castData.CasterUnit = m_caster->GetGUID();
     castData.CastGuid = m_castGuid[0];
-    castData.CastGuid2 = m_castGuid[1];
+    if (_triggeredCastFlags)
+        castData.CastGuid2 = m_castGuid[1];
     castData.SpellXSpellVisualID = m_SpellVisual;
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;

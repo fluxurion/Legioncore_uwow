@@ -980,6 +980,33 @@ struct CleanDamage
     MeleeHitOutcome hitOutCome;
 };
 
+enum CastType
+{
+    SPELL_CAST_TYPE_NULL      = 0,
+    SPELL_CAST_TYPE_CLIENT    = 2,
+    SPELL_CAST_TYPE_NORMAL    = 3,
+    SPELL_CAST_TYPE_ITEM      = 4, //Spell 200452, 193456, 192000
+    SPELL_CAST_TYPE_UNK1      = 7, //Spell 194461
+    SPELL_CAST_TYPE_FROM_AURA = 13,
+    SPELL_CAST_TYPE_UNK2      = 14, //Spell 3286, 17251
+    SPELL_CAST_TYPE_MISSILE   = 16
+};
+
+struct TriggerCastData
+{
+    TriggerCastFlags triggerFlags = TRIGGERED_NONE;
+    Item* castItem = NULL;
+    AuraEffect const* triggeredByAura = NULL;
+    ObjectGuid originalCaster = ObjectGuid::Empty;
+    int32 casttime = 0;
+    ObjectGuid spellGuid = ObjectGuid::Empty;
+    bool skipCheck = false;
+    bool replaced = false;
+    uint32 miscData0 = 0;
+    uint32 miscData1 = 0;
+    CastType SubType = SPELL_CAST_TYPE_NORMAL;
+};
+
 struct CalcDamageInfo;
 struct SpellNonMeleeDamage;
 
@@ -1792,6 +1819,7 @@ class Unit : public WorldObject
         void SendEnergizeSpellLog(Unit* victim, uint32 spellID, int32 damage, Powers powertype);
         void EnergizeBySpell(Unit* victim, uint32 SpellID, int32 Damage, Powers powertype);
 
+        void CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo, CustomSpellValues const* value, TriggerCastData& triggerData);
         void CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo, CustomSpellValues const* value, TriggerCastFlags triggerFlags = TRIGGERED_NONE, Item* castItem = NULL, AuraEffect const* triggeredByAura = NULL, ObjectGuid originalCaster = ObjectGuid::Empty);
         void CastSpell(Unit* victim, uint32 spellId, bool triggered, Item* castItem = NULL, AuraEffect const* triggeredByAura = NULL, ObjectGuid originalCaster = ObjectGuid::Empty);
         void CastSpell(Unit* victim, uint32 spellId, TriggerCastFlags triggerFlags = TRIGGERED_NONE, Item* castItem = NULL, AuraEffect const* triggeredByAura = NULL, ObjectGuid originalCaster = ObjectGuid::Empty);

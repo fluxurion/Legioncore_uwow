@@ -67,12 +67,14 @@ void WorldSession::HandleUseToy(WorldPackets::Toy::UseToy& packet)
 
     SpellCastTargets targets(player, packet.Cast);
 
-    Spell* spell = new Spell(player, spellInfo, TRIGGERED_NONE, ObjectGuid::Empty, false);
+    TriggerCastData triggerData;
+    triggerData.miscData0 = packet.Cast.Misc[0];
+    triggerData.miscData1 = packet.Cast.Misc[1];
+    triggerData.spellGuid = packet.Cast.SpellGuid;
+
+    Spell* spell = new Spell(player, spellInfo, triggerData);
     spell->m_castItemEntry = packet.ItemID;
-    for (uint8 i = 0; i < 2; ++i)
-        spell->m_miscData[i] = packet.Cast.Misc[i];
     spell->m_castFlags[1] |= CAST_FLAG_EX_USE_TOY_SPELL;
-    spell->m_spellGuid = packet.Cast.SpellGuid;
     spell->prepare(&targets);
 }
 

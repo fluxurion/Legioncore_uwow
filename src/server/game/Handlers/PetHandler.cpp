@@ -399,11 +399,14 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     uint32 triggeredCastFlags = triggered ? TRIGGERED_FULL_MASK : TRIGGERED_NONE;
     triggeredCastFlags &= ~TRIGGERED_IGNORE_POWER_AND_REAGENT_COST;
 
-    Spell* spell = new Spell(caster, spellInfo, TriggerCastFlags(triggeredCastFlags));
+    TriggerCastData triggerData;
+    triggerData.triggerFlags = TriggerCastFlags(triggeredCastFlags);
+    triggerData.miscData0 = cast.Cast.Misc[0];
+    triggerData.miscData1 = cast.Cast.Misc[1];
+    triggerData.spellGuid = cast.Cast.SpellGuid;
+
+    Spell* spell = new Spell(caster, spellInfo, triggerData);
     spell->m_targets = targets;
-    spell->m_miscData[0] = cast.Cast.Misc[0];
-    spell->m_miscData[1] = cast.Cast.Misc[1];
-    spell->m_spellGuid = cast.Cast.SpellGuid;
 
     if (spellInfo->Categories.StartRecoveryCategory) // Check if spell is affected by GCD
         if (caster->GetTypeId() == TYPEID_UNIT && caster->GetCharmInfo() && caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(spellInfo))
@@ -817,7 +820,8 @@ void WorldSession::HandlePetActionHelper(Unit* pet, ObjectGuid petGuid, uint32 s
                 pet->GetCharmInfo()->SetIsFollowing(false);
             }
 
-            Spell* spell = new Spell(pet, spellInfo, TRIGGERED_NONE);
+            TriggerCastData triggerData;
+            Spell* spell = new Spell(pet, spellInfo, triggerData);
 
             SpellCastResult result = spell->CheckPetCast(unit_target);
 

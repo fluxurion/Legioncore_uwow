@@ -9369,10 +9369,13 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
                 return;
             }
 
-            Spell* spell = new Spell(this, spellInfo, TRIGGERED_NONE);
-            spell->m_CastItem = item;
+            TriggerCastData triggerData;
+            triggerData.castItem = item;
+            triggerData.spellGuid = SpellGuid;
+            triggerData.SubType = SPELL_CAST_TYPE_ITEM;
+
+            Spell* spell = new Spell(this, spellInfo, triggerData);
             spell->SetSpellValue(SPELLVALUE_BASE_POINT0, learning_spell_id);
-            spell->m_spellGuid = SpellGuid;
             spell->prepare(&targets);
             return;
         }
@@ -9403,11 +9406,15 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
         if (!spellInfo)
             continue;
 
-        Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
-        spell->m_CastItem = item;
-        spell->m_miscData[0] = misc[0];
-        spell->m_miscData[1] = misc[1];
-        spell->m_spellGuid = SpellGuid;
+        TriggerCastData triggerData;
+        triggerData.triggerFlags = (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE;
+        triggerData.castItem = item;
+        triggerData.miscData0 = misc[0];
+        triggerData.miscData1 = misc[1];
+        triggerData.spellGuid = SpellGuid;
+        triggerData.SubType = SPELL_CAST_TYPE_ITEM;
+
+        Spell* spell = new Spell(this, spellInfo, triggerData);
         spell->prepare(&targets);
 
         ++count;
@@ -9432,11 +9439,15 @@ void Player::CastItemUseSpell(Item* item, SpellCastTargets const& targets, int32
                 continue;
             }
 
-            Spell* spell = new Spell(this, spellInfo, (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE);
-            spell->m_CastItem = item;
-            spell->m_miscData[0] = misc[0];
-            spell->m_miscData[1] = misc[1];
-            spell->m_spellGuid = SpellGuid;
+            TriggerCastData triggerData;
+            triggerData.triggerFlags = (count > 0) ? TRIGGERED_FULL_MASK : TRIGGERED_NONE;
+            triggerData.castItem = item;
+            triggerData.miscData0 = misc[0];
+            triggerData.miscData1 = misc[1];
+            triggerData.spellGuid = SpellGuid;
+            triggerData.SubType = SPELL_CAST_TYPE_ITEM;
+
+            Spell* spell = new Spell(this, spellInfo, triggerData);
             spell->prepare(&targets);
             ++count;
         }

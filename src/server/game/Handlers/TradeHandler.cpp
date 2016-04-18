@@ -353,8 +353,11 @@ void WorldSession::HandleAcceptTrade(WorldPackets::Trade::AcceptTrade& /*packet*
                 return;
             }
 
-            my_spell = new Spell(player, spellEntry, TRIGGERED_FULL_MASK);
-            my_spell->m_CastItem = castItem;
+            TriggerCastData triggerData;
+            triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+            triggerData.castItem = castItem;
+
+            my_spell = new Spell(player, spellEntry, triggerData);
             my_targets.SetTradeItemTarget(player);
             my_spell->m_targets = my_targets;
 
@@ -388,8 +391,11 @@ void WorldSession::HandleAcceptTrade(WorldPackets::Trade::AcceptTrade& /*packet*
                 return;
             }
 
-            his_spell = new Spell(trader, spellEntry, TRIGGERED_FULL_MASK);
-            his_spell->m_CastItem = castItem;
+            TriggerCastData triggerData;
+            triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+            triggerData.castItem = castItem;
+
+            his_spell = new Spell(trader, spellEntry, triggerData);
             his_targets.SetTradeItemTarget(trader);
             his_spell->m_targets = his_targets;
 

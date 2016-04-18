@@ -1217,6 +1217,32 @@ void Unit::CastStop(uint32 except_spellid)
             InterruptSpell(CurrentSpellTypes(i), false);
 }
 
+void Unit::CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo, CustomSpellValues const* value, TriggerCastData& triggerData)
+{
+    if(m_cleanupDone)
+        return;
+
+    if (!spellInfo)
+    {
+        sLog->outError(LOG_FILTER_UNITS, "CastSpell: unknown spell by caster: %s %u)", (GetTypeId() == TYPEID_PLAYER ? "player (GUID:" : "creature (Entry:"), (GetTypeId() == TYPEID_PLAYER ? GetGUIDLow() : GetEntry()));
+        return;
+    }
+
+    // TODO: this is a workaround - not needed anymore, but required for some scripts :(
+    //! by cyberbrest: i remove it as all prock spell by arrea with NeedsToBeTriggeredByCaster check are not work correct. ispesially new.
+    //! if u uncomment it - force originalcaster guid on HandlePeriodicTriggerSpellAuraTick
+    //if (!originalCaster && triggeredByAura)
+    //    originalCaster = triggeredByAura->GetCasterGUID();
+
+    Spell* spell = new Spell(this, spellInfo, triggerData);
+
+    if (value)
+        for (CustomSpellValues::const_iterator itr = value->begin(); itr != value->end(); ++itr)
+            spell->SetSpellValue(itr->first, itr->second, itr->second);
+
+    spell->prepare(&targets);
+}
+
 void Unit::CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo, CustomSpellValues const* value, TriggerCastFlags triggerFlags, Item* castItem, AuraEffect const* triggeredByAura, ObjectGuid originalCaster)
 {
     if(m_cleanupDone)
@@ -1234,14 +1260,21 @@ void Unit::CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo
     //if (!originalCaster && triggeredByAura)
     //    originalCaster = triggeredByAura->GetCasterGUID();
 
-    Spell* spell = new Spell(this, spellInfo, triggerFlags, originalCaster);
+    TriggerCastData triggerData;
+    triggerData.triggerFlags = triggerFlags;
+    triggerData.originalCaster = originalCaster;
+    triggerData.castItem = castItem;
+    triggerData.triggeredByAura = triggeredByAura;
+    if (triggeredByAura)
+        triggerData.SubType = SPELL_CAST_TYPE_FROM_AURA;
+
+    Spell* spell = new Spell(this, spellInfo, triggerData);
 
     if (value)
         for (CustomSpellValues::const_iterator itr = value->begin(); itr != value->end(); ++itr)
             spell->SetSpellValue(itr->first, itr->second, itr->second);
 
-    spell->m_CastItem = castItem;
-    spell->prepare(&targets, triggeredByAura);
+    spell->prepare(&targets);
 }
 
 void Unit::CastSpell(Unit* victim, uint32 spellId, bool triggered, Item* castItem, AuraEffect const* triggeredByAura, ObjectGuid originalCaster)
@@ -3565,8 +3598,11 @@ void Unit::_UpdateAutoRepeatSpell()
             if (Unit* curspellTarget = m_currentSpells[CURRENT_AUTOREPEAT_SPELL]->m_targets.GetUnitTarget())
                 UpdateVictim(curspellTarget);
 
+        TriggerCastData triggerData;
+        triggerData.triggerFlags = TRIGGERED_FULL_MASK;
+
         // we want to shoot
-        Spell* spell = new Spell(this, m_currentSpells[CURRENT_AUTOREPEAT_SPELL]->m_spellInfo, TRIGGERED_FULL_MASK);
+        Spell* spell = new Spell(this, m_currentSpells[CURRENT_AUTOREPEAT_SPELL]->m_spellInfo, triggerData);
         spell->prepare(&(m_currentSpells[CURRENT_AUTOREPEAT_SPELL]->m_targets));
 
         // all went good, reset attack

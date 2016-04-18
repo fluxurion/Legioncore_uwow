@@ -512,7 +512,7 @@ class Spell
 
         typedef std::set<Aura*> UsedSpellMods;
 
-        Spell(Unit* caster, SpellInfo const* info, TriggerCastFlags triggerFlags, ObjectGuid originalCasterGUID = ObjectGuid::Empty, bool skipCheck = false, bool replaced = false);
+        Spell(Unit* caster, SpellInfo const* info, TriggerCastData& triggerData);
         ~Spell();
 
         void InitExplicitTargets(SpellCastTargets const& targets);
@@ -544,7 +544,7 @@ class Spell
         void SearchAreaTargets(std::list<WorldObject*>& targets, float range, Position const* position, Unit* referer, SpellTargetObjectTypes objectType, SpellTargetCheckTypes selectionType, ConditionList* condList);
         void SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTargets, WorldObject* target, SpellTargetObjectTypes objectType, SpellTargetCheckTypes selectType, ConditionList* condList, bool isChainHeal);
 
-        void prepare(SpellCastTargets const* targets, AuraEffect const* triggeredByAura = NULL);
+        void prepare(SpellCastTargets const* targets);
         void cancel();
         void update(uint32 difftime);
         void cast(bool skipCheck = false);
