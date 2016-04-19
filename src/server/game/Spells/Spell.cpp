@@ -488,9 +488,12 @@ m_referencedFromCurrentSpell(false), m_executedCurrently(false), hasPredictedDis
 m_delayStart(0), m_delayAtDamageCount(0), m_count_dispeling(0), m_applyMultiplierMask(0), m_auraScaleMask(0),
 m_CastItem(triggerData.castItem), unitTarget(NULL), m_originalTarget(NULL), itemTarget(NULL), gameObjTarget(NULL), focusObject(NULL),
 m_preCastSpell(0), m_triggeredByAuraSpell(NULL), m_spellAura(NULL), find_target(false), m_spellState(SPELL_STATE_NULL),
-m_runesState(0), m_casttime(triggerData.casttime), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerData.triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
-m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(triggerData.replaced), m_triggeredByAura(NULL)
+m_runesState(0), m_casttime(0), m_timer(0), m_channelTargetEffectMask(0), _triggeredCastFlags(triggerData.triggerFlags), m_spellValue(NULL), m_currentExecutedEffect(SPELL_EFFECT_NONE),
+m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(triggerData.replaced), m_triggeredByAura(NULL), m_castedTime(triggerData.casttime)
 {
+    if (!m_castedTime)
+        m_castedTime = getMSTime();
+
     m_spellGuid = triggerData.spellGuid;
     m_diffMode = m_caster->GetMap() ? m_caster->GetMap()->GetSpawnMode() : 0;
     m_spellValue = new SpellValue(m_spellInfo, m_diffMode);
@@ -4985,7 +4988,7 @@ void Spell::SendSpellGo()
     castData.SpellID = m_spellInfo->Id;
     castData.CastFlags = castFlags;
     castData.CastFlagsEx = castFlagsEx;
-    castData.CastTime = getMSTime();
+    castData.CastTime = m_castedTime;
 
     UpdateSpellCastDataTargets(castData);
 

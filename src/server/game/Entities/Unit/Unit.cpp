@@ -1265,7 +1265,7 @@ void Unit::CastSpell(SpellCastTargets const& targets, SpellInfo const* spellInfo
     triggerData.originalCaster = originalCaster;
     triggerData.castItem = castItem;
     triggerData.triggeredByAura = triggeredByAura;
-    if (triggeredByAura)
+    if (triggeredByAura && triggeredByAura->GetBase() && !triggeredByAura->GetBase()->IsPassive())
         triggerData.SubType = SPELL_CAST_TYPE_FROM_AURA;
 
     Spell* spell = new Spell(this, spellInfo, triggerData);
