@@ -129,7 +129,7 @@ bool DBCFile::open()
                 fieldsOffset[i] += sizeof(uint8);
                 break;
             case 's':
-                fieldsOffset[i] += sizeof(char*);
+                fieldsOffset[i] += 4/*sizeof(char*)*/; //! WARNING! Size 4
                 break;
             default:
                 break;
