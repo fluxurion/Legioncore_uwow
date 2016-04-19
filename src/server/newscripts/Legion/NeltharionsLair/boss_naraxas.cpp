@@ -59,12 +59,14 @@ public:
         {
             SetCombatMovement(false);
             me->SetMaxPower(POWER_MANA, 100);
+            introDone = false;
         }
 
         SummonList summons;
         uint8 playerCount, speakerCount;
         uint16 checkMeleeTimer;
         bool berserkActive;
+        bool introDone;
 
         void Reset()
         {
@@ -96,6 +98,19 @@ public:
             _JustDied();
             summons.DespawnAll();
         }
+        
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!introDone && me->IsWithinDistInMap(who, 40.0f))
+             {
+                who->CastSpell(who, 209582, true);
+                introDone = true;
+             }
+        }        
 
         void JustSummoned(Creature* summon)
         {

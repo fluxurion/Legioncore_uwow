@@ -8,18 +8,19 @@
 #include "ScriptedCreature.h"
 #include "neltharions_lair.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_RAZOR           = 1,
+    SAY_DEATH           = 2,
+}; 
 
 enum Spells
 {
     SPELL_GAIN_ENERGY           = 193245,
     SPELL_BRITTLE               = 187714,
-    //SPELL_INTRO_ULAROGG         = 209390, //Boss 01 Intro Ularogg Cast
-    //SPELL_INTRO_EMERGE          = 209394, //Boss 01 Intro Emerge
+    SPELL_INTRO_ULAROGG         = 209390, //Boss 01 Intro Ularogg Cast
+    SPELL_INTRO_EMERGE          = 209394, //Boss 01 Intro Emerge
 
     SPELL_SHATTER_START_CALL_1  = 198122, //Conversation Shatter
     SPELL_SHATTER_END_CALL_1    = 198135, //Conversation Shatter
@@ -34,6 +35,7 @@ enum Spells
 enum eEvents
 {
     EVENT_RAZOR_SHARDS          = 1,
+    EVENT_DEAD_CONVERSATION     = 2,
 };
 
 class boss_rokmora : public CreatureScript
@@ -43,8 +45,14 @@ public:
 
     struct boss_rokmoraAI : public BossAI
     {
-        boss_rokmoraAI(Creature* creature) : BossAI(creature, DATA_ROKMORA) {}
+        boss_rokmoraAI(Creature* creature) : BossAI(creature, DATA_ROKMORA) 
+        {
+              introDone = false;
+        }
 
+        
+        bool introDone;
+        
         void Reset()
         {
             _Reset();
@@ -52,12 +60,12 @@ public:
             DoCast(me, SPELL_BRITTLE, true);
             me->RemoveAurasDueToSpell(SPELL_GAIN_ENERGY);
             me->SetMaxPower(POWER_MANA, 100);
-            me->SetPower(POWER_MANA, 0);
+            me->SetPower(POWER_MANA, 0);        
         }
 
         void EnterCombat(Unit* /*who*/) //53:15
         {
-            //Talk(SAY_AGGRO); //Rok SMASH!
+            Talk(SAY_AGGRO); //Rok SMASH!
             _EnterCombat();
             DoCast(me, SPELL_GAIN_ENERGY, true);
 
@@ -66,12 +74,33 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
+            events.ScheduleEvent(EVENT_DEAD_CONVERSATION, 3000);
         }
 
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!introDone && me->IsWithinDistInMap(who, 40.0f))
+             {
+                DoCast(209374);
+                introDone = true;
+             }
+        }
+        
         void UpdateAI(uint32 diff)
         {
+            if (!introDone)
+               if (Creature* ularogg = me->FindNearestCreature(105300, 50.0f, true)
+               {
+                  ularogg->CastSpell(me, SPELL_INTRO_ULAROGG);
+                  me->CastSpell(me, SPELL_INTRO_EMERGE);
+               }
+               
             if (!UpdateVictim())
                 return;
 
@@ -87,7 +116,11 @@ public:
                     case EVENT_RAZOR_SHARDS:
                         DoCast(me, SPELL_RAZOR_SHARDS_CALL, true);
                         DoCast(SPELL_RAZOR_SHARDS);
+                        Talk(SAY_RAZOR);
                         events.ScheduleEvent(EVENT_RAZOR_SHARDS, 26000);
+                        break;
+                    case EVENT_DEAD_CONVERSATION:
+                        //DoCast(199392); пока офф, крашит
                         break;
                 }
             }
@@ -196,9 +229,54 @@ public:
     }
 };
 
+// trash 183433
+class spell_submerge : public SpellScriptLoader
+{
+    public:
+        spell_submerge() : SpellScriptLoader("spell_submerge") { }
+
+        class spell_submerge_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_submerge_AuraScript);
+
+            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                Unit* target = GetTarget();
+                std::list<Player*> targets;
+                GetPlayerListInGrid(targets, target, 40);
+                Trinity::Containers::RandomResizeList(targets, 1);
+                for (std::list<Creature*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+                  if (!targets.empty())
+                    target->CastSpell((*itr), 183430, true);
+                    target->CastSpell((*itr), 183438, false);
+                    
+                    target->AI()SetVisible(true);          
+            }
+            
+            void OnApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+               if (Unit* target = GetTarget())
+                  target->AI()->SetVisible(false);      
+            }
+
+            void Register()
+            {
+                OnEffectRemove += AuraEffectRemoveFn(spell_submerge_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_TRANSFORM, AURA_EFFECT_HANDLE_REAL);
+                OnEffectApply += AuraEffectApplyFn(spell_submerge_AuraScript::OnApply, EFFECT_0, SPELL_AURA_TRANSFORM, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_submerge_AuraScript();
+        }
+};
+
 void AddSC_boss_rokmora()
 {
     new boss_rokmora();
     new npc_rokmora_blightshard_skitter();
     new spell_rokmora_gain_energy();
+    // trash
+    new spell_submerge();
 }

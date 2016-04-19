@@ -8,11 +8,12 @@
 #include "ScriptedCreature.h"
 #include "neltharions_lair.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_STANCE_EMOTE    = 1,
+    SAY_DEATH           = 2,
+};
 
 enum Spells
 {
@@ -73,7 +74,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //05:40
         {
-            //Talk(SAY_AGGRO); //Pay attention, Navarogg. I want you to see your heroes die.
+            Talk(SAY_AGGRO); //Pay attention, Navarogg. I want you to see your heroes die.
             _EnterCombat();
             DefaultEvent();
         }
@@ -87,7 +88,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
 
@@ -180,6 +181,7 @@ public:
                         events.Reset();
                         DoStopAttack();
                         DoCast(SPELL_STANCE_MOUNTAIN_JUMP);
+                        Talk(SAY_STANCE_EMOTE);
                         break;
                     case EVENT_STANCE_MOUNTAIN_2:
                         DoCast(SPELL_STANCE_MOUNTAIN_SUM);
@@ -298,9 +300,89 @@ class spell_barrel_ride_plr_move : public SpellScriptLoader
         }
 };
 
+
+//trash 102228
+class npc_stonedark_slave : public CreatureScript
+{
+public:
+    npc_stonedark_slave() : CreatureScript("npc_stonedark_slave") {}
+
+    struct npc_stonedark_slaveAI : public ScriptedAI
+    {
+        npc_stonedark_slaveAI(Creature* creature) : ScriptedAI(creature) 
+        {
+           _endBarrel = false;
+           _intro = false;
+        }
+ 
+        bool _endBarrel;
+        bool _intro;
+        
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!_endBarrel && me->IsWithinDistInMap(who, 90.0f))
+             {
+                // who->CastSpell(who, 209531, true);  пока офф до 7.0.3, крашит
+                _endBarrel = true;
+             }            
+             if (!_intro && me->IsWithinDistInMap(who, 40.0f))
+             {
+                who->CastSpell(who, 209536, true);
+                _intro = true;
+             }
+        }
+ 
+    };
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_stonedark_slaveAI(creature);
+    }
+};
+
+// trash 183088
+class spell_avalanche : public SpellScriptLoader
+{
+    public:
+        spell_avalanche() : SpellScriptLoader("spell_avalanche") { }
+
+        class spell_avalanche_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_avalanche_SpellScript);
+            
+            void HandleScript(SpellEffIndex effIndex)
+            {
+                Unit* caster = GetCaster();
+                if (!caster)
+                    return;
+                std::list<Player*> targets;
+                GetPlayerListInGrid(targets, caster, 40);
+                Trinity::Containers::RandomResizeList(targets, 2);
+                for (std::list<Creature*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+                  if (!targets.empty())
+                    caster->CastSpell((*itr), 183095, true);                 
+            }
+
+            void Register()
+            {
+                OnEffectHit += SpellEffectFn(spell_avalanche_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_avalanche_SpellScript();
+        }
+};
+
 void AddSC_boss_ularogg_cragshaper()
 {
     new boss_ularogg_cragshaper();
     new npc_ularogg_bellowing_idols();
     new spell_barrel_ride_plr_move();
+    new npc_stonedark_slave();
+    new spell_avalanche();
 }

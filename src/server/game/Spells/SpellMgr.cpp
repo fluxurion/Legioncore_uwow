@@ -4941,6 +4941,7 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 144918: //Cutter Laser Dmg
                 case 159226: //Solar Storm
                 case 197556: //Fenryr: Ravenous Leap
+                case 202231: // Leech
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_NEGATIVE;
                     break;
                 case 144396: //Vengeful Strikes. WTF. SPELL_AURA_MOD_POSSESS_PET
