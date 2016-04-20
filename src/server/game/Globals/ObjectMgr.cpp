@@ -9865,6 +9865,43 @@ void ObjectMgr::LoadDisplayChoiceData()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 display_choice data. DB table `display_choice` is empty.");
 }
 
+void ObjectMgr::LoadGameObjectActionData()
+{
+    _gameObjectActionMap.clear();
+
+    //                                                  0           1           2              3              4       5    6    7    8     9
+    QueryResult result = WorldDatabase.Query("SELECT `entry`, `ActionType`, `SpellID`, `WorldSafeLocID`, `Distance`, `X`, `Y`, `Z`, `O`, MapID FROM `gameobject_action`");
+    if (result)
+    {
+        uint32 counter = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+
+            uint8 i = 0;
+            GameObjectActionData data;
+            uint32 entry = fields[i++].GetUInt32();
+            data.ActionType = fields[i++].GetUInt8();
+            data.SpellID = fields[i++].GetUInt32();
+            data.WorldSafeLocID = fields[i++].GetUInt32();
+            data.Distance = fields[i++].GetUInt32();
+            data.X = fields[i++].GetFloat();
+            data.Y = fields[i++].GetFloat();
+            data.Z = fields[i++].GetFloat();
+            data.O = fields[i++].GetFloat();
+            data.MapID = fields[i++].GetUInt32();
+
+            _gameObjectActionMap[entry].push_back(data);
+            ++counter;
+        }
+        while (result->NextRow());
+
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u gameobject_action data.", counter);
+    }
+    else
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 gameobject_action data. DB table `gameobject_action` is empty.");
+}
+
 const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId) const
 {
     ScenarioDataListMap::const_iterator itr = _scenarioDataList.find(mapId);
@@ -9883,6 +9920,12 @@ const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId)
     }
 
     return NULL;
+}
+
+const std::vector<GameObjectActionData>* ObjectMgr::GetGameObjectActionData(uint32 entry) const
+{
+    GameObjectActionMap::const_iterator itr = _gameObjectActionMap.find(entry);
+    return itr != _gameObjectActionMap.end() ? &(itr->second) : NULL;
 }
 
 const std::vector<DisplayChoiceData>* ObjectMgr::GetDisplayChoiceData(uint32 ChoiceID) const

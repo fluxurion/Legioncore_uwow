@@ -488,6 +488,21 @@ struct DisplayChoiceData
 
 typedef std::unordered_map<uint32/*entry*/, std::vector<DisplayChoiceData> > DisplayChoiceMap;
 
+struct GameObjectActionData
+{
+    uint8  ActionType;
+    uint32 SpellID;
+    uint32 WorldSafeLocID;
+    uint32 Distance;
+    float X;
+    float Y;
+    float Z;
+    float O;
+    uint32 MapID;
+};
+
+typedef std::unordered_map<uint32/*entry*/, std::vector<GameObjectActionData> > GameObjectActionMap;
+
 typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
 struct CellObjectGuids
@@ -1409,6 +1424,8 @@ class ObjectMgr
         void LoadTavernAreaTriggers();
         void LoadGameObjectForQuests();
 
+        void LoadGameObjectActionData();
+
         void LoadPageTexts();
         PageText const* GetPageText(uint32 pageEntry);
 
@@ -1648,6 +1665,8 @@ class ObjectMgr
         const std::vector<CreatureActionData>* GetCreatureActionData(uint32 entry, uint8 type = 0, uint8 action = 0) const;
 
         const std::vector<DisplayChoiceData>* GetDisplayChoiceData(uint32 ChoiceID) const;
+
+        const std::vector<GameObjectActionData>* GetGameObjectActionData(uint32 entry) const;
 
         void AddCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid, uint32 instance);
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
@@ -2072,6 +2091,8 @@ class ObjectMgr
         CreatureActionDataMap _creatureActionDataList[2][2];
 
         DisplayChoiceMap _displayChoiceMap;
+
+        GameObjectActionMap _gameObjectActionMap;
 };
 
 #define sObjectMgr ObjectMgr::instance()

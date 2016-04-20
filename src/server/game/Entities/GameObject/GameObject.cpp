@@ -280,6 +280,17 @@ bool GameObject::Create(ObjectGuid::LowType guidlow, uint32 name_id, Map* map, u
     LastUsedScriptID = GetGOInfo()->ScriptId;
     AIM_Initialize();
 
+    m_actionVector = sObjectMgr->GetGameObjectActionData(name_id);
+    if (m_actionVector && !m_actionVector->empty())
+    {
+        m_actionActive = true;
+        for (std::vector<GameObjectActionData>::const_iterator itr = m_actionVector->begin(); itr != m_actionVector->end(); ++itr)
+        {
+            if (m_maxActionDistance < itr->Distance)
+                m_maxActionDistance = itr->Distance;
+        }
+    }
+
     return true;
 }
 
@@ -297,6 +308,12 @@ void GameObject::Update(uint32 diff)
         //((Transport*)this)->Update(p_time);
         return;
     }
+
+    if (m_actionTimeCheck <= diff)
+    {
+        m_actionTimeCheck = 2500;
+        GameObjectAction();
+    } else m_actionTimeCheck -= diff;
 
     switch (m_lootState)
     {
@@ -2286,6 +2303,42 @@ void GameObject::setVisibilityCDForPlayer(ObjectGuid const& guid, uint32 sec/* =
 {
     // By default set 5 min.
     m_lastUser[guid] = time(nullptr) + sec;
+}
+
+
+void GameObject::GameObjectAction()
+{
+    if (!m_actionActive)
+        return;
+
+    std::list<Player*> playerList;
+    GetPlayerListInGrid(playerList, m_maxActionDistance);
+
+    if (playerList.empty())
+        return;
+
+    for (std::vector<GameObjectActionData>::const_iterator itr = m_actionVector->begin(); itr != m_actionVector->end(); ++itr)
+    {
+        for (auto player : playerList)
+        {
+            if (player->GetDistance2d(this) > float(itr->Distance))
+                continue;
+
+            if (itr->SpellID)
+                player->CastSpell(player, itr->SpellID, true);
+
+            if (itr->WorldSafeLocID)
+            {
+                if (WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(itr->WorldSafeLocID))
+                {
+                    float Orientation = entry->Loc.O * 3.14159265358979323846f / 180.0f;
+                    player->TeleportTo(entry->MapID, entry->Loc.X, entry->Loc.Y, entry->Loc.Z, Orientation);
+                }
+            }
+            else if(itr->X != 0.0f || itr->Y != 0.0f || itr->Z != 0.0f)
+                player->TeleportTo(itr->MapID, itr->X, itr->Y, itr->Z, itr->O);
+        }
+    }
 }
 
 class GameObjectModelOwnerImpl : public GameObjectModelOwnerBase

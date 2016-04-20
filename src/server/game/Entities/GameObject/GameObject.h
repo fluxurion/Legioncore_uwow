@@ -27,6 +27,7 @@
 #include "DatabaseEnv.h"
 
 class GameObjectAI;
+struct GameObjectActionData;
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push, N), also any gcc version not support it at some platform
 #if defined(__GNUC__)
@@ -1173,6 +1174,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         uint32 GetVignetteId() const { return m_goInfo ? m_goInfo->GetVignetteId() : 0; }
 
         void setVisibilityCDForPlayer(ObjectGuid const& guid, uint32 sec = 300);
+
+        void GameObjectAction();
     protected:
         lastUserList m_lastUser;
         bool AIM_Initialize();
@@ -1205,6 +1208,12 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         bool   m_manual_anim;
         bool   m_isDynActive;
         bool   m_onUse;
+
+        bool m_actionActive = false;
+        uint32 m_actionTimeCheck = 2500;
+        std::vector<GameObjectActionData> const* m_actionVector;
+        uint32 m_maxActionDistance = 0;
+
     private:
         void RemoveFromOwner();
         void SwitchDoorOrButton(bool activate, bool alternative = false);

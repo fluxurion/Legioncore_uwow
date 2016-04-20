@@ -1669,6 +1669,9 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Treasure Data...");
     sObjectMgr->LoadPersonalLootTemplate();
 
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading GameObject Action Data...");
+    sObjectMgr->LoadGameObjectActionData();
+
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Gameobject Data...");
     sObjectMgr->LoadGameobjects();
 
