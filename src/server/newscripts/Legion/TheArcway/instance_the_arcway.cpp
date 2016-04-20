@@ -9,8 +9,7 @@
 
 DoorData const doorData[] =
 {
-    //{GO_,       DATA_,         DOOR_TYPE_PASSAGE,    BOUNDARY_NONE},
-    {0,                   0,                  DOOR_TYPE_ROOM,       BOUNDARY_NONE}, // END
+    {GO_CORSTILAX_DOOR_2,       DATA_CORSTILAX,       DOOR_TYPE_ROOM,       BOUNDARY_NONE},
 };
 
 class instance_the_arcway : public InstanceMapScript
@@ -30,48 +29,63 @@ public:
             SetBossNumber(MAX_ENCOUNTER);
         }
 
+        ObjectGuid VandrosGUID;
+
+        bool onInitEnterState;
+        uint8 RandTeleport;
+
         void Initialize()
         {
             LoadDoorData(doorData);
+
+            VandrosGUID.Clear();
+
+            onInitEnterState = false;
+        }
+
+        void OnCreatureCreate(Creature* creature)
+        {
+            switch (creature->GetEntry())
+            {
+                case NPC_ADVISOR_VANDROS:    
+                    VandrosGUID = creature->GetGUID(); 
+                    break;
+            }
+        }
+
+        void OnGameObjectCreate(GameObject* go)
+        {
+            switch (go->GetEntry())
+            {
+                case GO_CORSTILAX_DOOR_1:
+                case GO_CORSTILAX_DOOR_2:
+                    AddDoor(go, true);
+                    break;
+                default:
+                    break;
+            }
         }
 
         bool SetBossState(uint32 type, EncounterState state)
         {
             if (!InstanceScript::SetBossState(type, state))
                 return false;
-            
+
+            DoEventCreatures();
+
             return true;
-        }
-
-        void OnGameObjectCreate(GameObject* go)
-        {
-            /* switch (go->GetEntry())
-            {
-                case GO_DOOR:
-                    AddDoor(go, true);
-                    break;
-                default:
-                    break;
-            } */
-        }
-
-        void OnCreatureCreate(Creature* creature)
-        {
-            /* switch (creature->GetEntry())
-            {
-                case NPC_:    
-                    GUID = creature->GetGUID(); 
-                    break;
-            } */
         }
 
         void SetData(uint32 type, uint32 data)
         {
-            /*switch (type)
+            switch (type)
             {
+                case DATA_RAND_TELEPORT:
+                    RandTeleport = data;
+                    break;
                 default:
                     break;
-            }*/
+            }
         }
 
         /* ObjectGuid GetGuidData(uint32 type) const
@@ -86,7 +100,45 @@ public:
 
         uint32 GetData(uint32 type) const
         {
+            switch (type)
+            {
+                case DATA_RAND_TELEPORT:
+                    return RandTeleport;
+            }
             return 0;
+        }
+
+        void OnPlayerEnter(Player* player)
+        {
+            if (onInitEnterState)
+                return;
+
+            onInitEnterState = true;
+
+            DoEventCreatures();
+            
+        }
+
+        bool checkBossDone()
+        {
+            for (uint8 i = 0; i < DATA_VANDROS; i++)
+                if (GetBossState(i) != DONE)
+                    return false;
+
+            return true;
+        }
+
+        void DoEventCreatures()
+        {
+            if (!checkBossDone())
+                return;
+
+            if (Creature* vandros = instance->GetCreature(VandrosGUID))
+            {
+                //vandros->AI()->ZoneTalk();
+                vandros->SetReactState(REACT_AGGRESSIVE);
+                vandros->SetVisible(true);
+            }
         }
 
         /* void Update(uint32 diff) 

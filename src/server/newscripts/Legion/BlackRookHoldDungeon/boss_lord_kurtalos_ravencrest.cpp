@@ -502,41 +502,6 @@ public:
     }
 };
 
-//198635
-class spell_kurtalos_unerring_shear : public SpellScriptLoader
-{
-public:
-    spell_kurtalos_unerring_shear() : SpellScriptLoader("spell_kurtalos_unerring_shear") { }
-
-    class spell_kurtalos_unerring_shear_AuraScript : public AuraScript
-    {
-        PrepareAuraScript(spell_kurtalos_unerring_shear_AuraScript);
-
-        void OnApply(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
-        {
-            if (!GetTarget())
-                return;
-        }
-
-        void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
-        {
-            if (!GetTarget())
-                return;
-        }
-        
-        void Register()
-        {
-            OnEffectApply += AuraEffectApplyFn(spell_kurtalos_unerring_shear_AuraScript::OnApply, EFFECT_1, SPELL_AURA_PERIODIC_DAMAGE, AURA_EFFECT_HANDLE_REAL);
-            OnEffectRemove += AuraEffectRemoveFn(spell_kurtalos_unerring_shear_AuraScript::OnRemove, EFFECT_1, SPELL_AURA_PERIODIC_DAMAGE, AURA_EFFECT_HANDLE_REAL);
-        }
-    };
-
-    AuraScript* GetAuraScript() const
-    {
-        return new spell_kurtalos_unerring_shear_AuraScript();
-    }
-};
-
 void AddSC_boss_lord_kurtalos_ravencrest()
 {
     new boss_latosius();

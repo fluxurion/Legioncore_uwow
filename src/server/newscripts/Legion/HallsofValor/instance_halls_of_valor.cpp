@@ -211,20 +211,19 @@ public:
 
         void OnPlayerEnter(Player* player)
         {
-           
             if (!StartEvent)
             {
-               if (PlayerCount < 5)
-                  {
-                     PlayerCount++;
-                  } 
+                if (PlayerCount < 5)
+                {
+                    PlayerCount++;
+                } 
                else
-                  {
-                  StartEvent = true;
-                  if (Group *g = player->GetGroup())
-                    if(Player* leader = ObjectAccessor::FindPlayer(g ->GetLeaderGUID()))
-                        leader->CastSpell(leader, 202036);
-                  }
+                {
+                    StartEvent = true;
+                    if (Group *g = player->GetGroup())
+                        if(Player* leader = ObjectAccessor::FindPlayer(g ->GetLeaderGUID()))
+                            leader->CastSpell(leader, 202036);
+                }
             }
             if (onInitEnterState)
                 return;

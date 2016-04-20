@@ -103,10 +103,9 @@ delete from conditions where SourceTypeOrReferenceId = 13 and SourceEntry in (19
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES 
 (13, 1, 198961, 0, 0, 31, 0, 3, 98965, 0, 0, 0, '', NULL);
 
-delete from spell_script_names where spell_id in (198835,198635);
+delete from spell_script_names where spell_id in (198835);
 INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES 
-(198835, 'spell_latosius_random_teleport'),
-(198635, 'spell_kurtalos_unerring_shear');
+(198835, 'spell_latosius_random_teleport');
 
 delete from spell_target_position where id = 199058;
 INSERT INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES 

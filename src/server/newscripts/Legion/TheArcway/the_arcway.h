@@ -14,16 +14,28 @@ enum eData
     DATA_NALTIRA        = 3,
     DATA_VANDROS        = 4,
     MAX_ENCOUNTER,
+
+    DATA_RAND_TELEPORT,
 };
 
-/* enum eCreatures
+enum eCreatures
 {
-    NPC_ = ,
+    //Corstilax
+    NPC_SUPPRESSION_PROTOCOL    = 99628,
+    NPC_QUARANTINE              = 99560,
+    NPC_PIPE_STALKER            = 99446,
+    //Xakal
+    NPC_FISSURE                 = 100342,
+    NPC_DREAD_FELBAT            = 100393,
+    //Vandros
+    NPC_ADVISOR_VANDROS         = 98208, //102849
 };
 
 enum eGameObjects
 {
-    GO_ = ,
-}; */
+    GO_CORSTILAX_DOOR_1         = 245968,
+    GO_CORSTILAX_DOOR_2         = 246024,
+    GO_XAKAL_FISSURE            = 245606,
+};
 
 #endif

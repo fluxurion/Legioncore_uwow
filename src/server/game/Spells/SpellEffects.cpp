@@ -791,7 +791,10 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
             sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell::EffectDummy %u, 1<<effIndex %u, itr->effectmask %u, option %u, spell_trigger %i, target %u (%u ==> %u) effectHandleMode %u", m_spellInfo->Id, 1 << effIndex, itr->effectmask, itr->option, itr->spell_trigger, itr->target, triggerTarget ? triggerTarget->GetGUIDLow() : 0, triggerCaster ? triggerCaster->GetGUIDLow() : 0, effectHandleMode);
             #endif
 
-            if (effectHandleMode == SPELL_EFFECT_HANDLE_LAUNCH && itr->option != DUMMY_TRIGGER_CAST_DEST && itr->option != DUMMY_TRIGGER_CAST_OR_REMOVE)
+            if (effectHandleMode == SPELL_EFFECT_HANDLE_LAUNCH
+                && itr->option != DUMMY_TRIGGER_CAST_DEST
+                && itr->option != DUMMY_TRIGGER_CAST_OR_REMOVE
+                && itr->option != DUMMY_TRIGGER_ADD_POWER_COST)
                 continue;
 
             if (!(itr->effectmask & (1 << effIndex)))
@@ -983,6 +986,20 @@ bool Spell::SpellDummyTriggered(SpellEffIndex effIndex)
                             copyAura->SetCharges(aura->GetCharges());
                         }
                     }
+                    check = true;
+                }
+                break;
+                case DUMMY_TRIGGER_ADD_POWER_COST: //9
+                {
+                    if(!triggerCaster)
+                        break;
+
+                    if (bp0 != 0)
+                        basepoints0 = bp0;
+
+                    uint32 power = triggerCaster->GetMaxPower((Powers)bp1);
+                    bp0 = CalculatePct(power, basepoints0);
+                    triggerCaster->SetPower((Powers)bp1, power - bp0);
                     check = true;
                 }
                 break;

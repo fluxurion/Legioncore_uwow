@@ -212,6 +212,7 @@ enum DummyTriggerType
     DUMMY_TRIGGER_CAST_OR_REMOVE                = 6,            // cast spell without option
     DUMMY_TRIGGER_DAM_MAXHEALTH                 = 7,            // set basepoint to spell damage or max heal percent
     DUMMY_TRIGGER_COPY_AURA                     = 8,            // Copy aura
+    DUMMY_TRIGGER_ADD_POWER_COST                = 9,            // Add power cost to spell
 };
 
 enum AuraTriggerType
