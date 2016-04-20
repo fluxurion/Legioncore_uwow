@@ -301,7 +301,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     bool Stationary = (flags & UPDATEFLAG_STATIONARY_POSITION) != 0;
     bool CombatVictim = ((flags & UPDATEFLAG_HAS_TARGET) != 0) && ToUnit() && ToUnit()->getVictim();
     bool ServerTime = (flags & UPDATEFLAG_TRANSPORT) != 0;
-    bool VehicleCreate = (flags & UPDATEFLAG_VEHICLE) != 0;
+    bool VehicleCreate = ((flags & UPDATEFLAG_VEHICLE) != 0) && ToUnit() && ToUnit()->GetVehicleKit();
     bool AnimKitCreate = (flags & UPDATEFLAG_ANIMKITS) != 0;
     bool Rotation = (flags & UPDATEFLAG_ROTATION) != 0;
     bool HasAreaTrigger = (flags & UPDATEFLAG_AREA_TRIGGER) != 0;
