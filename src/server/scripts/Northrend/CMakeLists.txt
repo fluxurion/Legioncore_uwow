@@ -15,6 +15,9 @@ endif ()
 
 set(Northrend_STAT_SRCS
   ${Northrend_STAT_SRCS}
+  ../../game/AI/ScriptedAI/ScriptedEscortAI.cpp
+  ../../game/AI/ScriptedAI/ScriptedCreature.cpp
+  ../../game/AI/ScriptedAI/ScriptedFollowerAI.cpp
   wintergrasp.cpp
   isle_of_conquest.cpp
   storm_peaks.cpp

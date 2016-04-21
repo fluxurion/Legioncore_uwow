@@ -15,6 +15,9 @@ endif ()
 
 set(Kalimdor_STAT_SRCS
   ${Kalimdor_STAT_SRCS}
+  ../../game/AI/ScriptedAI/ScriptedEscortAI.cpp
+  ../../game/AI/ScriptedAI/ScriptedCreature.cpp
+  ../../game/AI/ScriptedAI/ScriptedFollowerAI.cpp
   stonetalon_mountains.cpp
   silithus.cpp
   moonglade.cpp
