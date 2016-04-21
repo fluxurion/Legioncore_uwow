@@ -175,6 +175,8 @@ target_link_libraries(worldserver
   gsoap
   Detour
   zmqpp
+  Command
+  spells
   ${READLINE_LIBRARY}
   ${TERMCAP_LIBRARY}
   ${MYSQL_LIBRARY}
@@ -195,6 +197,8 @@ target_link_libraries(worldserver
   gsoap
   Detour
   zmqpp
+  Command
+  spells
   ${READLINE_LIBRARY}
   ${TERMCAP_LIBRARY}
   ${MYSQL_LIBRARY}

@@ -16,9 +16,9 @@ if (USE_SCRIPTPCH)
 endif ()
 
 message(STATUS "SCRIPT PREPARATIONS")
-include(Spells/CMakeLists.txt)
 
-include(Commands/CMakeLists.txt)
+add_subdirectory(Spells)
+add_subdirectory(Commands)
 
 include(Examples/CMakeLists.txt)
 
