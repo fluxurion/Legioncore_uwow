@@ -8,11 +8,12 @@
 #include "ScriptedCreature.h"
 #include "neltharions_lair.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+    SAY_EMOTE           = 1,
+    SAY_DEATH           = 2,
+};
 
 enum Spells
 {
@@ -58,9 +59,11 @@ public:
         boss_dargrul_the_underkingAI(Creature* creature) : BossAI(creature, DATA_DARGRUL) 
         {
             me->SetMaxPower(POWER_MANA, 100);
+            introDone = false;
         }
 
         uint8 rand;
+        bool introDone;
 
         void Reset()
         {
@@ -71,7 +74,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //27:51
         {
-            //Talk(SAY_AGGRO); //Yes. TRY to take the hammer from me!
+            Talk(SAY_AGGRO); //Yes. TRY to take the hammer from me!
             _EnterCombat();
             DoCast(me, SPELL_GAIN_ENERGY, true);
 
@@ -82,9 +85,22 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
+        
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!introDone && me->IsWithinDistInMap(who, 115.0f))
+             {
+                who->CastSpell(who, 209698, true);
+                introDone = true;
+             }
+        } 
 
         void SpellHitTarget(Unit* target, const SpellInfo* spell)
         {
@@ -184,7 +200,7 @@ public:
                 return true;
 
             return false;
-        }
+        }            
 
         void UpdateAI(uint32 diff)
         {
@@ -288,6 +304,7 @@ public:
     }
 };
 
+
 //201444
 class spell_dargrul_gain_energy : public SpellScriptLoader
 {
@@ -327,6 +344,8 @@ public:
                 caster->CastSpell(caster, SPELL_CONVERSATION_05, true);
                 caster->CastSpell(caster, SPELL_MAGMA_WAVE_AT, true);
                 caster->CastSpell(caster, SPELL_MAGMA_WAVE);
+                if (Creature* target = caster->FindNearestCreature(91007, 50, true))
+                        target->AI()->Talk(SAY_EMOTE);
                 caster->SetPower(POWER_MANA, 0);
             }
         }
@@ -427,6 +446,53 @@ public:
         return new spell_dargrul_magma_wave_filter_SpellScript();
     }
 };
+// 102295 trash
+class npc_emberhusk_dominator : public CreatureScript
+{
+public:
+    npc_emberhusk_dominator() : CreatureScript("npc_emberhusk_dominator") {}
+
+    struct npc_emberhusk_dominatorAI : public ScriptedAI
+    {
+        npc_emberhusk_dominatorAI(Creature* creature) : ScriptedAI(creature) {}
+        
+        uint32 SpellTimer;
+        uint32 SayTimer;
+         void Reset()
+         {
+            SpellTimer = urand (3000, 4000);
+            SayTimer = urand(30000, 45000);
+         }
+        
+        void UpdateAI(const uint32 diff)
+        {
+             if (!UpdateVictim())
+                 return;
+
+             if (me->HasUnitState(UNIT_STATE_CASTING))
+                 return;
+              
+             if (SpellTimer <= diff)
+             {
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                     me->CastSpell(target, 201959, TriggerCastFlags(TRIGGERED_IGNORE_CASTER_MOUNTED_OR_ON_VEHICLE));
+                SpellTimer = urand (3000, 4000);
+             } else SpellTimer -= diff;
+             
+             if (SayTimer <= diff)
+             {
+                SayTimer = urand(30000, 45000);
+                Talk(0);
+             } else SayTimer -= diff;
+        }
+        
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_emberhusk_dominatorAI(creature);
+    }
+};
 
 void AddSC_boss_dargrul_the_underking()
 {
@@ -436,4 +502,6 @@ void AddSC_boss_dargrul_the_underking()
     new spell_dargrul_gain_energy();
     new spell_dargrul_magma_breaker();
     new spell_dargrul_magma_wave_filter();
+    //trash
+    new npc_emberhusk_dominator();
 }

@@ -9,16 +9,16 @@
 #include "ScriptedCreature.h"
 #include "neltharions_lair.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_SUM             = 0,
+    SAY_EMOTE           = 1,
+};
 
 enum Spells
 {
     //SPELL_INTRO_MYSTIC          = 209625, //Boss 03 Intro Mystic Cast - визуально прячется?
-    //SPELL_INTRO_EMERGE          = 209641, //Boss 03 Intro Emerge - hit npc 105766
+    SPELL_INTRO_EMERGE          = 209641, //Boss 03 Intro Emerge - hit npc 105766
     SPELL_GAIN_ENERGY           = 200086,
     SPELL_PUTRID_SKIES          = 198963,
     SPELL_FRENZY                = 199775,
@@ -60,6 +60,8 @@ public:
             SetCombatMovement(false);
             me->SetMaxPower(POWER_MANA, 100);
             introDone = false;
+            introDone1 = false;
+            me->AddAura(209625, me);
         }
 
         SummonList summons;
@@ -67,6 +69,7 @@ public:
         uint16 checkMeleeTimer;
         bool berserkActive;
         bool introDone;
+        bool introDone1;
 
         void Reset()
         {
@@ -83,7 +86,6 @@ public:
 
         void EnterCombat(Unit* /*who*/) //17:03
         {
-            //Talk(SAY_AGGRO);
             _EnterCombat();
             DoCast(me, SPELL_GAIN_ENERGY, true);
 
@@ -94,9 +96,12 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
             _JustDied();
             summons.DespawnAll();
+            if (Creature* target = me->FindNearestCreature(100700, 50, true))
+            {
+               target->CastSpell(target, 208691); //conversation
+            }
         }
         
         void MoveInLineOfSight(Unit* who)
@@ -105,10 +110,22 @@ public:
             if (!(who->GetTypeId() == TYPEID_PLAYER))
                return;
           
-             if (!introDone && me->IsWithinDistInMap(who, 40.0f))
+             if (!introDone && me->IsWithinDistInMap(who, 115.0f))
              {
                 who->CastSpell(who, 209582, true);
                 introDone = true;
+             }
+             
+             if (!introDone1 && me->IsWithinDistInMap(who, 80.0f))
+             {
+                me->CastSpell(me,  209629, true);
+                me->RemoveAurasDueToSpell(209625);
+                if (Creature* target = me->FindNearestCreature(105766, 30, true))
+                {
+                   me->CastSpell(target, SPELL_INTRO_EMERGE);
+                   target->SetVisible(false);
+                }
+                introDone1 = true;
              }
         }        
 
@@ -204,7 +221,7 @@ public:
                         events.ScheduleEvent(EVENT_TOXIC_WRETCH, 14000);
                         break;
                     case EVENT_SUM_WORMSPEAKER:
-                        //Talk();
+                        Talk(SAY_SUM);
                         for (uint8 i = 0; i < 2; i++)
                             SummonWormspeaker(i);
                         events.ScheduleEvent(EVENT_SUM_WORMSPEAKER, 64000);
@@ -341,6 +358,8 @@ public:
             if (caster->GetPower(POWER_MANA) >= 100)
             {
                 caster->CastSpell(caster, SPELL_SPIKED_TONGUE);
+                if (Creature* target = caster->FindNearestCreature(91005, 50, true))
+                     target->AI()->Talk(SAY_EMOTE);
                 caster->CastSpell(caster, SPELL_RAVENOUS, true);
             }
         }

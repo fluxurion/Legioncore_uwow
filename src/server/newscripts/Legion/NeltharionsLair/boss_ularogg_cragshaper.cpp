@@ -361,7 +361,7 @@ class spell_avalanche : public SpellScriptLoader
                 std::list<Player*> targets;
                 GetPlayerListInGrid(targets, caster, 40);
                 Trinity::Containers::RandomResizeList(targets, 2);
-                for (std::list<Creature*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+                for (std::list<Player*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
                   if (!targets.empty())
                     caster->CastSpell((*itr), 183095, true);                 
             }

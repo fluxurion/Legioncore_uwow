@@ -95,7 +95,7 @@ public:
         void UpdateAI(uint32 diff)
         {
             if (!introDone)
-               if (Creature* ularogg = me->FindNearestCreature(105300, 50.0f, true)
+               if (Creature* ularogg = me->FindNearestCreature(105300, 50.0f, true))
                {
                   ularogg->CastSpell(me, SPELL_INTRO_ULAROGG);
                   me->CastSpell(me, SPELL_INTRO_EMERGE);
@@ -245,18 +245,19 @@ class spell_submerge : public SpellScriptLoader
                 std::list<Player*> targets;
                 GetPlayerListInGrid(targets, target, 40);
                 Trinity::Containers::RandomResizeList(targets, 1);
-                for (std::list<Creature*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
-                  if (!targets.empty())
-                    target->CastSpell((*itr), 183430, true);
-                    target->CastSpell((*itr), 183438, false);
-                    
-                    target->AI()SetVisible(true);          
+                for (std::list<Player*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+                     if (!targets.empty())
+                     {
+                       target->CastSpell((*itr), 183438);
+                       target->CastSpell((*itr), 183430, true);
+                     }
+                    target->SetVisible(true);          
             }
             
             void OnApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
                if (Unit* target = GetTarget())
-                  target->AI()->SetVisible(false);      
+                  target->SetVisible(false);      
             }
 
             void Register()
