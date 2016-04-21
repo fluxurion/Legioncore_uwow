@@ -9,8 +9,8 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 if (USE_SCRIPTPCH)
-  set(spells_STAT_PCH_HDR ../PrecompiledHeaders/ScriptPCH.h)
-  set(spells_STAT_PCH_SRC ../PrecompiledHeaders/ScriptPCH.cpp)
+  set(spells_STAT_PCH_HDR PrecompiledHeaders/SpellPCH.h)
+  set(spells_STAT_PCH_SRC PrecompiledHeaders/SpellPCH.cpp)
 endif ()
 
 set(spells_STAT_SRCS
@@ -139,7 +139,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/server/game/Warden/Modules
   ${CMAKE_SOURCE_DIR}/src/server/game/Weather
   ${CMAKE_SOURCE_DIR}/src/server/game/World
-  ../PrecompiledHeaders
+  ${CMAKE_CURRENT_SOURCE_DIR}/PrecompiledHeaders
   ${MYSQL_INCLUDE_DIR}
   ${OPENSSL_INCLUDE_DIR}
 )
