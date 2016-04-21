@@ -4,7 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "mogu_shan_palace.h"
 

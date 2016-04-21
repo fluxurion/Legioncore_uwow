@@ -3,7 +3,6 @@
     Instance General Script
 */
 
-#include "NewScriptPCH.h"
 #include "stormstout_brewery.h"
 
 enum eEvents

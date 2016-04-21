@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "the_stonecore.h"
 
 class instance_the_stonecore : public InstanceMapScript

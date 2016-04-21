@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "lost_city_of_the_tolvir.h"
 #include "Vehicle.h"
 

@@ -3,7 +3,6 @@
 * Copyright (C) 2014-2015 Epicwow.com <http://epicwow.com/>
 */
 
-#include "NewScriptPCH.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"

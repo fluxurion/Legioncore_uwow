@@ -1,7 +1,6 @@
 //UWoWCore
 //Heart of Fear
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "heart_of_fear.h"
 

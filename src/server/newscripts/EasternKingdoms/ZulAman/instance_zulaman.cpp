@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "zulaman.h"
 
 #define MAX_ENCOUNTER 6

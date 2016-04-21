@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "shadowfang_keep.h"
 
 DoorData const doorData[] =

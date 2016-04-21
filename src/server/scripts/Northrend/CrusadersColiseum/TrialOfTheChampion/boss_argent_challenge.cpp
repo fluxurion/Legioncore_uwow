@@ -22,7 +22,6 @@ SDComment: AI from bosses need more improvements.
 SDCategory: Trial of the Champion
 EndScriptData */
 
-#include "ScriptPCH.h"
 #include "trial_of_the_champion.h"
 
 enum Spells

@@ -22,7 +22,6 @@ SD%Complete: 100%
 SD%Comments: Kologarn's vehicleid is wrong.
 EndScriptData */
 
-#include "ScriptPCH.h"
 #include "ulduar.h"
 #include "Vehicle.h"
 

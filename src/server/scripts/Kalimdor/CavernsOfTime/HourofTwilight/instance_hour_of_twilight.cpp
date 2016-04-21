@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "hour_of_twilight.h"
 
 #define MAX_ENCOUNTER 3

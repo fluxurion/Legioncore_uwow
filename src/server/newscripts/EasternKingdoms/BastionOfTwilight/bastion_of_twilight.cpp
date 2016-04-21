@@ -1,4 +1,3 @@
-#include"NewScriptPCH.h"
 #include "bastion_of_twilight.h"
 
 enum ScriptTexts

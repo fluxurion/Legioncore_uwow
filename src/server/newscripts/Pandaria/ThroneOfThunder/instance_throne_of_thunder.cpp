@@ -1,7 +1,6 @@
 //UWoWCore
 //Throne of Thunder
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "throne_of_thunder.h"
 

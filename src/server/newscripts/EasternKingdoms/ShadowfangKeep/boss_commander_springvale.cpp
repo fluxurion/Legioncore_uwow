@@ -1,4 +1,3 @@
-#include"NewScriptPCH.h"
 #include"WorldPacket.h"
 #include"shadowfang_keep.h"
 #include"ScriptMgr.h"

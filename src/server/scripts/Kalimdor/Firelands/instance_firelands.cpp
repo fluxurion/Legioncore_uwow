@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "AccountMgr.h"
 #include "firelands.h"
 

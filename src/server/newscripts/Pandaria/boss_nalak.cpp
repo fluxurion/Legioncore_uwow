@@ -1,8 +1,6 @@
 //UWoWCore
 //World boss
 
-#include "NewScriptPCH.h"
-
 enum eSpells
 {
     SPELL_ARC_NOVA                  = 136338,

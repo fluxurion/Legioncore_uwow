@@ -4,7 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
 #include "CreatureTextMgr.h"
 
 #define TYPE_SET_SUNS_SELECTABLE 2

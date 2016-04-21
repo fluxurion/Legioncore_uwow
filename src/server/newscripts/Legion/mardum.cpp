@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "ScriptedEscortAI.h"
 #include "CreatureTextMgr.h"
 #include "Battleground.h"

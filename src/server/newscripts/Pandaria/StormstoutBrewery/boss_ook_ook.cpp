@@ -4,7 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
 #include "stormstout_brewery.h"
 
 enum Spells

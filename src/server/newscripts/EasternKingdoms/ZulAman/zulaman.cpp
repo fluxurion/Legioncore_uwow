@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "zulaman.h"
 
 enum Spells

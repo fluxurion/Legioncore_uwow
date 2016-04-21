@@ -17,7 +17,6 @@
  */
 
 
-#include "NewScriptPCH.h"
 #include "shadopan_monastery.h"
 
 enum eSpells

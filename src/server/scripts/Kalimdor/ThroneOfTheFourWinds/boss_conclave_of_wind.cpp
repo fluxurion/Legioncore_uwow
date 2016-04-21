@@ -1,5 +1,4 @@
 
-#include "ScriptPCH.h"
 #include "Vehicle.h"
 #include "CreatureTextMgr.h"
 

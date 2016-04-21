@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "throne_of_the_tides.h"
 
 enum Spells

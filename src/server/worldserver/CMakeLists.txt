@@ -177,6 +177,13 @@ target_link_libraries(worldserver
   zmqpp
   Command
   spells
+  Kalimdor
+  Outland
+  Northrend
+  Legion
+  Draenor
+  Pandaria
+  EasternKingdoms
   ${READLINE_LIBRARY}
   ${TERMCAP_LIBRARY}
   ${MYSQL_LIBRARY}

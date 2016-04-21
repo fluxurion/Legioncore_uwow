@@ -1,4 +1,3 @@
-#include"NewScriptPCH.h"
 #include"Spell.h"
 #include"blackwing_descent.h"
 

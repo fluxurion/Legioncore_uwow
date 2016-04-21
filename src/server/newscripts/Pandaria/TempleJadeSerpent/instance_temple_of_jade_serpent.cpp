@@ -4,8 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
-
 #define EVENT_LOREWALKER_STONESTEP_SUNS 0
 #define EVENT_LOREWALKER_STONESTEP_TRIAL 1
 

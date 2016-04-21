@@ -1,5 +1,4 @@
 #include "grim_batol.h"
-#include "NewScriptPCH.h"
 
 
 //todo: реализовать адов и mighty stomp

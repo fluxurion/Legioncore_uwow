@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "baradin_hold.h"
 
 DoorData const doorData[] =

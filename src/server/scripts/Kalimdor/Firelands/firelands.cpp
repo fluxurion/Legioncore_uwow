@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "MoveSplineInit.h"
 #include "Cell.h"
 #include "CellImpl.h"

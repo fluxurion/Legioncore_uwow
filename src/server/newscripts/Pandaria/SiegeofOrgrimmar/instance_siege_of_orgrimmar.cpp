@@ -1,7 +1,6 @@
 //UWoWCore
 //Siege of Orgrimmar
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "siege_of_orgrimmar.h"
 #include "AccountMgr.h"

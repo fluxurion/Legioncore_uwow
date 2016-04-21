@@ -1,5 +1,4 @@
 #include "grim_batol.h"
-#include "NewScriptPCH.h"
 
 class instance_grim_batol : public InstanceMapScript
 {

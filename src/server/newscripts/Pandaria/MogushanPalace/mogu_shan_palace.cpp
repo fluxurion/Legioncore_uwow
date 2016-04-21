@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "mogu_shan_palace.h"
 
 enum otherEvents

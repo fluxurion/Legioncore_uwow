@@ -4,8 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
-
 enum eBoss
 {
     BOSS_WASE_MARI = 1,

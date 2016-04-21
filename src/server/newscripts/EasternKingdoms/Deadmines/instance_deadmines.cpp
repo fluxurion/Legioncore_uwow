@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "deadmines.h"
 #include "Packets/MiscPackets.h"
 

@@ -1,4 +1,3 @@
-#include"ScriptPCH.h"
 #include"the_vortex_pinnacle.h"
 
 enum Spells

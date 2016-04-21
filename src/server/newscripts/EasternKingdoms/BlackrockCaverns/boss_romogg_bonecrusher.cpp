@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "blackrock_caverns.h"
 
 //todo: реализовать призыв о помощи

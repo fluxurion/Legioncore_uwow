@@ -4,8 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
-
 #define TYPE_CLASS_FIGMENT 8
 #define TYPE_CLASS_FIGMENT_DIE 9
 

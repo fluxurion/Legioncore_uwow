@@ -18,7 +18,6 @@
 
 //Work only first phase (Sanmay)
 
-#include "NewScriptPCH.h"
 #include "mogu_shan_vault.h"
 
 enum eSpells

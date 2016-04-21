@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "halls_of_origination.h"
 
 // Sun-Touched Spriteling 39370

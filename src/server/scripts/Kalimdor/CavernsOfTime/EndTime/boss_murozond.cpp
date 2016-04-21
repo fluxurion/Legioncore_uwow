@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "end_time.h"
 #include "Group.h"
 

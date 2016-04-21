@@ -16,7 +16,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewScriptPCH.h"
 #include "siege_of_orgrimmar.h"
 
 enum eSpells

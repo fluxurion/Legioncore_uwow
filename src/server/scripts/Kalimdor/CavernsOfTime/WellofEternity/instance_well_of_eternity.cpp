@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
 #include "well_of_eternity.h"
 

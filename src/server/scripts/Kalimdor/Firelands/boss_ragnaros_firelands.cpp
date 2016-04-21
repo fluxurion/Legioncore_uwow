@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "firelands.h"
 #include "boss_ragnaros_firelands.h"
 #include "Group.h"

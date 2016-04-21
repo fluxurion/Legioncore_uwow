@@ -1,7 +1,6 @@
 //UWoWCore
 //Mogushan Vault
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "mogu_shan_vault.h"
 

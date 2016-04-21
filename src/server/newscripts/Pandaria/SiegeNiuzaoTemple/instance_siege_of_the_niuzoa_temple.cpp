@@ -3,7 +3,6 @@
     Instance General Script
 */
 
-#include "NewScriptPCH.h"
 #include "siege_of_the_niuzoa_temple.h"
 
 class instance_siege_of_the_niuzoa_temple : public InstanceMapScript

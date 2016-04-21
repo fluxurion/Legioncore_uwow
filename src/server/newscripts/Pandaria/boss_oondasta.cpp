@@ -1,8 +1,6 @@
 //UWoWCore
 //World boss
 
-#include "NewScriptPCH.h"
-
 enum eSpells
 {
     SPELL_CRUSH           = 137504,

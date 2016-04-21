@@ -3,7 +3,6 @@
     Instance General Script
 */
 
-#include "NewScriptPCH.h"
 #include "gate_setting_sun.h"
 
 DoorData const doorData[] =

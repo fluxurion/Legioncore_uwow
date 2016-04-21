@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "ScriptMgr.h"
 
 enum Says

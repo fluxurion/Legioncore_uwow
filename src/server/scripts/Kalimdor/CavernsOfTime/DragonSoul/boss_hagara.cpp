@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "MoveSplineInit.h"
 #include "dragon_soul.h"
 

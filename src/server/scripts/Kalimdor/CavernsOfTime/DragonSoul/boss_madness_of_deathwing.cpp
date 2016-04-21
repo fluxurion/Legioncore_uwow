@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "dragon_soul.h"
 #include "LFGMgr.h"
 #include "Group.h"

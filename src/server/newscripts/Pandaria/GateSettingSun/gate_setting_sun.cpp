@@ -4,7 +4,6 @@
 */
 
 #include "gate_setting_sun.h"
-#include "NewScriptPCH.h"
 
 enum spells
 {

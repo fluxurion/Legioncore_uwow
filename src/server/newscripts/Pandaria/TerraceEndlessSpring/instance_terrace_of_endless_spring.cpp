@@ -1,7 +1,6 @@
 //UWoWCore
 //Terrace of Endless Spring
 
-#include "NewScriptPCH.h"
 #include "VMapFactory.h"
 #include "terrace_of_endless_spring.h"
 

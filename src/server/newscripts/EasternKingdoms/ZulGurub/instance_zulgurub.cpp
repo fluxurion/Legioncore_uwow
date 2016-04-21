@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "zulgurub.h"
 
 static const DoorData doordata[] = 

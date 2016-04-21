@@ -1,4 +1,3 @@
-#include "NewScriptPCH.h"
 #include "grim_batol.h"
     
 enum Creatures

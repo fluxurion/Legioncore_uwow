@@ -4,7 +4,6 @@
     Jade servers
 */
 
-#include "NewScriptPCH.h"
 #include "mogu_shan_palace.h"
 
 #define TYPE_GET_ENTOURAGE 14

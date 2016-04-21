@@ -1,4 +1,3 @@
-#include "ScriptPCH.h"
 #include "firelands.h"
 
 enum ScriptTexts

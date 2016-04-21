@@ -2,8 +2,6 @@
 Pandaria
 World boss
 */
-#include "NewScriptPCH.h"
-
 enum eBosses
 {
     BOSS_GALION,

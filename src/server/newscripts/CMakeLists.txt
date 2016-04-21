@@ -25,10 +25,10 @@ set(scripts_STAT_SRCS
 )
 
 if(SCRIPTS)
-  include(Legion/CMakeLists.txt)
-  include(Draenor/CMakeLists.txt)
-  include(Pandaria/CMakeLists.txt)
-  include(EasternKingdoms/CMakeLists.txt)
+  add_subdirectory(Legion)
+  add_subdirectory(Draenor)
+  add_subdirectory(Pandaria)
+  add_subdirectory(EasternKingdoms)
   include(Scenario/CMakeLists.txt)
 endif()
 

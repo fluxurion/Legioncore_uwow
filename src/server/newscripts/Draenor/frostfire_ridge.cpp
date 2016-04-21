@@ -5,7 +5,6 @@
 
 // DRAENOR START LOCATION FOR THE HORDE + GARRIZONE
 
-#include "NewScriptPCH.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
