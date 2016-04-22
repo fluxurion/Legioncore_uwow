@@ -7592,13 +7592,10 @@ void Spell::EffectRechargeManaGem(SpellEffIndex /*effIndex*/)
 
     if (Item* pItem = player->GetItemByEntry(item_id))
     {
-        if (pItem->IsInWorld())
-        {
-            for (auto const& v : pProto->Effects)
-                pItem->SetSpellCharges(v->ID, v->Charges);
+        for (auto const& v : pProto->Effects)
+            pItem->SetSpellCharges(v->OrderIndex, v->Charges);
 
-            pItem->SetState(ITEM_CHANGED, player);
-        }
+        pItem->SetState(ITEM_CHANGED, player);
     }
 }
 
