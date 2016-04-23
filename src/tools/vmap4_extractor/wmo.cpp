@@ -502,11 +502,11 @@ WMOInstance::WMOInstance(MPQFile& f, char const* WmoInstName, uint32 mapID, uint
     pos2 = Vec3D(ff[0],ff[1],ff[2]);
     f.read(ff,12);
     pos3 = Vec3D(ff[0],ff[1],ff[2]);
-    f.read(&d2,4);
+    f.read(&d2,4); //flags + doodadSet
 
     uint16 trash,adtId;
-    f.read(&adtId,2);
-    f.read(&trash,2);
+    f.read(&adtId, 2);  //nameSet
+    f.read(&trash, 2);  //unk
 
     //-----------add_in _dir_file----------------
 
@@ -518,8 +518,11 @@ WMOInstance::WMOInstance(MPQFile& f, char const* WmoInstName, uint32 mapID, uint
     if(!input)
     {
         printf("WMOInstance::WMOInstance: couldn't open %s\n", tempname);
+        //system("pause");
         return;
     }
+
+    printf("WMOInstance::open %s\n", tempname);
 
     fseek(input, 8, SEEK_SET); // get the correct no of vertices
     int nVertices;
@@ -561,12 +564,12 @@ WMOInstance::WMOInstance(MPQFile& f, char const* WmoInstName, uint32 mapID, uint
     fwrite(&nlen, sizeof(uint32), 1, pDirfile);
     fwrite(WmoInstName, sizeof(char), nlen, pDirfile);
 
-     fprintf(pDirfile,"MapName %s WmoInstName %s pos.x %f, pos.y %f, pos.z%f, rot.x %f, rot.y %f, rot.z %f nVertices %d\n",
+     /*fprintf(pDirfile,"MapName %s WmoInstName %s pos.x %f, pos.y %f, pos.z%f, rot.x %f, rot.y %f, rot.z %f nVertices %d\n",
         MapName,
         WmoInstName,
         (float) x, (float) pos.y, (float) z,
         (float) rot.x, (float) rot.y, (float) rot.z,
-        nVertices); 
+        nVertices); */
 
     // fclose(dirfile);
 }

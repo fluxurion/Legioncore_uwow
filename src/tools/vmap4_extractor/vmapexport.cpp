@@ -72,7 +72,7 @@ const char* szRawVMAPMagic = "VMAP043";
 bool OpenCascStorage()
 {
     boost::filesystem::path const storage_dir(boost::filesystem::canonical(input_path) / "Data");
-    if (!CascOpenStorage(storage_dir.string().c_str(), CASC_LOCALE_ENUS | CASC_LOCALE_ENGB, &CascStorage))
+    if (!CascOpenStorage(storage_dir.string().c_str(), CASC_LOCALE_ALL, &CascStorage))
         return false;
 
     printf("opened casc storage '%s' \n", storage_dir.string().c_str());

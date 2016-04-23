@@ -211,9 +211,11 @@ ModelInstance::ModelInstance(MPQFile& f, char const* ModelInstName, uint32 mapID
 
     if (!input)
     {
-        //printf("ModelInstance::ModelInstance couldn't open %s\n", tempname);
+        printf("ModelInstance::ModelInstance couldn't open %s\n", tempname);
+        //system("pause");
         return;
     }
+    printf("ModelInstance::open %s\n", tempname);
 
     fseek(input, 8, SEEK_SET); // get the correct no of vertices
     int nVertices;
