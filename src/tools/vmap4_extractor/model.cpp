@@ -45,28 +45,75 @@ bool Model::open()
 
     _unload();
 
-    memcpy(&header, f.getBuffer(), sizeof(ModelHeader));
-    if (header.nBoundingTriangles > 0)
+    char fourcc[5];
+    uint32 size;
+
+    while (true)
     {
-        f.seek(0);
-        f.seekRelative(header.ofsBoundingVertices);
-        vertices = new Vec3D[header.nBoundingVertices];
-        f.read(vertices,header.nBoundingVertices*12);
-        for (uint32 i=0; i<header.nBoundingVertices; i++)
-            vertices[i] = fixCoordSystem(vertices[i]);
-        f.seek(0);
-        f.seekRelative(header.ofsBoundingTriangles);
-        indices = new uint16[header.nBoundingTriangles];
-        f.read(indices,header.nBoundingTriangles*2);
-        f.close();
+        f.read(fourcc, 4);
+        f.read(&size, 4);
+        flipcc(fourcc);
+        fourcc[4] = 0;
+
+        size_t nextpos = f.getPos() + size;
+
+        if (!size)
+            break;
+
+        char *buf = new char[size];
+        f.read(buf, size);
+
+        if (!strcmp(fourcc, "12DM") || !strcmp(fourcc, "MD21"))
+        {
+            memcpy(&header, buf, sizeof(ModelHeader));
+
+            //printf("\n ADDDDDDDDD -- %s ---- %u\n", filename.c_str(), header.nBoundingTriangles);
+
+            if (header.nBoundingTriangles > 0)
+            {
+                vertices = new Vec3D[header.nBoundingVertices];
+                memcpy(vertices, &(buf[header.ofsBoundingVertices]), header.nBoundingVertices * 12);
+                for (uint32 i = 0; i<header.nBoundingVertices; i++)
+                    vertices[i] = fixCoordSystem(vertices[i]);
+
+
+                indices = new uint16[header.nBoundingTriangles];
+                memcpy(indices, &buf[header.ofsBoundingTriangles], header.nBoundingTriangles * 2);
+                f.close();
+                return true;
+            }
+            f.close();
+            return false;
+
+        }
+        else if (strcmp(fourcc, "SFID") && strcmp(fourcc, "DIFS"))
+            printf("\n------>%u --  %s -- %s\n", nextpos, filename.c_str(), fourcc);
+        f.seek((int) nextpos);
     }
-    else
-    {
-        //printf("not included %s\n", filename.c_str());
-        f.close();
-        return false;
-    }
-    return true;
+
+    //memcpy(&header, f.getBuffer(), sizeof(ModelHeader));
+    //if (header.nBoundingTriangles > 0)
+    //{
+    //    f.seek(0);
+    //    f.seekRelative(header.ofsBoundingVertices);
+    //    vertices = new Vec3D[header.nBoundingVertices];
+    //    f.read(vertices,header.nBoundingVertices*12);
+    //    for (uint32 i=0; i<header.nBoundingVertices; i++)
+    //        vertices[i] = fixCoordSystem(vertices[i]);
+    //    f.seek(0);
+    //    f.seekRelative(header.ofsBoundingTriangles);
+    //    indices = new uint16[header.nBoundingTriangles];
+    //    f.read(indices,header.nBoundingTriangles*2);
+    //    f.close();
+    //}
+    //else
+    //{
+    //    //printf("not included %s\n", filename.c_str());
+    //    f.close();
+    //    return false;
+    //}
+    f.close();
+    return false;
 }
 
 bool Model::ConvertToVMAPModel(const char * outfilename)
