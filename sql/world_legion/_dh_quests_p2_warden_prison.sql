@@ -11,11 +11,14 @@ REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `Pr
 
 -- Quest chaine fixes.
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
+('38668', '0', '0', '0'), -- hideen
 ('38669', '0', '0', '0'),
 ('38672', '38669', '0', '0'),
 -- ToDo
 ('38723', '99999', '0', '0');
 
 
--- Q: 38669
+-- Q: 38669 GO 241553
+
+
 -- Q: 38672

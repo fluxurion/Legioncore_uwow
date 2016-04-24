@@ -968,7 +968,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     return true;
 }
 
-bool Player::StoreNewItemInBestSlots(uint32 titem_id, uint32 titem_amount)
+bool Player::StoreNewItemInBestSlots(uint32 titem_id, uint32 titem_amount, bool not_loading/*=true*/)
 {
     sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "STORAGE: Creating initial item, itemId = %u, count = %u", titem_id, titem_amount);
 
@@ -976,7 +976,7 @@ bool Player::StoreNewItemInBestSlots(uint32 titem_id, uint32 titem_amount)
     while (titem_amount > 0)
     {
         uint16 eDest;
-        InventoryResult msg = CanEquipNewItem(NULL_SLOT, eDest, titem_id, false);
+        InventoryResult msg = CanEquipNewItem(NULL_SLOT, eDest, titem_id, false, not_loading);
         if (msg != EQUIP_ERR_OK)
             break;
 
@@ -10517,7 +10517,7 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
 
             // suggest offhand slot only if know dual wielding
             // (this will be replace mainhand weapon at auto equip instead unwonted "you don't known dual wielding" ...
-            if (CanDualWield())
+            if (CanDualWield() || proto->SubClass == ITEM_SUBCLASS_WEAPON_WARGLAIVES)
                 slots[1] = EQUIPMENT_SLOT_OFFHAND;
             break;
         }
@@ -10577,6 +10577,8 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
             break;
         case INVTYPE_WEAPONMAINHAND:
             slots[0] = EQUIPMENT_SLOT_MAINHAND;
+            if (proto->SubClass == ITEM_SUBCLASS_WEAPON_WARGLAIVES)
+                slots[1] = EQUIPMENT_SLOT_OFFHAND;
             break;
         case INVTYPE_WEAPONOFFHAND:
             slots[0] = EQUIPMENT_SLOT_OFFHAND;
@@ -11868,13 +11870,13 @@ InventoryResult Player::CanStoreItems(Item** pItems, int count) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-InventoryResult Player::CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap) const
+InventoryResult Player::CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap, bool not_loading) const
 {
     dest = 0;
     Item* pItem = Item::CreateItem(item, 1, this);
     if (pItem)
     {
-        InventoryResult result = CanEquipItem(slot, dest, pItem, swap);
+        InventoryResult result = CanEquipItem(slot, dest, pItem, swap, not_loading);
         delete pItem;
         return result;
     }
@@ -26592,13 +26594,50 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
 
     //sLog->outDebug(LOG_FILTER_LOOT, "Player::StoreLootItem itemid %i count %i", item->itemid, item->count);
 
+    bool autoEquip = false;
+    switch (item->item.ItemID)
+    {
+        case 128956:
+            KilledMonsterCredit(97574); //Q: 38669
+            autoEquip = true;
+            break;
+        case 132243:
+            KilledMonsterCredit(98369); //Q: 38669
+            autoEquip = true;
+            break;
+        default:
+            break;
+    }
+
     ItemPosCountVec dest;
     InventoryResult msg = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->item.ItemID, item->count);
-    if (msg == EQUIP_ERR_OK)
+    if (msg != EQUIP_ERR_OK)
+    {
+        SendEquipError(msg, NULL, NULL, item->item.ItemID);
+        return;
+    }
+
+    Item* newitem = nullptr;
+
+    //! autoEquip store
+    if (autoEquip)
+    {
+        if (!StoreNewItemInBestSlots(item->item.ItemID, item->count, false))
+        {
+            SendEquipError(EQUIP_ERR_NOT_OWNER, NULL, NULL, item->item.ItemID);
+            return;
+        }
+
+        newitem = GetItemByEntry(item->item.ItemID);
+
+    }
+
+    //! non auto Equip store.
+    if (!newitem)
     {
         GuidSet looters = item->GetAllowedLooters();
-        
-        Item* newitem = StoreNewItem(dest, item->item.ItemID, true, item->item.RandomPropertiesID, looters, item->item.ItemBonus.BonusListIDs);
+        newitem = StoreNewItem(dest, item->item.ItemID, true, item->item.RandomPropertiesID, looters, item->item.ItemBonus.BonusListIDs);
+    }
 
         if (qitem)
         {
@@ -26646,9 +26685,8 @@ void Player::StoreLootItem(uint8 lootSlot, Loot* loot)
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_ITEM, item->item.ItemID, item->count);
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_TYPE, loot->loot_type, item->count);
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_EPIC_ITEM, item->item.ItemID, item->count);
-    }
-    else
-        SendEquipError(msg, NULL, NULL, item->item.ItemID);
+
+        
 }
 
 uint8 Player::CalculateTalentsPoints() const

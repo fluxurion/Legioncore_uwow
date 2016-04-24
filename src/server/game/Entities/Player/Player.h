@@ -1659,7 +1659,7 @@ class Player : public Unit, public GridObject<Player>
 
         }
         InventoryResult CanStoreItems(Item** pItem, int count) const;
-        InventoryResult CanEquipNewItem(uint8 slot, uint16& dest, uint32 item, bool swap) const;
+        InventoryResult CanEquipNewItem(uint8 slot, uint16& dest, uint32 item, bool swap, bool not_loading = true) const;
         InventoryResult CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool swap, bool not_loading = true) const;
 
         InventoryResult CanEquipUniqueItem(Item* pItem, uint8 except_slot = NULL_SLOT, uint32 limit_count = 1) const;
@@ -1677,7 +1677,7 @@ class Player : public Unit, public GridObject<Player>
         Item* EquipNewItem(uint16 pos, uint32 item, bool update);
         Item* EquipItem(uint16 pos, Item* pItem, bool update);
         void AutoUnequipOffhandIfNeed(bool force = false);
-        bool StoreNewItemInBestSlots(uint32 item_id, uint32 item_count);
+        bool StoreNewItemInBestSlots(uint32 item_id, uint32 item_count, bool not_loading = true);
         bool AutoStoreLoot(uint8 bag, uint8 slot, uint32 loot_id, LootStore const& store, uint32 filterLevel = 0, bool broadcast = true);
         bool AutoStoreLoot(uint32 loot_id, LootStore const& store, uint32 filterLevel = 0, bool broadcast = true) { return AutoStoreLoot(NULL_BAG, NULL_SLOT, loot_id, store, filterLevel, broadcast); }
         void StoreLootItem(uint8 lootSlot, Loot* loot);
