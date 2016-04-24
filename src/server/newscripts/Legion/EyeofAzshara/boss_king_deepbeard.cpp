@@ -12,51 +12,56 @@
 {
     SAY_AGGRO           = ,
     SAY_DEATH           = ,
-    SAY_EVADE           = ,
 }; */
 
-/* enum Spells
+enum Spells
 {
-    SPELL_    = ,
-    SPELL_    = ,
-    SPELL_    = ,
-    SPELL_    = ,
-}; */
+    SPELL_GROUND_SLAM               = 193093,
+    SPELL_GASEOUS_BUBBLES           = 193018,
+    SPELL_GASEOUS_BUBBLES_EXPLOSE   = 193047,
+    SPELL_QUAKE                     = 193152,
+    SPELL_CALL_THE_SEAS             = 193051,
 
-/* enum eEvents
+    SPELL_QUAKE_VISAL               = 193175,
+    SPELL_QUAKE_DMG                 = 193159,
+};
+
+enum eEvents
 {
-    EVENT_    = 1,
-    EVENT_    = 2,
-    EVENT_    = 3,
-    EVENT_    = 4,
-    EVENT_    = 5,
-}; */
+    EVENT_GROUND_SLAM           = 1,
+    EVENT_GASEOUS_BUBBLES       = 2,
+    EVENT_QUAKE                 = 3,
+    EVENT_CALL_THE_SEAS         = 4,
+};
 
 class boss_king_deepbeard : public CreatureScript
 {
 public:
-    boss_king_deepbeard() : CreatureScript("boss_king_deepbeard") { }
+    boss_king_deepbeard() : CreatureScript("boss_king_deepbeard") {}
 
     struct boss_king_deepbeardAI : public BossAI
     {
         boss_king_deepbeardAI(Creature* creature) : BossAI(creature, DATA_DEEPBEARD) {}
 
+        bool activeEnergy;
+        uint16 changeEnergyTimer;
+
         void Reset()
         {
-            events.Reset();
             _Reset();
+            me->SetPower(POWER_ENERGY, 30);
+            changeEnergyTimer = 1000;
+            activeEnergy = true;
         }
 
-        void EnterCombat(Unit* /*who*/)
+        void EnterCombat(Unit* /*who*/) //33:25
         {
             //Talk(SAY_AGGRO);
             _EnterCombat();
-        }
 
-        void EnterEvadeMode()
-        {
-            //Talk(SAY_EVADE);
-            BossAI::EnterEvadeMode();
+            events.ScheduleEvent(EVENT_GROUND_SLAM, 7000); //33:32
+            events.ScheduleEvent(EVENT_GASEOUS_BUBBLES, 11000); //33:36, 34:09
+            events.ScheduleEvent(EVENT_CALL_THE_SEAS, 20000); //33:45
         }
 
         void JustDied(Unit* /*killer*/)
@@ -70,13 +75,46 @@ public:
             if (!UpdateVictim())
                 return;
 
+            if (activeEnergy)
+                if (changeEnergyTimer <= diff)
+                {
+                    if (me->GetPower(POWER_ENERGY) >= 100)
+                    {
+                        events.ScheduleEvent(EVENT_QUAKE, 0);
+                        activeEnergy = false;
+                    }
+                    else
+                        me->SetPower(POWER_ENERGY, me->GetPower(POWER_ENERGY) + 5);
+
+                    changeEnergyTimer = 1000;
+                }
+                else changeEnergyTimer -= diff;
+
             events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
 
             while (uint32 eventId = events.ExecuteEvent())
             {
                 switch (eventId)
                 {
-                    case EVENT_1:
+                    case EVENT_GROUND_SLAM:
+                        if (me->getVictim())
+                            DoCast(me->getVictim(), SPELL_GROUND_SLAM);
+                        events.ScheduleEvent(EVENT_GROUND_SLAM, 18000);
+                        break;
+                    case EVENT_GASEOUS_BUBBLES:
+                        DoCast(SPELL_GASEOUS_BUBBLES);
+                        events.ScheduleEvent(EVENT_GASEOUS_BUBBLES, 33000);
+                        break;
+                    case EVENT_QUAKE:
+                        DoCast(SPELL_QUAKE);
+                        activeEnergy = true;
+                        break;
+                    case EVENT_CALL_THE_SEAS:
+                        DoCast(SPELL_CALL_THE_SEAS);
+                        events.ScheduleEvent(EVENT_CALL_THE_SEAS, 30000);
                         break;
                 }
             }
@@ -90,7 +128,87 @@ public:
     }
 };
 
+//97916
+class npc_deepbeard_quake : public CreatureScript
+{
+public:
+    npc_deepbeard_quake() : CreatureScript("npc_deepbeard_quake") {}
+
+    struct npc_deepbeard_quakeAI : public ScriptedAI
+    {
+        npc_deepbeard_quakeAI(Creature* creature) : ScriptedAI(creature) 
+        {
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        EventMap events;
+
+        void Reset() {}
+
+        void IsSummonedBy(Unit* summoner)
+        {
+            DoCast(me, SPELL_QUAKE_VISAL, true);
+            DoCast(SPELL_QUAKE_DMG);
+            events.ScheduleEvent(EVENT_1, 4000);
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_1:
+                        DoCast(SPELL_QUAKE_DMG);
+                        me->DespawnOrUnsummon(1000);
+                        break;
+                }
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_deepbeard_quakeAI(creature);
+    }
+};
+
+//193018
+class spell_deepbeard_gaseous_explosion : public SpellScriptLoader
+{
+    public:
+        spell_deepbeard_gaseous_explosion() : SpellScriptLoader("spell_deepbeard_gaseous_explosion") { }
+
+        class spell_deepbeard_gaseous_explosion_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_deepbeard_gaseous_explosion_AuraScript);
+
+            void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+            {
+                if (!GetTarget())
+                    return;
+
+                if (GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE)
+                    GetTarget()->CastSpell(GetTarget(), SPELL_GASEOUS_BUBBLES_EXPLOSE, true);
+            }
+
+            void Register()
+            {
+                OnEffectRemove += AuraEffectRemoveFn(spell_deepbeard_gaseous_explosion_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_SCHOOL_ABSORB, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_deepbeard_gaseous_explosion_AuraScript();
+        }
+};
+
 void AddSC_boss_king_deepbeard()
 {
     new boss_king_deepbeard();
+    new npc_deepbeard_quake();
+    new spell_deepbeard_gaseous_explosion();
 }

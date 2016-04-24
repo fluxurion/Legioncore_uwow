@@ -16,14 +16,17 @@ enum eData
     MAX_ENCOUNTER,
 };
 
-/* enum eCreatures
+enum eCreatures
 {
-    NPC_ = ,
+    //Hatecoil
+    NPC_SAND_DUNE           = 97853,
+    //Deepbeard
+    NPC_QUAKE               = 97916,
 };
 
 enum eGameObjects
 {
-    GO_ = ,
-}; */
+    GO_SAND_DUNE            = 244690,
+};
 
 #endif

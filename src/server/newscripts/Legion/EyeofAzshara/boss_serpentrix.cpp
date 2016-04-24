@@ -12,25 +12,24 @@
 {
     SAY_AGGRO           = ,
     SAY_DEATH           = ,
-    SAY_EVADE           = ,
 }; */
 
-/* enum Spells
+enum Spells
 {
-    SPELL_    = ,
-    SPELL_    = ,
-    SPELL_    = ,
-    SPELL_    = ,
-}; */
+    //SPELL_    = ,
+    //SPELL_    = ,
+    //SPELL_    = ,
+    //SPELL_    = ,
+};
 
-/* enum eEvents
+enum eEvents
 {
-    EVENT_    = 1,
-    EVENT_    = 2,
-    EVENT_    = 3,
-    EVENT_    = 4,
-    EVENT_    = 5,
-}; */
+    //EVENT_    = 1,
+    //EVENT_    = 2,
+    //EVENT_    = 3,
+    //EVENT_    = 4,
+    //EVENT_    = 5,
+};
 
 class boss_serpentrix : public CreatureScript
 {
@@ -43,7 +42,6 @@ public:
 
         void Reset()
         {
-            events.Reset();
             _Reset();
         }
 
@@ -51,12 +49,8 @@ public:
         {
             //Talk(SAY_AGGRO);
             _EnterCombat();
-        }
 
-        void EnterEvadeMode()
-        {
-            //Talk(SAY_EVADE);
-            BossAI::EnterEvadeMode();
+            //events.ScheduleEvent(EVENT_, );
         }
 
         void JustDied(Unit* /*killer*/)
@@ -71,6 +65,9 @@ public:
                 return;
 
             events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
 
             while (uint32 eventId = events.ExecuteEvent())
             {

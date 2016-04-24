@@ -84,6 +84,8 @@ class CreatureAI : public UnitAI
         Creature* DoSummonFlyer(uint32 entry, WorldObject* obj, float flightZ, float radius = 5.0f, uint32 despawnTime = 30000, TempSummonType summonType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
 
     public:
+        uint32 inFightAggroCheck_Timer;
+        void DoAggroPulse(const uint32 diff);
         void Talk(uint8 id, ObjectGuid WhisperGuid = ObjectGuid::Empty);
         void ZoneTalk(uint8 id, ObjectGuid WhisperGuid = ObjectGuid::Empty);
         explicit CreatureAI(Creature* creature) : UnitAI(creature), me(creature), m_MoveInLineOfSight_locked(false), m_canSeeEvenInPassiveMode(false) {}
