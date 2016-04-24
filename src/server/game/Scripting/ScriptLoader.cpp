@@ -100,6 +100,7 @@ void AddSC_garrison_instance();
 
 //legion
 void AddSC_Mardum();
+void AddSC_warden_prison();
 
 void AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
 void AddSC_boss_the_amalgam_of_souls();
@@ -1165,6 +1166,7 @@ void AddLegionScripts()
 {
 #ifdef SCRIPTS
     AddSC_Mardum();
+    AddSC_warden_prison();
 
     AddSC_instance_black_rook_hold_dungeon();  //Black Rook Hold Dungeon
     AddSC_boss_the_amalgam_of_souls();

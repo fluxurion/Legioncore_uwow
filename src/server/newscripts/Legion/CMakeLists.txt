@@ -16,6 +16,7 @@ endif ()
 set(Legion_STAT_SRCS
   ${Legion_STAT_SRCS}
   mardum.cpp
+  warden_prison.cpp
   
   BlackRookHoldDungeon/instance_black_rook_hold_dungeon.cpp
   BlackRookHoldDungeon/boss_the_amalgam_of_souls.cpp
