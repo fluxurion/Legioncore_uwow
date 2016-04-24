@@ -2324,6 +2324,10 @@ void GameObject::GameObjectAction()
             if (player->GetDistance2d(this) > float(itr->Distance))
                 continue;
 
+            if ((itr->SpellID || itr->WorldSafeLocID) && (itr->X != 0.0f || itr->Y != 0.0f || itr->Z != 0.0f))
+                if (GetExactDist(itr->X, itr->Y, itr->Z) > float(itr->Distance))
+                    continue;
+
             if (itr->SpellID)
                 player->CastSpell(player, itr->SpellID, true);
 
@@ -2335,7 +2339,7 @@ void GameObject::GameObjectAction()
                     player->TeleportTo(entry->MapID, entry->Loc.X, entry->Loc.Y, entry->Loc.Z, Orientation);
                 }
             }
-            else if(itr->X != 0.0f || itr->Y != 0.0f || itr->Z != 0.0f)
+            else if (itr->X != 0.0f || itr->Y != 0.0f || itr->Z != 0.0f)
                 player->TeleportTo(itr->MapID, itr->X, itr->Y, itr->Z, itr->O);
         }
     }
