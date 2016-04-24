@@ -1596,6 +1596,9 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Spell Phase Dbc Info...");
     sObjectMgr->LoadSpellPhaseInfo();
 
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading AreaTrigger Forces...");
+    sObjectMgr->LoadAreaTriggerForces();
+
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading NPC Texts...");
     sObjectMgr->LoadNPCText();
 

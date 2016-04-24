@@ -293,6 +293,7 @@ class Aura
         ObjectGuid m_spellDynObjGuid;
         ObjectGuid m_spellAreaTrGuid;
         AuraEffect const* m_triggeredByAura;
+        ObjectGuid m_areaTrGuid;
 
         int32 m_maxDuration;                                // Max aura duration
         int32 m_duration;                                   // Current time

@@ -3139,6 +3139,7 @@ class Player : public Unit, public GridObject<Player>
 
         void ValidateMovementInfo(MovementInfo* mi);
         void SendMovementForce(AreaTrigger const* at, float x = 0.0f, float y = 0.0f, float z = 0.0f, float magnitude = 0.0f, uint32 type = 0, bool apply = false);
+        void SendMovementForceAura(ObjectGuid triggerGuid, G3D::Vector3 wind, G3D::Vector3 center, float magnitude, uint8 type, bool apply);
 
         /*! These methods send different packets to the client in apply and unapply case.
             These methods are only sent to the current unit.

@@ -503,6 +503,18 @@ struct GameObjectActionData
 
 typedef std::unordered_map<uint32/*entry*/, std::vector<GameObjectActionData> > GameObjectActionMap;
 
+struct AreaTriggerForce
+{
+    uint32 AuraID;
+    uint32 CustomEntry;
+    G3D::Vector3 wind;
+    G3D::Vector3 center;
+    float windSpeed;
+    uint8 windType;
+};
+
+typedef std::unordered_map<uint32/*entry*/, std::vector<AreaTriggerForce> > AreaTriggerForceMap;
+
 typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
 struct CellObjectGuids
@@ -1423,6 +1435,7 @@ class ObjectMgr
         void LoadAreaTriggerScripts();
         void LoadTavernAreaTriggers();
         void LoadGameObjectForQuests();
+        void LoadAreaTriggerForces();
 
         void LoadGameObjectActionData();
 
@@ -1667,6 +1680,7 @@ class ObjectMgr
         const std::vector<DisplayChoiceData>* GetDisplayChoiceData(uint32 ChoiceID) const;
 
         const std::vector<GameObjectActionData>* GetGameObjectActionData(uint32 entry) const;
+        const std::vector<AreaTriggerForce>* GetAreaTriggerForce(uint32 AuraID) const;
 
         void AddCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid, uint32 instance);
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
@@ -2093,6 +2107,7 @@ class ObjectMgr
         DisplayChoiceMap _displayChoiceMap;
 
         GameObjectActionMap _gameObjectActionMap;
+        AreaTriggerForceMap _areaTriggerForceMap;
 };
 
 #define sObjectMgr ObjectMgr::instance()

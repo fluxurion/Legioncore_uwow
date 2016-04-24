@@ -647,7 +647,7 @@ m_owner(owner), m_timeCla(0), m_updateTargetMapInterval(0),
 m_casterLevel(caster ? caster->getLevelForTarget(owner) : m_spellInfo->SpellLevel), m_procCharges(0), m_stackAmount(stackAmount ? stackAmount: 1),
 m_isRemoved(false), m_isSingleTarget(false), m_isUsingCharges(false), m_fromAreatrigger(false), m_inArenaNerf(false), m_aura_amount(0),
 m_diffMode(caster ? caster->GetSpawnMode() : 0), m_spellDynObjGuid(), m_spellAreaTrGuid(), m_customData(0), m_damage_amount(0),
-m_comboPoints(comboPoints)
+m_comboPoints(comboPoints), m_areaTrGuid()
 {
     SpellPowerData powerData;
     if (!GetSpellInfo()->GetSpellPowerByCasterPower(GetCaster(), powerData))
@@ -1973,6 +1973,19 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
     // mods at aura apply
     if (apply)
     {
+        //Hack use AT for auras, when AT very big radius and not visible
+        std::vector<AreaTriggerForce> const* forceData = sObjectMgr->GetAreaTriggerForce(GetId());
+        if (forceData && !forceData->empty())
+        {
+            for (std::vector<AreaTriggerForce>::const_iterator itr = forceData->begin(); itr != forceData->end(); ++itr)
+            {
+                if (Player* player = target->ToPlayer())
+                {
+                    m_areaTrGuid = ObjectGuid::Create<HighGuid::AreaTrigger>(target->GetMapId(), itr->CustomEntry, sObjectMgr->GetGenerator<HighGuid::AreaTrigger>()->Generate());
+                    player->SendMovementForceAura(m_areaTrGuid, itr->wind, itr->center, itr->windSpeed, itr->windType, true);
+                }
+            }
+        }
         switch (GetSpellInfo()->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:
@@ -2158,6 +2171,13 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
     // mods at aura remove
     else
     {
+        if (m_areaTrGuid)
+        {
+            G3D::Vector3 temp;
+            if (Player* player = target->ToPlayer())
+                player->SendMovementForceAura(m_areaTrGuid, temp, temp, 0.0f, 0, false);
+        }
+
         switch (GetSpellInfo()->ClassOptions.SpellClassSet)
         {
             case SPELLFAMILY_GENERIC:

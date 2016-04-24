@@ -9902,6 +9902,45 @@ void ObjectMgr::LoadGameObjectActionData()
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 gameobject_action data. DB table `gameobject_action` is empty.");
 }
 
+void ObjectMgr::LoadAreaTriggerForces()
+{
+    _areaTriggerForceMap.clear();
+
+    //                                                  0             1          2        3        4         5            6           7          8          9
+    QueryResult result = WorldDatabase.Query("SELECT `AuraID`, `CustomEntry`, `windX`, `windY`, `windZ`, `windType`, `windSpeed`, `centerX`, `centerY`, `centerZ` FROM `areatrigger_force`");
+    if (result)
+    {
+        uint32 counter = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+
+            uint8 i = 0;
+            AreaTriggerForce data;
+            data.AuraID = fields[i++].GetUInt32();
+            data.CustomEntry = fields[i++].GetUInt32();
+            float windX = fields[i++].GetFloat();
+            float windY = fields[i++].GetFloat();
+            float windZ = fields[i++].GetFloat();
+            data.wind = G3D::Vector3(windX, windY, windZ);
+            data.windType = fields[i++].GetUInt8();
+            data.windSpeed = fields[i++].GetFloat();
+            float centerX = fields[i++].GetFloat();
+            float centerY = fields[i++].GetFloat();
+            float centerZ = fields[i++].GetFloat();
+            data.center = G3D::Vector3(centerX, centerY, centerZ);
+
+            _areaTriggerForceMap[data.AuraID].push_back(data);
+            ++counter;
+        }
+        while (result->NextRow());
+
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u areatrigger_force data.", counter);
+    }
+    else
+        sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 areatrigger_force data. DB table `areatrigger_force` is empty.");
+}
+
 const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId) const
 {
     ScenarioDataListMap::const_iterator itr = _scenarioDataList.find(mapId);
@@ -9920,6 +9959,12 @@ const ScenarioData* ObjectMgr::GetScenarioOnMap(uint32 mapId, uint32 scenarioId)
     }
 
     return NULL;
+}
+
+const std::vector<AreaTriggerForce>* ObjectMgr::GetAreaTriggerForce(uint32 AuraID) const
+{
+    AreaTriggerForceMap::const_iterator itr = _areaTriggerForceMap.find(AuraID);
+    return itr != _areaTriggerForceMap.end() ? &(itr->second) : NULL;
 }
 
 const std::vector<GameObjectActionData>* ObjectMgr::GetGameObjectActionData(uint32 entry) const
