@@ -20,8 +20,22 @@
 #include "MapBuilder.h"
 #include "Timer.h"
 
-using namespace MMAP;
+#include "Common.h"
+#include "Config.h"
+#include "DatabaseEnv.h"
+#include "Log.h"
+#include "ProcessPriority.h"
+#include "SystemConfig.h"
+#include "Util.h"
+#include <cstdlib>
+#include <iostream>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/program_options.hpp>
+#include <openssl/opensslv.h>
+#include <openssl/crypto.h>
 
+using namespace MMAP;
+LoginDatabaseWorkerPool LoginDatabase;
 bool checkDirectories(bool debugOutput)
 {
     std::vector<std::string> dirFiles;

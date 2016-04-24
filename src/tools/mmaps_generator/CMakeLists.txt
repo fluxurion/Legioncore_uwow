@@ -12,6 +12,7 @@ file(GLOB_RECURSE mmap_gen_sources *.cpp *.h)
 
 set(mmap_gen_Includes
   ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/dep/zmqpp
   ${CMAKE_SOURCE_DIR}/dep/cppformat
   ${CMAKE_SOURCE_DIR}/dep/libmpq
   ${CMAKE_SOURCE_DIR}/dep/zlib
@@ -43,6 +44,9 @@ set(mmap_gen_Includes
   ${CMAKE_SOURCE_DIR}/src/server/collision/Maps
   ${CMAKE_SOURCE_DIR}/src/server/collision/Models
   ${MYSQL_INCLUDE_DIR}
+  ${OPENSSL_INCLUDE_DIR}
+  ${VALGRIND_INCLUDE_DIR}
+  ${ZMQ_INCLUDE_DIR}
 )
 
 if( WIN32 )
@@ -61,11 +65,14 @@ target_link_libraries(mmaps_generator
   g3dlib
   Recast
   Detour
-  ${BZIP2_LIBRARIES}
-  ${ZLIB_LIBRARIES}
+  zmqpp
+  format
+  shared
+  ${MYSQL_LIBRARY}
+  ${OPENSSL_LIBRARIES}
+  ${ZMQ_LIBRARY}
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
-  ${MYSQL_LIBRARY}
 )
 
 if( UNIX )
