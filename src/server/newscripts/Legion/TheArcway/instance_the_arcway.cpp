@@ -116,7 +116,6 @@ public:
             onInitEnterState = true;
 
             DoEventCreatures();
-            
         }
 
         bool checkBossDone()

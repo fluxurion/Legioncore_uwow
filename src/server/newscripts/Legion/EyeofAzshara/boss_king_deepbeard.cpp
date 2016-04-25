@@ -21,6 +21,7 @@ enum Spells
     SPELL_GASEOUS_BUBBLES_EXPLOSE   = 193047,
     SPELL_QUAKE                     = 193152,
     SPELL_CALL_THE_SEAS             = 193051,
+    SPELL_FRENZY                    = 197550,
 
     SPELL_QUAKE_VISAL               = 193175,
     SPELL_QUAKE_DMG                 = 193159,
@@ -43,6 +44,7 @@ public:
     {
         boss_king_deepbeardAI(Creature* creature) : BossAI(creature, DATA_DEEPBEARD) {}
 
+        bool lowHp;
         bool activeEnergy;
         uint16 changeEnergyTimer;
 
@@ -52,6 +54,7 @@ public:
             me->SetPower(POWER_ENERGY, 30);
             changeEnergyTimer = 1000;
             activeEnergy = true;
+            lowHp = false;
         }
 
         void EnterCombat(Unit* /*who*/) //33:25
@@ -68,6 +71,15 @@ public:
         {
             //Talk(SAY_DEATH);
             _JustDied();
+        }
+
+        void DamageTaken(Unit* attacker, uint32& damage)
+        {
+            if (me->HealthBelowPct(31) && !lowHp)
+            {
+                lowHp = true;
+                DoCast(me, SPELL_FRENZY, true);
+            }
         }
 
         void UpdateAI(uint32 diff)
@@ -175,6 +187,63 @@ public:
     }
 };
 
+//97844
+class npc_deepbeard_call_the_seas : public CreatureScript
+{
+public:
+    npc_deepbeard_call_the_seas() : CreatureScript("npc_deepbeard_call_the_seas") {}
+
+    struct npc_deepbeard_call_the_seasAI : public ScriptedAI
+    {
+        npc_deepbeard_call_the_seasAI(Creature* creature) : ScriptedAI(creature) 
+        {
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        bool moveActive;
+        uint16 randomMoveTimer;
+
+        void Reset() 
+        {
+            moveActive = true;
+            randomMoveTimer = 1000;
+        }
+
+        void MovementInform(uint32 type, uint32 id)
+        {
+            if (type != POINT_MOTION_TYPE)
+                return;
+
+            moveActive = true;
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            if (moveActive)
+                if (randomMoveTimer <= diff)
+                {
+                    moveActive = false;
+                    randomMoveTimer = 500;
+                    float angle = (float)rand_norm() * static_cast<float>(2 * M_PI);
+                    float distance = 20 * (float)rand_norm();
+                    float x = me->GetHomePosition().GetPositionX() + distance * std::cos(angle);
+                    float y = me->GetHomePosition().GetPositionY() + distance * std::sin(angle);
+                    float z = me->GetHomePosition().GetPositionZ();
+                    Trinity::NormalizeMapCoord(x);
+                    Trinity::NormalizeMapCoord(y);
+    
+                    me->GetMotionMaster()->MovePoint(1, x, y, z);
+                }
+                else randomMoveTimer -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_deepbeard_call_the_seasAI(creature);
+    }
+};
+
 //193018
 class spell_deepbeard_gaseous_explosion : public SpellScriptLoader
 {
@@ -210,5 +279,6 @@ void AddSC_boss_king_deepbeard()
 {
     new boss_king_deepbeard();
     new npc_deepbeard_quake();
+    new npc_deepbeard_call_the_seas();
     new spell_deepbeard_gaseous_explosion();
 }
