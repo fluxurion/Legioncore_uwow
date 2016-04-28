@@ -220,7 +220,7 @@ public:
 
         void EnterCombat(Unit* /*who*/)
         {
-            if (nokgar)
+            if (nokgar && nokgar->ToCreature() && nokgar->ToCreature()->AI())
                 nokgar->ToCreature()->AI()->DoZoneInCombat();
 
             events.ScheduleEvent(EVENT_SAVAGE_MAULING, 28000);
@@ -232,7 +232,7 @@ public:
         {
             ScriptedAI::EnterEvadeMode();
 
-            if (nokgar)
+            if (nokgar && nokgar->ToCreature() && nokgar->ToCreature()->AI())
                 nokgar->ToCreature()->AI()->EnterEvadeMode();
         }
 
