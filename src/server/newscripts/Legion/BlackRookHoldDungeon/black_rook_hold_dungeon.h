@@ -15,6 +15,8 @@ enum eData
     MAX_ENCOUNTER,
 
     DATA_KURTALOS_STATE,
+    DATA_AMALGAM_OUTRO,
+    DATA_ILLYSANNA_INTRO,
 };
 
 enum eCreatures
@@ -46,6 +48,7 @@ enum eGameObjects
     GO_ILLYSANNA_DOOR_1         = 247401,
     GO_ILLYSANNA_DOOR_2         = 247399,
     GO_ILLYSANNA_DOOR_3         = 247400,
+    GO_ILLYSANNA_DOOR_4         = 245079,
     GO_SMASHSPITE_DOOR          = 247402,
     GO_SMASH_KURT_DOOR_1        = 245104,
     GO_SMASH_KURT_DOOR_2        = 245105,

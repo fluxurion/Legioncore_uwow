@@ -8,11 +8,10 @@
 #include "ScriptedCreature.h"
 #include "black_rook_hold_dungeon.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 0,
+};
 
 enum Spells
 {
@@ -295,7 +294,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //22:08
         {
-            //Talk(SAY_AGGRO); //Fiends, you shall never have our world!
+            Talk(SAY_AGGRO); //Fiends, you shall never have our world!
             if (Creature* latosius = me->FindNearestCreature(NPC_LATOSIUS, 30.0f))
                 latosius->AI()->DoZoneInCombat(latosius, 100.0f);
 

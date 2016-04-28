@@ -58,6 +58,7 @@ public:
         bool glaiveDubleCast;
         bool phaseTwo;
         int8 PowerCount;
+        bool introDone;
 
         void Reset()
         {
@@ -89,6 +90,20 @@ public:
             events.ScheduleEvent(EVENT_BRUTAL_GLAIVE, 6000);  //07:41, 07:57
             events.ScheduleEvent(EVENT_VENGEFUL_SHEAR, 9000); //07:44, 07:59, 08:11
             events.ScheduleEvent(EVENT_DARK_RUSH_1, 12000);   //07:47, 08:18
+        }
+        
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!introDone && me->IsWithinDistInMap(who, 57.0f))
+             {
+                if (Creature* cap = me->FindNearestCreature(98706, 100.0f, true))
+                   cap->AI()->DoAction(true);
+                introDone = true;
+             }
         }
 
         void SpellHitTarget(Unit* target, const SpellInfo* spell)
@@ -356,10 +371,103 @@ public:
     }
 };
 
+
+// commandir 98706
+class npc_illysanna_commandir : public CreatureScript
+{
+public:
+    npc_illysanna_commandir() : CreatureScript("npc_illysanna_commandir") {}
+
+    struct npc_illysanna_commandirAI : public ScriptedAI
+    {
+        npc_illysanna_commandirAI(Creature* creature) : ScriptedAI(creature) 
+        {
+            me->SetReactState(REACT_PASSIVE);
+            wait = false;
+            instance = me->GetInstanceScript();
+            if (me->isAlive())
+             instance->SetData(DATA_AMALGAM_OUTRO, IN_PROGRESS);            
+        }
+
+        EventMap events;
+        InstanceScript* instance;
+        bool wait;
+        std::list<Creature*> trashList;
+        
+        void DoAction(int32 const action)
+        {
+           events.ScheduleEvent(EVENT_1, 9000);
+        }
+        void EnterCombat(Unit* /*who*/) //07:35
+        {
+            events.ScheduleEvent(EVENT_3, 16000);
+        }        
+        
+        void JustDied(Unit* /*killer*/)
+        {
+           instance->SetData(DATA_AMALGAM_OUTRO, DONE);      
+        }
+        
+        void EnterEvadeMode()
+        {
+           wait = false;
+        }
+        
+        void UpdateAI(uint32 diff) 
+        {
+            if (!UpdateVictim() && wait)
+                return;
+
+            events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_1:
+                       Talk(0);
+                       events.ScheduleEvent(EVENT_2, 3000);
+                       break;
+                    case EVENT_2:
+                        me->SetReactState(REACT_AGGRESSIVE);
+                        GetCreatureListWithEntryInGrid(trashList, me, 98275, 70.0f);                       
+                        GetCreatureListWithEntryInGrid(trashList, me, 98691, 70.0f);
+                        if (Unit* target = me->SelectNearestPlayer(50.0f))
+                        {
+                           for (std::list<Creature*>::iterator itr = trashList.begin(); itr != trashList.end(); ++itr)
+                              if ((*itr))    
+                                 (*itr)->AI()->AttackStart(target);
+                           me->AI()->AttackStart(target);                              
+                        }
+                        wait = true;
+                        break;   
+                    case EVENT_3:
+                        DoCast(200261);
+                        events.ScheduleEvent(EVENT_3, 16000);
+                        break;
+                }
+            }
+            DoMeleeAttackIfReady();
+        }            
+        
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_illysanna_commandirAI(creature);
+    }
+};
+        
+
 void AddSC_boss_illysanna_ravencrest()
 {
     new boss_illysanna_ravencrest();
     new npc_illysanna_eye_beam_stalker();
     new spell_illysanna_periodic_energize();
     new spell_illysanna_eye_beams();
+    
+    new npc_illysanna_commandir();
 }

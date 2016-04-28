@@ -8,11 +8,6 @@
 #include "ScriptedCreature.h"
 #include "black_rook_hold_dungeon.h"
 
-/* enum Says
-{
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
 
 enum Spells
 {
@@ -85,8 +80,8 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
             _JustDied();
+            DoCast(205271);
         }
 
         void UpdateAI(uint32 diff)

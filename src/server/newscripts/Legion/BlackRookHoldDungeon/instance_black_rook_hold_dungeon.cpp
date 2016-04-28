@@ -9,7 +9,7 @@
 
 DoorData const doorData[] =
 {
-    {GO_AMALGAM_DOOR_EXIT,      DATA_AMALGAM,       DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
+    // {GO_AMALGAM_DOOR_EXIT,      DATA_AMALGAM_OUTRO,       DOOR_TYPE_PASSAGE,      BOUNDARY_NONE},
     {GO_AMALGAM_DOOR_1,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
     {GO_AMALGAM_DOOR_2,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
     {GO_AMALGAM_DOOR_3,         DATA_AMALGAM,       DOOR_TYPE_ROOM,         BOUNDARY_NONE},
@@ -41,11 +41,17 @@ public:
         }
 
         uint8 KurtalosState;
+        uint8 AmalgamState;
+        ObjectGuid AmalgamGateGUID;
+        ObjectGuid IllysannaGateGUID;
 
         void Initialize()
         {
             LoadDoorData(doorData);
             KurtalosState = 0;
+            AmalgamState = 0;
+            AmalgamGateGUID.Clear();
+            IllysannaGateGUID.Clear();
         }
 
         void OnCreatureCreate(Creature* creature)
@@ -66,7 +72,6 @@ public:
                 case GO_AMALGAM_DOOR_2:
                 case GO_AMALGAM_DOOR_3:
                 case GO_AMALGAM_DOOR_4:
-                case GO_AMALGAM_DOOR_EXIT:
                 case GO_ILLYSANNA_DOOR_1:
                 case GO_ILLYSANNA_DOOR_2:
                 case GO_ILLYSANNA_DOOR_3:
@@ -75,6 +80,12 @@ public:
                 case GO_SMASH_KURT_DOOR_2:
                 case GO_KURTALOS_DOOR:
                     AddDoor(go, true);
+                    break;
+                case GO_AMALGAM_DOOR_EXIT:
+                    AmalgamGateGUID = go->GetGUID();
+                    break;                
+                case GO_ILLYSANNA_DOOR_4:
+                    IllysannaGateGUID = go->GetGUID();
                     break;
                 default:
                     break;
@@ -95,6 +106,20 @@ public:
             {
                 case DATA_KURTALOS_STATE:
                     KurtalosState = data;
+                    break;               
+                case DATA_AMALGAM_OUTRO:
+                    if (data == 0)
+                       AmalgamState++;
+                    if (data == DONE)
+                       HandleGameObject(AmalgamGateGUID, true);                    
+                    if (data != DONE)
+                       HandleGameObject(AmalgamGateGUID, false);
+                    break;                
+                case DATA_ILLYSANNA_INTRO:
+                    if (data == DONE)
+                       HandleGameObject(IllysannaGateGUID, false);                    
+                    if (data != DONE)
+                       HandleGameObject(IllysannaGateGUID, true);
                     break;
                 default:
                     break;
@@ -116,7 +141,9 @@ public:
             switch (type)
             {
                 case DATA_KURTALOS_STATE:
-                    return KurtalosState;
+                    return KurtalosState;                
+                case DATA_AMALGAM_OUTRO:
+                    return AmalgamState;
             }
             return 0;
         }
