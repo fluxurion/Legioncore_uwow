@@ -318,7 +318,9 @@ struct QuestObjectivesLocale
 enum QuestObjectiveFlags
 {
     QUEST_OBJECTIVE_FLAG_HIDEN = 0x2,
+    QUEST_OBJECTIVES_FLAG_REQUAREMENT_FOR_MAIN_OBJECTIVE = 0x8, // more research.
     QUEST_OBJECTIVE_FLAG_TASK   = 0x40 | 0x10,  //
+    
 };
 
 struct QuestObjective

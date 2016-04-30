@@ -10,12 +10,15 @@
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
 ('7814', '1', '0', '5366 5367', '0', '0', '16', 'While not rew 38672'),
 ('7814', '2', '0', '5976', '0', '0', '16', 'rew 38672'),
+('7814', '3', '0', '5495 5494', '0', '0', '16', 'rew 38672'),
 ('7814', '100', '0', '5982 5966 5965 5964 5409 5407 5401 5309 5158 5129 5121 5125 5124', '0', '0', '16', 'Legion. Global.'); --
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup = 7814; 
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
-(23, 7814, 1, 0, 0, 8, 0, 38672, 0, 0, 1, 0, '', 'Draenor. FrostFireRidge. While non rew 38672'),
-(23, 7814, 2, 0, 0, 8, 0, 38672, 0, 0, 0, 0, '', 'Draenor. FrostFireRidge. While rew 38672');
+(23, 7814, 1, 0, 0, 8, 0, 38672, 0, 0, 1, 0, '', 'While non rew 38672'),
+(23, 7814, 2, 0, 0, 8, 0, 38672, 0, 0, 0, 0, '', 'While rew 38672'),
+(23, 7814, 3, 0, 0, 14, 0, 38690, 0, 0, 1, 0, '', 'While taken 38690'),
+(23, 7814, 3, 1, 0, 14, 0, 38689, 0, 0, 1, 0, '', 'While taken 38689');
 
 -- Quest chaine fixes.
 REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `ExclusiveGroup`) VALUES 
@@ -23,11 +26,11 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38669', '0', '0', '0'),
 ('38672', '38669', '0', '0'),
 ('39742', '38672', '0', '0'),
-('38690', '38672', '0', '0'),
-('38689', '38672', '0', '0'),
-
+('38690', '38672', '0', '-38723'),
+('38689', '38672', '0', '-38723'),
+('38723', '38689', '0', '0'),
 -- ToDo
-('38723', '99999', '0', '0');
+('39682', '1', '0', '0');
 
 DELETE FROM `spell_area` WHERE area in (7814);
 REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
@@ -47,10 +50,11 @@ INSERT INTO `quest_start_scripts` (`id`, `delay`, `command`, `datalong`, `datalo
 -- Q: 39742 Area
 
 -- Q: 38690
-
 -- opened state: 8839
-UPDATE `gameobject_template` SET `WorldEffectID` = '4205', `SpellStateAnimKitID` = '0' WHERE `gameobject_template`.`entry` = 244588;
+UPDATE `gameobject_template` SET `WorldEffectID` = '4205', `SpellStateAnimKitID` = '0', `ScriptName` = 'go_q38690' WHERE `gameobject_template`.`entry` = 244588;
 
 -- Q: 38689
 -- 133511 spell 202154 -> 133578 133509
 UPDATE `creature_template` SET `ScriptName` = 'npc_q38689' WHERE `creature_template`.`entry` in (92782, 92776);
+
+-- Q: 38723
