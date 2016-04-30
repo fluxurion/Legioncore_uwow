@@ -22,9 +22,16 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38668', '0', '0', '0'), -- hideen
 ('38669', '0', '0', '0'),
 ('38672', '38669', '0', '0'),
+('39742', '38672', '0', '0'),
+('38690', '38672', '0', '0'),
+('38689', '38672', '0', '0'),
+
 -- ToDo
 ('38723', '99999', '0', '0');
 
+DELETE FROM `spell_area` WHERE area in (7814);
+REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
+('133508', '7814', '38689', '38689', '0', '0', '2', '1', '10', '64');
 
 -- Q: 38669 GO 241553
 
@@ -36,3 +43,11 @@ UPDATE `quest_template` SET `StartScript` = '38672' WHERE `quest_template`.`ID` 
 DELETE FROM `quest_start_scripts` WHERE id = 38672;
 INSERT INTO `quest_start_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `dataint`, `x`, `y`, `z`, `o`) VALUES 
 ('38672', '0', '8', '99326', '0', '0', '0', '0', '0', '0');
+
+-- Q: 39742 Area
+
+-- Q: 38690
+
+-- Q: 38689
+-- 133511 spell 202154 -> 133578 133509
+UPDATE `creature_template` SET `ScriptName` = 'npc_q38689' WHERE `creature_template`.`entry` in (92782, 92776);
