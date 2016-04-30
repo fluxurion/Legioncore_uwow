@@ -21,6 +21,8 @@ public:
 
         npc_q38689AI(Creature* creature) : ScriptedAI(creature)
         {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
@@ -49,15 +51,12 @@ public:
         void MoveInLineOfSight(Unit* /*who*/) override {};
         void DamageDealt(Unit* victim, uint32& damage, DamageEffectType /*damageType*/) override
         {
-            if (victim->ToPlayer())
-                damage /= 10;
-            else
-                damage = 0;
+            damage /= 10;
         }
 
         void DamageTaken(Unit* attacker, uint32& damage) override
         {
-            damage *= 5;
+            damage = 10000;
         }
 
         void JustDied(Unit* /*killer*/)
@@ -72,8 +71,8 @@ public:
                     player->CastSpell(player, SPELL_CREDIT2, true);
                 }
             }
-            me->Respawn(false, 5000);
         }
+
     };
 };
 

@@ -48,6 +48,9 @@ INSERT INTO `quest_start_scripts` (`id`, `delay`, `command`, `datalong`, `datalo
 
 -- Q: 38690
 
+-- opened state: 8839
+UPDATE `gameobject_template` SET `WorldEffectID` = '4205', `SpellStateAnimKitID` = '0' WHERE `gameobject_template`.`entry` = 244588;
+
 -- Q: 38689
 -- 133511 spell 202154 -> 133578 133509
 UPDATE `creature_template` SET `ScriptName` = 'npc_q38689' WHERE `creature_template`.`entry` in (92782, 92776);
