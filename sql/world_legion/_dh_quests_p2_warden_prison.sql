@@ -5,6 +5,7 @@
 -- ----------------
 --   P A S E
 -- ----------------
+
 -- 5366 5367   - Q38672
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
 ('7814', '1', '0', '5366 5367', '0', '0', '16', 'While not rew 38672'),
@@ -12,8 +13,8 @@ REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `Pr
 ('7814', '3', '0', '5495 5494', '0', '0', '16', 'rew 38672'),
 ('7814', '4', '0', '5128', '0', '0', '16', 'active 38723 and not completed and not rewarded'),
 ('7819', '5', '0', '5498', '0', '0', '16', 'rewarded 38723'),
-('7814', '99', '0', '5982 5966 5965 5964 5409 5407 5309 5129 5121 5125 5124', '0', '0', '16', 'Legion. Global.'), --
-('7814', '100', '0', '5401 5158', '0', '0', '16', 'Legion. Global.');
+('7814', '99', '0', '5982 5966 5965 5964 5309 5121 5125 5124', '0', '0', '16', 'Legion. Global.'), --
+('7814', '100', '0', '5401 5158 5409 5407 5129', '0', '0', '16', 'Legion. Global.');
 
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup in (7814, 7819); 
@@ -73,3 +74,38 @@ INSERT INTO `quest_start_scripts` (`id`, `delay`, `command`, `datalong`, `datalo
 REPLACE INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES ('187864', 'spell_q38723');
 
 UPDATE `creature_template` SET `ScriptName` = 'npc_q38723' WHERE `creature_template`.`entry` in (92990,97632 );
+
+-- Q: 39682
+-- vehicle 99443 
+-- spell  195537 summoner 96659
+
+DELETE FROM `npc_spellclick_spells` WHERE `npc_entry` = 99443;
+INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `cast_flags`, `user_type`) 
+VALUES ('99443', '46598', '1', '0');
+
+UPDATE `creature_template` SET `VehicleId` = '4372', `minlevel` = '100', `maxlevel` = '100', `faction` = '1610', `ScriptName` = 'npc_q39682' WHERE `entry` = 99443;
+
+SET @id = 0;
+SET @entry = 99443;
+DELETE FROM `script_waypoint` WHERE `entry` = @entry;
+INSERT INTO `script_waypoint` (`entry`, `pointid`, `location_x`, `location_y`, `location_z`, `waittime`, `point_comment`) VALUES
+(@entry, @id := @id+ 1, 4436.342, -285.1404, -245.9517, 0, NULL),
+(@entry, @id := @id+ 1, 4436.776, -284.2395, -245.9517, 0, NULL),
+(@entry, @id := @id+ 1, 4446.447, -295.8958, -235.3393, 0, NULL),
+(@entry, @id := @id+ 1, 4456.686, -311.0035, -207.6675, 0, NULL),
+(@entry, @id := @id+ 1, 4460.651, -321.5399, -187.7354, 0, NULL),
+(@entry, @id := @id+ 1, 4454.374, -328.5417, -165.5679, 0, NULL),
+(@entry, @id := @id+ 1, 4447.924, -327.4219, -153.9652, 0, NULL),
+(@entry, @id := @id+ 1, 4448.483, -319.5451, -144.8872, 0, NULL),
+(@entry, @id := @id+ 1, 4454.757, -318.3906, -127.1212, 0, NULL),
+(@entry, @id := @id+ 1, 4455.591, -325.2778, -107.7209, 0, NULL),
+(@entry, @id := @id+ 1, 4449.187, -328.9375, -85.20784, 0, NULL),
+(@entry, @id := @id+ 1, 4444.792, -325.2083, -66.88081, 0, NULL),
+(@entry, @id := @id+ 1, 4446.588, -317.9913, -27.77394, 0, NULL),
+(@entry, @id := @id+ 1, 4451.853, -316.2778, -6.795706, 0, NULL),
+(@entry, @id := @id+ 1, 4454.854, -320.9028, 38.56396, 0, NULL),
+(@entry, @id := @id+ 1, 4454.283, -324.1094, 68.72004, 0, NULL),
+(@entry, @id := @id+ 1, 4451.352, -326.1875, 91.97843, 0, NULL),
+(@entry, @id := @id+ 1, 4451.143, -327.8229, 136.2271, 0, NULL),
+(@entry, @id := @id+ 1, 4451.238, -351.0729, 129.3609, 0, NULL),
+(@entry, @id := @id+ 1, 4451.238, -351.0729, 129.3609, 0, NULL);

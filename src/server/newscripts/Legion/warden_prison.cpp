@@ -224,10 +224,98 @@ public:
 
     };
 };
+
+/*
+[1] byte70: False
+[1] [0] Waypoint: X: 4436.342 Y: -285.1404 Z: -245.9517
+[1] [1] Waypoint: X: 4436.776 Y: -284.2395 Z: -245.9517
+[1] [2] Waypoint: X: 4446.447 Y: -295.8958 Z: -235.3393
+[1] [3] Waypoint: X: 4456.686 Y: -311.0035 Z: -207.6675
+[1] [4] Waypoint: X: 4460.651 Y: -321.5399 Z: -187.7354
+[1] [5] Waypoint: X: 4454.374 Y: -328.5417 Z: -165.5679
+[1] [6] Waypoint: X: 4447.924 Y: -327.4219 Z: -153.9652
+[1] [7] Waypoint: X: 4448.483 Y: -319.5451 Z: -144.8872
+[1] [8] Waypoint: X: 4454.757 Y: -318.3906 Z: -127.1212
+[1] [9] Waypoint: X: 4455.591 Y: -325.2778 Z: -107.7209
+[1] [10] Waypoint: X: 4449.187 Y: -328.9375 Z: -85.20784
+[1] [11] Waypoint: X: 4444.792 Y: -325.2083 Z: -66.88081
+[1] [12] Waypoint: X: 4446.588 Y: -317.9913 Z: -27.77394
+[1] [13] Waypoint: X: 4451.853 Y: -316.2778 Z: -6.795706
+[1] [14] Waypoint: X: 4454.854 Y: -320.9028 Z: 38.56396
+[1] [15] Waypoint: X: 4454.283 Y: -324.1094 Z: 68.72004
+[1] [16] Waypoint: X: 4451.352 Y: -326.1875 Z: 91.97843
+[1] [17] Waypoint: X: 4451.143 Y: -327.8229 Z: 136.2271
+[1] [18] Waypoint: X: 4451.238 Y: -351.0729 Z: 129.3609
+[1] [19] Waypoint: X: 4451.238 Y: -351.0729 Z: 129.3609
+[1] RecID: 4372
+[1] InitialRawFacing: 1.121713
+*/
+class npc_q39682 : public CreatureScript
+{
+public:
+    npc_q39682() : CreatureScript("npc_q39682") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39682AI(creature);
+    }
+
+    struct npc_q39682AI : public npc_escortAI
+    {
+        npc_q39682AI(Creature* creature) : npc_escortAI(creature) {}
+
+        bool PlayerOn;
+        void Reset()
+        {
+            PlayerOn = false;
+        }
+
+        void OnCharmed(bool /*apply*/)
+        {
+        }
+
+
+        void PassengerBoarded(Unit* who, int8 /*seatId*/, bool apply)
+        {
+            if (!apply || who->GetTypeId() != TYPEID_PLAYER)
+                return;
+
+            PlayerOn = true;
+            Start(false, true, who->GetGUID());
+        }
+
+        void WaypointReached(uint32 i)
+        {
+            switch (i)
+            {
+                case 20:    // for NPC_BASTIA_2
+                    if (Player* player = GetPlayerForEscort())
+                    {
+                        SetEscortPaused(true);
+                        player->ExitVehicle();
+                    }
+                    break;
+            }
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            npc_escortAI::UpdateAI(diff);
+
+            if (PlayerOn)
+            {
+                if (Player* player = GetPlayerForEscort())
+                    player->SetClientControl(me, 0);
+                PlayerOn = false;
+            }
+        }
+    };
+};
 void AddSC_warden_prison()
 {
     new go_q38690();
     new npc_q38689();
     new spell_q38723();
     new npc_q38723();
+    new npc_q39682();
 }
