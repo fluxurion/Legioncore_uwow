@@ -37,7 +37,12 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('38690', '38672', '0', '-38723'),
 ('38689', '38672', '0', '-38723'),
 ('38723', '38689', '0', '0'),
-('39682', '38723', '0', '0');
+('39682', '38723', '0', '0'),
+('39684', '39682', '0', '-39686'),
+('39685', '39682', '0', '-39686'),
+('39683', '39682', '0', '-39686'),
+('39686', '39683', '0', '0');
+
 
 DELETE FROM `spell_area` WHERE area in (7814);
 REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
