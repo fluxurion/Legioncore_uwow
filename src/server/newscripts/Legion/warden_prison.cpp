@@ -291,6 +291,8 @@ public:
                 case 20:    // for NPC_BASTIA_2
                     if (Player* player = GetPlayerForEscort())
                     {
+                        
+                        player->KilledMonsterCredit(96659);
                         SetEscortPaused(true);
                         player->ExitVehicle();
                     }
