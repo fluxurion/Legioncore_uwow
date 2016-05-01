@@ -22,6 +22,9 @@
 void WorldSession::HandleScenePlaybackCanceled(WorldPackets::Scene::SceneInstance& packet)
 {
     SendPacket(WorldPackets::Scene::CancelScene(packet.SceneInstanceID).Write());
+
+    if (_player)
+        _player->SceneCompleted(packet.SceneInstanceID);
 }
 
 void WorldSession::HandleScenePlaybackComplete(WorldPackets::Scene::SceneInstance& packet)
