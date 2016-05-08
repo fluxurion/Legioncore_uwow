@@ -566,6 +566,88 @@ public:
         return true;
     }
 };
+
+//! 96783
+class npc_q39694 : public CreatureScript
+{
+public:
+    npc_q39694() : CreatureScript("npc_q39694") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39694AI(creature);
+    }
+
+    //! Scripted_NoMovementAI HACK!
+    struct npc_q39694AI : public Scripted_NoMovementAI
+    {
+        EventMap events;
+        ObjectGuid playerGuid;
+        int8 lowStep;
+        npc_q39694AI(Creature* creature) : Scripted_NoMovementAI(creature)
+        {
+            lowStep = 1;
+        }
+
+        enum data
+        {
+            REWARD_SPELL = 210500,
+            REWARD_SPELL2 = 195450,
+            CREDIT = 106255,
+
+            EVENT_1 = 1,
+            EVENT_2,
+            EVENT_3,
+            EVENT_4,
+            EVENT_5,
+            EVENT_6,
+        };
+
+        void EnterCombat(Unit* victim) override
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, victim->GetGUID());
+        }
+
+        void DoAction(int32 const /*param*/)
+        {
+
+        }
+
+        //! HACK!!! ANTIL FINISH EVENT
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            damage *= lowStep;
+        }
+
+        void DamageDealt(Unit* victim, uint32& damage, DamageEffectType /*damageType*/) override
+        {
+            damage /= lowStep;
+        }
+
+        void JustDied(Unit* killer)
+        {
+            Player *player = killer->ToPlayer();
+            if (!player)
+                return;
+
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_3, player->GetGUID());
+            player->CastSpell(player, REWARD_SPELL, true);
+            player->CastSpell(player, REWARD_SPELL2, true);
+            player->KilledMonsterCredit(CREDIT);
+        }
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+};
 void AddSC_warden_prison()
 {
     new go_q38690();
@@ -578,4 +660,5 @@ void AddSC_warden_prison()
     new npc_dh_questgiver_96675();
     new go_q39687();
     new npc_dh_questgiver_97644();
+    new npc_q39694();
 }

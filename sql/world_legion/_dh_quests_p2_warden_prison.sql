@@ -12,6 +12,7 @@
 -- 5440 5438 5437 5150 Q39685 non complete?
 -- 5439 5148 5147 39685 complete?
 -- 5469 5451 - Q39683 rewarded
+-- 5958 5500 5480
 
 -- 5366 5367   - Q38672
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
@@ -25,9 +26,9 @@ REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `Pr
 ('7814', '8', '0', '5440 5438 5437 5150 5439 5148 5147', '0', '0', '16', 'not completed 39685'),
 ('7814', '9', '0', '', '0', '0', '16', 'completed 39685'),
 ('7814', '10', '0', '5469 5451', '0', '0', '16', 'rewarded 39683'),
+('7814', '11', '0', '5958 5500 5480', '0', '0', '16', 'rewarded 40373'),
 ('7814', '99', '0', '5982 5966 5965 5964 5309 5121 5125 5124', '0', '0', '16', 'Legion. Global.'), --
 ('7814', '100', '0', '5401 5158 5409 5407 5129 5157', '0', '0', '16', 'Legion. Global.');
-
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup in (7814, 7819, 7865); 
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
@@ -45,6 +46,7 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (23, 7814, 9, 0, 0, 28, 0, 39685, 0, 0, 0, 0, '', 'While completed or rewarded 39685'),
 (23, 7814, 9, 0, 1, 8, 0, 39685, 0, 0, 0, 0, '', 'While completed or rewarded 39685'),
 (23, 7814, 10, 0, 0, 8, 0, 39683, 0, 0, 0, 0, '', 'rewarded 39683'),
+(23, 7814, 11, 0, 0, 8, 0, 40373, 0, 0, 0, 0, '', 'rewarded 40373'),
 (23, 7814, 99, 0, 1, 8, 0, 38723, 0, 0, 1, 0, '', 'global not rew 38723');
 
 -- Quest chaine fixes.
@@ -63,7 +65,8 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('39686', '39683', '0', '0'),
 ('39687', '39686', '0', '0'),
 ('40373', '39687', '0', '0'),
-('39694', '40373', '0', '0');
+('39694', '40373', '0', '0'),
+('39690', '39694', '0', '0');
 
 DELETE FROM `spell_area` WHERE area in (7814);
 REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
@@ -155,3 +158,7 @@ UPDATE `gameobject_template` SET  `ScriptName` = 'go_q39687' WHERE `gameobject_t
 UPDATE `creature_template` SET `ScriptName` = 'npc_dh_questgiver_97644' WHERE `entry` = 97644;
 
 -- Q: 39694
+UPDATE `creature_template` SET `ScriptName` = 'npc_q39694' WHERE `entry` = 96783;
+UPDATE `creature_template` SET `flags_extra` = '128' WHERE `creature_template`.`entry` = 101446;
+
+-- Q: 39690
