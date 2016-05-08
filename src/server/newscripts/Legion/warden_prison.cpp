@@ -514,6 +514,57 @@ public:
     }
 };
 
+//! 244455
+class go_q39687 : public GameObjectScript
+{
+public:
+    go_q39687() : GameObjectScript("go_q39687") { }
+
+    struct go_q39687AI : public GameObjectAI
+    {
+        go_q39687AI(GameObject* go) : GameObjectAI(go)
+        {
+
+        }
+
+        enum data
+        {
+            QUEST = 39687,
+            CREDIT = 100166,
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            player->KilledMonsterCredit(CREDIT);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const
+    {
+        return new go_q39687AI(go);
+    }
+};
+
+//! 96675
+class npc_dh_questgiver_97644 : public CreatureScript
+{
+public:
+    npc_dh_questgiver_97644() : CreatureScript("npc_dh_questgiver_97644") {}
+    enum data
+    {
+        QUEST_02 = 40373,
+    };
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == QUEST_02) // La lecon du parchemin brulant
+        {
+
+        }
+
+        return true;
+    }
+};
 void AddSC_warden_prison()
 {
     new go_q38690();
@@ -524,4 +575,6 @@ void AddSC_warden_prison()
     new npc_q39685();
     new npc_q39683();
     new npc_dh_questgiver_96675();
+    new go_q39687();
+    new npc_dh_questgiver_97644();
 }
