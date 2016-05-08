@@ -57,7 +57,8 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('39684', '39682', '0', '-39686'),
 ('39685', '39682', '0', '-39686'),
 ('39683', '39682', '0', '-39686'),
-('39686', '39683', '0', '0');
+('39686', '39683', '0', '0'),
+('39687', '39686', '0', '0');
 
 
 DELETE FROM `spell_area` WHERE area in (7814);
@@ -138,3 +139,9 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q39685' WHERE `entry` in (997
 
 -- Q: 39683
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39683' WHERE `entry` = 96682;
+
+-- Q: 39686 GO 244644
+UPDATE `creature_template` SET `ScriptName` = 'npc_dh_questgiver_96675' WHERE `entry` = 96675;
+UPDATE `gameobject_template` SET `flags` = '40' WHERE `gameobject_template`.`entry` = 244644;
+
+-- Q: 39687

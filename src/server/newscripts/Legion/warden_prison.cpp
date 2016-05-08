@@ -403,6 +403,10 @@ public:
 
         enum data
         {
+            REWARD_SPELL = 210486,
+            REWARD_SPELL2 = 195440,
+            CREDIT = 106254,            
+
             EVENT_1 = 1,
             EVENT_2,
             EVENT_3,
@@ -452,7 +456,11 @@ public:
             Player *player = killer->ToPlayer();
             if (!player)
                 return;
-            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_2, player->GetGUID());
+
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_3, player->GetGUID());
+            player->CastSpell(player, REWARD_SPELL, true);
+            player->CastSpell(player, REWARD_SPELL2, true);
+            player->KilledMonsterCredit(CREDIT);
         }
         void UpdateAI(uint32 diff)
         {
@@ -468,6 +476,44 @@ public:
     };
 };
 
+//! 96675
+class npc_dh_questgiver_96675 : public CreatureScript
+{
+public:
+    npc_dh_questgiver_96675() : CreatureScript("npc_dh_questgiver_96675") {}
+    enum data
+    {
+        QUEST_03 = 39686,
+        GO_ELEVATOR = 244644,
+        CREDIT = 96814,
+    };
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == QUEST_03) // La lecon du parchemin brulant
+        {
+            creature->GetMap()->LoadGrid(4450.857f, -451.7679f); //voice
+
+            std::list<GameObject*> lList;
+            creature->GetGameObjectListWithEntryInGrid(lList, GO_ELEVATOR, 500.0f);
+            if (lList.empty())
+            {
+                creature->MonsterSay("SCRIPT::npc_dh_questgiver_96675 no elevator", LANG_UNIVERSAL, player->GetGUID());
+                return true;
+            }
+            //creature->MonsterSay("SCRIPT::npc_dh_questgiver_96675 OK", LANG_UNIVERSAL, player->GetGUID());
+
+            GameObject* elevator = *lList.begin();
+            player->AddToExtraLook(elevator);
+
+            UpdateData transData(player->GetMapId());
+            elevator->BuildCreateUpdateBlockForPlayer(&transData, player);
+            player->KilledMonsterCredit(CREDIT);
+        }
+
+        return true;
+    }
+};
+
 void AddSC_warden_prison()
 {
     new go_q38690();
@@ -477,4 +523,5 @@ void AddSC_warden_prison()
     new npc_q39682();
     new npc_q39685();
     new npc_q39683();
+    new npc_dh_questgiver_96675();
 }
