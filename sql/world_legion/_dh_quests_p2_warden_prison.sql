@@ -12,7 +12,6 @@
 -- 5440 5438 5437 5150 Q39685 non complete?
 -- 5439 5148 5147 39685 complete?
 
-
 -- 5366 5367   - Q38672
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
 ('7814', '1', '0', '5366 5367', '0', '0', '16', 'While not rew 38672'),
@@ -138,3 +137,4 @@ INSERT INTO `script_waypoint` (`entry`, `pointid`, `location_x`, `location_y`, `
 UPDATE `creature_template` SET `ScriptName` = 'npc_q39685' WHERE `entry` in (99709, 99731, 99732);
 
 -- Q: 39683
+UPDATE `creature_template` SET `ScriptName` = 'npc_q39683' WHERE `entry` = 96682;

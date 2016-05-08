@@ -379,6 +379,95 @@ public:
     };
 };
 
+//! 96682
+class npc_q39683 : public CreatureScript
+{
+public:
+    npc_q39683() : CreatureScript("npc_q39683") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39683AI(creature);
+    }
+
+    //! Scripted_NoMovementAI HACK!
+    struct npc_q39683AI : public Scripted_NoMovementAI
+    {
+        EventMap events;
+        ObjectGuid playerGuid;
+        int8 lowStep;
+        npc_q39683AI(Creature* creature) : Scripted_NoMovementAI(creature)
+        {
+            lowStep = 1;
+        }
+
+        enum data
+        {
+            EVENT_1 = 1,
+            EVENT_2,
+            EVENT_3,
+            EVENT_4,
+            EVENT_5,
+            EVENT_6,
+        };
+
+        void EnterCombat(Unit* victim) override
+        {
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, victim->GetGUID());
+
+            Player *player = victim->ToPlayer();
+            if (!player)
+                return;
+
+            lowStep = 1;
+
+            float health_pct = 100.0f;
+            if (player->GetQuestStatus(39684) == QUEST_STATUS_COMPLETE || player->GetQuestStatus(39684) ==  QUEST_STATUS_REWARDED)
+            {
+                ++lowStep;
+                health_pct -= 40.0f;
+            }
+            if (player->GetQuestStatus(39685) == QUEST_STATUS_COMPLETE || player->GetQuestStatus(39685) == QUEST_STATUS_COMPLETE)
+            {
+                ++lowStep;
+                health_pct -= 40.0f;
+            }
+
+            me->SetHealth(float(me->GetMaxHealth() / 100.0f)*health_pct);
+        }
+
+        void DoAction(int32 const /*param*/)
+        {
+
+        }
+
+        //! HACK!!! ANTIL FINISH EVENT
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            damage *= lowStep;
+        }
+
+        void JustDied(Unit* killer)
+        {
+            Player *player = killer->ToPlayer();
+            if (!player)
+                return;
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_2, player->GetGUID());
+        }
+        void UpdateAI(uint32 diff)
+        {
+            UpdateVictim();
+
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+};
+
 void AddSC_warden_prison()
 {
     new go_q38690();
@@ -387,4 +476,5 @@ void AddSC_warden_prison()
     new npc_q38723();
     new npc_q39682();
     new npc_q39685();
+    new npc_q39683();
 }
