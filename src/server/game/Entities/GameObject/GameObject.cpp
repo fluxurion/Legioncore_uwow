@@ -1119,7 +1119,9 @@ void GameObject::UseDoorOrButton(uint32 time_to_restore, bool alternative /* = f
         time_to_restore = GetGOInfo()->GetAutoCloseTime();
 
     SwitchDoorOrButton(true, alternative);
-    SetLootState(GO_ACTIVATED, user);
+
+    if (GetGoType() != GAMEOBJECT_TYPE_DOOR)
+        SetLootState(GO_ACTIVATED, user);
 
     m_cooldownTime = time(NULL) + time_to_restore;
 }

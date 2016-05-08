@@ -116,6 +116,7 @@ struct AreaTriggerAction
     float scale;
     int32 hitMaxCount;
     int32 amount;
+    bool onDespawn;
 };
 
 typedef std::list<AreaTriggerAction> AreaTriggerActionList;

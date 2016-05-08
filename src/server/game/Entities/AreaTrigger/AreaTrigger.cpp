@@ -836,6 +836,13 @@ void AreaTrigger::DoAction(Unit* unit, ActionInfo& action)
 
     //sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AreaTrigger::DoAction action _hitCount %i hitCount %i hitMaxCount %i hitType %i actionType %i", _hitCount, action.hitCount, action.action->hitMaxCount, atInfo.hitType, action.action->actionType);
 
+    if (action.action->onDespawn)
+    {
+        _on_despawn = true;
+        SetDuration(0);
+        return;
+    }
+
     if (action.charges > 0)
     {
         --action.charges;

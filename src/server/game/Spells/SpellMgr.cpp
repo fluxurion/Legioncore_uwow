@@ -5593,6 +5593,12 @@ void SpellMgr::LoadSpellCustomAttr()
                 case 197687: //Illysanna: Dark Rush
                     spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(6); //100yards
                     break;
+                case 202046: //Glazer: Beam
+                    spellInfo->Duration.Duration = 1000;
+                    break;
+                case 213411: //Cordana: Deepening Shadows
+                    spellInfo->Effects[EFFECT_0].TriggerSpell = 213397;
+                    break;
                 default:
                     break;
             }

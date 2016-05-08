@@ -1491,7 +1491,6 @@ class spell_chogall_worshipping : public SpellScriptLoader
             {
                 OnEffectApply += AuraEffectApplyFn(spell_chogall_worshipping_AuraScript::OnApply, EFFECT_1, SPELL_AURA_MOD_FACTION, AURA_EFFECT_HANDLE_REAL);
                 OnEffectRemove += AuraEffectRemoveFn(spell_chogall_worshipping_AuraScript::OnRemove, EFFECT_1, SPELL_AURA_MOD_FACTION, AURA_EFFECT_HANDLE_REAL);
-            
             }
         };
 

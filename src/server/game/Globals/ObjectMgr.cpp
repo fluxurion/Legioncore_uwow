@@ -9584,8 +9584,8 @@ void ObjectMgr::LoadAreaTriggerActionsAndData()
     else
         sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 areatrigger data. DB table `areatrigger_data` is empty.");
 
-    //                                                0      1     2         3           4           5         6                7           8       9       10        11         12
-    QueryResult result2 = WorldDatabase.Query("SELECT entry, id, moment, actionType, targetFlags, spellId, maxCharges, chargeRecoveryTime, aura, hasspell, scale, hitMaxCount, amount FROM areatrigger_actions");
+    //                                                0      1     2         3           4           5         6                7           8       9       10        11         12         13
+    QueryResult result2 = WorldDatabase.Query("SELECT entry, id, moment, actionType, targetFlags, spellId, maxCharges, chargeRecoveryTime, aura, hasspell, scale, hitMaxCount, amount, onDespawn FROM areatrigger_actions");
     if (result2)
     {
         uint32 counter = 0;
@@ -9608,6 +9608,7 @@ void ObjectMgr::LoadAreaTriggerActionsAndData()
             action.scale = fields[i++].GetFloat();
             action.hitMaxCount = fields[i++].GetInt32();
             action.amount = fields[i++].GetInt32();
+            action.onDespawn = fields[i++].GetBool();
 
             if (action.actionType >= AT_ACTION_TYPE_MAX)
             {

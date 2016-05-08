@@ -1,0 +1,1 @@
+ALTER TABLE `areatrigger_actions` ADD COLUMN `onDespawn` tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER `amount`;
