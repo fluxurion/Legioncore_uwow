@@ -6,6 +6,13 @@
 --   P A S E
 -- ----------------
 
+
+-- 5518 5442   - Q39684
+-- 5443 - Q39684 completed & rewarded.
+-- 5440 5438 5437 5150 Q39685 non complete?
+-- 5439 5148 5147 39685 complete?
+
+
 -- 5366 5367   - Q38672
 REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `PreloadMapID`, `VisibleMapID`, `flags`, `comment`) VALUES 
 ('7814', '1', '0', '5366 5367', '0', '0', '16', 'While not rew 38672'),
@@ -13,8 +20,12 @@ REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `Pr
 ('7814', '3', '0', '5495 5494', '0', '0', '16', 'rew 38672'),
 ('7814', '4', '0', '5128', '0', '0', '16', 'active 38723 and not completed and not rewarded'),
 ('7819', '5', '0', '5498', '0', '0', '16', 'rewarded 38723'),
+('7814', '6', '0', '5518 5442', '0', '0', '16', 'not completed 38723'),
+('7814', '7', '0', '5443', '0', '0', '16', 'completed 38723'),
+('7814', '8', '0', '5440 5438 5437 5150 5439 5148 5147', '0', '0', '16', 'not completed 39685'),
+('7814', '9', '0', '', '0', '0', '16', 'completed 39685'),
 ('7814', '99', '0', '5982 5966 5965 5964 5309 5121 5125 5124', '0', '0', '16', 'Legion. Global.'), --
-('7814', '100', '0', '5401 5158 5409 5407 5129', '0', '0', '16', 'Legion. Global.');
+('7814', '100', '0', '5401 5158 5409 5407 5129 5157', '0', '0', '16', 'Legion. Global.');
 
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 23 AND SourceGroup in (7814, 7819); 
@@ -26,6 +37,12 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (23, 7814, 4, 0, 0, 9, 0, 38723, 0, 0, 0, 0, '', 'While taken 38723'),
 (23, 7819, 5, 0, 0, 28, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
 (23, 7819, 5, 0, 1, 8, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
+(23, 7814, 6, 0, 0, 9, 0, 39684, 0, 0, 0, 0, '', 'While taken 39684'),
+(23, 7814, 7, 0, 0, 28, 0, 39684, 0, 0, 0, 0, '', 'While completed or rewarded 39684'),
+(23, 7814, 7, 0, 1, 8, 0, 39684, 0, 0, 0, 0, '', 'While completed or rewarded 39684'),
+(23, 7814, 8, 0, 0, 9, 0, 39685, 0, 0, 0, 0, '', 'While taken 39685'),
+(23, 7814, 9, 0, 0, 28, 0, 39685, 0, 0, 0, 0, '', 'While completed or rewarded 39685'),
+(23, 7814, 9, 0, 1, 8, 0, 39685, 0, 0, 0, 0, '', 'While completed or rewarded 39685'),
 (23, 7814, 99, 0, 1, 8, 0, 38723, 0, 0, 1, 0, '', 'global not rew 38723');
 
 -- Quest chaine fixes.
@@ -114,3 +131,10 @@ INSERT INTO `script_waypoint` (`entry`, `pointid`, `location_x`, `location_y`, `
 (@entry, @id := @id+ 1, 4451.143, -327.8229, 136.2271, 0, NULL),
 (@entry, @id := @id+ 1, 4451.238, -351.0729, 129.3609, 0, NULL),
 (@entry, @id := @id+ 1, 4451.238, -351.0729, 129.3609, 0, NULL);
+
+-- Q: 39684
+-- Q: 39685
+-- NPC 99709 99731 99732
+UPDATE `creature_template` SET `ScriptName` = 'npc_q39685' WHERE `entry` in (99709, 99731, 99732);
+
+-- Q: 39683

@@ -313,6 +313,72 @@ public:
         }
     };
 };
+
+//Q: 39685
+class npc_q39685 : public CreatureScript
+{
+public:
+    npc_q39685() : CreatureScript("npc_q39685") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_q39685AI(creature);
+    }
+
+    enum data
+    {
+        SPELL_ID = 0,
+        SPELL_AURA = 195189,
+    };
+    struct npc_q39685AI : public ScriptedAI
+    {
+        npc_q39685AI(Creature* creature) : ScriptedAI(creature) {}
+
+        uint32 cooldown;
+
+        void Reset()
+        {
+            cooldown = 0;
+            me->SetFlag(UNIT_FIELD_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+            me->SetUInt32Value(UNIT_FIELD_MOUNT_DISPLAY_ID, 51861);
+            me->AddAura(SPELL_AURA, me);
+            
+        }
+
+        void OnSpellClick(Unit* Clicker)
+        {
+            if (cooldown)
+                return;
+
+            Clicker->ToPlayer()->KilledMonsterCredit(me->GetEntry());
+            //Clicker->CastSpell(me, SPELL_ID, false);
+                
+
+            cooldown = 5000;
+            me->RemoveFlag(UNIT_FIELD_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+        }
+
+        void EnterCombat(Unit* /*who*/)
+        {
+            return;
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            if (cooldown)
+            {
+                if (cooldown <= diff)
+                {
+                    me->SetFlag(UNIT_FIELD_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+                    cooldown = 0;
+                }
+                else
+                    cooldown -= diff;
+            }
+        }
+    };
+};
+
 void AddSC_warden_prison()
 {
     new go_q38690();
@@ -320,4 +386,5 @@ void AddSC_warden_prison()
     new spell_q38723();
     new npc_q38723();
     new npc_q39682();
+    new npc_q39685();
 }
