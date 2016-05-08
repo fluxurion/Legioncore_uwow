@@ -554,12 +554,13 @@ public:
     enum data
     {
         QUEST_02 = 40373,
+        CAST_SPELL = 196650,
     };
     bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
     {
         if (quest->GetQuestId() == QUEST_02) // La lecon du parchemin brulant
         {
-
+            player->CastSpell(player, CAST_SPELL, true);
         }
 
         return true;
