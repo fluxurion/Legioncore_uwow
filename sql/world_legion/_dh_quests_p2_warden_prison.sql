@@ -2,6 +2,7 @@
 /*!40101 SET NAMES utf8 */;
 /*!40014 SET FOREIGN_KEY_CHECKS=0 */;
 
+UPDATE `gameobject_template` SET `flags` = '16' WHERE `gameobject_template`.`entry` in (245914, 245913, 245915);
 -- ----------------
 --   P A S E
 -- ----------------
