@@ -449,7 +449,10 @@ public:
 
     struct npc_q39049AI : public ScriptedAI
     {
-        npc_q39049AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_q39049AI(Creature* creature) : ScriptedAI(creature) {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
+        }
         void Reset()
         {
             me->SetReactState(REACT_DEFENSIVE);
@@ -732,6 +735,8 @@ public:
 
         npc_q93221_beliashAI(Creature* creature) : ScriptedAI(creature)
         {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
@@ -810,6 +815,8 @@ public:
 
         npc_q39495_cazaAI(Creature* creature) : Scripted_NoMovementAI(creature)
         {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
@@ -983,6 +990,8 @@ public:
 
         npc_q39495_prolificaAI(Creature* creature) : Scripted_NoMovementAI(creature)
         {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
@@ -1056,6 +1065,8 @@ public:
 
         npc_q38728_tyrannaAI(Creature* creature) : Scripted_NoMovementAI(creature)
         {
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data

@@ -399,6 +399,8 @@ public:
         npc_q39683AI(Creature* creature) : Scripted_NoMovementAI(creature)
         {
             lowStep = 1;
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
@@ -587,6 +589,8 @@ public:
         npc_q39694AI(Creature* creature) : Scripted_NoMovementAI(creature)
         {
             lowStep = 1;
+            creature->SetCorpseDelay(30);
+            creature->SetRespawnDelay(15);
         }
 
         enum data
