@@ -303,7 +303,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
     bool ServerTime = (flags & UPDATEFLAG_TRANSPORT) != 0;
     bool VehicleCreate = ((flags & UPDATEFLAG_VEHICLE) != 0) && ToUnit() && ToUnit()->GetVehicleKit();
     bool AnimKitCreate = (flags & UPDATEFLAG_ANIMKITS) != 0;
-    bool Rotation = (flags & UPDATEFLAG_ROTATION) != 0;
+    bool Rotation = (flags & UPDATEFLAG_ROTATION) != 0 && ToGameObject();
     bool HasAreaTrigger = (flags & UPDATEFLAG_AREA_TRIGGER) != 0;
     bool HasGameObject = (flags & UPDATEFLAG_HAS_WORLDEFFECTID) != 0;;
     bool ThisIsYou = (flags & UPDATEFLAG_SELF) != 0;
@@ -478,7 +478,7 @@ void Object::_BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         *data << uint16(obj->GetMeleeAnimKitId());                     // MeleeID
     }
 
-    if (Rotation)
+    if (Rotation && ToGameObject())
         *data << uint64(ToGameObject()->GetRotation());                 // Rotation
 
     if (HasAreaTrigger)
