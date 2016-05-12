@@ -4856,6 +4856,9 @@ void Spell::SendSpellStart()
     if (GetSpellInfo()->HasPower(POWER_RUNES))
         castFlags |= CAST_FLAG_NO_GCD;
 
+    if (m_spellInfo->Cooldowns.StartRecoveryTime)
+        castFlags |= CAST_FLAG_NO_GCD;
+
     WorldPackets::Spells::SpellStart packet;
     WorldPackets::Spells::SpellCastData& castData = packet.Cast;
 
@@ -4981,7 +4984,7 @@ void Spell::SendSpellGo()
     if (m_targets.HasTraj())
         castFlags |= CAST_FLAG_ADJUST_MISSILE;
 
-    if (!m_spellInfo->Cooldowns.StartRecoveryTime)
+    if (m_spellInfo->Cooldowns.StartRecoveryTime)
         castFlags |= CAST_FLAG_NO_GCD;
 
     WorldPackets::Spells::SpellGo packet;
