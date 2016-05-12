@@ -603,7 +603,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(triggerD
 
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 
-    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), 0, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), triggerData.SubType);
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), m_spellGuid.GetEntry(), sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), triggerData.SubType);
     m_castGuid[1] = m_spellGuid;
 }
 
