@@ -163,3 +163,43 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_q39694' WHERE `entry` = 96783
 UPDATE `creature_template` SET `flags_extra` = '128' WHERE `creature_template`.`entry` = 101446;
 
 -- Q: 39690
+
+-- -----------------------------------
+--  B I N D
+-- -----------------------------------
+
+-- 192275 at quest complete 40378
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES ('192275', '1481', '825.93', '2760.64', '-30.68', '0');
+
+-- 201114 at quest take 39050
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES ('201114', '1481', '1057.12', '2576.84', '-37.53', '0');
+
+-- 201115 at take 38813
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES ('201115', '1481', '1453.49', '1767.1', '54.44', '0');
+UPDATE `quest_template_addon` SET `SourceSpellID` = '201115' WHERE `quest_template_addon`.`ID` = 38813;
+
+-- at take 38728 set at npc_q38728_progres1 complete. should be at take.
+-- ServerToClient: SMSG_BIND_POINT_UPDATE (0x257D) Length: 20 ConnIdx: 0 Time: 02/07/2016 00:11:03.920 Number: 195358
+-- Position: X: 1467.47 Y: 1412.78 Z: 243.96
+-- AreaID: 1481 (1481)
+-- MapID: 7749 (7749)
+
+-- 192141
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES
+(192141, 1468, 4325.94, -620.21, -281.41, 1.65894);
+
+-- 195567 at complete 39682 done by npc_q39682
+-- ServerToClient: SMSG_BIND_POINT_UPDATE (0x257D) Length: 20 ConnIdx: 0 Time: 02/07/2016 00:38:03.246 Number: 260965
+-- Position: X: 4450.89 Y: -431.51 Z: 119.26
+-- AreaID: 1468 (1468)
+-- MapID: 7866 (7866)
+
+-- 195568 at complete 39686 done by npc_dh_questgiver_96675
+-- ServerToClient: SMSG_BIND_POINT_UPDATE (0x257D) Length: 20 ConnIdx: 0 Time: 02/07/2016 00:53:50.858 Number: 305384
+-- Position: X: 4317.87 Y: -451.61 Z: 259.36
+-- AreaID: 1468 (1468)
+-- MapID: 7865 (7865)
+
+-- 205319 at complete 39690 WARNING!! 197366 name is Bind to Orgrimmar
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES
+(197366, 1, 1577.3, -4453.42, 15.67, 1.65894);

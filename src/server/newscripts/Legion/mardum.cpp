@@ -1159,6 +1159,15 @@ public:
             if (who->ToPlayer()->GetQuestObjectiveData(QUEST, CREDIT))
                 return;
 
+            WorldLocation loc;
+            loc.m_mapId = 1481;
+            loc.m_positionX = 1467.47f;
+            loc.m_positionY = 1412.78f;
+            loc.m_positionZ = 243.96f;
+            loc.SetOrientation(who->GetOrientation());
+            who->ToPlayer()->SetHomebind(loc, 7749);
+            who->ToPlayer()->SendBindPointUpdate();
+
             who->ToPlayer()->KilledMonsterCredit(CREDIT);
         }
     };

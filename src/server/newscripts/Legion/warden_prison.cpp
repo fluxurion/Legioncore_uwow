@@ -291,7 +291,15 @@ public:
                 case 20:    // for NPC_BASTIA_2
                     if (Player* player = GetPlayerForEscort())
                     {
-                        
+                        WorldLocation loc;
+                        loc.m_mapId = 1468;
+                        loc.m_positionX = 4450.89f;
+                        loc.m_positionY = -431.51f;
+                        loc.m_positionZ = 119.26f;
+                        loc.SetOrientation(player->GetOrientation());
+                        player->SetHomebind(loc, 7866);
+                        player->SendBindPointUpdate();
+
                         player->KilledMonsterCredit(96659);
                         SetEscortPaused(true);
                         player->ExitVehicle();
@@ -493,6 +501,15 @@ public:
     {
         if (quest->GetQuestId() == QUEST_03) // La lecon du parchemin brulant
         {
+            WorldLocation loc;
+            loc.m_mapId = 1468;
+            loc.m_positionX = 4317.87f;
+            loc.m_positionY = -451.61f;
+            loc.m_positionZ = 259.36f;
+            loc.SetOrientation(player->GetOrientation());
+            player->SetHomebind(loc, 7866);
+            player->SendBindPointUpdate();
+
             creature->GetMap()->LoadGrid(4450.857f, -451.7679f); //voice
 
             std::list<GameObject*> lList;
