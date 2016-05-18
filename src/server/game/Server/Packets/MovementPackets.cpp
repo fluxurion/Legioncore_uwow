@@ -296,7 +296,7 @@ void WorldPackets::Movement::CommonMovement::WriteCreateObjectSplineDataBlock(::
     else
         data << G3D::Vector3::zero();
 
-    if (data.WriteBit(!moveSpline.Finalized()))
+    if (data.WriteBit(!moveSpline.Finalized() && moveSpline.Duration() > 0))
     {
         data.FlushBits();
 
