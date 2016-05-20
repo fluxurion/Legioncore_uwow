@@ -828,8 +828,8 @@ void WorldSession::SendTimeZoneInformation()
 {
     //Etc/UTC recomendation from skyfire
     WorldPackets::System::SetTimeZoneInformation packet;
-    packet.ServerTimeTZ = "Etc/UTC";    //RTL: Europe/Paris
-    packet.GameTimeTZ = "Etc/UTC";      //RTL: Europe/Paris
+    packet.ServerTimeTZ = "America/Los_Angeles";    //RTL: Europe/Paris
+    packet.GameTimeTZ = "Europe/Paris";      //RTL: Europe/Paris
 
     SendPacket(packet.Write());
 }

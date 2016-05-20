@@ -130,6 +130,8 @@ void Object::_Create(ObjectGuid const& guid)
 
     SetGuidValue(OBJECT_FIELD_GUID, guid);
     SetUInt16Value(OBJECT_FIELD_TYPE, 0, m_objectType);
+    if (m_objectType & TYPEMASK_PLAYER)
+        SetUInt16Value(OBJECT_FIELD_TYPE, 1, 1);
     m_PackGUID.Set(guid);
     if (GetVignetteId())
         vignetteGuid = ObjectGuid::Create<HighGuid::Vignette>(guid.GetMapId(), 0, guid.GetCounter());

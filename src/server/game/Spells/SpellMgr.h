@@ -89,19 +89,19 @@ enum SpellFamilyFlag
 };
 
 
-#define SPELL_LINKED_MAX_SPELLS  200000
+#define SPELL_LINKED_MAX_SPELLS  300000
 
 enum SpellLinkedType
 {
     SPELL_LINK_CAST             = 0,            // +: cast; -: remove
-    SPELL_LINK_ON_HIT           = 1 * 200000,
-    SPELL_LINK_AURA             = 2 * 200000,   // +: aura; -: immune
-    SPELL_LINK_BEFORE_HIT       = 3 * 200000,
-    SPELL_LINK_AURA_HIT         = 4 * 200000,
-    SPELL_LINK_BEFORE_CAST      = 5 * 200000,
-    SPELL_LINK_PREPARE_CAST     = 6 * 200000,
-    SPELL_LINK_BEFORE_CHECK     = 7 * 200000,
-    SPELL_LINK_FINISH_CAST      = 8 * 200000,
+    SPELL_LINK_ON_HIT           = 1 * 300000,
+    SPELL_LINK_AURA             = 2 * 300000,   // +: aura; -: immune
+    SPELL_LINK_BEFORE_HIT       = 3 * 300000,
+    SPELL_LINK_AURA_HIT         = 4 * 300000,
+    SPELL_LINK_BEFORE_CAST      = 5 * 300000,
+    SPELL_LINK_PREPARE_CAST     = 6 * 300000,
+    SPELL_LINK_BEFORE_CHECK     = 7 * 300000,
+    SPELL_LINK_FINISH_CAST      = 8 * 300000,
     SPELL_LINK_REMOVE           = 0,
 };
 

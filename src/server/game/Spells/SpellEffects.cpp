@@ -1603,6 +1603,7 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
     triggerData.spellGuid = (m_castGuid[1].GetSubType() == SPELL_CAST_TYPE_NORMAL) ? m_castGuid[1] : m_castGuid[0];
     triggerData.originalCaster = m_originalCasterGUID;
     triggerData.casttime = m_casttime;
+    triggerData.SubType = SPELL_CAST_TYPE_MISSILE;
 
     // original caster guid only for GO cast
     m_caster->CastSpell(targets, spellInfo, &values, triggerData);

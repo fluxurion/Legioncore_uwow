@@ -655,6 +655,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetFloatValue(UNIT_FIELD_MOD_HASTE, 1.0f);
     SetFloatValue(UNIT_FIELD_MOD_HASTE_REGEN, 1.0f);
     SetFloatValue(UNIT_FIELD_MOD_RANGED_HASTE, 1.0f);
+    SetFloatValue(UNIT_FIELD_MOD_TIME_RATE, 1.0f);
     SetFloatValue(UNIT_FIELD_HOVER_HEIGHT, 1.0f);            // default for players in 3.0.3
 
                                                             // -1 is default value
@@ -669,7 +670,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER, createInfo->Sex);
     SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_TATOO, createInfo->Tattoo);
     SetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_HORN, createInfo->Horn);
-    SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, (GetSession()->IsARecruiter() || GetSession()->GetRecruiterId() != 0) ? REST_STATE_RAF_LINKED : REST_STATE_NOT_RAF_LINKED);
+    SetUInt32Value(PLAYER_FIELD_REST_INFO, (GetSession()->IsARecruiter() || GetSession()->GetRecruiterId() != 0) ? REST_STATE_RAF_LINKED : REST_STATE_NOT_RAF_LINKED);
 
     //! 7.0.1
     //! ToDo: find how is now.
@@ -3310,6 +3311,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetFloatValue(UNIT_FIELD_MOD_HASTE, 1.0f);
     SetFloatValue(UNIT_FIELD_MOD_HASTE_REGEN, 1.0f);
     SetFloatValue(UNIT_FIELD_MOD_RANGED_HASTE, 1.0f);
+    SetFloatValue(UNIT_FIELD_MOD_TIME_RATE, 1.0f);
 
     // reset size before reapply auras
     SetObjectScale(1.0f);
@@ -3330,7 +3332,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
 
     InitStatBuffMods();
 
-    SetUInt32Value(UNIT_FIELD_SCALE_DURATION, 500);
+    SetUInt32Value(UNIT_FIELD_SCALE_DURATION, 100);
     SetInt32Value(UNIT_FIELD_LOOK_AT_CONTROLLER_ID, -1);
     SetUInt32Value(PLAYER_FIELD_LOCAL_FLAGS, GetSession()->GetSessionDbLocaleIndex());
     
@@ -4884,6 +4886,8 @@ void Player::ResetSpec()
 
 void Player::SetSpecializationId(uint32 id, bool initial /*= false*/)
 {
+    SetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID, id);
+
     _talentMgr->SpecializationId = id;
 
     if (initial)
@@ -18137,7 +18141,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_FIELD_NEXT_LEVEL_XP)/72000)*bubble);
     }
     else
-        SetRestBonus(2.0f);
+        SetRestBonus(1.0f);
 
     // load battle pets journal ans slots before spells and other
     _battlePetMgr->LoadFromDB(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_BATTLE_PETS),
@@ -22475,14 +22479,15 @@ void Player::SetRestBonus(float rest_bonus_new)
 
     // update data for client
     if (GetSession()->IsARecruiter() || (GetSession()->GetRecruiterId() != 0))
-        SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, REST_STATE_RAF_LINKED);
-    else if (m_rest_bonus > 10)
-        SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, REST_STATE_RESTED);              // Set Reststate = Rested
+        SetUInt32Value(PLAYER_FIELD_REST_INFO, REST_STATE_RAF_LINKED);
     else if (m_rest_bonus <= 1)
-        SetByteValue(PLAYER_FIELD_REST_INFO, PLAYER_REST_STATE_OFFSET_STATE, REST_STATE_NOT_RAF_LINKED);              // Set Reststate = Normal
+        SetUInt32Value(PLAYER_FIELD_REST_INFO, REST_STATE_NOT_RAF_LINKED);              // Set Reststate = Normal
+    else// if (m_rest_bonus > 10)
+        SetUInt32Value(PLAYER_FIELD_REST_INFO, REST_STATE_RESTED);              // Set Reststate = Rested
 
     SetUInt32Value(PLAYER_FIELD_REST_INFO + 1, uint32(m_rest_bonus));
-    SetUInt32Value(PLAYER_FIELD_REST_INFO + 2, uint32(m_rest_bonus));
+    // SetUInt32Value(PLAYER_FIELD_REST_INFO + 2, 1); //Test hack
+    // SetUInt32Value(PLAYER_FIELD_REST_INFO + 3, 228); //Test hack
 }
 
 bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc /*= NULL*/, uint32 spellid /*= 0*/)
@@ -24375,7 +24380,7 @@ void Player::SendInitialPacketsAfterAddToMap()
 
     // SMSG_POWER_UPDATE
 
-    CastSpell(this, 836, true);                             // LOGINEFFECT
+    CastSpell(this, 836, false);                             // LOGINEFFECT
 
     // set some aura effects that send packet to player client after add player to map
     // SendMessageToSet not send it to player not it map, only for aura that not changed anything at re-apply

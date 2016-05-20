@@ -603,7 +603,7 @@ m_absorb(0), m_resist(0), m_blocked(0), m_interupted(false), m_replaced(triggerD
 
     m_SpellVisual = m_spellInfo->GetSpellXSpellVisualId(caster->GetMap()->GetDifficultyID());
 
-    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), m_spellGuid.GetEntry(), sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), triggerData.SubType);
+    m_castGuid[0] = ObjectGuid::Create<HighGuid::Cast>(m_caster->GetMapId(), m_spellInfo->Id, sObjectMgr->GetGenerator<HighGuid::Cast>()->Generate(), triggerData.SubType);
     m_castGuid[1] = m_spellGuid;
 }
 
@@ -4848,8 +4848,7 @@ void Spell::SendSpellStart()
     if ((IsTriggered() && !m_spellInfo->IsAutoRepeatRangedSpell() && !(AttributesCustomEx4 & SPELL_ATTR4_TRIGGERED)) || m_triggeredByAuraSpell)
         castFlags |= CAST_FLAG_PENDING;
 
-    if ((m_caster->GetTypeId() == TYPEID_PLAYER ||
-        (m_caster->GetTypeId() == TYPEID_UNIT && (m_caster->ToCreature()->isPet() || m_caster->ToCreature()->IsVehicle())))
+    if (((m_caster->GetTypeId() == TYPEID_UNIT && (m_caster->ToCreature()->isPet() || m_caster->ToCreature()->IsVehicle())))
         && !GetSpellInfo()->HasPower(POWER_HEALTH))
         castFlags |= CAST_FLAG_POWER_LEFT_SELF;
 
@@ -5627,8 +5626,17 @@ void Spell::LinkedSpell(Unit* _caster, Unit* _target, SpellLinkedType type)
                     {
                         if (m_targets.HasDst())
                         {
-                            Position pos = *m_targets.GetDstPos();
-                            _caster->CastSpell(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), i->effect, true);
+                            CustomSpellValues values;
+                            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(i->effect);
+                            TriggerCastData triggerData;
+                            triggerData.replaced = true;
+                            triggerData.originalCaster = m_originalCasterGUID;
+                            triggerData.castItem = m_CastItem;
+                            triggerData.triggeredByAura = m_triggeredByAura;
+                            triggerData.spellGuid = m_castGuid[0];
+                            triggerData.SubType = SPELL_CAST_TYPE_NORMAL;
+
+                            _caster->CastSpell(m_targets, spellInfo, &values, triggerData);
                         }
                         break;
                     }
