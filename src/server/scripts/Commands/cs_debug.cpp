@@ -80,7 +80,6 @@ public:
             { "attackpower",    SEC_REALM_LEADER,   false, &HandleDebugModifyAttackpowerCommand,    "", NULL },
             { "backward",       SEC_REALM_LEADER,   false, &HandleDebugMoveBackward,           "", NULL },
             { "bg",             SEC_REALM_LEADER,   false, &HandleDebugBattlegroundCommand,    "", NULL },
-            { "conversation",    SEC_ADMINISTRATOR, false, &HandleDebugConversationCommand,    "", NULL},
             { "crit",           SEC_REALM_LEADER,   false, &HandleDebugModifyCritChanceCommand,     "", NULL },
             { "entervehicle",   SEC_ADMINISTRATOR,  false, &HandleDebugEnterVehicleCommand,    "", NULL },
             { "getdynamicvalue",SEC_ADMINISTRATOR,  false, &HandleDebugGetDynamicValueCommand, "", NULL },
@@ -879,32 +878,7 @@ public:
         sBattlegroundMgr->ToggleTesting();
         return true;
     }
-    static bool HandleDebugConversationCommand(ChatHandler* handler, char const* args)
-    {
-        if (!*args)
-        {
-            handler->SendSysMessage(LANG_BAD_VALUE);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
 
-        char* i = strtok((char*) args, " ");
-        if (!i)
-            return false;
-
-        uint32 convID = (uint32) atoi(i);
-
-        Player* player = handler->GetSession()->GetPlayer();
-        if (!player)
-            return false;
-
-        Conversation* conversation = new Conversation;
-        if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), convID, player, NULL, *player))
-            delete conversation;
-
-        return true;
-    }
-    
     static bool HandleDebugArenaCommand(ChatHandler* handler, char const* args)
     {
         if (!*args)
