@@ -7,7 +7,6 @@ UPDATE `gameobject_template` SET `flags` = '16' WHERE `gameobject_template`.`ent
 --   P A S E
 -- ----------------
 
-
 -- 5518 5442   - Q39684
 -- 5443 - Q39684 completed & rewarded.
 -- 5440 5438 5437 5150 Q39685 non complete?
@@ -21,7 +20,7 @@ REPLACE INTO `phase_definitions` (`zoneId`, `entry`, `phasemask`, `phaseId`, `Pr
 ('7814', '2', '0', '5976', '0', '0', '16', 'rew 38672'), -- not removed
 ('7814', '3', '0', '5495 5494', '0', '0', '16', 'rew 38672'),
 ('7814', '4', '0', '5128', '0', '0', '16', 'active 38723 and not completed and not rewarded'),
-('7819', '5', '0', '5498', '0', '0', '16', 'rewarded 38723'),
+('7814', '5', '0', '5498', '0', '0', '16', 'rewarded 38723'),
 ('7814', '6', '0', '5518 5442', '0', '0', '16', 'not completed 38723'),
 ('7814', '7', '0', '5443', '0', '0', '16', 'completed 38723'),
 ('7814', '8', '0', '5440 5438 5437 5150 5439 5148 5147', '0', '0', '16', 'not completed 39685'),
@@ -38,8 +37,8 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (23, 7814, 3, 0, 0, 14, 0, 38690, 0, 0, 1, 0, '', 'While not non 38690'),
 (23, 7814, 3, 1, 0, 14, 0, 38689, 0, 0, 1, 0, '', 'While not non 38689'),
 (23, 7814, 4, 0, 0, 9, 0, 38723, 0, 0, 0, 0, '', 'While taken 38723'),
-(23, 7819, 5, 0, 0, 28, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
-(23, 7819, 5, 0, 1, 8, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
+(23, 7814, 5, 0, 0, 28, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
+(23, 7814, 5, 0, 1, 8, 0, 38723, 0, 0, 0, 0, '', 'While completed or rewarded 38723'),
 (23, 7814, 6, 0, 0, 9, 0, 39684, 0, 0, 0, 0, '', 'While taken 39684'),
 (23, 7814, 7, 0, 0, 28, 0, 39684, 0, 0, 0, 0, '', 'While completed or rewarded 39684'),
 (23, 7814, 7, 0, 1, 8, 0, 39684, 0, 0, 0, 0, '', 'While completed or rewarded 39684'),

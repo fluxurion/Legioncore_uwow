@@ -318,6 +318,7 @@ public:
     };
 };
 
+
 class conversation_announcer : public CreatureScript
 {
 public:
@@ -339,7 +340,7 @@ public:
         {
             conversationEntry = 0;
             targetGUID.Clear();
-            me->SetReactState(REACT_PASSIVE);
+            //me->SetReactState(REACT_PASSIVE);
         }
 
         enum events
@@ -353,6 +354,7 @@ public:
         {
             NPC_ANNOUNCER_1 = 101748, //583
             NPC_ANNOUNCER_2 = 101781, //1542
+            NPC_ANNOUNCER_3 = 100510, //531
         };
 
         uint32 conversationEntry;
@@ -368,16 +370,27 @@ public:
             if (itr != m_player_for_event.end())
                 return;
 
-            if (!me->IsWithinDistInMap(who, 60.0f))
+            if (!me->IsWithinDistInMap(who, 100.0f))
                 return;
 
             uint32 eTimer = 1000;
+            /*
+            area 7742
+            [1] Object Guid: Full: 0x1C2090B9200084C000109C00004B0C80; HighType: Conversation; Low: 4918400; Map: 1481; Entry: 531;
+            [1] Stationary Position: X: 1561.098 Y: 2623.586 Z: 30.56277
 
+            area 7705
+            [0] Object Guid: Full: 0x1C2090B92000BAC000109C00004B0CE6; HighType: Conversation; Low: 4918502; Map: 1481; Entry: 747;
+            [0] Stationary Position: X: 1429.753 Y: 2362.509 Z: 61.22379
+            */
             switch (me->GetEntry())
             {
                 case NPC_ANNOUNCER_1:
-                    conversationEntry = 583;
-                    events.RescheduleEvent(EVENT_1, eTimer);
+                    if (me->GetAreaId() == 7742) //Quest 38766
+                    {
+                        conversationEntry = 531;
+                        events.RescheduleEvent(EVENT_1, eTimer);
+                    }
                     break;
                 case NPC_ANNOUNCER_2:
                     conversationEntry = 1542;
@@ -387,9 +400,11 @@ public:
                     break;
             }
 
-            ASSERT(conversationEntry);
+            if (!conversationEntry)
+                return;
+
             m_player_for_event.insert(who->GetGUID());
-            events.RescheduleEvent(EVENT_CLEAR, 300000);
+            //events.RescheduleEvent(EVENT_CLEAR, 300000);
             targetGUID = who->GetGUID();
         }
 
