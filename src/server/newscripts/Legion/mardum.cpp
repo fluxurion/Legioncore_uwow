@@ -717,6 +717,64 @@ public:
     }
 };
 
+//! 96675
+class npc_questgiver_93759 : public CreatureScript
+{
+public:
+    npc_questgiver_93759() : CreatureScript("npc_questgiver_93759") {}
+    enum data
+    {
+        QUEST = 40379,
+        QUEST2 = 39050,
+        QUEST_03 = 38766,
+        CONVERSATION = 735
+    };
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == QUEST_03) // La lecon du parchemin brulant
+        {
+            Conversation* conversation = new Conversation;
+            if (!conversation->CreateConversation(sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate(), CONVERSATION, player, NULL, *player))
+                delete conversation;
+        }
+        else if (quest->GetQuestId() == QUEST2)
+        {
+            sCreatureTextMgr->SendChat(creature, TEXT_GENERIC_1, player->GetGUID());
+        }
+
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_questgiver_93759AI(creature);
+    }
+    struct npc_questgiver_93759AI : public ScriptedAI
+    {
+        npc_questgiver_93759AI(Creature* creature) : ScriptedAI(creature)
+        {
+
+        }
+        GuidSet m_player_for_event;
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (who->GetTypeId() != TYPEID_PLAYER || !me->IsWithinDistInMap(who, 50.0f))
+                return;
+
+            GuidSet::iterator itr = m_player_for_event.find(who->GetGUID());
+            if (itr != m_player_for_event.end())
+                return;
+
+            if (who->ToPlayer()->GetQuestStatus(QUEST) != QUEST_STATUS_COMPLETE)
+                return;
+
+            m_player_for_event.insert(who->GetGUID());
+            sCreatureTextMgr->SendChat(me, TEXT_GENERIC_0, who->GetGUID());
+        }
+    };
+};
+
 //93221 Doom Commander Beliash
 class npc_q93221_beliash : public CreatureScript
 {
@@ -1224,6 +1282,7 @@ void AddSC_Mardum()
     new go_q39050();
     new npc_q38765();
     new go_q38765();
+    new npc_questgiver_93759();
     new npc_q93221_beliash();
     new npc_q39495_caza();
     new go_q38727();
