@@ -8,11 +8,17 @@
 #include "ScriptedCreature.h"
 #include "the_arcway.h"
 
-/* enum Says
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 2,
+    SAY_BOMB            = 3,
+    SAY_TIME            = 4,
+    SAY_TIME_EMOTE      = 5,
+    SAY_TIME_REM        = 6,
+//    SAY_?????           = 7,    i dont know, where he say its   "Think of this as a mercy killing."
+    SAY_EVADE           = 8,
+    SAY_DEATH           = 9,
+}; 
 
 enum Spells
 {
@@ -71,7 +77,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //40:56
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
 
             events.ScheduleEvent(EVENT_A_BLAST, 3000); //40:59
@@ -82,12 +88,13 @@ public:
         void EnterEvadeMode()
         {
             me->SetReactState(REACT_AGGRESSIVE);
+            Talk(SAY_EVADE);
             BossAI::EnterEvadeMode();
         }
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
 
@@ -105,6 +112,7 @@ public:
                         {
                             player->CastSpell(player, SPELL_BANISH_IN_TIME_TIMER, true);
                             player->CastSpell(player, SPELL_BANISH_IN_TIME_TP, true);
+                            Talk(SAY_TIME_EMOTE);
                         }
             }
         }
@@ -130,6 +138,7 @@ public:
                         me->InterruptSpell(CURRENT_CHANNELED_SPELL);
                         me->SetReactState(REACT_AGGRESSIVE);
                         DoCast(me, SPELL_BANISH_IN_TIME_REMOV, true);
+                        Talk(SAY_TIME_REM);
                     }
         }
 
@@ -157,10 +166,12 @@ public:
                         events.ScheduleEvent(EVENT_CHRONO_SHARDS, 6000);
                         break;
                     case EVENT_FORCE_BOMB:
+                        Talk(SAY_BOMB);
                         DoCast(SPELL_FORCE_BOMB);
                         events.ScheduleEvent(EVENT_FORCE_BOMB, 16000);
                         break;
                     case EVENT_BANISH_IN_TIME:
+                        Talk(SAY_TIME);
                         instance->SetData(DATA_RAND_TELEPORT, urand(0,3));
                         DoStopAttack();
                         DoCast(me, SPELL_BANISH_IN_TIME_STUN, true);
@@ -226,7 +237,7 @@ public:
         return new npc_vandros_chrono_shardAI(creature);
     }
 };
-
+        
 //203883
 class spell_vandros_teleport_plr : public SpellScriptLoader
 {
@@ -295,6 +306,79 @@ class spell_vandros_banish_in_time_timer : public SpellScriptLoader
             return new spell_vandros_banish_in_time_timer_AuraScript();
         }
 };
+// 98426 98425
+class npc_unstable_amalgamation : public CreatureScript
+{
+public:
+    npc_unstable_amalgamation() : CreatureScript("npc_unstable_amalgamation") {}
+
+    struct npc_unstable_amalgamationAI : public ScriptedAI
+    {
+        npc_unstable_amalgamationAI(Creature* creature) : ScriptedAI(creature) {}
+        
+        EventMap events;
+        uint32 AddSum;
+        
+        void EnterCombat(Unit* /*who*/) 
+        {
+            events.ScheduleEvent(EVENT_1, 30000); //193942
+            if (me->GetEntry() == 98425)
+               events.ScheduleEvent(EVENT_2, 15000); //193938
+        }       
+
+        void JustDied(Unit* /*killer*/)
+        {
+            Position pos;
+            float x, y, z;
+            me->GetPosition(x, y, z);
+            if (me->GetEntry() == 98425)
+               AddSum = 98426;            
+            if (me->GetEntry() == 98426)
+               AddSum = 98435;
+            for (uint8 i = 0; i < 4; i++)
+            {
+                if (Unit* summon = me->SummonCreature(AddSum, x, y, z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000))
+                {
+                   float angle = i * static_cast<float>(M_PI);
+                   me->GetNearPosition(pos, 5.0f, angle);
+                   summon->CastSpell(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), 193852, true);
+                }
+            }
+        }        
+
+        void UpdateAI(uint32 diff)
+        {
+            if (!UpdateVictim())
+                return;
+
+            events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_1:
+                        DoCast(193942);
+                        events.ScheduleEvent(EVENT_1, 30000);
+                        break;                    
+                    case EVENT_2:
+                        DoCast(193938);
+                        events.ScheduleEvent(EVENT_2, 16000);
+                        break;
+                }
+            }
+        }            
+        
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_unstable_amalgamationAI(creature);
+    }
+};
 
 void AddSC_boss_advisor_vandros()
 {
@@ -302,4 +386,5 @@ void AddSC_boss_advisor_vandros()
     new npc_vandros_chrono_shard();
     new spell_vandros_teleport_plr();
     new spell_vandros_banish_in_time_timer();
+    new npc_unstable_amalgamation();
 }

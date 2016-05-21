@@ -33,6 +33,8 @@ public:
 
         bool onInitEnterState;
         uint8 RandTeleport;
+        bool TwoSay;
+        uint32 TwoSayTimer;
 
         void Initialize()
         {
@@ -41,6 +43,8 @@ public:
             VandrosGUID.Clear();
 
             onInitEnterState = false;
+            TwoSay = false;
+            TwoSayTimer = 0;
         }
 
         void OnCreatureCreate(Creature* creature)
@@ -134,17 +138,29 @@ public:
 
             if (Creature* vandros = instance->GetCreature(VandrosGUID))
             {
-                //vandros->AI()->ZoneTalk();
+                vandros->AI()->ZoneTalk(0);
                 vandros->SetReactState(REACT_AGGRESSIVE);
                 vandros->SetVisible(true);
+                TwoSay = true;
+                TwoSayTimer = 20000;
             }
         }
 
-        /* void Update(uint32 diff) 
+        void Update(uint32 diff) 
         {
             // Challenge
             InstanceScript::Update(diff);
-        } */
+            if (!TwoSay)
+               return;
+            
+            if (TwoSayTimer <= diff)
+            {
+               if (Creature* vandros = instance->GetCreature(VandrosGUID))
+                   vandros->AI()->ZoneTalk(1); 
+               TwoSay = false;
+            } else 
+               TwoSayTimer -= diff;
+        } 
     };
 };
 

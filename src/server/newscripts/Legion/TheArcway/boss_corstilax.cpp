@@ -82,7 +82,11 @@ public:
                     float y = target->GetPositionY();
                     float z = target->GetPositionZ();
                     if (Creature* protocol = me->SummonCreature(NPC_SUPPRESSION_PROTOCOL, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 12000))
+                    {
                         protocol->CastSpell(target, SPELL_S_PROTOCOL_FIXATE, true);
+                        if (target->GetTypeId() != TYPEID_PLAYER)
+                        protocol->AI()->Talk(0, target->ToPlayer()->GetGUID());
+                    }
                     DoCast(SPELL_S_PROTOCOL_DMG);
                     break;
                 }
@@ -226,6 +230,7 @@ public:
 
             plrTarget = summoner;
             DoCast(summoner, 195820, true); //Ride Veh
+            Talk(0, summoner->ToPlayer()->GetGUID());
         }
 
         void OnSpellClick(Unit* clicker)

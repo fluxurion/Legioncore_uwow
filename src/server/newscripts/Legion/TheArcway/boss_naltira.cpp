@@ -8,11 +8,7 @@
 #include "ScriptedCreature.h"
 #include "the_arcway.h"
 
-/* enum Says
-{
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+//TO-DO: pre-event
 
 enum Spells
 {
@@ -134,6 +130,7 @@ public:
                         plrWebTarget = nullptr;
                         checkWebPlayer = true;
                         DoCast(SPELL_TANGLED_WEB);
+                        Talk(0);
                         events.ScheduleEvent(EVENT_TANGLED_WEB, 22000);
                         break;
                 }

@@ -8,12 +8,17 @@
 #include "ScriptedCreature.h"
 #include "the_arcway.h"
 
-/* enum Says
+ enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 1,
+    SAY_FEL             = 2,
+    SAY_SUM             = 3,
+    SAY_WICKED          = 4,
+    SAY_WICKED_TEXT     = 5,
+    SAY_DEATH           = 6,
+}; 
 
+//TO-DO: Весь треш на 703+
 enum Spells
 {
     SPELL_FEL_FISSURE       = 197776,
@@ -57,7 +62,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //37:50
         {
-            //Talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             _EnterCombat();
 
             events.ScheduleEvent(EVENT_FEL_FISSURE, 6000); //37:56
@@ -68,7 +73,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
 
@@ -101,6 +106,7 @@ public:
                 {
                     case EVENT_FEL_FISSURE:
                         DoCast(SPELL_FEL_FISSURE);
+                        Talk(SAY_FEL);
                         events.ScheduleEvent(EVENT_FEL_FISSURE, 14000);
                         break;
                     case EVENT_SHADOW_SLASH:
@@ -108,11 +114,14 @@ public:
                         events.ScheduleEvent(EVENT_SHADOW_SLASH, 14000);
                         break;
                     case EVENT_WICKED_SLAM:
+                        Talk(SAY_WICKED);
+                        Talk(SAY_WICKED_TEXT);
                         DoCast(SPELL_WICKED_SLAM);
                         events.ScheduleEvent(EVENT_WICKED_SLAM, 40000);
                         break;
                     case EVENT_SUM_FELBAT:
                     {
+                        Talk(SAY_SUM);
                         Position pos;
                         me->GetRandomNearPosition(pos, 30.0f);
                         me->SummonCreature(NPC_DREAD_FELBAT, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ() + 20.0f);

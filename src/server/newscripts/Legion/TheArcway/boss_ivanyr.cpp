@@ -8,11 +8,14 @@
 #include "ScriptedCreature.h"
 #include "the_arcway.h"
 
-/* enum Says
+// TO-DO: Скиллы почти у всего треша, когда будет 703
+
+enum Says
 {
-    SAY_AGGRO           = ,
-    SAY_DEATH           = ,
-}; */
+    SAY_AGGRO           = 1,
+    SAY_MAGIC           = 2,
+    SAY_DEATH           = 3,
+}; 
 
 enum Spells
 {
@@ -45,9 +48,11 @@ public:
         boss_ivanyrAI(Creature* creature) : BossAI(creature, DATA_IVANYR) 
         {
             DoCast(me, SPELL_SPAWN_VISUAL, true);
+            introDone = false;
         }
 
         bool phaseLowMana;
+        bool introDone;
 
         void Reset()
         {
@@ -60,7 +65,7 @@ public:
 
         void EnterCombat(Unit* /*who*/) //08:22
         {
-            //Talk(SAY_AGGRO); //Stay back! It's mine!
+            Talk(SAY_AGGRO); //Stay back! It's mine!
             _EnterCombat();
 
             events.ScheduleEvent(EVENT_VOLATILE_MAGIC, 8000); //08:31
@@ -71,9 +76,21 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            //Talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             _JustDied();
         }
+        void MoveInLineOfSight(Unit* who)
+        {  
+ 
+            if (!(who->GetTypeId() == TYPEID_PLAYER))
+               return;
+          
+             if (!introDone && me->IsWithinDistInMap(who, 130.0f))
+             {
+                introDone = true;
+                Talk(0);
+             }
+        }             
 
         void JustReachedHome()
         {
@@ -114,6 +131,7 @@ public:
                 {
                     case EVENT_VOLATILE_MAGIC:
                         DoCast(SPELL_VOLATILE_MAGIC);
+                        Talk(SAY_MAGIC);
                         events.ScheduleEvent(EVENT_VOLATILE_MAGIC, 24000);
                         break;
                     case EVENT_OVERCHARGE_MANA:
