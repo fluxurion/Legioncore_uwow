@@ -1003,7 +1003,7 @@ class WorldObject : public Object, public WorldLocation
         GuidUnorderedSet _hideForGuid;
 
         virtual bool _IsWithinDist(WorldObject const* obj, float dist2compare, bool is3D) const;
-
+        virtual bool CanNeverSee2(WorldObject const* obj) const { return false; }
         virtual bool CanNeverSee(WorldObject const* obj) const { return GetMap() != obj->GetMap() || !InSamePhase(obj); }
         virtual bool CanAlwaysSee(WorldObject const* /*obj*/) const { return false; }
         bool CanDetect(WorldObject const* obj, bool ignoreStealth) const;

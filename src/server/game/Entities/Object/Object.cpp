@@ -2225,7 +2225,7 @@ bool WorldObject::canSeeOrDetect(WorldObject const* obj, bool ignoreStealth, boo
             return false;
     }
 
-    if (obj->IsNeverVisible(this) || CanNeverSee(obj))
+    if (obj->IsNeverVisible(this) || CanNeverSee(obj) || obj->CanNeverSee2(this))
         return false;
 
     if (obj->IsAlwaysVisibleFor(this) || CanAlwaysSee(obj))

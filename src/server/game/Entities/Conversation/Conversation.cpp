@@ -267,7 +267,6 @@ void Conversation::BuildDynamicValuesUpdate(uint8 updateType, ByteBuffer* data, 
 
 bool Conversation::LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bool addToMap)
 {
-    sLog->outU("---------------------> load %u addToMap %u", guid, addToMap);
     ConversationSpawnData const* data = sObjectMgr->GetConversationData(guid);
     if (!data)
     {
@@ -406,7 +405,7 @@ bool Conversation::LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bo
         }
     }
 
-    //SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
+    SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
     //SetDuration(duration);
     setActive(true);
 
@@ -414,4 +413,21 @@ bool Conversation::LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bo
         return false;
 
     return true;
+}
+
+bool Conversation::CanNeverSee2(WorldObject const* seer) const
+{
+    if (seer->GetTypeId() != TYPEID_PLAYER)
+        return true;
+
+    auto data = playing.find(seer->GetGUID());
+    if (data == playing.end())
+    {
+        const_cast<Conversation*>(this)->playing[seer->GetGUID()] = getMSTime();
+        return true;
+    }
+    uint32 const dur = getMSTime() - data->second;
+    if (dur > GetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION))
+        return true;
+    return false;
 }

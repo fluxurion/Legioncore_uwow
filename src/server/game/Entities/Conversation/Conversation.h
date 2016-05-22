@@ -50,6 +50,8 @@ class Conversation : public WorldObject, public GridObject<Conversation>
         void AddToWorld();
         void RemoveFromWorld();
 
+        bool CanNeverSee2(WorldObject const* seer) const;
+
         bool LoadFromDB(ObjectGuid::LowType guid, Map* map) { return LoadConversationFromDB(guid, map, false); }
         bool LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bool addToMap = true);
 
@@ -75,5 +77,7 @@ class Conversation : public WorldObject, public GridObject<Conversation>
         uint32 _spellId;
         uint32 _duration;
         ObjectGuid casterGUID;
+
+        std::map<ObjectGuid, uint32> playing;
 };
 #endif
