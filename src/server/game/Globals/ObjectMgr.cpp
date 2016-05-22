@@ -1671,6 +1671,140 @@ std::vector<TempSummonData> const* ObjectMgr::GetSummonGroup(uint32 summonerId, 
     return NULL;
 }
 
+void ObjectMgr::LoadConversations()
+{
+    uint32 oldMSTime = getMSTime();
+
+    //                                                 0    1   2      3      4       5           6           7           8            9            10        11  
+    QueryResult result = WorldDatabase.Query("SELECT guid, id, map, zoneId, areaId, position_x, position_y, position_z, orientation, spawnMask, phaseMask, PhaseId "
+        "FROM conversation ORDER BY `map` ASC, `guid` ASC");
+
+    if (!result)
+    {
+        sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creatures. DB table `creature` is empty.");
+        return;
+    }
+
+    // Build single time for check spawnmask
+    std::map<uint32, uint32> spawnMasks;
+    for (auto& mapDifficultyPair : sDB2Manager._mapDifficulty)
+        for (auto& difficultyPair : mapDifficultyPair.second)
+            spawnMasks[mapDifficultyPair.first] |= (1 << difficultyPair.first);
+
+    _creatureDataStore.rehash(result->GetRowCount());
+    std::map<uint32, ConversationSpawnData*> lastEntryCreature;
+
+    uint32 count = 0;
+    do
+    {
+        Field* fields = result->Fetch();
+
+        uint8 index = 0;
+
+        ObjectGuid::LowType guid = fields[index++].GetUInt64();
+        uint32 entry = fields[index++].GetUInt32();
+
+        std::vector<ConversationData> const* conversationData = sObjectMgr->GetConversationData(entry);
+        std::vector<ConversationCreature> const* conversationCreature = sObjectMgr->GetConversationCreature(entry);
+        std::vector<ConversationActor> const* conversationActor = sObjectMgr->GetConversationActor(entry);
+
+        bool isActor = conversationActor && !conversationActor->empty();
+        bool isCreature = conversationCreature && !conversationCreature->empty();
+        bool hasData = conversationData && !conversationData->empty();
+
+        if (!hasData || (!isActor && !isCreature))
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `conversation` has conversation (GUID: " UI64FMTD ") with non existing conversation data %u, skipped.", guid, entry);
+            continue;
+        }
+
+        ConversationSpawnData& data = _conversationDataStore[guid];
+        data.guid = guid;
+        data.id = entry;
+        data.mapid = fields[index++].GetUInt16();
+        data.zoneId = fields[index++].GetUInt16();
+        data.areaId = fields[index++].GetUInt16();
+        data.posX = fields[index++].GetFloat();
+        data.posY = fields[index++].GetFloat();
+        data.posZ = fields[index++].GetFloat();
+        data.orientation = fields[index++].GetFloat();
+        data.spawnMask = fields[index++].GetUInt32();
+        data.phaseMask = fields[index++].GetUInt32();
+
+        Tokenizer phasesToken(fields[index++].GetString(), ' ', 100);
+        for (Tokenizer::const_iterator::value_type itr : phasesToken)
+            if (PhaseEntry const* phase = sPhaseStores.LookupEntry(uint32(strtoull(itr, nullptr, 10))))
+                data.PhaseID.insert(phase->ID);
+
+        // check near npc with same entry.
+        auto lastCreature = lastEntryCreature.find(entry);
+        if (lastCreature != lastEntryCreature.end())
+        {
+            if (data.mapid == lastCreature->second->mapid)
+            {
+                float dx1 = lastCreature->second->posX - data.posX;
+                float dy1 = lastCreature->second->posY - data.posY;
+                float dz1 = lastCreature->second->posZ - data.posZ;
+
+                float distsq1 = dx1*dx1 + dy1*dy1 + dz1*dz1;
+                if (distsq1 < 0.5f)
+                {
+                    // split phaseID
+                    for (auto phaseID : data.PhaseID)
+                        lastCreature->second->PhaseID.insert(phaseID);
+
+                    lastCreature->second->phaseMask |= data.phaseMask;
+                    lastCreature->second->spawnMask |= data.spawnMask;
+                    WorldDatabase.PExecute("UPDATE conversation SET phaseMask = %u, spawnMask = %u WHERE guid = %u", lastCreature->second->phaseMask, lastCreature->second->spawnMask, lastCreature->second->guid);
+                    WorldDatabase.PExecute("DELETE FROM conversation WHERE guid = %u", guid);
+                    sLog->outError(LOG_FILTER_SQL, "Table `conversation` have clone npc %u witch stay too close (dist: %f). original npc guid %u. npc with guid %u will be deleted.", entry, distsq1, lastCreature->second->guid, guid);
+                    continue;
+                }
+            }
+            else
+                lastEntryCreature[entry] = &data;
+
+        }
+        else
+            lastEntryCreature[entry] = &data;
+
+        MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
+        if (!mapEntry)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `conversation` have conversation (GUID: " UI64FMTD ") that spawned at not existed map (Id: %u), skipped.", guid, data.mapid);
+            continue;
+        }
+
+        if (data.spawnMask & ~spawnMasks[data.mapid])
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `conversation` have conversation (GUID: " UI64FMTD ") that have wrong spawn mask %u including not supported difficulty modes for map (Id: %u) spawnMasks[data.mapid]: %u.", guid, data.spawnMask, data.mapid, spawnMasks[data.mapid]);
+            WorldDatabase.PExecute("UPDATE conversation SET spawnMask = %u WHERE guid = %u", spawnMasks[data.mapid], guid);
+        }
+
+
+        if (data.phaseMask == 0)
+        {
+            sLog->outError(LOG_FILTER_SQL, "Table `conversation` have conversation (GUID: " UI64FMTD " Entry: %u) with `phaseMask`=0 (not visible for anyone), set to 1.", guid, data.id);
+            data.phaseMask = 1;
+        }
+
+        // Add to grid if not managed by the game event or pool system
+        AddConversationToGrid(guid, &data);
+
+        if (!data.zoneId || !data.areaId)
+        {
+            uint32 zoneId = 0;
+            uint32 areaId = 0;
+
+            sMapMgr->GetZoneAndAreaId(zoneId, areaId, data.mapid, data.posX, data.posY, data.posZ);
+            WorldDatabase.PExecute("UPDATE creature SET zoneId = %u, areaId = %u WHERE guid = %u", zoneId, areaId, guid);
+        }
+
+        ++count;
+
+    } while (result->NextRow());
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u conversation in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
 void ObjectMgr::LoadCreatures()
 {
     uint32 oldMSTime = getMSTime();
@@ -2006,6 +2140,20 @@ void ObjectMgr::LoadPersonalLootTemplate()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u personal loot in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
+void ObjectMgr::AddConversationToGrid(ObjectGuid::LowType const& guid, ConversationSpawnData const* data)
+{
+    uint32 mask = data->spawnMask;
+    for (uint32 i = 0; mask != 0; i++, mask >>= 1)
+    {
+        if (mask & 1)
+        {
+            CellCoord cellCoord = Trinity::ComputeCellCoord(data->posX, data->posY);
+            CellObjectGuids& cell_guids = _mapObjectGuidsStore[MAKE_PAIR32(data->mapid, i)][cellCoord.GetId()];
+            cell_guids.conversation.insert(guid);
+        }
+    }
 }
 
 void ObjectMgr::AddCreatureToGrid(ObjectGuid::LowType const& guid, CreatureData const* data)

@@ -23,6 +23,24 @@
 #include "UpdateMask.h"
 #include "UpdateFieldFlags.h"
 
+struct ConversationSpawnData
+{
+    explicit ConversationSpawnData() : dbData(true) {}
+    ObjectGuid::LowType guid = 0;
+    uint32 id;                                              // entry in creature_template
+    uint16 mapid;
+    uint16 zoneId = 0;
+    uint16 areaId = 0;
+    uint32 phaseMask = 1;
+    float posX;
+    float posY;
+    float posZ;
+    float orientation;
+    uint32 spawnMask = 1;
+    bool dbData;
+    std::set<uint32> PhaseID;
+};
+
 class Conversation : public WorldObject, public GridObject<Conversation>
 {
     public:
@@ -31,6 +49,9 @@ class Conversation : public WorldObject, public GridObject<Conversation>
 
         void AddToWorld();
         void RemoveFromWorld();
+
+        bool LoadFromDB(ObjectGuid::LowType guid, Map* map) { return LoadConversationFromDB(guid, map, false); }
+        bool LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bool addToMap = true);
 
         bool CreateConversation(ObjectGuid::LowType guidlow, uint32 triggerEntry, Unit* caster, SpellInfo const* info, Position const& pos);
         void Update(uint32 p_time);

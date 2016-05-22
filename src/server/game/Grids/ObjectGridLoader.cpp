@@ -95,13 +95,14 @@ void LoadHelper(CellGuidSet const& guid_set, CellCoord &cell, GridRefManager<T> 
     {
         T* obj = new T;
         ObjectGuid::LowType guid = *i_guid;
-        //sLog->outInfo(LOG_FILTER_GENERAL, "DEBUG: LoadHelper from table: %s for (guid: %u) Loading", table, guid);
+        sLog->outInfo(LOG_FILTER_GENERAL, "DEBUG: LoadHelper from for (guid: %u) Loading", guid);
         if (!obj->LoadFromDB(guid, map))
         {
             delete obj;
             continue;
         }
-
+        if (guid == 1)
+            sLog->outU("--------------> %u", obj->IsInGrid());
         AddObjectHelper(cell, m, count, map, obj);
     }
 }
@@ -148,6 +149,13 @@ void ObjectGridLoader::Visit(CreatureMapType &m)
     CellCoord cellCoord = i_cell.GetCellCoord();
     CellObjectGuids const& cell_guids = sObjectMgr->GetCellObjectGuids(i_map->GetId(), i_map->GetSpawnMode(), cellCoord.GetId());
     LoadHelper(cell_guids.creatures, cellCoord, m, i_creatures, i_map);
+}
+
+void ObjectGridLoader::Visit(ConversationMapType &m)
+{
+    CellCoord cellCoord = i_cell.GetCellCoord();
+    CellObjectGuids const& cell_guids = sObjectMgr->GetCellObjectGuids(i_map->GetId(), i_map->GetSpawnMode(), cellCoord.GetId());
+    LoadHelper(cell_guids.conversation, cellCoord, m, i_conversation, i_map);
 }
 
 void ObjectWorldLoader::Visit(CorpseMapType &m)

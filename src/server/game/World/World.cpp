@@ -1620,6 +1620,9 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_GENERAL, "Loading Item Scripts...");                 // must be after LoadItemPrototypes
     sObjectMgr->LoadItemScriptNames();
 
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Conversation data...");
+    sObjectMgr->LoadConversationData();
+
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Creature Model Based Info Data...");
     sObjectMgr->LoadCreatureModelInfo();
 
@@ -1652,6 +1655,9 @@ void World::SetInitialWorldSettings()
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Creature Data...");
     sObjectMgr->LoadCreatures();
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Conversation spawn Data...");
+    sObjectMgr->LoadConversations();
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Temporary Summon Data...");
     sObjectMgr->LoadTempSummons();                               // must be after LoadCreatureTemplates() and LoadGameObjectTemplates()
@@ -1903,8 +1909,6 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading AreaTrigger data...");
     sObjectMgr->LoadAreaTriggerActionsAndData();
 
-    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Conversation data...");
-    sObjectMgr->LoadConversationData();
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Loading Scenario data...");
     sObjectMgr->LoadScenarioData();

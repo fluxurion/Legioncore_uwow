@@ -32,7 +32,7 @@ class ObjectGridLoader
 
     public:
         ObjectGridLoader(NGridType &grid, Map* map, const Cell &cell)
-            : i_cell(cell), i_grid(grid), i_map(map), i_gameObjects(0), i_creatures(0), i_corpses (0)
+            : i_cell(cell), i_grid(grid), i_map(map), i_gameObjects(0), i_creatures(0), i_corpses(0), i_conversation(0)
             {}
 
         void Visit(GameObjectMapType &m);
@@ -40,7 +40,7 @@ class ObjectGridLoader
         void Visit(CorpseMapType &) const {}
         void Visit(DynamicObjectMapType&) const {}
         void Visit(AreaTriggerMapType &) const {}
-        void Visit(ConversationMapType &) const {}
+        void Visit(ConversationMapType &m);
 
         void LoadN(void);
 
@@ -52,6 +52,7 @@ class ObjectGridLoader
         Map* i_map;
         uint32 i_gameObjects;
         uint32 i_creatures;
+        uint32 i_conversation;
         uint32 i_corpses;
 };
 

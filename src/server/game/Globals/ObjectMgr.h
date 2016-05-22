@@ -519,6 +519,7 @@ typedef std::set<ObjectGuid::LowType> CellGuidSet;
 typedef std::map<ObjectGuid/*player guid*/, uint32/*instance*/> CellCorpseSet;
 struct CellObjectGuids
 {
+    CellGuidSet conversation;
     CellGuidSet creatures;
     CellGuidSet gameobjects;
     CellCorpseSet corpses;
@@ -543,6 +544,7 @@ struct TrinityStringLocale
 };
 
 typedef std::map<ObjectGuid, ObjectGuid> LinkedRespawnContainer;
+typedef std::unordered_map<ObjectGuid::LowType, ConversationSpawnData> ConversationDataContainer;
 typedef std::unordered_map<ObjectGuid::LowType, CreatureData> CreatureDataContainer;
 typedef std::unordered_map<ObjectGuid::LowType, GameObjectData> GameObjectDataContainer;
 typedef std::map<TempSummonGroupKey, std::vector<TempSummonData> > TempSummonDataContainer;
@@ -1401,6 +1403,7 @@ class ObjectMgr
         void RestructCreatureGUID();
         void RestructGameObjectGUID();
         void LoadTempSummons();
+        void LoadConversations();
         void LoadCreatures();
         void LoadCreatureAIInstance();
         void LoadCreatureActionData();
@@ -1547,6 +1550,13 @@ class ObjectMgr
 
         std::vector<TempSummonData> const* GetSummonGroup(uint32 summonerId, SummonerType summonerType, uint8 group) const;
 
+        ConversationSpawnData const* GetConversationData(ObjectGuid::LowType const& guid) const
+        {
+            ConversationDataContainer::const_iterator itr = _conversationDataStore.find(guid);
+            if (itr == _conversationDataStore.end()) return NULL;
+            return &itr->second;
+        }
+
         CreatureData const* GetCreatureData(ObjectGuid::LowType const& guid) const
         {
             CreatureDataContainer::const_iterator itr = _creatureDataStore.find(guid);
@@ -1573,6 +1583,7 @@ class ObjectMgr
             return itr != _creatureAIInstanceGo.end() ? &(itr->second) : NULL;
         }
 
+        ConversationSpawnData& NewOrExistConversationData(ObjectGuid::LowType const& guid) { return _conversationDataStore[guid]; }
         CreatureData& NewOrExistCreatureData(ObjectGuid::LowType const& guid) { return _creatureDataStore[guid]; }
         void DeleteCreatureData(ObjectGuid::LowType const& guid);
 
@@ -1686,6 +1697,7 @@ class ObjectMgr
         void DeleteCorpseCellData(uint32 mapid, uint32 cellid, ObjectGuid player_guid);
 
         // grid objects
+        void AddConversationToGrid(ObjectGuid::LowType const& guid, ConversationSpawnData const* data);
         void AddCreatureToGrid(ObjectGuid::LowType const& guid, CreatureData const* data);
         void RemoveCreatureFromGrid(ObjectGuid::LowType const& guid, CreatureData const* data);
         void AddGameobjectToGrid(ObjectGuid::LowType const& guid, GameObjectData const* data);
@@ -2048,6 +2060,7 @@ class ObjectMgr
         HalfNameContainer _petHalfName1;
 
         MapObjectGuids _mapObjectGuidsStore;
+        ConversationDataContainer _conversationDataStore;
         CreatureDataContainer _creatureDataStore;
         CreatureTemplateContainer _creatureTemplateStore;
         CreatureDifficultyStatContainer _creatureDifficultyStatStore;

@@ -216,13 +216,16 @@ void Conversation::Update(uint32 p_time)
 {
     bool expired = false;
 
-    if (GetDuration() > int32(p_time))
-        _duration -= p_time;
-    else
-        expired = true;
+    if (GetDuration())
+    {
+        if (GetDuration() > int32(p_time))
+            _duration -= p_time;
+        else
+            expired = true;
 
-    if (expired)
-        Remove();
+        if (expired)
+            Remove();
+    }
 }
 
 void Conversation::Remove()
@@ -236,6 +239,8 @@ void Conversation::Remove()
 
 void Conversation::BindToCaster()
 {
+    if (!GetCasterGUID())
+        return;
     ASSERT(!_caster);
     _caster = ObjectAccessor::GetUnit(*this, GetCasterGUID());
     ASSERT(_caster);
@@ -244,6 +249,8 @@ void Conversation::BindToCaster()
 
 void Conversation::UnbindFromCaster()
 {
+    if (!GetCasterGUID())
+        return;
     ASSERT(_caster);
     _caster = NULL;
 }
@@ -256,4 +263,155 @@ void Conversation::BuildDynamicValuesUpdate(uint8 updateType, ByteBuffer* data, 
     *data << uint8(updateMaskTemp.GetBlockCount());
     updateMaskTemp.AppendToPacket(data);
     data->append(fieldBuffer);
+}
+
+bool Conversation::LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bool addToMap)
+{
+    sLog->outU("---------------------> load %u addToMap %u", guid, addToMap);
+    ConversationSpawnData const* data = sObjectMgr->GetConversationData(guid);
+    if (!data)
+    {
+        sLog->outError(LOG_FILTER_SQL, "Creature (GUID: %u) not found in table `creature`, can't load. ", guid);
+        return false;
+    }
+
+    if (map->GetInstanceId() == 0)
+    {
+        /*if (map->GetConversation(ObjectGuid::Create<HighGuid::Conversation>(data->mapid, data->id, guid)))
+            return false;*/
+    }
+    else
+        guid = sObjectMgr->GetGenerator<HighGuid::Conversation>()->Generate();
+
+    std::vector<ConversationData> const* conversationData = sObjectMgr->GetConversationData(data->id);
+    std::vector<ConversationCreature> const* conversationCreature = sObjectMgr->GetConversationCreature(data->id);
+    std::vector<ConversationActor> const* conversationActor = sObjectMgr->GetConversationActor(data->id);
+
+    bool isActor = conversationActor && !conversationActor->empty();
+    bool isCreature = conversationCreature && !conversationCreature->empty();
+    bool hasData = conversationData && !conversationData->empty();
+
+    if (!hasData || (!isActor && !isCreature))
+        return false;
+
+    SetMap(map);
+    Relocate(data->posX, data->posY, data->posZ, data->orientation);
+    if (!IsPositionValid())
+    {
+        sLog->outError(LOG_FILTER_GENERAL, "Conversation (conversation %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", data->id, GetPositionX(), GetPositionY());
+        return false;
+    }
+
+    uint32 duration = 30000;
+
+    Object::_Create(ObjectGuid::Create<HighGuid::Conversation>(GetMapId(), data->id, guid));
+    SetPhaseMask(data->phaseMask, false);
+    SetPhaseId(data->PhaseID, false);
+
+    SetEntry(data->id);
+    SetObjectScale(1.0f);
+    SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
+
+
+    for (uint16 index = 0; index < _dynamicValuesCount; ++index)
+    {
+        ByteBuffer buffer;
+        if (_fieldNotifyFlags & ConversationDynamicFieldFlags[index])
+        {
+            updateMask.SetBit(index);
+
+            UpdateMask arrayMask;
+            if (index == CONVERSATION_DYNAMIC_FIELD_ACTORS)
+            {
+                uint32 count = 0;
+                if (isActor)
+                {
+                    arrayMask.SetCount(conversationActor->size() * 6);
+                    for (std::vector<ConversationActor>::const_iterator itr = conversationActor->begin(); itr != conversationActor->end(); ++itr)
+                    {
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->actorId);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->creatureId);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->displayId);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk1);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk2);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk3);
+
+                        if (itr->duration)
+                            duration = itr->duration;
+                    }
+                }
+                if (isCreature)
+                {
+                    arrayMask.SetCount(conversationCreature->size() * 6);
+                    for (std::vector<ConversationCreature>::const_iterator itr = conversationCreature->begin(); itr != conversationCreature->end(); ++itr)
+                    {
+                        ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(0xFFFFFFFFFF);
+
+                        if (itr->creatureId)
+                        {
+                            Creature* creature = FindNearestCreature(itr->creatureId, GetVisibilityRange());
+                            if (!creature)
+                            {
+                                sLog->outError(LOG_FILTER_GENERAL, "Conversation (conversation %u) not created. Can't fine creature %u", data->id, itr->creatureId);
+                                return false;
+                            }
+
+                            guid = creature->GetGUID();
+                        }
+
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_LOPART(guid.GetLowPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_HIPART(guid.GetLowPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_LOPART(guid.GetHighPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(PAIR64_HIPART(guid.GetHighPart()));
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk1);
+                        arrayMask.SetBit(count++);
+                        buffer << uint32(itr->unk2);
+
+                        if (itr->duration)
+                            duration = itr->duration;
+                    }
+                }
+            }
+            if (index == CONVERSATION_DYNAMIC_FIELD_LINES)
+            {
+                uint32 count = 0;
+                arrayMask.SetCount(conversationData->size() * 4);
+                for (std::vector<ConversationData>::const_iterator itr = conversationData->begin(); itr != conversationData->end(); ++itr)
+                {
+                    arrayMask.SetBit(count++);
+                    buffer << uint32(itr->id);
+                    arrayMask.SetBit(count++);
+                    buffer << uint32(itr->textId);
+                    arrayMask.SetBit(count++);
+                    buffer << uint32(itr->unk1);
+                    arrayMask.SetBit(count++);
+                    buffer << uint32(itr->unk2);
+                }
+            }
+
+            fieldBuffer << uint16(arrayMask.GetBlockCount());
+            arrayMask.AppendToPacket(&fieldBuffer);
+            fieldBuffer.append(buffer);
+        }
+    }
+
+    //SetUInt32Value(CONVERSATION_FIELD_LAST_LINE_DURATION, duration);
+    //SetDuration(duration);
+    setActive(true);
+
+    if (addToMap && !GetMap()->AddToMap(this))
+        return false;
+
+    return true;
 }
