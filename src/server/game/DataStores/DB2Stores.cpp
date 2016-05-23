@@ -718,6 +718,8 @@ void DB2Manager::InitDB2CustomStores()
     {
         if (sTaxiNodesStore.GetNumRows())
         {
+            sLog->outInfo(LOG_FILTER_SERVER_LOADING, "DB2Manager::InitDB2CustomStores TaxiMaskSize %u GetNumRows %u required %u", TaxiMaskSize, sTaxiNodesStore.GetNumRows(), uint32(((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1));
+
             // Temporary disable, on 21021 max 225 node, on 21154 227, client crashed, remove a new version
             // ASSERT(TaxiMaskSize >= ((sTaxiNodesStore.GetNumRows() - 1) / 8) + 1,
                    // "TaxiMaskSize is not large enough to contain all taxi nodes! (current value %d, required %d)",
