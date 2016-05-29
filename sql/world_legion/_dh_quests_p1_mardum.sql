@@ -4,6 +4,8 @@
 
 ALTER TABLE `phase_definitions` CHANGE `phaseId` `phaseId` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';
 
+UPDATE `creature_template` SET `flags_extra` = '128' WHERE `creature_template`.`entry` in (100061, 100257);
+
 -- ----------------
 --   P A S E
 -- ----------------

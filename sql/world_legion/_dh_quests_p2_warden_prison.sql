@@ -2,7 +2,7 @@
 /*!40101 SET NAMES utf8 */;
 /*!40014 SET FOREIGN_KEY_CHECKS=0 */;
 
-UPDATE `gameobject_template` SET `flags` = '16' WHERE `gameobject_template`.`entry` in (245914, 245913, 245915);
+UPDATE `gameobject_template` SET `flags` = '16' WHERE `gameobject_template`.`entry` in (245914, 245913, 245915, 244352, 244353, 244354, 244355, 247182, 245207, 245206, 245208, 245434);
 -- ----------------
 --   P A S E
 -- ----------------
@@ -65,8 +65,13 @@ REPLACE INTO `quest_template_addon` (`ID`, `PrevQuestID`, `NextQuestID`, `Exclus
 ('39686', '39683', '0', '0'),
 ('39687', '39686', '0', '0'),
 ('40373', '39687', '0', '0'),
-('39694', '40373', '0', '0'),
-('39690', '39694', '0', '0');
+('39694', '40373', '39690', '0'), -- blood elfe
+('39688', '40373', '39689', '0'), -- night elfe
+('39690', '', '0', '0'), -- blood elfe
+('39689', '', '0', '0'); -- night elfe
+
+REPLACE INTO `creature_queststarter` (`id`, `quest`) VALUES ('97644', '39688'), ('97978', '39689');
+REPLACE INTO `creature_questender` (`id`, `quest`) VALUES ('96666', '39688'), ('96669', '39688'), ('97978', '39689');
 
 DELETE FROM `spell_area` WHERE area in (7814);
 REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`, `quest_start_status`, `quest_end_status`) VALUES 
@@ -202,3 +207,7 @@ REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `
 -- 205319 at complete 39690 WARNING!! 197366 name is Bind to Orgrimmar
 REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES
 (197366, 1, 1577.3, -4453.42, 15.67, 1.65894);
+
+REPLACE INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) VALUES
+(205317, 0, -9066.33, 433.17, 93.06, 0.663225);
+
